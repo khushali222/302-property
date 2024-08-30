@@ -82,7 +82,6 @@ String reverseFormatDate(String formattedDate) {
 Color blueColor = Color.fromRGBO(21, 43, 83, 1);
 
 Color greyColor = Color.fromRGBO(73, 81, 96, 1);
-
 Color grey = Color.fromRGBO(21, 43, 83, .5);
 TableRow buildTableRow(String leftLabel, String leftValue, String rightLabel, String rightValue) {
   return TableRow(
@@ -133,5 +132,9 @@ String getDisplayValue(String? value) {
   // Return 'N/A' if the value is null or empty, otherwise return the value
   return (value == null || value.trim().isEmpty) ? 'N/A' : value;
 }
+//Color grey = Color.fromRGBO(21, 43, 83, .5);
+
+
+
 //Color grey = Color.fromRGBO(21, 43, 83, .5);
 

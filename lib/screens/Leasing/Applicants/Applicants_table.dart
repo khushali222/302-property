@@ -997,11 +997,11 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                 .width *
                                                             .05),
                                                 Expanded(
-
+                                                  flex: 3,
                                                   child: Padding(
                                                     padding: const EdgeInsets.only(left:15.0),
                                                     child: Text(
-                                                      '${applicant.applicantStatus != null && applicant.applicantStatus.isNotEmpty ? applicant.applicantStatus.first.status.toString() : 'N/A'}',
+                                                      '   ${applicant.applicantStatus != null && applicant.applicantStatus.isNotEmpty ? applicant.applicantStatus.first.status.toString() : 'N/A'}',
                                                       style: const TextStyle(
                                                         color: Color.fromRGBO(
                                                             21, 43, 83, 1),

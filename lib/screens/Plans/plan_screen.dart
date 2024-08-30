@@ -1176,24 +1176,25 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
 
                                       decoration: BoxDecoration(
                                           color: blueColor,
-                                        borderRadius: BorderRadius.only(topLeft: Radius.circular(5),topRight: Radius.circular(5),)
+                                        borderRadius: BorderRadius.circular(5)
                                       ),
                                       child: Center(child: Text("Current Subscription Plan Details",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),)),
                                     ),
+                                    SizedBox(height: 6,),
                                     Container(
                                       height: 50,
                                       width: MediaQuery.of(context).size.width * .91,
 
-                                      decoration: BoxDecoration(
-                                        border:Border.all(color: blueColor),
-                        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5),bottomRight: Radius.circular(5),)
-                                      ),
+                        //               decoration: BoxDecoration(
+                        //                 border:Border.all(color: blueColor),
+                        // borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5),bottomRight: Radius.circular(5),)
+                        //               ),
                                       child:  Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           SizedBox(
                                             height: 40,
-                                            width: MediaQuery.of(context).size.width * .43,
+                                            width: MediaQuery.of(context).size.width * .9 /2,
                                             child: GestureDetector(
                                               onTap: () {
                                                 // Add your onPressed code here
@@ -1220,7 +1221,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                           ),
                                           SizedBox(
                                             height: 40,
-                                            width: MediaQuery.of(context).size.width * .42,
+                                            width: MediaQuery.of(context).size.width * .87 /2,
                                             child: GestureDetector(
                                               onTap: () {
                                                 _showEnhancedAlert(context, data.subscriptionId!, data.purchaseId!);
@@ -1248,17 +1249,25 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
 
 
                                     ),
-                                    SizedBox(height: 10,),
+                                    SizedBox(height: 6,),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Container(
-                                          height: 55,
+                                          height: 75,
                                           padding: EdgeInsets.only(left: 18,right: 8,top: 8,bottom: 8),
-                                          width: MediaQuery.of(context).size.width * .89 / 2,
+                                          width: MediaQuery.of(context).size.width * .86 / 2,
                                           decoration: BoxDecoration(
-                                              border:Border.all(color: blueColor.withOpacity(.5)),
-                                            borderRadius: BorderRadius.circular(5)
+                                              border: Border(
+                                                left: BorderSide(color: blueColor.withOpacity(.5)),
+                                                top: BorderSide(color: blueColor.withOpacity(.5)),
+                                                bottom: BorderSide(color: blueColor.withOpacity(.5)),
+                                                // No right side border
+                                              ),
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(5),
+                                              bottomLeft: Radius.circular(5),
+                                            ),
 
                                           ),
                                           child: Column(
@@ -1271,7 +1280,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                   const Text(
                                                     "Plan Name : ",
                                                     style: TextStyle(
-                                                        fontSize: 10,
+                                                        fontSize: 12,
                                                         fontWeight:
                                                         FontWeight
                                                             .bold,
@@ -1287,7 +1296,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                   Text(
                                                     "${data.planDetail?.planName}",
                                                     style: TextStyle(
-                                                        fontSize: 10,
+                                                        fontSize: 12,
                                                         color:
                                                         blueColor,
                                                         fontWeight:
@@ -1296,13 +1305,14 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                   ),
                                                 ],
                                               ),
+                                              SizedBox(height: 8),
                                               Row(
 
                                                 children: [
                                                   const Text(
                                                     "Plan Price   :  ",
                                                     style: TextStyle(
-                                                        fontSize: 10,
+                                                        fontSize: 12,
                                                         fontWeight:
                                                         FontWeight
                                                             .bold,
@@ -1318,7 +1328,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                   Text(
                                                     "\$${data.planDetail?.planPrice}",
                                                     style: TextStyle(
-                                                        fontSize: 10,
+                                                        fontSize: 12,
                                                         color:
                                                         blueColor,
                                                         fontWeight:
@@ -1331,16 +1341,22 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                           ),
 
                                         ),
-                                        SizedBox(width: 5,),
+                                      //  SizedBox(width: 5,),
                                         Container(
-                                          height: 55,
+                                          height: 75,
                                           padding: EdgeInsets.all(8),
-                                          width: MediaQuery.of(context).size.width * .89 / 2,
+                                          width: MediaQuery.of(context).size.width * .95 / 2,
                                           decoration: BoxDecoration(
-                                              border:Border.all(color: blueColor.withOpacity(.5)),
-                                              borderRadius: BorderRadius.circular(5)
-
-                                          ),
+                                            border: Border(
+                                              right: BorderSide(color: blueColor.withOpacity(.5)),
+                                              top: BorderSide(color: blueColor.withOpacity(.5)),
+                                              bottom: BorderSide(color: blueColor.withOpacity(.5)),
+                                              // No right side border
+                                            ),
+                                            borderRadius: BorderRadius.only(
+                                              topRight: Radius.circular(5),
+                                              bottomRight: Radius.circular(5),
+                                            ),),
                                           child: Column(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -1351,7 +1367,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                   const Text(
                                                     "Purchase Date : ",
                                                     style: TextStyle(
-                                                        fontSize: 10,
+                                                        fontSize: 12,
                                                         fontWeight:
                                                         FontWeight
                                                             .bold,
@@ -1368,7 +1384,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                     formatDate(data
                                                         .purchaseDate!),
                                                     style: TextStyle(
-                                                        fontSize: 10,
+                                                        fontSize: 12,
                                                         color:
                                                         blueColor,
                                                         fontWeight:
@@ -1377,13 +1393,14 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                   ),
                                                 ],
                                               ),
+                                              SizedBox(height: 8),
                                               Row(
 
                                                 children: [
                                                   const Text(
                                                     "Billing Period : ",
                                                     style: TextStyle(
-                                                        fontSize: 10,
+                                                        fontSize: 12,
                                                         fontWeight:
                                                         FontWeight
                                                             .bold,
@@ -1399,7 +1416,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                   Text(
                                                     "\$${data.planDetail?.billingInterval}",
                                                     style: TextStyle(
-                                                        fontSize: 10,
+                                                        fontSize: 12,
                                                         color:
                                                         blueColor,
                                                         fontWeight:

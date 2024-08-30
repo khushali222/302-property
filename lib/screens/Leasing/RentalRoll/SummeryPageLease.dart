@@ -1493,6 +1493,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       // appBar: widget302.,
       appBar: widget_302.App_Bar(context: context),

@@ -913,54 +913,54 @@ class _Summery_pageState extends State<Summery_page>
                 ),
               ),
             ),
-            // Expanded(
-            //   child: InkWell(
-            //     onTap: () {
-            //       setState(() {
-            //         if (sorting3multi) {
-            //           sorting1multi = false;
-            //           sorting2multi = false;
-            //           sorting3multi = sorting3multi;
-            //           ascending3multi = sorting3multi ? !ascending3multi : true;
-            //           ascending2multi = false;
-            //           ascending1multi = false;
-            //         } else {
-            //           sorting1multi = false;
-            //           sorting2multi = false;
-            //           sorting3multi = !sorting3multi;
-            //           ascending3multi = sorting3multi ? !ascending3multi : true;
-            //           ascending2multi = false;
-            //           ascending1multi = false;
-            //         }
-            //
-            //         // Sorting logic here
-            //       });
-            //     },
-            //     child: Row(
-            //       children: [
-            //         Text("Action", style: TextStyle(color: Colors.white)),
-            //         SizedBox(width: 5),
-            //         ascending3multi
-            //             ? Padding(
-            //           padding: const EdgeInsets.only(top: 7, left: 2),
-            //           child: FaIcon(
-            //             FontAwesomeIcons.sortUp,
-            //             size: 20,
-            //             color: Colors.white,
-            //           ),
-            //         )
-            //             : Padding(
-            //           padding: const EdgeInsets.only(bottom: 7, left: 2),
-            //           child: FaIcon(
-            //             FontAwesomeIcons.sortDown,
-            //             size: 20,
-            //             color: Colors.white,
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting3multi) {
+                      sorting1multi = false;
+                      sorting2multi = false;
+                      sorting3multi = sorting3multi;
+                      ascending3multi = sorting3multi ? !ascending3multi : true;
+                      ascending2multi = false;
+                      ascending1multi = false;
+                    } else {
+                      sorting1multi = false;
+                      sorting2multi = false;
+                      sorting3multi = !sorting3multi;
+                      ascending3multi = sorting3multi ? !ascending3multi : true;
+                      ascending2multi = false;
+                      ascending1multi = false;
+                    }
+
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text("Action", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 5),
+                    ascending3multi
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -2893,50 +2893,48 @@ class _Summery_pageState extends State<Summery_page>
                       children: List.generate(
                         tenants.length,
                             (index) => Material(
-                          elevation: 3,
-                          borderRadius: BorderRadius.circular(10),
-                          child:
-                          Container(
-                            height: 245,
-                            width: MediaQuery.of(context).size.width * .44,
-                            decoration: BoxDecoration(
-                              color:
-                              Colors.white, // Change as per your need
+                              elevation: 3,
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: blueColor),
+                              child:
+                              Container(
+                                height: 245,
+                                width: MediaQuery.of(context).size.width * .44,
+                                decoration: BoxDecoration(
+                                  color:
+                                      Colors.white, // Change as per your need
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: buildTenantCard(tenants[index]),
+                              ),
                             ),
-                            child: buildTenantCard(tenants[index]),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                )
-                    : SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Wrap(
-                    alignment: WrapAlignment.start,
-                    spacing: MediaQuery.of(context).size.width * 0.03,
-                    runSpacing: MediaQuery.of(context).size.width * 0.02,
-                    children: List.generate(
-                      tenants.length,
+                    )
+                  : SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: Wrap(
+                        alignment: WrapAlignment.start,
+                        spacing: MediaQuery.of(context).size.width * 0.03,
+                        runSpacing: MediaQuery.of(context).size.width * 0.02,
+                        children: List.generate(
+                          tenants.length,
                           (index) => Padding(
-                        padding: const EdgeInsets.only(
-                          left: 20, right: 20, top: 20,),
-                        child: Material(
-                          elevation: 3,
-                          borderRadius: BorderRadius.circular(10),
-                          child: Container(
-                            height: 230,
-                            //  width: MediaQuery.of(context).size.width * .44,
-                            decoration: BoxDecoration(
-                              color:
-                              Colors.white, // Change as per your need
+                            padding: const EdgeInsets.only(
+                                left: 20, right: 20, top: 20,),
+                            child: Material(
+                              elevation: 3,
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: blueColor),
-                            ),
-                            child: buildTenantCard(
-                                tenants[index]
+                              child: Container(
+                                height: 230,
+                                //  width: MediaQuery.of(context).size.width * .44,
+                                decoration: BoxDecoration(
+                                  color:
+                                      Colors.white, // Change as per your need
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: buildTenantCard(
+                                    tenants[index]
 
                             ),
                           ),
@@ -8895,7 +8893,12 @@ class _Summery_pageState extends State<Summery_page>
                                                       ),
                                                     ),
                                                   ),
-
+                                                  SizedBox(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .08),
                                                   Expanded(
                                                     child: Text(
                                                       '${Propertytype.rentalunitadress}',
@@ -8907,1009 +8910,20 @@ class _Summery_pageState extends State<Summery_page>
                                                       ),
                                                     ),
                                                   ),
-                                                  // SizedBox(
-                                                  //     width:
-                                                  //     MediaQuery.of(context)
-                                                  //         .size
-                                                  //         .width *
-                                                  //         .08),
-                                                  // Expanded(
-                                                  //   child: Container(
-                                                  //     child: Row(
-                                                  //       children: [
-                                                  //         SizedBox(
-                                                  //           width: 10,
-                                                  //         ),
-                                                  //         InkWell(
-                                                  //           onTap: () {
-                                                  //             unitnum.text =
-                                                  //             Propertytype
-                                                  //                 .rentalunit!;
-                                                  //             street3.text =
-                                                  //             Propertytype
-                                                  //                 .rentalunitadress!;
-                                                  //             sqft3.text =
-                                                  //             Propertytype
-                                                  //                 .rentalsqft!;
-                                                  //             bath3.text =
-                                                  //             Propertytype
-                                                  //                 .rentalbath!;
-                                                  //             bed3.text =
-                                                  //                 Propertytype
-                                                  //                     .rentalbed!;
-                                                  //             if (Propertytype.rentalImages != null) {
-                                                  //               setState(() {
-                                                  //                 _imageUrls = Propertytype.rentalImages!;
-                                                  //               });
-                                                  //             }
-                                                  //             if (widget
-                                                  //                 .properties
-                                                  //                 .propertyTypeData!
-                                                  //                 .isMultiunit! &&
-                                                  //                 widget
-                                                  //                     .properties
-                                                  //                     .propertyTypeData!
-                                                  //                     .propertyType ==
-                                                  //                     'Residential') {
-                                                  //               showDialog(
-                                                  //                 context:
-                                                  //                 context,
-                                                  //                 builder:
-                                                  //                     (BuildContext
-                                                  //                         context) {
-                                                  //
-                                                  //                   // Moved isChecked inside the StatefulBuilder
-                                                  //                   return StatefulBuilder(
-                                                  //                     builder: (BuildContext
-                                                  //                     context,
-                                                  //                         StateSetter
-                                                  //                         setState) {
-                                                  //                       return AlertDialog(
-                                                  //                         backgroundColor:
-                                                  //                         Colors.white,
-                                                  //                         surfaceTintColor:
-                                                  //                         Colors.white,
-                                                  //                         content:
-                                                  //                         SingleChildScrollView(
-                                                  //                           child:
-                                                  //                           Column(
-                                                  //                             children: [
-                                                  //                               Row(
-                                                  //                                 children: [
-                                                  //                                   const Text(
-                                                  //                                     "Edit Unit Details",
-                                                  //                                     style: TextStyle(
-                                                  //                                       color: Color.fromRGBO(21, 43, 81, 1),
-                                                  //                                       fontWeight: FontWeight.bold,
-                                                  //                                     ),
-                                                  //                                   ),
-                                                  //                                   const Spacer(),
-                                                  //                                   Align(
-                                                  //                                     alignment: Alignment.centerRight,
-                                                  //                                     child: InkWell(
-                                                  //                                       onTap: () {
-                                                  //                                         Navigator.pop(context);
-                                                  //                                       },
-                                                  //                                       child: const Icon(Icons.close, color: Colors.black),
-                                                  //                                     ),
-                                                  //                                   ),
-                                                  //                                 ],
-                                                  //                               ),
-                                                  //                               const SizedBox(
-                                                  //                                 height: 10,
-                                                  //                               ),
-                                                  //                               const Row(
-                                                  //                                 children: [
-                                                  //                                   Text(
-                                                  //                                     "Unit Number",
-                                                  //                                     style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
-                                                  //                                   ),
-                                                  //                                 ],
-                                                  //                               ),
-                                                  //                               const SizedBox(
-                                                  //                                 height: 10,
-                                                  //                               ),
-                                                  //                               Padding(
-                                                  //                                 padding: const EdgeInsets.symmetric(vertical: 1),
-                                                  //                                 child: Material(
-                                                  //                                   elevation: 3,
-                                                  //                                   borderRadius: BorderRadius.circular(3),
-                                                  //                                   child: TextFormField(
-                                                  //                                     controller: unitnum,
-                                                  //                                     cursorColor: Colors.black,
-                                                  //                                     decoration: InputDecoration(
-                                                  //                                       //  hintText: label,
-                                                  //                                       // labelText: label,
-                                                  //                                       // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                  //                                       filled: true,
-                                                  //                                       fillColor: Colors.white,
-                                                  //                                       border: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: BorderSide.none,
-                                                  //                                       ),
-                                                  //                                       enabledBorder: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: const BorderSide(color: Color(0xFF8A95A8)),
-                                                  //                                       ),
-                                                  //                                       focusedBorder: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
-                                                  //                                       ),
-                                                  //                                       contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                                                  //                                     ),
-                                                  //                                   ),
-                                                  //                                 ),
-                                                  //                               ),
-                                                  //                               const SizedBox(
-                                                  //                                 height: 10,
-                                                  //                               ),
-                                                  //                               const Row(
-                                                  //                                 children: [
-                                                  //                                   Text(
-                                                  //                                     "Street Address",
-                                                  //                                     style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
-                                                  //                                   ),
-                                                  //                                 ],
-                                                  //                               ),
-                                                  //                               Padding(
-                                                  //                                 padding: const EdgeInsets.symmetric(vertical: 1),
-                                                  //                                 child: Material(
-                                                  //                                   elevation: 3,
-                                                  //                                   borderRadius: BorderRadius.circular(3),
-                                                  //                                   child: TextFormField(
-                                                  //                                     controller: street3,
-                                                  //                                     cursorColor: Colors.black,
-                                                  //                                     decoration: InputDecoration(
-                                                  //                                       //  hintText: label,
-                                                  //                                       // labelText: label,
-                                                  //                                       // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                  //                                       filled: true,
-                                                  //                                       fillColor: Colors.white,
-                                                  //                                       border: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: BorderSide.none,
-                                                  //                                       ),
-                                                  //                                       enabledBorder: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: const BorderSide(color: Color(0xFF8A95A8)),
-                                                  //                                       ),
-                                                  //                                       focusedBorder: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
-                                                  //                                       ),
-                                                  //                                       contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                                                  //                                     ),
-                                                  //                                   ),
-                                                  //                                 ),
-                                                  //                               ),
-                                                  //                               const SizedBox(
-                                                  //                                 height: 10,
-                                                  //                               ),
-                                                  //                               const Row(
-                                                  //                                 children: [
-                                                  //                                   Text(
-                                                  //                                     "SQFT",
-                                                  //                                     style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
-                                                  //                                   ),
-                                                  //                                 ],
-                                                  //                               ),
-                                                  //                               Padding(
-                                                  //                                 padding: const EdgeInsets.symmetric(vertical: 1),
-                                                  //                                 child: Material(
-                                                  //                                   elevation: 3,
-                                                  //                                   borderRadius: BorderRadius.circular(3),
-                                                  //                                   child: TextFormField(
-                                                  //                                     controller: sqft3,
-                                                  //                                     cursorColor: Colors.black,
-                                                  //                                     decoration: InputDecoration(
-                                                  //                                       //  hintText: label,
-                                                  //                                       // labelText: label,
-                                                  //                                       // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                  //                                       filled: true,
-                                                  //                                       fillColor: Colors.white,
-                                                  //                                       border: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: BorderSide.none,
-                                                  //                                       ),
-                                                  //                                       enabledBorder: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: const BorderSide(color: Color(0xFF8A95A8)),
-                                                  //                                       ),
-                                                  //                                       focusedBorder: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
-                                                  //                                       ),
-                                                  //                                       contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                                                  //                                     ),
-                                                  //                                   ),
-                                                  //                                 ),
-                                                  //                               ),
-                                                  //                               const SizedBox(
-                                                  //                                 height: 10,
-                                                  //                               ),
-                                                  //                               const Row(
-                                                  //                                 children: [
-                                                  //                                   Text(
-                                                  //                                     "bath",
-                                                  //                                     style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
-                                                  //                                   ),
-                                                  //                                 ],
-                                                  //                               ),
-                                                  //                               Padding(
-                                                  //                                 padding: const EdgeInsets.symmetric(vertical: 1),
-                                                  //                                 child: Material(
-                                                  //                                   elevation: 3,
-                                                  //                                   borderRadius: BorderRadius.circular(3),
-                                                  //                                   child: TextFormField(
-                                                  //                                     controller: bath3,
-                                                  //                                     cursorColor: Colors.black,
-                                                  //                                     decoration: InputDecoration(
-                                                  //                                       //  hintText: label,
-                                                  //                                       // labelText: label,
-                                                  //                                       // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                  //                                       filled: true,
-                                                  //                                       fillColor: Colors.white,
-                                                  //                                       border: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: BorderSide.none,
-                                                  //                                       ),
-                                                  //                                       enabledBorder: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: const BorderSide(color: Color(0xFF8A95A8)),
-                                                  //                                       ),
-                                                  //                                       focusedBorder: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
-                                                  //                                       ),
-                                                  //                                       contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                                                  //                                     ),
-                                                  //                                   ),
-                                                  //                                 ),
-                                                  //                               ),
-                                                  //                               const SizedBox(
-                                                  //                                 height: 10,
-                                                  //                               ),
-                                                  //                               const Row(
-                                                  //                                 children: [
-                                                  //                                   Text(
-                                                  //                                     "bed",
-                                                  //                                     style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
-                                                  //                                   ),
-                                                  //                                 ],
-                                                  //                               ),
-                                                  //                               Padding(
-                                                  //                                 padding: const EdgeInsets.symmetric(vertical: 1),
-                                                  //                                 child: Material(
-                                                  //                                   elevation: 3,
-                                                  //                                   borderRadius: BorderRadius.circular(3),
-                                                  //                                   child: TextFormField(
-                                                  //                                     controller: bed3,
-                                                  //                                     cursorColor: Colors.black,
-                                                  //                                     decoration: InputDecoration(
-                                                  //                                       //  hintText: label,
-                                                  //                                       // labelText: label,
-                                                  //                                       // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                  //                                       filled: true,
-                                                  //                                       fillColor: Colors.white,
-                                                  //                                       border: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: BorderSide.none,
-                                                  //                                       ),
-                                                  //                                       enabledBorder: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: const BorderSide(color: Color(0xFF8A95A8)),
-                                                  //                                       ),
-                                                  //                                       focusedBorder: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
-                                                  //                                       ),
-                                                  //                                       contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                                                  //                                     ),
-                                                  //                                   ),
-                                                  //                                 ),
-                                                  //                               ),
-                                                  //                               const SizedBox(
-                                                  //                                 height: 10,
-                                                  //                               ),
-                                                  //                               const Row(
-                                                  //                                 children: [
-                                                  //                                   Text(
-                                                  //                                     'Photo',
-                                                  //                                     style: TextStyle(color: Colors.black),
-                                                  //                                   ),
-                                                  //                                 ],
-                                                  //                               ),
-                                                  //                               const SizedBox(height: 8.0),
-                                                  //                               Row(
-                                                  //                                 children: [
-                                                  //                                   GestureDetector(
-                                                  //                                     onTap: () {
-                                                  //                                       _pickImage().then((_) {
-                                                  //                                         setState(() {}); // Rebuild the widget after selecting the image
-                                                  //                                       });
-                                                  //                                     },
-                                                  //                                     child: const Text(
-                                                  //                                       '+ Add',
-                                                  //                                       style: TextStyle(color: Colors.green),
-                                                  //                                     ),
-                                                  //                                   ),
-                                                  //                                 ],
-                                                  //                               ),
-                                                  //                               const SizedBox(
-                                                  //                                 height: 10,
-                                                  //                               ),
-                                                  //                               // _image != null
-                                                  //                               //     ? Column(
-                                                  //                               //         children: [
-                                                  //                               //           Image.file(
-                                                  //                               //             _image!,
-                                                  //                               //             height: 80,
-                                                  //                               //             width: 80,
-                                                  //                               //             fit: BoxFit.cover,
-                                                  //                               //           ),
-                                                  //                               //           Text(_uploadedFileName ?? ""),
-                                                  //                               //         ],
-                                                  //                               //       )
-                                                  //                               //     : const Text(''),
-                                                  //                               _imageUrls.isNotEmpty
-                                                  //                                   ? Row(
-                                                  //                                 children: [
-                                                  //                                   Expanded(
-                                                  //                                     child: Container(
-                                                  //                                       child: Wrap(
-                                                  //                                         spacing: 8.0, // Horizontal spacing between items
-                                                  //                                         runSpacing: 8.0, // Vertical spacing between rows
-                                                  //                                         children: List.generate(
-                                                  //                                           _imageUrls.length,
-                                                  //                                               (index) {
-                                                  //                                             return Container(
-                                                  //                                               width: 85,
-                                                  //                                               child: Column(
-                                                  //                                                 mainAxisAlignment: MainAxisAlignment.start,
-                                                  //                                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                                  //                                                 children: [
-                                                  //                                                   Row(
-                                                  //                                                     children: [
-                                                  //                                                       SizedBox(width: 60),
-                                                  //                                                       GestureDetector(
-                                                  //                                                         onTap: () {
-                                                  //                                                           setState(() {
-                                                  //                                                             _imageUrls.removeAt(index);
-                                                  //                                                           });
-                                                  //                                                         },
-                                                  //                                                         child: Icon(
-                                                  //                                                           Icons.close,
-                                                  //                                                           color: Colors.grey,
-                                                  //                                                         ),
-                                                  //                                                       ),
-                                                  //                                                     ],
-                                                  //                                                   ),
-                                                  //                                                   Row(
-                                                  //                                                     mainAxisAlignment: MainAxisAlignment.start,
-                                                  //                                                     crossAxisAlignment: CrossAxisAlignment.start,
-                                                  //                                                     children: [
-                                                  //                                                       Container(
-                                                  //                                                         child: Image.network(
-                                                  //                                                           "$image_url${_imageUrls[index]}",
-                                                  //                                                           height: 80,
-                                                  //                                                           width: 80,
-                                                  //                                                           fit: BoxFit.cover,
-                                                  //                                                           errorBuilder: (context, error, stackTrace) {
-                                                  //                                                             return Icon(Icons.error); // Placeholder for errors
-                                                  //                                                           },
-                                                  //                                                         ),
-                                                  //                                                       ),
-                                                  //                                                     ],
-                                                  //                                                   ),
-                                                  //                                                 ],
-                                                  //                                               ),
-                                                  //                                             );
-                                                  //                                           },
-                                                  //                                         ),
-                                                  //                                       ),
-                                                  //                                     ),
-                                                  //                                   ),
-                                                  //                                 ],
-                                                  //                               )
-                                                  //                                   : Center(child: Text("No images selected.")),
-                                                  //                               const SizedBox(height: 8.0),
-                                                  //
-                                                  //                               Row(
-                                                  //                                 children: [
-                                                  //                                   const SizedBox(
-                                                  //                                     width: 0,
-                                                  //                                   ),
-                                                  //                                   GestureDetector(
-                                                  //                                     onTap: () async {
-                                                  //                                       if (unitnum.text.isEmpty || street3.text.isEmpty || sqft3.text.isEmpty || bath3.text.isEmpty || bed3.text.isEmpty) {
-                                                  //                                         setState(() {
-                                                  //                                           iserror = true;
-                                                  //                                         });
-                                                  //                                       } else {
-                                                  //                                         setState(() {
-                                                  //                                           isLoading = true;
-                                                  //                                           iserror = false;
-                                                  //                                         });
-                                                  //                                         SharedPreferences prefs = await SharedPreferences.getInstance();
-                                                  //
-                                                  //                                         String? id = prefs.getString("adminId");
-                                                  //                                         Properies_summery_Repo().Editunit(
-                                                  //                                             rentalunit: unitnum.text,
-                                                  //                                             rentalImages: _imageUrls,
-                                                  //                                             rentalsqft: sqft3.text,
-                                                  //                                             rentalunitadress: street3.text,
-                                                  //                                             rentalbath: bath3.text,
-                                                  //                                             rentalbed: bed3.text,
-                                                  //                                             unitId: Propertytype.unitId,
-                                                  //                                             adminId: id,
-                                                  //                                            // rentalImages: _imageUrls,
-                                                  //                                             rentalId: Propertytype.rentalId
-                                                  //                                         ).then((value) {
-                                                  //                                           setState(() {
-                                                  //                                             isLoading = false;
-                                                  //                                           });
-                                                  //
-                                                  //                                           Navigator.of(context).pop(true);
-                                                  //                                           reload_Screen();
-                                                  //                                         }).catchError((e) {
-                                                  //                                           setState(() {
-                                                  //                                             isLoading = false;
-                                                  //                                           });
-                                                  //                                         });
-                                                  //                                       }
-                                                  //                                     },
-                                                  //                                     child: Material(
-                                                  //                                       elevation: 3,
-                                                  //                                       borderRadius: const BorderRadius.all(
-                                                  //                                         Radius.circular(5),
-                                                  //                                       ),
-                                                  //                                       child: Container(
-                                                  //                                         height: 30,
-                                                  //                                         width: 80,
-                                                  //                                         decoration: const BoxDecoration(
-                                                  //                                           color: Color.fromRGBO(21, 43, 81, 1),
-                                                  //                                           borderRadius: BorderRadius.all(
-                                                  //                                             Radius.circular(5),
-                                                  //                                           ),
-                                                  //                                         ),
-                                                  //                                         child: const Center(
-                                                  //                                             child: Text(
-                                                  //                                               "Save",
-                                                  //                                               style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
-                                                  //                                             )),
-                                                  //                                       ),
-                                                  //                                     ),
-                                                  //                                   ),
-                                                  //                                   const SizedBox(width: 10),
-                                                  //                                   GestureDetector(
-                                                  //                                     onTap: () {
-                                                  //                                       Navigator.pop(context);
-                                                  //                                     },
-                                                  //                                     child: Material(
-                                                  //                                       elevation: 3,
-                                                  //                                       borderRadius: const BorderRadius.all(
-                                                  //                                         Radius.circular(5),
-                                                  //                                       ),
-                                                  //                                       child: Container(
-                                                  //                                         height: 30,
-                                                  //                                         width: 80,
-                                                  //                                         decoration: const BoxDecoration(
-                                                  //                                           color: Colors.white,
-                                                  //                                           borderRadius: BorderRadius.all(
-                                                  //                                             Radius.circular(5),
-                                                  //                                           ),
-                                                  //                                         ),
-                                                  //                                         child: const Center(
-                                                  //                                             child: Text(
-                                                  //                                               "Cancel",
-                                                  //                                               style: TextStyle(fontWeight: FontWeight.w500, color: Color.fromRGBO(21, 43, 81, 1)),
-                                                  //                                             )),
-                                                  //                                       ),
-                                                  //                                     ),
-                                                  //                                   ),
-                                                  //                                 ],
-                                                  //                               ),
-                                                  //                               const SizedBox(height: 8.0),
-                                                  //                               if (iserror)
-                                                  //                                 const Text(
-                                                  //                                   "Please fill in all fields correctly.",
-                                                  //                                   style: TextStyle(color: Colors.redAccent),
-                                                  //                                 ),
-                                                  //                             ],
-                                                  //                           ),
-                                                  //                         ),
-                                                  //                       );
-                                                  //                     },
-                                                  //                   );
-                                                  //                 },
-                                                  //               );
-                                                  //             }
-                                                  //             if (widget
-                                                  //                 .properties
-                                                  //                 .propertyTypeData!
-                                                  //                 .isMultiunit! &&
-                                                  //                 widget
-                                                  //                     .properties
-                                                  //                     .propertyTypeData!
-                                                  //                     .propertyType ==
-                                                  //                     'Commercial') {
-                                                  //               showDialog(
-                                                  //                 context:
-                                                  //                 context,
-                                                  //                 builder:
-                                                  //                     (BuildContext
-                                                  //                 context) {
-                                                  //                   bool
-                                                  //                   isChecked =
-                                                  //                   false; // Moved isChecked inside the StatefulBuilder
-                                                  //                   return StatefulBuilder(
-                                                  //                     builder: (BuildContext
-                                                  //                     context,
-                                                  //                         StateSetter
-                                                  //                         setState) {
-                                                  //                       return AlertDialog(
-                                                  //                         backgroundColor:
-                                                  //                         Colors.white,
-                                                  //                         surfaceTintColor:
-                                                  //                         Colors.white,
-                                                  //                         content:
-                                                  //                         SingleChildScrollView(
-                                                  //                           child:
-                                                  //                           Column(
-                                                  //                             children: [
-                                                  //                               Row(
-                                                  //                                 children: [
-                                                  //                                   const Text(
-                                                  //                                     "Edit Unit Details",
-                                                  //                                     style: TextStyle(
-                                                  //                                       color: Color.fromRGBO(21, 43, 81, 1),
-                                                  //                                       fontWeight: FontWeight.bold,
-                                                  //                                     ),
-                                                  //                                   ),
-                                                  //                                   const Spacer(),
-                                                  //                                   Align(
-                                                  //                                     alignment: Alignment.centerRight,
-                                                  //                                     child: InkWell(
-                                                  //                                       onTap: () {
-                                                  //                                         Navigator.pop(context);
-                                                  //                                       },
-                                                  //                                       child: const Icon(Icons.close, color: Colors.black),
-                                                  //                                     ),
-                                                  //                                   ),
-                                                  //                                 ],
-                                                  //                               ),
-                                                  //                               const SizedBox(
-                                                  //                                 height: 10,
-                                                  //                               ),
-                                                  //                               const Row(
-                                                  //                                 children: [
-                                                  //                                   Text(
-                                                  //                                     "Unit Number",
-                                                  //                                     style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
-                                                  //                                   ),
-                                                  //                                 ],
-                                                  //                               ),
-                                                  //                               const SizedBox(
-                                                  //                                 height: 10,
-                                                  //                               ),
-                                                  //                               Padding(
-                                                  //                                 padding: const EdgeInsets.symmetric(vertical: 1),
-                                                  //                                 child: Material(
-                                                  //                                   elevation: 3,
-                                                  //                                   borderRadius: BorderRadius.circular(3),
-                                                  //                                   child: TextFormField(
-                                                  //                                     controller: unitnum,
-                                                  //                                     cursorColor: Colors.black,
-                                                  //                                     decoration: InputDecoration(
-                                                  //                                       //  hintText: label,
-                                                  //                                       // labelText: label,
-                                                  //                                       // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                  //                                       filled: true,
-                                                  //                                       fillColor: Colors.white,
-                                                  //                                       border: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: BorderSide.none,
-                                                  //                                       ),
-                                                  //                                       enabledBorder: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: const BorderSide(color: Color(0xFF8A95A8)),
-                                                  //                                       ),
-                                                  //                                       focusedBorder: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
-                                                  //                                       ),
-                                                  //                                       contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                                                  //                                     ),
-                                                  //                                   ),
-                                                  //                                 ),
-                                                  //                               ),
-                                                  //                               const SizedBox(
-                                                  //                                 height: 10,
-                                                  //                               ),
-                                                  //                               const Row(
-                                                  //                                 children: [
-                                                  //                                   Text(
-                                                  //                                     "Street Address",
-                                                  //                                     style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
-                                                  //                                   ),
-                                                  //                                 ],
-                                                  //                               ),
-                                                  //                               Padding(
-                                                  //                                 padding: const EdgeInsets.symmetric(vertical: 1),
-                                                  //                                 child: Material(
-                                                  //                                   elevation: 3,
-                                                  //                                   borderRadius: BorderRadius.circular(3),
-                                                  //                                   child: TextFormField(
-                                                  //                                     controller: street3,
-                                                  //                                     cursorColor: Colors.black,
-                                                  //                                     decoration: InputDecoration(
-                                                  //                                       //  hintText: label,
-                                                  //                                       // labelText: label,
-                                                  //                                       // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                  //                                       filled: true,
-                                                  //                                       fillColor: Colors.white,
-                                                  //                                       border: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: BorderSide.none,
-                                                  //                                       ),
-                                                  //                                       enabledBorder: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: const BorderSide(color: Color(0xFF8A95A8)),
-                                                  //                                       ),
-                                                  //                                       focusedBorder: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
-                                                  //                                       ),
-                                                  //                                       contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                                                  //                                     ),
-                                                  //                                   ),
-                                                  //                                 ),
-                                                  //                               ),
-                                                  //                               const SizedBox(
-                                                  //                                 height: 10,
-                                                  //                               ),
-                                                  //                               const Row(
-                                                  //                                 children: [
-                                                  //                                   Text(
-                                                  //                                     "SQFT",
-                                                  //                                     style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
-                                                  //                                   ),
-                                                  //                                 ],
-                                                  //                               ),
-                                                  //                               Padding(
-                                                  //                                 padding: const EdgeInsets.symmetric(vertical: 1),
-                                                  //                                 child: Material(
-                                                  //                                   elevation: 3,
-                                                  //                                   borderRadius: BorderRadius.circular(3),
-                                                  //                                   child: TextFormField(
-                                                  //                                     controller: sqft3,
-                                                  //                                     cursorColor: Colors.black,
-                                                  //                                     decoration: InputDecoration(
-                                                  //                                       //  hintText: label,
-                                                  //                                       // labelText: label,
-                                                  //                                       // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                  //                                       filled: true,
-                                                  //                                       fillColor: Colors.white,
-                                                  //                                       border: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: BorderSide.none,
-                                                  //                                       ),
-                                                  //                                       enabledBorder: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: const BorderSide(color: Color(0xFF8A95A8)),
-                                                  //                                       ),
-                                                  //                                       focusedBorder: OutlineInputBorder(
-                                                  //                                         borderRadius: BorderRadius.circular(3),
-                                                  //                                         borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
-                                                  //                                       ),
-                                                  //                                       contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                                                  //                                     ),
-                                                  //                                   ),
-                                                  //                                 ),
-                                                  //                               ),
-                                                  //                               const SizedBox(
-                                                  //                                 height: 10,
-                                                  //                               ),
-                                                  //                               const Row(
-                                                  //                                 children: [
-                                                  //                                   Text(
-                                                  //                                     'Photo',
-                                                  //                                     style: TextStyle(color: Colors.black),
-                                                  //                                   ),
-                                                  //                                 ],
-                                                  //                               ),
-                                                  //                               const SizedBox(height: 8.0),
-                                                  //                               Row(
-                                                  //                                 children: [
-                                                  //                                   GestureDetector(
-                                                  //                                     onTap: () {
-                                                  //                                       _pickImage().then((_) {
-                                                  //                                         setState(() {}); // Rebuild the widget after selecting the image
-                                                  //                                       });
-                                                  //
-                                                  //                                     },
-                                                  //                                     child: const Text(
-                                                  //                                       '+ Add',
-                                                  //                                       style: TextStyle(color: Colors.green),
-                                                  //                                     ),
-                                                  //                                   ),
-                                                  //                                 ],
-                                                  //                               ),
-                                                  //                               // const SizedBox(height: 8.0),
-                                                  //                               // _image != null
-                                                  //                               //     ? Column(
-                                                  //                               //         children: [
-                                                  //                               //           Image.file(
-                                                  //                               //             _image!,
-                                                  //                               //             height: 80,
-                                                  //                               //             width: 80,
-                                                  //                               //             fit: BoxFit.cover,
-                                                  //                               //           ),
-                                                  //                               //           Text(_uploadedFileName ?? ""),
-                                                  //                               //         ],
-                                                  //                               //       )
-                                                  //                               //     : const Text(''),
-                                                  //                               _imageUrls.isNotEmpty
-                                                  //                                   ? Row(
-                                                  //                                 children: [
-                                                  //                                   Expanded(
-                                                  //                                     child: Container(
-                                                  //                                       child: Wrap(
-                                                  //                                         spacing: 8.0, // Horizontal spacing between items
-                                                  //                                         runSpacing: 8.0, // Vertical spacing between rows
-                                                  //                                         children: List.generate(
-                                                  //                                           _imageUrls.length,
-                                                  //                                               (index) {
-                                                  //                                             return Container(
-                                                  //                                               width: 85,
-                                                  //                                               child: Column(
-                                                  //                                                 mainAxisAlignment: MainAxisAlignment.start,
-                                                  //                                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                                  //                                                 children: [
-                                                  //                                                   Row(
-                                                  //                                                     children: [
-                                                  //                                                       SizedBox(width: 60),
-                                                  //                                                       GestureDetector(
-                                                  //                                                         onTap: () {
-                                                  //                                                           setState(() {
-                                                  //                                                             _imageUrls.removeAt(index);
-                                                  //                                                           });
-                                                  //                                                         },
-                                                  //                                                         child: Icon(
-                                                  //                                                           Icons.close,
-                                                  //                                                           color: Colors.grey,
-                                                  //                                                         ),
-                                                  //                                                       ),
-                                                  //                                                     ],
-                                                  //                                                   ),
-                                                  //                                                   Row(
-                                                  //                                                     mainAxisAlignment: MainAxisAlignment.start,
-                                                  //                                                     crossAxisAlignment: CrossAxisAlignment.start,
-                                                  //                                                     children: [
-                                                  //                                                       Container(
-                                                  //                                                         child: Image.network(
-                                                  //                                                           "$image_url${_imageUrls[index]}",
-                                                  //                                                           height: 80,
-                                                  //                                                           width: 80,
-                                                  //                                                           fit: BoxFit.cover,
-                                                  //                                                           errorBuilder: (context, error, stackTrace) {
-                                                  //                                                             return Icon(Icons.error); // Placeholder for errors
-                                                  //                                                           },
-                                                  //                                                         ),
-                                                  //                                                       ),
-                                                  //                                                     ],
-                                                  //                                                   ),
-                                                  //                                                 ],
-                                                  //                                               ),
-                                                  //                                             );
-                                                  //                                           },
-                                                  //                                         ),
-                                                  //                                       ),
-                                                  //                                     ),
-                                                  //                                   ),
-                                                  //                                 ],
-                                                  //                               )
-                                                  //                                   : Center(child: Text("No images selected.")),
-                                                  //                               const SizedBox(height: 8.0),
-                                                  //                               Row(
-                                                  //                                 children: [
-                                                  //                                   const SizedBox(
-                                                  //                                     width: 0,
-                                                  //                                   ),
-                                                  //                                   GestureDetector(
-                                                  //                                     onTap: () async {
-                                                  //                                       if (unitnum.text.isEmpty || street3.text.isEmpty || sqft3.text.isEmpty) {
-                                                  //                                         setState(() {
-                                                  //                                           iserror = true;
-                                                  //                                         });
-                                                  //                                       } else {
-                                                  //                                         setState(() {
-                                                  //                                           isLoading = true;
-                                                  //                                           iserror = false;
-                                                  //                                         });
-                                                  //                                         SharedPreferences prefs = await SharedPreferences.getInstance();
-                                                  //                                         String? id = prefs.getString("adminId");
-                                                  //                                         Properies_summery_Repo()
-                                                  //                                             .Editunit(
-                                                  //                                           rentalunit: unitnum.text,
-                                                  //                                           rentalsqft: sqft3.text,
-                                                  //                                           rentalImages: _imageUrls,
-                                                  //                                           rentalunitadress: street3.text,
-                                                  //                                           unitId: Propertytype.unitId!,
-                                                  //                                           rentalId: Propertytype.rentalId!,
-                                                  //                                         )
-                                                  //                                             .then((value) {
-                                                  //                                           setState(() {
-                                                  //                                             isLoading = false;
-                                                  //                                           });
-                                                  //                                           Navigator.of(context).pop(true);
-                                                  //                                           reload_Screen();
-                                                  //                                         }).catchError((e) {
-                                                  //                                           setState(() {
-                                                  //                                             isLoading = false;
-                                                  //                                           });
-                                                  //                                         });
-                                                  //                                       }
-                                                  //                                     },
-                                                  //                                     child: Material(
-                                                  //                                       elevation: 3,
-                                                  //                                       borderRadius: const BorderRadius.all(
-                                                  //                                         Radius.circular(5),
-                                                  //                                       ),
-                                                  //                                       child: Container(
-                                                  //                                         height: 30,
-                                                  //                                         width: 80,
-                                                  //                                         decoration: const BoxDecoration(
-                                                  //                                           color: Color.fromRGBO(21, 43, 81, 1),
-                                                  //                                           borderRadius: BorderRadius.all(
-                                                  //                                             Radius.circular(5),
-                                                  //                                           ),
-                                                  //                                         ),
-                                                  //                                         child: const Center(
-                                                  //                                             child: Text(
-                                                  //                                               "Save",
-                                                  //                                               style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
-                                                  //                                             )),
-                                                  //                                       ),
-                                                  //                                     ),
-                                                  //                                   ),
-                                                  //                                   const SizedBox(width: 10),
-                                                  //                                   GestureDetector(
-                                                  //                                     onTap: () {
-                                                  //                                       Navigator.pop(context);
-                                                  //                                     },
-                                                  //                                     child: Material(
-                                                  //                                       elevation: 3,
-                                                  //                                       borderRadius: const BorderRadius.all(
-                                                  //                                         Radius.circular(5),
-                                                  //                                       ),
-                                                  //                                       child: Container(
-                                                  //                                         height: 30,
-                                                  //                                         width: 80,
-                                                  //                                         decoration: const BoxDecoration(
-                                                  //                                           color: Colors.white,
-                                                  //                                           borderRadius: BorderRadius.all(
-                                                  //                                             Radius.circular(5),
-                                                  //                                           ),
-                                                  //                                         ),
-                                                  //                                         child: const Center(
-                                                  //                                             child: Text(
-                                                  //                                               "Cancel",
-                                                  //                                               style: TextStyle(fontWeight: FontWeight.w500, color: Color.fromRGBO(21, 43, 81, 1)),
-                                                  //                                             )),
-                                                  //                                       ),
-                                                  //                                     ),
-                                                  //                                   ),
-                                                  //                                 ],
-                                                  //                               ),
-                                                  //                               const SizedBox(height: 8.0),
-                                                  //                               if (iserror)
-                                                  //                                 const Text(
-                                                  //                                   "Please fill in all fields correctly.",
-                                                  //                                   style: TextStyle(color: Colors.redAccent),
-                                                  //                                 ),
-                                                  //                             ],
-                                                  //                           ),
-                                                  //                         ),
-                                                  //                       );
-                                                  //                     },
-                                                  //                   );
-                                                  //                 },
-                                                  //               );
-                                                  //             }
-                                                  //           },
-                                                  //           child: Container(
-                                                  //             child: FaIcon(
-                                                  //               FontAwesomeIcons
-                                                  //                   .edit,
-                                                  //               size: 20,
-                                                  //               color: Color
-                                                  //                   .fromRGBO(
-                                                  //                   21,
-                                                  //                   43,
-                                                  //                   83,
-                                                  //                   1),
-                                                  //             ),
-                                                  //           ),
-                                                  //         ),
-                                                  //       ],
-                                                  //     ),
-                                                  //   ),
-                                                  // ),
-                                                  // SizedBox(
-                                                  //     width:
-                                                  //     MediaQuery.of(context)
-                                                  //         .size
-                                                  //         .width *
-                                                  //         .02),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          if (isExpanded)
-                                            Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 2.0),
-                                              margin:
-                                              EdgeInsets.only(bottom: 2),
-                                              child: SingleChildScrollView(
-                                                child: Column(
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .start,
-                                                      children: [
-                                                        FaIcon(
-                                                          isExpanded
-                                                              ? FontAwesomeIcons
-                                                              .sortUp
-                                                              : FontAwesomeIcons
-                                                              .sortDown,
-                                                          size: 40,
-                                                          color: Colors
-                                                              .transparent,
-                                                        ),
-                                                        Expanded(
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                            children: <Widget>[
-                                                              Text.rich(
-                                                                TextSpan(
-                                                                  children: [
-                                                                    TextSpan(
-                                                                      text:
-                                                                      'Tenant :',
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
-                                                                          color:
-                                                                          blueColor), // Bold and black
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text:
-                                                                      ' ${tenentCount}',
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .w700,
-                                                                          color:
-                                                                          grey), // Light and grey
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ],
+                                                  SizedBox(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .08),
+                                                  Expanded(
+                                                    child: Container(
+                                                      child: Row(
+                                                        children: [
+                                                          SizedBox(
+                                                            width: 10,
                                                           ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      children: [
-                                                        Expanded(
-                                                          child: GestureDetector(
+                                                          InkWell(
                                                             onTap: () {
                                                               unitnum.text =
                                                               Propertytype
@@ -9924,9 +8938,9 @@ class _Summery_pageState extends State<Summery_page>
                                                               Propertytype
                                                                   .rentalbath!;
                                                               bed3.text =
-                                                              Propertytype
-                                                                  .rentalbed!;
-                                                              if (Propertytype.rentalImages != null) {
+                                                                  Propertytype
+                                                                      .rentalbed!;
+                                                              if(Propertytype.rentalImages != null){
                                                                 setState(() {
                                                                   _imageUrls = Propertytype.rentalImages!;
                                                                 });
@@ -9945,8 +8959,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                   context,
                                                                   builder:
                                                                       (BuildContext
-                                                                  context) {
-
+                                                                          context) {
                                                                     // Moved isChecked inside the StatefulBuilder
                                                                     return StatefulBuilder(
                                                                       builder: (BuildContext
@@ -10331,7 +9344,6 @@ class _Summery_pageState extends State<Summery_page>
                                                                                               rentalbed: bed3.text,
                                                                                               unitId: Propertytype.unitId,
                                                                                               adminId: id,
-                                                                                              // rentalImages: _imageUrls,
                                                                                               rentalId: Propertytype.rentalId
                                                                                           ).then((value) {
                                                                                             setState(() {
@@ -10808,61 +9820,88 @@ class _Summery_pageState extends State<Summery_page>
                                                               }
                                                             },
                                                             child: Container(
-                                                              height:40,
-                                                              decoration: BoxDecoration(
-                                                                  color: Colors.grey[350]
-                                                              ),                                               // color:Colors.grey[100],
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                MainAxisAlignment.center,
-                                                                crossAxisAlignment:
-                                                                CrossAxisAlignment.center,
-                                                                children: [
-                                                                  FaIcon(
-                                                                    FontAwesomeIcons.edit,
-                                                                    size: 15,
-                                                                    color:blueColor,
-                                                                  ),
-                                                                  SizedBox(width: 10,),
-                                                                  Text("Edit",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
-                                                                ],
+                                                              child: FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .edit,
+                                                                size: 20,
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        83,
+                                                                        1),
                                                               ),
                                                             ),
                                                           ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .02),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          if (isExpanded)
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 8.0),
+                                              margin:
+                                                  EdgeInsets.only(bottom: 20),
+                                              child: SingleChildScrollView(
+                                                child: Column(
+                                                  children: [
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        FaIcon(
+                                                          isExpanded
+                                                              ? FontAwesomeIcons
+                                                                  .sortUp
+                                                              : FontAwesomeIcons
+                                                                  .sortDown,
+                                                          size: 50,
+                                                          color: Colors
+                                                              .transparent,
                                                         ),
-                                                        SizedBox(width: 5,),
                                                         Expanded(
-                                                          child: GestureDetector(
-                                                            onTap: () {
-                                                              setState(() {
-                                                                showdetails = true;
-                                                                unit = Propertytype;
-                                                              });
-
-                                                            },
-                                                            child: Container(
-                                                              height:40,
-                                                              decoration: BoxDecoration(
-                                                                  color: Colors.grey[350]
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: <Widget>[
+                                                              Text.rich(
+                                                                TextSpan(
+                                                                  children: [
+                                                                    TextSpan(
+                                                                      text:
+                                                                          'Tenant :',
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              blueColor), // Bold and black
+                                                                    ),
+                                                                    TextSpan(
+                                                                      text:
+                                                                          '${tenentCount}',
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .w700,
+                                                                          color:
+                                                                              Colors.grey), // Light and grey
+                                                                    ),
+                                                                  ],
+                                                                ),
                                                               ),
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                MainAxisAlignment.center,
-                                                                crossAxisAlignment:
-                                                                CrossAxisAlignment.center,
-                                                                children: [
-                                                                  SizedBox(width: 5,),
-                                                                  Image.asset('assets/icons/view.png'),
-                                                                  // FaIcon(
-                                                                  //   FontAwesomeIcons.trashCan,
-                                                                  //   size: 15,
-                                                                  //   color:blueColor,
-                                                                  // ),
-                                                                  SizedBox(width: 8,),
-                                                                  Text("View Details",style: TextStyle(fontSize: 11,color: blueColor,fontWeight: FontWeight.bold),)
-                                                                ],
-                                                              ),
-                                                            ),
+                                                            ],
                                                           ),
                                                         ),
 
@@ -12706,7 +11745,7 @@ class _Summery_pageState extends State<Summery_page>
                       },
                       buttonStyleData: ButtonStyleData(
                         height:
-                        MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                            MediaQuery.of(context).size.width < 500 ? 40 : 50,
                         // width: 180,
                         width: MediaQuery.of(context).size.width < 500
                             ? MediaQuery.of(context).size.width * .38
@@ -12961,229 +12000,148 @@ class _Summery_pageState extends State<Summery_page>
                                           child: SingleChildScrollView(
                                             child: Column(
                                               children: [
-                                                // Row(
-                                                //   mainAxisAlignment:
-                                                //   MainAxisAlignment.start,
-                                                //   children: [
-                                                //     FaIcon(
-                                                //       isExpanded
-                                                //           ? FontAwesomeIcons
-                                                //           .sortUp
-                                                //           : FontAwesomeIcons
-                                                //           .sortDown,
-                                                //       size: 50,
-                                                //       color: Colors.transparent,
-                                                //     ),
-                                                //     Expanded(
-                                                //       child: Column(
-                                                //         crossAxisAlignment:
-                                                //         CrossAxisAlignment
-                                                //             .start,
-                                                //         children: <Widget>[
-                                                //           Text.rich(
-                                                //             TextSpan(
-                                                //               children: [
-                                                //                 TextSpan(
-                                                //                   text:
-                                                //                   ' Category : ',
-                                                //                   style: TextStyle(
-                                                //                       fontWeight:
-                                                //                       FontWeight
-                                                //                           .bold,
-                                                //                       color:
-                                                //                       blueColor), // Bold and black
-                                                //                 ),
-                                                //                 TextSpan(
-                                                //                   text:
-                                                //                   '${workOrder.workCategory}',
-                                                //                   style: TextStyle(
-                                                //                       fontWeight:
-                                                //                       FontWeight
-                                                //                           .w700,
-                                                //                       color: Colors
-                                                //                           .grey), // Light and grey
-                                                //                 ),
-                                                //               ],
-                                                //             ),
-                                                //           ),
-                                                //           SizedBox(
-                                                //             height: 5,
-                                                //           ),
-                                                //           Text.rich(
-                                                //             TextSpan(
-                                                //               children: [
-                                                //                 TextSpan(
-                                                //                   text:
-                                                //                   'Created At : ',
-                                                //                   style: TextStyle(
-                                                //                       fontWeight:
-                                                //                       FontWeight
-                                                //                           .bold,
-                                                //                       color:
-                                                //                       blueColor), // Bold and black
-                                                //                 ),
-                                                //                 TextSpan(
-                                                //                   text: formatDate(
-                                                //                       '${workOrder.createdAt}'),
-                                                //                   style: TextStyle(
-                                                //                       fontWeight:
-                                                //                       FontWeight
-                                                //                           .w700,
-                                                //                       color: Colors
-                                                //                           .grey), // Light and grey
-                                                //                 ),
-                                                //               ],
-                                                //             ),
-                                                //           ),
-                                                //         ],
-                                                //       ),
-                                                //     ),
-                                                //     SizedBox(width: 5),
-                                                //     Expanded(
-                                                //       child: Column(
-                                                //         crossAxisAlignment:
-                                                //         CrossAxisAlignment
-                                                //             .start,
-                                                //         children: <Widget>[
-                                                //           Text.rich(
-                                                //             TextSpan(
-                                                //               children: [
-                                                //                 TextSpan(
-                                                //                   text:
-                                                //                   'Assign ',
-                                                //                   style: TextStyle(
-                                                //                       fontWeight:
-                                                //                       FontWeight
-                                                //                           .bold,
-                                                //                       color:
-                                                //                       blueColor), // Bold and black
-                                                //                 ),
-                                                //                 TextSpan(
-                                                //                   text:
-                                                //                   '${workOrder.staffmemberName}',
-                                                //                   style: TextStyle(
-                                                //                       fontWeight:
-                                                //                       FontWeight
-                                                //                           .w700,
-                                                //                       color: Colors
-                                                //                           .grey), // Light and grey
-                                                //                 ),
-                                                //               ],
-                                                //             ),
-                                                //           ),
-                                                //           SizedBox(
-                                                //             height: 5,
-                                                //           ),
-                                                //           Text.rich(
-                                                //             TextSpan(
-                                                //               children: [
-                                                //                 TextSpan(
-                                                //                   text:
-                                                //                   'Updated At : ',
-                                                //                   style: TextStyle(
-                                                //                       fontWeight:
-                                                //                       FontWeight
-                                                //                           .bold,
-                                                //                       color:
-                                                //                       blueColor), // Bold and black
-                                                //                 ),
-                                                //                 TextSpan(
-                                                //                   text: formatDate(
-                                                //                       '${workOrder.updatedAt}'),
-                                                //                   style: TextStyle(
-                                                //                       fontWeight:
-                                                //                       FontWeight
-                                                //                           .w700,
-                                                //                       color: Colors
-                                                //                           .grey), // Light and grey
-                                                //                 ),
-                                                //               ],
-                                                //             ),
-                                                //           ),
-                                                //         ],
-                                                //       ),
-                                                //     ),
-                                                //   ],
-                                                // ),
                                                 Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
                                                   children: [
                                                     FaIcon(
                                                       isExpanded
                                                           ? FontAwesomeIcons
                                                           .sortUp
                                                           : FontAwesomeIcons
-                                                          .sortDown,
-                                                      size: 30,
-                                                      color:
-                                                      Colors.transparent,
+                                                              .sortDown,
+                                                      size: 50,
+                                                      color: Colors.transparent,
                                                     ),
                                                     Expanded(
-                                                      child: Table(
-                                                        columnWidths: {
-                                                          0: FlexColumnWidth(), // Distribute columns equally
-                                                          1: FlexColumnWidth(),
-                                                          // 0: FixedColumnWidth(150.0), // Adjust width as needed
-                                                          // 1: FlexColumnWidth(),
-                                                        },
-                                                        children: [
-                                                          _buildTableRow(
-                                                              'Category :', _getDisplayValue(workOrder.workCategory),
-                                                              'Assign:', _getDisplayValue(workOrder.staffmemberName)
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: <Widget>[
+                                                          Text.rich(
+                                                            TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                      ' Category : ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color:
+                                                                          blueColor), // Bold and black
+                                                                ),
+                                                                TextSpan(
+                                                                  text:
+                                                                      '${workOrder.workCategory}',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                      color: Colors
+                                                                          .grey), // Light and grey
+                                                                ),
+                                                              ],
+                                                            ),
                                                           ),
-                                                          _buildTableRow(
-                                                            'Created At:', formatDate('${workOrder.createdAt}'),
-                                                            'Updated At:', formatDate('${workOrder.updatedAt}}')
+                                                          SizedBox(
+                                                            height: 5,
                                                           ),
-
+                                                          Text.rich(
+                                                            TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                      'Created At : ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color:
+                                                                          blueColor), // Bold and black
+                                                                ),
+                                                                TextSpan(
+                                                                  text: formatDate(
+                                                                      '${workOrder.createdAt}'),
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                      color: Colors
+                                                                          .grey), // Light and grey
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
                                                         ],
                                                       ),
                                                     ),
-                                                    SizedBox(width: 5,),
-                                                    // Column(
-                                                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    //   children: [
-                                                    //     IconButton(
-                                                    //       icon: FaIcon(
-                                                    //         FontAwesomeIcons.edit,
-                                                    //         size: 20,
-                                                    //         color:blueColor,
-                                                    //       ),
-                                                    //       onPressed: () async {
-                                                    //         // handleEdit(Propertytype);
-                                                    //
-                                                    //                       var check = await Navigator.push(
-                                                    //                           context,
-                                                    //                           MaterialPageRoute(
-                                                    //                               builder: (context) => ResponsiveEditWorkOrder(
-                                                    //                                     workorderId: workOrder.workOrderData!.workOrderId!,
-                                                    //                                   )));
-                                                    //                       if (check ==
-                                                    //                           true) {
-                                                    //                         setState(() {
-                                                    //                           futureworkorders =
-                                                    //                               WorkOrderRepository()
-                                                    //                                   .fetchWorkOrders();
-                                                    //                         });
-                                                    //                       }
-                                                    //       },
-                                                    //     ),
-                                                    //     IconButton(
-                                                    //       icon: FaIcon(
-                                                    //         FontAwesomeIcons.trashCan,
-                                                    //         size: 20,
-                                                    //         color:blueColor,
-                                                    //       ),
-                                                    //       onPressed: () {
-                                                    //         //handleDelete(Propertytype);
-                                                    //                       _showAlert(
-                                                    //                           context,
-                                                    //                           workOrder
-                                                    //                               .workOrderData!
-                                                    //                               .workOrderId!);
-                                                    //       },
-                                                    //     ),
-                                                    //   ],
-                                                    // ),
+                                                    SizedBox(width: 5),
+                                                    Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: <Widget>[
+                                                          Text.rich(
+                                                            TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                      'Assign ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color:
+                                                                          blueColor), // Bold and black
+                                                                ),
+                                                                TextSpan(
+                                                                  text:
+                                                                      '${workOrder.staffmemberName}',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                      color: Colors
+                                                                          .grey), // Light and grey
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 5,
+                                                          ),
+                                                          Text.rich(
+                                                            TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                      'Updated At : ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color:
+                                                                          blueColor), // Bold and black
+                                                                ),
+                                                                TextSpan(
+                                                                  text: formatDate(
+                                                                      '${workOrder.updatedAt}'),
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                      color: Colors
+                                                                          .grey), // Light and grey
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
                                                   ],
                                                 ),
                                               ],
