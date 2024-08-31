@@ -2279,7 +2279,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   },
                                                   child: Container(
                                                     margin: EdgeInsets.only(
-                                                        left: 5),
+                                                        left: 5,right: 8),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
                                                         bottom: 10)
@@ -2310,7 +2310,7 @@ class _Summery_pageState extends State<Summery_page>
                                                       });
                                                     },
                                                     child: Text(
-                                                      '   ${(rentals.rentalOwnerData?.rentalOwnerName??"").isEmpty ?'N/A':rentals.rentalOwnerData?.rentalOwnerName} ',
+                                                      '${(rentals.rentalOwnerData?.rentalOwnerName??"").isEmpty ?'N/A':rentals.rentalOwnerData?.rentalOwnerName} ',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
@@ -12874,7 +12874,7 @@ class _Summery_pageState extends State<Summery_page>
                                                 },
                                                 child: Container(
                                                   margin:
-                                                  EdgeInsets.only(left: 5),
+                                                  EdgeInsets.only(left: 5,right: 8),
                                                   padding: !isExpanded
                                                       ? EdgeInsets.only(
                                                       bottom: 10)
@@ -12894,7 +12894,7 @@ class _Summery_pageState extends State<Summery_page>
                                               ),
                                               Expanded(
                                                 child: Text(
-                                                  '   ${workOrder.workSubject}',
+                                                  '${workOrder.workSubject}',
                                                   style: TextStyle(
                                                     color: blueColor,
                                                     fontWeight: FontWeight.bold,
@@ -15706,7 +15706,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                   },
                                                   child: Container(
                                                     margin: EdgeInsets.only(
-                                                        left: 5),
+                                                        left: 5,right: 8),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
                                                         bottom: 10)
@@ -15735,7 +15735,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                       //               rentalOwnersid: rentals.rentalownerId!,)));
                                                     },
                                                     child: Text(
-                                                      '   ${rentals.applianceName}',
+                                                      '${rentals.applianceName}',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:

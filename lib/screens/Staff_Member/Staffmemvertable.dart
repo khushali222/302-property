@@ -732,7 +732,7 @@ class _StaffTableState extends State<StaffTable> {
                                                   },
                                                   child: Container(
                                                     margin: EdgeInsets.only(
-                                                        left: 5),
+                                                        left: 5,right: 5),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
                                                             bottom: 10)
@@ -763,7 +763,7 @@ class _StaffTableState extends State<StaffTable> {
                                                       });
                                                     },
                                                     child: Text(
-                                                      '   ${staffmembers.staffmemberName}',
+                                                      '${staffmembers.staffmemberName}',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
