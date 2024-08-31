@@ -89,6 +89,7 @@ class _Tenants_tableState extends State<Tenants_table> {
               ),
             ),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -143,6 +144,7 @@ class _Tenants_tableState extends State<Tenants_table> {
               ),
             ),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -190,6 +192,7 @@ class _Tenants_tableState extends State<Tenants_table> {
               ),
             ),
             Expanded(
+              flex: 2,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -216,25 +219,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                   children: [
                     Text("Created At",
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle(color: Colors.white,fontSize: 14)),
                     SizedBox(width: 5),
-                    ascending3
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+
                   ],
                 ),
               ),
@@ -1075,6 +1062,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                   ),
                                                 ),
                                                 Expanded(
+                                                  flex:3,
                                                   child: InkWell(
                                                     onTap: () {
                                                       setState(() {
@@ -1108,8 +1096,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .05),
+                                                            .03),
                                                 Expanded(
+                                                  flex:3,
                                                   child: Text(
                                                     '${tenants.tenantPhoneNumber}',
                                                     style: TextStyle(
@@ -1125,8 +1114,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .05),
+                                                            .02),
                                                 Expanded(
+                                                  flex:2,
                                                   child: Text(
                                                     // '${widget.data.createdAt}',
 
@@ -1483,13 +1473,14 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: (newValue) {
+                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
                                               setState(() {
                                                 itemsPerPage = newValue!;
-                                                currentPage =
-                                                    0; // Reset to first page when items per page change
+                                                currentPage = 0; // Reset to first page when items per page change
                                               });
-                                            },
+                                            }
+                                                : null,
                                           ),
                                         ),
                                       ),

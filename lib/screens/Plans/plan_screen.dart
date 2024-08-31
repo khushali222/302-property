@@ -798,20 +798,20 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
           ? PlanPurchaseCard(isappbarShow: false)
           : Container(
         color: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: 10,),
-              FutureBuilder<getPlanDetailModel?>(
-                future: _futurePlanDetails,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CardShimmerCurrentPlan();
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (!snapshot.hasData || snapshot.data == null) {
-                    return const Center(child: Text('No data available'));
-                  }
+            child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(height: 10,),
+                    FutureBuilder<getPlanDetailModel?>(
+                      future: _futurePlanDetails,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return CardShimmerCurrentPlan();
+                        } else if (snapshot.hasError) {
+                          return Center(child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData || snapshot.data == null) {
+                          return const Center(child: Text('No data available'));
+                        }
 
                   final data = snapshot.data!.data;
                   if (data == null) {
@@ -819,11 +819,11 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                         child: Text('No plan details found.'));
                   }
 
-                  return Column(
-                    children: [
-                      if (MediaQuery.of(context).size.width < 500)
+                        return Column(
+                          children: [
+                            if (MediaQuery.of(context).size.width < 500)
 
-                      /* Padding(
+                             /* Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Container(
                                   width: double.infinity,
@@ -1165,640 +1165,659 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                 ),
                               ),*/
 
-                        Container(
-
-                          child: Column(
-                            children: [
                               Container(
-                                height: 45,
-                                width: MediaQuery.of(context).size.width * .91,
+
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height: 45,
+                                      width: MediaQuery.of(context).size.width * .91,
 
 
-                                decoration: BoxDecoration(
-                                    color: blueColor,
-                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(5),topRight: Radius.circular(5),)
+                                      decoration: BoxDecoration(
+                                          color: blueColor,
+                                        borderRadius: BorderRadius.circular(5)
+                                      ),
+                                      child: Center(child: Text("Current Subscription Plan Details",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),)),
+                                    ),
+                                    SizedBox(height: 6,),
+                                    Container(
+                                      height: 50,
+                                      width: MediaQuery.of(context).size.width * .91,
+
+                        //               decoration: BoxDecoration(
+                        //                 border:Border.all(color: blueColor),
+                        // borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5),bottomRight: Radius.circular(5),)
+                        //               ),
+                                      child:  Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          SizedBox(
+                                            height: 40,
+                                            width: MediaQuery.of(context).size.width * .9 /2,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                // Add your onPressed code here
+                                              },
+                                              child: Container(
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  color: Color.fromRGBO(38, 194, 44, 1),
+                                                //  borderRadius: BorderRadius.circular(5),
+                                                ),
+                                                child: const Text(
+                                                  'Plan Upgrade',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 8,
+                                          ),
+                                          SizedBox(
+                                            height: 40,
+                                            width: MediaQuery.of(context).size.width * .87 /2,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                _showEnhancedAlert(context, data.subscriptionId!, data.purchaseId!);
+                                                print(data.subscriptionId);
+                                              },
+                                              child: Container(
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  color: Color.fromRGBO(255, 0, 0, 1),
+                                                //  borderRadius: BorderRadius.circular(5),
+                                                ),
+                                                child: const Text(
+                                                  'Cancel Subscription',
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.bold
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+
+
+                                    ),
+                                    SizedBox(height: 6,),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          height: 75,
+                                          padding: EdgeInsets.only(left: 18,right: 8,top: 8,bottom: 8),
+                                          width: MediaQuery.of(context).size.width * .86 / 2,
+                                          decoration: BoxDecoration(
+                                              border: Border(
+                                                left: BorderSide(color: blueColor.withOpacity(.5)),
+                                                top: BorderSide(color: blueColor.withOpacity(.5)),
+                                                bottom: BorderSide(color: blueColor.withOpacity(.5)),
+                                                // No right side border
+                                              ),
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(5),
+                                              bottomLeft: Radius.circular(5),
+                                            ),
+
+                                          ),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Row(
+
+                                                children: [
+                                                  const Text(
+                                                    "Plan Name : ",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            138,
+                                                            149,
+                                                            168,
+                                                            1)),
+                                                  ),
+
+                                                  // SizedBox(height: 8), // Space between the text
+                                                  Text(
+                                                    "${data.planDetail?.planName}",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        color:
+                                                        blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: 8),
+                                              Row(
+
+                                                children: [
+                                                  const Text(
+                                                    "Plan Price   :  ",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            138,
+                                                            149,
+                                                            168,
+                                                            1)),
+                                                  ),
+
+                                                  // SizedBox(height: 8), // Space between the text
+                                                  Text(
+                                                    "\$${data.planDetail?.planPrice}",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        color:
+                                                        blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+
+                                        ),
+                                      //  SizedBox(width: 5,),
+                                        Container(
+                                          height: 75,
+                                          padding: EdgeInsets.all(8),
+                                          width: MediaQuery.of(context).size.width * .95 / 2,
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              right: BorderSide(color: blueColor.withOpacity(.5)),
+                                              top: BorderSide(color: blueColor.withOpacity(.5)),
+                                              bottom: BorderSide(color: blueColor.withOpacity(.5)),
+                                              // No right side border
+                                            ),
+                                            borderRadius: BorderRadius.only(
+                                              topRight: Radius.circular(5),
+                                              bottomRight: Radius.circular(5),
+                                            ),),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Row(
+
+                                                children: [
+                                                  const Text(
+                                                    "Purchase Date : ",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            138,
+                                                            149,
+                                                            168,
+                                                            1)),
+                                                  ),
+
+                                                  // SizedBox(height: 8), // Space between the text
+                                                  Text(
+                                                    formatDate(data
+                                                        .purchaseDate!),
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        color:
+                                                        blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: 8),
+                                              Row(
+
+                                                children: [
+                                                  const Text(
+                                                    "Billing Period : ",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            138,
+                                                            149,
+                                                            168,
+                                                            1)),
+                                                  ),
+
+                                                  // SizedBox(height: 8), // Space between the text
+                                                  Text(
+                                                    "\$${data.planDetail?.billingInterval}",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        color:
+                                                        blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+
+                                        ),
+                                      ],
+                                    )
+                                  ],
                                 ),
-                                child: Center(child: Text("Current Subscription Plan Details",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),)),
                               ),
-                              Container(
-                                  height: 50,
-                                  width: MediaQuery.of(context).size.width * .91,
-
+                            if (MediaQuery.of(context).size.width > 500)
+                              Padding(
+                                padding: const EdgeInsets.all(28.0),
+                                child: Container(
+                                  width: double.infinity,
                                   decoration: BoxDecoration(
-                                      border:Border.all(color: blueColor),
-                                      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5),bottomRight: Radius.circular(5),)
+                                    border: Border.all(
+                                      color: const Color.fromRGBO(21, 43, 83, 1),
+                                    ),
+                                    borderRadius: BorderRadius.circular(10.0),
                                   ),
-                                  child:  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      SizedBox(
-                                        height: 40,
-                                        width: MediaQuery.of(context).size.width * .41,
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            // Add your onPressed code here
-                                          },
-                                          child: Container(
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                              color: Color.fromRGBO(38, 194, 44, 1),
-                                              //  borderRadius: BorderRadius.circular(5),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                            'Current Subscription Details',
+                                            style: TextStyle(
+                                                fontSize: 21,
+                                                fontWeight: FontWeight.bold,
+                                                color: blueColor)),
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.green),
+                                              onPressed: () {},
+                                              child: const Text(
+                                                'Plan Upgrade',
+                                                style: TextStyle(fontSize: 16),
+                                              )),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.red),
+                                              onPressed: () {
+                                                _showEnhancedAlert(
+                                                    context,
+                                                    data.subscriptionId!,
+                                                    data.purchaseId!);
+                                              },
+                                              child: const Text(
+                                                'Cancel Subscription',
+                                                style: TextStyle(fontSize: 16),
+                                              )),
+                                          const SizedBox(
+                                            width: 16,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 16),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            width: screenWidth * 0.43,
+                                            height: 150,
+                                            margin: EdgeInsets.symmetric(
+                                                horizontal: screenWidth * .016),
+                                            decoration: const BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(15)),
                                             ),
-                                            child: const Text(
-                                              'Plan Upgrade',
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold
+                                            child: Material(
+                                              elevation: 3,
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(15)),
+                                              child: Column(
+                                                children: [
+                                                  Expanded(
+                                                    flex: 4,
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: blueColor,
+                                                        borderRadius:
+                                                            const BorderRadius
+                                                                    .vertical(
+                                                                top: Radius
+                                                                    .circular(
+                                                                        15)),
+                                                      ),
+                                                      child: const Center(
+                                                          child: Text(
+                                                        "Plan Infomation",
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight.bold),
+                                                      )),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 8,
+                                                    child: Container(
+                                                      decoration:
+                                                          const BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius.vertical(
+                                                                bottom: Radius
+                                                                    .circular(
+                                                                        15)),
+                                                      ),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets.all(
+                                                                8.0),
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceEvenly,
+                                                          children: [
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                const Text(
+                                                                  "PLAN NAME",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: Color
+                                                                          .fromRGBO(
+                                                                              138,
+                                                                              149,
+                                                                              168,
+                                                                              1)),
+                                                                ),
+                                                                // SizedBox(height: 8), // Space between the text
+                                                                Text(
+                                                                  "${data.planDetail?.planName}",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          16,
+                                                                      color:
+                                                                          blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            Divider(
+                                                              color: blueColor,
+                                                            ),
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                const Text(
+                                                                  "PLAN PRICE",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: Color
+                                                                          .fromRGBO(
+                                                                              138,
+                                                                              149,
+                                                                              168,
+                                                                              1)),
+                                                                ),
+                                                                // SizedBox(height: 8), // Space between the text
+                                                                Text(
+                                                                  "\$${data.planDetail?.planPrice}",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          16,
+                                                                      color:
+                                                                          blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      SizedBox(
-                                        height: 40,
-                                        width: MediaQuery.of(context).size.width * .41,
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            _showEnhancedAlert(context, data.subscriptionId!, data.purchaseId!);
-                                            print(data.subscriptionId);
-                                          },
-                                          child: Container(
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                              color: Color.fromRGBO(255, 0, 0, 1),
-                                              //  borderRadius: BorderRadius.circular(5),
+                                          // SizedBox(width: 16),
+                                          Container(
+                                            width: screenWidth * 0.43,
+                                            height: 150,
+                                            margin: EdgeInsets.symmetric(
+                                                horizontal: screenWidth * .016),
+                                            decoration: const BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(15)),
                                             ),
-                                            child: const Text(
-                                              'Cancel Subscription',
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold
+                                            child: Material(
+                                              elevation: 3,
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(15)),
+                                              child: Column(
+                                                children: [
+                                                  Expanded(
+                                                    flex: 4,
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: blueColor,
+                                                        borderRadius:
+                                                            const BorderRadius
+                                                                    .vertical(
+                                                                top: Radius
+                                                                    .circular(
+                                                                        15)),
+                                                      ),
+                                                      child: const Center(
+                                                          child: Text(
+                                                        "Duration",
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight.bold),
+                                                      )),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 8,
+                                                    child: Container(
+                                                      decoration:
+                                                          const BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius.vertical(
+                                                                bottom: Radius
+                                                                    .circular(
+                                                                        15)),
+                                                      ),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets.all(
+                                                                8.0),
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceEvenly,
+                                                          children: [
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                const Text(
+                                                                  "PURCHASE DATE",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: Color
+                                                                          .fromRGBO(
+                                                                              138,
+                                                                              149,
+                                                                              168,
+                                                                              1)),
+                                                                ),
+                                                                // SizedBox(height: 8), // Space between the text
+                                                                Text(
+                                                                  formatDate(data
+                                                                      .purchaseDate!),
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          16,
+                                                                      color:
+                                                                          blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            Divider(
+                                                              color: blueColor,
+                                                            ),
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                const Text(
+                                                                  "BILLING PERIOD",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: Color
+                                                                          .fromRGBO(
+                                                                              138,
+                                                                              149,
+                                                                              168,
+                                                                              1)),
+                                                                ),
+                                                                // SizedBox(height: 8), // Spce between the text
+                                                                Text(
+                                                                  "\$${data.planDetail?.billingInterval}",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          13,
+                                                                      color:
+                                                                          blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ),
-                                        ),
+                                        ],
                                       ),
+                                      const SizedBox(height: 16)
                                     ],
-                                  )
-
-
-                              ),
-                              SizedBox(height: 10,),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    height: 55,
-                                    padding: EdgeInsets.all(8),
-                                    width: MediaQuery.of(context).size.width * .89 / 2,
-                                    decoration: BoxDecoration(
-                                        border:Border.all(color: blueColor)
-
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Row(
-
-                                          children: [
-                                            const Text(
-                                              "Plan Name : ",
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .bold,
-                                                  color: Color
-                                                      .fromRGBO(
-                                                      138,
-                                                      149,
-                                                      168,
-                                                      1)),
-                                            ),
-
-                                            // SizedBox(height: 8), // Space between the text
-                                            Text(
-                                              "${data.planDetail?.planName}",
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  color:
-                                                  blueColor,
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .bold),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-
-                                          children: [
-                                            const Text(
-                                              "Plan Price   :  ",
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .bold,
-                                                  color: Color
-                                                      .fromRGBO(
-                                                      138,
-                                                      149,
-                                                      168,
-                                                      1)),
-                                            ),
-
-                                            // SizedBox(height: 8), // Space between the text
-                                            Text(
-                                              "\$${data.planDetail?.planPrice}",
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  color:
-                                                  blueColor,
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .bold),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-
                                   ),
-                                  SizedBox(width: 5,),
-                                  Container(
-                                    height: 55,
-                                    padding: EdgeInsets.all(8),
-                                    width: MediaQuery.of(context).size.width * .89 / 2,
-                                    decoration: BoxDecoration(
-                                        border:Border.all(color: blueColor)
-
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Row(
-
-                                          children: [
-                                            const Text(
-                                              "Purchase Date : ",
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .bold,
-                                                  color: Color
-                                                      .fromRGBO(
-                                                      138,
-                                                      149,
-                                                      168,
-                                                      1)),
-                                            ),
-
-                                            // SizedBox(height: 8), // Space between the text
-                                            Text(
-                                              formatDate(data
-                                                  .purchaseDate!),
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  color:
-                                                  blueColor,
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .bold),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-
-                                          children: [
-                                            const Text(
-                                              "Billing Period : ",
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .bold,
-                                                  color: Color
-                                                      .fromRGBO(
-                                                      138,
-                                                      149,
-                                                      168,
-                                                      1)),
-                                            ),
-
-                                            // SizedBox(height: 8), // Space between the text
-                                            Text(
-                                              "\$${data.planDetail?.billingInterval}",
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  color:
-                                                  blueColor,
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .bold),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                      if (MediaQuery.of(context).size.width > 500)
-                        Padding(
-                          padding: const EdgeInsets.all(28.0),
-                          child: Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: const Color.fromRGBO(21, 43, 83, 1),
+                                ),
                               ),
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                      'Current Subscription Details',
-                                      style: TextStyle(
-                                          fontSize: 21,
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor)),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.green),
-                                        onPressed: () {},
-                                        child: const Text(
-                                          'Plan Upgrade',
-                                          style: TextStyle(fontSize: 16),
-                                        )),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.red),
-                                        onPressed: () {
-                                          _showEnhancedAlert(
-                                              context,
-                                              data.subscriptionId!,
-                                              data.purchaseId!);
-                                        },
-                                        child: const Text(
-                                          'Cancel Subscription',
-                                          style: TextStyle(fontSize: 16),
-                                        )),
-                                    const SizedBox(
-                                      width: 16,
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                Row(
-                                  children: [
-                                    Container(
-                                      width: screenWidth * 0.43,
-                                      height: 150,
-                                      margin: EdgeInsets.symmetric(
-                                          horizontal: screenWidth * .016),
-                                      decoration: const BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(15)),
-                                      ),
-                                      child: Material(
-                                        elevation: 3,
-                                        borderRadius:
-                                        const BorderRadius.all(
-                                            Radius.circular(15)),
-                                        child: Column(
-                                          children: [
-                                            Expanded(
-                                              flex: 4,
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: blueColor,
-                                                  borderRadius:
-                                                  const BorderRadius
-                                                      .vertical(
-                                                      top: Radius
-                                                          .circular(
-                                                          15)),
-                                                ),
-                                                child: const Center(
-                                                    child: Text(
-                                                      "Plan Infomation",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                          FontWeight.bold),
-                                                    )),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 8,
-                                              child: Container(
-                                                decoration:
-                                                const BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                  BorderRadius.vertical(
-                                                      bottom: Radius
-                                                          .circular(
-                                                          15)),
-                                                ),
-                                                child: Padding(
-                                                  padding:
-                                                  const EdgeInsets.all(
-                                                      8.0),
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                    children: [
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                        crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                        children: [
-                                                          const Text(
-                                                            "PLAN NAME",
-                                                            style: TextStyle(
-                                                                fontSize:
-                                                                15,
-                                                                fontWeight:
-                                                                FontWeight
-                                                                    .bold,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                    138,
-                                                                    149,
-                                                                    168,
-                                                                    1)),
-                                                          ),
-                                                          // SizedBox(height: 8), // Space between the text
-                                                          Text(
-                                                            "${data.planDetail?.planName}",
-                                                            style: TextStyle(
-                                                                fontSize:
-                                                                16,
-                                                                color:
-                                                                blueColor,
-                                                                fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Divider(
-                                                        color: blueColor,
-                                                      ),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                        crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                        children: [
-                                                          const Text(
-                                                            "PLAN PRICE",
-                                                            style: TextStyle(
-                                                                fontSize:
-                                                                15,
-                                                                fontWeight:
-                                                                FontWeight
-                                                                    .bold,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                    138,
-                                                                    149,
-                                                                    168,
-                                                                    1)),
-                                                          ),
-                                                          // SizedBox(height: 8), // Space between the text
-                                                          Text(
-                                                            "\$${data.planDetail?.planPrice}",
-                                                            style: TextStyle(
-                                                                fontSize:
-                                                                16,
-                                                                color:
-                                                                blueColor,
-                                                                fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    // SizedBox(width: 16),
-                                    Container(
-                                      width: screenWidth * 0.43,
-                                      height: 150,
-                                      margin: EdgeInsets.symmetric(
-                                          horizontal: screenWidth * .016),
-                                      decoration: const BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(15)),
-                                      ),
-                                      child: Material(
-                                        elevation: 3,
-                                        borderRadius:
-                                        const BorderRadius.all(
-                                            Radius.circular(15)),
-                                        child: Column(
-                                          children: [
-                                            Expanded(
-                                              flex: 4,
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: blueColor,
-                                                  borderRadius:
-                                                  const BorderRadius
-                                                      .vertical(
-                                                      top: Radius
-                                                          .circular(
-                                                          15)),
-                                                ),
-                                                child: const Center(
-                                                    child: Text(
-                                                      "Duration",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                          FontWeight.bold),
-                                                    )),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 8,
-                                              child: Container(
-                                                decoration:
-                                                const BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                  BorderRadius.vertical(
-                                                      bottom: Radius
-                                                          .circular(
-                                                          15)),
-                                                ),
-                                                child: Padding(
-                                                  padding:
-                                                  const EdgeInsets.all(
-                                                      8.0),
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                    children: [
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                        crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                        children: [
-                                                          const Text(
-                                                            "PURCHASE DATE",
-                                                            style: TextStyle(
-                                                                fontSize:
-                                                                15,
-                                                                fontWeight:
-                                                                FontWeight
-                                                                    .bold,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                    138,
-                                                                    149,
-                                                                    168,
-                                                                    1)),
-                                                          ),
-                                                          // SizedBox(height: 8), // Space between the text
-                                                          Text(
-                                                            formatDate(data
-                                                                .purchaseDate!),
-                                                            style: TextStyle(
-                                                                fontSize:
-                                                                16,
-                                                                color:
-                                                                blueColor,
-                                                                fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Divider(
-                                                        color: blueColor,
-                                                      ),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                        crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                        children: [
-                                                          const Text(
-                                                            "BILLING PERIOD",
-                                                            style: TextStyle(
-                                                                fontSize:
-                                                                15,
-                                                                fontWeight:
-                                                                FontWeight
-                                                                    .bold,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                    138,
-                                                                    149,
-                                                                    168,
-                                                                    1)),
-                                                          ),
-                                                          // SizedBox(height: 8), // Spce between the text
-                                                          Text(
-                                                            "\$${data.planDetail?.billingInterval}",
-                                                            style: TextStyle(
-                                                                fontSize:
-                                                                13,
-                                                                color:
-                                                                blueColor,
-                                                                fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16)
-                              ],
-                            ),
-                          ),
+                          ],
+                        );
+                      },
+                    ),
+                    if (MediaQuery.of(context).size.width < 500)
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 10.0,
+                          right: 10.0,
                         ),
-                    ],
-                  );
-                },
-              ),
-              if (MediaQuery.of(context).size.width < 500)
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 10.0,
-                    right: 10.0,
-                  ),
-                  child: FutureBuilder<List<pastPlanData>>(
-                    future: _futureReport,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState ==
-                          ConnectionState.waiting) {
-                        return ColabShimmerLoadingWidget();
-                      } else if (snapshot.hasError) {
-                        return Center(
-                            child: Text('Error: ${snapshot.error}'));
-                      } else if (!snapshot.hasData ||
-                          snapshot.data == null ||
-                          snapshot.data!.isEmpty) {
-                        return const Center(
-                            child: Text('No data available'));
-                      }
+                        child: FutureBuilder<List<pastPlanData>>(
+                          future: _futureReport,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return ColabShimmerLoadingWidget();
+                            } else if (snapshot.hasError) {
+                              return Center(
+                                  child: Text('Error: ${snapshot.error}'));
+                            } else if (!snapshot.hasData ||
+                                snapshot.data == null ||
+                                snapshot.data!.isEmpty) {
+                              return const Center(
+                                  child: Text('No data available'));
+                            }
 
                       var data = snapshot.data!;
 
@@ -1831,454 +1850,454 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
 
                       data = data.reversed.toList();
 
-                      // Pagination logic
-                      final totalPages =
-                      (data.length / itemsPerPage).ceil();
-                      final currentPageData = data
-                          .skip(currentPage * itemsPerPage)
-                          .take(itemsPerPage)
-                          .toList();
-                      return SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            // Expanded(
-                            //   flex: 0,
-                            //   child: Padding(
-                            //     padding: const EdgeInsets.symmetric(
-                            //         horizontal: 5.0, vertical: 5),
-                            //     child: Row(
-                            //       mainAxisAlignment:
-                            //           MainAxisAlignment.spaceBetween,
-                            //       children: [
-                            //         Material(
-                            //           elevation: 3,
-                            //           borderRadius: BorderRadius.circular(2),
-                            //           child: Container(
-                            //             padding: const EdgeInsets.symmetric(
-                            //                 horizontal: 10),
-                            //             height:
-                            //                 MediaQuery.of(context).size.width <
-                            //                         500
-                            //                     ? 40
-                            //                     : 50,
-                            //             width: MediaQuery.of(context).size.width <
-                            //                     500
-                            //                 ? MediaQuery.of(context).size.width *
-                            //                     .90
-                            //                 : MediaQuery.of(context).size.width *
-                            //                     .90,
-                            //             decoration: BoxDecoration(
-                            //               color: Colors.white,
-                            //               borderRadius: BorderRadius.circular(2),
-                            //               border: Border.all(
-                            //                   color: const Color(0xFF8A95A8)),
-                            //             ),
-                            //             child: TextField(
-                            //               onChanged: (value) {
-                            //                 setState(() {
-                            //                   searchvalue = value;
-                            //                 });
-                            //               },
-                            //               decoration: const InputDecoration(
-                            //                 border: InputBorder.none,
-                            //                 hintText: "Search here...",
-                            //                 hintStyle: TextStyle(
-                            //                     color: Color(0xFF8A95A8)),
-                            //               ),
-                            //             ),
-                            //           ),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //   ),
-                            // ),
-                            const SizedBox(height: 10),
-                            _buildHeaders(),
-                            const SizedBox(height: 20),
-                            Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                            // Pagination logic
+                            final totalPages =
+                                (data.length / itemsPerPage).ceil();
+                            final currentPageData = data
+                                .skip(currentPage * itemsPerPage)
+                                .take(itemsPerPage)
+                                .toList();
+                            return SingleChildScrollView(
                               child: Column(
-                                children: currentPageData
-                                    .asMap()
-                                    .entries
-                                    .map((entry) {
-                                  int index = entry.key;
-                                  bool isExpanded = expandedIndex == index;
-                                  pastPlanData workOrder = entry.value;
-
-                                  return Container(
+                                children: [
+                                  // Expanded(
+                                  //   flex: 0,
+                                  //   child: Padding(
+                                  //     padding: const EdgeInsets.symmetric(
+                                  //         horizontal: 5.0, vertical: 5),
+                                  //     child: Row(
+                                  //       mainAxisAlignment:
+                                  //           MainAxisAlignment.spaceBetween,
+                                  //       children: [
+                                  //         Material(
+                                  //           elevation: 3,
+                                  //           borderRadius: BorderRadius.circular(2),
+                                  //           child: Container(
+                                  //             padding: const EdgeInsets.symmetric(
+                                  //                 horizontal: 10),
+                                  //             height:
+                                  //                 MediaQuery.of(context).size.width <
+                                  //                         500
+                                  //                     ? 40
+                                  //                     : 50,
+                                  //             width: MediaQuery.of(context).size.width <
+                                  //                     500
+                                  //                 ? MediaQuery.of(context).size.width *
+                                  //                     .90
+                                  //                 : MediaQuery.of(context).size.width *
+                                  //                     .90,
+                                  //             decoration: BoxDecoration(
+                                  //               color: Colors.white,
+                                  //               borderRadius: BorderRadius.circular(2),
+                                  //               border: Border.all(
+                                  //                   color: const Color(0xFF8A95A8)),
+                                  //             ),
+                                  //             child: TextField(
+                                  //               onChanged: (value) {
+                                  //                 setState(() {
+                                  //                   searchvalue = value;
+                                  //                 });
+                                  //               },
+                                  //               decoration: const InputDecoration(
+                                  //                 border: InputBorder.none,
+                                  //                 hintText: "Search here...",
+                                  //                 hintStyle: TextStyle(
+                                  //                     color: Color(0xFF8A95A8)),
+                                  //               ),
+                                  //             ),
+                                  //           ),
+                                  //         ),
+                                  //       ],
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                  const SizedBox(height: 10),
+                                  _buildHeaders(),
+                                  const SizedBox(height: 20),
+                                  Container(
                                     decoration: BoxDecoration(
-                                      color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
-                                    ),
+                                        border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
                                     child: Column(
-                                      children: <Widget>[
-                                        ListTile(
-                                          contentPadding: EdgeInsets.zero,
-                                          title: Padding(
-                                            padding:
-                                            const EdgeInsets.all(2.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                InkWell(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      if (expandedIndex ==
-                                                          index) {
-                                                        expandedIndex =
-                                                        null;
-                                                      } else {
-                                                        expandedIndex =
-                                                            index;
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    margin: const EdgeInsets
-                                                        .only(left: 5),
-                                                    padding: !isExpanded
-                                                        ? const EdgeInsets
-                                                        .only(
-                                                        bottom: 10)
-                                                        : const EdgeInsets
-                                                        .only(top: 10),
-                                                    child: FaIcon(
-                                                      isExpanded
-                                                          ? FontAwesomeIcons
-                                                          .sortUp
-                                                          : FontAwesomeIcons
-                                                          .sortDown,
-                                                      size: 20,
-                                                      color: const Color
-                                                          .fromRGBO(
-                                                          21, 43, 83, 1),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: Text(
-                                                    '   ${workOrder.planName!.isEmpty ? '-- - - -- ----' : workOrder.planName} ',
-                                                    style: TextStyle(
-                                                      color: workOrder
-                                                          .isActive ==
-                                                          true
-                                                          ? Colors.green
-                                                          : blueColor,
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width: MediaQuery.of(
-                                                        context)
-                                                        .size
-                                                        .width *
-                                                        .02),
-                                                Expanded(
-                                                  child: Text(
-                                                    workOrder.isActive ==
-                                                        true
-                                                        ? 'Active'
-                                                        : 'Inactive',
-                                                    style: TextStyle(
-                                                      color: workOrder
-                                                          .isActive ==
-                                                          true
-                                                          ? Colors.green
-                                                          : blueColor,
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                      children: currentPageData
+                                          .asMap()
+                                          .entries
+                                          .map((entry) {
+                                        int index = entry.key;
+                                        bool isExpanded = expandedIndex == index;
+                                        pastPlanData workOrder = entry.value;
+
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                            color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                            border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                                           ),
-                                        ),
-                                        if (isExpanded)
-                                          Container(
-                                            padding:
-                                            const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            margin: const EdgeInsets.only(
-                                                bottom: 20),
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                children: [
-                                                  Row(
+                                          child: Column(
+                                            children: <Widget>[
+                                              ListTile(
+                                                contentPadding: EdgeInsets.zero,
+                                                title: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(2.0),
+                                                  child: Row(
                                                     mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .start,
-                                                    children: [
-                                                      FaIcon(
-                                                        isExpanded
-                                                            ? FontAwesomeIcons
-                                                            .sortUp
-                                                            : FontAwesomeIcons
-                                                            .sortDown,
-                                                        size: 50,
-                                                        color: Colors
-                                                            .transparent,
-                                                      ),
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                          children: <Widget>[
-                                                            Row(
-                                                              children: [
-                                                                Column(
-                                                                  crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                                  children: [
-                                                                    Text(
-                                                                      'Start Date',
-                                                                      style:
-                                                                      TextStyle(
-                                                                        color: workOrder.isActive == true
-                                                                            ? Colors.green
-                                                                            : blueColor,
-                                                                        fontWeight:
-                                                                        FontWeight.bold,
-                                                                        fontSize:
-                                                                        14,
-                                                                      ),
-                                                                    ),
-                                                                    Text(
-                                                                      ' ${formatDate(workOrder.purchaseDate!)}',
-                                                                      style:
-                                                                      TextStyle(
-                                                                        color: workOrder.isActive == true
-                                                                            ? Colors.green[800]
-                                                                            : blueColor,
-                                                                        fontWeight:
-                                                                        FontWeight.bold,
-                                                                        fontSize:
-                                                                        14,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(
-                                                                    width: MediaQuery.of(context).size.width *
-                                                                        .1),
-                                                                Column(
-                                                                  crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                                  children: [
-                                                                    Text(
-                                                                      'End Date',
-                                                                      style:
-                                                                      TextStyle(
-                                                                        color: workOrder.isActive == true
-                                                                            ? Colors.green
-                                                                            : blueColor,
-                                                                        fontWeight:
-                                                                        FontWeight.bold,
-                                                                        fontSize:
-                                                                        14,
-                                                                      ),
-                                                                    ),
-                                                                    Text(
-                                                                      ' ${formatdateplan(workOrder.expirationDate!)}',
-                                                                      style:
-                                                                      TextStyle(
-                                                                        color: workOrder.isActive == true
-                                                                            ? Colors.green[800]
-                                                                            : blueColor,
-                                                                        fontWeight:
-                                                                        FontWeight.bold,
-                                                                        fontSize:
-                                                                        14,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.center,
+                                                    children: <Widget>[
+                                                      InkWell(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            if (expandedIndex ==
+                                                                index) {
+                                                              expandedIndex =
+                                                                  null;
+                                                            } else {
+                                                              expandedIndex =
+                                                                  index;
+                                                            }
+                                                          });
+                                                        },
+                                                        child: Container(
+                                                          margin: const EdgeInsets
+                                                              .only(left: 5),
+                                                          padding: !isExpanded
+                                                              ? const EdgeInsets
+                                                                      .only(
+                                                                  bottom: 10)
+                                                              : const EdgeInsets
+                                                                  .only(top: 10),
+                                                          child: FaIcon(
+                                                            isExpanded
+                                                                ? FontAwesomeIcons
+                                                                    .sortUp
+                                                                : FontAwesomeIcons
+                                                                    .sortDown,
+                                                            size: 20,
+                                                            color: const Color
+                                                                    .fromRGBO(
+                                                                21, 43, 83, 1),
+                                                          ),
                                                         ),
                                                       ),
-                                                      Container(
-                                                        width: 40,
-                                                        child: const Column(
-                                                          children: [],
+                                                      Expanded(
+                                                        child: Text(
+                                                          '   ${workOrder.planName!.isEmpty ? '-- - - -- ----' : workOrder.planName} ',
+                                                          style: TextStyle(
+                                                            color: workOrder
+                                                                        .isActive ==
+                                                                    true
+                                                                ? Colors.green
+                                                                : blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              .02),
+                                                      Expanded(
+                                                        child: Text(
+                                                          workOrder.isActive ==
+                                                                  true
+                                                              ? 'Active'
+                                                              : 'Inactive',
+                                                          style: TextStyle(
+                                                            color: workOrder
+                                                                        .isActive ==
+                                                                    true
+                                                                ? Colors.green
+                                                                : blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13,
+                                                          ),
                                                         ),
                                                       ),
                                                     ],
                                                   ),
-                                                ],
+                                                ),
+                                              ),
+                                              if (isExpanded)
+                                                Container(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                          horizontal: 8.0),
+                                                  margin: const EdgeInsets.only(
+                                                      bottom: 20),
+                                                  child: SingleChildScrollView(
+                                                    child: Column(
+                                                      children: [
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            FaIcon(
+                                                              isExpanded
+                                                                  ? FontAwesomeIcons
+                                                                      .sortUp
+                                                                  : FontAwesomeIcons
+                                                                      .sortDown,
+                                                              size: 50,
+                                                              color: Colors
+                                                                  .transparent,
+                                                            ),
+                                                            Expanded(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: <Widget>[
+                                                                  Column(
+                                                                    children: [
+                                                                      Row(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment
+                                                                                .start,
+                                                                        children: [
+                                                                          Text(
+                                                                            'Start Date :- ',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              color: workOrder.isActive == true
+                                                                                  ? Colors.green
+                                                                                  : blueColor,
+                                                                              fontWeight:
+                                                                                  FontWeight.bold,
+                                                                              fontSize:
+                                                                                  14,
+                                                                            ),
+                                                                          ),
+                                                                          Text(
+                                                                            ' ${formatDate(workOrder.purchaseDate!)}',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              color: workOrder.isActive == true
+                                                                                  ? Colors.green[800]
+                                                                                  : blueColor,
+                                                                              fontWeight:
+                                                                                  FontWeight.bold,
+                                                                              fontSize:
+                                                                                  14,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      SizedBox(
+                                                                          width: MediaQuery.of(context).size.width *
+                                                                              .1),
+                                                                      Row(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment
+                                                                                .start,
+                                                                        children: [
+                                                                          Text(
+                                                                            'End Date   :- ',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              color: workOrder.isActive == true
+                                                                                  ? Colors.green
+                                                                                  : blueColor,
+                                                                              fontWeight:
+                                                                                  FontWeight.bold,
+                                                                              fontSize:
+                                                                                  14,
+                                                                            ),
+                                                                          ),
+                                                                          Text(
+                                                                            ' ${formatdateplan(workOrder.expirationDate!)}',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              color: workOrder.isActive == true
+                                                                                  ? Colors.green[800]
+                                                                                  : blueColor,
+                                                                              fontWeight:
+                                                                                  FontWeight.bold,
+                                                                              fontSize:
+                                                                                  14,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            Container(
+                                                              width: 40,
+                                                              child: const Column(
+                                                                children: [],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const SizedBox(width: 10),
+                                          Material(
+                                            elevation: 3,
+                                            child: Container(
+                                              height: 40,
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 12.0),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.grey),
+                                              ),
+                                              child: DropdownButtonHideUnderline(
+                                                child: DropdownButton<int>(
+                                                  value: itemsPerPage,
+                                                  items: itemsPerPageOptions
+                                                      .map((int value) {
+                                                    return DropdownMenuItem<int>(
+                                                      value: value,
+                                                      child:
+                                                          Text(value.toString()),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged: (newValue) {
+                                                    setState(() {
+                                                      itemsPerPage = newValue!;
+                                                      currentPage =
+                                                          0; // Reset to first page when items per page change
+                                                    });
+                                                  },
+                                                ),
                                               ),
                                             ),
                                           ),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Row(
-                                  children: [
-                                    const SizedBox(width: 10),
-                                    Material(
-                                      elevation: 3,
-                                      child: Container(
-                                        height: 40,
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 12.0),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: Colors.grey),
-                                        ),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<int>(
-                                            value: itemsPerPage,
-                                            items: itemsPerPageOptions
-                                                .map((int value) {
-                                              return DropdownMenuItem<int>(
-                                                value: value,
-                                                child:
-                                                Text(value.toString()),
-                                              );
-                                            }).toList(),
-                                            onChanged: (newValue) {
-                                              setState(() {
-                                                itemsPerPage = newValue!;
-                                                currentPage =
-                                                0; // Reset to first page when items per page change
-                                              });
-                                            },
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: FaIcon(
+                                              FontAwesomeIcons.circleChevronLeft,
+                                              color: currentPage == 0
+                                                  ? Colors.grey
+                                                  : const Color.fromRGBO(
+                                                      21, 43, 83, 1),
+                                            ),
+                                            onPressed: currentPage == 0
+                                                ? null
+                                                : () {
+                                                    setState(() {
+                                                      currentPage--;
+                                                    });
+                                                  },
                                           ),
-                                        ),
+                                          Text(
+                                              'Page ${currentPage + 1} of $totalPages'),
+                                          IconButton(
+                                            icon: FaIcon(
+                                              FontAwesomeIcons.circleChevronRight,
+                                              color: currentPage < totalPages - 1
+                                                  ? const Color.fromRGBO(
+                                                      21, 43, 83, 1)
+                                                  : Colors.grey,
+                                            ),
+                                            onPressed:
+                                                currentPage < totalPages - 1
+                                                    ? () {
+                                                        setState(() {
+                                                          currentPage++;
+                                                        });
+                                                      }
+                                                    : null,
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronLeft,
-                                        color: currentPage == 0
-                                            ? Colors.grey
-                                            : const Color.fromRGBO(
-                                            21, 43, 83, 1),
-                                      ),
-                                      onPressed: currentPage == 0
-                                          ? null
-                                          : () {
-                                        setState(() {
-                                          currentPage--;
-                                        });
-                                      },
-                                    ),
-                                    Text(
-                                        'Page ${currentPage + 1} of $totalPages'),
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronRight,
-                                        color: currentPage < totalPages - 1
-                                            ? const Color.fromRGBO(
-                                            21, 43, 83, 1)
-                                            : Colors.grey,
-                                      ),
-                                      onPressed:
-                                      currentPage < totalPages - 1
-                                          ? () {
-                                        setState(() {
-                                          currentPage++;
-                                        });
-                                      }
-                                          : null,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              if (MediaQuery.of(context).size.width > 500)
-                Padding(
-                  padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Material(
-                          elevation: 3,
-                          borderRadius: BorderRadius.circular(2),
-                          child: Container(
-                            padding:
-                            const EdgeInsets.symmetric(horizontal: 10),
-                            // height: 40,
-                            height: MediaQuery.of(context).size.width < 500
-                                ? 40
-                                : 50,
-                            width: MediaQuery.of(context).size.width < 500
-                                ? MediaQuery.of(context).size.width * .45
-                                : MediaQuery.of(context).size.width * .4,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(2),
-                              border: Border.all(
-                                  color: const Color(0xFF8A95A8)),
-                            ),
-                            child: TextField(
-                              onChanged: (value) {
-                                setState(() {
-                                  searchvalue = value;
-                                });
-                              },
-                              decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Search here...",
-                                hintStyle:
-                                TextStyle(color: Color(0xFF8A95A8)),
-                                // contentPadding: EdgeInsets.all(10),
+                                    ],
+                                  ),
+                                ],
                               ),
-                            ),
+                            );
+                          },
+                        ),
+                      ),
+                    if (MediaQuery.of(context).size.width > 500)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Material(
+                                elevation: 3,
+                                borderRadius: BorderRadius.circular(2),
+                                child: Container(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 10),
+                                  // height: 40,
+                                  height: MediaQuery.of(context).size.width < 500
+                                      ? 40
+                                      : 50,
+                                  width: MediaQuery.of(context).size.width < 500
+                                      ? MediaQuery.of(context).size.width * .45
+                                      : MediaQuery.of(context).size.width * .4,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(2),
+                                    border: Border.all(
+                                        color: const Color(0xFF8A95A8)),
+                                  ),
+                                  child: TextField(
+                                    onChanged: (value) {
+                                      setState(() {
+                                        searchvalue = value;
+                                      });
+                                    },
+                                    decoration: const InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: "Search here...",
+                                      hintStyle:
+                                          TextStyle(color: Color(0xFF8A95A8)),
+                                      // contentPadding: EdgeInsets.all(10),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-              if (MediaQuery.of(context).size.width > 500)
-                const SizedBox(height: 25),
-              if (MediaQuery.of(context).size.width > 500)
-                FutureBuilder<List<pastPlanData>>(
-                  future: _futureReport,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState ==
-                        ConnectionState.waiting) {
-                      return ShimmerTabletTable();
-                    } else if (snapshot.hasError) {
-                      return Center(
-                          child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData ||
-                        snapshot.data!.isEmpty) {
-                      return const Center(child: Text('No data available'));
-                    }
+                      ),
+                    if (MediaQuery.of(context).size.width > 500)
+                      const SizedBox(height: 25),
+                    if (MediaQuery.of(context).size.width > 500)
+                      FutureBuilder<List<pastPlanData>>(
+                        future: _futureReport,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return ShimmerTabletTable();
+                          } else if (snapshot.hasError) {
+                            return Center(
+                                child: Text('Error: ${snapshot.error}'));
+                          } else if (!snapshot.hasData ||
+                              snapshot.data!.isEmpty) {
+                            return const Center(child: Text('No data available'));
+                          }
 
                     var data = snapshot.data!;
 

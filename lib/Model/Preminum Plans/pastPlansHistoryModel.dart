@@ -65,7 +65,7 @@ class pastPlanData {
   int? applicantCount;
   int? staffmemberCount;
   bool? paymentFunctionality;
-  Null? annualDiscount;
+  dynamic? annualDiscount;
   int? vendorCount;
   String? subscriptionId;
 

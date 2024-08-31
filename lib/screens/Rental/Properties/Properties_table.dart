@@ -1459,6 +1459,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
 
                                                     ],
                                                   ),
+
                                                 ],
                                               ),
                                             ),

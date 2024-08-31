@@ -148,7 +148,7 @@ class _Lease_TableState extends State<Lease_Table> {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -172,7 +172,7 @@ class _Lease_TableState extends State<Lease_Table> {
                 },
                 child: Row(
                   children: [
-                    Text("Lease Start", style: TextStyle(color: Colors.white,fontSize: 14)),
+                    Text("  Lease Start", style: TextStyle(color: Colors.white,fontSize: 14)),
                     SizedBox(width: 5),
                    /* ascending2
                         ? Padding(
@@ -196,7 +196,7 @@ class _Lease_TableState extends State<Lease_Table> {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -221,7 +221,7 @@ class _Lease_TableState extends State<Lease_Table> {
                 },
                 child: Row(
                   children: [
-                    Text("  Lease End", style: TextStyle(color: Colors.white,fontSize: 14)),
+                    Text(" Lease End", style: TextStyle(color: Colors.white,fontSize: 14)),
                     SizedBox(width: 5),
                     /*ascending3
                         ? Padding(
@@ -893,7 +893,7 @@ class _Lease_TableState extends State<Lease_Table> {
                             SizedBox(height: 20),
                             Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: blueColor)),
+                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -905,7 +905,8 @@ class _Lease_TableState extends State<Lease_Table> {
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
+                                      color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                                     ),
                                     child: Column(
                                       children: <Widget>[
@@ -945,7 +946,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                                   },
                                                   child: Container(
                                                     margin: EdgeInsets.only(
-                                                        left: 5),
+                                                        left: 5,right: 5),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
                                                         bottom: 10)
@@ -971,7 +972,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                                           .push(MaterialPageRoute(builder: (context) => summery_page(lease_id: Propertytype.leaseId,)));
                                                     },*/
                                                     child: Text(
-                                                      '   ${Propertytype.rentalAdress}',
+                                                      '${Propertytype.rentalAdress}',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
@@ -986,9 +987,9 @@ class _Lease_TableState extends State<Lease_Table> {
                                                     MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                        .08),
+                                                        .04),
                                                 Expanded(
-                                                  flex: 2,
+                                                  flex: 3,
                                                   child: Text(
                                                     '${formatDate(Propertytype.startDate!)}',
                                                     style: TextStyle(
@@ -1004,9 +1005,9 @@ class _Lease_TableState extends State<Lease_Table> {
                                                     MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                        .08),
+                                                        .04),
                                                 Expanded(
-                                                  flex: 2,
+                                                  flex: 3,
                                                   child: Text(
                                                     // '${widget.data.createdAt}',
 
@@ -1048,7 +1049,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                                             .sortUp
                                                             : FontAwesomeIcons
                                                             .sortDown,
-                                                        size: 50,
+                                                        size: 30,
                                                         color:
                                                         Colors.transparent,
                                                       ),
@@ -1078,8 +1079,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                                                         fontWeight:
                                                                         FontWeight
                                                                             .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
+                                                                        color: grey), // Light and grey
                                                                   ),
                                                                 ],
                                                               ),
@@ -1104,8 +1104,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                                                         fontWeight:
                                                                         FontWeight
                                                                             .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
+                                                                        color: grey), // Light and grey
                                                                   ),
                                                                 ],
                                                               ),
@@ -1130,8 +1129,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                                                         fontWeight:
                                                                         FontWeight
                                                                             .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
+                                                                        color: grey), // Light and grey
                                                                   ),
                                                                 ],
                                                               ),
@@ -1156,8 +1154,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                                                         fontWeight:
                                                                         FontWeight
                                                                             .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
+                                                                        color: grey), // Light and grey
                                                                   ),
                                                                 ],
                                                               ),
@@ -1182,8 +1179,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                                                         fontWeight:
                                                                         FontWeight
                                                                             .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
+                                                                        color: grey), // Light and grey
                                                                   ),
                                                                 ],
                                                               ),
@@ -1208,8 +1204,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                                                         fontWeight:
                                                                         FontWeight
                                                                             .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
+                                                                        color: grey), // Light and grey
                                                                   ),
                                                                 ],
                                                               ),
@@ -1398,13 +1393,14 @@ class _Lease_TableState extends State<Lease_Table> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: (newValue) {
+                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
                                               setState(() {
                                                 itemsPerPage = newValue!;
-                                                currentPage =
-                                                0; // Reset to first page when items per page change
+                                                currentPage = 0; // Reset to first page when items per page change
                                               });
-                                            },
+                                            }
+                                                : null,
                                           ),
                                         ),
                                       ),

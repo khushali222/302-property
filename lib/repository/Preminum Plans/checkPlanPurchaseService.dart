@@ -22,6 +22,8 @@ class CheckPlanPurchaseService {
         headers: headers,
       );
 
+      print(response.body);
+      print('$Api_url/api/purchase/plan-purchase/$adminId');
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
         return checkPlanPurchaseModel.fromJson(jsonResponse);

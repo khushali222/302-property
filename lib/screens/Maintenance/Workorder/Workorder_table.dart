@@ -94,7 +94,7 @@ class _Workorder_tableState extends State<Workorder_table> {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 4,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -147,7 +147,7 @@ class _Workorder_tableState extends State<Workorder_table> {
               ),
             ),
             Expanded(
-              flex: 1,
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -171,7 +171,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                 },
                 child: Row(
                   children: [
-                    const Text("Status",
+                    const Text("       Status",
                         style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
                     ascending2
@@ -196,6 +196,7 @@ class _Workorder_tableState extends State<Workorder_table> {
               ),
             ),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -1634,13 +1635,14 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: (newValue) {
+                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
                                               setState(() {
                                                 itemsPerPage = newValue!;
-                                                currentPage =
-                                                    0; // Reset to first page when items per page change
+                                                currentPage = 0; // Reset to first page when items per page change
                                               });
-                                            },
+                                            }
+                                                : null,
                                           ),
                                         ),
                                       ),

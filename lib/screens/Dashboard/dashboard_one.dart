@@ -128,7 +128,7 @@ class _DashboardState extends State<Dashboard> {
         setState(() {
           loading = false;
         });
-        throw Exception('Failed to load data');
+        throw Exception('Failed to load dataxxx');
       }
     } catch (e) {
       print('Error fetching data: $e');
@@ -171,10 +171,10 @@ class _DashboardState extends State<Dashboard> {
           totalRentPastDue = double.parse(data['totalRentPastDue'].toString());
         });
       } else {
-        throw Exception('Failed to load data');
+        throw Exception('Failed to load dataaaaaaaa');
       }
     } else {
-      throw Exception('Failed to load data');
+      throw Exception('Failed to load datawwwwww');
     }
   }
 

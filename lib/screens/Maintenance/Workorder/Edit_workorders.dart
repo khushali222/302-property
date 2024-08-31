@@ -150,7 +150,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       perform.text = fetchedDetails.workPerformed!;
       _selectedStatus = fetchedDetails.status!?? "";
       vendornote.text = fetchedDetails.vendorNotes ?? "";
-      _dateController.text = fetchedDetails.date!;
+      _dateController.text = fetchedDetails.date ?? "";
       _selectedOption = fetchedDetails.priority ?? "";
       _selectedPropertyId = fetchedDetails.rentalId;
       renderId = fetchedDetails.rentalId!;

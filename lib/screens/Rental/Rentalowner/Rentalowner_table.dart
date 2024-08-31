@@ -102,6 +102,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
               ),
             ),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -152,6 +153,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
               ),
             ),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -751,7 +753,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                   },
                                                   child: Container(
                                                     margin: EdgeInsets.only(
-                                                        left: 5),
+                                                        left: 5,right: 5),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
                                                             bottom: 10)
@@ -770,6 +772,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                   ),
                                                 ),
                                                 Expanded(
+                                                  flex:3,
                                                   child: InkWell(
                                                     onTap: () {
                                                       setState(() {
@@ -782,7 +785,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                       });
                                                     },
                                                     child: Text(
-                                                      '   ${rentals.rentalOwnername}',
+                                                      '${rentals.rentalOwnername}',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
@@ -793,12 +796,14 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                   ),
                                                 ),
                                                 SizedBox(
+
                                                     width:
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
                                                             .08),
                                                 Expanded(
+                                                  flex:3,
                                                   child: Text(
                                                     '${rentals.rentalOwnerPhoneNumber}',
                                                     style: TextStyle(
@@ -1111,13 +1116,14 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: (newValue) {
+                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
                                               setState(() {
                                                 itemsPerPage = newValue!;
-                                                currentPage =
-                                                    0; // Reset to first page when items per page change
+                                                currentPage = 0; // Reset to first page when items per page change
                                               });
-                                            },
+                                            }
+                                                : null,
                                           ),
                                         ),
                                       ),
