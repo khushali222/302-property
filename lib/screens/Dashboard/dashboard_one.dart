@@ -215,8 +215,8 @@ class _DashboardState extends State<Dashboard> {
         appBar: widget_302.App_Bar(context: context),
         body: Center(
             child: loading
-                ? const SpinKitFadingCircle(
-              color: Colors.black,
+                ?  SpinKitSpinningLines(
+              color: blueColor,
               size: 50.0,
             )
                 : ListView(

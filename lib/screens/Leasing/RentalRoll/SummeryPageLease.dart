@@ -1465,8 +1465,9 @@ import '../../Rental/Properties/moveout/repository.dart';
 import 'Financial.dart';
 import '../../../widgets/custom_drawer.dart';
 class SummeryPageLease extends StatefulWidget {
+  bool? isredirectpayment;
   String leaseId;
-  SummeryPageLease({super.key, required this.leaseId});
+  SummeryPageLease({super.key, required this.leaseId,this.isredirectpayment});
   @override
   State<SummeryPageLease> createState() => _SummeryPageLeaseState();
 }
@@ -1485,6 +1486,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
     _tabController = TabController(length: 3, vsync: this);
     moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    if(widget.isredirectpayment != null && widget.isredirectpayment!){
+      _tabController!.animateTo(1);
+    }
     super.initState();
   }
   String moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
@@ -1503,9 +1507,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
           future: futureLeaseSummary,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: SpinKitFadingCircle(
-                  color: Colors.black,
+              return  Center(
+                child: SpinKitSpinningLines(
+                  color: blueColor,
                   size: 55.0,
                 ),
               );

@@ -33,6 +33,7 @@ class widget_302 {
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
       titleSpacing:00,
+
       toolbarHeight: MediaQuery.of(context).size.width < 500 ? 60 : 80, // Adjust height for tablet
       title: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {

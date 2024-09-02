@@ -3,14 +3,16 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
-import '../../constant/constant.dart';
+
+
+import '../../../constant/constant.dart';
+import '../../../widgets/titleBar.dart';
 import '../../widgets/custom_drawer.dart';
-import '../../widgets/titleBar.dart';
+import '../../widgets/appbar.dart';
+
 import 'package:http/http.dart' as http;
 
-import '../Maintenance/Workorder/Edit_workorders.dart';
-import '../Leasing/RentalRoll/SummeryPageLease.dart';
+
 class notifications extends StatefulWidget {
   const notifications({super.key});
 
@@ -19,16 +21,16 @@ class notifications extends StatefulWidget {
 }
 
 class _notificationsState extends State<notifications> {
-
+  GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
 
 
   Future<List<Map<String,dynamic>>>? fetchNotifications() async {
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
     final response = await http.get(
-      Uri.parse('${Api_url}/api/notification/admin/$id'),
+      Uri.parse('${Api_url}/api/notification/tenant/$id'),
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
@@ -52,8 +54,14 @@ class _notificationsState extends State<notifications> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer:CustomDrawer(currentpage: "Dashboard",dropdown: false,),
-      appBar: widget_302.App_Bar(context: context),
+      key: key,
+      backgroundColor: Colors.white,
+      drawer:CustomDrawer(currentpage: "Dashboard"),
+      appBar: widget_302.App_Bar(context: context,onDrawerIconPressed: () {
+        print("calling appbar");
+        key.currentState!.openDrawer();
+        // Scaffold.of(context).openDrawer();
+      },),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -72,23 +80,21 @@ class _notificationsState extends State<notifications> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return CircularProgressIndicator();
                    // return ColabShimmerLoadingWidget();
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                   return Container(
-                        height: MediaQuery.of(context).size.height * .5,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
-                              SizedBox(height: 10,),
-                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
-                            ],
-                          ),
+                    return Container(
+                      height: MediaQuery.of(context).size.height * .6,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset("assets/images/no_notification.jpg"),
+                            SizedBox(height: 10,),
+                            Text("No Notifications Yet",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                          ],
                         ),
-                      );
+                      ),
+                    );
                   } else
                  {
                    List<Map<String, dynamic>> notifications = snapshot.data!;
@@ -134,14 +140,12 @@ class _notificationsState extends State<notifications> {
                                      ),
                                      ElevatedButton(
                                        onPressed: () {
-                                         if(notification['notification_title'] =="Workorder Created"){
+                                      /*   if(notification['notification_title'] =="Workorder Created"){
                                            Navigator.of(context).push(MaterialPageRoute(
                                                builder: (context) =>  ResponsiveEditWorkOrder(workorderId: notification['notification_type']['workorder_id'],)));
-                                         }else if(notification['notification_title'] =="New Payment"){
-                                           Navigator.of(context).push(MaterialPageRoute(
-                                               builder: (context) =>  SummeryPageLease(leaseId: notification['notification_type']['lease_id'],isredirectpayment: true,)));
+                                         }else{
 
-                                         }
+                                         }*/
 
                                          // Handle view button press
                                        },

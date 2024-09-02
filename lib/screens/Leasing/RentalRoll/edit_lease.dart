@@ -804,7 +804,7 @@ class _Edit_leaseState extends State<Edit_lease>
                               ),
                               _isLoading
                                   ? const Center(
-                                child: SpinKitFadingCircle(
+                                child: SpinKitSpinningLines(
                                   color: Colors.black,
                                   size: 50.0,
                                 ),
@@ -4414,7 +4414,25 @@ class _Edit_leaseState extends State<Edit_lease>
       ),
     );
   }
+  String reverseFormatDate(String inputDate) {
+    DateTime parsedDate;
 
+    try {
+      // Try parsing the date as yyyy-MM-dd
+      parsedDate = DateFormat('yyyy-MM-dd').parseStrict(inputDate);
+    } catch (e) {
+      try {
+        // If the above fails, try parsing the date as dd-MM-yyyy
+        parsedDate = DateFormat('dd-MM-yyyy').parseStrict(inputDate);
+      } catch (e) {
+        // Handle invalid date format or return an error
+        throw FormatException("Invalid date format");
+      }
+    }
+
+    // Return the date in the yyyy-MM-dd format
+    return DateFormat('yyyy-MM-dd').format(parsedDate);
+  }
   Future<void> updateLeaseAndNavigate(Lease lease) async {
     bool success = await LeaseRepository().updateLease(lease);
 

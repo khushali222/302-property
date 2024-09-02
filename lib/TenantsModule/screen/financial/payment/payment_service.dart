@@ -270,7 +270,7 @@ class PaymentService {
       },
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,
-        'admin_id': id,
+        'admin_id': adminId,
         'tenant_id': tenantId,
         'lease_id': leaseId,
         'payment_type': paymentType,
@@ -412,7 +412,7 @@ class PaymentService {
       },
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,
-        'admin_id': id,
+        'admin_id': adminId,
         'tenant_id': tenantId,
         'lease_id': leaseId,
         'payment_type': paymentType,

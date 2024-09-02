@@ -71,7 +71,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
   String formatDate(String dateStr) {
     try {
       final date = DateTime.parse(dateStr);
-      final formatter = DateFormat('dd/MM/yy');
+      final formatter = DateFormat('dd-MM-yyyy');
       return formatter.format(date);
     } catch (e) {
       return dateStr; // If the date is not valid, return the original string
@@ -1020,7 +1020,20 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(child: Text('No data available'));
+                     return Container(
+                        height: MediaQuery.of(context).size.height * .5,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
+                              SizedBox(height: 10,),
+                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                            ],
+                          ),
+                        ),
+                      );
                     }
 
                     var data = snapshot.data!;
@@ -1364,7 +1377,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                                             TextSpan(
                                                               children: [
                                                                 TextSpan(
-                                                                  text: 'Rent ',
+                                                                  text: 'Rent : ',
                                                                   style: TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
@@ -1392,7 +1405,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                                               children: [
                                                                 TextSpan(
                                                                   text:
-                                                                      'Non-Rent ',
+                                                                      'Non-Rent : ',
                                                                   style: TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
@@ -1476,7 +1489,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                                               children: [
                                                                 TextSpan(
                                                                   text:
-                                                                      'STATUS ',
+                                                                      'STATUS : ',
                                                                   style: TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
@@ -1751,7 +1764,20 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No data available'));
+                   return Container(
+                        height: MediaQuery.of(context).size.height * .5,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
+                              SizedBox(height: 10,),
+                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                            ],
+                          ),
+                        ),
+                      );
                   }
 
                   var data = snapshot.data!;

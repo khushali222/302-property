@@ -2830,7 +2830,7 @@ class _FinancialTableState extends State<FinancialTable> {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
-                      child: SpinKitFadingCircle(
+                      child: SpinKitSpinningLines(
                         color: Colors.black,
                         size: 55.0,
                       ),

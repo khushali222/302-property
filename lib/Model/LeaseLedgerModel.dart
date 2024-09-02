@@ -6,6 +6,7 @@ class LeaseLedger {
   LeaseLedger({this.data, this.totalBalance, this.message});
 
   LeaseLedger.fromJson(Map<String, dynamic> json) {
+    print(json);
     if (json['data'] != null) {
       data = [];
       json['data'].forEach((v) {

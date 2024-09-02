@@ -199,9 +199,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
         future: futureApplicantDetails,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-                child: SpinKitFadingCircle(
-              color: Colors.black,
+            return  Center(
+                child: SpinKitSpinningLines(
+              color: blueColor,
               size: 40.0,
             ));
           } else if (snapshot.hasError) {

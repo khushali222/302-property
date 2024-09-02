@@ -484,7 +484,7 @@ class _AddCardState extends State<AddCard> {
                                             color: Colors.grey)),
                                     tenants.isEmpty
                                         ? const Center(
-                                      child: SpinKitFadingCircle(
+                                      child: SpinKitSpinningLines(
                                         color: Colors.black,
                                         size: 55.0,
                                       ),

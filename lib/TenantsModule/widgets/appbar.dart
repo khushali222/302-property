@@ -12,6 +12,7 @@ import 'package:three_zero_two_property/screens/Profile/Settings_screen.dart';
 import 'package:three_zero_two_property/widgets/test.dart';
 
 import '../../constant/constant.dart';
+import '../screen/notifications/notifications.dart';
 import '../screen/change_password.dart';
 
 class widget_302  {
@@ -46,7 +47,7 @@ class widget_302  {
         title: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             // Check if the device width is less than 600 (considered as phone screen)
-            if (constraints.maxWidth < 500) {
+            if (constraints.maxWidth < 50) {
               return Image.asset(
                 'assets/images/applogo.png',
                 height: 40,
@@ -88,9 +89,19 @@ class widget_302  {
           SizedBox(
             width: 10,
           ),
-          Icon(
-            Icons.notifications_outlined,
-            color: Color.fromRGBO(21, 43, 81, 1),
+          InkWell(
+            onTap: (){
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const notifications()));
+            },
+            child:  Padding(
+              padding: const EdgeInsets.only(top: 15.0),
+              child: FaIcon(
+                FontAwesomeIcons.solidBell,
+                size: 25,
+                color: blueColor,
+              ),
+            ),
           ),
           //   FaIcon(
           //     FontAwesomeIcons.bell,
