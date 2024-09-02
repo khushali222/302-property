@@ -374,13 +374,14 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
   }
 
   final _scrollController = ScrollController();
-  void handleTap(RentalOwnerSummey rentalownersummery) async {
+  void handleTap(RentalOwnerData rental) async {
     // Handle edit action
-    print('Edit ${rentalownersummery.rentalownerId}');
+    print('Edit ${rental.rentalownerId}');
     final result = await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => ResponsiveRentalSummary(
+                  rentalowners: rental,
                   rentalOwnersid: '',
                 )));
     /* if (result == true) {
@@ -1045,7 +1046,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                                         ResponsiveRentalSummary(
                                                                           rentalOwnersid:
                                                                           rentals
-                                                                              .rentalownerId!,
+                                                                              .rentalownerId!,rentalowners:rentals ,
                                                                         )));
 
                                                           },

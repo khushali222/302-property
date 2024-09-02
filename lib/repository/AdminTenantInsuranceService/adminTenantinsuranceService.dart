@@ -70,4 +70,6 @@ class AdminTenantInsuranceRepository {
       throw Exception('Failed to load insurances');
     }
   }
+
+
 }

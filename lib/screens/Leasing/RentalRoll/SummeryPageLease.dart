@@ -1529,11 +1529,26 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                         SizedBox(
                           width: 25,
                         ),
-                      Text('${snapshot.data!.data!.rentalAddress}',
-                          style: TextStyle(
-                              color: Color.fromRGBO(21, 43, 81, 1),
-                              fontWeight: FontWeight.bold,
-                            fontSize:   MediaQuery.of(context).size.width < 500 ? 15 :18)),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width > 500 ? 200: 150,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 1),
+                          child: Text(
+                            '${snapshot.data!.data!.rentalAddress}',
+                            maxLines: 5, // Set maximum number of lines
+                            overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
+                            style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 18,
+                              color: blueColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                      // Text('${snapshot.data!.data!.rentalAddress}',
+                      //     style: TextStyle(
+                      //         color: Color.fromRGBO(21, 43, 81, 1),
+                      //         fontWeight: FontWeight.bold,
+                      //       fontSize:   MediaQuery.of(context).size.width < 500 ? 15 :18)),
 
                     ],
                   ),
@@ -2262,7 +2277,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           elevation: 3,
                           borderRadius: BorderRadius.circular(10),
                           child: Container(
-                            height: 220,
+                            height: 245,
                             width: MediaQuery.of(context).size.width * .44,
                             decoration: BoxDecoration(
                               color:
@@ -2278,7 +2293,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                 children: [
                                   const SizedBox(height: 10),
 
-                                    Row(
+                                  Row(
                                     children: [
                                       const SizedBox(width: 15),
                                       Container(
@@ -2467,7 +2482,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           elevation: 3,
                           borderRadius: BorderRadius.circular(10),
                           child: Container(
-                            height: 205,
+                            //height: 240,
                             //  width: MediaQuery.of(context).size.width * .44,
                             decoration: BoxDecoration(
                               color:
@@ -2513,7 +2528,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               Text(
                                                 '${snapshot.data!.data!.tenantData![index].tenantFirstName} ${snapshot.data!.data!.tenantData![index].tenantLastName}',
                                                 style: const TextStyle(
-                                                  fontSize: 14,
+                                                  fontSize: 16,
                                                   fontWeight: FontWeight.bold,
                                                   color: Color.fromRGBO(21, 43, 81, 1),
                                                 ),
@@ -2524,13 +2539,25 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           Row(
                                             children: [
                                               const SizedBox(width: 2),
-                                              Text(
-                                                snapshot.data!.data!.rentalAddress!,
-                                                style: const TextStyle(
-                                                  fontSize: 11,
-                                                  color: Color(0xFF8A95A8),
+                                              SizedBox(
+                                                width: MediaQuery.of(context).size.width > 500 ? 200: 180,
+                                                child: Text(
+                                                  '${snapshot.data!.data!.rentalAddress!}',
+                                                  maxLines: 3, // Set maximum number of lines
+                                                  overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
+                                                  style: TextStyle(
+                                                    fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 18,
+                                                    color: blueColor,
+                                                  ),
                                                 ),
                                               ),
+                                              // Text(
+                                              //   snapshot.data!.data!.rentalAddress!,
+                                              //   style: const TextStyle(
+                                              //     fontSize: 15,
+                                              //     color: Color(0xFF8A95A8),
+                                              //   ),
+                                              // ),
                                             ],
                                           ),
                                         ],
@@ -2607,7 +2634,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       Text(
                                         '${snapshot.data!.data!.startDate} to',
                                         style: const TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 15,
                                           color: Color.fromRGBO(21, 43, 81, 1),
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -2620,7 +2647,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       Text(
                                         '${snapshot.data!.data!.endDate}',
                                         style: const TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 15,
                                           color: Color.fromRGBO(21, 43, 81, 1),
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -2640,7 +2667,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       Text(
                                         '${snapshot.data!.data!.tenantData![index].tenantPhoneNumber}',
                                         style: const TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 15,
                                           color: Color.fromRGBO(21, 43, 81, 1),
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -2660,7 +2687,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       Text(
                                         '${snapshot.data!.data!.tenantData![index].tenantEmail}',
                                         style: const TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 15,
                                           color: Color.fromRGBO(21, 43, 81, 1),
                                           fontWeight: FontWeight.w500,
                                         ),
