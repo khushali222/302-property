@@ -475,6 +475,7 @@ class _Tenants_tableState extends State<Tenants_table> {
               MaterialPageRoute(
                   builder: (context) =>
                       ResponsiveTenantSummary(
+                        tenants: tenants,
                           tenantId:
                           tenants
                               .tenantId!)));
@@ -1414,6 +1415,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                 MaterialPageRoute(
                                                                     builder: (context) =>
                                                                         ResponsiveTenantSummary(
+                                                                          tenants: tenants,
                                                                             tenantId:
                                                                             tenants
                                                                                 .tenantId!)));

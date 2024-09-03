@@ -9,6 +9,11 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Leasing/Applicants/Applicants_table.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Vendor/Vendor_table.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Workorder/Workorder_table.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/Properties_table.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Rental/Tenants/Tenants_table.dart';
 import 'package:three_zero_two_property/widgets/pie_chart.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/properties.dart';
 import '../model/staffpermission.dart';
@@ -20,8 +25,7 @@ import '../widgets/drawer_tiles.dart';
 import '../widgets/custom_drawer.dart';
 import '../../widgets/barchart.dart';
 import '../widgets/chart.dart';
-import '../screen/Properties/Properties_table.dart';
-import '../screen/Workorder/Workorder_table.dart';
+
 import 'profile.dart';
 class DashboardData {
   // int tenantCount = 0;
@@ -49,16 +53,7 @@ class DashboardData {
     "Work Orders"
   ];
 
-  final List<Widget> pages = [
-    PropertiesTable(),
-    PropertiesTable(),
-    PropertiesTable(),
-    PropertiesTable(),
-    /*Tenants_table(),
-    Applicants_table(),
-    Vendor_table(),*/
-    Workorder_table(),
-  ];
+
 
   List<Color> colorc = [
     const Color.fromRGBO(21, 43, 81, 1),
@@ -91,6 +86,13 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
   String firstname = '';
   String lastname = '';
   bool loading = false;
+  final List<Widget> pages = [
+    PropertiesTable(),
+    Tenants_table(),
+    Applicants_table(),
+    Vendor_table(),
+    Workorder_table(),
+  ];
   StaffPermission? permissions;
   Future<void> fetchDatacount() async {
     /*setState(() {
@@ -394,111 +396,119 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                       return Column(
                         children: [
                           SizedBox(
-                              height:
-                              MediaQuery.of(context).size.width * 0.05),
-                          Container(
-                          //  color:Colors.pink,
-                            padding:
-                            const EdgeInsets.only(left: 15, right: 15),
+                              height: MediaQuery.of(context).size.width *
+                                  0.05),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 25, right: 25),
                             child: GridView.builder(
                               itemCount: 5,
-                              padding: EdgeInsets.zero,
                               gridDelegate:
-                
                               SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount:
                                 2, // Number of items per row
                                 crossAxisSpacing:
                                 MediaQuery.of(context).size.width *
-                                    0.05,
+                                    0.02,
                                 mainAxisSpacing:
                                 MediaQuery.of(context).size.width *
                                     0.02,
                                 childAspectRatio:
-                                1.2, // Adjust as needed for your design
+                                .99, // Adjust as needed for your design
                               ),
                               itemBuilder: (context, index) {
-                                return InkWell(
-                                  onTap: (){
-                                   /* if(index  == 0 && permissions!.propertyView!)
-                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>PropertiesTable()));
-                                    else if(index ==1 && permissions!.workorderView!)
-                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Workorder_table()));*/
-                                  },
-                                  child: Material(
-                                    elevation: 3,
-                
-                                    borderRadius: BorderRadius.circular(6),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: dashboardData.colorc[index],
-                                        borderRadius:
-                                        BorderRadius.circular(6),
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          const SizedBox(height: 10),
-                                          Row(
+                                return
+                                  GestureDetector(
+                                    onTap: (){
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => pages[index]),
+                                      );
+                                    },
+                                    child: Material(
+                                      elevation: 3,
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: dashboardData.colorc[index],
+                                          borderRadius:
+                                          BorderRadius.circular(8),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(left: 5),
+                                          child: Column(
                                             children: [
-                                              const SizedBox(width: 10),
-                                              Material(
-                                                elevation: 10,
-                                                borderRadius:
-                                                BorderRadius.circular(30),
-                                                child: Container(
-                                                    height: 50,
-                                                    width: 50,
-                                                    padding:
-                                                    const EdgeInsets.all(
-                                                        10),
-                                                    decoration: BoxDecoration(
-                                                      color: dashboardData
-                                                          .colors[index],
-                                                      borderRadius:
-                                                      BorderRadius
-                                                          .circular(20),
+                                              const SizedBox(height: 15),
+                                              Row(
+                                                children: [
+                                                  const SizedBox(width: 10),
+                                                  Material(
+                                                    elevation: 5,
+                                                    borderRadius:
+                                                    BorderRadius.circular(
+                                                        15),
+                                                    child: Container(
+                                                        height: 50,
+                                                        width: 50,
+                                                        padding:
+                                                        const EdgeInsets
+                                                            .all(10),
+                                                        decoration:
+                                                        BoxDecoration(
+                                                          color: dashboardData
+                                                              .colors[index],
+                                                          borderRadius:
+                                                          BorderRadius
+                                                              .circular(15),
+                                                        ),
+                                                        child: SvgPicture.asset(
+                                                          "${dashboardData.icons[index]}",
+                                                          fit: BoxFit.cover,
+                                                          height: 30,
+                                                          width: 30,
+                                                        )),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 16),
+                                              Row(
+                                                children: [
+                                                  const SizedBox(width: 10),
+                                                  Text(
+                                                    countList[index].toString(),
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      fontSize: 20,
                                                     ),
-                                                    child: SvgPicture.asset(
-                                                      "${dashboardData.icons[index]}",
-                                                      fit: BoxFit.cover,
-                                                      height: 27,
-                                                      width: 27,
-                                                    )),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 10),
+                                              Row(
+                                                children: [
+                                                  const SizedBox(width: 10),
+                                                  Text(
+                                                    dashboardData.titles[index],
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 5,),
+                                                  Icon(Icons.arrow_forward_rounded,color: Colors.white,),
+
+                                                ],
                                               ),
                                             ],
                                           ),
-                                          const SizedBox(height: 10),
-                                          Row(
-                                            children: [
-                                              const SizedBox(width: 10),
-                                              Text(
-                                                countList[index].toString(),
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Row(
-                                            children: [
-                                              const SizedBox(width: 10),
-                                              Text(
-                                                dashboardData.titles[index],
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 15,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                );
+                                  );
                               },
                               shrinkWrap:
                               true, // If you want the GridView to take only the space it needs

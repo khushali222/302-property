@@ -3,26 +3,54 @@ import 'dart:core';
 
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../Model/tenants.dart';
 
-import '../../constant/constant.dart';
-import 'package:http/http.dart'as http;
+
+import '../../../Model/tenants.dart';
+import '../../../constant/constant.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as http;
 
 class TenantsRepository {
   final String apiUrl = '${Api_url}/api//tenant/tenants';
 
-
-
   Future<List<Tenant>> fetchTenants() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
-    String?  admin_id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    final response = await http.get(Uri.parse('${Api_url}/api/tenant/tenants/$admin_id'),
-      headers: {"authorization" : "CRM $token","id":"CRM $id",},
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/tenant/tenants/$adminid'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
     );
     print(response.body);
-    print('${Api_url}/api//tenant/tenants/$admin_id');
+    print('${Api_url}/api/tenant/tenants/$id');
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body)['data'];
+      return jsonResponse.map((data) => Tenant.fromJson(data)).toList();
+    } else {
+      print('Failed to fetch tenants: ${response.body}');
+      return [];
+     // throw Exception('Failed to load data');
+    }
+  }
+
+  Future<List<Tenant>> fetchLeaseTenants(String tenantId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
+    String? token = prefs.getString('token');
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/tenant/tenants/$tenantId'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
+    print(response.body);
+    print('${Api_url}/api/tenant_details/$id');
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => Tenant.fromJson(data)).toList();
@@ -35,15 +63,19 @@ class TenantsRepository {
     final url = Uri.parse('${Api_url}/api/tenant/tenants');
     print(url);
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
-    String?  admin_id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
-      print(jsonEncode(tenant.toJson()));
+    print(jsonEncode(tenant.toJson()));
     try {
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json',"authorization" : "CRM $token","id":"CRM $id",},
+        headers: {
+          'Content-Type': 'application/json',
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
         body: jsonEncode(tenant.toJson()),
       );
 
@@ -236,39 +268,39 @@ class TenantsRepository {
     required String enableOverRideFee,
   }) async {
     final Map<String, dynamic> data = {
-    'admin_id': adminId,
-    'tenant_id': tenantId,
-    'tenant_firstName': tenantFirstName,
-    'tenant_lastName': tenantLastName,
-    'tenant_phoneNumber': tenantPhoneNumber,
-    'tenant_alternativeNumber': tenantAlternativeNumber,
-    'tenant_email': tenantEmail,
-    'tenant_alternativeEmail': tenantAlternativeEmail,
-    'tenant_password': tenantPassword,
-    'tenant_birthDate': tenantBirthDate,
-    'taxPayer_id': taxPayerId,
-    'comments': comments,
-    'emergency_contact': {
-      'name': emergencyContactName,
-      'relation': emergencyContactRelation,
-      'email': emergencyContactEmail,
-      'phoneNumber': emergencyContactPhoneNumber,
-
-    },
+      'admin_id': adminId,
+      'tenant_id': tenantId,
+      'tenant_firstName': tenantFirstName,
+      'tenant_lastName': tenantLastName,
+      'tenant_phoneNumber': tenantPhoneNumber,
+      'tenant_alternativeNumber': tenantAlternativeNumber,
+      'tenant_email': tenantEmail,
+      'tenant_alternativeEmail': tenantAlternativeEmail,
+      'tenant_password': tenantPassword,
+      'tenant_birthDate': tenantBirthDate,
+      'taxPayer_id': taxPayerId,
+      'comments': comments,
+      'emergency_contact': {
+        'name': emergencyContactName,
+        'relation': emergencyContactRelation,
+        'email': emergencyContactEmail,
+        'phoneNumber': emergencyContactPhoneNumber,
+      },
       'override_fee': overRideFee,
       'enable_override_fee': enableOverRideFee,
     };
+    print('Data is :$data');
 
     print('$apiUrl/$tenantId');
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
-    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     final http.Response response = await http.put(
       Uri.parse('$Api_url/api/tenant/tenants/$tenantId'),
       headers: <String, String>{
-        "authorization" : "CRM $token",
-        "id":"CRM $id",
+        "authorization": "CRM $token",
+        "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -279,7 +311,6 @@ class TenantsRepository {
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
-
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to edit property type');
@@ -298,22 +329,22 @@ class TenantsRepository {
         'tenant_email': tenantEmail,
       });
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      String?  id = prefs.getString('staff_id');
-      String?  admin_id = prefs.getString('adminId');
       String? token = prefs.getString('token');
+      String? adminid = prefs.getString("adminId");
+      String? id = prefs.getString("staff_id");
       final http.Response response = await http.delete(
         uri,
         headers: <String, String>{
-          "authorization" : "CRM $token",
-          "id":"CRM $id",
+          "authorization": "CRM $token",
+          "id": "CRM $id",
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
 
       var responseData = json.decode(response.body);
       print(response.body);
-            print(tenantId);
-            print(tenantEmail);
+      print(tenantId);
+      print(tenantEmail);
       if (response.statusCode == 200) {
         Fluttertoast.showToast(msg: responseData["message"]);
         return json.decode(response.body);
@@ -328,13 +359,16 @@ class TenantsRepository {
 
   Future<List<Tenant>>? fetchTenantsummery(String tenantId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
-    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     print(tenantId);
-    final response = await http
-        .get(Uri.parse('$Api_url/api/tenant/tenant_details/$tenantId'),
-      headers: {"authorization" : "CRM $token","id":"CRM $id",},
+    final response = await http.get(
+      Uri.parse('$Api_url/api/tenant/tenant_details/$tenantId'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
     );
 
     if (response.statusCode == 200) {
@@ -349,24 +383,33 @@ class TenantsRepository {
 
   Future<String> fetchCompanyName(String adminId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
-    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-    final String apiUrl = '${Api_url}/api/admin/admin_profile/$adminId';
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
+    final String apiUrl = '$Api_url/api/admin/admin_profile/$adminId';
 
     try {
-      final http.Response response = await http.get(Uri.parse(apiUrl),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+      final http.Response response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
         // Check if company_name exists in response and is not null
-        if (data.containsKey('data') && data['data'] != null && data['data']['company_name'] != null) {
+        if (data.containsKey('data') &&
+            data['data'] != null &&
+            data['data']['company_name'] != null) {
           return data['data']['company_name'].toString();
         } else {
           throw Exception('Company name not found in response');
         }
       } else {
-        throw Exception('Failed to fetch company name. Status code: ${response.statusCode}');
+        throw Exception(
+            'Failed to fetch company name. Status code: ${response.statusCode}');
       }
     } catch (e) {
       throw Exception('Failed to fetch company name: $e');

@@ -588,7 +588,6 @@ class _Edit_leaseState extends State<Edit_lease>
         );
       },
     );
-
     if (result != null) {
       setState(() {
         result['rent_cycle'] = Rent; // Add Rent value to the result map

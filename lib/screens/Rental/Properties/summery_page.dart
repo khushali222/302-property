@@ -1564,12 +1564,27 @@ class _Summery_pageState extends State<Summery_page>
               const SizedBox(
                 width: 20,
               ),
-              Text('${widget.properties.rentalAddress}',
-                  style: TextStyle(
-                    color: Color.fromRGBO(21, 43, 81, 1),
-                    fontWeight: FontWeight.bold,
-                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 20,
-                  )),
+              SizedBox(
+                width: MediaQuery.of(context).size.width > 500 ? 200: 150,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 1),
+                  child: Text(
+                    '${widget.properties?.rentalAddress}',
+                    maxLines: 5, // Set maximum number of lines
+                    overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
+                    style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 18,
+                      color: blueColor,
+                    ),
+                  ),
+                ),
+              ),
+              // Text('${widget.properties.rentalAddress}',
+              //     style: TextStyle(
+              //       color: Color.fromRGBO(21, 43, 81, 1),
+              //       fontWeight: FontWeight.bold,
+              //       fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 20,
+              //     )),
             ],
           ),
           const SizedBox(
@@ -4078,7 +4093,6 @@ class _Summery_pageState extends State<Summery_page>
       ),
     );
   }
-
 
   Widget buildTableCell(Widget child) {
     return TableCell(
@@ -7248,22 +7262,39 @@ class _Summery_pageState extends State<Summery_page>
                                         SizedBox(
                                           height: 5,
                                         ),
-                                        Padding(
-                                          padding:
-                                          const EdgeInsets.only(left: 16),
-                                          child: Text(
-                                            '${widget.properties?.rentalAddress}',
-                                            style: TextStyle(
-                                                fontSize:
-                                                MediaQuery.of(context)
-                                                    .size
-                                                    .width <
-                                                    500
-                                                    ? 13
-                                                    : 18,
-                                                color: Colors.grey[800]),
+                                        SizedBox(
+                                          width: MediaQuery.of(context).size.width > 500 ? 200: 200,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(left: 16),
+                                            child: Expanded(
+                                              child: Text(
+                                                '${widget.properties?.rentalAddress}',
+                                                maxLines: 3, // Set maximum number of lines
+                                                overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
+                                                style: TextStyle(
+                                                  fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 18,
+                                                  color: blueColor,
+                                                ),
+                                              ),
+                                            ),
                                           ),
                                         ),
+                                        // Padding(
+                                        //   padding:
+                                        //   const EdgeInsets.only(left: 16),
+                                        //   child: Text(
+                                        //     '${widget.properties?.rentalAddress}',
+                                        //     style: TextStyle(
+                                        //         fontSize:
+                                        //         MediaQuery.of(context)
+                                        //             .size
+                                        //             .width <
+                                        //             500
+                                        //             ? 13
+                                        //             : 18,
+                                        //         color: Colors.grey[800]),
+                                        //   ),
+                                        // ),
                                         SizedBox(
                                           height: 5,
                                         ),
@@ -12982,7 +13013,7 @@ class _Summery_pageState extends State<Summery_page>
                                                 },
                                                 child: Container(
                                                   margin:
-                                                  EdgeInsets.only(left: 5),
+                                                  EdgeInsets.only(left: 5,right: 8),
                                                   padding: !isExpanded
                                                       ? EdgeInsets.only(
                                                       bottom: 10)
@@ -13002,7 +13033,7 @@ class _Summery_pageState extends State<Summery_page>
                                               ),
                                               Expanded(
                                                 child: Text(
-                                                  '   ${workOrder.workSubject}',
+                                                  '${workOrder.workSubject}',
                                                   style: TextStyle(
                                                     color: blueColor,
                                                     fontWeight: FontWeight.bold,

@@ -9,7 +9,8 @@ class AdminTenantInsuranceRepository {
   Future<List<AdminTenantInsuranceModel>> fetchTenantInsurance(
       String tenantId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     final headers = {
@@ -46,7 +47,8 @@ class AdminTenantInsuranceRepository {
 
   Future<bool> deleteInsurancesProperties(String TenantInsurance_id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     final response = await http.delete(
@@ -70,4 +72,6 @@ class AdminTenantInsuranceRepository {
       throw Exception('Failed to load insurances');
     }
   }
+
+
 }

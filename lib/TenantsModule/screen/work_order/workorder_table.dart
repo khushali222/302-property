@@ -15,6 +15,7 @@ import 'package:three_zero_two_property/TenantsModule/screen/work_order/workorde
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../constant/constant.dart';
 
+import '../../../widgets/CustomTableShimmer.dart';
 import '../../model/tenant_financial.dart';
 import '../../model/tenant_property.dart';
 
@@ -910,11 +911,10 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                   future: futureworkorder,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                          child: SpinKitFadingCircle(
-                            color: Colors.black,
-                            size: 40.0,
-                          ));
+                      return Container(
+                        margin: const EdgeInsets.only(top: 20.0),
+                        child: ColabShimmerLoadingWidget(),
+                      );
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {

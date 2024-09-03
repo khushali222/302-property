@@ -415,6 +415,7 @@ class _MakePaymentState extends State<MakePayment> {
       setState(() {
         rows = charges?.where((entry) => entry.chargeAmount! > 0).map((entry) {
               return {
+                'entry_id':entry.entryId,
                 'account': entry.account,
                 'amount': 0.0,
                 'charge_amount': entry.chargeAmount,
@@ -3063,6 +3064,16 @@ class _MakePaymentState extends State<MakePayment> {
                               if ((_formKey.currentState?.validate() ??
                                       false) &&
                                   validationMessage == null) {
+                                rows = rows.asMap().map((index, entry) {
+                                  return MapEntry(
+                                    index,
+                                    {
+                                      ...entry,
+                                      'date': reverseFormatDate(_startDate.text), // Set the date to the desired date
+                                      'balance': charges_balances[index], // Add balance from charges_balances list
+                                    },
+                                  );
+                                }).values.toList();
                                 setState(() {
                                   _isLoading = true;
                                 });
@@ -3076,7 +3087,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   print("adminId ${id}");
                                   print(
                                       "adminId ${cardDetails[selectedcardindex!].company}");
-                                  if(processor_id == ""){
+                                  if(processor_id == "zzz"){
                                     showFailedPaymentAlert(context);
                                     setState(() {
                                       _isLoading = false;
@@ -3150,7 +3161,7 @@ class _MakePaymentState extends State<MakePayment> {
                                               selectedTenant["last_name"]!,
                                           emailName: selectedTenant["email"]!,
                                           surcharge:
-                                              "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100)}",
+                                              "$surchargecount",
                                           amount:
                                               "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text)}",
                                           tenantId: selectedTenantId!,

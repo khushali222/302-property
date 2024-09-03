@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/model/lease.dart';
 
-import '../../../constant/constant.dart';
+import '../../../../constant/constant.dart';
 
 class PaymentService {
 
@@ -24,12 +25,12 @@ class PaymentService {
     required String leaseid,
     required String company_name,
     required bool future_Date,
-
+    required List<String>? uploadedFile,
     required List<Map<String,dynamic>> entries,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
-    String?  admin_id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     print("surcharge ${surcharge}");
@@ -50,8 +51,7 @@ class PaymentService {
         'address1': address1,
         'processor_id': processorId,
       };
-      print(paymentDetails);
-      print(entries);
+      log(paymentDetails.toString());
       final response = await http.post(
         Uri.parse(baseUrl),
         headers: {
@@ -68,7 +68,7 @@ class PaymentService {
         if(jsonData["statusCode"] == 100){
           print(jsonData["data"]["responsetext"]);
           print(jsonData["data"]["transactionid"]);
-          storePayment(companyName: company_name, adminId: adminId, tenantId: tenantId, leaseId: leaseid, paymentType: "Card", customerVaultId: customerVaultId, billingId: billingId, entries: entries, totalAmount: amount, isLeaseAdded:false, uploadedFile: "", transactionId: jsonData["data"]["transactionid"], responseText: jsonData["data"]["responsetext"],surcharge: surcharge);
+          storePayment(companyName: company_name, adminId: adminId, tenantId: tenantId, leaseId: leaseid, paymentType: "Card", customerVaultId: customerVaultId, billingId: billingId, entries: entries, totalAmount: amount, isLeaseAdded:false, uploadedFile: [], transactionId: jsonData["data"]["transactionid"], responseText: jsonData["data"]["responsetext"],surcharge: surcharge);
           return "Payment Success";
         }
         else{
@@ -81,7 +81,7 @@ class PaymentService {
     }
     else{
       try{
-        storePayment(companyName: company_name, adminId: adminId, tenantId: tenantId, leaseId: leaseid, paymentType: "Card", customerVaultId: customerVaultId, billingId: billingId, entries: entries, totalAmount: amount, isLeaseAdded:false, uploadedFile: "", transactionId: "", responseText: "PENDING",surcharge: surcharge);
+        storePayment(companyName: company_name, adminId: adminId, tenantId: tenantId, leaseId: leaseid, paymentType: "Card", customerVaultId: customerVaultId, billingId: billingId, entries: entries, totalAmount: amount, isLeaseAdded:false, uploadedFile: [], transactionId: "", responseText: "PENDING",surcharge: surcharge);
         return "Payment Scheduled Successfully";
       }
       catch(e){
@@ -107,15 +107,15 @@ class PaymentService {
    required List<Map<String,dynamic>> entries,
     required String totalAmount,
     required bool isLeaseAdded,
-    required String uploadedFile,
+    required List<String>? uploadedFile,
     required String transactionId,
     required String responseText,
     required String surcharge,
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
-    String?  admin_id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     
     final response = await http.post(
@@ -127,19 +127,19 @@ class PaymentService {
       },
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,
-        'admin_id': adminId,
+        'admin_id': id,
         'tenant_id': tenantId,
         'lease_id': leaseId,
         'payment_type': paymentType,
         'customer_vault_id': customerVaultId,
         'billing_id': billingId,
         'entry': entries,
-        'total_amount': totalAmount,
+        'total_amount': (double.parse(totalAmount) -double.parse(surcharge)).toString(),
+        'surcharge':surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,
         'response': responseText,
-        'surcharge':surcharge,
       }),
     );
 
@@ -171,11 +171,12 @@ class PaymentService {
     required String checkaba,
     required String checkname,
     required bool future_Date,
+    required List<String>? uploadedFile,
     required List<Map<String,dynamic>> entries,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
-    String?  admin_id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     print("surcharge ${surcharge}");
@@ -216,7 +217,7 @@ class PaymentService {
         if(jsonData["statusCode"] == 100){
           print(jsonData["data"]["responsetext"]);
           print(jsonData["data"]["transactionid"]);
-          storePaymentAch(companyName: company_name, adminId: adminId, tenantId: tenantId, leaseId: leaseid, paymentType: "ACH", entries: entries, totalAmount: amount, isLeaseAdded:false, uploadedFile: "", transactionId: jsonData["data"]["transactionid"], responseText: jsonData["data"]["responsetext"],surcharge: surcharge);
+          storePaymentAch(companyName: company_name, adminId: adminId, tenantId: tenantId, leaseId: leaseid, paymentType: "ACH", entries: entries, totalAmount: amount, isLeaseAdded:false, uploadedFile: [], transactionId: jsonData["data"]["transactionid"], responseText: jsonData["data"]["responsetext"],surcharge: surcharge);
           return "Payment Success";
         }
         else{
@@ -229,7 +230,7 @@ class PaymentService {
     }
     else{
       try{
-        storePaymentAch(companyName: company_name, adminId: adminId, tenantId: tenantId, leaseId: leaseid, paymentType: "Card",  entries: entries, totalAmount: amount, isLeaseAdded:false, uploadedFile: "", transactionId: "", responseText: "PENDING",surcharge: surcharge);
+        storePaymentAch(companyName: company_name, adminId: adminId, tenantId: tenantId, leaseId: leaseid, paymentType: "Card",  entries: entries, totalAmount: amount, isLeaseAdded:false, uploadedFile: [], transactionId: "", responseText: "PENDING",surcharge: surcharge);
         return "Payment Scheduled Successfully";
       }
       catch(e){
@@ -252,15 +253,15 @@ class PaymentService {
     required List<Map<String,dynamic>> entries,
     required String totalAmount,
     required bool isLeaseAdded,
-    required String uploadedFile,
+    required List<String>? uploadedFile,
     required String transactionId,
     required String responseText,
     required String surcharge,
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
-    String?  admin_id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     final response = await http.post(
@@ -279,6 +280,8 @@ class PaymentService {
 
         'entry': entries,
         'total_amount': totalAmount,
+        //'total_amount': (double.parse(totalAmount) -double.parse(surcharge)).toString(),
+        'surcharge':surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,
@@ -317,11 +320,12 @@ class PaymentService {
     required bool future_Date,
     required String Check_number,
     required bool Check,
+    required List<String>? uploadedFile,
     required List<Map<String,dynamic>> entries,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
-    String?  admin_id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     print("surcharge ${surcharge}");
     if(future_Date == false){
@@ -360,7 +364,7 @@ class PaymentService {
         if(jsonData["statusCode"] == 100){
           print(jsonData["data"]["responsetext"]);
           print(jsonData["data"]["transactionid"]);
-          storePaymentAch(companyName: company_name, adminId: adminId, tenantId: tenantId, leaseId: leaseid, paymentType: "ACH", entries: entries, totalAmount: amount, isLeaseAdded:false, uploadedFile: "", transactionId: jsonData["data"]["transactionid"], responseText: jsonData["data"]["responsetext"],surcharge: surcharge);
+          storePaymentAch(companyName: company_name, adminId: adminId, tenantId: tenantId, leaseId: leaseid, paymentType: "ACH", entries: entries, totalAmount: amount, isLeaseAdded:false, uploadedFile: [], transactionId: jsonData["data"]["transactionid"], responseText: jsonData["data"]["responsetext"],surcharge: surcharge);
           return "Payment Success";
         }
         else{
@@ -403,8 +407,8 @@ class PaymentService {
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
-    String?  admin_id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     final response = await http.post(

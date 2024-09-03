@@ -5,23 +5,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
 
-import '../../Model/Edit_workorder.dart';
-import '../../model/summery_workorder.dart';
-import '../../model/workordr.dart';
+import '../../../model/Edit_workorder.dart';
+import '../../../model/summery_workorder.dart';
+import '../../../model/workordr.dart';
 
 class WorkOrderRepository {
-
-
   Future<List<Data>> fetchWorkOrders() async {
     // Retrieve admin ID and token from SharedPreferences
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
-    String?  admin_id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     // Define the URL and headers for the request
     final response = await http.get(
-      Uri.parse('$Api_url/api/work-order/work-orders/$admin_id'),
+      Uri.parse('$Api_url/api/work-order/work-orders/$adminid'),
       headers: {
         'authorization': 'CRM $token',
         'id': 'CRM $id',
@@ -37,38 +35,39 @@ class WorkOrderRepository {
       return jsonResponse.map((data) => Data.fromJson(data)).toList();
     } else {
       // Throw an exception if the request failed
-      throw Exception('Failed to load work orders');
+      print('Failed to fetch workorders: ${response.body}');
+      return [];
+      //throw Exception('Failed to load work orders');
     }
   }
 
-
   Future<Map<String, dynamic>> addWorkOrder({
-     String? adminId,
-     String? workSubject,
-     String? staffMemberName,
-     String? workCategory,
-     String? workPerformed,
-     String? status,
-     String? rentalAddress,
-     String? rentalUnit,
-     String? tenant,
-     String? rentalid,
-     String? unitid,
-     List<String>? workOrderImages,
-     bool? entry,
-     String? vendorId,
-     String? vendorNotes,
-     String? priority,
-     bool? workChargeTo,
-     String? date,
-     bool? isBillable,
-     List<Map<String, dynamic>>? parts,
+    String? adminId,
+    String? workSubject,
+    String? staffMemberName,
+    String? workCategory,
+    String? workPerformed,
+    String? status,
+    String? rentalAddress,
+    String? rentalUnit,
+    String? tenant,
+    String? rentalid,
+    String? unitid,
+    List<String>? workOrderImages,
+    bool? entry,
+    String? vendorId,
+    String? vendorNotes,
+    String? priority,
+    bool? workChargeTo,
+    String? date,
+    bool? isBillable,
+    List<Map<String, dynamic>>? parts,
   }) async {
     // Constructing the request data
     final Map<String, dynamic> data = {
       'admin_id': adminId,
       'work_subject': workSubject,
-      'staffmember_name': staffMemberName,
+      'staffmember_id': staffMemberName,
       'work_category': workCategory,
       'work_performed': workPerformed,
       'status': status,
@@ -85,15 +84,15 @@ class WorkOrderRepository {
       'work_charge_to': workChargeTo,
       'date': date,
       'is_billable': isBillable,
-     // 'parts': parts,
+      // 'parts': parts,
     };
-
+    print("'status': $status");
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
-    String?  admin_id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     // Logging the request data
-  //  print('Request data: $data');
+    //  print('Request data: $data');
 
     // Sending the request
     //print(jsonEncode({"workOrder": data}));
@@ -104,13 +103,14 @@ class WorkOrderRepository {
         "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode({"workOrder": data,'parts': parts,}),
+      body: jsonEncode({
+        "workOrder": data,
+        'parts': parts,
+      }),
     );
 
-
     //print('Response status: ${response.statusCode}');
-   // print('Response body: ${response.body}');
-
+    // print('Response body: ${response.body}');
 
     var responseData = json.decode(response.body);
 
@@ -125,19 +125,23 @@ class WorkOrderRepository {
 
   Future<EditData> fetchWorkordersDetails(String workorderId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
-    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-    final response = await http.get(Uri.parse('${Api_url}/api/work-order/workorder_details/$workorderId'),
-      headers: {"authorization" : "CRM $token",
-        "id":"CRM $id",},); // Update with your actual API URL
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/work-order/workorder_details/$workorderId'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    ); // Update with your actual API URL
     //print('hello${response.body}');
     print(workorderId);
     print(workorderId);
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       // List leasesJson = jsonResponse['data'];
-      return  EditData.fromJson(jsonResponse['data']);
+      return EditData.fromJson(jsonResponse['data']);
     } else {
       throw Exception('Failed to load workorder');
     }
@@ -171,7 +175,7 @@ class WorkOrderRepository {
       'admin_id': adminId,
       'workOrder_id': workOrderid,
       'work_subject': workSubject,
-      'staffmember_name': staffMemberName,
+      'staffmember_id': staffMemberName,
       'work_category': workCategory,
       'work_performed': workPerformed,
       'status': status,
@@ -192,11 +196,9 @@ class WorkOrderRepository {
     };
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
-    String?  admin_id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-
-
 
     final http.Response response = await http.put(
       Uri.parse('${Api_url}/api/work-order/work-order/$workOrderid'),
@@ -205,15 +207,18 @@ class WorkOrderRepository {
         "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode({"workOrder": data,'parts': parts,}),
+      body: jsonEncode({
+        "workOrder": data,
+        'parts': parts,
+      }),
     );
 
     print('data length${data.length}');
-   // print('Response body: ${response.body}');
-   // print(workOrderid);
+    // print('Response body: ${response.body}');
+    // print(workOrderid);
     var responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
-      Fluttertoast.showToast(msg: responseData["message"]);
+      // Fluttertoast.showToast(msg: responseData["message"]);
       return responseData;
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
@@ -221,48 +226,48 @@ class WorkOrderRepository {
     }
   }
 
-  Future<bool> DeleteWorkOrder({
-    required String? workOrderid
-  }) async {
-
+  Future<Map<String, dynamic>> DeleteWorkOrder(
+      {required String? workOrderid}) async {
     //print('$apiUrl/$id');
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
-    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     final http.Response response = await http.delete(
       Uri.parse('$Api_url/api/work-order/delete_workorder/$workOrderid'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id":"CRM $id",
+        "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
     var responseData = json.decode(response.body);
     print('$Api_url/work-order/delete_workorder/$workOrderid');
     print(workOrderid);
-  //  print(response.body);
+    //  print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
-      return true;
-
+      return json.decode(response.body);
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to delete workorder');
     }
   }
 
-  static Future<WorkOrderData_summery> getworkorderSummary(String workorderId) async {
+  static Future<WorkOrderData_summery> getworkorderSummary(
+      String workorderId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
-    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-    final url = Uri.parse('$Api_url/api/work-order/workorder_details/$workorderId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
+
+    final url =
+        Uri.parse('$Api_url/api/work-order/workorder_details/$workorderId');
     print('$Api_url/api/work-order/workorder_details/$workorderId');
-    final response = await http.get(
-        url,
-        headers: {"authorization" : "CRM $token","id":"CRM $id",}
-    );
+    final response = await http.get(url, headers: {
+      "authorization": "CRM $token",
+      "id": "CRM $id",
+    });
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body)["data"];
@@ -272,21 +277,22 @@ class WorkOrderRepository {
     }
   }
 
-  static Future<bool> updateworkorderSummary(Map<String,dynamic> workorder,String workorderId) async {
+  static Future<bool> updateworkorderSummary(
+      Map<String, dynamic> workorder, String workorderId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
-    String?  admin_id = prefs.getString('adminId');
     String? token = prefs.getString('token');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     //http://localhost:4000/api/work-order/work-order/1721286680248
     final url = Uri.parse('$Api_url/api/work-order/work-order/$workorderId');
     print('$Api_url/api/work-order/workorder_details/$workorderId');
-    final response = await http.put(
-        url,
-        headers: {"authorization" : "CRM $token","id":"CRM $id", 'Content-Type': 'application/json; charset=UTF-8',},
-        body: jsonEncode({
-          "workOrder": workorder
-        })
-    );
+    final response = await http.put(url,
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({"workOrder": workorder}));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body)["data"];
@@ -295,5 +301,4 @@ class WorkOrderRepository {
       throw Exception('Failed to fetch workorder summary: ${response.body}');
     }
   }
-
 }

@@ -18,8 +18,8 @@ class ApplicantRepository {
     // Log the postData for debugging
     print('Posting data: ${jsonEncode(postData)}');
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    String?  id = prefs.getString('staff_id');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     final response = await http.post(
       Uri.parse('$Api_url/api/applicant/applicant'),
@@ -43,11 +43,11 @@ class ApplicantRepository {
 
   Future<List<Datum>> fetchApplicants() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    String? admin_id = prefs.getString("adminId");
     final response = await http
-        .get(Uri.parse('$Api_url/api/applicant/applicant/$admin_id'), headers: {
+        .get(Uri.parse('$Api_url/api/applicant/applicant/$adminid'), headers: {
       "authorization": "CRM $token",
       "id": "CRM $id",
     });
@@ -57,7 +57,9 @@ class ApplicantRepository {
       print(applicantJson);
       return applicantJson.map((json) => Datum.fromJson(json)).toList();
     } else {
-      throw Exception('Failed to load applicants');
+      print('Failed to fetch applicant: ${response.body}');
+      return [];
+      //throw Exception('Failed to load applicants');
     }
   }
 
@@ -69,7 +71,8 @@ class ApplicantRepository {
     print('id is that :${applicantId}');
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    String?  id = prefs.getString('staff_id');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     final response = await http.put(
       Uri.parse('$Api_url/api/applicant/applicant/$applicantId'),
@@ -96,7 +99,8 @@ class ApplicantRepository {
     print('id is $Applicantid');
     // print('$apiUrl/$id');
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     final http.Response response = await http.delete(
       Uri.parse('$Api_url/api/applicant/applicant/$Applicantid'),

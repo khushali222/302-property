@@ -6,10 +6,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
+import '../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
-import '../../../Model/propertytype.dart';
-import '../../../constant/constant.dart';
+import '../../../../Model/propertytype.dart';
+import '../../../../constant/constant.dart';
 import '../../repository/Property_type.dart';
 import '../../widgets/drawer_tiles.dart';
 import 'Edit_property_type.dart';
@@ -22,7 +22,7 @@ class PropertyTable extends StatefulWidget {
 
 class _PropertyTableState extends State<PropertyTable> {
   int totalrecords = 0;
-  late Future<List<propertytype>>? futurePropertyTypes;
+  late Future<List<propertytype>> futurePropertyTypes;
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
   bool sortAscending = true;
@@ -616,9 +616,12 @@ class _PropertyTableState extends State<PropertyTable> {
               child: Row(
                 //mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  titleBar(
-                    width: MediaQuery.of(context).size.width * .65,
-                    title: 'Property Type',
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: titleBar(
+                      width: MediaQuery.of(context).size.width * .65,
+                      title: 'Property Type',
+                    ),
                   ),
                   GestureDetector(
                     onTap: () async {
@@ -645,6 +648,13 @@ class _PropertyTableState extends State<PropertyTable> {
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
                         borderRadius: BorderRadius.circular(5),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey,
+                            offset: Offset(0.0, 4.0),
+                            blurRadius: 6.0,
+                          ),
+                        ],
                       ),
                       child: Center(
                         child: Row(
@@ -674,30 +684,28 @@ class _PropertyTableState extends State<PropertyTable> {
               ),
             ),
             SizedBox(height: 10),
-
-            SizedBox(height: 10),
             //search
             Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
+              padding: const EdgeInsets.only(left: 11, right: 11),
               child: Row(
                 children: [
                   if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 5),
+                    SizedBox(width: 1),
                   if (MediaQuery.of(context).size.width > 500)
                     SizedBox(width: 24),
                   Material(
-                    elevation: 3,
-                    borderRadius: BorderRadius.circular(2),
+                    elevation: 2,
+                    borderRadius: BorderRadius.circular(8),
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       // height: 40,
-                      height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                      height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
                       width: MediaQuery.of(context).size.width < 500
                           ? MediaQuery.of(context).size.width * .52
                           : MediaQuery.of(context).size.width * .49,
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(2),
+                          borderRadius: BorderRadius.circular(8),
                           // border: Border.all(color: Colors.grey),
                           border: Border.all(color: Color(0xFF8A95A8))),
                       child: Stack(
@@ -733,17 +741,18 @@ class _PropertyTableState extends State<PropertyTable> {
                                     color: Color(0xFF8A95A8),
                                   ),
                                   contentPadding: EdgeInsets.only(
-                                      left: 5, bottom: 12, top: 8)),
+                                      left: 5, bottom: 12, top: 5)),
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                  SizedBox(width: 15),
+                  SizedBox(width: 10),
                   DropdownButtonHideUnderline(
                     child: Material(
                       elevation: 3,
+                      borderRadius: BorderRadius.circular(8),
                       child: DropdownButton2<String>(
                         isExpanded: true,
                         hint: const Row(
@@ -786,14 +795,14 @@ class _PropertyTableState extends State<PropertyTable> {
                         },
                         buttonStyleData: ButtonStyleData(
                           height:
-                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                              MediaQuery.of(context).size.width < 500 ? 45 : 50,
                           // width: 180,
                           width: MediaQuery.of(context).size.width < 500
-                              ? MediaQuery.of(context).size.width * .35
+                              ? MediaQuery.of(context).size.width * .39
                               : MediaQuery.of(context).size.width * .4,
                           padding: const EdgeInsets.only(left: 14, right: 14),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(2),
+                            borderRadius: BorderRadius.circular(8),
                             border: Border.all(
                               // color: Colors.black26,
                               color: Color(0xFF8A95A8),
@@ -883,12 +892,14 @@ class _PropertyTableState extends State<PropertyTable> {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            SizedBox(height: 20),
+                            SizedBox(height: 10),
                             _buildHeaders(),
                             SizedBox(height: 20),
                             Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: blueColor)),
+                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                              // decoration: BoxDecoration(
+                              //     border: Border.all(color: blueColor)),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -900,8 +911,12 @@ class _PropertyTableState extends State<PropertyTable> {
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
+                                      color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                                     ),
+                                    // decoration: BoxDecoration(
+                                    //   border: Border.all(color: blueColor),
+                                    // ),
                                     child: Column(
                                       children: <Widget>[
                                         ListTile(
@@ -940,7 +955,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                   },
                                                   child: Container(
                                                     margin: EdgeInsets.only(
-                                                        left: 5),
+                                                        left: 5,right: 5),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
                                                             bottom: 10)
@@ -959,13 +974,25 @@ class _PropertyTableState extends State<PropertyTable> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  child: Text(
-                                                    ' ${Propertytype.propertyType}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
+                                                  child: InkWell(
+                                                    onTap:(){
+                                                      setState(() {
+                                                        if (expandedIndex ==
+                                                            index) {
+                                                          expandedIndex = null;
+                                                        } else {
+                                                          expandedIndex = index;
+                                                        }
+                                                      });
+                                                    },
+                                                    child: Text(
+                                                      ' ${Propertytype.propertyType}',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -1019,8 +1046,8 @@ class _PropertyTableState extends State<PropertyTable> {
                                         if (isExpanded)
                                           Container(
                                             padding: EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            margin: EdgeInsets.only(bottom: 20),
+                                                horizontal: 2.0),
+                                            margin: EdgeInsets.only(bottom: 2),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
@@ -1064,8 +1091,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .w700,
-                                                                        color: Colors
-                                                                            .grey), // Light and grey
+                                                                        color: grey), // Light and grey
                                                                   ),
                                                                 ],
                                                               ),
@@ -1157,62 +1183,140 @@ class _PropertyTableState extends State<PropertyTable> {
                                                       //     ],
                                                       //   ),
                                                       // ),
-                                                      Container(
-                                                        width: 40,
-                                                        child: Column(
-                                                          children: [
-                                                            IconButton(
-                                                              icon: FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .edit,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed:
-                                                                  () async {
-                                                                // handleEdit(Propertytype);
+                                                      // Container(
+                                                      //   width: 40,
+                                                      //   child: Column(
+                                                      //     children: [
+                                                      //       IconButton(
+                                                      //         icon: FaIcon(
+                                                      //           FontAwesomeIcons
+                                                      //               .edit,
+                                                      //           size: 20,
+                                                      //           color: Color
+                                                      //               .fromRGBO(
+                                                      //                   21,
+                                                      //                   43,
+                                                      //                   83,
+                                                      //                   1),
+                                                      //         ),
+                                                      //         onPressed:
+                                                      //             () async {
+                                                      //           // handleEdit(Propertytype);
+                                                      //
+                                                      //           var check = await Navigator.push(
+                                                      //               context,
+                                                      //               MaterialPageRoute(
+                                                      //                   builder: (context) => Edit_property_type(
+                                                      //                         property: Propertytype,
+                                                      //                       )));
+                                                      //           if (check ==
+                                                      //               true) {
+                                                      //             setState(
+                                                      //                 () {});
+                                                      //           }
+                                                      //         },
+                                                      //       ),
+                                                      //       IconButton(
+                                                      //         icon: FaIcon(
+                                                      //           FontAwesomeIcons
+                                                      //               .trashCan,
+                                                      //           size: 20,
+                                                      //           color: Color
+                                                      //               .fromRGBO(
+                                                      //                   21,
+                                                      //                   43,
+                                                      //                   83,
+                                                      //                   1),
+                                                      //         ),
+                                                      //         onPressed: () {
+                                                      //           //handleDelete(Propertytype);
+                                                      //           _showAlert(
+                                                      //               context,
+                                                      //               Propertytype
+                                                      //                   .propertyId!);
+                                                      //         },
+                                                      //       ),
+                                                      //     ],
+                                                      //   ),
+                                                      // ),
 
-                                                                var check = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => Edit_property_type(
-                                                                              property: Propertytype,
-                                                                            )));
-                                                                if (check ==
-                                                                    true) {
-                                                                  setState(
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:()async{
+                                                            var check = await Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder: (context) => Edit_property_type(
+                                                                      property: Propertytype,
+                                                                    )));
+                                                            if (check ==
+                                                                true) {
+                                                              setState(
                                                                       () {});
-                                                                }
-                                                              },
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),                                               // color:Colors.grey[100],
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.edit,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Edit",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                                                              ],
                                                             ),
-                                                            IconButton(
-                                                              icon: FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .trashCan,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
-                                                              ),
-                                                              onPressed: () {
-                                                                //handleDelete(Propertytype);
-                                                                _showAlert(
-                                                                    context,
-                                                                    Propertytype
-                                                                        .propertyId!);
-                                                              },
-                                                            ),
-                                                          ],
+                                                          ),
                                                         ),
                                                       ),
+                                                      SizedBox(width: 5,),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap:(){
+                                                            _showAlert(
+                                                                context,
+                                                                Propertytype
+                                                                    .propertyId!);
+                                                          },
+                                                          child: Container(
+                                                            height:40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.grey[350]
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons.trashCan,
+                                                                  size: 15,
+                                                                  color:blueColor,
+                                                                ),
+                                                                SizedBox(width: 10,),
+                                                                Text("Delete",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+
+
                                                     ],
                                                   ),
                                                 ],

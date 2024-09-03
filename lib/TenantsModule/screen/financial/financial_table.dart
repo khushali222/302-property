@@ -11,6 +11,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/financial/payment/make_payment.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/property/summery_page.dart';
+import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../constant/constant.dart';
@@ -895,11 +896,10 @@ class _FinancialTableState extends State<FinancialTable> {
                   future: futureFinancial,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                          child: SpinKitFadingCircle(
-                            color: Colors.black,
-                            size: 40.0,
-                          ));
+                      return Container(
+                        margin: const EdgeInsets.only(top: 20.0),
+                        child: ColabShimmerLoadingWidget(),
+                      );
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return Container(
                         height: MediaQuery.of(context).size.height * .5,

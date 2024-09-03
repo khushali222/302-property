@@ -776,7 +776,7 @@ class _StaffTableState extends State<StaffTable> {
                                                       });
                                                     },
                                                     child: Text(
-                                                      '   ${staffmembers.staffmemberName}',
+                                                      '${staffmembers.staffmemberName}',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:

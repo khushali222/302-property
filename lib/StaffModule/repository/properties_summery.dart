@@ -5,11 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart'as http;
-import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/model/properties.dart';
 import 'package:three_zero_two_property/model/properties_summery.dart';
-import '../../model/properties_workorders.dart';
-import '../model/unitsummery_propeties.dart';
+
+import '../../../constant/constant.dart';
+import '../../../model/properties_workorders.dart';
+import '../../model/unitsummery_propeties.dart';
 
 // class Properies_summery_Repo{
 //
@@ -38,7 +39,8 @@ class Properies_summery_Repo{
   Future<List<TenantData>> fetchPropertiessummery(String rentalId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //String? id = prefs.getString("rentalid");
-    String?  id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     print(id);
     final response = await http.get(Uri.parse('${Api_url}/api/tenant/rental_tenant/$rentalId'),
@@ -79,7 +81,8 @@ class Properies_summery_Repo{
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     final http.Response response = await http.post(
       Uri.parse('${Api_url}/api/unit/unit'),
       headers: <String, String>{
@@ -103,7 +106,8 @@ class Properies_summery_Repo{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //String? id = prefs.getString("rentalid");
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     print(id);
     print("obj");
     final response = await http.get(Uri.parse('${Api_url}/api/unit/rental_unit/$rentalId'),
@@ -139,7 +143,8 @@ class Properies_summery_Repo{
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     final http.Response response = await http.post(
       Uri.parse('${Api_url}/api/appliance/appliance'),
       headers: <String, String>{
@@ -180,7 +185,8 @@ class Properies_summery_Repo{
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     final http.Response response = await http.put(
       Uri.parse('${Api_url}/api/appliance/appliance/$applianceid'),
       headers: <String, String>{
@@ -231,7 +237,8 @@ class Properies_summery_Repo{
    // print('$apiUrl/$id');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     final http.Response response = await http.put(
       Uri.parse('${Api_url}/api/unit/unit/$unitId'),
       headers: <String, String>{
@@ -263,7 +270,8 @@ class Properies_summery_Repo{
     print('hello 123 ${appliance_id}');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     final http.Response response = await http.delete(
       Uri.parse('${Api_url}/api/appliance/appliance/$appliance_id'),
       headers: <String, String>{
@@ -290,7 +298,8 @@ class Properies_summery_Repo{
     print('hello 123 ${unitId}');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     final http.Response response = await http.delete(
       Uri.parse('${Api_url}/api/unit/unit/$unitId'),
       headers: <String, String>{
@@ -334,7 +343,8 @@ class Properies_summery_Repo{
   Future<Rentals> fetchrentalDetails(String rentalId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     final response = await http.get(
         Uri.parse('${Api_url}/api/rentals/rental_summary/$rentalId'),
         headers: {
@@ -361,7 +371,8 @@ class Properies_summery_Repo{
   Future<List<propertiesworkData>> fetchWorkOrders(String rentalId) async {
     // Retrieve admin ID and token from SharedPreferences
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     // Define the URL and headers for the request

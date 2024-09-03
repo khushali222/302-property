@@ -7,18 +7,18 @@ import 'package:three_zero_two_property/screens/Rental/Rentalowner/rentalowner_s
 import '../../Model/RentalOwnersData.dart';
 import 'package:http/http.dart'as http;
 
-import '../../constant/constant.dart';
-import '../model/rentalOwner.dart';
-import '../model/rentalowners_summery.dart';
+import '../../../constant/constant.dart';
+import '../../../model/rentalOwner.dart';
+import '../../model/rentalowners_summery.dart';
 
 class RentalOwnerService {
  // final String baseUrl = 'http://192.168.1.26:4000/api/rentals';
 
   Future<List<RentalOwnerData>> fetchRentalOwners(String? adminId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     adminId = prefs.getString("adminId");
-    String?  id = prefs.getString('staff_id');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     final response = await http.get(Uri.parse('$Api_url/api/rentals/rental-owners/$adminId'),
       headers: {"authorization" : "CRM $token","id":"CRM $id",},);
@@ -30,7 +30,9 @@ class RentalOwnerService {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((data) => RentalOwnerData.fromJson(data)).toList();
     } else {
-      throw Exception('Failed to load rental owners');
+      print('Failed to fetch rentalowners: ${response.body}');
+      return [];
+      // throw Exception('Failed to load data');
     }
   }
   // Future<bool> addRentalOwner(RentalOwnerData rentalOwner) async {
@@ -54,13 +56,16 @@ class RentalOwnerService {
   //   }
   // }
 
+
   Future<bool> addRentalOwner(RentalOwnerData rentalOwner) async {
     final url = Uri.parse('${Api_url}/api/rental_owner/rental_owner');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('staff_id');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     print(url);
-    print(jsonEncode(rentalOwner.toJson()));
+    print(rentalOwner.processorList!.length);
+    print(' Body: ${jsonEncode(rentalOwner.toJson())}');
     try {
       final response = await http.post(
         url,
@@ -70,10 +75,10 @@ class RentalOwnerService {
           'Content-Type': 'application/json'},
         body: jsonEncode(rentalOwner.toJson()),
       );
-
+       print(jsonEncode(rentalOwner.toJson()));
       var responseData = jsonDecode(response.body);
       print(responseData);
-
+     print(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (responseData['statusCode'] == 200) {
           print('Response successfully: ${responseData['data']}');
@@ -195,7 +200,8 @@ class RentalOwnerService {
     print(apiUrl);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('staff_id');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     final http.Response response = await
     http.put(
        Uri.parse(apiUrl),
@@ -223,7 +229,8 @@ class RentalOwnerService {
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('staff_id');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     final http.Response response = await http.delete(
       Uri.parse('$Api_url/api/rentals/rental-owners/$rentalownerId'),
       headers: <String, String>{
@@ -246,7 +253,8 @@ class RentalOwnerService {
 
   Future<List<RentalOwnerData>> fetchRentalOwnerssummery(String rentalOwnerId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('staff_id');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
    // adminId = prefs.getString("adminId");
    //  rentalOwnerId = "1718715476950"
