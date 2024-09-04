@@ -599,6 +599,7 @@ class _EditApplicantState extends State<EditApplicant> {
                             try {
                               // Create the applicant data map
                               Map<String, dynamic> applicantData = {
+                                "admin_id": adminId,
                                 "applicant_firstName": firstName.text.isNotEmpty
                                     ? firstName.text
                                     : 'N/A',

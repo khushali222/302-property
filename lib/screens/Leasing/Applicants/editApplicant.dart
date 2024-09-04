@@ -662,7 +662,7 @@ class _EditApplicantState extends State<EditApplicant> {
                               isLoading = false;
                               errorMessage = "Admin ID not found";
                             });
-                            Fluttertoast.showToast(msg: "Admin ID not found");
+                          //  Fluttertoast.showToast(msg: "Admin ID not found");
                           }
                         },
                         child: isLoading
