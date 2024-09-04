@@ -9,6 +9,7 @@ import 'package:three_zero_two_property/TenantsModule/screen/dashboard.dart';
 import 'package:three_zero_two_property/screens/Dashboard/dashboard_one.dart';
 import '../../TenantsModule/repository/permission_provider.dart';
 import '../../VendorModule/screen/dashboard.dart';
+import '../../VendorModule/screen/mainScreen.dart';
 import '../../provider/Plan Purchase/plancheckProvider.dart';
 import '../Login/login_screen.dart';
 import '../Plans/PlansPurcharCard.dart'; // Import your login screen file
@@ -104,7 +105,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => isAuthenticated == true ? Dashboard_vendors() : Login_Screen(),
+          builder: (context) => isAuthenticated == true ? MainScreen() : Login_Screen(),
         ),
       );
     }

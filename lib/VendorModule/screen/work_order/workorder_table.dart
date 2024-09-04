@@ -264,7 +264,10 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
   void initState() {
     super.initState();
     futureworkorder = WorkOrderRepository().fetchWorkOrders();
-    selectedValue = widget.filter;
+    setState(() {
+      selectedValue = widget.filter;
+    });
+
   }
 
   void handleEdit(WorkOrder property) async {
@@ -627,13 +630,14 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
   @override
   Widget build(BuildContext context) {
 
+  //  print(selectedValue);
     return Scaffold(
       key: key,
       appBar: widget_302.App_Bar(context: context,onDrawerIconPressed: () {
         key.currentState!.openDrawer();
       },),
       backgroundColor: Colors.white,
-      drawer: Drawer(
+     /* drawer: Drawer(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
         child: SingleChildScrollView(
@@ -665,7 +669,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                   ),
                   "Profile",
                   false),
-             /* buildListTile(
+             *//* buildListTile(
                   context,
                   SvgPicture.asset(
                     "assets/images/tenants/Property.svg",
@@ -684,7 +688,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                     width: 20,
                   ),
                   "Financial",
-                  false),*/
+                  false),*//*
               buildListTile(
                   context,
                   SvgPicture.asset(
@@ -695,7 +699,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                   ),
                   "Work Order",
                   true),
-              /* buildDropdownListTile(
+              *//* buildDropdownListTile(
                   context,
                   const FaIcon(
                     FontAwesomeIcons.key,
@@ -718,11 +722,11 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                   Image.asset("assets/icons/maintence.png",
                       height: 20, width: 20),
                   "Maintenance",
-                  ["Vendor", "Work Order"]),*/
+                  ["Vendor", "Work Order"]),*//*
             ],
           ),
         ),
-      ),
+      ),*/
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -1014,7 +1018,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                       }
 
                       //sortData(data);
-                      print(data);
+                     // print(data);
                       //   print(snapshot.data!.first.totalBalance);
                       final totalPages = (data.length / itemsPerPage).ceil();
                       final currentPageData = data

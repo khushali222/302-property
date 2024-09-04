@@ -46,7 +46,7 @@ class DashboardData {
 
   List<String> titles = [
 
-    "New Work Orders",
+    "New Work\nOrders",
     "OverDue Work\nOrders",
     // "Monthly Rent",
     // "Due Date",
@@ -75,7 +75,10 @@ class DashboardData {
 }
 
 class Dashboard_vendors extends StatefulWidget {
-  Dashboard_vendors({super.key});
+   Function(String)? onWorkOrderSelected;
+
+  Dashboard_vendors({ this.onWorkOrderSelected});
+  //Dashboard_vendors({super.key});
 
   @override
   State<Dashboard_vendors> createState() => _Dashboard_vendorsState();
@@ -106,10 +109,10 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
           }
 
       );
-      print(response.body);
+   //   print(response.body);
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
-        print(jsonData);
+      //  print(jsonData);
         setState(() {
           //countList[0] = jsonData["data"]['all_workorders'];
           //  countList[1] = jsonData['rentalCount'];
@@ -138,8 +141,8 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
       String? id = prefs.getString("tenant_id");
       String? admin_id = prefs.getString("adminId");
       String? token = prefs.getString('token');
-      print(id);
-      print(token);
+      //print(id);
+     /// print(token);
       final response =
       await http.get(
           Uri.parse('${Api_url}/api/payment/tenant_financial/${id!}'),
@@ -150,11 +153,11 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
           }
 
       );
-      print(response.body);
+    //  print(response.body);
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
-        print(jsonData);
-        print(jsonData["totalBalance"]);
+      //  print(jsonData);
+       // print(jsonData["totalBalance"]);
         setState(() {
           // countList[0] = jsonData['property_staffMember'];
           countList[1] = double.parse(jsonData['totalBalance'].toString()).toStringAsFixed(2) ??0;
@@ -201,18 +204,18 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
     //print('${Api_url}/api/payment/admin_balance/$id');
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
-      print(jsonData);
+    //  print(jsonData);
       if (jsonData["statusCode"] == 200) {
         final data = jsonData["data"];
         setState(() {
           var newwork = data["new_workorder"];
           var overdue = data["overdue_workorder"];
-          print(newwork);
+         // print(newwork);
           /*newworkorder = newwork;
           overdueworkorder = overdue;*/
           countList[0] = newwork.length;
           countList[1] = overdue.length;
-          print(data);
+         // print(data);
         });
       } else {
         throw Exception('Failed to load data');
@@ -791,8 +794,8 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                 color: dashboardData
                                                     .colors[index],
                                                 child: Container(
-                                                    height: 40,
-                                                    width: 40,
+                                                    height: 45,
+                                                    width: 45,
                                                     padding:
                                                     const EdgeInsets.all(
                                                         10),
@@ -821,7 +824,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                 countList[index].toString(),
                                                 style: const TextStyle(
                                                   color: Colors.white,
-                                                  fontSize: 18,
+                                                  fontSize: 20,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -836,7 +839,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                 style: const TextStyle(
                                                   color: Colors.white,
                                                   // fontWeight: FontWeight.bold,
-                                                  fontSize: 15,
+                                                  fontSize: 16,
                                                 ),
                                               ),
                                              /* if(index == 0 || index ==1)
@@ -855,7 +858,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                               const NeverScrollableScrollPhysics(), // If you don't want it to scroll
                             ),
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 10),
                           Padding(
                             padding: const EdgeInsets.only(left: 15, right: 15),
                             child: Row(
@@ -863,7 +866,8 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                 Expanded(
                                   child: InkWell(
                                     onTap:(){
-                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>WorkOrderTable(filter: "New",)));
+                                      widget.onWorkOrderSelected!("New");
+                                   //   Navigator.of(context).push(MaterialPageRoute(builder: (context)=>WorkOrderTable(filter: "New",)));
                     },
                                     child: Material(
                                       elevation: 3,
@@ -885,7 +889,8 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                 Expanded(
                                   child: InkWell(
                                     onTap:(){
-                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>WorkOrderTable(filter: "Over Due",)));
+                                      widget.onWorkOrderSelected!("Over Due");
+                                     // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>WorkOrderTable(filter: "Over Due",)));
                                     },
                                     child: Material(
                                       elevation: 3,
@@ -915,13 +920,15 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                  padding: const EdgeInsets.only(left:8.0,bottom: 10),
+                                  child: Text("Statistics",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                  child: Wrap(
+                                    spacing: 10.0, // Horizontal space between children
+                                    runSpacing: 10.0, // Vertical space between rows
                                     children: [
-                                      Text("Statistics",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
-                                     SizedBox(height: 10,),
                                       Container(
                                         height: 40,
                                         width: 160,
@@ -932,22 +939,25 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                         child: Row(
                                           children: [
                                             SizedBox(width: 10,),
-                                            Container(height: 15,width: 15,
-
+                                            Container(
+                                              height: 15,
+                                              width: 15,
                                               decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.circular(2),
-                                                color:  Color.fromRGBO(21, 43, 81, 1),
+                                                color: Color.fromRGBO(21, 43, 81, 1),
                                               ),
                                             ),
                                             SizedBox(width: 10,),
-                                            Text("New Work Orders",style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold),),
+                                            Text(
+                                              "New Work Orders",
+                                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                            ),
                                           ],
                                         ),
                                       ),
-                                      SizedBox(height: 10,),
                                       Container(
                                         height: 40,
-                                        width: 200,
+                                        width: 190,
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(6),
                                           color: Color.fromRGBO(206, 233, 255, 1),
@@ -955,22 +965,26 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                         child: Row(
                                           children: [
                                             SizedBox(width: 10,),
-                                            Container(height: 15,width: 15,
-
+                                            Container(
+                                              height: 15,
+                                              width: 15,
                                               decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.circular(2),
-                                                color:  Color.fromRGBO(90, 134, 213, 1),
+                                                color: Color.fromRGBO(90, 134, 213, 1),
                                               ),
                                             ),
                                             SizedBox(width: 10,),
-                                            Text("OverDue Work Orders",style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold),),
+                                            Text(
+                                              "OverDue Work Orders",
+                                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                            ),
                                           ],
                                         ),
                                       ),
-                                      SizedBox(height: 10,),
                                     ],
                                   ),
                                 ),
+                                SizedBox(height: 10,),
 
 
 

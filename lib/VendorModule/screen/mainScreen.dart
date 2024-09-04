@@ -11,24 +11,47 @@ import '../screen/profile.dart';
 import '../screen/work_order/workorder_table.dart';
 
 class MainScreen extends StatefulWidget {
+  String? workorder;
+
+  MainScreen({this.workorder});
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-
+  String _workOrderFilter = "";
   // List of screens corresponding to each BottomNavigationBarItem
-  final List<Widget> _screens = [
+   List<Widget> _screens = [
     Dashboard_vendors(),
     Profile_screen(),
-    WorkOrderTable(),
+  //  WorkOrderTable(),
   ];
-
+  void initState() {
+    super.initState();
+    _screens = [
+      Dashboard_vendors(
+        onWorkOrderSelected: (filter) {
+          setState(() {
+            print(filter);
+            _workOrderFilter = filter; // Update the filter value
+            _onItemTapped(2);
+            // Switch to the Work Order tab
+          });
+        },
+      ),
+      Profile_screen(),
+      WorkOrderTable(),
+    ];
+  }
   void _onItemTapped(int index) {
     setState(() {
+
       _selectedIndex = index;
+      _screens[2] = _workOrderFilter == "" ? WorkOrderTable() : WorkOrderTable(filter: _workOrderFilter,);
+      _workOrderFilter = "";
     });
+
   }
   Future<bool> _showExitPopup(BuildContext context) async {
     bool exitConfirmed = false;
@@ -117,7 +140,7 @@ class _MainScreenState extends State<MainScreen> {
       },
       child: Scaffold(
 
-        body: _screens[_selectedIndex], // Display the selected screen
+        body:  _screens[_selectedIndex],// Display the selected screen
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
