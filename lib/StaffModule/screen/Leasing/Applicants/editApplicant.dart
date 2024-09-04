@@ -9,8 +9,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/lease.dart';
+import 'package:three_zero_two_property/StaffModule/repository/applicants.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
-import 'package:three_zero_two_property/repository/applicants.dart';
+
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import '../../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
@@ -631,12 +632,14 @@ class _EditApplicantState extends State<EditApplicant> {
                                   await ApplicantRepository.updateApplicants(
                                 applicantId: widget.applicantId,
                                 applicantData: applicantData,
+
                               );
 
                               Fluttertoast.showToast(
                                   msg: "Applicant updated successfully");
                               Navigator.of(context).pop(true);
                               setState(() {
+
                                 widget.applicant.applicant!.applicantFirstName =
                                     firstName.text;
                                 widget.applicant.applicant!.applicantLastName =

@@ -14,6 +14,7 @@ class PropertiesRepository {
   final String apiUrl = '${Api_url}/api/propertytype/property_type';
 
   Future<List<Rentals>> fetchProperties() async {
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
@@ -108,9 +109,10 @@ class PropertiesRepository {
     String? token = prefs.getString("token");
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
+    String? staffid = prefs.getString("staff_id");
     final headers = {
       'Content-Type': 'application/json',
-      "id": "CRM $id",
+      "id": "CRM $staffid",
       'Authorization': 'Bearer $token',
     };
 

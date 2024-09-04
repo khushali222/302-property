@@ -67,7 +67,7 @@ dependencies:
   google_fonts:
   file_picker: ^8.0.5
   flutter_slidable:
-
+  loading_animation_widget: ^1.2.1
   printing:
   syncfusion_flutter_pdf:
   path_provider: ^2.1.3

@@ -10,6 +10,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import '../model/ApplicantModel.dart';
 
 class ApplicantRepository {
+
   static Future<Map<String, dynamic>> postApplicant({
     required Datum applicantData,
   }) async {
@@ -71,6 +72,7 @@ class ApplicantRepository {
 
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+
     final response = await http.put(
       Uri.parse('$Api_url/api/applicant/applicant/$applicantId'),
       headers: <String, String>{

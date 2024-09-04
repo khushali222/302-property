@@ -1032,7 +1032,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                 Expanded(
                                   child: Material(
                                     elevation: 3,
-                                    borderRadius: BorderRadius.circular(2),
+                                    borderRadius: BorderRadius.circular(8),
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 10),
@@ -1043,7 +1043,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                               : 50,
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius: BorderRadius.circular(2),
+                                        borderRadius: BorderRadius.circular(8),
                                         border: Border.all(
                                             color: const Color(0xFF8A95A8)),
                                       ),

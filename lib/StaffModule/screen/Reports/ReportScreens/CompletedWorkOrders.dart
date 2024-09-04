@@ -771,7 +771,8 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                 children: [
                                   Material(
                                     elevation: 3,
-                                    borderRadius: BorderRadius.circular(2),
+
+                                    borderRadius: BorderRadius.circular(8),
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 10, vertical: 0),
@@ -789,7 +790,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                               .4,
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius: BorderRadius.circular(2),
+                                        borderRadius: BorderRadius.circular(8),
                                         border: Border.all(
                                             color: const Color(0xFF8A95A8)),
                                       ),

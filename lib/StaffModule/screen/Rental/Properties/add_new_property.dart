@@ -13,10 +13,13 @@ import 'package:keyboard_actions/keyboard_actions_config.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/StaffModule/repository/Property_type.dart';
+import 'package:three_zero_two_property/StaffModule/repository/Staffmember.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/add_rentalowners.dart';
 import 'package:three_zero_two_property/model/staffmember.dart';
-import 'package:three_zero_two_property/repository/Staffmember.dart';
+
 import 'package:three_zero_two_property/repository/rental_properties.dart';
-import 'package:three_zero_two_property/screens/Rental/Properties/add_rentalowners.dart';
+
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
 import '../../../../Model/propertytype.dart';
@@ -24,7 +27,7 @@ import '../../../../constant/constant.dart';
 import '../../../../model/add_property.dart';
 import '../../../../model/rental_properties.dart';
 import '../../../../provider/add_property.dart';
-import '../../../../repository/Property_type.dart';
+
 import '../../../widgets/drawer_tiles.dart';
 import '../../../../widgets/rental_widget.dart';
 import 'package:http/http.dart' as http;
@@ -162,9 +165,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
     final response =
         await http.get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'),headers: {
-          "id":"CRM $id",
+          "id":"CRM $staffid",
           "authorization": "CRM $token",
         },);
 
@@ -1891,7 +1895,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               ],
                             ),
                           ),
-
                           SizedBox(
                             height: 10,
                           ),
