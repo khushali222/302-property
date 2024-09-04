@@ -1107,8 +1107,8 @@ class _LoginScreenState extends State<LoginScreen> {
       /* prefs.setString('first_name', jsonData['${rolename.toLowerCase()}_firstName']);
       prefs.setString('last_name', jsonData['${rolename.toLowerCase()}_lastname']);
 */
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Dashboard_vendors()));
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => Dashboard_vendors()));
     } else {
       print('Failed to check token');
     }

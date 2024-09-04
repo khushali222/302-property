@@ -12,7 +12,8 @@ class AddCardService {
   Future<CardResponse?> postCardDetails(CardModel card) async {
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+  //  String? id = prefs.getString("adminId");
+    String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
 
     final headers = {
@@ -166,7 +167,8 @@ class AddCardService {
 
   Future<void> deletefromdatabaseCard(String billingId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? id = prefs.getString("tenant_id");
+  //  String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
 
     final headers = {
@@ -178,6 +180,81 @@ class AddCardService {
     try {
       final response = await http.delete(
         Uri.parse('$Api_url/api/creditcard/deleteCreditCard/$billingId'),
+        headers: headers,
+      );
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        // Handle success scenario here
+        print('Delete credit card successfully from database');
+      } else {
+        // Handle error scenario here
+        print('Failed to submit add credit card: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle exception scenario here
+      print('Exception during POST request: $e');
+    }
+  }
+  Future<int> deleteOneCardDelete(String customerVaultId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminId = prefs.getString("adminId");
+    String? id = prefs.getString("tenant_id");
+    String? token = prefs.getString('token');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'authorization': 'CRM $token',
+      'id': 'CRM $id',
+    };
+    final body = {
+      'customer_vault_id': customerVaultId,
+      'admin_id': adminId,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse('$Api_url/api/nmipayment/delete-customer-vault'),
+        headers: headers,
+        body: json.encode(body), // Encode the body to JSON
+      );
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        print('Delete credit card successfully from nmi');
+        // Handle success scenario here
+        return response.statusCode;
+      } else {
+        return response.statusCode;
+        // Handle error scenario here
+      }
+    } catch (e) {
+      // Handle exception scenario here
+      print('Exception during POST request in only one card: $e');
+    }
+    return 0;
+  }
+
+//if there is the only card there so fire this api from the our database
+  Future<void> deleteOneCardfromdatabase(String customerVaultId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminId = prefs.getString("adminId");
+    String? id = prefs.getString("tenant_id");
+    String? token = prefs.getString('token');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'authorization': 'CRM $token',
+      'id': 'CRM $id',
+    };
+
+    try {
+      final response = await http.delete(
+        Uri.parse('$Api_url/api/creditcard/deleteCardVault/$customerVaultId'),
         headers: headers,
       );
 

@@ -75,7 +75,10 @@ class DashboardData {
 }
 
 class Dashboard_vendors extends StatefulWidget {
-  Dashboard_vendors({super.key});
+  final Function(String) onWorkOrderSelected;
+
+  Dashboard_vendors({required this.onWorkOrderSelected});
+// Dashboard_vendors({super.key});
 
   @override
   State<Dashboard_vendors> createState() => _Dashboard_vendorsState();
@@ -619,7 +622,8 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                 children: [
                                   InkWell(
                                     onTap:(){
-                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>WorkOrderTable(filter: "New",)));
+                                      widget.onWorkOrderSelected("New");
+                                     // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>WorkOrderTable(filter: "New",)));
                                     },
                                     child: Material(
                                       elevation: 3,
@@ -640,7 +644,8 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                   SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                                   InkWell(
                                     onTap:(){
-                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>WorkOrderTable(filter: "Over Due",)));
+                                      widget.onWorkOrderSelected("Over Due");
+                                     // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>WorkOrderTable(filter: "Over Due",)));
                                     },
                                     child: Material(
                                       elevation: 3,
@@ -863,7 +868,8 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                 Expanded(
                                   child: InkWell(
                                     onTap:(){
-                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>WorkOrderTable(filter: "New",)));
+                                      widget.onWorkOrderSelected("New");
+                                      // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>WorkOrderTable(filter: "New",)));
                     },
                                     child: Material(
                                       elevation: 3,
@@ -885,7 +891,8 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                 Expanded(
                                   child: InkWell(
                                     onTap:(){
-                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>WorkOrderTable(filter: "Over Due",)));
+                                      widget.onWorkOrderSelected("Over Due");
+                                      //  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>WorkOrderTable(filter: "Over Due",)));
                                     },
                                     child: Material(
                                       elevation: 3,

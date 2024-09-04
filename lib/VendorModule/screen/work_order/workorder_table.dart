@@ -1014,7 +1014,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                       }
 
                       //sortData(data);
-                      print(data);
+                     // print(data);
                       //   print(snapshot.data!.first.totalBalance);
                       final totalPages = (data.length / itemsPerPage).ceil();
                       final currentPageData = data
