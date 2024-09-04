@@ -14,11 +14,12 @@ import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/Model/tenants.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/lease.dart';
-import 'package:three_zero_two_property/repository/workorder.dart';
+
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newModel.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 // import 'package:three_zero_two_property/repository/properties_summery.dart';
 import '../../../../model/summery_workorder.dart';
+import '../../../repository/workorder.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../../widgets/titleBar.dart';
 import '../../../widgets/custom_drawer.dart';
@@ -82,6 +83,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
   Future<void> _loadStaff() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
+    String? staffid = prefs.getString("staff_id");
+  //  String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     setState(() {
       _isLoadingstaff = true;
@@ -91,7 +94,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
           Uri.parse('${Api_url}/api/staffmember/staff_member/$id'),
           headers: {
             "authorization": "CRM $token",
-            "id": "CRM $id",
+            "id": "CRM $staffid",
           });
       print('${Api_url}/api/staffmember/staff_member/$id');
 
