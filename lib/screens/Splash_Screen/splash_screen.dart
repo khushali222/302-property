@@ -1,11 +1,14 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/StaffModule/repository/staffpermission_provider.dart';
 import 'package:three_zero_two_property/StaffModule/screen/dashboard.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/dashboard.dart';
+import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Dashboard/dashboard_one.dart';
 import '../../TenantsModule/repository/permission_provider.dart';
 import '../../VendorModule/screen/dashboard.dart';
@@ -28,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
   _navigateToCorrectScreen() async {
 
-    await Future.delayed(Duration(seconds: 3)); // Simulate splash screen delay
+    await Future.delayed(Duration(seconds: 5)); // Simulate splash screen delay
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isAuthenticated = prefs.getBool('isAuthenticated') ?? false;
     String role = prefs.getString("role") ??"";
@@ -145,6 +148,15 @@ class _SplashScreenState extends State<SplashScreen> {
                 height: 220,
                 width: 300,
               ),
+              SizedBox(height: 30),
+              SpinKitSpinningLines(
+                color: blueColor,
+                size: 50.0,
+              ),
+              // LoadingAnimationWidget.fourRotatingDots(
+              //  color: blueColor,
+              //   size: 40,
+              // ),
             ],
           ),
         ),

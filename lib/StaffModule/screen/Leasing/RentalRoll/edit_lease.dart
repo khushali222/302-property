@@ -15,11 +15,13 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
+import 'package:three_zero_two_property/StaffModule/repository/lease.dart';
+import 'package:three_zero_two_property/StaffModule/repository/properties.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/model/properties.dart';
-import 'package:three_zero_two_property/repository/lease.dart';
-import 'package:three_zero_two_property/repository/properties.dart';
+
+
 
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import '../../../../widgets/appbar.dart';
@@ -221,7 +223,7 @@ class _Edit_leaseState extends State<Edit_lease>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-
+    String? staffid = prefs.getString("staff_id");
     setState(() {
       _isLoading = true;
     });
@@ -230,7 +232,7 @@ class _Edit_leaseState extends State<Edit_lease>
       final response = await http
           .get(Uri.parse('${Api_url}/api/rentals/rentals/$id'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $staffid",
       });
       print('${Api_url}/api/rentals/rentals/$id');
 
@@ -267,11 +269,12 @@ class _Edit_leaseState extends State<Edit_lease>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
     try {
       final response = await http
           .get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $staffid",
       });
       print('$Api_url/api/unit/rental_unit/$rentalId');
 

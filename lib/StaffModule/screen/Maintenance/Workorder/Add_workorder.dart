@@ -11,10 +11,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/repository/workorder.dart';
+
 
 import '../../../../constant/constant.dart';
 
+import '../../../repository/workorder.dart';
 import '../../../model/properties.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/drawer_tiles.dart';
@@ -111,6 +112,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
     setState(() {
       _isLoading = true;
     });
@@ -118,7 +120,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
       final response = await http
           .get(Uri.parse('${Api_url}/api/rentals/rentals/$id'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $staffid",
       });
       print('${Api_url}/api/rentals/rentals/$id');
       if (response.statusCode == 200) {
@@ -153,11 +155,12 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
     try {
       final response = await http
           .get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $staffid",
       });
       print('$Api_url/api/unit/rental_unit/$rentalId');
 
@@ -189,6 +192,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
     setState(() {
       _isLoadingvendors = true;
     });
@@ -196,7 +200,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
       final response = await http
           .get(Uri.parse('${Api_url}/api/vendor/vendors/$id'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $staffid",
       });
       print('${Api_url}/api/vendor/vendors/$id');
 
@@ -228,6 +232,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
     setState(() {
       _isLoadingstaff = true;
     });
@@ -236,7 +241,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
           Uri.parse('${Api_url}/api/staffmember/staff_member/$id'),
           headers: {
             "authorization": "CRM $token",
-            "id": "CRM $id",
+            "id": "CRM $staffid",
           });
       print('${Api_url}/api/staffmember/staff_member/$id');
 
@@ -269,6 +274,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
     setState(() {
       _isLoadingtenant = true;
     });
@@ -277,7 +283,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
           Uri.parse('${Api_url}/api/leases/get_tenants/$rentalId/$unitId'),
           headers: {
             "authorization": "CRM $token",
-            "id": "CRM $id",
+            "id": "CRM $staffid",
           });
       print('${Api_url}/api/leases/get_tenants/$rentalId/$unitId');
       print(response.body);

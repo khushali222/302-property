@@ -14,11 +14,14 @@ import 'package:keyboard_actions/keyboard_actions_item.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/StaffModule/repository/Staffmember.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/Edit_Rentalowners.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/add_rentalowners.dart';
 import 'package:three_zero_two_property/model/staffmember.dart';
-import 'package:three_zero_two_property/repository/Staffmember.dart';
+
 import 'package:three_zero_two_property/repository/rental_properties.dart';
-import 'package:three_zero_two_property/screens/Rental/Properties/Edit_Rentalowners.dart';
-import 'package:three_zero_two_property/screens/Rental/Properties/add_rentalowners.dart';
+
+
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
 import '../../../../Model/propertytype.dart';
@@ -175,9 +178,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
     final response =
     await http.get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'),headers: {
-      "id":"CRM $id",
+      "id":"CRM $staffid",
       "authorization": "CRM $token",
     });
 
@@ -2415,7 +2419,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             ),
                             GestureDetector(
                               onTap: () {
-
                                 Navigator.push(context, MaterialPageRoute(builder: (context)=>AddRentalowners(OwnersDetails: Ownersdetails,isEdit: true,)));
                               },
                               child:
@@ -4435,28 +4438,28 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           //Provider.of<OwnerDetailsProvider>(context, listen: false).setOwnerDetails(updatedOwner);
 
                           Rentals properties = Rentals(
-                            adminId: id,
-                            rentalOwnerData: RentalOwnerData(
-                              adminId: widget.properties.adminId,
-                              rentalOwnerId: widget.properties.rentalOwnerId,
-                              rentalOwnerName: updatedOwner.rentalOwnerName,
-                              rentalOwnerCompanyName: updatedOwner.rentalOwnerCompanyName,
-                              rentalOwnerPrimaryEmail: updatedOwner.rentalOwnerPrimaryEmail,
-                              rentalOwnerPhoneNumber: updatedOwner.rentalOwnerPhoneNumber,
-                              city: updatedOwner.city,
-                              state: updatedOwner.state,
-                              country: updatedOwner.country,
-                              postalCode: updatedOwner.postalCode,
-                              processorList: processorIds
-                            ),
-                            rentalId: widget.rentalId,
-                            propertyId: widget.properties.propertyId,
-                            rentalAddress: address.text,
-                            rentalCity: city.text,
-                            rentalState: state.text,
-                            rentalCountry: country.text,
-                            rentalPostcode: postalcode.text,
-                            staffMemberId: widget.properties.staffMemberId,
+                              adminId: id,
+                              rentalOwnerData: RentalOwnerData(
+                                  adminId: widget.properties.adminId,
+                                  rentalOwnerId: widget.properties.rentalOwnerId,
+                                  rentalOwnerName: updatedOwner.rentalOwnerName,
+                                  rentalOwnerCompanyName: updatedOwner.rentalOwnerCompanyName,
+                                  rentalOwnerPrimaryEmail: updatedOwner.rentalOwnerPrimaryEmail,
+                                  rentalOwnerPhoneNumber: updatedOwner.rentalOwnerPhoneNumber,
+                                  city: updatedOwner.city,
+                                  state: updatedOwner.state,
+                                  country: updatedOwner.country,
+                                  postalCode: updatedOwner.postalCode,
+                                  processorList: processorIds
+                              ),
+                              rentalId: widget.rentalId,
+                              propertyId: widget.properties.propertyId,
+                              rentalAddress: address.text,
+                              rentalCity: city.text,
+                              rentalState: state.text,
+                              rentalCountry: country.text,
+                              rentalPostcode: postalcode.text,
+                              staffMemberId: widget.properties.staffMemberId,
                               processor_id:processorId
                           );
                           PropertiesRepository()

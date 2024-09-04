@@ -404,6 +404,7 @@ class LeaseRepository {
   }*/
 
   Future<LeaseDetails> fetchLeaseDetails(String leaseId) async {
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');

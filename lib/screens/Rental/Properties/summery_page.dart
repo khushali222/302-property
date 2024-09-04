@@ -1565,7 +1565,7 @@ class _Summery_pageState extends State<Summery_page>
                 width: 20,
               ),
               SizedBox(
-                width: MediaQuery.of(context).size.width > 500 ? 200: 150,
+                width: MediaQuery.of(context).size.width > 500 ? 200: 170,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 1),
                   child: Text(
@@ -1575,6 +1575,7 @@ class _Summery_pageState extends State<Summery_page>
                     style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 18,
                       color: blueColor,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -1725,6 +1726,7 @@ class _Summery_pageState extends State<Summery_page>
                         //     height: 100,
                         //   ),
                         // ),
+
                         Container(
                           width: MediaQuery.of(context).size.width < 500
                               ? 150
@@ -1739,7 +1741,7 @@ class _Summery_pageState extends State<Summery_page>
                               child: CachedNetworkImage(
                                 imageUrl: widget.properties.rentalImage != null && widget.properties.rentalImage!.isNotEmpty
                                     ? "$image_url${widget.properties.rentalImage}"
-                                    : 'https://i.pinimg.com/originals/59/11/81/591181790b40c5e1f8cc04b55ebdbf25.jpg',
+                                    : 'assets/images/no_image.jpg',
                                 fit: BoxFit.cover,
                                 height: MediaQuery.of(context).size.width < 500 ? 140 : 220,
                                 width: MediaQuery.of(context).size.width < 500 ? 160 : 220,
@@ -1761,6 +1763,7 @@ class _Summery_pageState extends State<Summery_page>
                           ),
 
                         ),
+
                         if (MediaQuery.of(context).size.width < 500)
                           SizedBox(
                             width: 15,
@@ -1833,7 +1836,7 @@ class _Summery_pageState extends State<Summery_page>
                                 padding: const EdgeInsets.only(left: 10),
                                 child: Text(
                                   '${widget.properties?.rentalAddress}',
-                                  maxLines: 2, // Set maximum number of lines
+                                  maxLines: 4, // Set maximum number of lines
                                   overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
                                   style: TextStyle(
                                     fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 18,
@@ -2013,7 +2016,6 @@ class _Summery_pageState extends State<Summery_page>
             const SizedBox(
               height: 20,
             ),
-
             Row(
               children: [
                 if (MediaQuery.of(context).size.width > 500)
@@ -7221,18 +7223,22 @@ class _Summery_pageState extends State<Summery_page>
                                         child: CachedNetworkImage(
                                           imageUrl: data.first.rentalImages != null && data.first.rentalImages!.isNotEmpty
                                               ? "$image_url${data.first.rentalImages?.first}"
-                                              : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe_jcaXNfnjMStYxu0ScZHngqxm-cTA9lJbB9DrbhxHQ6G-aAvZFZFu9-xSz31R5gKgjM&usqp=CAU',
+                                              : 'assets/images/no_image.jpg',
                                           fit: BoxFit.cover,
                                           height: MediaQuery.of(context).size.width < 500 ? 140 : 220,
                                           width: MediaQuery.of(context).size.width < 500 ? 160 : 220,
-                                          placeholder: (context, url) => Center(
-                                            child: CircularProgressIndicator(),
+                                          placeholder: (context, url) => Shimmer.fromColors(
+                                            baseColor: Colors.grey[300]!,
+                                            highlightColor: Colors.grey[100]!,
+                                            child: Container(
+                                              color: Colors.grey[300],
+                                              height: MediaQuery.of(context).size.width < 500 ? 140 : 220,
+                                              width: MediaQuery.of(context).size.width < 500 ? 160 : 220,
+                                            ),
                                           ),
-                                          errorWidget: (context, url, error) => Image.network(
-                                            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe_jcaXNfnjMStYxu0ScZHngqxm-cTA9lJbB9DrbhxHQ6G-aAvZFZFu9-xSz31R5gKgjM&usqp=CAU',
-                                            fit: BoxFit.cover,
-                                            height: MediaQuery.of(context).size.width < 500 ? 140 : 220,
-                                            width: MediaQuery.of(context).size.width < 500 ? 160 : 220,
+                                          errorWidget: (context, url, error) => Image.asset(
+                                            "assets/images/no_image.jpg",
+                                            fit: BoxFit.fill,
                                           ),
                                         ),
                                       ),
@@ -7263,13 +7269,13 @@ class _Summery_pageState extends State<Summery_page>
                                           height: 5,
                                         ),
                                         SizedBox(
-                                          width: MediaQuery.of(context).size.width > 500 ? 200: 200,
+                                          width: MediaQuery.of(context).size.width > 500 ? 200: 159,
                                           child: Padding(
                                             padding: const EdgeInsets.only(left: 16),
                                             child: Expanded(
                                               child: Text(
                                                 '${widget.properties?.rentalAddress}',
-                                                maxLines: 3, // Set maximum number of lines
+                                                maxLines: 5, // Set maximum number of lines
                                                 overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
                                                 style: TextStyle(
                                                   fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 18,
@@ -15280,23 +15286,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                         : Text("Name", style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
-                    ascending1
-                        ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
-                        : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+
                   ],
                 ),
               ),
@@ -15327,23 +15317,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                   children: [
                     Text("Description", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
-                    ascending2
-                        ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
-                        : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+
                   ],
                 ),
               ),
@@ -15375,23 +15349,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                   children: [
                     Text("   Action", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
-                    ascending3
-                        ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
-                        : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+
                   ],
                 ),
               ),

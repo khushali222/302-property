@@ -1288,7 +1288,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                   'Rentals Insurance Policy',
                                   style: TextStyle(
                                       color: blueColor,
-                                      fontSize: 19,
+                                      fontSize: 17,
                                       fontWeight: FontWeight.bold),
                                 ),
                             Spacer(),

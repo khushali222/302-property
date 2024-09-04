@@ -47,6 +47,7 @@ class PropertyTypeRepository {
   }
 
   Future<List<propertytype>> fetchPropertyTypes() async {
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
      String? token = prefs.getString('token');
     String? adminid = prefs.getString("adminId");
