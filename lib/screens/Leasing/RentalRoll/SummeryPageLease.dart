@@ -1465,8 +1465,9 @@ import '../../Rental/Properties/moveout/repository.dart';
 import 'Financial.dart';
 import '../../../widgets/custom_drawer.dart';
 class SummeryPageLease extends StatefulWidget {
+  bool? isredirectpayment;
   String leaseId;
-  SummeryPageLease({super.key, required this.leaseId});
+  SummeryPageLease({super.key, required this.leaseId,this.isredirectpayment});
   @override
   State<SummeryPageLease> createState() => _SummeryPageLeaseState();
 }
@@ -1485,6 +1486,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
     _tabController = TabController(length: 3, vsync: this);
     moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    if(widget.isredirectpayment != null && widget.isredirectpayment!){
+      _tabController!.animateTo(1);
+    }
     super.initState();
   }
   String moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
@@ -1503,9 +1507,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
           future: futureLeaseSummary,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: SpinKitFadingCircle(
-                  color: Colors.black,
+              return  Center(
+                child: SpinKitSpinningLines(
+                  color: blueColor,
                   size: 55.0,
                 ),
               );
@@ -1529,11 +1533,26 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                         SizedBox(
                           width: 25,
                         ),
-                      Text('${snapshot.data!.data!.rentalAddress}',
-                          style: TextStyle(
-                              color: Color.fromRGBO(21, 43, 81, 1),
-                              fontWeight: FontWeight.bold,
-                            fontSize:   MediaQuery.of(context).size.width < 500 ? 15 :18)),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width > 500 ? 200: 150,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 1),
+                          child: Text(
+                            '${snapshot.data!.data!.rentalAddress}',
+                            maxLines: 5, // Set maximum number of lines
+                            overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
+                            style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 18,
+                              color: blueColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                      // Text('${snapshot.data!.data!.rentalAddress}',
+                      //     style: TextStyle(
+                      //         color: Color.fromRGBO(21, 43, 81, 1),
+                      //         fontWeight: FontWeight.bold,
+                      //       fontSize:   MediaQuery.of(context).size.width < 500 ? 15 :18)),
 
                     ],
                   ),
@@ -1604,11 +1623,14 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                       controller: _tabController,
                       children: [
                         SummaryPage(),
-                        FinancialTable(
-                            leaseId: widget.leaseId,
-                            status:
-                                '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate).toString()}',
-                          tenantId:' ${snapshot.data!.data!.tenantId}',),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: FinancialTable(
+                              leaseId: widget.leaseId,
+                              status:
+                                  '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate).toString()}',
+                            tenantId:' ${snapshot.data!.data!.tenantId}',),
+                        ),
                         Tenant(context),
                       ],
                     ),
@@ -1808,18 +1830,18 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                 padding: const EdgeInsets.only(
                     left: 25, right: 25, top: 25, bottom: 25),
                 child: Material(
-                  elevation: 6,
-                  borderRadius: BorderRadius.circular(10),
+                  //elevation: 6,
+                  //borderRadius: BorderRadius.circular(10),
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                          color: const Color.fromRGBO(21, 43, 81, 1)),
+                      // border: Border.all(
+                      //     color: const Color.fromRGBO(21, 43, 81, 1)),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.only(
-                          left: 8, right: 8, top: 20, bottom: 30),
+                          left: 2, right: 2, top: 5, bottom: 30),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -1936,8 +1958,11 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                 ),
                                 Container(
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: blueColor),
-                                  ),
+                                     // color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                                  // decoration: BoxDecoration(
+                                  //   border: Border.all(color: blueColor),
+                                  // ),
                                   child: Column(
                                     children: <Widget>[
                                       ListTile(
@@ -1957,6 +1982,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                   });
                                                 },
                                                 child: Container(
+
                                                   margin: const EdgeInsets.only(
                                                       left: 5),
                                                   padding: !isExpanded
@@ -2159,7 +2185,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           ),
                           if (MediaQuery.of(context).size.width > 500)
                             Padding(
-                              padding: const EdgeInsets.only(left: 16),
+                              padding: const EdgeInsets.only(left: 5),
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Expanded(
@@ -2258,7 +2284,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           elevation: 3,
                           borderRadius: BorderRadius.circular(10),
                           child: Container(
-                            height: 220,
+                            height: 245,
                             width: MediaQuery.of(context).size.width * .44,
                             decoration: BoxDecoration(
                               color:
@@ -2274,7 +2300,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                 children: [
                                   const SizedBox(height: 10),
 
-                                    Row(
+                                  Row(
+
                                     children: [
                                       const SizedBox(width: 15),
                                       Container(
@@ -2302,12 +2329,15 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           Row(
                                             children: [
                                               const SizedBox(width: 2),
-                                              Text(
-                                                '${snapshot.data!.data!.tenantData![index].tenantFirstName} ${snapshot.data!.data!.tenantData![index].tenantLastName}',
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                              Container(
+                                                width: 150,
+                                                child: Text(
+                                                  '${snapshot.data!.data!.tenantData![index].tenantFirstName} ${snapshot.data!.data!.tenantData![index].tenantLastName}',
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                                  ),
                                                 ),
                                               ),
                                             ],
@@ -2368,7 +2398,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           ],
                                                                                ),
                                        ),
-                                      const SizedBox(width: 15),
+
                                     ],
                                   ),
                                   const SizedBox(height: 15),
@@ -2463,7 +2493,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           elevation: 3,
                           borderRadius: BorderRadius.circular(10),
                           child: Container(
-                            height: 205,
+                            //height: 240,
                             //  width: MediaQuery.of(context).size.width * .44,
                             decoration: BoxDecoration(
                               color:
@@ -2509,7 +2539,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               Text(
                                                 '${snapshot.data!.data!.tenantData![index].tenantFirstName} ${snapshot.data!.data!.tenantData![index].tenantLastName}',
                                                 style: const TextStyle(
-                                                  fontSize: 14,
+                                                  fontSize: 16,
                                                   fontWeight: FontWeight.bold,
                                                   color: Color.fromRGBO(21, 43, 81, 1),
                                                 ),
@@ -2520,13 +2550,25 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           Row(
                                             children: [
                                               const SizedBox(width: 2),
-                                              Text(
-                                                snapshot.data!.data!.rentalAddress!,
-                                                style: const TextStyle(
-                                                  fontSize: 11,
-                                                  color: Color(0xFF8A95A8),
+                                              SizedBox(
+                                                width: MediaQuery.of(context).size.width > 500 ? 200: 180,
+                                                child: Text(
+                                                  '${snapshot.data!.data!.rentalAddress!}',
+                                                  maxLines: 3, // Set maximum number of lines
+                                                  overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
+                                                  style: TextStyle(
+                                                    fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 18,
+                                                    color: blueColor,
+                                                  ),
                                                 ),
                                               ),
+                                              // Text(
+                                              //   snapshot.data!.data!.rentalAddress!,
+                                              //   style: const TextStyle(
+                                              //     fontSize: 15,
+                                              //     color: Color(0xFF8A95A8),
+                                              //   ),
+                                              // ),
                                             ],
                                           ),
                                         ],
@@ -2603,7 +2645,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       Text(
                                         '${snapshot.data!.data!.startDate} to',
                                         style: const TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 15,
                                           color: Color.fromRGBO(21, 43, 81, 1),
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -2616,7 +2658,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       Text(
                                         '${snapshot.data!.data!.endDate}',
                                         style: const TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 15,
                                           color: Color.fromRGBO(21, 43, 81, 1),
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -2636,7 +2678,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       Text(
                                         '${snapshot.data!.data!.tenantData![index].tenantPhoneNumber}',
                                         style: const TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 15,
                                           color: Color.fromRGBO(21, 43, 81, 1),
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -2656,7 +2698,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       Text(
                                         '${snapshot.data!.data!.tenantData![index].tenantEmail}',
                                         style: const TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 15,
                                           color: Color.fromRGBO(21, 43, 81, 1),
                                           fontWeight: FontWeight.w500,
                                         ),

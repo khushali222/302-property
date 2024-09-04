@@ -15,6 +15,7 @@ import 'package:three_zero_two_property/TenantsModule/screen/work_order/workorde
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../constant/constant.dart';
 
+import '../../../widgets/CustomTableShimmer.dart';
 import '../../model/tenant_financial.dart';
 import '../../model/tenant_property.dart';
 
@@ -102,7 +103,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
             ),*/
 
             Expanded(
-              flex: 3,
+              flex: 4,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -155,7 +156,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -910,17 +911,27 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                   future: futureworkorder,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                          child: SpinKitFadingCircle(
-                            color: Colors.black,
-                            size: 40.0,
-                          ));
+                      return Container(
+                        margin: const EdgeInsets.only(top: 20.0),
+                        child: ColabShimmerLoadingWidget(),
+                      );
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return Container(
-                          height: 60,
-                          child: Center(child: Text('No data available')));
+                        height: MediaQuery.of(context).size.height * .5,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
+                              SizedBox(height: 10,),
+                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                            ],
+                          ),
+                        ),
+                      );
                     } else {
                       var data = snapshot.data!;
                       if (selectedValue == null && searchvalue!.isEmpty) {
@@ -1045,7 +1056,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  flex: 3,
+                                                  flex: 4,
                                                   child: InkWell(
                                                     onTap: (){
                                                       setState(() {
@@ -1078,7 +1089,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                         .width *
                                                         .04),
                                                 Expanded(
-                                                  flex: 2,
+                                                  flex: 3,
                                                   child: Text(
                                                     '${workorder.rentalAddress}',
                                                     style: TextStyle(
@@ -1393,7 +1404,20 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No data available'));
+                   return Container(
+                        height: MediaQuery.of(context).size.height * .5,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
+                              SizedBox(height: 10,),
+                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                            ],
+                          ),
+                        ),
+                      );
                   } else {
                     _tableData = snapshot.data!;
                     if (selectedValue == null && searchvalue.isEmpty) {

@@ -4544,11 +4544,22 @@ class _MakePaymentState extends State<MakePayment> {
                                       shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8.0))),
                                   onPressed: () async {
+
                                     SharedPreferences prefs =
                                     await SharedPreferences.getInstance();
                                     String? id = prefs.getString('adminId');
                                     if (_formKey.currentState!.validate()  &&
                                         validationMessage == null) {
+                                      rows = rows.asMap().map((index, entry) {
+                                        return MapEntry(
+                                          index,
+                                          {
+                                            ...entry,
+                                            'date': reverseFormatDate(_startDate.text), // Set the date to the desired date
+                                            'balance': charges_balances[index], // Add balance from charges_balances list
+                                          },
+                                        );
+                                      }).values.toList();
                                       setState(() {
                                         _isLoading = true;
                                       });

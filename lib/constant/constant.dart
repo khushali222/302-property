@@ -10,7 +10,7 @@ String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
 //String Api_url = "http://192.168.1.19:4000";
 //String Api_url = "http://192.168.1.15:4000";
 //String Api_url = "http://192.168.1.14:4000q";
-//String Api_url = "http://192.168.1.12:4000";
+//String Api_url = "http://192.168.1.33:4000";
 //String Api_url = "http://192.168.38.213:4000"
 
 
@@ -132,5 +132,9 @@ String getDisplayValue(String? value) {
   // Return 'N/A' if the value is null or empty, otherwise return the value
   return (value == null || value.trim().isEmpty) ? 'N/A' : value;
 }
+//Color grey = Color.fromRGBO(21, 43, 83, .5);
+
+
+
 //Color grey = Color.fromRGBO(21, 43, 83, .5);
 

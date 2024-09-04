@@ -424,7 +424,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
   String formatDate(String dateStr) {
     try {
       final date = DateTime.parse(dateStr);
-      final formatter = DateFormat('dd/MM/yy');
+      final formatter = DateFormat('dd-MM-yyyy');
       return formatter.format(date);
     } catch (e) {
       return dateStr; // If the date is not valid, return the original string
@@ -707,7 +707,20 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(child: Text('No data available'));
+                     return Container(
+                        height: MediaQuery.of(context).size.height * .5,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
+                              SizedBox(height: 10,),
+                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                            ],
+                          ),
+                        ),
+                      );
                     }
 
                     var data = snapshot.data!;
@@ -914,7 +927,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                               ),
                                               Expanded(
                                                 child: Text(
-                                                  '   ${workOrder.date!.isEmpty ? '-- - - -- ----' : workOrder.date} ',
+                                                  '   ${workOrder.date!.isEmpty ? '-- - - -- ----' : formatDate(workOrder.date!)} ',
                                                   style: TextStyle(
                                                     color: blueColor,
                                                     fontWeight: FontWeight.bold,
@@ -1010,7 +1023,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                                               children: [
                                                                 TextSpan(
                                                                   text:
-                                                                      'Description ',
+                                                                      'Description : ',
                                                                   style: TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
@@ -1018,15 +1031,26 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                                                       color:
                                                                           blueColor), // Bold and black
                                                                 ),
+                                                                if(workOrder.workPerformed !="")
                                                                 TextSpan(
                                                                   text:
-                                                                      '${workOrder.workPerformed}',
+                                                                      '${workOrder.workPerformed??"N/A"}',
                                                                   style: TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .w700,
                                                                       color: grey), // Light and grey
                                                                 ),
+                                                                if(workOrder.workPerformed =="")
+                                                                  TextSpan(
+                                                                    text:
+                                                                    'N/A',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                        color: grey), // Light and grey
+                                                                  ),
                                                               ],
                                                             ),
                                                           ),
@@ -1037,7 +1061,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                                             TextSpan(
                                                               children: [
                                                                 TextSpan(
-                                                                  text: 'Note',
+                                                                  text: 'Note : ',
                                                                   style: TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
@@ -1045,9 +1069,20 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                                                       color:
                                                                           blueColor), // Bold and black
                                                                 ),
+                                                                if(workOrder.vendorNotes =="")
+                                                                  TextSpan(
+                                                                    text:
+                                                                    'N/A',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                        color: grey), // Light and grey
+                                                                  ),
+                                                                if(workOrder.vendorNotes !="")
                                                                 TextSpan(
                                                                   text:
-                                                                      '${workOrder.vendorNotes}',
+                                                                      '${workOrder.vendorNotes ?? "N/A"}',
                                                                   style: TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
@@ -1269,7 +1304,20 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No data available'));
+                   return Container(
+                        height: MediaQuery.of(context).size.height * .5,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
+                              SizedBox(height: 10,),
+                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                            ],
+                          ),
+                        ),
+                      );
                   }
 
                   var data = snapshot.data!;

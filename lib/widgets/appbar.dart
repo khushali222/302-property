@@ -12,6 +12,7 @@ import 'package:three_zero_two_property/screens/Plans/plan_screen.dart';
 import 'package:three_zero_two_property/screens/Profile/Settings_screen.dart';
 
 import '../constant/constant.dart';
+import '../screens/notifications/notifications.dart';
 
 class widget_302 {
   static App_Bar({
@@ -32,6 +33,7 @@ class widget_302 {
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
       titleSpacing:00,
+
       toolbarHeight: MediaQuery.of(context).size.width < 500 ? 60 : 80, // Adjust height for tablet
       title: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
@@ -90,10 +92,16 @@ class widget_302 {
         const SizedBox(
           width: 10,
         ),
-        Icon(
-          Icons.notifications_outlined,
-          size:  MediaQuery.of(context).size.width > 500 ?35 :25,
-          color: Color.fromRGBO(21, 43, 81, 1),
+        InkWell(
+          onTap: (){
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const notifications()));
+          },
+          child: Icon(
+            Icons.notifications_outlined,
+            size:  MediaQuery.of(context).size.width > 500 ?35 :25,
+            color: Color.fromRGBO(21, 43, 81, 1),
+          ),
         ),
         const SizedBox(
           width: 10,

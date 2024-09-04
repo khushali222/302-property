@@ -3,24 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:cupertino_icons/cupertino_icons.dart';
+import 'package:three_zero_two_property/constant/constant.dart';
 
-import '../../constant/constant.dart';
-import '../model/staffpermission.dart';
-import '../repository/staffpermission_provider.dart';
 import 'drawer_tiles.dart';
 
 
 class CustomDrawer extends StatefulWidget {
   final String currentpage;
-  bool? dropdown;
-  CustomDrawer({required this.currentpage,this.dropdown});
+  final bool dropdown;
+
+  CustomDrawer({required this.currentpage,required this.dropdown});
 
   @override
   _CustomDrawerState createState() => _CustomDrawerState();
 }
 
 class _CustomDrawerState extends State<CustomDrawer> {
-  StaffPermission? permissions;
+
   bool isLoading = true;
 
   @override
@@ -41,8 +41,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
       return Center(child: Text('Failed to load permissions'));
     }
 */
-    final permissionProvider = Provider.of<StaffPermissionProvider>(context);
-    StaffPermission? permissions = permissionProvider.permissions;
+
     return ClipRRect(
       borderRadius: const BorderRadius.only(
         topRight: Radius.circular(80),
@@ -54,106 +53,214 @@ class _CustomDrawerState extends State<CustomDrawer> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const SizedBox(height: 70),
+              const SizedBox(height: 80),
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Image.asset("assets/images/logo.png"),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 40),
               buildListTile(
                 context,
-                Icon(
-                  CupertinoIcons.circle_grid_3x3,
-                  color:  widget.currentpage == "Dashboard" ?Colors.white:blueColor,
+                widget.currentpage == "Dashboard"
+                    ? SvgPicture.asset(
+                  "assets/images/tenants/dashboard1.svg",
+                  fit: BoxFit.cover,
+                  height: 20,
+                  width: 20,
+                )
+                    : SvgPicture.asset(
+                  "assets/images/tenants/dashboard.svg",
+                  fit: BoxFit.cover,
+                  height: 20,
+                  width: 20,
                 ),
                 "Dashboard",
-                widget.currentpage == "Dashboard",),
+                widget.currentpage == "Dashboard",
+              ),
               buildListTile(
                 context,
-                Icon(
-                  CupertinoIcons.person,
-                  color:widget.currentpage == "Profile" ?Colors.white:blueColor,
+                FaIcon(
+                  FontAwesomeIcons.house,
+                  size: 20,
+                  color: widget.currentpage == "Add Property Type"
+                      ? Colors.white
+                      : blueColor,
                 ),
-                "Profile",
-                widget.currentpage == "Profile",),
-              /* if(permissions!.propertyView!)
-                buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.home,
-                    color: widget.currentpage == "Add Property Type" ?Colors.white:blueColor,
-                  ),
-                  "Add Property Type",
-                  widget.currentpage == "Add Property Type",),*/
-              if(permissions!.propertyView!)
-                buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.building_2_fill,
-                    color: widget.currentpage == "Properties" ?Colors.white:blueColor,
-                  ),
-                  "Properties",
-                  widget.currentpage == "Properties",),
-              if(permissions!.propertyView!)
-                buildListTile(
-                  context,
-                  Icon(
-                    CupertinoIcons.person_2,
-                    color: widget.currentpage == "RentalOwner" ?Colors.white:blueColor,
-                  ),
-                  "Rental Owner",
-                  widget.currentpage == "RentalOwner",),
-              if(permissions!.tenantView!)
-                buildListTile(
-                  context,
-                  Icon(
-                    Icons.lock_person_outlined,
-                    color: widget.currentpage == "Tenants" ?Colors.white:blueColor,
-                  ),
-                  "Tenants",
-                  widget.currentpage == "Tenants",),
-              if(permissions!.leaseView!)
-                buildListTile(
-                  context,
-                  Icon(
-                    Icons.wallet,
-                    color: widget.currentpage == "Rent Roll" ?Colors.white:blueColor,
-                  ),
-                  "Rent Roll",
-                  widget.currentpage == "Rent Roll",),
-              /* if(permissions!.leaseView!)
-                buildListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.addressCard,
-                    color: widget.currentpage == "Applicants" ?Colors.white:blueColor,
-                  ),
-                  "Applicants",
-                  widget.currentpage == "Applicants",),
-              if(permissions!.workorderView!)
-                buildListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.circleUser,
-                    color: widget.currentpage == "Vendor" ?Colors.white:blueColor,
-                  ),
-                  "Vendor",
-                  widget.currentpage == "Vendor",),
-
-              if(permissions!.workorderView!)
+                "Property Type",
+                widget.currentpage == "Add Property Type",
+              ),
+              /*buildListTile(
+                context,
+                FaIcon(
+                  FontAwesomeIcons.userClock,
+                  size: 20,
+                  color: widget.currentpage == "Add Staff Member"
+                      ? Colors.white
+                      : blueColor,
+                ),
+                "Staff Member",
+                widget.currentpage == "Add Staff Member",
+              ),*/
+              buildDropdownListTile(
+                context,
+                FaIcon(
+                  FontAwesomeIcons.key,
+                  size: 20,
+                  color: blueColor,
+                ),
+                "Rental",
+                ["Properties", "RentalOwner", "Tenants"],
+                [
+                  FaIcon(FontAwesomeIcons.buildingUser, size: 20, color: widget.currentpage == "Properties"
+                      ? Colors.white
+                      : blueColor,), // Icon for Properties
+                  FaIcon(FontAwesomeIcons.houseChimneyUser, size: 20,  color: widget.currentpage == "RentalOwner"
+                      ? Colors.white
+                      : blueColor,), // Icon for RentalOwner
+                  FaIcon(FontAwesomeIcons.users, size: 20,  color: widget.currentpage == "Tenants"
+                      ? Colors.white
+                      : blueColor,), // Icon for Tenants
+                ],
+                selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
+              ),
+              buildDropdownListTile(
+                context,
+                FaIcon(
+                  FontAwesomeIcons.thumbsUp,
+                  size: 20,
+                  color: blueColor,
+                ),
+                "Leasing",
+                ["Rent Roll", "Applicants"],
+                [
+                  FaIcon(FontAwesomeIcons.wallet, size: 20,  color: widget.currentpage == "Rent Roll"
+                      ? Colors.white
+                      : blueColor,), // Icon for Properties
+                  FaIcon(FontAwesomeIcons.addressCard, size: 20,  color: widget.currentpage == "Applicants"
+                      ? Colors.white
+                      : blueColor,), // Icon for RentalOwner
+                  //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
+                ],
+                selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
+              ),
+              buildDropdownListTile(
+                context,
+                FaIcon(FontAwesomeIcons.screwdriverWrench, size: 20,  color:  blueColor,),
+                "Maintenance",
+                ["Vendor", "Work Order"],
+                [
+                  FaIcon(FontAwesomeIcons.solidCircleUser, size: 20,  color: widget.currentpage == "Vendor"
+                      ? Colors.white
+                      : blueColor,), // Icon for Properties
+                  FaIcon(FontAwesomeIcons.bookBookmark, size: 20, color: widget.currentpage == "Work Order"
+                      ? Colors.white
+                      : blueColor,), // Icon for RentalOwner
+                  //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
+                ],
+                selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
+              ),
               buildListTile(
-                  context,
-                   Icon(
-                    CupertinoIcons.square_list,
-                    color: widget.currentpage == "Work Order" ?Colors.white:blueColor,
-                  ),
-                  "Work Order",
-                widget.currentpage == "Work Order",),
-*/
+                context,
+                FaIcon(
+                  FontAwesomeIcons.folderOpen,
+                  color: widget.currentpage == "Reports"
+                      ? Colors.white
+                      : blueColor,
+                ),
+                "Reports",
+                widget.currentpage == "Reports",
+              ),
             ],
           ),
         ),
       ),
     );
+
+    /*return Drawer(
+      backgroundColor: Colors.white,
+      surfaceTintColor: Colors.white,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 40),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Image.asset("assets/images/logo.png"),
+            ),
+            const SizedBox(height: 40),
+            buildListTile(
+              context,
+              SvgPicture.asset(
+                "assets/images/tenants/dashboard.svg",
+                fit: BoxFit.cover,
+                height: 20,
+                width: 20,
+              ),
+              "Dashboard",
+              widget.currentpage == "Dashboard",
+            ),
+            buildListTile(
+              context,
+              SvgPicture.asset(
+                "assets/images/tenants/Admin.svg",
+                fit: BoxFit.cover,
+                height: 20,
+                width: 20,
+              ),
+              "Profile",
+              widget.currentpage == "Profile",
+            ),
+
+              buildListTile(
+                context,
+                SvgPicture.asset(
+                  "assets/images/tenants/Property.svg",
+                  fit: BoxFit.cover,
+                  height: 20,
+                  width: 20,
+                ),
+                "Properties",
+                widget.currentpage == "Properties",
+              ),
+
+              buildListTile(
+                context,
+                SvgPicture.asset(
+                  "assets/images/tenants/Financial.svg",
+                  fit: BoxFit.cover,
+                  height: 20,
+                  width: 20,
+                ),
+                "Financial",
+                widget.currentpage == "Financial",
+              ),
+
+              buildListTile(
+                context,
+                SvgPicture.asset(
+                  "assets/images/tenants/Work.svg",
+                  fit: BoxFit.cover,
+                  height: 20,
+                  width: 20,
+                ),
+                "Work Order",
+                widget.currentpage == "Work Order",
+              ),
+
+              buildListTile(
+                context,
+                SvgPicture.asset(
+                  "assets/images/tenants/tenantdoc1.svg",
+                  fit: BoxFit.cover,
+                  height: 20,
+                  width: 20,
+                ),
+                "Documents",
+                widget.currentpage == "Documents",
+              ),
+          ],
+        ),
+      ),
+    );*/
   }
 }

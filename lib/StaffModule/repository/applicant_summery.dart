@@ -12,7 +12,8 @@ class ApplicantSummeryRepository {
 
   static Future<applicant_summery_details> getApplicantSummary(String applicantId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  id = prefs.getString('adminId');
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     final url = Uri.parse('$Api_url/api/applicant/applicant_summary/$applicantId');

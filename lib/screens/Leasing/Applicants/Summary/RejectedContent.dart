@@ -50,7 +50,7 @@ class _RejectedContentState extends State<RejectedContent> {
     return Scaffold(
       body: isLoading
           ? const Center(
-              child: SpinKitFadingCircle(
+              child: SpinKitSpinningLines(
               color: Colors.black,
               size: 40.0,
             ))

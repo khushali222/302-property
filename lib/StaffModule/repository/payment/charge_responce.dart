@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
-import '../../model/payments/fetch_payment_table.dart';
+import '../../../model/payments/fetch_payment_table.dart';
 import 'package:http/http.dart'as http;
 class ChargeRepositorys {
 
@@ -29,8 +29,8 @@ class ChargeRepositorys {
   Future<List<Entrycharge>?> fetchChargesTable(String leaseId, String tenantId) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      String?  id = prefs.getString('staff_id');
-      String?  admin_id = prefs.getString('adminId');
+      String? adminid = prefs.getString("adminId");
+      String? id = prefs.getString("staff_id");
       String? token = prefs.getString('token');
       print(tenantId);
 

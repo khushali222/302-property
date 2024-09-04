@@ -125,9 +125,9 @@ class _PlanPurchaseCardState extends State<PlanPurchaseCard> {
           future: _futureCard,
           builder: (context, snapshot) {
             if (isLoading) {
-              return const Center(
-                child: SpinKitFadingCircle(
-                  color: Colors.black,
+              return  Center(
+                child: SpinKitSpinningLines(
+                  color: blueColor,
                   size: 40.0,
                 ),
               );

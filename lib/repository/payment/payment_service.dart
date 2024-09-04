@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/model/lease.dart';
@@ -49,7 +50,7 @@ class PaymentService {
         'address1': address1,
         'processor_id': processorId,
       };
-      print(paymentDetails);
+      log(paymentDetails.toString());
       final response = await http.post(
         Uri.parse(baseUrl),
         headers: {
@@ -131,7 +132,8 @@ class PaymentService {
         'customer_vault_id': customerVaultId,
         'billing_id': billingId,
         'entry': entries,
-        'total_amount': totalAmount,
+        'total_amount': (double.parse(totalAmount) -double.parse(surcharge)).toString(),
+        'surcharge':surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,
@@ -274,6 +276,8 @@ class PaymentService {
 
         'entry': entries,
         'total_amount': totalAmount,
+        //'total_amount': (double.parse(totalAmount) -double.parse(surcharge)).toString(),
+        'surcharge':surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,

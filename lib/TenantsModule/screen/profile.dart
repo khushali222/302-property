@@ -106,8 +106,8 @@ class _Profile_screenState extends State<Profile_screen> {
       drawer:  CustomDrawer(currentpage: 'Profile',),
       body: _isLoading
           ? Center(
-        child: SpinKitFadingCircle(
-          color: Colors.black,
+        child: SpinKitSpinningLines(
+          color:blueColor,
           size: 50.0,
         ),
       )

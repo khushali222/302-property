@@ -374,13 +374,14 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
   }
 
   final _scrollController = ScrollController();
-  void handleTap(RentalOwnerSummey rentalownersummery) async {
+  void handleTap(RentalOwnerData rental) async {
     // Handle edit action
-    print('Edit ${rentalownersummery.rentalownerId}');
+    print('Edit ${rental.rentalownerId}');
     final result = await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => ResponsiveRentalSummary(
+                  rentalowners: rental,
                   rentalOwnersid: '',
                 )));
     /* if (result == true) {
@@ -567,78 +568,90 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
             //   ),
             // ),
 
-            SizedBox(height: 10),
-          Padding(
-            padding: EdgeInsets.only(left: 19, right: 13),
-            child: Row(
-              children: [
-                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 2),
-                if (MediaQuery.of(context).size.width > 500) SizedBox(width: 19),
-                Material(
-                  elevation: 3,
-                  borderRadius: BorderRadius.circular(2),
-                  child: Container(
-                    height: (MediaQuery.of(context).size.width < 500) ? 40 : 50,
-                    width: MediaQuery.of(context).size.width < 500
-                        ? MediaQuery.of(context).size.width * .45 // Slightly reduced width for search field
-                        : MediaQuery.of(context).size.width * .40,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(2),
-                      border: Border.all(color: Color(0xFF8A95A8)),
-                    ),
-                    child: TextField(
-                      style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.width < 500 ? 12 : 14,
+            Padding(
+              padding: EdgeInsets.only(left: 11, right: 11),
+              child: Row(
+                children: [
+                  if (MediaQuery.of(context).size.width < 500)
+                    SizedBox(width: 2),
+                  if (MediaQuery.of(context).size.width > 500)
+                    SizedBox(width: 19),
+                  Material(
+                    elevation: 3,
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      height:
+                          (MediaQuery.of(context).size.width < 500) ? 45 : 50,
+                      width: MediaQuery.of(context).size.width < 500
+                          ? MediaQuery.of(context).size.width * .52
+                          : MediaQuery.of(context).size.width * .49,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Color(0xFF8A95A8)),
                       ),
-                      onChanged: (value) {
-                        setState(() {
-                          searchValue = value;
-                        });
-                      },
-                      cursorColor: Colors.blue,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Search here...",
-                        hintStyle: TextStyle(
-                          color: Color(0xFF8A95A8),
-                          fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                      child: TextField(
+                        style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width < 500
+                                ? 12
+                                : 14),
+                        onChanged: (value) {
+                          setState(() {
+                            searchValue = value;
+                          });
+                        },
+                        cursorColor: Colors.blue,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Search here...",
+                          hintStyle: TextStyle(
+                              color: Color(0xFF8A95A8),
+                              fontSize: MediaQuery.of(context).size.width < 500
+                                  ? 14
+                                  : 18),
+                          contentPadding:
+                              (EdgeInsets.only(left: 8, bottom: 13, top: 5)),
                         ),
-                        contentPadding: EdgeInsets.only(left: 8, bottom: 13, top: 7),
                       ),
                     ),
                   ),
-                ),
-                Spacer(),
-                Wrap(
-                  spacing: 8, // Space between items horizontally
-                  runSpacing: 4, // Space between items vertically
-                  children: [
-                    Text(
-                      'Added: ${rentalownerCount.toString()}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF8A95A8),
-                        fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                  Spacer(),
+                  Row(
+                    children: [
+                      Text(
+                        'Added : ${rentalownerCount.toString()}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF8A95A8),
+                          fontSize:
+                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                        ),
                       ),
-                    ),
-                    Text(
-                      'Total: ${rentalOwnerCountLimit.toString()}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF8A95A8),
-                        fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                      SizedBox(
+                        width: 5,
                       ),
-                    ),
-                  ],
-                ),
-                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 10),
-                if (MediaQuery.of(context).size.width > 500) SizedBox(width: 25),
-              ],
-            ),
-          ),
+                      //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
+                      Text(
+                        'Total: ${rentalOwnerCountLimit.toString()}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF8A95A8),
+                          fontSize:
+                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                        ),
+                      ),
+                    ],
+                  ),
 
-          if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
+
+                  if (MediaQuery.of(context).size.width < 500)
+                    SizedBox(width: 5),
+                  if (MediaQuery.of(context).size.width > 500)
+                    SizedBox(width: 25),
+                ],
+              ),
+            ),
+            if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
             if (MediaQuery.of(context).size.width < 500)
               Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -650,7 +663,20 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(child: Text('No data available'));
+                     return Container(
+                        height: MediaQuery.of(context).size.height * .5,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
+                              SizedBox(height: 10,),
+                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                            ],
+                          ),
+                        ),
+                      );
                     } else {
                       var data = snapshot.data!;
                       if (searchValue == null || searchValue!.isEmpty) {
@@ -678,7 +704,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            SizedBox(height: 20),
+                            SizedBox(height: 10),
                             _buildHeaders(),
                             SizedBox(height: 20),
                             Container(
@@ -1033,7 +1059,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                                         ResponsiveRentalSummary(
                                                                           rentalOwnersid:
                                                                           rentals
-                                                                              .rentalownerId!,
+                                                                              .rentalownerId!,rentalowners:rentals ,
                                                                         )));
 
                                                           },
@@ -1192,7 +1218,20 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No data available'));
+                   return Container(
+                        height: MediaQuery.of(context).size.height * .5,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
+                              SizedBox(height: 10,),
+                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                            ],
+                          ),
+                        ),
+                      );
                   } else {
                     List<RentalOwnerData>? filteredData = [];
                     _tableData = snapshot.data!;

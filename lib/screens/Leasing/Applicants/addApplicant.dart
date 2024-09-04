@@ -329,7 +329,7 @@ class _AddApplicantState extends State<AddApplicant> {
                         ),
                         _isLoading
                             ? const Center(
-                                child: SpinKitFadingCircle(
+                                child: SpinKitSpinningLines(
                                   color: Colors.black,
                                   size: 50.0,
                                 ),

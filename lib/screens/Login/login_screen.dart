@@ -147,7 +147,7 @@ class _Login_ScreenState extends State<Login_Screen> {
 
   @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).size.height);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(

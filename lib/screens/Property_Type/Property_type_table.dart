@@ -648,6 +648,13 @@ class _PropertyTableState extends State<PropertyTable> {
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(21, 43, 81, 1),
                         borderRadius: BorderRadius.circular(5),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey,
+                            offset: Offset(0.0, 4.0),
+                            blurRadius: 6.0,
+                          ),
+                        ],
                       ),
                       child: Center(
                         child: Row(
@@ -677,30 +684,28 @@ class _PropertyTableState extends State<PropertyTable> {
               ),
             ),
             SizedBox(height: 10),
-
-            SizedBox(height: 10),
             //search
             Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
+              padding: const EdgeInsets.only(left: 11, right: 11),
               child: Row(
                 children: [
                   if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 5),
+                    SizedBox(width: 1),
                   if (MediaQuery.of(context).size.width > 500)
                     SizedBox(width: 24),
                   Material(
-                    elevation: 3,
-                    borderRadius: BorderRadius.circular(2),
+                    elevation: 2,
+                    borderRadius: BorderRadius.circular(8),
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       // height: 40,
-                      height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                      height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
                       width: MediaQuery.of(context).size.width < 500
                           ? MediaQuery.of(context).size.width * .52
                           : MediaQuery.of(context).size.width * .49,
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(2),
+                          borderRadius: BorderRadius.circular(8),
                           // border: Border.all(color: Colors.grey),
                           border: Border.all(color: Color(0xFF8A95A8))),
                       child: Stack(
@@ -736,17 +741,18 @@ class _PropertyTableState extends State<PropertyTable> {
                                     color: Color(0xFF8A95A8),
                                   ),
                                   contentPadding: EdgeInsets.only(
-                                      left: 5, bottom: 12, top: 8)),
+                                      left: 5, bottom: 12, top: 5)),
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                  SizedBox(width: 15),
+                  SizedBox(width: 10),
                   DropdownButtonHideUnderline(
                     child: Material(
                       elevation: 3,
+                      borderRadius: BorderRadius.circular(8),
                       child: DropdownButton2<String>(
                         isExpanded: true,
                         hint: const Row(
@@ -789,14 +795,14 @@ class _PropertyTableState extends State<PropertyTable> {
                         },
                         buttonStyleData: ButtonStyleData(
                           height:
-                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                              MediaQuery.of(context).size.width < 500 ? 45 : 50,
                           // width: 180,
                           width: MediaQuery.of(context).size.width < 500
-                              ? MediaQuery.of(context).size.width * .35
+                              ? MediaQuery.of(context).size.width * .39
                               : MediaQuery.of(context).size.width * .4,
                           padding: const EdgeInsets.only(left: 14, right: 14),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(2),
+                            borderRadius: BorderRadius.circular(8),
                             border: Border.all(
                               // color: Colors.black26,
                               color: Color(0xFF8A95A8),
@@ -841,7 +847,20 @@ class _PropertyTableState extends State<PropertyTable> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(child: Text('No data available'));
+                     return Container(
+                        height: MediaQuery.of(context).size.height * .5,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
+                              SizedBox(height: 10,),
+                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                            ],
+                          ),
+                        ),
+                      );
                     } else {
                       var data = snapshot.data!;
                       if (selectedValue == null && searchvalue!.isEmpty) {
@@ -873,7 +892,7 @@ class _PropertyTableState extends State<PropertyTable> {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            SizedBox(height: 20),
+                            SizedBox(height: 10),
                             _buildHeaders(),
                             SizedBox(height: 20),
                             Container(
@@ -1427,7 +1446,20 @@ class _PropertyTableState extends State<PropertyTable> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No data available'));
+                   return Container(
+                        height: MediaQuery.of(context).size.height * .5,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
+                              SizedBox(height: 10,),
+                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                            ],
+                          ),
+                        ),
+                      );
                   } else {
                     _tableData = snapshot.data!;
                     if (selectedValue == null && searchvalue.isEmpty) {

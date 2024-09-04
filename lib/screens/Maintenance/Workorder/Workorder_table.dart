@@ -221,7 +221,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                 },
                 child: Row(
                   children: [
-                    const Text("   Billable ",
+                    const Text("      Billable ",
                         style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
                     /*ascending3
@@ -638,7 +638,7 @@ class _Workorder_tableState extends State<Workorder_table> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-
+            SizedBox(height: 20),
             //add Data
             Padding(
               padding: const EdgeInsets.only(left: 0, right: 0),
@@ -706,30 +706,28 @@ class _Workorder_tableState extends State<Workorder_table> {
               ),
             ),
             const SizedBox(height: 10),
-
-            const SizedBox(height: 10),
             //search
             Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
+              padding: const EdgeInsets.only(left: 11, right: 11),
               child: Row(
                 children: [
                   if (MediaQuery.of(context).size.width < 500)
-                    const SizedBox(width: 5),
+                    const SizedBox(width: 2),
                   if (MediaQuery.of(context).size.width > 500)
                     const SizedBox(width: 25),
                   Material(
                     elevation: 3,
-                    borderRadius: BorderRadius.circular(2),
+                    borderRadius: BorderRadius.circular(8),
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       // height: 40,
-                      height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                      height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
                       width: MediaQuery.of(context).size.width < 500
                           ? MediaQuery.of(context).size.width * .52
                           : MediaQuery.of(context).size.width * .49,
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(2),
+                          borderRadius: BorderRadius.circular(8),
                           // border: Border.all(color: Colors.grey),
                           border: Border.all(color: const Color(0xFF8A95A8))),
                       child: Stack(
@@ -765,7 +763,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                     color: const Color(0xFF8A95A8),
                                   ),
                                   contentPadding: const EdgeInsets.only(
-                                      left: 5, bottom: 10, top: 14)),
+                                      left: 5, bottom: 11, top: 5)),
                             ),
                           ),
                         ],
@@ -776,6 +774,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                   DropdownButtonHideUnderline(
                     child: Material(
                       elevation: 3,
+                      borderRadius: BorderRadius.circular(8),
                       child: DropdownButton2<String>(
                         isExpanded: true,
                         hint: const Row(
@@ -818,14 +817,14 @@ class _Workorder_tableState extends State<Workorder_table> {
                         },
                         buttonStyleData: ButtonStyleData(
                           height:
-                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                              MediaQuery.of(context).size.width < 500 ? 45 : 50,
                           // width: 180,
                           width: MediaQuery.of(context).size.width < 500
-                              ? MediaQuery.of(context).size.width * .35
+                              ? MediaQuery.of(context).size.width * .38
                               : MediaQuery.of(context).size.width * .4,
                           padding: const EdgeInsets.only(left: 14, right: 14),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(2),
+                            borderRadius: BorderRadius.circular(8),
                             border: Border.all(
                               // color: Colors.black26,
                               color: const Color(0xFF8A95A8),
@@ -856,7 +855,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                     ),
                   ),
                   if (MediaQuery.of(context).size.width < 500)
-                    const SizedBox(width: 5),
+                    const SizedBox(width: 2),
                   if (MediaQuery.of(context).size.width > 500)
                     const SizedBox(width: 28),
                 ],
@@ -868,7 +867,7 @@ class _Workorder_tableState extends State<Workorder_table> {
               const SizedBox(height: 20),
             //billable
             Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
+              padding: const EdgeInsets.only(left: 11, right: 11),
               child: Row(
                 children: [
                   if (MediaQuery.of(context).size.width < 500)
@@ -922,10 +921,22 @@ class _Workorder_tableState extends State<Workorder_table> {
                         color: Colors.black,
                         size: 40.0,
                       ));
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
+
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(child: Text('No data available'));
+                      return Container(
+                        height: MediaQuery.of(context).size.height * .5,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
+                              SizedBox(height: 10,),
+                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                            ],
+                          ),
+                        ),
+                      );
                     } else {
                       var data = snapshot.data!;
                       if (selectedValue == null && searchvalue!.isEmpty) {
@@ -933,8 +944,6 @@ class _Workorder_tableState extends State<Workorder_table> {
                       } else if (selectedValue == "All") {
                         data = snapshot.data!;
                       } else if (searchvalue!.isNotEmpty) {
-
-
                         data = snapshot.data!
                             .where((workorder) =>
                                 workorder.workOrderData!.workSubject!
@@ -963,7 +972,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 5),
                             _buildHeaders(),
                             const SizedBox(height: 20),
                             Container(

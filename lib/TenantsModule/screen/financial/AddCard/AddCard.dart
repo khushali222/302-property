@@ -16,6 +16,7 @@ import 'package:keyboard_actions/keyboard_actions_config.dart';
 import 'package:keyboard_actions/keyboard_actions_item.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Financial.dart';
 
 
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
@@ -148,6 +149,7 @@ class _AddCardState extends State<AddCard> {
       headers: {"id": "CRM $id", "authorization": "CRM $token"},
     );
 
+    print('$Api_url/api/creditcard/getCreditCards/$tenantId');
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
       customervaultid = jsonResponse['customer_vault_id'];
@@ -172,6 +174,7 @@ class _AddCardState extends State<AddCard> {
 
       if (customerData != null) {
         setState(() {
+          customervaultid = jsonResponse['customer_vault_id'];
           cardDetails = customerData.billing;
           messageCardAvailable = '';
         });
@@ -453,7 +456,7 @@ class _AddCardState extends State<AddCard> {
                       hintText: 'MM/YYYY',
                       controller: expirationDate,
                       label: "Enter Expiration Date",
-                      isexpirydate: true,
+                      //isexpirydate: true,
                       formatter: [
                         ExpiryDateInputFormatter()
                       ],
@@ -679,7 +682,9 @@ class _AddCardState extends State<AddCard> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0))),
                             onPressed: () async {
-                              if (_formKey.currentState?.validate() ?? false) {
+                              print(_formKey.currentState!.validate());
+                              if (_formKey.currentState!.validate() ) {
+                                print("calling");
                                 SharedPreferences prefs =
                                 await SharedPreferences.getInstance();
                                 String? id = prefs.getString("adminId");
@@ -776,8 +781,8 @@ class _AddCardState extends State<AddCard> {
                                     tenantId: selectedTenantId,
                                     billingId: randomNumber,
                                     customerVaultId:
-                                    cardResponses!.customerVaultId,
-                                    responseCode: cardResponses.responseCode,
+                                    cardResponses?.customerVaultId,
+                                    responseCode: cardResponses?.responseCode,
                                   );
                                   await addCardService
                                       .postAddCreditCard(addcards);
@@ -1159,14 +1164,17 @@ class CustomTextFieldState extends State<CustomTextField> {
                 return '';
               }
             } else if (widget.isexpirydate!) {
+              print('${widget.isexpirydate} is calling');
               final RegExp expDateRegExp =
               RegExp(r'^(0[1-9]|1[0-2])\/\d{4}$');
               if (!expDateRegExp.hasMatch(widget.controller!.text)) {
+                print('${widget.isexpirydate} is calling');
                 setState(() {
                   _errorMessage = 'Invalid expiration date format. Use MM/YYYY';
                 });
                 return '';
               } else {
+                print('${widget.isexpirydate} is calling');
                 final parts = widget.controller!.text.split('/');
                 final month = int.tryParse(parts[0]);
                 final year = int.tryParse(parts[1]);
@@ -1177,13 +1185,17 @@ class CustomTextFieldState extends State<CustomTextField> {
                 if (year == null || year < currentYear) {
                   _errorMessage = 'Invalid year. Use the current year or later';
                 }
+                print(_errorMessage);
                 setState(() {});
                 return '';
               }
             }
+            print(_errorMessage);
             return null;
           },
           builder: (FormFieldState<String> state) {
+           // print(state.hasError);
+          //  print(state.value);
             return Column(
               children: <Widget>[
                 Material(
@@ -1257,9 +1269,13 @@ class CustomTextFieldState extends State<CustomTextField> {
     );
     return shouldUseKeyboardActions
         ? SizedBox(
-      height: 60,
+      height:  widget.amount_check != null ?widget.amount_check! ?  75 :60:60,
       width: MediaQuery.of(context).size.width * .98,
       child: KeyboardActions(
+      //  autoScroll: false,
+        disableScroll: false,
+        enable: false,
+        // bottomAvoiderScrollPhysics: ScrollPhysics(),
         config: _buildConfig(context),
         child: textField,
       ),

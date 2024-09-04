@@ -490,8 +490,9 @@ class LeaseRepository {
         "id": "CRM $id",
       },
     );
-    print(response.body);
-    print(leaseId);
+    print('$Api_url/api/payment/charges_payments/$leaseId');
+   // print(response.body);
+   // print(leaseId);
     //print($id);
     if (response.statusCode == 200) {
       return LeaseLedger.fromJson(json.decode(response.body));

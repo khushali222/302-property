@@ -6,6 +6,7 @@ class LeaseLedger {
   LeaseLedger({this.data, this.totalBalance, this.message});
 
   LeaseLedger.fromJson(Map<String, dynamic> json) {
+    print(json);
     if (json['data'] != null) {
       data = [];
       json['data'].forEach((v) {
@@ -38,6 +39,7 @@ class Data {
   String? transactionid;
   List<Entry>? entry;
   double? totalAmount; // Adjusted to double
+  double? surcharge; // Adjusted to double
   bool? isLeaseAdded;
   String? type;
   List<dynamic>? uploadedFile;
@@ -67,6 +69,7 @@ class Data {
     this.iV,
     this.tenantData,
     this.balance,
+    this.surcharge
   });
 
   Data.fromJson(Map<String, dynamic> json) {
@@ -88,6 +91,8 @@ class Data {
     type = json['type'];
     uploadedFile = json['uploaded_file'] ?? [];
     createdAt = json['createdAt'];
+    surcharge = json['surcharge'] != null ? double.parse(json['surcharge'].toString()) : 0.0;
+
     updatedAt = json['updatedAt'];
     isDelete = json['is_delete'];
     iV = json['__v'];

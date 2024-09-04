@@ -134,7 +134,8 @@ class PaymentService {
         'customer_vault_id': customerVaultId,
         'billing_id': billingId,
         'entry': entries,
-        'total_amount': totalAmount,
+        'total_amount': (double.parse(totalAmount) -double.parse(surcharge)).toString(),
+        'surcharge':surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,
@@ -270,7 +271,7 @@ class PaymentService {
       },
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,
-        'admin_id': id,
+        'admin_id': adminId,
         'tenant_id': tenantId,
         'lease_id': leaseId,
         'payment_type': paymentType,
@@ -412,7 +413,7 @@ class PaymentService {
       },
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,
-        'admin_id': id,
+        'admin_id': adminId,
         'tenant_id': tenantId,
         'lease_id': leaseId,
         'payment_type': paymentType,

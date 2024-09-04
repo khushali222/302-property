@@ -484,7 +484,7 @@ class _AddCardState extends State<AddCard> {
                                             color: Colors.grey)),
                                     tenants.isEmpty
                                         ? const Center(
-                                      child: SpinKitFadingCircle(
+                                      child: SpinKitSpinningLines(
                                         color: Colors.black,
                                         size: 55.0,
                                       ),
@@ -1970,7 +1970,7 @@ class CustomTextFieldState extends State<CustomTextField> {
     );
     return shouldUseKeyboardActions
         ? SizedBox(
-      height: 60,
+      height:  widget.amount_check != null ?widget.amount_check! ?  75 :60:60,
       width: MediaQuery.of(context).size.width * .98,
       child: KeyboardActions(
         config: _buildConfig(context),

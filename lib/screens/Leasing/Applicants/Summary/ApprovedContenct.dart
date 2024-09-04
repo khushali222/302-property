@@ -7,6 +7,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:three_zero_two_property/Model/applicant_summery_model.dart';
 import 'package:three_zero_two_property/repository/applicant_summery_repo.dart';
 
+import '../../../../constant/constant.dart';
+
 class ApprovedContent extends StatefulWidget {
   final String applicantId;
   applicant_summery_details applicantDetail;
@@ -49,9 +51,9 @@ class _ApprovedContentState extends State<ApprovedContent> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: isLoading
-          ? const Center(
-              child: SpinKitFadingCircle(
-              color: Colors.black,
+          ?  Center(
+              child: SpinKitSpinningLines(
+              color: blueColor,
               size: 40.0,
             ))
           : applicantDetail != null

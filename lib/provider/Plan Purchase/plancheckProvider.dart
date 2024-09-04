@@ -16,7 +16,6 @@ class checkPlanPurchaseProiver extends ChangeNotifier {
   Future<void> fetchPlanPurchaseDetail() async {
     _isLoading = true;
     notifyListeners();
-
     _checkPlanPurchaseModel = await _service.fetchPlanPurchaseDetail();
 
     
