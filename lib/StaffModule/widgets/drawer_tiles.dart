@@ -15,6 +15,7 @@ import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.d
 
 
 import '../screen/dashboard.dart';
+import '../screen/profile.dart';
 
 
 
@@ -43,6 +44,10 @@ Widget buildListTile(
         } else if (title == "Reports" && active != true) {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => ReportsMainScreen()));
+        }
+        else if (title == "Profile") {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => Profile_screen()));
         }
       },
       leading: leadingIcon,
