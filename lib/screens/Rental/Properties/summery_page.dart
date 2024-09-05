@@ -3067,7 +3067,7 @@ class _Summery_pageState extends State<Summery_page>
                   children: [
                     const SizedBox(width: 2),
                     Text(
-                      formatDate2(tenant.updatedAt!),
+                      formatDate(tenant.updatedAt!),
                       style: TextStyle(
                         fontSize:
                         MediaQuery.of(context).size.width < 500 ? 15 : 17,

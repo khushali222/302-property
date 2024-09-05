@@ -6,7 +6,7 @@ import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:keyboard_actions/keyboard_actions_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
+import '../../../widgets/appbar.dart';
 
 import '../../../../Model/RentalOwnersData.dart';
 import '../../../model/rentalOwner.dart';

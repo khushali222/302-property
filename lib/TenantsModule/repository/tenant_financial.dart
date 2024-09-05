@@ -18,9 +18,9 @@ class TenantFinancialRepository {
       "authorization": "CRM $token",
       "Content-Type": "application/json"
     });
-    print('financial table${response.body}');
-    print(id);
-    print(response.body);
+  //  print('financial table${response.body}');
+  //  print(id);
+   // print(response.body);
     if (response.statusCode == 200) {
        List<dynamic> data = jsonDecode(response.body)['data'];
       return data.map((json) => Data.fromJson(json)).toList();

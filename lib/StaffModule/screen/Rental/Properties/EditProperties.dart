@@ -22,7 +22,7 @@ import 'package:three_zero_two_property/model/staffmember.dart';
 import 'package:three_zero_two_property/repository/rental_properties.dart';
 
 
-import 'package:three_zero_two_property/widgets/appbar.dart';
+
 
 import '../../../../Model/propertytype.dart';
 import '../../../../constant/constant.dart';
@@ -39,6 +39,7 @@ import 'package:http/http.dart' as http;
 
 
 import '../../../widgets/custom_drawer.dart';
+import '../../../widgets/appbar.dart';
 class Edit_properties extends StatefulWidget {
   propertytype? property;
   Staffmembers? staff;
@@ -236,6 +237,9 @@ class _Edit_propertiesState extends State<Edit_properties> {
       streetAddress: widget.properties.rentalOwnerData?.Address,
       postalCode: widget.properties.rentalOwnerData?.postalCode,
       country: widget.properties.rentalOwnerData?.country,
+        processorList:widget.properties.rentalOwnerData?.processorList?.map((item) {
+          return ProcessorList.fromJson(item as Map<String, dynamic>);
+        }).toList()
 
     );
     processor_id = widget.properties.processor_id;
@@ -273,11 +277,25 @@ class _Edit_propertiesState extends State<Edit_properties> {
         country.text = fetchedDetails.rentalCountry!;
         selectedProperty = fetchedDetails.propertyTypeData!.propertySubType;
         Ownersdetails = RentalOwner(
-          rentalOwnerId: fetchedDetails.rentalOwnerId,
-          rentalOwnerPhoneNumber:
-          fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber,
-          rentalOwnerName:
-          fetchedDetails.rentalOwnerData!.rentalOwnerName,
+            rentalOwnerId: fetchedDetails.rentalOwnerId,
+            rentalOwnerPhoneNumber:
+            fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber,
+            rentalOwnerName:
+            fetchedDetails.rentalOwnerData!.rentalOwnerName,
+
+            rentalOwnerHomeNumber: fetchedDetails.rentalOwnerData?.rentalOwnerHomeNumber,
+            rentalOwnerBusinessNumber: fetchedDetails.rentalOwnerData?.rentalOwnerBuisinessNumber,
+            rentalOwnerAlternateEmail: fetchedDetails.rentalOwnerData?.rentalOwnerAlternativeEmail,
+            rentalOwnerPrimaryEmail: fetchedDetails.rentalOwnerData?.rentalOwnerPrimaryEmail,
+            rentalOwnerCompanyName: fetchedDetails.rentalOwnerData?.rentalOwnerCompanyName,
+            city: fetchedDetails.rentalOwnerData?.city,
+            state: fetchedDetails.rentalOwnerData?.state,
+            streetAddress: fetchedDetails.rentalOwnerData?.Address,
+            postalCode: fetchedDetails.rentalOwnerData?.postalCode,
+            country: fetchedDetails.rentalOwnerData?.country,
+            processorList:fetchedDetails.rentalOwnerData?.processorList?.map((item) {
+              return ProcessorList.fromJson(item as Map<String, dynamic>);
+            }).toList()
         );
         firstname.text = fetchedDetails.rentalOwnerData!.rentalOwnerName!;
         comname.text = fetchedDetails.rentalOwnerData!.rentalOwnerCompanyName!;

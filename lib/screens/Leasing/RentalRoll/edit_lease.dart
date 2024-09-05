@@ -6440,8 +6440,8 @@ class _AddTenantState extends State<AddTenant> {
                       Provider.of<SelectedTenantsProvider>(context)
                           .selectedTenants
                           .where((test) =>
-                      test.tenantFirstName ==
-                          tenant.tenantFirstName)
+                      test.tenantId ==
+                          tenant.tenantId)
                           .toList();
                       print(matchingTenants);
                       final isSelected =
@@ -6488,12 +6488,14 @@ class _AddTenantState extends State<AddTenant> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
                         child: Container(
                           height: 30.0,
-                          width: 50,
+                          width: 80,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
                             color: Color.fromRGBO(21, 43, 81, 1),
@@ -6516,7 +6518,7 @@ class _AddTenantState extends State<AddTenant> {
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 10),
+                                  fontSize: 12),
                             ),
                           ),
                         ),
@@ -6532,9 +6534,10 @@ class _AddTenantState extends State<AddTenant> {
                         borderRadius: BorderRadius.circular(5.0),
                         child: Container(
                           height: 30.0,
-                          width: 50,
+                          width: 80,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
+                            border: Border.all(color: blueColor),
                             color: Colors.white,
                             boxShadow: [
                               BoxShadow(
@@ -6556,7 +6559,7 @@ class _AddTenantState extends State<AddTenant> {
                                   color:
                                   Color.fromRGBO(21, 43, 81, 1),
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 10),
+                                  fontSize: 12),
                             ),
                           ),
                         ),
@@ -7096,6 +7099,7 @@ class _AddTenantState extends State<AddTenant> {
             const SizedBox(
               height: 10,
             ),
+            if(isChecked ==false)
             ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {

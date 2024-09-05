@@ -24,7 +24,7 @@ import 'package:three_zero_two_property/model/properties.dart';
 
 
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
-import '../../../../widgets/appbar.dart';
+import '../../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
@@ -98,19 +98,7 @@ class _Edit_leaseState extends State<Edit_lease>
     // print();
 
     // print(fetchedDetails.re);
-    print(leaseId);
-    print('rental id ${fetchedDetails.rental.rentalId}');
-    print('property id ${fetchedDetails.rental.propertyId}');
-    print(
-        'Rent amount ${fetchedDetails.rentCharges!.first!.amount.toString()}');
-    print('Rent lease type ${fetchedDetails.lease.leaseType}');
-    print('Rent start ${fetchedDetails.lease.startDate}');
-    print('Rent end ${fetchedDetails.lease.endDate}');
-    print('Rent cycle ${fetchedDetails.rentCharges!.first!.rentCycle}');
-    print('Rent amt ${fetchedDetails.securityCharges!.first!.amount}');
-    print('Rent date ${fetchedDetails.rentCharges!.first!.date}');
-    print(
-        'Rent amount ${fetchedDetails.rentCharges!.first!.amount.toString()}');
+
 
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
@@ -4849,11 +4837,12 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     String? id = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     final response = await http
         .get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {
       "authorization": "CRM $token",
-      "id": "CRM $id",
+      "id": "CRM $staffid",
     });
     print(response.body);
     if (response.statusCode == 200) {
@@ -5444,12 +5433,13 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
       };
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString('adminId');
+      String? staffid = prefs.getString("staff_id");
       String? token = prefs.getString('token');
       final response = await http.post(
         Uri.parse('$Api_url/api/accounts/accounts'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM $staffid",
           'Content-Type': 'application/json'
         },
         body: json.encode(formData),
@@ -5578,11 +5568,12 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     final response = await http
         .get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {
       "authorization": "CRM $token",
-      "id": "CRM $id",
+      "id": "CRM $staffid",
     });
     print(response.body);
     if (response.statusCode == 200) {
@@ -6143,12 +6134,13 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       };
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString('adminId');
+      String? staffid = prefs.getString("staff_id");
       String? token = prefs.getString('token');
       final response = await http.post(
         Uri.parse('$Api_url/api/accounts/accounts'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM $staffid",
           'Content-Type': 'application/json'
         },
         body: json.encode(formData),
@@ -6274,12 +6266,14 @@ class _AddTenantState extends State<AddTenant> {
 
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
+      //String? id = prefs.getString("adminId");
       String? id = prefs.getString("adminId");
+      String? staffid = prefs.getString("staff_id");
       String? token = prefs.getString('token');
       final response = await http
           .get(Uri.parse('${Api_url}/api/tenant/tenants/$id'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $staffid",
       });
 
       if (response.statusCode == 200) {
@@ -6436,6 +6430,8 @@ class _AddTenantState extends State<AddTenant> {
                       DataColumn(label: Text('Select')),
                     ],
                     rows: filteredTenants.map((tenant) {
+                      print(  Provider.of<SelectedTenantsProvider>(context)
+                          .selectedTenants.length);
                       /* final isSelected = Provider.of<SelectedTenantsProvider>(context)
                                 .selectedTenants
                                 .contains(tenant);*/
@@ -6443,8 +6439,8 @@ class _AddTenantState extends State<AddTenant> {
                       Provider.of<SelectedTenantsProvider>(context)
                           .selectedTenants
                           .where((test) =>
-                      test.tenantFirstName ==
-                          tenant.tenantFirstName)
+                      test.tenantId ==
+                          tenant.tenantId)
                           .toList();
                       print(matchingTenants);
                       final isSelected =

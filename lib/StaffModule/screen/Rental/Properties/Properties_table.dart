@@ -1375,6 +1375,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                               ),
                                                             );
                                                             if (check == true) {
+                                                              setState(() {
+                                                                futureRentalOwners = PropertiesRepository().fetchProperties();
+
+                                                              });
                                                               // Update State
                                                             }
                                                           },

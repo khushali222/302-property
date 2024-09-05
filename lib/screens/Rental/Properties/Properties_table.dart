@@ -310,7 +310,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   rentalId: properties.rentalId!,
                 )));
     if (check == true) {
-      setState(() {});
+      setState(() {
+        futureRentalOwners = PropertiesRepository().fetchProperties();
+      });
     }
     // final result = await Navigator.push(
     //     context,
@@ -1374,6 +1376,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                               ),
                                                             );
                                                             if (check == true) {
+                                                              setState(() {
+                                                                futureRentalOwners = PropertiesRepository().fetchProperties();
+
+                                                              });
                                                               // Update State
                                                             }
                                                           },

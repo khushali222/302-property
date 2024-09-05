@@ -20,7 +20,7 @@ import 'package:three_zero_two_property/model/staffmember.dart';
 
 import 'package:three_zero_two_property/repository/rental_properties.dart';
 
-import 'package:three_zero_two_property/widgets/appbar.dart';
+import '../../../widgets/appbar.dart';
 
 import '../../../../Model/propertytype.dart';
 import '../../../../constant/constant.dart';

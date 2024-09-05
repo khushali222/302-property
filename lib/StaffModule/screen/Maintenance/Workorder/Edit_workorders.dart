@@ -581,8 +581,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
               },
               buttonStyleData: ButtonStyleData(
                 height: 50,
-                width: 250,
-                padding: const EdgeInsets.only(left: 14, right: 14),
+
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(6),
                   color: Colors.white,
@@ -1005,14 +1004,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                             SizedBox(
                               height: 2,
                             ),
-                            _isLoading
-                                ? const Center(
-                                    child: SpinKitFadingCircle(
-                                      color: Colors.black,
-                                      size: 50.0,
-                                    ),
-                                  )
-                                : Column(
+                           Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
@@ -1283,9 +1275,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                 },
                                 buttonStyleData: ButtonStyleData(
                                   height: 45,
-                                  width: 200,
-                                  padding: const EdgeInsets.only(
-                                      left: 14, right: 14),
+                                 // width: 200,
+
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(6),
                                     color: Colors.white,
@@ -1337,14 +1328,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                             SizedBox(
                               height: 2,
                             ),
-                            _isLoadingvendors
-                                ? const Center(
-                                    child: SpinKitFadingCircle(
-                                      color: Colors.black,
-                                      size: 50.0,
-                                    ),
-                                  )
-                                : Column(
+                            Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
@@ -1485,9 +1469,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                 },
                                 buttonStyleData: ButtonStyleData(
                                   height: 45,
-                                  width: 200,
-                                  padding: const EdgeInsets.only(
-                                      left: 14, right: 14),
+
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(6),
                                     color: Colors.white,
@@ -1712,6 +1694,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                             ),
                             ElevatedButton(
                               onPressed: addRow,
+                              style: ElevatedButton.styleFrom(backgroundColor: blueColor),
                               child: Text('Add Row'),
                             ),
                             SizedBox(
@@ -1989,9 +1972,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                 },
                                 buttonStyleData: ButtonStyleData(
                                   height: 45,
-                                  width: 200,
-                                  padding: const EdgeInsets.only(
-                                      left: 14, right: 14),
+
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(6),
                                     color: Colors.white,

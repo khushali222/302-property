@@ -218,6 +218,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
     addPropertyGroup();
     fetchOwners();
     print(selectedStaff);
+    print(widget.properties.rentalOwnerData!.processorList);
+
     Ownersdetails = RentalOwner(
       rentalOwnerId: widget.properties.rentalOwnerId,
       rentalOwnerName: widget.properties.rentalOwnerData?.rentalOwnerName,
@@ -232,6 +234,9 @@ class _Edit_propertiesState extends State<Edit_properties> {
       streetAddress: widget.properties.rentalOwnerData?.Address,
       postalCode: widget.properties.rentalOwnerData?.postalCode,
       country: widget.properties.rentalOwnerData?.country,
+      processorList:widget.properties.rentalOwnerData?.processorList?.map((item) {
+        return ProcessorList.fromJson(item as Map<String, dynamic>);
+      }).toList()
 
     );
     processor_id = widget.properties.processor_id;
@@ -274,6 +279,20 @@ class _Edit_propertiesState extends State<Edit_properties> {
           fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber,
           rentalOwnerName:
           fetchedDetails.rentalOwnerData!.rentalOwnerName,
+
+            rentalOwnerHomeNumber: fetchedDetails.rentalOwnerData?.rentalOwnerHomeNumber,
+            rentalOwnerBusinessNumber: fetchedDetails.rentalOwnerData?.rentalOwnerBuisinessNumber,
+            rentalOwnerAlternateEmail: fetchedDetails.rentalOwnerData?.rentalOwnerAlternativeEmail,
+            rentalOwnerPrimaryEmail: fetchedDetails.rentalOwnerData?.rentalOwnerPrimaryEmail,
+            rentalOwnerCompanyName: fetchedDetails.rentalOwnerData?.rentalOwnerCompanyName,
+            city: fetchedDetails.rentalOwnerData?.city,
+            state: fetchedDetails.rentalOwnerData?.state,
+            streetAddress: fetchedDetails.rentalOwnerData?.Address,
+            postalCode: fetchedDetails.rentalOwnerData?.postalCode,
+            country: fetchedDetails.rentalOwnerData?.country,
+            processorList:fetchedDetails.rentalOwnerData?.processorList?.map((item) {
+              return ProcessorList.fromJson(item as Map<String, dynamic>);
+            }).toList()
         );
         firstname.text = fetchedDetails.rentalOwnerData!.rentalOwnerName!;
         comname.text = fetchedDetails.rentalOwnerData!.rentalOwnerCompanyName!;
@@ -4385,33 +4404,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                               rentalOwner: owners,
                               rental: rentals,
                               units: units);
-                          // Rentals properties = Rentals(
-                          //   adminId: id,
-                          //   rentalOwnerData: RentalOwnerData(
-                          //     adminId: id,
-                          //     rentalOwnerId: widget.properties.rentalOwnerId,
-                          //     rentalOwnerName: firstname.text,
-                          //     rentalOwnerCompanyName: comname.text,
-                          //     rentalOwnerPrimaryEmail: primaryemail.text,
-                          //     rentalOwnerPhoneNumber: phonenum.text,
-                          //     city: city2.text,
-                          //     state: state2.text,
-                          //     country: county2.text,
-                          //     postalCode: code2.text,
-                          //   ),
-                          //   rentalId: widget.rentalId,
-                          //   propertyId: widget.properties.propertyId,
-                          //   // propertyId: selectedpropertytypedata!.propertyId,
-                          //   rentalAddress: address.text,
-                          //   rentalCity: city.text,
-                          //   rentalState: state.text,
-                          //   rentalCountry: country.text,
-                          //   rentalPostcode: postalcode.text,
-                          //   // staffMemberId: sid,
-                          //   staffMemberId: widget.properties.staffMemberId,
-                          // );
-                          // PropertiesRepository().updateRental1(rentals);
-                          // PropertiesRepository().updateRental(rentalrequest,widget.rentalId).then((value)
                           final updatedOwner = RentalOwner(
                             rentalOwnerName: firstnameController.text,
                             rentalOwnerCompanyName: comnameController.text,
@@ -4426,11 +4418,13 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
                           String processorId = context.read<OwnerDetailsProvider>().selectedprocessorlist ?? "";
 
-                          List<Map<String, String>> processorIds = ownerDetails!.processorList!.map((processor) {
-                            return {
-                              'processor_id': processor.processorId ?? "",
-                            };
-                          }).toList();
+                        List<Map<String, String>> processorIds    = ownerDetails!.processorList!.map((processor) {
+                              return {
+                                'processor_id': processor.processorId ?? "",
+                              };
+                            }).toList();
+
+
 
                           //Provider.of<OwnerDetailsProvider>(context, listen: false).setOwnerDetails(updatedOwner);
 
@@ -4459,6 +4453,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             staffMemberId: widget.properties.staffMemberId,
                               processor_id:processorId
                           );
+
+                          await Future.wait([
                           PropertiesRepository()
                               .updateRental1(properties)
                               .then((value) {
@@ -4485,12 +4481,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                   ?.propertySubType = selectedpropertytype;
                               isLoading = false;
                             });
-                            Navigator.of(context).pop(true);
+
                           }).catchError((e) {
                             setState(() {
                               isLoading = false;
                             });
-                          });
+                          })
+                          ]);
+                          Navigator.of(context).pop(true);
                         }
                         print(selectedValue);
                       },
