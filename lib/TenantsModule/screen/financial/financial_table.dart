@@ -949,7 +949,7 @@ class _FinancialTableState extends State<FinancialTable> {
                         );
                       }
                       //sortData(data);
-                      print(data);
+                    //  print(data);
                    //   print(snapshot.data!.first.totalBalance);
                       final totalPages = (data.length / itemsPerPage).ceil();
                       final currentPageData = data
@@ -973,7 +973,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                   int index = entry.key;
                                   bool isExpanded = expandedIndex == index;
                                   Data Tenant_financial = entry.value;
-                                  print(Tenant_financial.balance);
+                                //  print(Tenant_financial.balance);
                                   //print(Tenant_financial.totalBalance);
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(

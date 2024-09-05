@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
+
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/StaffModule/repository/staffpermission_provider.dart';
@@ -12,6 +12,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Dashboard/dashboard_one.dart';
 import '../../TenantsModule/repository/permission_provider.dart';
 import '../../VendorModule/screen/dashboard.dart';
+import '../../VendorModule/screen/mainScreen.dart';
 import '../../provider/Plan Purchase/plancheckProvider.dart';
 import '../Login/login_screen.dart';
 import '../Plans/PlansPurcharCard.dart'; // Import your login screen file
@@ -107,7 +108,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => isAuthenticated == true ? Dashboard_vendors() : Login_Screen(),
+          builder: (context) => isAuthenticated == true ? MainScreen() : Login_Screen(),
         ),
       );
     }

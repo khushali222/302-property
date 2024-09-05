@@ -79,6 +79,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
               ),
               buildListTile(
                 context,
+                Icon(
+                  CupertinoIcons.person,
+                  color:widget.currentpage == "Profile" ?Colors.white:blueColor,
+                ),
+                "Profile",
+                widget.currentpage == "Profile",),
+              buildListTile(
+                context,
                 FaIcon(
                   FontAwesomeIcons.house,
                   size: 20,

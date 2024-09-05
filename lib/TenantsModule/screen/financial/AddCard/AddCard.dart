@@ -52,6 +52,7 @@ class _AddCardState extends State<AddCard> {
 
   List<Map<String, String>> tenants = [];
   bool isLoading = false;
+  bool isLoading1 = false;
   String? selectedTenantId;
   int? customervaultid;
   List<BillingData> cardDetails = [];
@@ -278,17 +279,36 @@ class _AddCardState extends State<AddCard> {
       customerVaultId: customervaultid,
     );
 
-    AddCardService apiService = AddCardService();
-    int deleteResponse = await apiService.deleteCard(cardmodelfordelete);
+    if (cardDetails.length == 1) {
+      AddCardService apiService = AddCardService();
+      int deleteResponse =
+      await apiService.deleteOneCardDelete(customervaultid);
 
-    if (deleteResponse == 200) {
-      await apiService.deletefromdatabaseCard(billingData.billingId.toString());
-      setState(() {
-        cardDetails
-            .remove(billingData); // Remove the deleted card from the list
-      });
+      if (deleteResponse == 200) {
+        await apiService.deleteOneCardfromdatabase(customervaultid);
+        setState(() {
+          cardDetails
+              .remove(billingData); // Remove the deleted card from the list
+        });
+        Fluttertoast.showToast(msg: "Card Deleted Successfully");
+      } else {
+        // Handle the error case
+      }
     } else {
-      // Handle the error case
+      AddCardService apiService = AddCardService();
+      int deleteResponse = await apiService.deleteCard(cardmodelfordelete);
+
+      if (deleteResponse == 200) {
+        await apiService
+            .deletefromdatabaseCard(billingData.billingId.toString());
+        setState(() {
+          cardDetails
+              .remove(billingData); // Remove the deleted card from the list
+        });
+        Fluttertoast.showToast(msg: "Card Deleted Successfully");
+      } else {
+        // Handle the error case
+      }
     }
   }
 
@@ -684,12 +704,15 @@ class _AddCardState extends State<AddCard> {
                             onPressed: () async {
                               print(_formKey.currentState!.validate());
                               if (_formKey.currentState!.validate() ) {
+                                setState(() {
+                                  isLoading1 = true;
+                                });
                                 print("calling");
                                 SharedPreferences prefs =
                                 await SharedPreferences.getInstance();
                                 String? id = prefs.getString("adminId");
                                 String? token = prefs.getString('token');
-
+                                selectedTenantId = prefs.getString('tenant_id');
                                 String randomNumber = generateRandomNumber(10);
 
                                 String? comapanyName =
@@ -761,7 +784,11 @@ class _AddCardState extends State<AddCard> {
                                   );
 
                                   await addCardService
-                                      .postAddCreditCard(addcard);
+                                      .postAddCreditCard(addcard).then((value){
+                                    setState(() {
+                                      isLoading1 = false;
+                                    });
+                                  });
                                   Navigator.pop(context);
                                   Fluttertoast.showToast(
                                       msg: 'Add Card Successfully');
@@ -785,7 +812,11 @@ class _AddCardState extends State<AddCard> {
                                     responseCode: cardResponses?.responseCode,
                                   );
                                   await addCardService
-                                      .postAddCreditCard(addcards);
+                                      .postAddCreditCard(addcards).then((value){
+                                    setState(() {
+                                      isLoading1 = false;
+                                    });
+                                  });
                                   Navigator.pop(context);
                                   Fluttertoast.showToast(
                                       msg: 'Add Card Successfully');
@@ -794,7 +825,12 @@ class _AddCardState extends State<AddCard> {
                                 //charges
                               } else {}
                             },
-                            child: const Text(
+                            child: isLoading1 ? Center(
+                              child: SpinKitFadingCircle(
+                                color: Colors.white,
+                                size: 20.0,
+                              ),
+                            ) : const Text(
                               'Add Card',
                               style: TextStyle(color: Color(0xFFf7f8f9)),
                             ))),

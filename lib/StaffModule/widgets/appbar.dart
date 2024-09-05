@@ -22,10 +22,10 @@ class widget_302 {
   }) {
     return AppBar(
       iconTheme: IconThemeData(color: Colors.black),
-      elevation: 0,
+      elevation: 1,
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
-
+      titleSpacing:05,
       //automaticallyImplyLeading: false,
       // title: Image(
       //   image: AssetImage('assets/images/applogo.png'),
@@ -35,7 +35,7 @@ class widget_302 {
       title: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           // Check if the device width is less than 600 (considered as phone screen)
-          if (constraints.maxWidth < 500) {
+          if (constraints.maxWidth < 50) {
             return Image.asset(
               'assets/images/applogo.png',
               height: 40,
@@ -77,9 +77,13 @@ class widget_302 {
         SizedBox(
           width: 10,
         ),
-        Icon(
-          Icons.notifications_outlined,
-          color: Color.fromRGBO(21, 43, 81, 1),
+        Padding(
+          padding: const EdgeInsets.only(top: 15.0),
+          child: FaIcon(
+            FontAwesomeIcons.solidBell,
+            size: 25,
+            color: blueColor,
+          ),
         ),
         //   FaIcon(
         //     FontAwesomeIcons.bell,

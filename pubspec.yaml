@@ -82,6 +82,7 @@ dependencies:
   pdf: ^3.11.0
   keyboard_actions:
   flutter_blurhash: ^0.6.0
+  flutter_native_splash:
   # pdf:
 
 
@@ -91,10 +92,20 @@ dev_dependencies:
   flutter_launcher_icons: "^0.13.1"
   flutter_lints: ^4.0.0
   custom_pop_up_menu: ^1.2.4
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/images/splashscreen.png
+  android_gravity: center
 
+
+
+
+
+  web: false
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
+
   image_path: "assets/images/logo.jpg"
 
 #  this is image

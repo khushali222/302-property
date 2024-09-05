@@ -21,6 +21,7 @@ import '../../StaffModule/repository/staffpermission_provider.dart';
 import '../../StaffModule/screen/dashboard.dart';
 import '../../TenantsModule/repository/permission_provider.dart';
 import '../../TenantsModule/screen/dashboard.dart';
+import '../../VendorModule/screen/mainScreen.dart';
 import '../../constant/constant.dart';
 import '../../provider/Plan Purchase/plancheckProvider.dart';
 import '../Dashboard/dashboard_one.dart';
@@ -1653,7 +1654,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setString('last_name', jsonData['${rolename.toLowerCase()}_lastname']);
 */
       Navigator.push(context,
-          MaterialPageRoute(builder: (context) => Dashboard_vendors()));
+          MaterialPageRoute(builder: (context) => MainScreen()));
     } else {
       print('Failed to check token');
     }
