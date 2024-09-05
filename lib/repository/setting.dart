@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:http/http.dart'as http;
@@ -237,4 +238,100 @@ class mailserviceRepository {
     }
   }
 
+}
+
+
+class accountRepository{
+
+  Future<List<Setting4>> fetchAccounts() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString('adminId');
+
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/accounts/accounts/$id'),
+      headers: {
+        'authorization': 'CRM $token',
+        'id': 'CRM $id',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body)['data'];
+      return jsonResponse.map((data) => Setting4.fromJson(data)).toList();
+    } else {
+      print('Failed to fetch settings: ${response.body}');
+      return [];
+    }
+  }
+
+  Future<Map<String, dynamic>> addAccount({
+    required String? adminId,
+    required String? account,
+    required String? accounttype,
+    required String? fundtype,
+    required String? chargetype,
+    required String? notes,
+  }) async {
+    final Map<String, dynamic> data = {
+      'admin_id': adminId,
+      'account': account,
+      'account_type': accounttype,
+      'fund_type': fundtype,
+      'charge_type': chargetype,
+      'notes': notes,
+    };
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
+    final http.Response response = await http.post(
+      Uri.parse('${Api_url}/api/accounts/accounts'),
+      headers: <String, String>{
+        "authorization": "CRM $token",
+        "id":"CRM $id",
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(data),
+    );
+    var responseData = json.decode(response.body);
+
+    print('account ${response.body}');
+    if (responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      return json.decode(response.body);
+
+    } else {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Failed to add account');
+    }
+  }
+
+  Future<Map<String, dynamic>> DeleteAccount({
+    required String? account_id
+  }) async {
+
+    //print('$apiUrl/$id');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  adminid = prefs.getString('adminId');
+
+    final http.Response response = await http.delete(
+      Uri.parse('${Api_url}/api/accounts/accounts/$account_id'),
+      headers: <String, String>{
+        "authorization": "CRM $token",
+        "id":"CRM $adminid",
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+    var responseData = json.decode(response.body);
+    print(response.body);
+    if (responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      return json.decode(response.body);
+
+    } else {
+      Fluttertoast.showToast(msg: responseData["message"]);
+      throw Exception('Failed to delete account');
+    }
+  }
 }

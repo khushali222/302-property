@@ -198,3 +198,66 @@ class ApiResponse {
 //     return data;
 //   }
 // }
+
+
+class Setting4 {
+  String? sId;
+  String? accountId;
+  String? adminId;
+  String? account;
+  String? accountType;
+  String? chargeType;
+  String? fundType;
+  String? notes;
+  String? createdAt;
+  String? updatedAt;
+  bool? isDelete;
+  int? iV;
+
+  Setting4({
+    this.sId,
+    this.accountId,
+    this.adminId,
+    this.account,
+    this.accountType,
+    this.chargeType,
+    this.fundType,
+    this.notes,
+    this.createdAt,
+    this.updatedAt,
+    this.isDelete,
+    this.iV,
+  });
+
+  Setting4.fromJson(Map<String, dynamic> json) {
+    sId = json['_id'];
+    accountId = json['account_id'];
+    adminId = json['admin_id'];
+    account = json['account'];
+    accountType = json['account_type'];
+    chargeType = json['charge_type'];
+    fundType = json['fund_type'];
+    notes = json['notes'];
+    createdAt = json['createdAt'];
+    updatedAt = json['updatedAt'];
+    isDelete = json['is_delete'];
+    iV = json['__v'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['_id'] = this.sId;
+    data['account_id'] = this.accountId;
+    data['admin_id'] = this.adminId;
+    data['account'] = this.account;
+    data['account_type'] = this.accountType;
+    data['charge_type'] = this.chargeType;
+    data['fund_type'] = this.fundType;
+    data['notes'] = this.notes;
+    data['createdAt'] = this.createdAt;
+    data['updatedAt'] = this.updatedAt;
+    data['is_delete'] = this.isDelete;
+    data['__v'] = this.iV;
+    return data;
+  }
+}
