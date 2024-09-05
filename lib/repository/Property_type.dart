@@ -105,6 +105,7 @@ class PropertyTypeRepository {
       throw Exception('Failed to add property type');
     }
   }
+
   Future<Map<String, dynamic>> DeletePropertyType({
     required String? pro_id
   }) async {

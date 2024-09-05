@@ -14,7 +14,6 @@ import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/Model/tenants.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/lease.dart';
-
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newModel.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 // import 'package:three_zero_two_property/repository/properties_summery.dart';
@@ -41,7 +40,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
     "IncomeVerification",
     "LandlordVerification"
   ];
-
   List<String> applicantChecklist = [];
   final Map<String, String> displayNames = {
     "CreditCheck": "Credit and background check",
@@ -103,8 +101,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> staffnames = {};
         jsonResponse.forEach((data) {
+
           staffnames[data['staffmember_id'].toString()] =
               data['staffmember_name'].toString();
+
         });
 
         setState(() {
@@ -115,9 +115,11 @@ class _Workorder_summeryState extends State<Workorder_summery>
         throw Exception('Failed to load data');
       }
     } catch (e) {
+
       setState(() {
         _isLoadingstaff = false;
       });
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to fetch vendors: $e')),
       );

@@ -4141,7 +4141,8 @@ class _addLease3State extends State<addLease3>
     return showDialog(
         context: context,
         builder: (context) {
-          return StatefulBuilder(builder: (context, setState) {
+          return
+            StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
               backgroundColor: Colors.white,
               contentPadding: EdgeInsets.zero,
