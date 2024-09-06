@@ -44,7 +44,7 @@ class _Add_propertyState extends State<Add_property> {
               height: 25,
             ),
             titleBar(
-              width: MediaQuery.of(context).size.width * .86,
+              width: MediaQuery.of(context).size.width * .88,
               title: 'Add Property Type',
             ),
             SizedBox(

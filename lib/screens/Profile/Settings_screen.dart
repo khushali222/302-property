@@ -32,13 +32,15 @@ class _TabBarExampleState extends State<TabBarExample> {
   TextEditingController flat = TextEditingController();
   TextEditingController late_fee = TextEditingController();
   TextEditingController duration = TextEditingController();
-  TextEditingController email_duration = TextEditingController();
+  TextEditingController durationmail = TextEditingController();
+
   bool rentDueReminderEmail = false;
 
   String surge_id = "";
   String latefee_id = "";
   bool isupdate = false;
   bool islatefeeupdate = false;
+  bool mailupdate = false;
   bool issurge = true;
   bool ismail = false;
   bool isaccounts = false;
@@ -53,6 +55,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     futureaccount = accountRepository().fetchAccounts();
     fetchSurchargeData();
     fetchlatefeeData();
+    fetchMailData();
     accountname = TextEditingController();
     note = TextEditingController();
   }
@@ -73,6 +76,8 @@ class _TabBarExampleState extends State<TabBarExample> {
       SurchargeRepository(baseUrl: '${Api_url}');
   final latefeeRepository latefeerepository =
       latefeeRepository(baseUrl: '${Api_url}');
+  final mailserviceRepository mailrepository =
+  mailserviceRepository(baseUrl: '${Api_url}');
 
   Future<void> fetchSurchargeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -83,7 +88,6 @@ class _TabBarExampleState extends State<TabBarExample> {
       if (surcharges != null) {
         setState(() {
           isupdate = true;
-
           credit.text = surcharges.surchargePercent.toString();
           debit.text = surcharges.surchargePercentDebit.toString();
           percent.text = surcharges.surchargePercentACH != 0.0
@@ -223,35 +227,35 @@ class _TabBarExampleState extends State<TabBarExample> {
           .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
-  Future<void> updatemailreminder() async {
-    print("calling");
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
-    try {
-      Map<String, dynamic> data = {
-        "admin_id": id,
-        "remindermail":rentDueReminderEmail,
-        "duration":
-        rentDueReminderEmail ? double.parse(email_duration.text) : 0,
-      };
-
-      bool success =
-      await latefeerepository.updateLatefeesData('$latefee_id', data);
-
-      if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Latefee Updated Successfully')));
-      } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Failed to Update Latefee')));
-      }
-    } catch (e) {
-      print('Failed to update surcharge data: $e');
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error: $e')));
-    }
-  }
+  // Future<void> updatemailreminder() async {
+  //   print("calling");
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? token = prefs.getString('token');
+  //   String?  id = prefs.getString('adminId');
+  //   try {
+  //     Map<String, dynamic> data = {
+  //       "admin_id": id,
+  //       "remindermail":rentDueReminderEmail,
+  //       "duration":
+  //       rentDueReminderEmail ? double.parse(email_duration.text) : 0,
+  //     };
+  //
+  //     bool success =
+  //     await latefeerepository.updateLatefeesData('$latefee_id', data);
+  //
+  //     if (success) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //           SnackBar(content: Text('Latefee Updated Successfully')));
+  //     } else {
+  //       ScaffoldMessenger.of(context)
+  //           .showSnackBar(SnackBar(content: Text('Failed to Update Latefee')));
+  //     }
+  //   } catch (e) {
+  //     print('Failed to update surcharge data: $e');
+  //     ScaffoldMessenger.of(context)
+  //         .showSnackBar(SnackBar(content: Text('Error: $e')));
+  //   }
+  // }
   Future<void> AddLatefeedata() async {
 
     print("calling");
@@ -277,6 +281,90 @@ class _TabBarExampleState extends State<TabBarExample> {
       }
     } catch (e) {
       print('Failed to update surcharge data: $e');
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
+  }
+
+  //mail Services
+  Future<void> fetchMailData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    try {
+      Setting3 latefee = await mailrepository.fetchMailData('$id');
+      print(latefee != null);
+      if (latefee != null) {
+        print("setting3 calling");
+        setState(() {
+          id = latefee.adminId;
+          mailupdate = true;
+          print(latefee.duration);
+          durationmail.text = latefee.duration.toString();
+        //  rentDueReminderEmail = true;
+          if (latefee.remindermail != null) {
+            rentDueReminderEmail = latefee.remindermail!;
+          }
+          print(rentDueReminderEmail);
+        });
+      }
+    } catch (e) {
+      print('Failed to load surcharge data: $e');
+    }
+  }
+  Future<void> updateMail() async {
+    print("calling");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
+    try {
+      Map<String, dynamic> data = {
+        "admin_id": id,
+        "duration":
+        durationmail.text.isNotEmpty ? double.parse(durationmail.text) : null,
+
+      };
+
+      bool success =
+      await mailrepository.updateMailData(data);
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('mail Updated Successfully')));
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Failed to Update mail')));
+      }
+    } catch (e) {
+      print('Failed to update mail data: $e');
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
+  }
+  Future<void> Addmail() async {
+
+    print("calling");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
+    try {
+      Map<String, dynamic> data = {
+        "admin_id": id,
+        "duration": durationmail.text.isNotEmpty ? int.parse(durationmail.text) : null,
+
+      };
+
+      bool success =
+      await mailrepository.AddMailData(id, data);
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('mail Updated Successfully')));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to Update ,ail')));
+      }
+    } catch (e) {
+      print('Failed to update mail data: $e');
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
@@ -1906,6 +1994,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                         ),
                         Row(
                           children: [
+
                             Text(
                               "Mail Service",
                               style: TextStyle(
@@ -1988,7 +2077,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                         children: [
                                           Positioned.fill(
                                             child: TextFormField(
-                                              controller: email_duration,
+                                              controller: durationmail,
                                               onChanged: (value) {
                                                 setState(() {
                                                   //  passworderror = false;
@@ -2032,10 +2121,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                               SizedBox(width: 2),
                             GestureDetector(
                               onTap: () async {
-                                if (islatefeeupdate)
-                                  await updateLatefee();
+                                if (mailupdate)
+                                  await updateMail();
                                 else
-                                  await AddLatefeedata();
+                                  await Addmail();
                               },
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(5.0),
@@ -2083,7 +2172,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                email_duration.clear();
+                                durationmail.clear();
                               },
                               child: Container(
                                   height:

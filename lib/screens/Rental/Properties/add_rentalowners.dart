@@ -2159,7 +2159,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                         Container(
                           height:
                           40.0,
-                          width: 130,
+                          width: 100,
                           decoration:
                           BoxDecoration(
                             borderRadius:

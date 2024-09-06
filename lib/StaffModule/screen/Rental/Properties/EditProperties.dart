@@ -3588,7 +3588,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                   'Add New Staffmember',
                                                   style: TextStyle(
                                                       fontSize:
-                                                      MediaQuery.of(context).size.width < 500 ? 10.5 : 18),
+                                                      MediaQuery.of(context).size.width < 500 ? 14 : 18),
                                                 ),
                                               ],
                                             ),
@@ -3605,7 +3605,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                           width: MediaQuery.of(context)
                                               .size
                                               .width *
-                                              .36,
+                                              .5,
                                           padding: EdgeInsets.symmetric(
                                               horizontal: 8, vertical: 4),
                                           decoration: BoxDecoration(

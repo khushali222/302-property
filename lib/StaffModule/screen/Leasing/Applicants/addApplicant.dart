@@ -330,14 +330,8 @@ class _AddApplicantState extends State<AddApplicant> {
                           hintText: 'Enter telephone number',
                           controller: telePhoneNumber,
                         ),
-                        _isLoading
-                            ? const Center(
-                                child: SpinKitSpinningLines(
-                                  color: Colors.black,
-                                  size: 50.0,
-                                ),
-                              )
-                            : Column(
+
+                        Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   DropdownButtonHideUnderline(

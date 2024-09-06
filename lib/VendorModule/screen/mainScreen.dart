@@ -146,7 +146,8 @@ class _MainScreenState extends State<MainScreen> {
           onTap: _onItemTapped,
           items:  [
             BottomNavigationBarItem(
-              icon: SvgPicture.asset(
+              icon:
+              SvgPicture.asset(
                 "assets/images/tenants/dashboard.svg",
                 height: 20,
                 width: 20,
@@ -155,7 +156,8 @@ class _MainScreenState extends State<MainScreen> {
               label: 'Dashboard',
             ),
             BottomNavigationBarItem(
-              icon: SvgPicture.asset(
+              icon:
+              SvgPicture.asset(
                 "assets/images/tenants/Admin.svg",
                 height: 20,
                 width: 20,

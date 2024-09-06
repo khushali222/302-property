@@ -2189,8 +2189,8 @@ class _EditRentalownersState extends State<EditRentalowners> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
                         child: Container(
-                          height: 30.0,
-                          width: 50,
+                          height: 40.0,
+                          width: 100,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
                             color: Color.fromRGBO(21, 43, 81, 1),
@@ -2213,7 +2213,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 10,
+                                      fontSize: 14,
                                     ),
                                   ),
                           ),

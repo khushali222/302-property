@@ -801,14 +801,7 @@ class _Edit_leaseState extends State<Edit_lease>
                               const SizedBox(
                                 height: 4,
                               ),
-                              _isLoading
-                                  ? const Center(
-                                child: SpinKitSpinningLines(
-                                  color: Colors.black,
-                                  size: 50.0,
-                                ),
-                              )
-                                  : Column(
+                              Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   DropdownButtonHideUnderline(
@@ -1096,11 +1089,11 @@ class _Edit_leaseState extends State<Edit_lease>
                                   },
                                   buttonStyleData: ButtonStyleData(
                                     height: 50,
-                                    width: 230,
+                                    //width: 230,
                                     padding:
                                     const EdgeInsets.only(left: 14, right: 14),
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
+                                      borderRadius: BorderRadius.circular(6),
                                       border: Border.all(
                                         color: Colors.black26,
                                       ),
@@ -2716,7 +2709,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                     },
                                     buttonStyleData: ButtonStyleData(
                                       height: 50,
-                                      width: 200,
+                                      //width: 200,
                                       padding:
                                       const EdgeInsets.only(left: 14, right: 14),
                                       decoration: BoxDecoration(
@@ -4038,7 +4031,7 @@ class _Edit_leaseState extends State<Edit_lease>
                           children: [
                             Container(
                                 height: 50,
-                                width: 150,
+                                width: 120,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8.0)),
                                 child: ElevatedButton(
@@ -4377,7 +4370,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                     },
                                     child: const Text(
                                       'Edit Lease',
-                                      style: TextStyle(color: Color(0xFFf7f8f9)),
+                                      style: TextStyle(color: Color(0xFFf7f8f9),fontSize: 15,fontWeight: FontWeight.bold),
                                     ))),
                             const SizedBox(
                               width: 8,
