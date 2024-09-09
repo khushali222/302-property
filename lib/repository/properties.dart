@@ -21,6 +21,7 @@ class PropertiesRepository {
     final response = await http.get(Uri.parse('${Api_url}/api/rentals/rentals/$id'),
       headers: {"authorization" : "CRM $token","id":"CRM $id",},);
     print('${Api_url}/api/rentals/rentals/$id');
+    print('properties ${response.body}');
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => Rentals.fromJson(data)).toList();

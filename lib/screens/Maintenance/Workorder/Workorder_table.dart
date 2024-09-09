@@ -316,7 +316,7 @@ class _Workorder_tableState extends State<Workorder_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data = WorkOrderRepository().DeleteWorkOrder(workOrderid: id);
+            var data =  await WorkOrderRepository().DeleteWorkOrder(workOrderid: id);
             // Add your delete logic here
             setState(() {
               futureworkorders = WorkOrderRepository().fetchWorkOrders();

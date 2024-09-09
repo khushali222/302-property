@@ -7754,7 +7754,6 @@ class _Summery_pageState extends State<Summery_page>
                 },
               ),
             //this for add ubit button
-
             if (widget.properties.propertyTypeData!.isMultiunit!)
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -7762,10 +7761,15 @@ class _Summery_pageState extends State<Summery_page>
                 children: [
                   GestureDetector(
                     onTap: () {
+                      unitnum.clear();
+                      street3.clear();
+                      sqft3.clear();
+                      bath3.clear();
+                      bed3.clear();
+                      _imageUrls.clear();
                       if (widget.properties.propertyTypeData!.isMultiunit! &&
                           widget.properties.propertyTypeData!.propertyType ==
                               'Residential')
-
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
@@ -8340,7 +8344,6 @@ class _Summery_pageState extends State<Summery_page>
                       if (widget.properties.propertyTypeData!.isMultiunit! &&
                           widget.properties.propertyTypeData!.propertyType ==
                               'Commercial')
-
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
@@ -12150,6 +12153,7 @@ class _Summery_pageState extends State<Summery_page>
                               setState(() {
                                 futureUnitsummery = Properies_summery_Repo()
                                     .fetchunit(widget.properties.rentalId!);
+                                showdetails = false;
                               });
                               //Navigator.pop(context);
                             },
@@ -12181,7 +12185,7 @@ class _Summery_pageState extends State<Summery_page>
                           child: CachedNetworkImage(
                             imageUrl: unit.rentalImages != null && unit.rentalImages!.length > 0
                                 ? "$image_url${unit.rentalImages!.first}"
-                                : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe_jcaXNfnjMStYxu0ScZHngqxm-cTA9lJbB9DrbhxHQ6G-aAvZFZFu9-xSz31R5gKgjM&usqp=CAU',
+                                : 'assets/images/no_image.jpg',
                             fit: BoxFit.cover,
                             height: MediaQuery.of(context).size.width < 500 ? 140 : 220,
                             width: MediaQuery.of(context).size.width < 500 ? 160 : 220,

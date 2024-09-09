@@ -1379,7 +1379,7 @@ class _enterChargeState extends State<enterCharge> {
                                       borderRadius:
                                           BorderRadius.circular(8.0))),
                               onPressed: () {
-                                // Navigator.pop(context);
+                                Navigator.pop(context);
                                 // firstName.clear();
                                 // lastName.clear();
                                 // email.clear();

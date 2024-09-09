@@ -2030,6 +2030,21 @@ class _Edit_leaseState extends State<Edit_lease>
                                                             ),
                                                             onChanged: (value) {
                                                               // Trigger validation on every change
+                                                              double enteredValue = double.tryParse(value) ?? 0;
+                                                              if (enteredValue > 100) {
+                                                                controller
+                                                                    .text =
+                                                                '100';
+                                                                controller
+                                                                    .selection =
+                                                                    TextSelection
+                                                                        .fromPosition(
+                                                                      TextPosition(
+                                                                          offset: controller
+                                                                              .text
+                                                                              .length),
+                                                                    );
+                                                              }
                                                               Provider.of<SelectedTenantsProvider>(context, listen: false)
                                                                   .validateRentShares();
                                                             },
@@ -4042,9 +4057,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                             BorderRadius.circular(8.0))),
                                     onPressed: () async {
                                       if (_formKey.currentState?.validate() ?? false) {
-
                                         final rentShareControllers = Provider.of<SelectedTenantsProvider>(context, listen: false).rentShareControllers;
-
                                         for (int i = 0; i < rentShareControllers.length; i++) {
                                           print('Tenant ${i + 1}: ${rentShareControllers[i].text}');
                                         }//charges
@@ -4087,7 +4100,6 @@ class _Edit_leaseState extends State<Edit_lease>
                                             'tenant_id'], // Assuming this field might be present
                                           );
                                         }).toList();
-
                                         chargeEntries.add(Entry(
 
                                             account: "Rent Income",
@@ -4119,16 +4131,13 @@ class _Edit_leaseState extends State<Edit_lease>
                                           rentCycle:
                                           _selectedRent, // Set default value or adjust as needed
                                         ));
-
                                         // Creating ChargeData object
                                         ChargeData chargeData = ChargeData(
                                           adminId: adminId,
                                           entry: chargeEntries,
                                           isLeaseAdded: _isLeaseAdded,
                                         );
-
                                         //Tenant
-
                                         List<TenantData> tenants = [];
                                         Map<String, String>? firstCosigner =
                                         cosignersMap.isNotEmpty

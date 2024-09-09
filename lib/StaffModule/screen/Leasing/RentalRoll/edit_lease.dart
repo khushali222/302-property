@@ -2020,7 +2020,9 @@ class _Edit_leaseState extends State<Edit_lease>
                                                               color: Colors.black,
                                                             ),
                                                             onChanged: (value) {
-                                                              // Trigger validation on every change
+                                                              // Trigger validation on every change abc
+                                                              double enteredValue = double.tryParse(value) ?? 0;
+
                                                               Provider.of<SelectedTenantsProvider>(context, listen: false)
                                                                   .validateRentShares();
                                                             },

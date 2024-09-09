@@ -4425,9 +4425,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                               };
                             }).toList();
 
-
-
-                          //Provider.of<OwnerDetailsProvider>(context, listen: false).setOwnerDetails(updatedOwner);
+                        //Provider.of<OwnerDetailsProvider>(context, listen: false).setOwnerDetails(updatedOwner);
 
                           Rentals properties = Rentals(
                             adminId: id,

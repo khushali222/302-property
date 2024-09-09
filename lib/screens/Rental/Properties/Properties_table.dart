@@ -366,7 +366,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
           onPressed: () async {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             print(id);
-            var data = PropertiesRepository().DeleteProperties(id: id,);
+            var data = await PropertiesRepository().DeleteProperties(id: id,);
             setState(() {
               futureRentalOwners = PropertiesRepository().fetchProperties();
               //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
