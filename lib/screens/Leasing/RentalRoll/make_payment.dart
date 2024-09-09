@@ -3142,11 +3142,32 @@ class _MakePaymentState extends State<MakePayment> {
                                       });
                                       Navigator.pop(context, true);
                                     }).catchError((e) {
+                                      print(e.toString().split("Exception")[1].toString().trimLeft());
                                       setState(() {
                                         _isLoading = false;
                                       });
-                                      Fluttertoast.showToast(
-                                          msg: "Payment failed $e");
+                                      Alert(
+                                        context: context,
+                                        type: AlertType.warning,
+                                        title: "Payment Failed!",
+                                        desc: "${e.toString().split('Exception:')[1].toString().trimLeft()}",
+                                        style: AlertStyle(
+                                          backgroundColor: Colors.white,
+                                          //  overlayColor: Colors.black.withOpacity(.8)
+                                        ),
+                                        buttons: [
+                                          DialogButton(
+                                            child: Text(
+                                              "Ok",
+                                              style: TextStyle(color: Colors.white, fontSize: 18),
+                                            ),
+                                            onPressed: () => Navigator.pop(context),
+                                            color: blueColor,
+                                          ),
+
+                                        ],
+                                      ).show();
+
                                     });
                                   }
 
@@ -3192,11 +3213,32 @@ class _MakePaymentState extends State<MakePayment> {
                                     });
                                     Navigator.pop(context, true);
                                   }).catchError((e) {
+                                    print(e.toString().split("Exception")[1].toString().trimLeft());
                                     setState(() {
                                       _isLoading = false;
                                     });
-                                    Fluttertoast.showToast(
-                                        msg: "Payment failed $e");
+                                    Alert(
+                                      context: context,
+                                      type: AlertType.warning,
+                                      title: "Payment Failed!",
+                                      desc: "${e.toString().split('Exception:')[1].toString().trimLeft()}",
+                                      style: AlertStyle(
+                                        backgroundColor: Colors.white,
+                                        //  overlayColor: Colors.black.withOpacity(.8)
+                                      ),
+                                      buttons: [
+                                        DialogButton(
+                                          child: Text(
+                                            "Ok",
+                                            style: TextStyle(color: Colors.white, fontSize: 18),
+                                          ),
+                                          onPressed: () => Navigator.pop(context),
+                                          color: blueColor,
+                                        ),
+
+                                      ],
+                                    ).show();
+
                                   });
                                 } else if (_selectedPaymentMethod == "Check") {
                                   List<Map<String, String>> filteredTenants =
@@ -3274,6 +3316,8 @@ class _MakePaymentState extends State<MakePayment> {
                                     });
                                     Navigator.pop(context, true);
                                   }).catchError((e) {
+                                    print(e);
+                                    Fluttertoast.showToast(msg: e);
                                     setState(() {
                                       _isLoading = false;
                                     });

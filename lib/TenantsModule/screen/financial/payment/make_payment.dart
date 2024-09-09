@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/financial/payment/payment_service.dart';
 
@@ -4627,6 +4628,32 @@ class _MakePaymentState extends State<MakePayment> {
                                             setState(() {
                                               _isLoading = false;
                                             });
+                                            print(e.toString().split("Exception")[1].toString().trimLeft());
+                                            setState(() {
+                                              _isLoading = false;
+                                            });
+                                            Alert(
+                                              context: context,
+                                              type: AlertType.warning,
+                                              title: "Payment Failed!",
+                                              desc: "${e.toString().split('Exception:')[1].toString().trimLeft()}",
+                                              style: AlertStyle(
+                                                backgroundColor: Colors.white,
+                                                //  overlayColor: Colors.black.withOpacity(.8)
+                                              ),
+                                              buttons: [
+                                                DialogButton(
+                                                  child: Text(
+                                                    "Ok",
+                                                    style: TextStyle(color: Colors.white, fontSize: 18),
+                                                  ),
+                                                  onPressed: () => Navigator.pop(context),
+                                                  color: blueColor,
+                                                ),
+
+                                              ],
+                                            ).show();
+
                                             Fluttertoast.showToast(
                                                 msg: "Payment failed $e");
                                           });
@@ -4677,11 +4704,32 @@ class _MakePaymentState extends State<MakePayment> {
                                           });
                                           Navigator.pop(context, true);
                                         }).catchError((e) {
+                                          print(e.toString().split("Exception")[1].toString().trimLeft());
                                           setState(() {
                                             _isLoading = false;
                                           });
-                                          Fluttertoast.showToast(
-                                              msg: "Payment failed $e");
+                                          Alert(
+                                            context: context,
+                                            type: AlertType.warning,
+                                            title: "Payment Failed!",
+                                            desc: "${e.toString().split('Exception:')[1].toString().trimLeft()}",
+                                            style: AlertStyle(
+                                              backgroundColor: Colors.white,
+                                              //  overlayColor: Colors.black.withOpacity(.8)
+                                            ),
+                                            buttons: [
+                                              DialogButton(
+                                                child: Text(
+                                                  "Ok",
+                                                  style: TextStyle(color: Colors.white, fontSize: 18),
+                                                ),
+                                                onPressed: () => Navigator.pop(context),
+                                                color: blueColor,
+                                              ),
+
+                                            ],
+                                          ).show();
+
                                         });
                                       } else if (_selectedPaymentMethod == "Check") {
                                         List<Map<String, String>> filteredTenants =

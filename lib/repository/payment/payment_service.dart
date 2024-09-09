@@ -88,7 +88,7 @@ class PaymentService {
 
           return "Payment Success";
         } else {
-          throw Exception('Failed payment ${jsonData["message"]}');
+          throw Exception(' ${jsonData["message"]}');
         }
         return jsonDecode(response.body);
       } else {
