@@ -1072,57 +1072,53 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                           child: Stack(
                                             children: [
                                               Positioned.fill(
-                                                child: KeyboardActions(
-                                                  config: _buildConfig(context),
-                                                  child: TextField(
-                                                    focusNode: _nodeText1,
-                                                    style: TextStyle(
-                                                      color: Colors.black,
+                                                child: TextField(
+                                                  focusNode: _nodeText1,
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 14
+                                                            : 15,
+                                                  ),
+                                                  keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true), // Adjust as needed
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      phonenumerror = false;
+                                                    });
+                                                  },
+                                                  controller: phonenum,
+                                                  cursorColor: Color.fromRGBO(
+                                                      21, 43, 81, 1),
+                                                  decoration: InputDecoration(
+                                                    enabledBorder: phonenumerror
+                                                        ? OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                            borderSide: BorderSide(
+                                                                color: Colors
+                                                                    .red), // Set border color here
+                                                          )
+                                                        : InputBorder.none,
+                                                    border: InputBorder.none,
+                                                    contentPadding:
+                                                        EdgeInsets.all(14),
+                                                    hintText:
+                                                        "Enter phone number",
+                                                    hintStyle: TextStyle(
+                                                      color: Colors.grey[600],
                                                       fontSize:
                                                           MediaQuery.of(context)
                                                                       .size
                                                                       .width <
                                                                   500
                                                               ? 14
-                                                              : 15,
-                                                    ),
-                                                    keyboardType: TextInputType
-                                                        .number, // Adjust as needed
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        phonenumerror = false;
-                                                      });
-                                                    },
-                                                    controller: phonenum,
-                                                    cursorColor: Color.fromRGBO(
-                                                        21, 43, 81, 1),
-                                                    decoration: InputDecoration(
-                                                      enabledBorder: phonenumerror
-                                                          ? OutlineInputBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10),
-                                                              borderSide: BorderSide(
-                                                                  color: Colors
-                                                                      .red), // Set border color here
-                                                            )
-                                                          : InputBorder.none,
-                                                      border: InputBorder.none,
-                                                      contentPadding:
-                                                          EdgeInsets.all(14),
-                                                      hintText:
-                                                          "Enter phone number",
-                                                      hintStyle: TextStyle(
-                                                        color: Colors.grey[600],
-                                                        fontSize:
-                                                            MediaQuery.of(context)
-                                                                        .size
-                                                                        .width <
-                                                                    500
-                                                                ? 14
-                                                                : 18,
-                                                      ),
+                                                              : 18,
                                                     ),
                                                   ),
                                                 ),
@@ -1165,57 +1161,53 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                           child: Stack(
                                             children: [
                                               Positioned.fill(
-                                                child: KeyboardActions(
-                                                  config: _buildConfig(context),
-                                                  child: TextField(
-                                                    focusNode: _nodeText2,
-                                                    style: TextStyle(
-                                                      color: Colors.black,
+                                                child: TextField(
+                                                  focusNode: _nodeText2,
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 14
+                                                            : 15,
+                                                  ),
+                                                  keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true), // Adjust as needed
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      homenumerror = false;
+                                                    });
+                                                  },
+                                                  controller: homenum,
+                                                  cursorColor: Color.fromRGBO(
+                                                      21, 43, 81, 1),
+                                                  decoration: InputDecoration(
+                                                    enabledBorder: homenumerror
+                                                        ? OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                            borderSide: BorderSide(
+                                                                color: Colors
+                                                                    .red), // Set border color here
+                                                          )
+                                                        : InputBorder.none,
+                                                    border: InputBorder.none,
+                                                    contentPadding:
+                                                        EdgeInsets.all(14),
+                                                    hintText:
+                                                        "Enter home number",
+                                                    hintStyle: TextStyle(
+                                                      color: Colors.grey[600],
                                                       fontSize:
                                                           MediaQuery.of(context)
                                                                       .size
                                                                       .width <
                                                                   500
                                                               ? 14
-                                                              : 15,
-                                                    ),
-                                                    keyboardType: TextInputType
-                                                        .number, // Adjust as needed
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        homenumerror = false;
-                                                      });
-                                                    },
-                                                    controller: homenum,
-                                                    cursorColor: Color.fromRGBO(
-                                                        21, 43, 81, 1),
-                                                    decoration: InputDecoration(
-                                                      enabledBorder: homenumerror
-                                                          ? OutlineInputBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10),
-                                                              borderSide: BorderSide(
-                                                                  color: Colors
-                                                                      .red), // Set border color here
-                                                            )
-                                                          : InputBorder.none,
-                                                      border: InputBorder.none,
-                                                      contentPadding:
-                                                          EdgeInsets.all(14),
-                                                      hintText:
-                                                          "Enter home number",
-                                                      hintStyle: TextStyle(
-                                                        color: Colors.grey[600],
-                                                        fontSize:
-                                                            MediaQuery.of(context)
-                                                                        .size
-                                                                        .width <
-                                                                    500
-                                                                ? 14
-                                                                : 18,
-                                                      ),
+                                                              : 18,
                                                     ),
                                                   ),
                                                 ),
@@ -1258,58 +1250,54 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                           child: Stack(
                                             children: [
                                               Positioned.fill(
-                                                child: KeyboardActions(
-                                                  config: _buildConfig(context),
-                                                  child: TextField(
-                                                    focusNode: _nodeText3,
-                                                    style: TextStyle(
-                                                      color: Colors.black,
+                                                child: TextField(
+                                                  focusNode: _nodeText3,
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 14
+                                                            : 15,
+                                                  ),
+                                                  keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true), // Adjust as needed
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      businessnumerror = false;
+                                                    });
+                                                  },
+                                                  controller: businessnum,
+                                                  cursorColor: Color.fromRGBO(
+                                                      21, 43, 81, 1),
+                                                  decoration: InputDecoration(
+                                                    enabledBorder:
+                                                        businessnumerror
+                                                            ? OutlineInputBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
+                                                                borderSide: BorderSide(
+                                                                    color: Colors
+                                                                        .red), // Set border color here
+                                                              )
+                                                            : InputBorder.none,
+                                                    border: InputBorder.none,
+                                                    contentPadding:
+                                                        EdgeInsets.all(14),
+                                                    hintText:
+                                                        "Enter business number",
+                                                    hintStyle: TextStyle(
+                                                      color: Colors.grey[600],
                                                       fontSize:
                                                           MediaQuery.of(context)
                                                                       .size
                                                                       .width <
                                                                   500
                                                               ? 14
-                                                              : 15,
-                                                    ),
-                                                    keyboardType: TextInputType
-                                                        .number, // Adjust as needed
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        businessnumerror = false;
-                                                      });
-                                                    },
-                                                    controller: businessnum,
-                                                    cursorColor: Color.fromRGBO(
-                                                        21, 43, 81, 1),
-                                                    decoration: InputDecoration(
-                                                      enabledBorder:
-                                                          businessnumerror
-                                                              ? OutlineInputBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              10),
-                                                                  borderSide: BorderSide(
-                                                                      color: Colors
-                                                                          .red), // Set border color here
-                                                                )
-                                                              : InputBorder.none,
-                                                      border: InputBorder.none,
-                                                      contentPadding:
-                                                          EdgeInsets.all(14),
-                                                      hintText:
-                                                          "Enter business number",
-                                                      hintStyle: TextStyle(
-                                                        color: Colors.grey[600],
-                                                        fontSize:
-                                                            MediaQuery.of(context)
-                                                                        .size
-                                                                        .width <
-                                                                    500
-                                                                ? 14
-                                                                : 18,
-                                                      ),
+                                                              : 18,
                                                     ),
                                                   ),
                                                 ),
@@ -1809,62 +1797,59 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                 child: Stack(
                                                   children: [
                                                     Positioned.fill(
-                                                      child: KeyboardActions(
-                                                        config: _buildConfig(context),
-                                                        child: TextField(
-                                                          focusNode: _nodeText4,
-                                                          controller: code2,
-                                                          keyboardType: TextInputType.number,
-                                                          style: TextStyle(
-                                                            color: Colors.black,
+                                                      child: TextField(
+                                                        focusNode: _nodeText4,
+                                                        controller: code2,
+                                                        keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                                                        style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 14
+                                                              : 15,
+                                                        ),
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            code2error = false;
+                                                          });
+                                                        },
+                                                        cursorColor:
+                                                            Color.fromRGBO(
+                                                                21, 43, 81, 1),
+                                                        decoration:
+                                                            InputDecoration(
+                                                          enabledBorder:
+                                                              code2error
+                                                                  ? OutlineInputBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10),
+                                                                      borderSide:
+                                                                          BorderSide(
+                                                                              color: Colors.red), // Error border color
+                                                                    )
+                                                                  : InputBorder
+                                                                      .none,
+                                                          border:
+                                                              InputBorder.none,
+                                                          contentPadding:
+                                                              EdgeInsets.all(
+                                                                  14),
+                                                          hintText:
+                                                              "Enter postal code",
+                                                          hintStyle: TextStyle(
+                                                            color: Color(
+                                                                0xFF8A95A8),
                                                             fontSize: MediaQuery.of(
                                                                             context)
                                                                         .size
                                                                         .width <
                                                                     500
                                                                 ? 14
-                                                                : 15,
-                                                          ),
-                                                          onChanged: (value) {
-                                                            setState(() {
-                                                              code2error = false;
-                                                            });
-                                                          },
-                                                          cursorColor:
-                                                              Color.fromRGBO(
-                                                                  21, 43, 81, 1),
-                                                          decoration:
-                                                              InputDecoration(
-                                                            enabledBorder:
-                                                                code2error
-                                                                    ? OutlineInputBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(
-                                                                                10),
-                                                                        borderSide:
-                                                                            BorderSide(
-                                                                                color: Colors.red), // Error border color
-                                                                      )
-                                                                    : InputBorder
-                                                                        .none,
-                                                            border:
-                                                                InputBorder.none,
-                                                            contentPadding:
-                                                                EdgeInsets.all(
-                                                                    14),
-                                                            hintText:
-                                                                "Enter postal code",
-                                                            hintStyle: TextStyle(
-                                                              color: Color(
-                                                                  0xFF8A95A8),
-                                                              fontSize: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width <
-                                                                      500
-                                                                  ? 14
-                                                                  : 18,
-                                                            ),
+                                                                : 18,
                                                           ),
                                                         ),
                                                       ),
@@ -2188,8 +2173,8 @@ class _EditRentalownersState extends State<EditRentalowners> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
                         child: Container(
-                          height: 30.0,
-                          width: 50,
+                         height:  40.0,
+                          width: 100,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
                             color: Color.fromRGBO(21, 43, 81, 1),
@@ -2212,7 +2197,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 10,
+                                      fontSize: 14,
                                     ),
                                   ),
                           ),
@@ -2227,8 +2212,9 @@ class _EditRentalownersState extends State<EditRentalowners> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
                         child: Container(
-                          height: 30.0,
-                          width: 50,
+                          height:
+                          40.0,
+                          width: 65,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
                             color: Colors.white,
@@ -2251,7 +2237,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                     style: TextStyle(
                                         color: Color.fromRGBO(21, 43, 81, 1),
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 10),
+                                        fontSize: 13),
                                   ),
                           ),
                         ),

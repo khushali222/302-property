@@ -22,10 +22,10 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   String _workOrderFilter = "";
   // List of screens corresponding to each BottomNavigationBarItem
-   List<Widget> _screens = [
+  List<Widget> _screens = [
     Dashboard_vendors(),
     Profile_screen(),
-  //  WorkOrderTable(),
+    //  WorkOrderTable(),
   ];
   void initState() {
     super.initState();
@@ -133,7 +133,7 @@ class _MainScreenState extends State<MainScreen> {
         }
         else{
 
-            return await _showExitPopup(context);
+          return await _showExitPopup(context);
 
         }
         return false;
@@ -146,7 +146,8 @@ class _MainScreenState extends State<MainScreen> {
           onTap: _onItemTapped,
           items:  [
             BottomNavigationBarItem(
-              icon: SvgPicture.asset(
+              icon:
+              SvgPicture.asset(
                 "assets/images/tenants/dashboard.svg",
                 height: 20,
                 width: 20,
@@ -155,7 +156,8 @@ class _MainScreenState extends State<MainScreen> {
               label: 'Dashboard',
             ),
             BottomNavigationBarItem(
-              icon: SvgPicture.asset(
+              icon:
+              SvgPicture.asset(
                 "assets/images/tenants/Admin.svg",
                 height: 20,
                 width: 20,

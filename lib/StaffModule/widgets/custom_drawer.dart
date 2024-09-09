@@ -73,6 +73,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   fit: BoxFit.cover,
                   height: 20,
                   width: 20,
+                  color: blueColor,
                 ),
                 "Dashboard",
                 widget.currentpage == "Dashboard",

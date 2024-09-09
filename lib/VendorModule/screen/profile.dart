@@ -102,7 +102,7 @@ class _Profile_screenState extends State<Profile_screen> {
         key.currentState!.openDrawer();
       },),
       backgroundColor: Colors.white,
-     /* drawer: Drawer(
+      drawer: Drawer(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
         child: SingleChildScrollView(
@@ -134,7 +134,7 @@ class _Profile_screenState extends State<Profile_screen> {
                   ),
                   "Profile",
                   true),
-             *//* buildListTile(
+             /* buildListTile(
                   context,
                   SvgPicture.asset(
                     "assets/images/tenants/Property.svg",
@@ -153,7 +153,7 @@ class _Profile_screenState extends State<Profile_screen> {
                     width: 20,
                   ),
                   "Financial",
-                  false),*//*
+                  false),*/
               buildListTile(
                   context,
                   SvgPicture.asset(
@@ -164,7 +164,7 @@ class _Profile_screenState extends State<Profile_screen> {
                   ),
                   "Work Order",
                   false),
-              *//* buildDropdownListTile(
+              /* buildDropdownListTile(
                   context,
                   const FaIcon(
                     FontAwesomeIcons.key,
@@ -187,11 +187,11 @@ class _Profile_screenState extends State<Profile_screen> {
                   Image.asset("assets/icons/maintence.png",
                       height: 20, width: 20),
                   "Maintenance",
-                  ["Vendor", "Work Order"]),*//*
+                  ["Vendor", "Work Order"]),*/
             ],
           ),
         ),
-      ),*/
+      ),
       body: _isLoading
           ? Center(
         child: SpinKitFadingCircle(

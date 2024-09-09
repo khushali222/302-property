@@ -14,7 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import '../../../repository/lease.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
-import '../../../../widgets/appbar.dart';
+import '../../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 
 import '../../../../model/EnterChargeModel.dart';
@@ -104,9 +104,10 @@ class _enterChargeState extends State<enterCharge> {
         Map<String, List<String>> fetchedData = {};
         // Adding static items to the "LIABILITY ACCOUNT" category
         fetchedData["Liability Account"] = [
-          "Last Month's Rent",
+          "Late Fee Income",
           "Pre-payments",
-          "Security Deposit Liability"
+          "Security Deposit",
+          'Rent Income'
         ];
 
         for (var item in jsonResponse) {
@@ -1293,7 +1294,7 @@ class _enterChargeState extends State<enterCharge> {
                                       dueAmount:
                                           0, // Adjust according to your requirement
                                       memo: row['memo'],
-                                      date: row['date'],
+                                      date: reverseFormatDate(row['date']),
                                       chargeType: row['charge_type'],
                                       isRepeatable:
                                           false, // Adjust according to your requirement

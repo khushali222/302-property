@@ -6,10 +6,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/Model/AdminTenantInsuranceModel/adminTenantInsuranceModel.dart';
+import 'package:three_zero_two_property/StaffModule/repository/AdminTenantInsuranceService/adminTenantinsuranceService.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Rental/Tenants/AdminTenantInsurance/addAdminTenantInsurance.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Rental/Tenants/AdminTenantInsurance/editAdminTenantInsurance.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
-import 'package:three_zero_two_property/repository/AdminTenantInsuranceService/adminTenantinsuranceService.dart';
-import 'package:three_zero_two_property/screens/Rental/Tenants/AdminTenantInsurance/addAdminTenantInsurance.dart';
-import 'package:three_zero_two_property/screens/Rental/Tenants/AdminTenantInsurance/editAdminTenantInsurance.dart';
+
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 

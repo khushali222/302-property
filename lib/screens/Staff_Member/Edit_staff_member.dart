@@ -363,37 +363,34 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                 child: Stack(
                                   children: [
                                     Positioned.fill(
-                                      child: KeyboardActions(
-                                        config: _buildConfig(context),
-                                        child: TextField(
-                                          onChanged: (value) {
-                                            setState(() {
-                                              phonenumbererror = false;
-                                            });
-                                          },
-                                          focusNode: _nodeText1,
-                                          controller: phonenumber,
-                                          keyboardType: TextInputType.number,
-                                          cursorColor:
-                                          Color.fromRGBO(21, 43, 81, 1),
-                                          decoration: InputDecoration(
-                                            hintText: "Enter phone number",
-                                            hintStyle: TextStyle(
-                                              fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
-                                              color: Color(0xFF8A95A8),
-                                            ),
-                                            enabledBorder: phonenumbererror
-                                                ? OutlineInputBorder(
-                                              borderRadius:
-                                              BorderRadius.circular(2),
-                                              borderSide: BorderSide(
-                                                color: Colors.red,
-                                              ),
-                                            )
-                                                : InputBorder.none,
-                                            border: InputBorder.none,
-                                            contentPadding: EdgeInsets.all(12),
+                                      child: TextField(
+                                        onChanged: (value) {
+                                          setState(() {
+                                            phonenumbererror = false;
+                                          });
+                                        },
+                                        focusNode: _nodeText1,
+                                        controller: phonenumber,
+                                        keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                                        cursorColor:
+                                        Color.fromRGBO(21, 43, 81, 1),
+                                        decoration: InputDecoration(
+                                          hintText: "Enter phone number",
+                                          hintStyle: TextStyle(
+                                            fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
+                                            color: Color(0xFF8A95A8),
                                           ),
+                                          enabledBorder: phonenumbererror
+                                              ? OutlineInputBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(2),
+                                            borderSide: BorderSide(
+                                              color: Colors.red,
+                                            ),
+                                          )
+                                              : InputBorder.none,
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.all(12),
                                         ),
                                       ),
                                     ),

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
+import '../../../widgets/appbar.dart';
 
 import '../../../../Model/RentalOwnersData.dart';
 import '../../../model/rentalOwner.dart';

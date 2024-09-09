@@ -327,7 +327,7 @@ class _EditTenantsState extends State<EditTenants> {
                                             SizedBox(height: 10),
                                             CustomTextField(
                                               keyboardType:
-                                                  TextInputType.number,
+                                              TextInputType.numberWithOptions(signed: true,decimal: true),
                                               hintText: 'Enter phone number',
                                               controller: phoneNumber,
                                               validator: (value) {
@@ -355,7 +355,7 @@ class _EditTenantsState extends State<EditTenants> {
                                             SizedBox(height: 10),
                                             CustomTextField(
                                               keyboardType:
-                                                  TextInputType.number,
+                                              TextInputType.numberWithOptions(signed: true,decimal: true),
                                               hintText: 'Enter work number',
                                               controller: workNumber,
                                             ),
@@ -805,7 +805,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                   color: Colors.grey)),
                                           SizedBox(height: 10),
                                           CustomTextField(
-                                            keyboardType: TextInputType.number,
+                                            keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                                             hintText: 'Enter phone number',
                                             controller: emergencyPhoneNumber,
                                           ),
@@ -1143,7 +1143,7 @@ class _EditTenantsState extends State<EditTenants> {
                       height: 15,
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(12.0),
+                      padding: const EdgeInsets.only(left: 17,right: 17),
                       child: Container(
                         width: double.infinity,
                         // height: !form_valid ? 860 : 830,
@@ -1210,7 +1210,7 @@ class _EditTenantsState extends State<EditTenants> {
                                 height: 10,
                               ),
                               CustomTextField(
-                                keyboardType: TextInputType.number,
+                                keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                                 hintText: 'Enter phone number',
                                 controller: phoneNumber,
                                 validator: (value) {
@@ -1232,7 +1232,7 @@ class _EditTenantsState extends State<EditTenants> {
                                 height: 10,
                               ),
                               CustomTextField(
-                                keyboardType: TextInputType.number,
+                                keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                                 hintText: 'Enter work number',
                                 controller: workNumber,
                               ),
@@ -1362,7 +1362,7 @@ class _EditTenantsState extends State<EditTenants> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(12.0),
+                      padding: const EdgeInsets.only(left: 17,right: 17,top: 15,bottom: 15),
                       child: Container(
                         width: double.infinity,
                         // height: 410,
@@ -1504,7 +1504,7 @@ class _EditTenantsState extends State<EditTenants> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(12.0),
+                      padding: const EdgeInsets.only(left: 17,right: 17),
                       child: Container(
                         width: double.infinity,
                         // height: form_valid ? 520 : 430,
@@ -1592,7 +1592,7 @@ class _EditTenantsState extends State<EditTenants> {
                                 height: 10,
                               ),
                               CustomTextField(
-                                keyboardType: TextInputType.number,
+                                keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                                 hintText: 'Enter phone number',
                                 controller: emergencyPhoneNumber,
                               ),
@@ -1602,7 +1602,7 @@ class _EditTenantsState extends State<EditTenants> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(12.0),
+                      padding: const EdgeInsets.only(left: 17,right: 17,top: 15),
                       child: Container(
                         width: double.infinity,
                         // height: form_valid ? 520 : 430,

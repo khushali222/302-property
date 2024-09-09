@@ -715,7 +715,7 @@ class _PropertyTableState extends State<PropertyTable> {
                               style: TextStyle(
                                   fontSize:
                                       MediaQuery.of(context).size.width < 500
-                                          ? 12
+                                          ? 15
                                           : 14),
                               // onChanged: (value) {
                               //   setState(() {

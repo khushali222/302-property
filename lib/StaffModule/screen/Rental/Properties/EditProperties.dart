@@ -14,12 +14,15 @@ import 'package:keyboard_actions/keyboard_actions_item.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/StaffModule/repository/Staffmember.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/Edit_Rentalowners.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/add_rentalowners.dart';
 import 'package:three_zero_two_property/model/staffmember.dart';
-import 'package:three_zero_two_property/repository/Staffmember.dart';
+
 import 'package:three_zero_two_property/repository/rental_properties.dart';
-import 'package:three_zero_two_property/screens/Rental/Properties/Edit_Rentalowners.dart';
-import 'package:three_zero_two_property/screens/Rental/Properties/add_rentalowners.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
+
+
+
 
 import '../../../../Model/propertytype.dart';
 import '../../../../constant/constant.dart';
@@ -36,6 +39,7 @@ import 'package:http/http.dart' as http;
 
 
 import '../../../widgets/custom_drawer.dart';
+import '../../../widgets/appbar.dart';
 class Edit_properties extends StatefulWidget {
   propertytype? property;
   Staffmembers? staff;
@@ -175,9 +179,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
     final response =
     await http.get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'),headers: {
-      "id":"CRM $id",
+      "id":"CRM $staffid",
       "authorization": "CRM $token",
     });
 
@@ -232,6 +237,9 @@ class _Edit_propertiesState extends State<Edit_properties> {
       streetAddress: widget.properties.rentalOwnerData?.Address,
       postalCode: widget.properties.rentalOwnerData?.postalCode,
       country: widget.properties.rentalOwnerData?.country,
+        processorList:widget.properties.rentalOwnerData?.processorList?.map((item) {
+          return ProcessorList.fromJson(item as Map<String, dynamic>);
+        }).toList()
 
     );
     processor_id = widget.properties.processor_id;
@@ -269,11 +277,25 @@ class _Edit_propertiesState extends State<Edit_properties> {
         country.text = fetchedDetails.rentalCountry!;
         selectedProperty = fetchedDetails.propertyTypeData!.propertySubType;
         Ownersdetails = RentalOwner(
-          rentalOwnerId: fetchedDetails.rentalOwnerId,
-          rentalOwnerPhoneNumber:
-          fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber,
-          rentalOwnerName:
-          fetchedDetails.rentalOwnerData!.rentalOwnerName,
+            rentalOwnerId: fetchedDetails.rentalOwnerId,
+            rentalOwnerPhoneNumber:
+            fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber,
+            rentalOwnerName:
+            fetchedDetails.rentalOwnerData!.rentalOwnerName,
+
+            rentalOwnerHomeNumber: fetchedDetails.rentalOwnerData?.rentalOwnerHomeNumber,
+            rentalOwnerBusinessNumber: fetchedDetails.rentalOwnerData?.rentalOwnerBuisinessNumber,
+            rentalOwnerAlternateEmail: fetchedDetails.rentalOwnerData?.rentalOwnerAlternativeEmail,
+            rentalOwnerPrimaryEmail: fetchedDetails.rentalOwnerData?.rentalOwnerPrimaryEmail,
+            rentalOwnerCompanyName: fetchedDetails.rentalOwnerData?.rentalOwnerCompanyName,
+            city: fetchedDetails.rentalOwnerData?.city,
+            state: fetchedDetails.rentalOwnerData?.state,
+            streetAddress: fetchedDetails.rentalOwnerData?.Address,
+            postalCode: fetchedDetails.rentalOwnerData?.postalCode,
+            country: fetchedDetails.rentalOwnerData?.country,
+            processorList:fetchedDetails.rentalOwnerData?.processorList?.map((item) {
+              return ProcessorList.fromJson(item as Map<String, dynamic>);
+            }).toList()
         );
         firstname.text = fetchedDetails.rentalOwnerData!.rentalOwnerName!;
         comname.text = fetchedDetails.rentalOwnerData!.rentalOwnerCompanyName!;
@@ -2274,36 +2296,33 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                         child: Stack(
                                           children: [
                                             Positioned.fill(
-                                              child: KeyboardActions(
-                                                config:_buildConfig(context),
-                                                child: TextField(
-                                                  focusNode: _nodeText1,
-                                                  controller: postalcode,
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
-                                                  ),
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      postalcodeerror = false;
-                                                    });
-                                                  },
-                                                  keyboardType: TextInputType.number,
-                                                  cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                                  decoration: InputDecoration(
-                                                    enabledBorder: postalcodeerror
-                                                        ? OutlineInputBorder(
-                                                      borderRadius: BorderRadius.circular(10),
-                                                      borderSide: BorderSide(color: Colors.red), // Error border color
-                                                    )
-                                                        : InputBorder.none,
-                                                    border: InputBorder.none,
-                                                    contentPadding: EdgeInsets.all(14),
-                                                    hintText: "Enter postal code",
-                                                    hintStyle: TextStyle(
-                                                      color: Color(0xFF8A95A8),
-                                                      fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
-                                                    ),
+                                              child: TextField(
+                                                focusNode: _nodeText1,
+                                                controller: postalcode,
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
+                                                ),
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    postalcodeerror = false;
+                                                  });
+                                                },
+                                                keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                                                cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                decoration: InputDecoration(
+                                                  enabledBorder: postalcodeerror
+                                                      ? OutlineInputBorder(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    borderSide: BorderSide(color: Colors.red), // Error border color
+                                                  )
+                                                      : InputBorder.none,
+                                                  border: InputBorder.none,
+                                                  contentPadding: EdgeInsets.all(14),
+                                                  hintText: "Enter postal code",
+                                                  hintStyle: TextStyle(
+                                                    color: Color(0xFF8A95A8),
+                                                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
                                                   ),
                                                 ),
                                               ),
@@ -2415,7 +2434,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             ),
                             GestureDetector(
                               onTap: () {
-
                                 Navigator.push(context, MaterialPageRoute(builder: (context)=>AddRentalowners(OwnersDetails: Ownersdetails,isEdit: true,)));
                               },
                               child:
@@ -3567,7 +3585,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                   'Add New Staffmember',
                                                   style: TextStyle(
                                                       fontSize:
-                                                      MediaQuery.of(context).size.width < 500 ? 10.5 : 18),
+                                                      MediaQuery.of(context).size.width < 500 ? 14 : 18),
                                                 ),
                                               ],
                                             ),
@@ -3584,7 +3602,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                           width: MediaQuery.of(context)
                                               .size
                                               .width *
-                                              .36,
+                                              .5,
                                           padding: EdgeInsets.symmetric(
                                               horizontal: 8, vertical: 4),
                                           decoration: BoxDecoration(
@@ -4435,28 +4453,28 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           //Provider.of<OwnerDetailsProvider>(context, listen: false).setOwnerDetails(updatedOwner);
 
                           Rentals properties = Rentals(
-                            adminId: id,
-                            rentalOwnerData: RentalOwnerData(
-                              adminId: widget.properties.adminId,
-                              rentalOwnerId: widget.properties.rentalOwnerId,
-                              rentalOwnerName: updatedOwner.rentalOwnerName,
-                              rentalOwnerCompanyName: updatedOwner.rentalOwnerCompanyName,
-                              rentalOwnerPrimaryEmail: updatedOwner.rentalOwnerPrimaryEmail,
-                              rentalOwnerPhoneNumber: updatedOwner.rentalOwnerPhoneNumber,
-                              city: updatedOwner.city,
-                              state: updatedOwner.state,
-                              country: updatedOwner.country,
-                              postalCode: updatedOwner.postalCode,
-                              processorList: processorIds
-                            ),
-                            rentalId: widget.rentalId,
-                            propertyId: widget.properties.propertyId,
-                            rentalAddress: address.text,
-                            rentalCity: city.text,
-                            rentalState: state.text,
-                            rentalCountry: country.text,
-                            rentalPostcode: postalcode.text,
-                            staffMemberId: widget.properties.staffMemberId,
+                              adminId: id,
+                              rentalOwnerData: RentalOwnerData(
+                                  adminId: widget.properties.adminId,
+                                  rentalOwnerId: widget.properties.rentalOwnerId,
+                                  rentalOwnerName: updatedOwner.rentalOwnerName,
+                                  rentalOwnerCompanyName: updatedOwner.rentalOwnerCompanyName,
+                                  rentalOwnerPrimaryEmail: updatedOwner.rentalOwnerPrimaryEmail,
+                                  rentalOwnerPhoneNumber: updatedOwner.rentalOwnerPhoneNumber,
+                                  city: updatedOwner.city,
+                                  state: updatedOwner.state,
+                                  country: updatedOwner.country,
+                                  postalCode: updatedOwner.postalCode,
+                                  processorList: processorIds
+                              ),
+                              rentalId: widget.rentalId,
+                              propertyId: widget.properties.propertyId,
+                              rentalAddress: address.text,
+                              rentalCity: city.text,
+                              rentalState: state.text,
+                              rentalCountry: country.text,
+                              rentalPostcode: postalcode.text,
+                              staffMemberId: widget.properties.staffMemberId,
                               processor_id:processorId
                           );
                           PropertiesRepository()

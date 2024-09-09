@@ -18,7 +18,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/lease.dart';
 
 
-import '../../../../widgets/appbar.dart';
+import '../../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 
 import '../../../model/EnterChargeModel.dart';
@@ -63,6 +63,7 @@ class _MakePaymentState extends State<MakePayment> {
   Setting1? surcharges;
   double? surchargecount = 0.0;
   double? finaltotal;
+  String? tenantname;
   Future<void> fetchSurchargeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
@@ -883,6 +884,9 @@ class _MakePaymentState extends State<MakePayment> {
                                         onChanged: (value) async {
                                           setState(() {
                                             selectedTenantId = value;
+                                            tenantname =   tenants.firstWhere(
+                                                  (tenant) => tenant['tenant_id'] == value,
+                                            )['tenant_name']!;
                                             fetchChargesForSelectedTenant(
                                                 value!);
                                           });
@@ -3135,6 +3139,7 @@ class _MakePaymentState extends State<MakePayment> {
                                         leaseid: widget.leaseId,
                                         company_name: companyName,
                                         entries: rows,
+                                        tenantname: tenantname,
                                         future_Date: futuredate!, uploadedFile: _uploadedFileNames)
                                         .then((value) {
                                       Fluttertoast.showToast(msg: "$value");
@@ -3184,6 +3189,7 @@ class _MakePaymentState extends State<MakePayment> {
                                               _selectedHoldertype!,
                                           checkaccount: accountnum.text,
                                           checkaba: bankrountingnum.text,
+                                      tenantname: tenantname,
                                           checkname: achname.text, uploadedFile: _uploadedFileNames)
                                       .then((value) {
                                     Fluttertoast.showToast(msg: "$value");

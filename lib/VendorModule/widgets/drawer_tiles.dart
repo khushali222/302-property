@@ -25,8 +25,8 @@ Widget buildListTile(
       onTap: () {
       //  navigateToOption(context, "Properties");
         if (title == "Dashboard") {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Dashboard_vendors()));
+        /*  Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Dashboard_vendors()));*/
         } else if (title == "Profile") {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => Profile_screen()));

@@ -866,7 +866,8 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                     Row(
                                       children: [
                                         Expanded(
-                                          child: Column(
+                                          child:
+                                          Column(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             crossAxisAlignment:

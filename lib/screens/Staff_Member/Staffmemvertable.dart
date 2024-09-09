@@ -178,7 +178,7 @@ class _StaffTableState extends State<StaffTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Designation", style: TextStyle(color: Colors.white)),
+                    Text("Designation", style: TextStyle(color: Colors.white,fontSize:15)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
@@ -226,6 +226,7 @@ class _StaffTableState extends State<StaffTable> {
                 },
                 child: Row(
                   children: [
+                    SizedBox(width: 5),
                     Text("   Contact", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     ascending3

@@ -2530,6 +2530,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                           color:
                                                                               blueColor), // Bold and black
                                                                     ),
+                                                                    if(data.type != "Charge")
                                                                     TextSpan(
                                                                       text:
                                                                           'Manual ${data.type} ${data.response} For ${data.paymenttype}',
@@ -2539,6 +2540,16 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                           color:
                                                                               grey), // Light and grey
                                                                     ),
+                                                                    if(data.type == "Charge")
+                                                                      TextSpan(
+                                                                        text:
+                                                                        '---------------------------',
+                                                                        style: TextStyle(
+                                                                            fontWeight: FontWeight
+                                                                                .w700,
+                                                                            color:
+                                                                            grey), // Light and grey
+                                                                      ),
                                                                   ],
                                                                 ),
                                                               ),

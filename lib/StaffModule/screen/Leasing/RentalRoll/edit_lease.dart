@@ -15,14 +15,16 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
+import 'package:three_zero_two_property/StaffModule/repository/lease.dart';
+import 'package:three_zero_two_property/StaffModule/repository/properties.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/model/properties.dart';
-import 'package:three_zero_two_property/repository/lease.dart';
-import 'package:three_zero_two_property/repository/properties.dart';
+
+
 
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
-import '../../../../widgets/appbar.dart';
+import '../../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
@@ -96,19 +98,7 @@ class _Edit_leaseState extends State<Edit_lease>
     // print();
 
     // print(fetchedDetails.re);
-    print(leaseId);
-    print('rental id ${fetchedDetails.rental.rentalId}');
-    print('property id ${fetchedDetails.rental.propertyId}');
-    print(
-        'Rent amount ${fetchedDetails.rentCharges!.first!.amount.toString()}');
-    print('Rent lease type ${fetchedDetails.lease.leaseType}');
-    print('Rent start ${fetchedDetails.lease.startDate}');
-    print('Rent end ${fetchedDetails.lease.endDate}');
-    print('Rent cycle ${fetchedDetails.rentCharges!.first!.rentCycle}');
-    print('Rent amt ${fetchedDetails.securityCharges!.first!.amount}');
-    print('Rent date ${fetchedDetails.rentCharges!.first!.date}');
-    print(
-        'Rent amount ${fetchedDetails.rentCharges!.first!.amount.toString()}');
+
 
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
@@ -221,7 +211,7 @@ class _Edit_leaseState extends State<Edit_lease>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-
+    String? staffid = prefs.getString("staff_id");
     setState(() {
       _isLoading = true;
     });
@@ -230,7 +220,7 @@ class _Edit_leaseState extends State<Edit_lease>
       final response = await http
           .get(Uri.parse('${Api_url}/api/rentals/rentals/$id'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $staffid",
       });
       print('${Api_url}/api/rentals/rentals/$id');
 
@@ -267,11 +257,12 @@ class _Edit_leaseState extends State<Edit_lease>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
     try {
       final response = await http
           .get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $staffid",
       });
       print('$Api_url/api/unit/rental_unit/$rentalId');
 
@@ -801,14 +792,7 @@ class _Edit_leaseState extends State<Edit_lease>
                               const SizedBox(
                                 height: 4,
                               ),
-                              _isLoading
-                                  ? const Center(
-                                child: SpinKitSpinningLines(
-                                  color: Colors.black,
-                                  size: 50.0,
-                                ),
-                              )
-                                  : Column(
+                              Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   DropdownButtonHideUnderline(
@@ -1096,11 +1080,11 @@ class _Edit_leaseState extends State<Edit_lease>
                                   },
                                   buttonStyleData: ButtonStyleData(
                                     height: 50,
-                                    width: 230,
+                                   // width: 230,
                                     padding:
                                     const EdgeInsets.only(left: 14, right: 14),
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
+                                      borderRadius: BorderRadius.circular(6),
                                       border: Border.all(
                                         color: Colors.black26,
                                       ),
@@ -2716,11 +2700,11 @@ class _Edit_leaseState extends State<Edit_lease>
                                     },
                                     buttonStyleData: ButtonStyleData(
                                       height: 50,
-                                      width: 200,
+                                     // width: 200,
                                       padding:
                                       const EdgeInsets.only(left: 14, right: 14),
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(6),
                                         border: Border.all(
                                           color: Colors.black26,
                                         ),
@@ -4038,7 +4022,7 @@ class _Edit_leaseState extends State<Edit_lease>
                           children: [
                             Container(
                                 height: 50,
-                                width: 150,
+                                width: 130,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8.0)),
                                 child: ElevatedButton(
@@ -4377,7 +4361,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                     },
                                     child: const Text(
                                       'Edit Lease',
-                                      style: TextStyle(color: Color(0xFFf7f8f9)),
+                                      style: TextStyle(color: Color(0xFFf7f8f9),fontSize: 16),
                                     ))),
                             const SizedBox(
                               width: 8,
@@ -4846,11 +4830,12 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     String? id = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     final response = await http
         .get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {
       "authorization": "CRM $token",
-      "id": "CRM $id",
+      "id": "CRM $staffid",
     });
     print(response.body);
     if (response.statusCode == 200) {
@@ -5441,12 +5426,13 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
       };
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString('adminId');
+      String? staffid = prefs.getString("staff_id");
       String? token = prefs.getString('token');
       final response = await http.post(
         Uri.parse('$Api_url/api/accounts/accounts'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM $staffid",
           'Content-Type': 'application/json'
         },
         body: json.encode(formData),
@@ -5575,11 +5561,12 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     final response = await http
         .get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {
       "authorization": "CRM $token",
-      "id": "CRM $id",
+      "id": "CRM $staffid",
     });
     print(response.body);
     if (response.statusCode == 200) {
@@ -6140,12 +6127,13 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       };
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString('adminId');
+      String? staffid = prefs.getString("staff_id");
       String? token = prefs.getString('token');
       final response = await http.post(
         Uri.parse('$Api_url/api/accounts/accounts'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM $staffid",
           'Content-Type': 'application/json'
         },
         body: json.encode(formData),
@@ -6271,12 +6259,14 @@ class _AddTenantState extends State<AddTenant> {
 
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
+      //String? id = prefs.getString("adminId");
       String? id = prefs.getString("adminId");
+      String? staffid = prefs.getString("staff_id");
       String? token = prefs.getString('token');
       final response = await http
           .get(Uri.parse('${Api_url}/api/tenant/tenants/$id'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $staffid",
       });
 
       if (response.statusCode == 200) {
@@ -6433,6 +6423,8 @@ class _AddTenantState extends State<AddTenant> {
                       DataColumn(label: Text('Select')),
                     ],
                     rows: filteredTenants.map((tenant) {
+                      print(  Provider.of<SelectedTenantsProvider>(context)
+                          .selectedTenants.length);
                       /* final isSelected = Provider.of<SelectedTenantsProvider>(context)
                                 .selectedTenants
                                 .contains(tenant);*/
@@ -6440,8 +6432,8 @@ class _AddTenantState extends State<AddTenant> {
                       Provider.of<SelectedTenantsProvider>(context)
                           .selectedTenants
                           .where((test) =>
-                      test.tenantFirstName ==
-                          tenant.tenantFirstName)
+                      test.tenantId ==
+                          tenant.tenantId)
                           .toList();
                       print(matchingTenants);
                       final isSelected =

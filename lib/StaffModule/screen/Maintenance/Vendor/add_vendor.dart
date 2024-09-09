@@ -128,7 +128,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                 height: 10,
                               ),
                               CustomTextField(
-                                keyboardType: TextInputType.number,
+                                keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                                 hintText: 'Enter phone number',
                                 controller: phoneNumber,
                                 validator: (value) {
@@ -427,7 +427,7 @@ class _Add_vendorState extends State<Add_vendor> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                               hintText: 'Enter phone number',
                               controller: phoneNumber,
                               validator: (value) {

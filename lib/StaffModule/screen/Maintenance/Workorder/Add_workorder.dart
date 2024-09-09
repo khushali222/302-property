@@ -11,10 +11,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/repository/workorder.dart';
+
 
 import '../../../../constant/constant.dart';
 
+import '../../../repository/workorder.dart';
 import '../../../model/properties.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/drawer_tiles.dart';
@@ -111,6 +112,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
     setState(() {
       _isLoading = true;
     });
@@ -118,7 +120,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
       final response = await http
           .get(Uri.parse('${Api_url}/api/rentals/rentals/$id'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $staffid",
       });
       print('${Api_url}/api/rentals/rentals/$id');
       if (response.statusCode == 200) {
@@ -153,11 +155,12 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
     try {
       final response = await http
           .get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $staffid",
       });
       print('$Api_url/api/unit/rental_unit/$rentalId');
 
@@ -189,6 +192,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
     setState(() {
       _isLoadingvendors = true;
     });
@@ -196,7 +200,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
       final response = await http
           .get(Uri.parse('${Api_url}/api/vendor/vendors/$id'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $staffid",
       });
       print('${Api_url}/api/vendor/vendors/$id');
 
@@ -228,6 +232,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
     setState(() {
       _isLoadingstaff = true;
     });
@@ -236,7 +241,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
           Uri.parse('${Api_url}/api/staffmember/staff_member/$id'),
           headers: {
             "authorization": "CRM $token",
-            "id": "CRM $id",
+            "id": "CRM $staffid",
           });
       print('${Api_url}/api/staffmember/staff_member/$id');
 
@@ -269,6 +274,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
     setState(() {
       _isLoadingtenant = true;
     });
@@ -277,7 +283,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
           Uri.parse('${Api_url}/api/leases/get_tenants/$rentalId/$unitId'),
           headers: {
             "authorization": "CRM $token",
-            "id": "CRM $id",
+            "id": "CRM $staffid",
           });
       print('${Api_url}/api/leases/get_tenants/$rentalId/$unitId');
       print(response.body);
@@ -454,7 +460,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
               },
               buttonStyleData: ButtonStyleData(
                 height: 45,
-                width: 200,
+               // width: 200,
                 padding: const EdgeInsets.only(left: 14, right: 14),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(6),
@@ -813,14 +819,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                             SizedBox(
                               height: 2,
                             ),
-                            _isLoading
-                                ? const Center(
-                                    child: SpinKitFadingCircle(
-                                      color: Colors.black,
-                                      size: 50.0,
-                                    ),
-                                  )
-                                : Column(
+                            Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
@@ -1089,7 +1088,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                                 },
                                 buttonStyleData: ButtonStyleData(
                                   height: 45,
-                                  width: 200,
+                                 // width: 200,
                                   padding: const EdgeInsets.only(
                                       left: 14, right: 14),
                                   decoration: BoxDecoration(
@@ -1143,14 +1142,8 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                             SizedBox(
                               height: 2,
                             ),
-                            _isLoadingvendors
-                                ? const Center(
-                                    child: SpinKitFadingCircle(
-                                      color: Colors.black,
-                                      size: 50.0,
-                                    ),
-                                  )
-                                : Column(
+
+                            Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
@@ -1289,7 +1282,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                                 },
                                 buttonStyleData: ButtonStyleData(
                                   height: 45,
-                                  width: 200,
+                                 // width: 200,
                                   padding: const EdgeInsets.only(
                                       left: 14, right: 14),
                                   decoration: BoxDecoration(
@@ -1335,14 +1328,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                             SizedBox(
                               height: 2,
                             ),
-                            _isLoadingstaff
-                                ? const Center(
-                                    child: SpinKitFadingCircle(
-                                      color: Colors.black,
-                                      size: 50.0,
-                                    ),
-                                  )
-                                : Column(
+                            Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
@@ -1798,7 +1784,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                                 },
                                 buttonStyleData: ButtonStyleData(
                                   height: 45,
-                                  width: 200,
+                                  //width: 200,
                                   padding: const EdgeInsets.only(
                                       left: 14, right: 14),
                                   decoration: BoxDecoration(

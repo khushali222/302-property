@@ -14,14 +14,15 @@ import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/Model/tenants.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/lease.dart';
-import 'package:three_zero_two_property/repository/workorder.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newModel.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 // import 'package:three_zero_two_property/repository/properties_summery.dart';
 import '../../../../model/summery_workorder.dart';
+import '../../../repository/workorder.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../../widgets/titleBar.dart';
 import '../../../widgets/custom_drawer.dart';
+
 class Workorder_summery extends StatefulWidget {
   String? workorder_id;
   Workorder_summery({super.key, this.workorder_id});
@@ -39,7 +40,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
     "IncomeVerification",
     "LandlordVerification"
   ];
-
   List<String> applicantChecklist = [];
   final Map<String, String> displayNames = {
     "CreditCheck": "Credit and background check",
@@ -82,6 +82,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
   Future<void> _loadStaff() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
+    String? staffid = prefs.getString("staff_id");
+  //  String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     setState(() {
       _isLoadingstaff = true;
@@ -91,7 +93,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
           Uri.parse('${Api_url}/api/staffmember/staff_member/$id'),
           headers: {
             "authorization": "CRM $token",
-            "id": "CRM $id",
+            "id": "CRM $staffid",
           });
       print('${Api_url}/api/staffmember/staff_member/$id');
 
@@ -99,8 +101,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> staffnames = {};
         jsonResponse.forEach((data) {
+
           staffnames[data['staffmember_id'].toString()] =
               data['staffmember_name'].toString();
+
         });
 
         setState(() {
@@ -111,9 +115,11 @@ class _Workorder_summeryState extends State<Workorder_summery>
         throw Exception('Failed to load data');
       }
     } catch (e) {
+
       setState(() {
         _isLoadingstaff = false;
       });
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to fetch vendors: $e')),
       );

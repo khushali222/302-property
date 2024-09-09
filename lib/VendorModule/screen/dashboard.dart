@@ -38,7 +38,7 @@ class DashboardData {
   List<String> icons = [
     // "assets/images/Properti-icon.svg",
     "assets/images/workorder-icon.svg",
-   /* "assets/images/tenants/balance.svg",
+    /* "assets/images/tenants/balance.svg",
     "assets/images/tenants/rent.svg",*/
     "assets/images/tenants/duedate.svg",
     //"assets/images/tenants/leaseicon.svg",
@@ -75,7 +75,7 @@ class DashboardData {
 }
 
 class Dashboard_vendors extends StatefulWidget {
-   Function(String)? onWorkOrderSelected;
+  Function(String)? onWorkOrderSelected;
 
   Dashboard_vendors({ this.onWorkOrderSelected});
   //Dashboard_vendors({super.key});
@@ -109,10 +109,10 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
           }
 
       );
-   //   print(response.body);
+      //   print(response.body);
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
-      //  print(jsonData);
+        //  print(jsonData);
         setState(() {
           //countList[0] = jsonData["data"]['all_workorders'];
           //  countList[1] = jsonData['rentalCount'];
@@ -142,7 +142,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
       String? admin_id = prefs.getString("adminId");
       String? token = prefs.getString('token');
       //print(id);
-     /// print(token);
+      /// print(token);
       final response =
       await http.get(
           Uri.parse('${Api_url}/api/payment/tenant_financial/${id!}'),
@@ -153,11 +153,11 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
           }
 
       );
-    //  print(response.body);
+      //  print(response.body);
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
-      //  print(jsonData);
-       // print(jsonData["totalBalance"]);
+        //  print(jsonData);
+        // print(jsonData["totalBalance"]);
         setState(() {
           // countList[0] = jsonData['property_staffMember'];
           countList[1] = double.parse(jsonData['totalBalance'].toString()).toStringAsFixed(2) ??0;
@@ -204,18 +204,18 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
     //print('${Api_url}/api/payment/admin_balance/$id');
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
-    //  print(jsonData);
+      //  print(jsonData);
       if (jsonData["statusCode"] == 200) {
         final data = jsonData["data"];
         setState(() {
           var newwork = data["new_workorder"];
           var overdue = data["overdue_workorder"];
-         // print(newwork);
+          // print(newwork);
           /*newworkorder = newwork;
           overdueworkorder = overdue;*/
           countList[0] = newwork.length;
           countList[1] = overdue.length;
-         // print(data);
+          // print(data);
         });
       } else {
         throw Exception('Failed to load data');
@@ -238,10 +238,10 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
     super.initState();
     dashboardData =
         DashboardData(countList: [0,0], amountList: [0, 0]);
-  //  fetchDatacount();
+    //  fetchDatacount();
     fetchData();
     _loadName();
-   // fetchDatafinancial();
+    // fetchDatafinancial();
   }
 
   Future<void> _loadName() async {
@@ -525,7 +525,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                 2,
                                     (index) => InkWell(
                                   onTap: (){
-                                  /*  if(dashboardData.titles[index] == "Work Orders"){
+                                    /*  if(dashboardData.titles[index] == "Work Orders"){
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context)=>WorkOrderTable()));
                                     }
                                     if(dashboardData.titles[index] == "Balance"){
@@ -615,8 +615,8 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                             ),
                             const SizedBox(height: 20),
                             Container(
-                             // color: Colors.cyan,
-                             // padding: const EdgeInsets.only(left: 15, right: 15),
+                              // color: Colors.cyan,
+                              // padding: const EdgeInsets.only(left: 15, right: 15),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
@@ -764,7 +764,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                               itemBuilder: (context, index) {
                                 return InkWell(
                                   onTap: (){
-                                 /*   print("calling");
+                                    /*   print("calling");
                                     if(dashboardData.titles[index] == "Work Orders"){
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context)=>WorkOrderTable()));
                                     }
@@ -842,7 +842,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                   fontSize: 16,
                                                 ),
                                               ),
-                                             /* if(index == 0 || index ==1)
+                                              /* if(index == 0 || index ==1)
                                                 Icon(Icons.arrow_forward_outlined,color: Colors.white,)*/
                                             ],
                                           ),
@@ -867,13 +867,13 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                   child: InkWell(
                                     onTap:(){
                                       widget.onWorkOrderSelected!("New");
-                                   //   Navigator.of(context).push(MaterialPageRoute(builder: (context)=>WorkOrderTable(filter: "New",)));
-                    },
+                                      //   Navigator.of(context).push(MaterialPageRoute(builder: (context)=>WorkOrderTable(filter: "New",)));
+                                    },
                                     child: Material(
                                       elevation: 3,
                                       borderRadius: BorderRadius.circular(10),
                                       child: Container(
-                                      //  color: dashboardData.colorc[0],
+                                        //  color: dashboardData.colorc[0],
                                         decoration: BoxDecoration(
                                           color: dashboardData.colorc[0],
                                           borderRadius:
@@ -890,7 +890,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                   child: InkWell(
                                     onTap:(){
                                       widget.onWorkOrderSelected!("Over Due");
-                                     // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>WorkOrderTable(filter: "Over Due",)));
+                                      // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>WorkOrderTable(filter: "Over Due",)));
                                     },
                                     child: Material(
                                       elevation: 3,
@@ -901,7 +901,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                           borderRadius:
                                           BorderRadius.circular(6),
                                         ),
-                                       // color: dashboardData.colorc[1],
+                                        // color: dashboardData.colorc[1],
                                         height: 50,
                                         child: Center(child: Text("View All",style: TextStyle(color: Colors.white),)),
                                       ),
@@ -1353,7 +1353,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                 //   }
                 // }),
 
-             /*   LayoutBuilder(
+                /*   LayoutBuilder(
                   builder: (context, constraints) {
                     if (constraints.maxWidth > 600) {
                       // Tablet layout - horizontal

@@ -55,6 +55,7 @@ class _AddApplicantState extends State<AddApplicant> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
     setState(() {
       _isLoading = true;
     });
@@ -63,7 +64,7 @@ class _AddApplicantState extends State<AddApplicant> {
       final response = await http
           .get(Uri.parse('${Api_url}/api/rentals/rentals/$id'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $staffid",
       });
       print('${Api_url}/api/rentals/rentals/$id');
 
@@ -99,11 +100,12 @@ class _AddApplicantState extends State<AddApplicant> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
     try {
       final response = await http
           .get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $staffid",
       });
       print('$Api_url/api/unit/rental_unit/$rentalId');
 
@@ -258,7 +260,7 @@ class _AddApplicantState extends State<AddApplicant> {
                             }
                             return null;
                           },
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                           hintText: 'Enter mobile number',
                           controller: mobileNumber,
                         ),
@@ -280,7 +282,7 @@ class _AddApplicantState extends State<AddApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                           hintText: 'Enter home number',
                           controller: homeNumber,
                         ),
@@ -302,7 +304,7 @@ class _AddApplicantState extends State<AddApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                           hintText: 'Enter business number',
                           controller: bussinessNumber,
                         ),
@@ -324,18 +326,12 @@ class _AddApplicantState extends State<AddApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                           hintText: 'Enter telephone number',
                           controller: telePhoneNumber,
                         ),
-                        _isLoading
-                            ? const Center(
-                                child: SpinKitSpinningLines(
-                                  color: Colors.black,
-                                  size: 50.0,
-                                ),
-                              )
-                            : Column(
+
+                        Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   DropdownButtonHideUnderline(

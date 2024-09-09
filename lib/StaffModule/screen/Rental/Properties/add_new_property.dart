@@ -13,18 +13,21 @@ import 'package:keyboard_actions/keyboard_actions_config.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/StaffModule/repository/Property_type.dart';
+import 'package:three_zero_two_property/StaffModule/repository/Staffmember.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/add_rentalowners.dart';
 import 'package:three_zero_two_property/model/staffmember.dart';
-import 'package:three_zero_two_property/repository/Staffmember.dart';
+
 import 'package:three_zero_two_property/repository/rental_properties.dart';
-import 'package:three_zero_two_property/screens/Rental/Properties/add_rentalowners.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
+
+import '../../../widgets/appbar.dart';
 
 import '../../../../Model/propertytype.dart';
 import '../../../../constant/constant.dart';
 import '../../../../model/add_property.dart';
 import '../../../../model/rental_properties.dart';
 import '../../../../provider/add_property.dart';
-import '../../../../repository/Property_type.dart';
+
 import '../../../widgets/drawer_tiles.dart';
 import '../../../../widgets/rental_widget.dart';
 import 'package:http/http.dart' as http;
@@ -162,9 +165,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
     final response =
         await http.get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'),headers: {
-          "id":"CRM $id",
+          "id":"CRM $staffid",
           "authorization": "CRM $token",
         },);
 
@@ -853,7 +857,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                           borderRadius:
                                           BorderRadius.circular(5),
                                         ),
-                                        child: DropdownButtonHideUnderline(
+                                        child:
+                                        DropdownButtonHideUnderline(
                                           child: DropdownButton<String>(
                                             value: selectedProperty,
                                             hint: Text(
@@ -1179,7 +1184,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                               borderRadius: BorderRadius.circular(5.0),
                                                                               child: Container(
                                                                                 height:  MediaQuery.of(context).size.width < 500 ? 40 :45,
-                                                                                width: MediaQuery.of(context).size.width < 500 ? 150 : 165,
+                                                                                width: MediaQuery.of(context).size.width < 500 ? 130 : 165,
                                                                                 decoration: BoxDecoration(
                                                                                   borderRadius: BorderRadius.circular(5.0),
                                                                                   color: Color.fromRGBO(21, 43, 81, 1),
@@ -1202,7 +1207,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                     style: TextStyle(
                                                                                         color: Colors.white,
                                                                                         fontWeight: FontWeight.bold,
-                                                                                        fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :15.5),
+                                                                                        fontSize:  MediaQuery.of(context).size.width < 500 ? 13 :15.5),
                                                                                   ),
                                                                                 ),
                                                                               ),
@@ -1218,7 +1223,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                             child: Material(
                                                                               elevation: 2,
                                                                               child: Container(
-                                                                                  width:  MediaQuery.of(context).size.width < 500 ? 90 : 100,
+                                                                                  width:  MediaQuery.of(context).size.width < 500 ? 90 : 90,
                                                                                   height:  MediaQuery.of(context).size.width < 500 ? 40 :40,
                                                                                   color: Colors.white,
                                                                                   child: Center(child: Text("Cancel"))),
@@ -1410,7 +1415,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               SizedBox(
                                 width: 15,
                               ),
-
                               // Expanded(
                               //   child: Container(
                               //     height: 40,
@@ -1891,7 +1895,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               ],
                             ),
                           ),
-
                           SizedBox(
                             height: 10,
                           ),
@@ -2174,36 +2177,33 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                         child: Stack(
                                           children: [
                                             Positioned.fill(
-                                              child: KeyboardActions(
-                                                config:_buildConfig(context),
-                                                child: TextField(
-                                                  focusNode: _nodeText1,
-                                                  controller: postalcode,
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
-                                                  ),
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      postalcodeerror = false;
-                                                    });
-                                                  },
-                                                  keyboardType: TextInputType.number,
-                                                  cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                                  decoration: InputDecoration(
-                                                    enabledBorder: postalcodeerror
-                                                        ? OutlineInputBorder(
-                                                      borderRadius: BorderRadius.circular(10),
-                                                      borderSide: BorderSide(color: Colors.red), // Error border color
-                                                    )
-                                                        : InputBorder.none,
-                                                    border: InputBorder.none,
-                                                    contentPadding: EdgeInsets.all(14),
-                                                    hintText: "Enter postal code",
-                                                    hintStyle: TextStyle(
-                                                      color: Color(0xFF8A95A8),
-                                                      fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
-                                                    ),
+                                              child: TextField(
+                                                focusNode: _nodeText1,
+                                                controller: postalcode,
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
+                                                ),
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    postalcodeerror = false;
+                                                  });
+                                                },
+                                                keyboardType:TextInputType.numberWithOptions(signed: true,decimal: true),
+                                                cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                decoration: InputDecoration(
+                                                  enabledBorder: postalcodeerror
+                                                      ? OutlineInputBorder(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    borderSide: BorderSide(color: Colors.red), // Error border color
+                                                  )
+                                                      : InputBorder.none,
+                                                  border: InputBorder.none,
+                                                  contentPadding: EdgeInsets.all(14),
+                                                  hintText: "Enter postal code",
+                                                  hintStyle: TextStyle(
+                                                    color: Color(0xFF8A95A8),
+                                                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
                                                   ),
                                                 ),
                                               ),
@@ -8968,7 +8968,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                   'Add New Staffmember',
                                                   style: TextStyle(
                                                       fontSize:
-                                                      MediaQuery.of(context).size.width < 500 ? 9 : 15),
+                                                      MediaQuery.of(context).size.width < 500 ? 14 : 15),
                                                 ),
                                               ],
                                             ),
@@ -8986,7 +8986,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                           width: MediaQuery.of(context)
                                               .size
                                               .width *
-                                              .36,
+                                              .5,
                                           padding: EdgeInsets.symmetric(
                                               horizontal: 8, vertical: 4),
                                           decoration: BoxDecoration(

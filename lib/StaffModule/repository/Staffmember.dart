@@ -53,8 +53,9 @@ class StaffMemberRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    String? staffid = prefs.getString("staff_id");
     final response = await http.get(Uri.parse('$apiUrl/$id'),
-      headers: {"authorization" : "CRM $token","id":"CRM $id",},
+      headers: {"authorization" : "CRM $token","id":"CRM $staffid",},
     );
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
@@ -65,6 +66,7 @@ class StaffMemberRepository {
       // throw Exception('Failed to load data');
     }
   }
+
   Future<Map<String, dynamic>> Edit_staff_member({
     required String? adminId,
     required String? staffmemberName,

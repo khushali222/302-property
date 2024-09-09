@@ -17,7 +17,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:three_zero_two_property/widgets/appbar.dart';
+import '../../../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../../widgets/custom_drawer.dart';

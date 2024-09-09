@@ -196,9 +196,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Property Type",
-                        style: TextStyle(color: Colors.white,fontSize: 14)),
-                    SizedBox(width: 3),
+                    Text("     Type",
+                        style: TextStyle(color: Colors.white,fontSize: 15)),
+                    SizedBox(width: 2),
                     ascending2
                         ? Padding(
                             padding: const EdgeInsets.only(top: 7, left: 2),
@@ -310,7 +310,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   rentalId: properties.rentalId!,
                 )));
     if (check == true) {
-      setState(() {});
+      setState(() {
+        futureRentalOwners = PropertiesRepository().fetchProperties();
+      });
     }
     // final result = await Navigator.push(
     //     context,
@@ -681,7 +683,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                           height:
                               MediaQuery.of(context).size.width < 500 ? 45 : 50,
                           width: MediaQuery.of(context).size.width < 500
-                              ? MediaQuery.of(context).size.width * .38
+                              ? MediaQuery.of(context).size.width * .37
                               : MediaQuery.of(context).size.width * .4,
                           padding: const EdgeInsets.only(left: 14, right: 14),
                           decoration: BoxDecoration(
@@ -1374,6 +1376,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                               ),
                                                             );
                                                             if (check == true) {
+                                                              setState(() {
+                                                                futureRentalOwners = PropertiesRepository().fetchProperties();
+
+                                                              });
                                                               // Update State
                                                             }
                                                           },

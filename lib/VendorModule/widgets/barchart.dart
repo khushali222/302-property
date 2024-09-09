@@ -49,7 +49,7 @@ class _BarchartState extends State<Barchart> {
     return Container(
       // color: Colors.white,
       // color: Colors.deepPurple,
-      height: MediaQuery.of(context).size.width > 500 ? 300: 220,
+      height: MediaQuery.of(context).size.width > 500 ? 300: 250,
       padding: EdgeInsets.symmetric(horizontal: 8),
       child: Card(
         elevation: 4,
@@ -147,8 +147,7 @@ class _BarchartState extends State<Barchart> {
               ),
             ),
             Container(
-             // color: Colors.blue,
-              height: 160,
+              height: 190,
               child: SfCartesianChart(
                 primaryXAxis: CategoryAxis(
                   majorGridLines: MajorGridLines(width: 0),

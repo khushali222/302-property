@@ -262,7 +262,7 @@ class _EditApplicantState extends State<EditApplicant> {
                             }
                             return null;
                           },
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                           hintText: 'Enter mobile number',
                           controller: mobileNumber,
                         ),
@@ -284,7 +284,7 @@ class _EditApplicantState extends State<EditApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                           hintText: 'Enter home number',
                           controller: homeNumber,
                         ),
@@ -306,7 +306,7 @@ class _EditApplicantState extends State<EditApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                           hintText: 'Enter business number',
                           controller: bussinessNumber,
                         ),
@@ -328,7 +328,7 @@ class _EditApplicantState extends State<EditApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                           hintText: 'Enter telephone number',
                           controller: telePhoneNumber,
                         ),
@@ -565,7 +565,7 @@ class _EditApplicantState extends State<EditApplicant> {
                   children: [
                     Container(
                       height: 50,
-                      width: 150,
+                      width: 160,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
@@ -662,7 +662,7 @@ class _EditApplicantState extends State<EditApplicant> {
                               isLoading = false;
                               errorMessage = "Admin ID not found";
                             });
-                            Fluttertoast.showToast(msg: "Admin ID not found");
+                          //  Fluttertoast.showToast(msg: "Admin ID not found");
                           }
                         },
                         child: isLoading
