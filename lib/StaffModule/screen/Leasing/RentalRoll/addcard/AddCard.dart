@@ -653,7 +653,7 @@ class _AddCardState extends State<AddCard> {
                                             fontWeight: FontWeight.bold,
                                             color: Colors.grey)),
                                     CustomTextField(
-                                      keyboardType: TextInputType.number,
+                                      keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                                       hintText: 'Enter Phone Number',
                                       controller: phoneNumber,
                                     ),
@@ -1214,7 +1214,7 @@ class _AddCardState extends State<AddCard> {
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey)),
                           CustomTextField(
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                             hintText: 'Enter Phone Number',
                             controller: phoneNumber,
                           ),

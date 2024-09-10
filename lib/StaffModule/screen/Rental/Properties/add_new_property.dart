@@ -2177,36 +2177,33 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                         child: Stack(
                                           children: [
                                             Positioned.fill(
-                                              child: KeyboardActions(
-                                                config:_buildConfig(context),
-                                                child: TextField(
-                                                  focusNode: _nodeText1,
-                                                  controller: postalcode,
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
-                                                  ),
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      postalcodeerror = false;
-                                                    });
-                                                  },
-                                                  keyboardType: TextInputType.number,
-                                                  cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                                  decoration: InputDecoration(
-                                                    enabledBorder: postalcodeerror
-                                                        ? OutlineInputBorder(
-                                                      borderRadius: BorderRadius.circular(10),
-                                                      borderSide: BorderSide(color: Colors.red), // Error border color
-                                                    )
-                                                        : InputBorder.none,
-                                                    border: InputBorder.none,
-                                                    contentPadding: EdgeInsets.all(14),
-                                                    hintText: "Enter postal code",
-                                                    hintStyle: TextStyle(
-                                                      color: Color(0xFF8A95A8),
-                                                      fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
-                                                    ),
+                                              child: TextField(
+                                                focusNode: _nodeText1,
+                                                controller: postalcode,
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
+                                                ),
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    postalcodeerror = false;
+                                                  });
+                                                },
+                                                keyboardType:TextInputType.numberWithOptions(signed: true,decimal: true),
+                                                cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                decoration: InputDecoration(
+                                                  enabledBorder: postalcodeerror
+                                                      ? OutlineInputBorder(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    borderSide: BorderSide(color: Colors.red), // Error border color
+                                                  )
+                                                      : InputBorder.none,
+                                                  border: InputBorder.none,
+                                                  contentPadding: EdgeInsets.all(14),
+                                                  hintText: "Enter postal code",
+                                                  hintStyle: TextStyle(
+                                                    color: Color(0xFF8A95A8),
+                                                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
                                                   ),
                                                 ),
                                               ),
