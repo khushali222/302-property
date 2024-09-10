@@ -7271,15 +7271,13 @@ class _Summery_pageState extends State<Summery_page>
                                           width: MediaQuery.of(context).size.width > 500 ? 200: 159,
                                           child: Padding(
                                             padding: const EdgeInsets.only(left: 16),
-                                            child: Expanded(
-                                              child: Text(
-                                                '${widget.properties?.rentalAddress}',
-                                                maxLines: 5, // Set maximum number of lines
-                                                overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
-                                                style: TextStyle(
-                                                  fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 18,
-                                                  color: blueColor,
-                                                ),
+                                            child: Text(
+                                              '${widget.properties?.rentalAddress}',
+                                              maxLines: 5, // Set maximum number of lines
+                                              overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
+                                              style: TextStyle(
+                                                fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 18,
+                                                color: blueColor,
                                               ),
                                             ),
                                           ),

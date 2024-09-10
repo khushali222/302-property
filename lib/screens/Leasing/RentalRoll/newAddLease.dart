@@ -687,14 +687,7 @@ class _addLease3State extends State<addLease3>
                                 const SizedBox(
                                   height: 4,
                                 ),
-                                _isLoading
-                                    ? const Center(
-                                        child: SpinKitFadingCircle(
-                                          color: Colors.black,
-                                          size: 50.0,
-                                        ),
-                                      )
-                                    : Column(
+                                Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           DropdownButtonHideUnderline(
@@ -3999,7 +3992,9 @@ class _addLease3State extends State<addLease3>
                                       },
                                       child: const Text(
                                         'Create Lease',
-                                        style: TextStyle(color: Color(0xFFf7f8f9)),
+                                        style: TextStyle(color: Color(0xFFf7f8f9),
+                                            fontSize: 16
+                                        ),
                                       ))),
                               const SizedBox(
                                 width: 10,
@@ -7294,7 +7289,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
                 },
                 buttonStyleData: ButtonStyleData(
                   height:  MediaQuery.of(context).size.width < 500 ? 45: 55,
-                  width:  MediaQuery.of(context).size.width < 500 ? 160 :250,
+                  //width:  MediaQuery.of(context).size.width < 500 ? 160 :250,
                   padding: const EdgeInsets.only(left: 14, right: 14),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(6),

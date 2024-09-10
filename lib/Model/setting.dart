@@ -91,33 +91,39 @@ class Setting2 {
   }
 }
 class Setting3 {
-  String id;
-  String adminId;
-  String latefeeId;
+  String? id;
+  String? adminId;
+  bool? remindermail;
+  String? duration;
 
-  String duration;
-  String late_fee;
 
-  Setting3({
-    required this.id,
-    required this.adminId,
-    required this.latefeeId,
-    required this.duration,
-    required this.late_fee,
+  // Constructor
+  Setting3({this.id, this.adminId, this.remindermail, this.duration});
 
-  });
+  // Method to parse JSON
+  Setting3.fromJson(Map<String, dynamic> json) {
+    print(json);
+    id = json['_id'];
+    adminId = json['admin_id'];
+    remindermail = json['remindermail'];
+    duration = json['duration'].toString();
 
-  factory Setting3.fromJson(Map<String, dynamic> json) {
-    return Setting3(
+    print("reminder mail $remindermail");
+    print("duration $duration");
+  }
 
-      id: json['_id'],
-      adminId: json['admin_id'],
-      latefeeId: json['latefee_id'],
-      duration: json['duration'].toString(),
-      late_fee: json['late_fee'].toString(),
-    );
+  // Method to convert object to JSON
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['_id'] = id;
+    data['admin_id'] = adminId;
+    data['remindermail'] = remindermail;
+    data['duration'] = duration;
+
+    return data;
   }
 }
+
 class ApiResponse {
   List<Setting1> data;
   int statusCode;

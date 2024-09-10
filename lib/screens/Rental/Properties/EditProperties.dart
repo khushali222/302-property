@@ -1300,7 +1300,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                               borderRadius: BorderRadius.circular(5.0),
                                                                               child: Container(
                                                                                 height:  MediaQuery.of(context).size.width < 500 ? 40 :45,
-                                                                                width: MediaQuery.of(context).size.width < 500 ? 150 : 165,
+                                                                                width: MediaQuery.of(context).size.width < 500 ? 130 : 165,
                                                                                 decoration: BoxDecoration(
                                                                                   borderRadius: BorderRadius.circular(5.0),
                                                                                   color: Color.fromRGBO(21, 43, 81, 1),
@@ -1318,12 +1318,13 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                     color: Colors.white,
                                                                                     size: 25.0,
                                                                                   )
-                                                                                      : Text(
+                                                                                      :
+                                                                                  Text(
                                                                                     "Add Property Type",
                                                                                     style: TextStyle(
                                                                                         color: Colors.white,
                                                                                         fontWeight: FontWeight.bold,
-                                                                                        fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :15.5),
+                                                                                        fontSize:  MediaQuery.of(context).size.width < 500 ? 13 :15.5),
                                                                                   ),
                                                                                 ),
                                                                               ),
@@ -3586,7 +3587,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                   'Add New Staffmember',
                                                   style: TextStyle(
                                                       fontSize:
-                                                      MediaQuery.of(context).size.width < 500 ? 10.5 : 18),
+                                                      MediaQuery.of(context).size.width < 500 ? 14 : 18),
                                                 ),
                                               ],
                                             ),
@@ -3603,7 +3604,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                           width: MediaQuery.of(context)
                                               .size
                                               .width *
-                                              .36,
+                                              .5,
                                           padding: EdgeInsets.symmetric(
                                               horizontal: 8, vertical: 4),
                                           decoration: BoxDecoration(

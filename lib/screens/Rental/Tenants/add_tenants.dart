@@ -1409,7 +1409,7 @@ class _AddTenantState extends State<AddTenant> {
                         height: 15,
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(12.0),
+                        padding: const EdgeInsets.only(left: 17,right: 17),
                         child: Container(
                           width: double.infinity,
                           // height: !form_valid ? 860 : 830,
@@ -1617,7 +1617,7 @@ class _AddTenantState extends State<AddTenant> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(12.0),
+                        padding: const EdgeInsets.only(left: 17,right: 17,top: 15,bottom: 15),
                         child: Container(
                           width: double.infinity,
                           // height: 410,
@@ -1758,7 +1758,7 @@ class _AddTenantState extends State<AddTenant> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(12.0),
+                        padding: const EdgeInsets.only(left: 17,right: 17),
                         child: Container(
                           width: double.infinity,
                           // height: form_valid ? 520 : 430,
@@ -1847,7 +1847,7 @@ class _AddTenantState extends State<AddTenant> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(12.0),
+                        padding: const EdgeInsets.only(left: 17,right: 17,top: 15),
                         child: Container(
                           width: double.infinity,
                           // height: form_valid ? 520 : 430,
@@ -2372,19 +2372,27 @@ class CustomTextFieldState extends State<CustomTextField> {
                       },*/
                       onFieldSubmitted: widget.onChanged2,
                       onChanged:(value){
-                        print("object calin $value");
+                      //  print("object calin $value");
                         if(value.isNotEmpty){
                           setState(() {
                             _errorMessage = null;
                           });
                         }
-
-                        widget.onChanged;
-                      print("callllll");
+                        if(widget.onChanged != null)
+                        widget.onChanged!(value);
+//print("callllll");
                         },
 
                 focusNode: _focusNode,
-                      onTap: widget.onTap,
+                      onTap: (){
+                        if(widget.onTap != null){
+                          widget.onTap!();
+                          setState(() {
+                            _errorMessage = null;
+                          });
+                        }
+
+                      },
                       obscureText: widget.obscureText,
                       readOnly: widget.readOnnly,
                       keyboardType: widget.keyboardType,
@@ -2405,7 +2413,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                     ),
                   ),
                 ),
-                if (state.hasError || widget.amount_check != null)
+                if (state.hasError && _errorMessage!= null || widget.amount_check != null)
                   SizedBox(height: 24),
                 // Reserve space for error message
               ],
@@ -2428,7 +2436,7 @@ class CustomTextFieldState extends State<CustomTextField> {
     );
     return shouldUseKeyboardActions
         ? SizedBox(
-      height: 60,
+      height: _errorMessage != null? 75 : 60,
       width: MediaQuery.of(context).size.width * .98,
       child: KeyboardActions(
         config: _buildConfig(context),

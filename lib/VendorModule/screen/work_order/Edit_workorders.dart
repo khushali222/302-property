@@ -670,7 +670,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         },
       ),
       backgroundColor: Colors.white,
-      drawer: Drawer(
+/*      drawer: Drawer(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
         child: SingleChildScrollView(
@@ -702,7 +702,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                   ),
                   "Profile",
                   false),
-              /*  buildListTile(
+              *//*  buildListTile(
                   context,
                   SvgPicture.asset(
                     "assets/images/tenants/Property.svg",
@@ -721,7 +721,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                     width: 20,
                   ),
                   "Financial",
-                  false),*/
+                  false),*//*
               buildListTile(
                   context,
                   SvgPicture.asset(
@@ -732,7 +732,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                   ),
                   "Work Order",
                   true),
-              /* buildDropdownListTile(
+              *//* buildDropdownListTile(
                   context,
                   const FaIcon(
                     FontAwesomeIcons.key,
@@ -755,11 +755,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                   Image.asset("assets/icons/maintence.png",
                       height: 20, width: 20),
                   "Maintenance",
-                  ["Vendor", "Work Order"]),*/
+                  ["Vendor", "Work Order"]),*//*
             ],
           ),
         ),
-      ),
+      ),*/
       body: LayoutBuilder(builder: (context, constraints) {
         if (constraints.maxWidth > 500) {
           return Form(
@@ -866,7 +866,8 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                     Row(
                                       children: [
                                         Expanded(
-                                          child: Column(
+                                          child:
+                                          Column(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             crossAxisAlignment:

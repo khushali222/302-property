@@ -1537,7 +1537,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                         child: Padding(
                           padding: const EdgeInsets.only(left: 1),
                           child: Text(
-                            '${snapshot.data!.data!.rentalAddress}',
+                            '${snapshot.data!.data?.rentalAddress}',
                             maxLines: 5, // Set maximum number of lines
                             overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
                             style: TextStyle(
@@ -1570,9 +1570,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           width: 25,
                         ),
                       Text(
-                          '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate)}',
+                          '${determineStatus(snapshot.data!.data?.startDate, snapshot.data!.data?.endDate)}',
                           style: TextStyle(
-                              color: _getStatusColor(determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate)),
+                              color: _getStatusColor(determineStatus(snapshot.data!.data?.startDate, snapshot.data!.data?.endDate)),
                               fontWeight: FontWeight.bold,
                               fontSize:   MediaQuery.of(context).size.width < 500 ? 13 :16)),
                     ],
@@ -1628,8 +1628,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           child: FinancialTable(
                               leaseId: widget.leaseId,
                               status:
-                                  '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate).toString()}',
-                            tenantId:' ${snapshot.data!.data!.tenantId}',),
+                                  '${determineStatus(snapshot.data!.data?.startDate, snapshot.data!.data?.endDate).toString()}',
+                            tenantId:' ${snapshot.data!.data?.tenantId}',),
                         ),
                         Tenant(context),
                       ],

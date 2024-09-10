@@ -19,10 +19,186 @@ import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 
 import '../../../../model/EnterChargeModel.dart';
 import '../../../widgets/custom_drawer.dart';
+class Chargedata {
+  String? id;
+  String? chargeId;
+  String? adminId;
+  String? tenantId;
+  String? leaseId;
+  List<Entrydata>? entry;
+  double? totalAmount;
+  bool? isLeaseAdded;
+  String? type;
+  List<dynamic>? uploadedFile;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  bool? isDelete;
+  TenantData? tenantData;
+
+  Chargedata({
+    this.id,
+    this.chargeId,
+    this.adminId,
+    this.tenantId,
+    this.leaseId,
+    this.entry,
+    this.totalAmount,
+    this.isLeaseAdded,
+    this.type,
+    this.uploadedFile,
+    this.createdAt,
+    this.updatedAt,
+    this.isDelete,
+    this.tenantData,
+  });
+
+  factory Chargedata.fromJson(Map<String, dynamic> json) {
+    return Chargedata(
+      id: json['_id'],
+      chargeId: json['charge_id'],
+      adminId: json['admin_id'],
+      tenantId: json['tenant_id'],
+      leaseId: json['lease_id'],
+      entry: json['entry'] != null
+          ? List<Entrydata>.from(json['entry'].map((x) => Entrydata.fromJson(x)))
+          : [],
+      totalAmount:  json['total_amount'] != null ?  json['total_amount'].toDouble() : 0.0,
+      isLeaseAdded: json['is_leaseAdded'],
+      type: json['type'],
+      uploadedFile: json['uploaded_file'] ?? [],
+
+      tenantData: json['tenantData'] != null
+          ? TenantData.fromJson(json['tenantData'])
+          : null,
+    );
+  }
+}
+
+class Entrydata {
+  String? entryId;
+  String? memo;
+  String? account;
+  double? amount;
+  double? dueAmount;
+  DateTime? date;
+  bool? isPaid;
+  bool? isLateFee;
+  bool? isRepeatable;
+  String? chargeType;
+  String? id;
+
+  Entrydata({
+    this.entryId,
+    this.memo,
+    this.account,
+    this.amount,
+    this.dueAmount,
+    this.date,
+    this.isPaid,
+    this.isLateFee,
+    this.isRepeatable,
+    this.chargeType,
+    this.id,
+  });
+
+  factory Entrydata.fromJson(Map<String, dynamic> json) {
+    return Entrydata(
+      entryId: json['entry_id'],
+      memo: json['memo'],
+      account: json['account'],
+      amount: json['amount'].toDouble(),
+      dueAmount: json['due_amount'] != null?  json['due_amount'].toDouble():0.0,
+      date: DateTime.parse(json['date']),
+      isPaid: json['is_paid'],
+      isLateFee: json['is_lateFee'],
+      isRepeatable: json['is_repeatable'],
+      chargeType: json['charge_type'],
+      id: json['_id'],
+    );
+  }
+}
+
+class TenantData {
+  EmergencyContact? emergencyContact;
+  String? tenantId;
+  String? adminId;
+  String? tenantFirstName;
+  String? tenantLastName;
+  String? tenantPhoneNumber;
+  String? tenantAlternativeNumber;
+  String? tenantEmail;
+  String? tenantAlternativeEmail;
+  String? tenantBirthDate;
+  String? taxPayerId;
+  String? comments;
+  bool? enableOverrideFee;
+
+  TenantData({
+    this.emergencyContact,
+    this.tenantId,
+    this.adminId,
+    this.tenantFirstName,
+    this.tenantLastName,
+    this.tenantPhoneNumber,
+    this.tenantAlternativeNumber,
+    this.tenantEmail,
+    this.tenantAlternativeEmail,
+    this.tenantBirthDate,
+    this.taxPayerId,
+    this.comments,
+    this.enableOverrideFee,
+  });
+
+  factory TenantData.fromJson(Map<String, dynamic> json) {
+    return TenantData(
+      emergencyContact: json['emergency_contact'] != null
+          ? EmergencyContact.fromJson(json['emergency_contact'])
+          : null,
+      tenantId: json['tenant_id'],
+      adminId: json['admin_id'],
+      tenantFirstName: json['tenant_firstName'],
+      tenantLastName: json['tenant_lastName'],
+      tenantPhoneNumber: json['tenant_phoneNumber'],
+      tenantAlternativeNumber: json['tenant_alternativeNumber'],
+      tenantEmail: json['tenant_email'],
+      tenantAlternativeEmail: json['tenant_alternativeEmail'],
+      tenantBirthDate: json['tenant_birthDate'],
+      taxPayerId: json['taxPayer_id'],
+      comments: json['comments'],
+      enableOverrideFee: json['enable_override_fee'],
+    );
+  }
+}
+
+class EmergencyContact {
+  String? name;
+  String? relation;
+  String? email;
+  String? phoneNumber;
+
+  EmergencyContact({
+    this.name,
+    this.relation,
+    this.email,
+    this.phoneNumber,
+  });
+
+  factory EmergencyContact.fromJson(Map<String, dynamic> json) {
+    return EmergencyContact(
+      name: json['name'],
+      relation: json['relation'],
+      email: json['email'],
+      phoneNumber: json['phoneNumber'],
+    );
+  }
+}
+
+
 class enterCharge extends StatefulWidget {
   final String leaseId;
+  String? chargeid;
 
-  const enterCharge({required this.leaseId});
+  enterCharge({required this.leaseId,this.chargeid});
 
   @override
   State<enterCharge> createState() => _enterChargeState();
@@ -48,17 +224,69 @@ class _enterChargeState extends State<enterCharge> {
     super.initState();
     fetchTenants();
     fetchDropdownData();
+    if(widget.chargeid != null){
+      fetchchargeData();
+    }
+  }
+  Future<void> fetchchargeData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString("adminId");
+    String? sid = prefs.getString("staff_id");
+    final response = await http.get(
+      Uri.parse('$Api_url/api/charge/charge/${widget.chargeid}'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $sid",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body)["data"];
+      print(data);
+
+      Chargedata fetchedCharge = Chargedata.fromJson(data);
+
+      setState(() {
+        selectedTenantId = fetchedCharge!.tenantId;
+        Amount.text = fetchedCharge.totalAmount.toString();
+        _startDate.text = formatDate(fetchedCharge.entry!.first!.date.toString());
+        Memo.text = fetchedCharge.entry!.first.memo!;
+        double  total = 0;
+
+        //  Memo.text = fetchedCharge["entry"]![0]["memo"];
+
+        for (var i = 0 ;i< fetchedCharge.entry!.length ;i++) {
+          print(fetchedCharge.entry![i].amount);
+          rows.add({
+            'account': fetchedCharge.entry![i].account,
+            'charge_type': fetchedCharge.entry![i].chargeType,
+            'amount': fetchedCharge.entry![i].amount,
+            'memo': Memo.text,
+            'date': _startDate.text,
+          });
+          total += fetchedCharge.entry![i].amount!;
+          totalAmount = total;
+        }
+      });
+      /*setState(() {
+        tenants = fetchedTenants;
+      });*/
+    } else {
+      throw Exception('Failed to load tenants');
+    }
   }
 
   Future<void> fetchTenants() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
+    String? sid = prefs.getString("staff_id");
     final response = await http.get(
       Uri.parse('$Api_url/api/leases/lease_tenant/${widget.leaseId}'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $sid",
       },
     );
 
@@ -71,7 +299,7 @@ class _enterChargeState extends State<enterCharge> {
         fetchedTenants.add({
           'tenant_id': tenant['tenant_id'],
           'tenant_name':
-              '${tenant['tenant_firstName']} ${tenant['tenant_lastName']}',
+          '${tenant['tenant_firstName']} ${tenant['tenant_lastName']}',
         });
       }
 
@@ -88,6 +316,7 @@ class _enterChargeState extends State<enterCharge> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String adminId = prefs.getString('adminId') ?? '';
       String? token = prefs.getString('token');
+      String? sid = prefs.getString("staff_id");
       print(token);
       print('lease ${widget.leaseId}');
       String? id = prefs.getString("adminId");
@@ -95,7 +324,7 @@ class _enterChargeState extends State<enterCharge> {
         Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM $sid",
         },
       );
 
@@ -175,7 +404,7 @@ class _enterChargeState extends State<enterCharge> {
     if (enteredAmount != totalAmount) {
       setState(() {
         validationMessage =
-            "The charge's amount must match the total applied to balance. The difference is ${(enteredAmount - totalAmount).abs().toStringAsFixed(2)}";
+        "The charge's amount must match the total applied to balance. The difference is ${(enteredAmount - totalAmount).abs().toStringAsFixed(2)}";
       });
     } else {
       setState(() {
@@ -303,7 +532,13 @@ class _enterChargeState extends State<enterCharge> {
                             ),
                           ],
                         ),
-                        child: const Text(
+                        child: widget.chargeid != null ? const Text(
+                          "Edit Charge",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18),
+                        ):const Text(
                           "Add Charge",
                           style: TextStyle(
                               color: Colors.white,
@@ -323,151 +558,144 @@ class _enterChargeState extends State<enterCharge> {
                           height: 8,
                         ),
                         if(MediaQuery.of(context).size.width < 500)
-                        const Text('Received From *',
-                            style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey)),
+                          const Text('Received From *',
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey)),
                         if(MediaQuery.of(context).size.width < 500)
-                        const SizedBox(
-                          height: 8,
-                        ),
+                          const SizedBox(
+                            height: 8,
+                          ),
                         if(MediaQuery.of(context).size.width < 500)
-                        tenants.isEmpty
-                            ? const Center(
-                                child: SpinKitFadingCircle(
-                                  color: Colors.black,
-                                  size: 50.0,
+                          DropdownButtonHideUnderline(
+                            child: DropdownButton2<String>(
+                              isExpanded: true,
+                              hint: const Text('Select Tenant'),
+                              value: selectedTenantId,
+                              items: tenants.map((tenant) {
+                                return DropdownMenuItem<String>(
+                                  value: tenant['tenant_id'],
+                                  child: Text(tenant['tenant_name']!),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedTenantId = value;
+                                });
+                                print(
+                                    'Selected tenant_id: $selectedTenantId');
+                              },
+                              buttonStyleData: ButtonStyleData(
+                                height: 45,
+                                width: 170,
+                                padding: const EdgeInsets.only(
+                                    left: 14, right: 14),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  color: Colors.white,
                                 ),
-                              )
-                            : DropdownButtonHideUnderline(
-                                child: DropdownButton2<String>(
-                                  isExpanded: true,
-                                  hint: const Text('Select Tenant'),
-                                  value: selectedTenantId,
-                                  items: tenants.map((tenant) {
-                                    return DropdownMenuItem<String>(
-                                      value: tenant['tenant_id'],
-                                      child: Text(tenant['tenant_name']!),
-                                    );
-                                  }).toList(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedTenantId = value;
-                                    });
-                                    print(
-                                        'Selected tenant_id: $selectedTenantId');
-                                  },
-                                  buttonStyleData: ButtonStyleData(
-                                    height: 45,
-                                    width: 170,
-                                    padding: const EdgeInsets.only(
-                                        left: 14, right: 14),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      color: Colors.white,
-                                    ),
-                                    elevation: 2,
-                                  ),
-                                  iconStyleData: const IconStyleData(
-                                    icon: Icon(
-                                      Icons.arrow_drop_down,
-                                    ),
-                                    iconSize: 24,
-                                    iconEnabledColor: Color(0xFFb0b6c3),
-                                    iconDisabledColor: Colors.grey,
-                                  ),
-                                  dropdownStyleData: DropdownStyleData(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      color: Colors.white,
-                                    ),
-                                    scrollbarTheme: ScrollbarThemeData(
-                                      radius: const Radius.circular(6),
-                                      thickness: MaterialStateProperty.all(6),
-                                      thumbVisibility:
-                                          MaterialStateProperty.all(true),
-                                    ),
-                                  ),
-                                  menuItemStyleData: const MenuItemStyleData(
-                                    height: 40,
-                                    padding:
-                                        EdgeInsets.only(left: 14, right: 14),
-                                  ),
+                                elevation: 2,
+                              ),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                ),
+                                iconSize: 24,
+                                iconEnabledColor: Color(0xFFb0b6c3),
+                                iconDisabledColor: Colors.grey,
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  color: Colors.white,
+                                ),
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(6),
+                                  thickness: MaterialStateProperty.all(6),
+                                  thumbVisibility:
+                                  MaterialStateProperty.all(true),
                                 ),
                               ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                                padding:
+                                EdgeInsets.only(left: 14, right: 14),
+                              ),
+                            ),
+                          ),
                         if(MediaQuery.of(context).size.width < 500)
-                        const SizedBox(
-                          height: 20,
-                        ),
+                          const SizedBox(
+                            height: 20,
+                          ),
                         if(MediaQuery.of(context).size.width < 500)
-                        const Text('Date',
-                            style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey)),
+                          const Text('Date',
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey)),
                         if(MediaQuery.of(context).size.width < 500)
-                        const SizedBox(
-                          height: 8,
-                        ),
+                          const SizedBox(
+                            height: 8,
+                          ),
                         if(MediaQuery.of(context).size.width < 500)
-                        CustomTextField(
-                          onTap: () async {
-                            DateTime? pickedDate = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(2101),
-                              locale: const Locale('en', 'US'),
-                              builder: (BuildContext context, Widget? child) {
-                                return Theme(
-                                  data: ThemeData.light().copyWith(
-                                    colorScheme: const ColorScheme.light(
-                                      primary: Color.fromRGBO(21, 43, 83,
-                                          1), // header background color
-                                      onPrimary:
-                                          Colors.white, // header text color
-                                      onSurface: Color.fromRGBO(
-                                          21, 43, 83, 1), // body text color
-                                    ),
-                                    textButtonTheme: TextButtonThemeData(
-                                      style: TextButton.styleFrom(
-                                        foregroundColor: Colors.white,
-                                        backgroundColor: const Color.fromRGBO(
-                                            21, 43, 83, 1), // button text color
+                          CustomTextField(
+                            onTap: () async {
+                              DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2101),
+                                locale: const Locale('en', 'US'),
+                                builder: (BuildContext context, Widget? child) {
+                                  return Theme(
+                                    data: ThemeData.light().copyWith(
+                                      colorScheme: const ColorScheme.light(
+                                        primary: Color.fromRGBO(21, 43, 83,
+                                            1), // header background color
+                                        onPrimary:
+                                        Colors.white, // header text color
+                                        onSurface: Color.fromRGBO(
+                                            21, 43, 83, 1), // body text color
+                                      ),
+                                      textButtonTheme: TextButtonThemeData(
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: Colors.white,
+                                          backgroundColor: const Color.fromRGBO(
+                                              21, 43, 83, 1), // button text color
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  child: child!,
-                                );
-                              },
-                            );
-                            if (pickedDate != null) {
-                              String formattedDate =
-                                  "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                              setState(() {
-                                _startDate.text = formattedDate;
-                              });
-                            }
-                          },
-                          readOnnly: true,
-                          suffixIcon: IconButton(
-                              onPressed: () {},
-                              icon: const Icon(Icons.date_range_rounded)),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please select start date';
-                            }
-                            return null;
-                          },
-                          keyboardType: TextInputType.text,
-                          hintText: 'dd-mm-yyyy',
-                          controller: _startDate,
-                        ),
+                                    child: child!,
+                                  );
+                                },
+                              );
+                              if (pickedDate != null) {
+                                String formattedDate =
+                                    "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                setState(() {
+                                  _startDate.text = formattedDate;
+                                });
+                              }
+                            },
+                            readOnnly: true,
+                            suffixIcon: IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.date_range_rounded)),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please select start date';
+                              }
+                              return null;
+                            },
+                            keyboardType: TextInputType.text,
+                            hintText: 'dd-mm-yyyy',
+                            controller: _startDate,
+                          ),
                         if(MediaQuery.of(context).size.width < 500)
-                        const SizedBox(
-                          height: 8,
-                        ),
+                          const SizedBox(
+                            height: 8,
+                          ),
                         if(MediaQuery.of(context).size.width > 500)
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 5.0),
@@ -1063,7 +1291,8 @@ class _enterChargeState extends State<enterCharge> {
                                 height:40,
                                 child: KeyboardActions(
                                   config: _buildConfig(context),
-                                  child: TextField(
+                                  child: TextFormField(
+                                    initialValue:  widget.chargeid != null ? rows[index]["amount"].toString() : "0", // Make sure 0 is a string,
                                     focusNode: _nodeText1,
                                     keyboardType: TextInputType.number,
                                     onChanged: (value) =>
@@ -1264,7 +1493,7 @@ class _enterChargeState extends State<enterCharge> {
                   ),
                   Row(
                     children: [
-                     // SizedBox(width: 5,),
+                      // SizedBox(width: 5,),
                       Container(
                           height: 50,
                           width: MediaQuery.of(context).size.width < 500 ? 130 :150,
@@ -1275,69 +1504,132 @@ class _enterChargeState extends State<enterCharge> {
                                   backgroundColor:blueColor,
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
-                                          BorderRadius.circular(8.0))),
+                                      BorderRadius.circular(8.0))),
                               onPressed: () async {
                                 if (_formKey.currentState?.validate() ??
                                     false) {
                                   setState(() {
                                     _isLoading = true;
                                   });
-                                  SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
-                                  String adminId =
-                                      prefs.getString('adminId').toString();
 
-                                  List<Entry> entryList = rows.map((row) {
-                                    return Entry(
-                                      account: row['account'],
-                                      amount: row['amount']?.toInt() ?? 0,
-                                      dueAmount:
-                                          0, // Adjust according to your requirement
-                                      memo: row['memo'],
-                                      date: reverseFormatDate(row['date']),
-                                      chargeType: row['charge_type'],
-                                      isRepeatable:
-                                          false, // Adjust according to your requirement
+                                  if(widget.chargeid != null){
+                                    SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                    String adminId =
+                                    prefs.getString('adminId').toString();
+
+                                    List<Entry> entryList = rows.map((row) {
+                                      return Entry(
+                                        account: row['account'],
+                                        amount: row['amount']?.toInt() ?? 0,
+                                        dueAmount:
+                                        0, // Adjust according to your requirement
+                                        memo: row['memo'],
+                                        date: reverseFormatDate(row['date']),
+                                        chargeType: row['charge_type'],
+                                        isRepeatable:
+                                        false, // Adjust according to your requirement
+                                      );
+                                    }).toList();
+
+                                    print("amount ${Amount.text}");
+                                    int totalAmount =
+                                        int.tryParse(Amount.text) ?? 0;
+                                    Charge charge = Charge(
+                                      adminId: adminId,
+                                      isLeaseAdded: false,
+                                      leaseId: widget.leaseId,
+                                      tenantId: selectedTenantId!,
+                                      totalAmount: totalAmount,
+                                      uploadedFile: _uploadedFileNames,
+                                      entry: entryList,
                                     );
-                                  }).toList();
+                                    print('file ${_uploadedFileNames}');
 
-                                  int totalAmount =
-                                      int.tryParse(Amount.text) ?? 0;
-                                  Charge charge = Charge(
-                                    adminId: adminId,
-                                    isLeaseAdded: false,
-                                    leaseId: widget.leaseId,
-                                    tenantId: selectedTenantId!,
-                                    totalAmount: totalAmount,
-                                    uploadedFile: _uploadedFileNames,
-                                    entry: entryList,
-                                  );
-                               print('file ${_uploadedFileNames}');
+                                    LeaseRepository apiService =
+                                    LeaseRepository();
+                                    int statusCode =
+                                    await apiService.EditCharge(charge,widget.chargeid!);
 
-                                  LeaseRepository apiService =
-                                      LeaseRepository();
-                                  int statusCode =
-                                      await apiService.postCharge(charge);
-
-                                  if (statusCode == 200) {
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
-                                    Fluttertoast.showToast(
-                                      msg: "Charge posted successfully",
-                                    );
-                                    Navigator.pop(context);
-                                  } else {
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
-                                    Fluttertoast.showToast(
-                                      msg: "Failed to post charge",
-                                    );
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
+                                    if (statusCode == 200) {
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                      Fluttertoast.showToast(
+                                        msg: "Charge Edited successfully",
+                                      );
+                                      Navigator.pop(context,true);
+                                    } else {
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                      Fluttertoast.showToast(
+                                        msg: "Failed to post charge",
+                                      );
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    }
                                   }
+                                  else{
+                                    SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                    String adminId =
+                                    prefs.getString('adminId').toString();
+
+                                    List<Entry> entryList = rows.map((row) {
+                                      return Entry(
+                                        account: row['account'],
+                                        amount: row['amount']?.toInt() ?? 0,
+                                        dueAmount:
+                                        0, // Adjust according to your requirement
+                                        memo: row['memo'],
+                                        date: reverseFormatDate(row['date']),
+                                        chargeType: row['charge_type'],
+                                        isRepeatable:
+                                        false, // Adjust according to your requirement
+                                      );
+                                    }).toList();
+
+                                    int totalAmount =
+                                        int.tryParse(Amount.text) ?? 0;
+                                    Charge charge = Charge(
+                                      adminId: adminId,
+                                      isLeaseAdded: false,
+                                      leaseId: widget.leaseId,
+                                      tenantId: selectedTenantId!,
+                                      totalAmount: totalAmount,
+                                      uploadedFile: _uploadedFileNames,
+                                      entry: entryList,
+                                    );
+                                    print('file ${_uploadedFileNames}');
+
+                                    LeaseRepository apiService =
+                                    LeaseRepository();
+                                    int statusCode =
+                                    await apiService.postCharge(charge);
+
+                                    if (statusCode == 200) {
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                      Fluttertoast.showToast(
+                                        msg: "Charge posted successfully",
+                                      );
+                                      Navigator.pop(context,true);
+                                    } else {
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                      Fluttertoast.showToast(
+                                        msg: "Failed to post charge",
+                                      );
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    }
+                                  }
+
 
                                   print('valid');
                                   print(selectedTenantId);
@@ -1359,10 +1651,14 @@ class _enterChargeState extends State<enterCharge> {
                                   print(Memo.text);
                                 }
                               },
-                              child:  Text(
+                              child:widget.chargeid != null ? Text(
+                                'Edit charge',
+                                style: TextStyle(color: Color(0xFFf7f8f9),
+                                    fontSize: MediaQuery.of(context).size.width < 500 ? 16 :18),
+                              ):  Text(
                                 'Add charge',
                                 style: TextStyle(color: Color(0xFFf7f8f9),
-                                fontSize: MediaQuery.of(context).size.width < 500 ? 16 :18),
+                                    fontSize: MediaQuery.of(context).size.width < 500 ? 16 :18),
                               ))),
                       const SizedBox(
                         width: 8,
@@ -1377,9 +1673,9 @@ class _enterChargeState extends State<enterCharge> {
                                   backgroundColor: const Color(0xFFffffff),
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
-                                          BorderRadius.circular(8.0))),
+                                      BorderRadius.circular(8.0))),
                               onPressed: () {
-                                // Navigator.pop(context);
+                                Navigator.pop(context);
                                 // firstName.clear();
                                 // lastName.clear();
                                 // email.clear();

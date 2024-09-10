@@ -454,7 +454,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
               },
               buttonStyleData: ButtonStyleData(
                 height: 45,
-                width: 200,
+                //width: 200,
                 padding: const EdgeInsets.only(left: 14, right: 14),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(6),
@@ -813,14 +813,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                             SizedBox(
                               height: 2,
                             ),
-                            _isLoading
-                                ? const Center(
-                                    child: SpinKitFadingCircle(
-                                      color: Colors.black,
-                                      size: 50.0,
-                                    ),
-                                  )
-                                : Column(
+                            Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
@@ -937,7 +930,8 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                                           : Container(),
                                       const SizedBox(height: 0),
                                       units.isNotEmpty
-                                          ? DropdownButtonHideUnderline(
+                                          ?
+                                      DropdownButtonHideUnderline(
                                               child: DropdownButtonFormField2<
                                                   String>(
                                                 decoration: InputDecoration(
@@ -1089,7 +1083,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                                 },
                                 buttonStyleData: ButtonStyleData(
                                   height: 45,
-                                  width: 200,
+                                 // width: 200,
                                   padding: const EdgeInsets.only(
                                       left: 14, right: 14),
                                   decoration: BoxDecoration(
@@ -1143,14 +1137,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                             SizedBox(
                               height: 2,
                             ),
-                            _isLoadingvendors
-                                ? const Center(
-                                    child: SpinKitFadingCircle(
-                                      color: Colors.black,
-                                      size: 50.0,
-                                    ),
-                                  )
-                                : Column(
+                            Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
@@ -1289,7 +1276,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                                 },
                                 buttonStyleData: ButtonStyleData(
                                   height: 45,
-                                  width: 200,
+                                 // width: 200,
                                   padding: const EdgeInsets.only(
                                       left: 14, right: 14),
                                   decoration: BoxDecoration(
@@ -1335,14 +1322,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                             SizedBox(
                               height: 2,
                             ),
-                            _isLoadingstaff
-                                ? const Center(
-                                    child: SpinKitFadingCircle(
-                                      color: Colors.black,
-                                      size: 50.0,
-                                    ),
-                                  )
-                                : Column(
+                            Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
@@ -1798,7 +1778,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                                 },
                                 buttonStyleData: ButtonStyleData(
                                   height: 45,
-                                  width: 200,
+                                 // width: 200,
                                   padding: const EdgeInsets.only(
                                       left: 14, right: 14),
                                   decoration: BoxDecoration(
@@ -2044,7 +2024,6 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
           entry: _selectedEntry == 'yes',
           parts: parts,
         ).then((value){
-
           Navigator.pop(context, true);
         });
         // Fluttertoast.showToast(

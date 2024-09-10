@@ -19,10 +19,187 @@ import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 
 import '../../../model/EnterChargeModel.dart';
 import '../../../widgets/custom_drawer.dart';
+
+class Chargedata {
+  String? id;
+  String? chargeId;
+  String? adminId;
+  String? tenantId;
+  String? leaseId;
+  List<Entrydata>? entry;
+  double? totalAmount;
+  bool? isLeaseAdded;
+  String? type;
+  List<dynamic>? uploadedFile;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  bool? isDelete;
+  TenantData? tenantData;
+
+  Chargedata({
+    this.id,
+    this.chargeId,
+    this.adminId,
+    this.tenantId,
+    this.leaseId,
+    this.entry,
+    this.totalAmount,
+    this.isLeaseAdded,
+    this.type,
+    this.uploadedFile,
+    this.createdAt,
+    this.updatedAt,
+    this.isDelete,
+    this.tenantData,
+  });
+
+  factory Chargedata.fromJson(Map<String, dynamic> json) {
+    return Chargedata(
+      id: json['_id'],
+      chargeId: json['charge_id'],
+      adminId: json['admin_id'],
+      tenantId: json['tenant_id'],
+      leaseId: json['lease_id'],
+      entry: json['entry'] != null
+          ? List<Entrydata>.from(json['entry'].map((x) => Entrydata.fromJson(x)))
+          : [],
+      totalAmount:  json['total_amount'] != null ?  json['total_amount'].toDouble() : 0.0,
+      isLeaseAdded: json['is_leaseAdded'],
+      type: json['type'],
+      uploadedFile: json['uploaded_file'] ?? [],
+
+      tenantData: json['tenantData'] != null
+          ? TenantData.fromJson(json['tenantData'])
+          : null,
+    );
+  }
+}
+
+class Entrydata {
+  String? entryId;
+  String? memo;
+  String? account;
+  double? amount;
+  double? dueAmount;
+  DateTime? date;
+  bool? isPaid;
+  bool? isLateFee;
+  bool? isRepeatable;
+  String? chargeType;
+  String? id;
+
+  Entrydata({
+    this.entryId,
+    this.memo,
+    this.account,
+    this.amount,
+    this.dueAmount,
+    this.date,
+    this.isPaid,
+    this.isLateFee,
+    this.isRepeatable,
+    this.chargeType,
+    this.id,
+  });
+
+  factory Entrydata.fromJson(Map<String, dynamic> json) {
+    return Entrydata(
+      entryId: json['entry_id'],
+      memo: json['memo'],
+      account: json['account'],
+      amount: json['amount'].toDouble(),
+      dueAmount: json['due_amount'] != null?  json['due_amount'].toDouble():0.0,
+      date: DateTime.parse(json['date']),
+      isPaid: json['is_paid'],
+      isLateFee: json['is_lateFee'],
+      isRepeatable: json['is_repeatable'],
+      chargeType: json['charge_type'],
+      id: json['_id'],
+    );
+  }
+}
+
+class TenantData {
+  EmergencyContact? emergencyContact;
+  String? tenantId;
+  String? adminId;
+  String? tenantFirstName;
+  String? tenantLastName;
+  String? tenantPhoneNumber;
+  String? tenantAlternativeNumber;
+  String? tenantEmail;
+  String? tenantAlternativeEmail;
+  String? tenantBirthDate;
+  String? taxPayerId;
+  String? comments;
+  bool? enableOverrideFee;
+
+  TenantData({
+    this.emergencyContact,
+    this.tenantId,
+    this.adminId,
+    this.tenantFirstName,
+    this.tenantLastName,
+    this.tenantPhoneNumber,
+    this.tenantAlternativeNumber,
+    this.tenantEmail,
+    this.tenantAlternativeEmail,
+    this.tenantBirthDate,
+    this.taxPayerId,
+    this.comments,
+    this.enableOverrideFee,
+  });
+
+  factory TenantData.fromJson(Map<String, dynamic> json) {
+    return TenantData(
+      emergencyContact: json['emergency_contact'] != null
+          ? EmergencyContact.fromJson(json['emergency_contact'])
+          : null,
+      tenantId: json['tenant_id'],
+      adminId: json['admin_id'],
+      tenantFirstName: json['tenant_firstName'],
+      tenantLastName: json['tenant_lastName'],
+      tenantPhoneNumber: json['tenant_phoneNumber'],
+      tenantAlternativeNumber: json['tenant_alternativeNumber'],
+      tenantEmail: json['tenant_email'],
+      tenantAlternativeEmail: json['tenant_alternativeEmail'],
+      tenantBirthDate: json['tenant_birthDate'],
+      taxPayerId: json['taxPayer_id'],
+      comments: json['comments'],
+      enableOverrideFee: json['enable_override_fee'],
+    );
+  }
+}
+
+class EmergencyContact {
+  String? name;
+  String? relation;
+  String? email;
+  String? phoneNumber;
+
+  EmergencyContact({
+    this.name,
+    this.relation,
+    this.email,
+    this.phoneNumber,
+  });
+
+  factory EmergencyContact.fromJson(Map<String, dynamic> json) {
+    return EmergencyContact(
+      name: json['name'],
+      relation: json['relation'],
+      email: json['email'],
+      phoneNumber: json['phoneNumber'],
+    );
+  }
+}
+
+
 class enterCharge extends StatefulWidget {
   final String leaseId;
+  String? chargeid;
 
-  const enterCharge({required this.leaseId});
+   enterCharge({required this.leaseId,this.chargeid});
 
   @override
   State<enterCharge> createState() => _enterChargeState();
@@ -39,7 +216,7 @@ class _enterChargeState extends State<enterCharge> {
   String? selectedAccount;
   bool isLoading = true;
   bool hasError = false;
-
+  List<FocusNode> focusNodes = [];
   List<Map<String, String>> tenants = [];
   String? selectedTenantId;
 
@@ -48,6 +225,57 @@ class _enterChargeState extends State<enterCharge> {
     super.initState();
     fetchTenants();
     fetchDropdownData();
+    if(widget.chargeid != null){
+      fetchchargeData();
+    }
+  }
+  Future<void> fetchchargeData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString("adminId");
+    final response = await http.get(
+      Uri.parse('$Api_url/api/charge/charge/${widget.chargeid}'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body)["data"];
+      print(data);
+
+      Chargedata fetchedCharge = Chargedata.fromJson(data);
+
+      setState(() {
+      selectedTenantId = fetchedCharge!.tenantId;
+      Amount.text = fetchedCharge.totalAmount.toString();
+      _startDate.text = formatDate(fetchedCharge.entry!.first!.date.toString());
+      Memo.text = fetchedCharge.entry!.first.memo!;
+      double  total = 0;
+
+      //  Memo.text = fetchedCharge["entry"]![0]["memo"];
+
+      for (var i = 0 ;i< fetchedCharge.entry!.length ;i++) {
+        print(fetchedCharge.entry![i].amount);
+        rows.add({
+          'account': fetchedCharge.entry![i].account,
+          'charge_type': fetchedCharge.entry![i].chargeType,
+          'amount': fetchedCharge.entry![i].amount,
+          'memo': Memo.text,
+          'date': _startDate.text,
+        });
+        total += fetchedCharge.entry![i].amount!;
+        totalAmount = total;
+        focusNodes.add(FocusNode());
+      }
+      });
+      /*setState(() {
+        tenants = fetchedTenants;
+      });*/
+    } else {
+      throw Exception('Failed to load tenants');
+    }
   }
 
   Future<void> fetchTenants() async {
@@ -149,6 +377,7 @@ class _enterChargeState extends State<enterCharge> {
         'memo': Memo.text,
         'date': _startDate.text,
       });
+      focusNodes.add(FocusNode());
     });
   }
 
@@ -156,7 +385,9 @@ class _enterChargeState extends State<enterCharge> {
     setState(() {
       totalAmount -= rows[index]['amount'];
       rows.removeAt(index);
+      focusNodes.removeAt(index);
     });
+
     validateAmounts();
   }
 
@@ -172,6 +403,8 @@ class _enterChargeState extends State<enterCharge> {
 
   void validateAmounts() {
     double enteredAmount = double.tryParse(Amount.text) ?? 0.0;
+    print(enteredAmount);
+    print(totalAmount);
     if (enteredAmount != totalAmount) {
       setState(() {
         validationMessage =
@@ -303,7 +536,13 @@ class _enterChargeState extends State<enterCharge> {
                             ),
                           ],
                         ),
-                        child: const Text(
+                        child: widget.chargeid != null ? const Text(
+                          "Edit Charge",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18),
+                        ):const Text(
                           "Add Charge",
                           style: TextStyle(
                               color: Colors.white,
@@ -333,69 +572,93 @@ class _enterChargeState extends State<enterCharge> {
                           height: 8,
                         ),
                         if(MediaQuery.of(context).size.width < 500)
-                        tenants.isEmpty
-                            ? const Center(
-                                child: SpinKitFadingCircle(
-                                  color: Colors.black,
-                                  size: 50.0,
-                                ),
-                              )
-                            : DropdownButtonHideUnderline(
-                                child: DropdownButton2<String>(
-                                  isExpanded: true,
-                                  hint: const Text('Select Tenant'),
-                                  value: selectedTenantId,
-                                  items: tenants.map((tenant) {
-                                    return DropdownMenuItem<String>(
-                                      value: tenant['tenant_id'],
-                                      child: Text(tenant['tenant_name']!),
-                                    );
-                                  }).toList(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedTenantId = value;
-                                    });
-                                    print(
-                                        'Selected tenant_id: $selectedTenantId');
-                                  },
-                                  buttonStyleData: ButtonStyleData(
-                                    height: 45,
-                                    width: 170,
-                                    padding: const EdgeInsets.only(
-                                        left: 14, right: 14),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      color: Colors.white,
+                          tenants.isEmpty
+                              ? const Center(
+                            child: SpinKitFadingCircle(
+                              color: Colors.black,
+                              size: 50.0,
+                            ),
+                          )
+                              : DropdownButtonHideUnderline(
+                            child: FormField<String>(
+                              validator: (value) {
+                                if (selectedTenantId == null) {
+                                  return 'Please select a tenant';
+                                }
+                                return null; // No error if valid
+                              },
+                              builder: (FormFieldState<String> state) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    DropdownButton2<String>(
+                                      isExpanded: true,
+                                      hint: const Text('Select Tenant'),
+                                      value: selectedTenantId,
+                                      items: tenants.map((tenant) {
+                                        return DropdownMenuItem<String>(
+                                          value: tenant['tenant_id'],
+                                          child: Text(tenant['tenant_name']!),
+                                        );
+                                      }).toList(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedTenantId = value;
+                                          state.didChange(value); // Notify form field state
+                                        });
+                                        state.reset();
+                                        print('Selected tenant_id: $selectedTenantId');
+                                      },
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 50,
+                                        width: 200,
+                                        padding: const EdgeInsets.only(left: 14, right: 14),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(6),
+                                          color: Colors.white,
+                                        ),
+                                        elevation: 2,
+                                      ),
+                                      iconStyleData: const IconStyleData(
+                                        icon: Icon(
+                                          Icons.arrow_drop_down,
+                                        ),
+                                        iconSize: 24,
+                                        iconEnabledColor: Color(0xFFb0b6c3),
+                                        iconDisabledColor: Colors.grey,
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(6),
+                                          color: Colors.white,
+                                        ),
+                                        scrollbarTheme: ScrollbarThemeData(
+                                          radius: const Radius.circular(6),
+                                          thickness: MaterialStateProperty.all(6),
+                                          thumbVisibility: MaterialStateProperty.all(true),
+                                        ),
+                                      ),
+                                      menuItemStyleData: const MenuItemStyleData(
+                                        height: 40,
+                                        padding: EdgeInsets.only(left: 14, right: 14),
+                                      ),
                                     ),
-                                    elevation: 2,
-                                  ),
-                                  iconStyleData: const IconStyleData(
-                                    icon: Icon(
-                                      Icons.arrow_drop_down,
-                                    ),
-                                    iconSize: 24,
-                                    iconEnabledColor: Color(0xFFb0b6c3),
-                                    iconDisabledColor: Colors.grey,
-                                  ),
-                                  dropdownStyleData: DropdownStyleData(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      color: Colors.white,
-                                    ),
-                                    scrollbarTheme: ScrollbarThemeData(
-                                      radius: const Radius.circular(6),
-                                      thickness: MaterialStateProperty.all(6),
-                                      thumbVisibility:
-                                          MaterialStateProperty.all(true),
-                                    ),
-                                  ),
-                                  menuItemStyleData: const MenuItemStyleData(
-                                    height: 40,
-                                    padding:
-                                        EdgeInsets.only(left: 14, right: 14),
-                                  ),
-                                ),
-                              ),
+                                    if (state.hasError)
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 5),
+                                        child: Text(
+                                          state.errorText!,
+                                          style: const TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
                         if(MediaQuery.of(context).size.width < 500)
                         const SizedBox(
                           height: 20,
@@ -493,59 +756,85 @@ class _enterChargeState extends State<enterCharge> {
                                         ),
                                       )
                                           : DropdownButtonHideUnderline(
-                                        child: DropdownButton2<String>(
-                                          isExpanded: true,
-                                          hint: const Text('Select Tenant'),
-                                          value: selectedTenantId,
-                                          items: tenants.map((tenant) {
-                                            return DropdownMenuItem<String>(
-                                              value: tenant['tenant_id'],
-                                              child: Text(tenant['tenant_name']!),
-                                            );
-                                          }).toList(),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              selectedTenantId = value;
-                                            });
-                                            print(
-                                                'Selected tenant_id: $selectedTenantId');
+                                        child: FormField<String>(
+                                          validator: (value) {
+                                            print(selectedTenantId);
+                                            if (selectedTenantId == null) {
+                                              return 'Please select a tenant sss';
+                                            }
+                                            return ""; // No error if valid
                                           },
-                                          buttonStyleData: ButtonStyleData(
-                                            height: 50,
-                                            width: 200,
-                                            padding: const EdgeInsets.only(
-                                                left: 14, right: 14),
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(6),
-                                              color: Colors.white,
-                                            ),
-                                            elevation: 2,
-                                          ),
-                                          iconStyleData: const IconStyleData(
-                                            icon: Icon(
-                                              Icons.arrow_drop_down,
-                                            ),
-                                            iconSize: 24,
-                                            iconEnabledColor: Color(0xFFb0b6c3),
-                                            iconDisabledColor: Colors.grey,
-                                          ),
-                                          dropdownStyleData: DropdownStyleData(
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(6),
-                                              color: Colors.white,
-                                            ),
-                                            scrollbarTheme: ScrollbarThemeData(
-                                              radius: const Radius.circular(6),
-                                              thickness: MaterialStateProperty.all(6),
-                                              thumbVisibility:
-                                              MaterialStateProperty.all(true),
-                                            ),
-                                          ),
-                                          menuItemStyleData: const MenuItemStyleData(
-                                            height: 40,
-                                            padding:
-                                            EdgeInsets.only(left: 14, right: 14),
-                                          ),
+                                          builder: (FormFieldState<String> state) {
+                                            print(state.hasError);
+                                            return Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                DropdownButton2<String>(
+                                                  isExpanded: true,
+                                                  hint: const Text('Select Tenant'),
+                                                  value: selectedTenantId,
+                                                  items: tenants.map((tenant) {
+                                                    return DropdownMenuItem<String>(
+                                                      value: tenant['tenant_id'],
+                                                      child: Text(tenant['tenant_name']!),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      selectedTenantId = value;
+                                                      state.didChange(value); // Notify form field state
+                                                    });
+                                                    state.reset();
+                                                    print('Selected tenant_id: $selectedTenantId');
+                                                  },
+                                                  buttonStyleData: ButtonStyleData(
+                                                    height: 50,
+                                                    width: 200,
+                                                    padding: const EdgeInsets.only(left: 14, right: 14),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(6),
+                                                      color: Colors.white,
+                                                    ),
+                                                    elevation: 2,
+                                                  ),
+                                                  iconStyleData: const IconStyleData(
+                                                    icon: Icon(
+                                                      Icons.arrow_drop_down,
+                                                    ),
+                                                    iconSize: 24,
+                                                    iconEnabledColor: Color(0xFFb0b6c3),
+                                                    iconDisabledColor: Colors.grey,
+                                                  ),
+                                                  dropdownStyleData: DropdownStyleData(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(6),
+                                                      color: Colors.white,
+                                                    ),
+                                                    scrollbarTheme: ScrollbarThemeData(
+                                                      radius: const Radius.circular(6),
+                                                      thickness: MaterialStateProperty.all(6),
+                                                      thumbVisibility: MaterialStateProperty.all(true),
+                                                    ),
+                                                  ),
+                                                  menuItemStyleData: const MenuItemStyleData(
+                                                    height: 40,
+                                                    padding: EdgeInsets.only(left: 14, right: 14),
+                                                  ),
+                                                ),
+                                                if (state.hasError)
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(top: 5),
+                                                    child: Text(
+                                                      state.errorText!,
+                                                      style: const TextStyle(
+                                                        color: Colors.red,
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  ),
+                                              ],
+                                            );
+                                          },
                                         ),
                                       ),
                                     ],
@@ -684,226 +973,7 @@ class _enterChargeState extends State<enterCharge> {
                   const SizedBox(
                     height: 10,
                   ),
-                  // isLoading
-                  //     ? const Center(
-                  //         child: SpinKitFadingCircle(
-                  //           color: Colors.black,
-                  //           size: 50.0,
-                  //         ),
-                  //       )
-                  //     : hasError
-                  //         ? const Center(child: Text('Failed to load data'))
-                  //         : Table(
-                  //             border: TableBorder.all(width: 1),
-                  //             columnWidths: const {
-                  //               0: FlexColumnWidth(2),
-                  //               1: FlexColumnWidth(2),
-                  //               2: FlexColumnWidth(1),
-                  //             },
-                  //             children: [
-                  //               const TableRow(children: [
-                  //                 Padding(
-                  //                   padding: EdgeInsets.all(8.0),
-                  //                   child: Center(
-                  //                     child: Text('Account',
-                  //                         style: TextStyle(
-                  //                             color:
-                  //                                 Color.fromRGBO(21, 43, 83, 1),
-                  //                             fontWeight: FontWeight.bold)),
-                  //                   ),
-                  //                 ),
-                  //                 Padding(
-                  //                   padding: EdgeInsets.all(8.0),
-                  //                   child: Center(
-                  //                     child: Text('Amount',
-                  //                         style: TextStyle(
-                  //                             color:
-                  //                                 Color.fromRGBO(21, 43, 83, 1),
-                  //                             fontWeight: FontWeight.bold)),
-                  //                   ),
-                  //                 ),
-                  //                 Padding(
-                  //                   padding: EdgeInsets.all(8.0),
-                  //                   child: Center(
-                  //                     child: Text('Actions',
-                  //                         style: TextStyle(
-                  //                             color:
-                  //                                 Color.fromRGBO(21, 43, 83, 1),
-                  //                             fontWeight: FontWeight.bold)),
-                  //                   ),
-                  //                 ),
-                  //               ]),
-                  //               ...rows.asMap().entries.map((entry) {
-                  //                 int index = entry.key;
-                  //                 Map<String, dynamic> row = entry.value;
-                  //                 return TableRow(children: [
-                  //                   Padding(
-                  //                     padding: const EdgeInsets.all(8.0),
-                  //                     child: DropdownButtonHideUnderline(
-                  //                       child: DropdownButton2<String>(
-                  //                         isExpanded: true,
-                  //                         value: row['account'],
-                  //                         items: [
-                  //                           ...categorizedData.entries
-                  //                               .expand((entry) {
-                  //                             return [
-                  //                               DropdownMenuItem<String>(
-                  //                                 enabled: false,
-                  //                                 child: Text(
-                  //                                   entry.key,
-                  //                                   style: const TextStyle(
-                  //                                     fontWeight:
-                  //                                         FontWeight.bold,
-                  //                                     color: Color.fromRGBO(
-                  //                                         21, 43, 81, 1),
-                  //                                   ),
-                  //                                 ),
-                  //                               ),
-                  //                               ...entry.value.map((item) {
-                  //                                 return DropdownMenuItem<
-                  //                                     String>(
-                  //                                   value: item,
-                  //                                   child: Padding(
-                  //                                     padding:
-                  //                                         const EdgeInsets.only(
-                  //                                             left: 16.0),
-                  //                                     child: Text(
-                  //                                       item,
-                  //                                       style: const TextStyle(
-                  //                                         color: Colors.black,
-                  //                                         fontWeight:
-                  //                                             FontWeight.w400,
-                  //                                       ),
-                  //                                     ),
-                  //                                   ),
-                  //                                 );
-                  //                               }).toList(),
-                  //                             ];
-                  //                           }).toList(),
-                  //                         ],
-                  //                         onChanged: (value) {
-                  //                           String? chargeType;
-                  //                           for (var entry
-                  //                               in categorizedData.entries) {
-                  //                             if (entry.value.contains(value)) {
-                  //                               chargeType = entry.key;
-                  //                               break;
-                  //                             }
-                  //                           }
-                  //                           setState(() {
-                  //                             rows[index]['account'] = value;
-                  //                             rows[index]['charge_type'] =
-                  //                                 chargeType;
-                  //                           });
-                  //                         },
-                  //                         buttonStyleData: ButtonStyleData(
-                  //                           height: 45,
-                  //                           width: 220,
-                  //                           padding: const EdgeInsets.only(
-                  //                               left: 14, right: 14),
-                  //                           decoration: BoxDecoration(
-                  //                             borderRadius:
-                  //                                 BorderRadius.circular(6),
-                  //                             color: Colors.white,
-                  //                           ),
-                  //                           elevation: 2,
-                  //                         ),
-                  //                         iconStyleData: const IconStyleData(
-                  //                           icon: Icon(Icons.arrow_drop_down),
-                  //                           iconSize: 24,
-                  //                           iconEnabledColor: Color(0xFFb0b6c3),
-                  //                           iconDisabledColor: Colors.grey,
-                  //                         ),
-                  //                         dropdownStyleData: DropdownStyleData(
-                  //                           width: 250,
-                  //                           decoration: BoxDecoration(
-                  //                             borderRadius:
-                  //                                 BorderRadius.circular(6),
-                  //                             color: Colors.white,
-                  //                           ),
-                  //                           scrollbarTheme: ScrollbarThemeData(
-                  //                             radius: const Radius.circular(6),
-                  //                             thickness:
-                  //                                 MaterialStateProperty.all(6),
-                  //                             thumbVisibility:
-                  //                                 MaterialStateProperty.all(
-                  //                                     true),
-                  //                           ),
-                  //                         ),
-                  //                         hint: const Text('Select an account'),
-                  //                       ),
-                  //                     ),
-                  //                   ),
-                  //                   Padding(
-                  //                     padding: const EdgeInsets.all(8.0),
-                  //                     child: TextField(
-                  //                       keyboardType: TextInputType.number,
-                  //                       onChanged: (value) =>
-                  //                           updateAmount(index, value),
-                  //                       decoration: const InputDecoration(
-                  //                         border: OutlineInputBorder(),
-                  //                         hintText: 'Enter amount',
-                  //                       ),
-                  //                     ),
-                  //                   ),
-                  //                   Padding(
-                  //                     padding: const EdgeInsets.all(8.0),
-                  //                     child: IconButton(
-                  //                       icon: const Icon(Icons.delete,
-                  //                           color: Colors.red),
-                  //                       onPressed: () => deleteRow(index),
-                  //                     ),
-                  //                   ),
-                  //                 ]);
-                  //               }).toList(),
-                  //               TableRow(children: [
-                  //                 const Padding(
-                  //                   padding: EdgeInsets.all(8.0),
-                  //                   child: Text('Total',
-                  //                       style: TextStyle(
-                  //                           fontWeight: FontWeight.bold)),
-                  //                 ),
-                  //                 Padding(
-                  //                   padding: const EdgeInsets.all(8.0),
-                  //                   child: Text(
-                  //                       '\$${totalAmount.toStringAsFixed(2)}'),
-                  //                 ),
-                  //                 const SizedBox.shrink(),
-                  //               ]),
-                  //               TableRow(children: [
-                  //                 Padding(
-                  //                   padding: const EdgeInsets.all(8.0),
-                  //                   child: Container(
-                  //                     height: 34,
-                  //                     decoration: BoxDecoration(
-                  //                         color: Colors.white,
-                  //                         border: Border.all(width: 1),
-                  //                         borderRadius:
-                  //                             BorderRadius.circular(10.0)),
-                  //                     child: ElevatedButton(
-                  //                       style: ElevatedButton.styleFrom(
-                  //                           shape: RoundedRectangleBorder(
-                  //                               borderRadius:
-                  //                                   BorderRadius.circular(
-                  //                                       10.0)),
-                  //                           elevation: 0,
-                  //                           backgroundColor: Colors.white),
-                  //                       onPressed: addRow,
-                  //                       child: const Text(
-                  //                         'Add Row',
-                  //                         style: TextStyle(
-                  //                           color:
-                  //                               Color.fromRGBO(21, 43, 83, 1),
-                  //                         ),
-                  //                       ),
-                  //                     ),
-                  //                   ),
-                  //                 ),
-                  //                 const SizedBox.shrink(),
-                  //                 const SizedBox.shrink(),
-                  //               ]),
-                  //             ],
-                  //           ),
+
                   isLoading
                       ? const Center(
                     child: SpinKitFadingCircle(
@@ -1011,6 +1081,7 @@ class _enterChargeState extends State<enterCharge> {
                                       break;
                                     }
                                   }
+
                                   setState(() {
                                     rows[index]['account'] = value;
                                     rows[index]['charge_type'] =
@@ -1060,11 +1131,12 @@ class _enterChargeState extends State<enterCharge> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: SizedBox(
-                                height:40,
+                                height:50,
                                 child: KeyboardActions(
                                   config: _buildConfig(context),
-                                  child: TextField(
-                                    focusNode: _nodeText1,
+                                  child: TextFormField(
+                                    initialValue:  widget.chargeid != null ? rows[index]["amount"].toString() : "0", // Make sure 0 is a string,
+                                    focusNode: focusNodes[index],
                                     keyboardType: TextInputType.number,
                                     onChanged: (value) =>
                                         updateAmount(index, value),
@@ -1282,71 +1354,133 @@ class _enterChargeState extends State<enterCharge> {
                                   setState(() {
                                     _isLoading = true;
                                   });
-                                  SharedPreferences prefs =
+
+                                  print(rows.where((e)=> e["charge_type"] == null));
+
+
+
+                                  if(validationMessage == null){
+                                    if(widget.chargeid != null){
+                                      SharedPreferences prefs =
                                       await SharedPreferences.getInstance();
-                                  String adminId =
+                                      String adminId =
                                       prefs.getString('adminId').toString();
 
-                                  List<Entry> entryList = rows.map((row) {
-                                    return Entry(
-                                      account: row['account'],
-                                      amount: row['amount']?.toInt() ?? 0,
-                                      dueAmount:
+                                      List<Entry> entryList = rows.map((row) {
+                                        return Entry(
+                                          account: row['account'],
+                                          amount: row['amount']?.toInt() ?? 0,
+                                          dueAmount:
                                           0, // Adjust according to your requirement
-                                      memo: row['memo'],
-                                      date: reverseFormatDate(row['date']),
-                                      chargeType: row['charge_type'],
-                                      isRepeatable:
+                                          memo: row['memo'],
+                                          date: reverseFormatDate(row['date']),
+                                          chargeType: row['charge_type'],
+                                          isRepeatable:
                                           false, // Adjust according to your requirement
-                                    );
-                                  }).toList();
+                                        );
+                                      }).toList();
 
-                                  int totalAmount =
-                                      int.tryParse(Amount.text) ?? 0;
-                                  Charge charge = Charge(
-                                    adminId: adminId,
-                                    isLeaseAdded: false,
-                                    leaseId: widget.leaseId,
-                                    tenantId: selectedTenantId!,
-                                    totalAmount: totalAmount,
-                                    uploadedFile: _uploadedFileNames,
-                                    entry: entryList,
-                                  );
-                               print('file ${_uploadedFileNames}');
+                                      print("amount ${Amount.text}");
+                                      int totalAmount =
+                                          int.tryParse(Amount.text) ?? 0;
+                                      Charge charge = Charge(
+                                        adminId: adminId,
+                                        isLeaseAdded: false,
+                                        leaseId: widget.leaseId,
+                                        tenantId: selectedTenantId!,
+                                        totalAmount: totalAmount,
+                                        uploadedFile: _uploadedFileNames,
+                                        entry: entryList,
+                                      );
+                                      print('file ${_uploadedFileNames}');
 
-                                  LeaseRepository apiService =
+                                      LeaseRepository apiService =
                                       LeaseRepository();
-                                  int statusCode =
+                                      int statusCode =
+                                      await apiService.EditCharge(charge,widget.chargeid!);
+
+                                      if (statusCode == 200) {
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                        Fluttertoast.showToast(
+                                          msg: "Charge Edited successfully",
+                                        );
+                                        Navigator.pop(context,true);
+                                      } else {
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                        Fluttertoast.showToast(
+                                          msg: "Failed to post charge",
+                                        );
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                      }
+                                    }
+                                    else{
+                                      SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                      String adminId =
+                                      prefs.getString('adminId').toString();
+
+                                      List<Entry> entryList = rows.map((row) {
+                                        return Entry(
+                                          account: row['account'],
+                                          amount: row['amount']?.toInt() ?? 0,
+                                          dueAmount:
+                                          0, // Adjust according to your requirement
+                                          memo: row['memo'],
+                                          date: reverseFormatDate(row['date']),
+                                          chargeType: row['charge_type'],
+                                          isRepeatable:
+                                          false, // Adjust according to your requirement
+                                        );
+                                      }).toList();
+
+                                      int totalAmount =
+                                          int.tryParse(Amount.text) ?? 0;
+                                      Charge charge = Charge(
+                                        adminId: adminId,
+                                        isLeaseAdded: false,
+                                        leaseId: widget.leaseId,
+                                        tenantId: selectedTenantId!,
+                                        totalAmount: totalAmount,
+                                        uploadedFile: _uploadedFileNames,
+                                        entry: entryList,
+                                      );
+                                      print('file ${_uploadedFileNames}');
+
+                                      LeaseRepository apiService =
+                                      LeaseRepository();
+                                      int statusCode =
                                       await apiService.postCharge(charge);
 
-                                  if (statusCode == 200) {
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
-                                    Fluttertoast.showToast(
-                                      msg: "Charge posted successfully",
-                                    );
-                                    Navigator.pop(context);
-                                  } else {
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
-                                    Fluttertoast.showToast(
-                                      msg: "Failed to post charge",
-                                    );
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
+                                      if (statusCode == 200) {
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                        Fluttertoast.showToast(
+                                          msg: "Charge posted successfully",
+                                        );
+                                        Navigator.pop(context,true);
+                                      } else {
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                        Fluttertoast.showToast(
+                                          msg: "Failed to post charge",
+                                        );
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                      }
+                                    }
+
                                   }
 
-                                  print('valid');
-                                  print(selectedTenantId);
-                                  print(rows);
-                                  print(totalAmount);
-                                  print(_startDate.text);
-                                  print(Amount.text);
-                                  print(Memo.text);
-                                  print(_uploadedFileNames);
+
 
                                   //charges
                                 } else {
@@ -1359,7 +1493,11 @@ class _enterChargeState extends State<enterCharge> {
                                   print(Memo.text);
                                 }
                               },
-                              child:  Text(
+                              child:widget.chargeid != null ? Text(
+                                'Edit charge',
+                                style: TextStyle(color: Color(0xFFf7f8f9),
+                                    fontSize: MediaQuery.of(context).size.width < 500 ? 16 :18),
+                              ):  Text(
                                 'Add charge',
                                 style: TextStyle(color: Color(0xFFf7f8f9),
                                 fontSize: MediaQuery.of(context).size.width < 500 ? 16 :18),
@@ -1379,7 +1517,7 @@ class _enterChargeState extends State<enterCharge> {
                                       borderRadius:
                                           BorderRadius.circular(8.0))),
                               onPressed: () {
-                                // Navigator.pop(context);
+                                 Navigator.pop(context);
                                 // firstName.clear();
                                 // lastName.clear();
                                 // email.clear();

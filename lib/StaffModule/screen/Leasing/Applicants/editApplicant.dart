@@ -567,7 +567,7 @@ class _EditApplicantState extends State<EditApplicant> {
                   children: [
                     Container(
                       height: 50,
-                      width: 150,
+                      width: 155,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
@@ -711,9 +711,13 @@ class _EditApplicantState extends State<EditApplicant> {
                             child: const Text(
                               'Cancel',
                               style: TextStyle(color: Color(0xFF748097)),
-                            )))
+                            ))),
+
                   ],
                 ),
+              ),
+              SizedBox(
+                height: 10,
               ),
             ],
           ),

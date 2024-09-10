@@ -1891,7 +1891,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                       height:
                                           MediaQuery.of(context).size.height *
                                               0.01),
-                                //  if (selectedOwner != null)
+                               /* //  if (selectedOwner != null)
                                     Padding(
                                       padding: const EdgeInsets.only(left: 13),
                                       child: Column(
@@ -2128,7 +2128,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                         ),
                                       ),
                                     ],
-                                  ),
+                                  ),*/
                                   SizedBox(
                                       height:
                                           MediaQuery.of(context).size.height *
@@ -2188,8 +2188,8 @@ class _EditRentalownersState extends State<EditRentalowners> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
                         child: Container(
-                          height: 30.0,
-                          width: 50,
+                         height:  40.0,
+                          width: 100,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
                             color: Color.fromRGBO(21, 43, 81, 1),
@@ -2212,7 +2212,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 10,
+                                      fontSize: 14,
                                     ),
                                   ),
                           ),
@@ -2227,8 +2227,9 @@ class _EditRentalownersState extends State<EditRentalowners> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
                         child: Container(
-                          height: 30.0,
-                          width: 50,
+                          height:
+                          40.0,
+                          width: 65,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
                             color: Colors.white,
@@ -2251,7 +2252,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                     style: TextStyle(
                                         color: Color.fromRGBO(21, 43, 81, 1),
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 10),
+                                        fontSize: 13),
                                   ),
                           ),
                         ),

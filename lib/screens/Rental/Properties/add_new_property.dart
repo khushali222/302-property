@@ -1179,7 +1179,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                               borderRadius: BorderRadius.circular(5.0),
                                                                               child: Container(
                                                                                 height:  MediaQuery.of(context).size.width < 500 ? 40 :45,
-                                                                                width: MediaQuery.of(context).size.width < 500 ? 150 : 165,
+                                                                                width: MediaQuery.of(context).size.width < 500 ? 130 : 165,
                                                                                 decoration: BoxDecoration(
                                                                                   borderRadius: BorderRadius.circular(5.0),
                                                                                   color: Color.fromRGBO(21, 43, 81, 1),
@@ -1202,7 +1202,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                     style: TextStyle(
                                                                                         color: Colors.white,
                                                                                         fontWeight: FontWeight.bold,
-                                                                                        fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :15.5),
+                                                                                        fontSize:  MediaQuery.of(context).size.width < 500 ? 13 :15.5),
                                                                                   ),
                                                                                 ),
                                                                               ),
@@ -1250,8 +1250,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                 );
                                               } else {
                                                 setState(() {
-
-
                                                   print(snapshot.data!
                                                       .where((element) =>
                                                   element
@@ -8968,7 +8966,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                   'Add New Staffmember',
                                                   style: TextStyle(
                                                       fontSize:
-                                                      MediaQuery.of(context).size.width < 500 ? 9 : 15),
+                                                      MediaQuery.of(context).size.width < 500 ? 14 : 15),
                                                 ),
                                               ],
                                             ),
@@ -8986,7 +8984,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                           width: MediaQuery.of(context)
                                               .size
                                               .width *
-                                              .36,
+                                              .5,
                                           padding: EdgeInsets.symmetric(
                                               horizontal: 8, vertical: 4),
                                           decoration: BoxDecoration(
