@@ -326,7 +326,7 @@ class _EditTenantsState extends State<EditTenants> {
                                           SizedBox(height: 10),
                                           CustomTextField(
                                             keyboardType:
-                                                TextInputType.number,
+                                            TextInputType.numberWithOptions(signed: true,decimal: true),
                                             hintText: 'Enter phone number',
                                             controller: phoneNumber,
                                             validator: (value) {
@@ -354,7 +354,7 @@ class _EditTenantsState extends State<EditTenants> {
                                           SizedBox(height: 10),
                                           CustomTextField(
                                             keyboardType:
-                                                TextInputType.number,
+                                            TextInputType.numberWithOptions(signed: true,decimal: true),
                                             hintText: 'Enter work number',
                                             controller: workNumber,
                                           ),
@@ -804,7 +804,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                 color: Colors.grey)),
                                         SizedBox(height: 10),
                                         CustomTextField(
-                                          keyboardType: TextInputType.number,
+                                          keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                                           hintText: 'Enter phone number',
                                           controller: emergencyPhoneNumber,
                                         ),
@@ -1209,7 +1209,7 @@ class _EditTenantsState extends State<EditTenants> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                               hintText: 'Enter phone number',
                               controller: phoneNumber,
                               validator: (value) {
@@ -1591,7 +1591,7 @@ class _EditTenantsState extends State<EditTenants> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                               hintText: 'Enter phone number',
                               controller: emergencyPhoneNumber,
                             ),

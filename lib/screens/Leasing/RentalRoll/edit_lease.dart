@@ -2029,21 +2029,12 @@ class _Edit_leaseState extends State<Edit_lease>
                                                               color: Colors.black,
                                                             ),
                                                             onChanged: (value) {
-                                                              // Trigger validation on every change
                                                               double enteredValue = double.tryParse(value) ?? 0;
                                                               if (enteredValue > 100) {
-                                                                controller
-                                                                    .text =
-                                                                '100';
-                                                                controller
-                                                                    .selection =
-                                                                    TextSelection
-                                                                        .fromPosition(
-                                                                      TextPosition(
-                                                                          offset: controller
-                                                                              .text
-                                                                              .length),
-                                                                    );
+                                                                controller.text = '100';
+                                                                controller.selection = TextSelection.fromPosition(
+                                                                  TextPosition(offset: controller.text.length),
+                                                                );
                                                               }
                                                               Provider.of<SelectedTenantsProvider>(context, listen: false)
                                                                   .validateRentShares();
@@ -4057,17 +4048,25 @@ class _Edit_leaseState extends State<Edit_lease>
                                             BorderRadius.circular(8.0))),
                                     onPressed: () async {
                                       if (_formKey.currentState?.validate() ?? false) {
-                                        final rentShareControllers = Provider.of<SelectedTenantsProvider>(context, listen: false).rentShareControllers;
+
+                                        final provider = Provider.of<SelectedTenantsProvider>(context, listen: false);
+                                        final rentShareControllers = provider.rentShareControllers;
                                         for (int i = 0; i < rentShareControllers.length; i++) {
                                           print('Tenant ${i + 1}: ${rentShareControllers[i].text}');
-                                        }//charges
+                                        }
+                                        bool hasError = false;
+                                        if (hasError || provider.validationMessage != null) {
+                                          setState(() {
+
+                                          });
+                                          return;
+                                        }
+                                        provider.clearValidationMessage();
                                         SharedPreferences prefs =
                                         await SharedPreferences.getInstance();
                                         String adminId =
                                         prefs.getString("adminId")!;
-
                                         bool _isLeaseAdded = false;
-
                                         // // Printing ChargeData object
                                         // // Printing ChargeData object
                                         //Changes
