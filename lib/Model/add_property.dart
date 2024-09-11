@@ -81,7 +81,7 @@ class Rental {
     'rental_country': country,
     'rental_postcode': postcode,
     'staffmember_id': staffMemberId,
-    'processor_id':processor_id
+   // 'processor_id':processor_id
   };
 }
 

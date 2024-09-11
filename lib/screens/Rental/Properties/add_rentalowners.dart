@@ -1530,7 +1530,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                    .height *
                                    0.01),
 
-                           if (selectedOwner !=
+                          /* if (selectedOwner !=
                                null)
                              Padding(
                                padding: const EdgeInsets.only(left: 13),
@@ -1849,13 +1849,13 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                ),
                              ],
                            ),
+                         ,*/
                            SizedBox(
                                height: MediaQuery.of(
                                    context)
                                    .size
                                    .height *
-                                   0.05),
-
+                                   0.05)
                          ],
                        )
                     ),

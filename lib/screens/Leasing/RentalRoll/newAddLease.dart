@@ -1212,15 +1212,19 @@ class _addLease3State extends State<addLease3>
                                         );
                                       },
                                     );
-
                                     if (pickedDate != null) {
-                                      String formattedStartDate =
-                                          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                      // String formattedStartDate =
+                                      //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                      String formattedStartDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                                       DateTime endDate = DateTime(pickedDate.year,
                                           pickedDate.month + 1, pickedDate.day);
-                                      String formattedEndDate =
-                                          "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
+                                      // String formattedEndDate =
+                                      //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
+
+                                      String formattedEndDate = "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+
                                       setState(() {
+
                                         startDateController.text = formattedStartDate;
                                         _startDate = pickedDate;
                                         endDateController.text = formattedEndDate;
@@ -1239,7 +1243,7 @@ class _addLease3State extends State<addLease3>
                                     return null;
                                   },
                                   keyboardType: TextInputType.text,
-                                  hintText: 'yyyy-mm-dd',
+                                  hintText: 'dd-mm-yyyy',
                                   controller: startDateController,
                                 ),
                                 if(MediaQuery.of(context).size.width < 500)
@@ -1291,10 +1295,10 @@ class _addLease3State extends State<addLease3>
                                         );
                                       },
                                     );
-
                                     if (pickedDate != null) {
-                                      String formattedDate =
-                                          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                      // String formattedDate =
+                                      //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                      String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                                       setState(() {
                                         endDateController.text = formattedDate;
                                       });
@@ -1311,6 +1315,7 @@ class _addLease3State extends State<addLease3>
                                     }
                                     return null;
                                   },
+                                  optional: true,
                                   keyboardType: TextInputType.text,
                                   hintText: 'dd-mm-yyyy',
                                   controller: endDateController,
@@ -1368,12 +1373,15 @@ class _addLease3State extends State<addLease3>
                                                 );
 
                                                 if (pickedDate != null) {
-                                                  String formattedStartDate =
-                                                      "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                                  // String formattedStartDate =
+                                                  //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                                  String formattedStartDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                                                   DateTime endDate = DateTime(pickedDate.year,
                                                       pickedDate.month + 1, pickedDate.day);
-                                                  String formattedEndDate =
-                                                      "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
+                                                  String formattedEndDate = "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+
+                                                  // String formattedEndDate =
+                                                  //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
                                                   setState(() {
                                                     startDateController.text = formattedStartDate;
                                                     _startDate = pickedDate;
@@ -1393,7 +1401,7 @@ class _addLease3State extends State<addLease3>
                                                 return null;
                                               },
                                               keyboardType: TextInputType.text,
-                                              hintText: 'yyyy-mm-dd',
+                                              hintText: 'dd-mm-yyyy',
                                               controller: startDateController,
                                             ),
                                           ],
@@ -1447,8 +1455,9 @@ class _addLease3State extends State<addLease3>
                                                 );
 
                                                 if (pickedDate != null) {
-                                                  String formattedDate =
-                                                      "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                                  // String formattedDate =
+                                                  //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                                  String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                                                   setState(() {
                                                     endDateController.text = formattedDate;
                                                   });
@@ -2837,7 +2846,7 @@ class _addLease3State extends State<addLease3>
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Text('Next Due Date',
+                                            Text('Next Due Date ',
                                                 style: TextStyle(
                                                     fontSize: 13,
                                                     fontWeight: FontWeight.bold,
@@ -2878,13 +2887,11 @@ class _addLease3State extends State<addLease3>
                                                   },
                                                 );
                                                 if (pickedDate != null) {
-                                                  String formattedDate =
-                                                      "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                                  String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
 
                                                   DateTime nextDueDate = calculateNextDueDate(
                                                       pickedDate, _selectedRent ?? 'Daily');
-                                                  String formattedNextDueDate =
-                                                      "${nextDueDate.year}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.day.toString().padLeft(2, '0')}";
+                                                  String formattedNextDueDate = "${nextDueDate.day.toString().padLeft(2, '0')}/${nextDueDate.month.toString().padLeft(2, '0')}/${nextDueDate.year}";
 
                                                   setState(() {
                                                     rentNextDueDate.text = formattedNextDueDate;
@@ -2895,6 +2902,7 @@ class _addLease3State extends State<addLease3>
                                                 }
                                               },
                                               readOnnly: true,
+                                              optional: true,
                                               suffixIcon: IconButton(
                                                 onPressed: () {},
                                                 icon: const Icon(Icons.date_range_rounded),
@@ -3015,13 +3023,12 @@ class _addLease3State extends State<addLease3>
                                       },
                                     );
                                     if (pickedDate != null) {
-                                      String formattedDate =
-                                          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                      String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+
 
                                       DateTime nextDueDate = calculateNextDueDate(
                                           pickedDate, _selectedRent ?? 'Daily');
-                                      String formattedNextDueDate =
-                                          "${nextDueDate.year}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.day.toString().padLeft(2, '0')}";
+                                      String formattedNextDueDate = "${nextDueDate.day.toString().padLeft(2, '0')}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.year}";
 
                                       setState(() {
                                         rentNextDueDate.text = formattedNextDueDate;
@@ -3042,6 +3049,7 @@ class _addLease3State extends State<addLease3>
                                     }
                                     return null;
                                   },
+                                  optional: true,
                                   keyboardType: TextInputType.text,
                                   hintText: 'dd-mm-yyyy',
                                   controller: rentNextDueDate,
@@ -4334,9 +4342,7 @@ class _addLease3State extends State<addLease3>
                                             print('tenant ids :${tenantIds.length}');
 
                                             //print all data
-
                                             print(firstCosigner);
-
                                             print('Tenant Data List:');
                                             for (var tenant in tenantDataList) {
                                               print('admin ID: ${tenant.adminId}');
@@ -4408,7 +4414,7 @@ class _addLease3State extends State<addLease3>
                                                 leaseAmount: rentAmount.text,
                                                 leaseType: _selectedLeaseType ?? "",
                                                 rentalId: renderId,
-                                                startDate: leaseStartDate,
+                                                startDate: reverseFormatDate(leaseStartDate),
                                                 tenantId: tenantDataList
                                                     .map((tenant) =>
                                                 tenant.tenantId ?? '')
@@ -4436,7 +4442,19 @@ class _addLease3State extends State<addLease3>
                                           }
                                         }
                                         else {
+                                          String leaseStartDate =
+                                              startDateController.text;
+                                          String leaseEndDate =
+                                              endDateController.text;
+                                          print(reverseFormatDate(leaseStartDate));
+
                                           print('Form validation failed');
+                                          print(reverseFormatDate(endDateController.text));
+                                          print(reverseFormatDate(startDateController.text));
+                                          print(
+                                              'ends date : ${endDateController.text}');
+                                          print(
+                                              'start date : ${startDateController.text}');
                                           SharedPreferences prefs =
                                               await SharedPreferences.getInstance();
                                           String adminId =
@@ -4541,6 +4559,7 @@ class _addLease3State extends State<addLease3>
                                               id: tenantMap['id'] ?? '',
                                             );
                                           }).toList();
+
 
                                         }
 

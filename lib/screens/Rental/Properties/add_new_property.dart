@@ -9619,11 +9619,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                         RentalOwner? ownerDetails = context.read<OwnerDetailsProvider>().ownerDetails;
 
                         String processorId = context.read<OwnerDetailsProvider>().selectedprocessorlist ?? "";
-                        List<Map<String, String>> processorIds = ownerDetails!.processorList!.map((processor) {
+                       /* List<Map<String, String>> processorIds = ownerDetails!.processorList!.map((processor) {
                           return {
                             'processor_id': processor.processorId ?? "",
                           };
-                        }).toList();
+                        }).toList();*/
 
                         SharedPreferences prefs =
                         await SharedPreferences.getInstance();
@@ -9649,7 +9649,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                           state: updatedOwner.state,
                           country: updatedOwner.country,
                           postalCode: updatedOwner.postalCode,
-                          processorid: processorIds!,
+                          //processorid: processorIds!,
                         );
 
 
