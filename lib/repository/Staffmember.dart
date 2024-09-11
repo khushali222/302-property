@@ -28,7 +28,6 @@ class StaffMemberRepository {
     };
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-
     String?  adminid = prefs.getString('adminId');
     final http.Response response = await http.post(
       Uri.parse(apiUrl),
@@ -39,6 +38,8 @@ class StaffMemberRepository {
       },
       body: jsonEncode(data),
     );
+
+    print(response.body);
     var responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);

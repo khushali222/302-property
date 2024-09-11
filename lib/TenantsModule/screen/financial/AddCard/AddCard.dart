@@ -1185,14 +1185,17 @@ class CustomTextFieldState extends State<CustomTextField> {
                     : 'Please ${widget.label}';
               });
               return '';
-            } else if (widget.amount_check != null &&
+            }
+            else if
+            (widget.amount_check != null &&
                 double.parse(widget.controller!.text) >
                     double.parse(widget.max_amount!)) {
               setState(() {
                 _errorMessage = '${widget.error_mess}';
               });
               return '';
-            } else if (widget.isEmail!) {
+            }
+            else if (widget.isEmail!) {
               if (!EmailValidator.validate(widget.controller!.text)) {
                 setState(() {
                   _errorMessage = "Email is not valid";

@@ -13,6 +13,7 @@ import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../repository/Property_type.dart';
 import '../../widgets/drawer_tiles.dart';
 import '../../widgets/custom_drawer.dart';
+
 class Add_staffmember extends StatefulWidget {
   const Add_staffmember({super.key});
 
@@ -48,17 +49,20 @@ class _Add_staffmemberState extends State<Add_staffmember> {
         KeyboardActionsItem(
           focusNode: _nodeText1,
         ),
-
       ],
     );
   }
+
   final FocusNode _nodeText1 = FocusNode();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Add Staff Member",dropdown: false,),
+      drawer: CustomDrawer(
+        currentpage: "Add Staff Member",
+        dropdown: false,
+      ),
       body: ListView(
         scrollDirection: Axis.vertical,
         children: [
@@ -88,8 +92,8 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: MediaQuery.of(context).size.width < 500 ? 18 : 20
-                  ),
+                      fontSize:
+                          MediaQuery.of(context).size.width < 500 ? 18 : 20),
                 ),
               ),
             ),
@@ -122,7 +126,9 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
-                                MediaQuery.of(context).size.width < 500 ? 20 : 25),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 20
+                                        : 25),
                           ),
                         ],
                       ),
@@ -135,12 +141,14 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                             width: 2,
                           ),
                           Text(
-                            "Staff Member Name",
+                            "Staff Member Name *",
                             style: TextStyle(
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                MediaQuery.of(context).size.width < 500 ? 15 : 20),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
                           ),
                         ],
                       ),
@@ -154,7 +162,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                             child: Material(
                               elevation: 4,
                               child: Container(
-                                height: 55,
+                                height: 50,
                                 width: MediaQuery.of(context).size.width * .6,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(2),
@@ -177,7 +185,12 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                         decoration: InputDecoration(
                                           hintText: "Enter staff member name",
                                           hintStyle: TextStyle(
-                                            fontSize:MediaQuery.of(context).size.width < 500 ? 15 : 20,
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 20,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: nameerror
@@ -235,7 +248,9 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                MediaQuery.of(context).size.width < 500 ? 15 : 20),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
                           ),
                         ],
                       ),
@@ -272,7 +287,12 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                         decoration: InputDecoration(
                                           hintText: "Enter designation",
                                           hintStyle: TextStyle(
-                                            fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 20,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: designationerror
@@ -324,13 +344,15 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                             width: 2,
                           ),
                           Text(
-                            "Phone Number",
+                            "Phone Number *",
                             style: TextStyle(
                                 // color: Colors.grey,
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                MediaQuery.of(context).size.width < 500 ? 15 : 20),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
                           ),
                         ],
                       ),
@@ -363,13 +385,20 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                           });
                                         },
                                         controller: phonenumber,
-                                        keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                                        keyboardType:
+                                            TextInputType.numberWithOptions(
+                                                signed: true, decimal: true),
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
                                           hintText: "Enter phone number",
                                           hintStyle: TextStyle(
-                                            fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 20,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: phonenumbererror
@@ -421,13 +450,15 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                             width: 2,
                           ),
                           Text(
-                            "Email",
+                            "Email *",
                             style: TextStyle(
                                 // color: Colors.grey,
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                MediaQuery.of(context).size.width < 500 ? 15 : 20),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
                           ),
                         ],
                       ),
@@ -466,7 +497,12 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                         decoration: InputDecoration(
                                           hintText: "Enter email",
                                           hintStyle: TextStyle(
-                                            fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 20,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: emailerror
@@ -518,13 +554,15 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                             width: 2,
                           ),
                           Text(
-                            "Password",
+                            "Password *",
                             style: TextStyle(
                                 // color: Colors.grey,
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                MediaQuery.of(context).size.width < 500 ? 15 : 20),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 20),
                           ),
                         ],
                       ),
@@ -561,7 +599,12 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                         decoration: InputDecoration(
                                           hintText: "Enter password",
                                           hintStyle: TextStyle(
-                                            fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 20,
                                             color: Color(0xFF8A95A8),
                                           ),
                                           enabledBorder: passworderror
@@ -597,7 +640,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                       fontSize:
                                           MediaQuery.of(context).size.width *
                                               .037,
-                                      fontWeight: FontWeight.bold),
+                                     ),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -610,45 +653,55 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                       ),
                       Row(
                         children: [
-                          if(MediaQuery.of(context).size.width < 500 )
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.01),
-                          if(MediaQuery.of(context).size.width > 500 )
+                          if (MediaQuery.of(context).size.width < 500)
                             SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.004),
+                                width:
+                                    MediaQuery.of(context).size.width * 0.01),
+                          if (MediaQuery.of(context).size.width > 500)
+                            SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.width * 0.004),
                           GestureDetector(
                             onTap: () async {
+                              // Validate name
                               if (name.text.isEmpty) {
                                 setState(() {
                                   nameerror = true;
-                                  namemessage = "name is required";
+                                  namemessage = "Name is required";
                                 });
                               } else {
                                 setState(() {
                                   nameerror = false;
                                 });
                               }
+
+                              // Validate designation
                               if (designation.text.isEmpty) {
                                 setState(() {
                                   designationerror = true;
                                   designationmessage =
-                                      "designation is required";
+                                      "Designation is required";
                                 });
                               } else {
                                 setState(() {
                                   designationerror = false;
                                 });
                               }
+
+                              // Validate phone number
                               if (phonenumber.text.isEmpty) {
                                 setState(() {
                                   phonenumbererror = true;
-                                  phonenumbermessage = "number is required";
+                                  phonenumbermessage =
+                                      "Phone number is required";
                                 });
                               } else {
                                 setState(() {
                                   phonenumbererror = false;
                                 });
                               }
+
+                              // Validate email
                               if (email.text.isEmpty) {
                                 setState(() {
                                   emailerror = true;
@@ -662,59 +715,69 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                               } else {
                                 setState(() {
                                   emailerror = false;
-                                  //firstnamemessage = "Firstname is required";
                                 });
                               }
+
+                              // Validate password
                               if (password.text.isEmpty) {
                                 setState(() {
                                   passworderror = true;
-                                  passwordmessage = "password is required";
+                                  passwordmessage = "Password is required";
                                 });
                               } else {
                                 setState(() {
                                   passworderror = false;
                                 });
                               }
+
+                              // Now, only proceed if all fields are filled and valid
                               if (!nameerror &&
                                   !designationerror &&
                                   !phonenumbererror &&
                                   !emailerror &&
-                                  !phonenumbererror) {
+                                  !passworderror) {
+                                // Fixed the extra check
                                 setState(() {
                                   isLoading = true;
                                 });
-                              }
-                              SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-                              String? adminId = prefs.getString("adminId");
-                              if (adminId != null) {
-                                try {
-                                  await StaffMemberRepository().addStaffMember(
-                                    adminId: adminId,
-                                    staffmemberName: name.text,
-                                    staffmemberDesignation: designation.text,
-                                    staffmemberPhoneNumber: phonenumber.text,
-                                    staffmemberEmail: email.text,
-                                    staffmemberPassword: password.text,
-                                  );
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                  Navigator.of(context).pop(true);
-                                } catch (e) {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                  // Handle error
+
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                String? adminId = prefs.getString("adminId");
+
+                                if (adminId != null) {
+                                  try {
+                                    await StaffMemberRepository()
+                                        .addStaffMember(
+                                      adminId: adminId,
+                                      staffmemberName: name.text,
+                                      staffmemberDesignation: designation.text,
+                                      staffmemberPhoneNumber: phonenumber.text,
+                                      staffmemberEmail: email.text,
+                                      staffmemberPassword: password.text,
+                                    );
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                    Navigator.of(context).pop(true);
+                                  } catch (e) {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                    // Handle error here
+                                  }
                                 }
                               }
                             },
+
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),
                               child: Container(
                                 height:
                                     MediaQuery.of(context).size.height * .04,
-                                width: MediaQuery.of(context).size.width < 500 ? 150 : 180,
+                                width: MediaQuery.of(context).size.width < 500
+                                    ? 150
+                                    : 180,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
                                   color: Color.fromRGBO(21, 43, 81, 1),
@@ -737,7 +800,12 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 18),
+                                              fontSize: MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                      500
+                                                  ? 15
+                                                  : 18),
                                         ),
                                 ),
                               ),
@@ -750,9 +818,15 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                               onTap: () {
                                 Navigator.pop(context);
                               },
-                              child: Text("Cancel",style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 18),)),
+                              child: Text(
+                                "Cancel",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 15
+                                            : 18),
+                              )),
                         ],
                       ),
                     ],

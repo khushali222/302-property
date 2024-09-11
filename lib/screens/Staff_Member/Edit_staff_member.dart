@@ -143,7 +143,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                             width: 2,
                           ),
                           Text(
-                            "Staff Member Name",
+                            "Staff Member Name *",
                             style: TextStyle(
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
@@ -332,7 +332,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                             width: 2,
                           ),
                           Text(
-                            "Phone Number",
+                            "Phone Number *",
                             style: TextStyle(
                               // color: Colors.grey,
                                 color: Color(0xFF8A95A8),
@@ -429,7 +429,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                             width: 2,
                           ),
                           Text(
-                            "Email",
+                            "Email *",
                             style: TextStyle(
                               // color: Colors.grey,
                                 color: Color(0xFF8A95A8),

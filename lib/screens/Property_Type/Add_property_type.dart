@@ -92,7 +92,7 @@ class _Add_propertyState extends State<Add_property> {
                             width: 15,
                           ),
                           Text(
-                            "Property Type*",
+                            "Property Type *",
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold,
@@ -196,7 +196,7 @@ class _Add_propertyState extends State<Add_property> {
                             width: 15,
                           ),
                           Text(
-                            "Property SubType*",
+                            "Property SubType *",
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold,

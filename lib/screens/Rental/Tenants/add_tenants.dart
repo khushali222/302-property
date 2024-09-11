@@ -2230,6 +2230,7 @@ class CustomTextField extends StatefulWidget {
   final bool? amount_check;
   final String? max_amount;
   final String? error_mess;
+  final bool? optional;
 
 
   CustomTextField({
@@ -2249,6 +2250,7 @@ class CustomTextField extends StatefulWidget {
     this.amount_check,
     this.max_amount,
     this.error_mess,
+    this.optional = false,
 
     // Initialize onTap
   }) : super(key: key);
@@ -2311,7 +2313,7 @@ class CustomTextFieldState extends State<CustomTextField> {
       clipBehavior: Clip.none,
       children: <Widget>[
         FormField<String>(
-          validator: (value) {
+          validator: widget.optional! ? null :(value) {
             if (widget.controller!.text.isEmpty) {
               setState(() {
                 if(widget.label == null)

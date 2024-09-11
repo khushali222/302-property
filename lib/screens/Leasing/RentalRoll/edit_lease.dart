@@ -670,7 +670,7 @@ class _Edit_leaseState extends State<Edit_lease>
 
   String renderId = '';
   String unitId = '';
-
+  String? _errorMessage;
   @override
   Widget build(BuildContext context) {
     final cosigners = Provider.of<SelectedCosignersProvider>(context).cosigners;
@@ -801,221 +801,454 @@ class _Edit_leaseState extends State<Edit_lease>
                               const SizedBox(
                                 height: 4,
                               ),
+                              // Column(
+                              //   crossAxisAlignment: CrossAxisAlignment.start,
+                              //   children: [
+                              //     DropdownButtonHideUnderline(
+                              //       child: DropdownButtonFormField2<String>(
+                              //         decoration: InputDecoration(
+                              //             border: InputBorder.none),
+                              //         isExpanded: true,
+                              //         hint: const Row(
+                              //           children: [
+                              //             Expanded(
+                              //               child: Text(
+                              //                 'Select Property',
+                              //                 style: TextStyle(
+                              //                   fontSize: 14,
+                              //                   fontWeight: FontWeight.w400,
+                              //                   color: Color(0xFFb0b6c3),
+                              //                 ),
+                              //                 overflow: TextOverflow.ellipsis,
+                              //               ),
+                              //             ),
+                              //           ],
+                              //         ),
+                              //         items: properties.map((property) {
+                              //           return DropdownMenuItem<String>(
+                              //             value: property['rental_id'],
+                              //             child: Text(
+                              //               property['rental_adress']!,
+                              //               style: const TextStyle(
+                              //                 fontSize: 14,
+                              //                 fontWeight: FontWeight.w400,
+                              //                 color: Colors.black87,
+                              //               ),
+                              //               overflow: TextOverflow.ellipsis,
+                              //             ),
+                              //           );
+                              //         }).toList(),
+                              //         value: _selectedProperty,
+                              //         onChanged: (value) {
+                              //           setState(() {
+                              //             _selectedUnit = null;
+                              //             _selectedProperty = value;
+                              //
+                              //             renderId = value.toString();
+                              //             print('Hello Yash:${renderId}');
+                              //             _loadUnits(
+                              //                 value!); // Fetch units for the selected property
+                              //           });
+                              //         },
+                              //         buttonStyleData: ButtonStyleData(
+                              //           height: 45,
+                              //           width: 160,
+                              //           padding: const EdgeInsets.only(
+                              //               left: 14, right: 14),
+                              //           decoration: BoxDecoration(
+                              //             borderRadius:
+                              //             BorderRadius.circular(6),
+                              //             color: Colors.white,
+                              //           ),
+                              //           elevation: 2,
+                              //         ),
+                              //         iconStyleData: const IconStyleData(
+                              //           icon: Icon(
+                              //             Icons.arrow_drop_down,
+                              //           ),
+                              //           iconSize: 24,
+                              //           iconEnabledColor: Color(0xFFb0b6c3),
+                              //           iconDisabledColor: Colors.grey,
+                              //         ),
+                              //         dropdownStyleData: DropdownStyleData(
+                              //           decoration: BoxDecoration(
+                              //             borderRadius:
+                              //             BorderRadius.circular(6),
+                              //             color: Colors.white,
+                              //           ),
+                              //           scrollbarTheme: ScrollbarThemeData(
+                              //             radius: const Radius.circular(6),
+                              //             thickness:
+                              //             MaterialStateProperty.all(6),
+                              //             thumbVisibility:
+                              //             MaterialStateProperty.all(true),
+                              //           ),
+                              //         ),
+                              //         menuItemStyleData:
+                              //         const MenuItemStyleData(
+                              //           height: 40,
+                              //           padding: EdgeInsets.only(
+                              //               left: 14, right: 14),
+                              //         ),
+                              //         validator: (value) {
+                              //           if (value == null || value.isEmpty) {
+                              //             return 'Please select an option';
+                              //           }
+                              //           return null;
+                              //         },
+                              //       ),
+                              //     ),
+                              //     units.isNotEmpty
+                              //         ? const Text('Unit',
+                              //         style: TextStyle(
+                              //             fontSize: 13,
+                              //             fontWeight: FontWeight.bold,
+                              //             color: Colors.grey))
+                              //         : Container(),
+                              //     const SizedBox(
+                              //       height: 0,
+                              //     ),
+                              //     units.isNotEmpty
+                              //         ? DropdownButtonHideUnderline(
+                              //       child: DropdownButtonFormField2<
+                              //           String>(
+                              //         decoration: InputDecoration(
+                              //             border: InputBorder.none),
+                              //         isExpanded: true,
+                              //         hint: const Row(
+                              //           children: [
+                              //             Expanded(
+                              //               child: Text(
+                              //                 'Select Unit',
+                              //                 style: TextStyle(
+                              //                   fontSize: 14,
+                              //                   fontWeight:
+                              //                   FontWeight.w400,
+                              //                   color:
+                              //                   Color(0xFFb0b6c3),
+                              //                 ),
+                              //                 overflow:
+                              //                 TextOverflow.ellipsis,
+                              //               ),
+                              //             ),
+                              //           ],
+                              //         ),
+                              //         items: units.map((unit) {
+                              //           return DropdownMenuItem<String>(
+                              //             value: unit['unit_id']!,
+                              //             child: Text(
+                              //               unit['rental_unit']!,
+                              //               style: const TextStyle(
+                              //                 fontSize: 14,
+                              //                 fontWeight:
+                              //                 FontWeight.w400,
+                              //                 color: Colors.black87,
+                              //               ),
+                              //               overflow:
+                              //               TextOverflow.ellipsis,
+                              //             ),
+                              //           );
+                              //         }).toList(),
+                              //         value:  units.isNotEmpty && units.any((unit) => unit['unit_id'] == _selectedUnit)
+                              //             ? _selectedUnit
+                              //             : null,
+                              //
+                              //         onChanged: (value) {
+                              //           setState(() {
+                              //             unitId = value.toString();
+                              //             print('Hello Jay${unitId}');
+                              //             _selectedUnit = value;
+                              //           });
+                              //         },
+                              //         buttonStyleData: ButtonStyleData(
+                              //           height: 45,
+                              //           width: 160,
+                              //           padding: const EdgeInsets.only(
+                              //               left: 14, right: 14),
+                              //           decoration: BoxDecoration(
+                              //             borderRadius:
+                              //             BorderRadius.circular(6),
+                              //             color: Colors.white,
+                              //           ),
+                              //           elevation: 2,
+                              //         ),
+                              //         iconStyleData:
+                              //         const IconStyleData(
+                              //           icon: Icon(
+                              //             Icons.arrow_drop_down,
+                              //           ),
+                              //           iconSize: 24,
+                              //           iconEnabledColor:
+                              //           Color(0xFFb0b6c3),
+                              //           iconDisabledColor: Colors.grey,
+                              //         ),
+                              //         dropdownStyleData:
+                              //         DropdownStyleData(
+                              //           decoration: BoxDecoration(
+                              //             borderRadius:
+                              //             BorderRadius.circular(6),
+                              //             color: Colors.white,
+                              //           ),
+                              //           scrollbarTheme:
+                              //           ScrollbarThemeData(
+                              //             radius:
+                              //             const Radius.circular(6),
+                              //             thickness:
+                              //             MaterialStateProperty.all(
+                              //                 6),
+                              //             thumbVisibility:
+                              //             MaterialStateProperty.all(
+                              //                 true),
+                              //           ),
+                              //         ),
+                              //         menuItemStyleData:
+                              //         const MenuItemStyleData(
+                              //           height: 40,
+                              //           padding: EdgeInsets.only(
+                              //               left: 14, right: 14),
+                              //         ),
+                              //         validator: (value) {
+                              //           if (value == null || value.isEmpty) {
+                              //             return 'Please select unit';
+                              //           }
+                              //           return null;
+                              //         },
+                              //       ),
+                              //     )
+                              //         : Container(),
+                              //   ],
+                              // ),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  DropdownButtonHideUnderline(
-                                    child: DropdownButtonFormField2<String>(
-                                      decoration: InputDecoration(
-                                          border: InputBorder.none),
-                                      isExpanded: true,
-                                      hint: const Row(
+                                  FormField<String>(
+                                    //initialValue: _selectedProperty,
+                                    validator: (value) {
+                                      if (_selectedProperty == null) {
+                                        return 'Please select an option';
+                                      }
+                                      return null;
+                                    },
+                                    builder: (FormFieldState<String> state) {
+                                      return Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Expanded(
-                                            child: Text(
-                                              'Select Property',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w400,
-                                                color: Color(0xFFb0b6c3),
+                                          DropdownButtonHideUnderline(
+                                            child: DropdownButtonFormField2<String>(
+                                              decoration: InputDecoration(
+                                                border: InputBorder.none,
                                               ),
-                                              overflow: TextOverflow.ellipsis,
+                                              isExpanded: true,
+                                              hint: const Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      'Select Property',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.w400,
+                                                        color: Color(0xFFb0b6c3),
+                                                      ),
+                                                      overflow: TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              items: properties.map((property) {
+                                                return DropdownMenuItem<String>(
+                                                  value: property['rental_id'],
+                                                  child: Text(
+                                                    property['rental_adress']!,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w400,
+                                                      color: Colors.black87,
+                                                    ),
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              value: _selectedProperty,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  _selectedProperty = value;
+                                                  _selectedUnit = null; // Optionally reset _selectedUnit
+                                                  state.didChange(value); // Notify the FormField that the value has changed
+                                                  renderId = value.toString();
+                                                  print('Hello Yash:${renderId}');
+                                                  _loadUnits(value!); // Fetch units for the selected property
+                                                });
+                                                state.reset();
+                                              },
+                                              buttonStyleData: ButtonStyleData(
+                                                height: 45,
+                                                width: 160,
+                                                padding: const EdgeInsets.only(left: 14, right: 14),
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(6),
+                                                  color: Colors.white,
+                                                ),
+                                                elevation: 2,
+                                              ),
+                                              iconStyleData: const IconStyleData(
+                                                icon: Icon(
+                                                  Icons.arrow_drop_down,
+                                                ),
+                                                iconSize: 24,
+                                                iconEnabledColor: Color(0xFFb0b6c3),
+                                                iconDisabledColor: Colors.grey,
+                                              ),
+                                              dropdownStyleData: DropdownStyleData(
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(6),
+                                                  color: Colors.white,
+                                                ),
+                                                scrollbarTheme: ScrollbarThemeData(
+                                                  radius: const Radius.circular(6),
+                                                  thickness: MaterialStateProperty.all(6),
+                                                  thumbVisibility: MaterialStateProperty.all(true),
+                                                ),
+                                              ),
+                                              menuItemStyleData: const MenuItemStyleData(
+                                                height: 40,
+                                                padding: EdgeInsets.only(left: 14, right: 14),
+                                              ),
                                             ),
                                           ),
+                                          if (state.hasError)
+                                            Padding(
+                                              padding: const EdgeInsets.only(left: 14, top: 8),
+                                              child: Text(
+                                                state.errorText!,
+                                                style: const TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ),
                                         ],
-                                      ),
-                                      items: properties.map((property) {
-                                        return DropdownMenuItem<String>(
-                                          value: property['rental_id'],
-                                          child: Text(
-                                            property['rental_adress']!,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.black87,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        );
-                                      }).toList(),
-                                      value: _selectedProperty,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedUnit = null;
-                                          _selectedProperty = value;
-
-                                          renderId = value.toString();
-                                          print('Hello Yash:${renderId}');
-                                          _loadUnits(
-                                              value!); // Fetch units for the selected property
-                                        });
-                                      },
-                                      buttonStyleData: ButtonStyleData(
-                                        height: 45,
-                                        width: 160,
-                                        padding: const EdgeInsets.only(
-                                            left: 14, right: 14),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.circular(6),
-                                          color: Colors.white,
-                                        ),
-                                        elevation: 2,
-                                      ),
-                                      iconStyleData: const IconStyleData(
-                                        icon: Icon(
-                                          Icons.arrow_drop_down,
-                                        ),
-                                        iconSize: 24,
-                                        iconEnabledColor: Color(0xFFb0b6c3),
-                                        iconDisabledColor: Colors.grey,
-                                      ),
-                                      dropdownStyleData: DropdownStyleData(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.circular(6),
-                                          color: Colors.white,
-                                        ),
-                                        scrollbarTheme: ScrollbarThemeData(
-                                          radius: const Radius.circular(6),
-                                          thickness:
-                                          MaterialStateProperty.all(6),
-                                          thumbVisibility:
-                                          MaterialStateProperty.all(true),
-                                        ),
-                                      ),
-                                      menuItemStyleData:
-                                      const MenuItemStyleData(
-                                        height: 40,
-                                        padding: EdgeInsets.only(
-                                            left: 14, right: 14),
-                                      ),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please select an option';
-                                        }
-                                        return null;
-                                      },
-                                    ),
+                                      );
+                                    },
                                   ),
-                                  units.isNotEmpty
-                                      ? const Text('Unit',
-                                      style: TextStyle(
+                                  if (units.isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 16.0),
+                                      child: Text(
+                                        'Unit',
+                                        style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.grey))
-                                      : Container(),
-                                  const SizedBox(
-                                    height: 0,
-                                  ),
-                                  units.isNotEmpty
-                                      ? DropdownButtonHideUnderline(
-                                    child: DropdownButtonFormField2<
-                                        String>(
-                                      decoration: InputDecoration(
-                                          border: InputBorder.none),
-                                      isExpanded: true,
-                                      hint: const Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              'Select Unit',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight:
-                                                FontWeight.w400,
-                                                color:
-                                                Color(0xFFb0b6c3),
-                                              ),
-                                              overflow:
-                                              TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      items: units.map((unit) {
-                                        return DropdownMenuItem<String>(
-                                          value: unit['unit_id']!,
-                                          child: Text(
-                                            unit['rental_unit']!,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight:
-                                              FontWeight.w400,
-                                              color: Colors.black87,
-                                            ),
-                                            overflow:
-                                            TextOverflow.ellipsis,
-                                          ),
-                                        );
-                                      }).toList(),
-                                      value:  units.isNotEmpty && units.any((unit) => unit['unit_id'] == _selectedUnit)
-                                          ? _selectedUnit
-                                          : null,
-
-                                      onChanged: (value) {
-                                        setState(() {
-                                          unitId = value.toString();
-                                          print('Hello Jay${unitId}');
-                                          _selectedUnit = value;
-                                        });
-                                      },
-                                      buttonStyleData: ButtonStyleData(
-                                        height: 45,
-                                        width: 160,
-                                        padding: const EdgeInsets.only(
-                                            left: 14, right: 14),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.circular(6),
-                                          color: Colors.white,
-                                        ),
-                                        elevation: 2,
-                                      ),
-                                      iconStyleData:
-                                      const IconStyleData(
-                                        icon: Icon(
-                                          Icons.arrow_drop_down,
-                                        ),
-                                        iconSize: 24,
-                                        iconEnabledColor:
-                                        Color(0xFFb0b6c3),
-                                        iconDisabledColor: Colors.grey,
-                                      ),
-                                      dropdownStyleData:
-                                      DropdownStyleData(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.circular(6),
-                                          color: Colors.white,
-                                        ),
-                                        scrollbarTheme:
-                                        ScrollbarThemeData(
-                                          radius:
-                                          const Radius.circular(6),
-                                          thickness:
-                                          MaterialStateProperty.all(
-                                              6),
-                                          thumbVisibility:
-                                          MaterialStateProperty.all(
-                                              true),
+                                          color: Colors.grey,
                                         ),
                                       ),
-                                      menuItemStyleData:
-                                      const MenuItemStyleData(
-                                        height: 40,
-                                        padding: EdgeInsets.only(
-                                            left: 14, right: 14),
-                                      ),
+                                    ),
+                                  if (units.isNotEmpty)
+                                    FormField<String>(
+                                      // initialValue: _selectedUnit,
                                       validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please select unit';
+                                        if (_selectedUnit == null) {
+                                          return 'Please select a unit';
                                         }
                                         return null;
                                       },
+                                      builder: (FormFieldState<String> state) {
+                                        return Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            DropdownButtonHideUnderline(
+                                              child: DropdownButtonFormField2<String>(
+                                                decoration: InputDecoration(
+                                                  border: InputBorder.none,
+                                                ),
+                                                isExpanded: true,
+                                                hint: const Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: Text(
+                                                        'Select Unit',
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.w400,
+                                                          color: Color(0xFFb0b6c3),
+                                                        ),
+                                                        overflow: TextOverflow.ellipsis,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                items: units.map((unit) {
+                                                  return DropdownMenuItem<String>(
+                                                    value: unit['unit_id']!,
+                                                    child: Text(
+                                                      unit['rental_unit']!,
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.w400,
+                                                        color: Colors.black87,
+                                                      ),
+                                                      overflow: TextOverflow.ellipsis,
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                                value: _selectedUnit,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    _selectedUnit = value;
+                                                    state.didChange(value);
+                                                  });
+                                                  state.reset();
+                                                },
+                                                buttonStyleData: ButtonStyleData(
+                                                  height: 45,
+                                                  width: 160,
+                                                  padding: const EdgeInsets.only(left: 14, right: 14),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(6),
+                                                    color: Colors.white,
+                                                  ),
+                                                  elevation: 2,
+                                                ),
+                                                iconStyleData: const IconStyleData(
+                                                  icon: Icon(
+                                                    Icons.arrow_drop_down,
+                                                  ),
+                                                  iconSize: 24,
+                                                  iconEnabledColor: Color(0xFFb0b6c3),
+                                                  iconDisabledColor: Colors.grey,
+                                                ),
+                                                dropdownStyleData: DropdownStyleData(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(6),
+                                                    color: Colors.white,
+                                                  ),
+                                                  scrollbarTheme: ScrollbarThemeData(
+                                                    radius: const Radius.circular(6),
+                                                    thickness: MaterialStateProperty.all(6),
+                                                    thumbVisibility: MaterialStateProperty.all(true),
+                                                  ),
+                                                ),
+                                                menuItemStyleData: const MenuItemStyleData(
+                                                  height: 40,
+                                                  padding: EdgeInsets.only(left: 14, right: 14),
+                                                ),
+                                              ),
+                                            ),
+                                            if (state.hasError)
+                                              Padding(
+                                                padding: const EdgeInsets.only(left: 14, top: 8),
+                                                child: Text(
+                                                  state.errorText!,
+                                                  style: const TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
+                                        );
+                                      },
                                     ),
-                                  )
-                                      : Container(),
+
                                 ],
                               ),
                               const SizedBox(
@@ -1045,83 +1278,188 @@ class _Edit_leaseState extends State<Edit_lease>
                               //     });
                               //   },
                               // ),
-                              DropdownButtonHideUnderline(
-                                child: DropdownButton2<String>(
-                                  isExpanded: true,
-                                  hint: const Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 4,
-                                      ),
-                                      Expanded(
-                                        child: Text(
-                                          'Type',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
+                              // DropdownButtonHideUnderline(
+                              //   child: DropdownButton2<String>(
+                              //     isExpanded: true,
+                              //     hint: const Row(
+                              //       children: [
+                              //         SizedBox(
+                              //           width: 4,
+                              //         ),
+                              //         Expanded(
+                              //           child: Text(
+                              //             'Type',
+                              //             style: TextStyle(
+                              //               fontSize: 14,
+                              //               fontWeight: FontWeight.bold,
+                              //               color: Colors.black,
+                              //             ),
+                              //             overflow: TextOverflow.ellipsis,
+                              //           ),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //     items: leaseTypeitems
+                              //         .map(
+                              //             (String item) => DropdownMenuItem<String>(
+                              //           value: item,
+                              //           child: Text(
+                              //             item,
+                              //             style: const TextStyle(
+                              //               fontSize: 14,
+                              //               fontWeight: FontWeight.bold,
+                              //               color: Colors.black,
+                              //             ),
+                              //             overflow: TextOverflow.ellipsis,
+                              //           ),
+                              //         ))
+                              //         .toList(),
+                              //     value: _selectedLeaseType,
+                              //     onChanged: (value) {
+                              //       setState(() {
+                              //         _selectedLeaseType = value;
+                              //       });
+                              //     },
+                              //     buttonStyleData: ButtonStyleData(
+                              //       height: 50,
+                              //       //width: 230,
+                              //       padding:
+                              //       const EdgeInsets.only(left: 14, right: 14),
+                              //       decoration: BoxDecoration(
+                              //         borderRadius: BorderRadius.circular(6),
+                              //         border: Border.all(
+                              //           color: Colors.black26,
+                              //         ),
+                              //         color: Colors.white,
+                              //       ),
+                              //       elevation: 3,
+                              //     ),
+                              //     dropdownStyleData: DropdownStyleData(
+                              //       maxHeight: 200,
+                              //       width: 200,
+                              //       decoration: BoxDecoration(
+                              //         borderRadius: BorderRadius.circular(14),
+                              //         //color: Colors.redAccent,
+                              //       ),
+                              //       offset: const Offset(-20, 0),
+                              //       scrollbarTheme: ScrollbarThemeData(
+                              //         radius: const Radius.circular(40),
+                              //         thickness: MaterialStateProperty.all(6),
+                              //         thumbVisibility:
+                              //         MaterialStateProperty.all(true),
+                              //       ),
+                              //     ),
+                              //     menuItemStyleData: const MenuItemStyleData(
+                              //       height: 40,
+                              //       padding: EdgeInsets.only(left: 14, right: 14),
+                              //     ),
+                              //   ),
+                              // ),
+                          FormField<String>(
+                            initialValue: _selectedLeaseType,
+                            builder: (FormFieldState<String> state) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  DropdownButtonHideUnderline(
+                                    child: DropdownButton2<String>(
+                                      isExpanded: true,
+                                      hint: const Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 4,
                                           ),
-                                          overflow: TextOverflow.ellipsis,
+                                          Expanded(
+                                            child: Text(
+                                              'Type',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      items: leaseTypeitems
+                                          .map(
+                                            (String item) => DropdownMenuItem<String>(
+                                          value: item,
+                                          child: Text(
+                                            item,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      )
+                                          .toList(),
+                                      value: _selectedLeaseType,
+                                      onChanged: (value) {
+                                        // Update the FormField state
+                                        setState(() {
+                                          _selectedLeaseType = value;
+                                          state.didChange(value);
+                                        });
+                                        state.reset();
+                                      },
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 50,
+                                        padding: const EdgeInsets.only(left: 14, right: 14),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(6),
+                                          border: Border.all(
+                                            color: Colors.black26,
+                                          ),
+                                          color: Colors.white,
+                                        ),
+                                        elevation: 3,
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        maxHeight: 200,
+                                        width: 200,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(14),
+                                        ),
+                                        offset: const Offset(-20, 0),
+                                        scrollbarTheme: ScrollbarThemeData(
+                                          radius: const Radius.circular(40),
+                                          thickness: MaterialStateProperty.all(6),
+                                          thumbVisibility: MaterialStateProperty.all(true),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                  items: leaseTypeitems
-                                      .map(
-                                          (String item) => DropdownMenuItem<String>(
-                                        value: item,
-                                        child: Text(
-                                          item,
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ))
-                                      .toList(),
-                                  value: _selectedLeaseType,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _selectedLeaseType = value;
-                                    });
-                                  },
-                                  buttonStyleData: ButtonStyleData(
-                                    height: 50,
-                                    //width: 230,
-                                    padding:
-                                    const EdgeInsets.only(left: 14, right: 14),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      border: Border.all(
-                                        color: Colors.black26,
+                                      menuItemStyleData: const MenuItemStyleData(
+                                        height: 40,
+                                        padding: EdgeInsets.only(left: 14, right: 14),
                                       ),
-                                      color: Colors.white,
-                                    ),
-                                    elevation: 3,
-                                  ),
-                                  dropdownStyleData: DropdownStyleData(
-                                    maxHeight: 200,
-                                    width: 200,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(14),
-                                      //color: Colors.redAccent,
-                                    ),
-                                    offset: const Offset(-20, 0),
-                                    scrollbarTheme: ScrollbarThemeData(
-                                      radius: const Radius.circular(40),
-                                      thickness: MaterialStateProperty.all(6),
-                                      thumbVisibility:
-                                      MaterialStateProperty.all(true),
                                     ),
                                   ),
-                                  menuItemStyleData: const MenuItemStyleData(
-                                    height: 40,
-                                    padding: EdgeInsets.only(left: 14, right: 14),
-                                  ),
-                                ),
-                              ),
+                                  if (state.hasError)
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 14, top: 8),
+                                      child: Text(
+                                        state.errorText!,
+                                        style: const TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              );
+                            },
+                            validator: (value) {
+                              if (_selectedLeaseType == null) {
+                                return 'Please select a lease type';
+                              }
+                              return null;
+                            },
+                          ),
+
                               const SizedBox(
                                 height: 8,
                               ),
@@ -1172,12 +1510,15 @@ class _Edit_leaseState extends State<Edit_lease>
                                     );
 
                                     if (pickedDate != null) {
-                                      String formattedStartDate =
-                                          "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                      // String formattedStartDate =
+                                      //     "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                      String formattedStartDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                                       DateTime endDate = DateTime(pickedDate.year,
                                           pickedDate.month + 1, pickedDate.day);
-                                      String formattedEndDate =
-                                          "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+                                      String formattedEndDate = "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+
+                                      // String formattedEndDate =
+                                      //     "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
                                       setState(() {
                                         startDateController.text = formattedStartDate;
                                         _startDate = pickedDate;
@@ -1250,8 +1591,9 @@ class _Edit_leaseState extends State<Edit_lease>
                                     );
 
                                     if (pickedDate != null) {
-                                      String formattedDate =
-                                          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                      // String formattedDate =
+                                      //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                      String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                                       setState(() {
                                         endDateController.text = formattedDate;
                                       });
@@ -1267,6 +1609,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                     }
                                     return null;
                                   },
+                                  optional: true,
                                   keyboardType: TextInputType.text,
                                   hintText: 'dd-mm-yyyy',
                                   controller: endDateController,
@@ -1324,12 +1667,15 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 );
 
                                                 if (pickedDate != null) {
-                                                  String formattedStartDate =
-                                                      "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                                  // String formattedStartDate =
+                                                  //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                                  String formattedStartDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                                                   DateTime endDate = DateTime(pickedDate.year,
                                                       pickedDate.month + 1, pickedDate.day);
-                                                  String formattedEndDate =
-                                                      "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
+                                                  String formattedEndDate = "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+
+                                                  // String formattedEndDate =
+                                                  //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
                                                   setState(() {
                                                     startDateController.text = formattedStartDate;
                                                     _startDate = pickedDate;
@@ -1403,14 +1749,16 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 );
 
                                                 if (pickedDate != null) {
-                                                  String formattedDate =
-                                                      "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                                  // String formattedDate =
+                                                  //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                                  String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                                                   setState(() {
                                                     endDateController.text = formattedDate;
                                                   });
                                                 }
                                               },
                                               readOnnly: true,
+                                              optional: true,
                                               suffixIcon: IconButton(
                                                 onPressed: () {},
                                                 icon: const Icon(Icons.date_range_rounded),
@@ -1464,22 +1812,341 @@ class _Edit_leaseState extends State<Edit_lease>
                               const SizedBox(
                                 height: 10,
                               ),
-                              InkWell(
-                                onTap: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return StatefulBuilder(
+                              // InkWell(
+                              //   onTap: () {
+                              //     showDialog(
+                              //         context: context,
+                              //         builder: (context) {
+                              //           return StatefulBuilder(
+                              //               builder: (context, setState) {
+                              //                 return AlertDialog(
+                              //                   backgroundColor: Colors.white,
+                              //                   contentPadding: EdgeInsets.zero,
+                              //                   title: const Text(
+                              //                       'Add Tenant or Cosigner',
+                              //                       style: TextStyle(
+                              //                           fontSize: 16,
+                              //                           fontWeight: FontWeight.w500,
+                              //                           color: Color(0xFF152b51))),
+                              //                   content: Form(
+                              //                     key: _addRecurringFormKey,
+                              //                     child: Padding(
+                              //                       padding: const EdgeInsets.all(8.0),
+                              //                       child: Container(
+                              //                         color: Colors.white,
+                              //                         width: double.infinity,
+                              //                         child: SingleChildScrollView(
+                              //                           child: Padding(
+                              //                             padding:
+                              //                             const EdgeInsets.all(8.0),
+                              //                             child: Column(
+                              //                               crossAxisAlignment:
+                              //                               CrossAxisAlignment
+                              //                                   .start,
+                              //                               children: [
+                              //                                 Row(
+                              //                                   children: [
+                              //                                     Expanded(
+                              //                                       child:
+                              //                                       GestureDetector(
+                              //                                         onTap: () {
+                              //                                           setState(() {
+                              //                                             isTenantSelected =
+                              //                                             true;
+                              //                                           });
+                              //                                         },
+                              //                                         child: Container(
+                              //                                           decoration:
+                              //                                           BoxDecoration(
+                              //                                             border: isTenantSelected
+                              //                                                 ? null
+                              //                                                 : Border.all(
+                              //                                                 color: const Color
+                              //                                                     .fromRGBO(
+                              //                                                     21,
+                              //                                                     43,
+                              //                                                     83,
+                              //                                                     1),
+                              //                                                 width:
+                              //                                                 1),
+                              //                                             gradient:
+                              //                                             isTenantSelected
+                              //                                                 ? const LinearGradient(
+                              //                                               colors: [
+                              //                                                 Color.fromRGBO(21, 43, 83, 1),
+                              //                                                 Color.fromRGBO(21, 43, 83, 1),
+                              //                                               ],
+                              //                                             )
+                              //                                                 : null,
+                              //                                             borderRadius:
+                              //                                             const BorderRadius
+                              //                                                 .only(
+                              //                                               topLeft: Radius
+                              //                                                   .circular(
+                              //                                                   4),
+                              //                                               bottomLeft:
+                              //                                               Radius.circular(
+                              //                                                   4),
+                              //                                             ),
+                              //                                           ),
+                              //                                           alignment:
+                              //                                           Alignment
+                              //                                               .center,
+                              //                                           padding: isTenantSelected
+                              //                                               ? const EdgeInsets
+                              //                                               .symmetric(
+                              //                                               vertical:
+                              //                                               13)
+                              //                                               : const EdgeInsets
+                              //                                               .symmetric(
+                              //                                               vertical:
+                              //                                               12),
+                              //                                           child: isTenantSelected
+                              //                                               ? Text(
+                              //                                             "Tenant",
+                              //                                             style:
+                              //                                             TextStyle(
+                              //                                               color: !isTenantSelected
+                              //                                                   ? Colors.transparent
+                              //                                                   : Colors.white,
+                              //                                               fontWeight:
+                              //                                               FontWeight.bold,
+                              //                                             ),
+                              //                                           )
+                              //                                               : ShaderMask(
+                              //                                             shaderCallback:
+                              //                                                 (bounds) {
+                              //                                               return const LinearGradient(
+                              //                                                 colors: [
+                              //                                                   Color.fromRGBO(21, 43, 83, 1),
+                              //                                                   Color.fromRGBO(21, 43, 83, 1),
+                              //                                                 ],
+                              //                                               ).createShader(
+                              //                                                   bounds);
+                              //                                             },
+                              //                                             child:
+                              //                                             Text(
+                              //                                               "Tenant",
+                              //                                               style:
+                              //                                               TextStyle(
+                              //                                                 color: isTenantSelected
+                              //                                                     ? Colors.transparent
+                              //                                                     : Colors.white,
+                              //                                                 fontWeight:
+                              //                                                 FontWeight.bold,
+                              //                                               ),
+                              //                                             ),
+                              //                                           ),
+                              //                                         ),
+                              //                                       ),
+                              //                                     ),
+                              //                                     Expanded(
+                              //                                       child:
+                              //                                       GestureDetector(
+                              //                                         onTap: () {
+                              //                                           setState(() {
+                              //                                             isTenantSelected =
+                              //                                             false;
+                              //                                           });
+                              //                                         },
+                              //                                         child: Container(
+                              //                                           decoration:
+                              //                                           BoxDecoration(
+                              //                                             border: isTenantSelected ==
+                              //                                                 false
+                              //                                                 ? null
+                              //                                                 : Border.all(
+                              //                                                 color: const Color
+                              //                                                     .fromRGBO(
+                              //                                                     21,
+                              //                                                     43,
+                              //                                                     83,
+                              //                                                     1),
+                              //                                                 width:
+                              //                                                 1),
+                              //                                             gradient: isTenantSelected ==
+                              //                                                 false
+                              //                                                 ? const LinearGradient(
+                              //                                               colors: [
+                              //                                                 Color.fromRGBO(
+                              //                                                     21,
+                              //                                                     43,
+                              //                                                     83,
+                              //                                                     1),
+                              //                                                 Color.fromRGBO(
+                              //                                                     21,
+                              //                                                     43,
+                              //                                                     83,
+                              //                                                     1),
+                              //                                               ],
+                              //                                             )
+                              //                                                 : null,
+                              //                                             borderRadius:
+                              //                                             const BorderRadius
+                              //                                                 .only(
+                              //                                               topRight: Radius
+                              //                                                   .circular(
+                              //                                                   4),
+                              //                                               bottomRight:
+                              //                                               Radius.circular(
+                              //                                                   4),
+                              //                                             ),
+                              //                                           ),
+                              //                                           alignment:
+                              //                                           Alignment
+                              //                                               .center,
+                              //                                           padding: isTenantSelected
+                              //                                               ? const EdgeInsets
+                              //                                               .symmetric(
+                              //                                               vertical:
+                              //                                               12)
+                              //                                               : const EdgeInsets
+                              //                                               .symmetric(
+                              //                                               vertical:
+                              //                                               13),
+                              //                                           child: !isTenantSelected
+                              //                                               ? Text(
+                              //                                             "Cosigner",
+                              //                                             style:
+                              //                                             TextStyle(
+                              //                                               color: isTenantSelected
+                              //                                                   ? Colors.transparent
+                              //                                                   : Colors.white,
+                              //                                               fontWeight:
+                              //                                               FontWeight.bold,
+                              //                                             ),
+                              //                                           )
+                              //                                               : ShaderMask(
+                              //                                             shaderCallback:
+                              //                                                 (bounds) {
+                              //                                               return const LinearGradient(
+                              //                                                 colors: [
+                              //                                                   Color.fromRGBO(21, 43, 83, 1),
+                              //                                                   Color.fromRGBO(21, 43, 83, 1),
+                              //                                                 ],
+                              //                                               ).createShader(
+                              //                                                   bounds);
+                              //                                             },
+                              //                                             child:
+                              //                                             Text(
+                              //                                               "Cosigner",
+                              //                                               style:
+                              //                                               TextStyle(
+                              //                                                 color: !isTenantSelected
+                              //                                                     ? Colors.transparent
+                              //                                                     : Colors.white,
+                              //                                                 fontWeight:
+                              //                                                 FontWeight.bold,
+                              //                                               ),
+                              //                                             ),
+                              //                                           ),
+                              //                                         ),
+                              //                                       ),
+                              //                                     ),
+                              //                                   ],
+                              //                                 ),
+                              //                                 isTenantSelected
+                              //                                     ? const AddTenant()
+                              //                                     : AddCosigner(),
+                              //                               ],
+                              //                             ),
+                              //                           ),
+                              //                         ),
+                              //                       ),
+                              //                     ),
+                              //                   ),
+                              //                   // actions: [
+                              //                   //   Container(
+                              //                   //       height: 50,
+                              //                   //       width: 90,
+                              //                   //       decoration: BoxDecoration(
+                              //                   //           borderRadius:
+                              //                   //               BorderRadius.circular(
+                              //                   //                   8.0)),
+                              //                   //       child: ElevatedButton(
+                              //                   //           style: ElevatedButton.styleFrom(
+                              //                   //               backgroundColor:
+                              //                   //                   const Color(
+                              //                   //                       0xFF152b51),
+                              //                   //               shape:
+                              //                   //                   RoundedRectangleBorder(
+                              //                   //                       borderRadius:
+                              //                   //                           BorderRadius
+                              //                   //                               .circular(
+                              //                   //                                   8.0))),
+                              //                   //           onPressed: () {
+                              //                   //             if (_addRecurringFormKey
+                              //                   //                 .currentState!
+                              //                   //                 .validate()) {
+                              //                   //               print('object valid');
+                              //                   //             } else {
+                              //                   //               print('object invalid');
+                              //                   //             }
+                              //                   //           },
+                              //                   //           child: const Text(
+                              //                   //             'Add',
+                              //                   //             style: TextStyle(
+                              //                   //                 color:
+                              //                   //                     Color(0xFFf7f8f9)),
+                              //                   //           ))),
+                              //                   //   Container(
+                              //                   //       height: 50,
+                              //                   //       width: 94,
+                              //                   //       decoration: BoxDecoration(
+                              //                   //           borderRadius:
+                              //                   //               BorderRadius.circular(
+                              //                   //                   8.0)),
+                              //                   //       child: ElevatedButton(
+                              //                   //           style: ElevatedButton.styleFrom(
+                              //                   //               backgroundColor:
+                              //                   //                   const Color(
+                              //                   //                       0xFFffffff),
+                              //                   //               shape:
+                              //                   //                   RoundedRectangleBorder(
+                              //                   //                       borderRadius:
+                              //                   //                           BorderRadius
+                              //                   //                               .circular(
+                              //                   //                                   8.0))),
+                              //                   //           onPressed: () {
+                              //                   //             Navigator.pop(context);
+                              //                   //           },
+                              //                   //           child: const Text(
+                              //                   //             'Cancel',
+                              //                   //             style: TextStyle(
+                              //                   //                 color:
+                              //                   //                     Color(0xFF748097)),
+                              //                   //           )))
+                              //                   // ],
+                              //                 );
+                              //               });
+                              //         });
+                              //   },
+                              //   child: const Text('+ Add Tenant or Cosigner',
+                              //       style: TextStyle(
+                              //           fontSize: 13,
+                              //           fontWeight: FontWeight.bold,
+                              //           color: Color(0xFF2ec433))),
+                              // ),
+                              FormField<String>(
+                                builder: (FormFieldState<String> state) {
+                                  return InkWell(
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return StatefulBuilder(
                                             builder: (context, setState) {
                                               return AlertDialog(
                                                 backgroundColor: Colors.white,
                                                 contentPadding: EdgeInsets.zero,
                                                 title: const Text(
-                                                    'Add Tenant or Cosigner',
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight: FontWeight.w500,
-                                                        color: Color(0xFF152b51))),
+                                                  'Add Tenant or Cosigner',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Color(0xFF152b51),
+                                                  ),
+                                                ),
                                                 content: Form(
                                                   key: _addRecurringFormKey,
                                                   child: Padding(
@@ -1489,40 +2156,28 @@ class _Edit_leaseState extends State<Edit_lease>
                                                       width: double.infinity,
                                                       child: SingleChildScrollView(
                                                         child: Padding(
-                                                          padding:
-                                                          const EdgeInsets.all(8.0),
+                                                          padding: const EdgeInsets.all(8.0),
                                                           child: Column(
-                                                            crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
                                                             children: [
                                                               Row(
                                                                 children: [
                                                                   Expanded(
-                                                                    child:
-                                                                    GestureDetector(
+                                                                    child: GestureDetector(
                                                                       onTap: () {
                                                                         setState(() {
-                                                                          isTenantSelected =
-                                                                          true;
+                                                                          isTenantSelected = true;
                                                                         });
                                                                       },
                                                                       child: Container(
-                                                                        decoration:
-                                                                        BoxDecoration(
+                                                                        decoration: BoxDecoration(
                                                                           border: isTenantSelected
                                                                               ? null
                                                                               : Border.all(
-                                                                              color: const Color
-                                                                                  .fromRGBO(
-                                                                                  21,
-                                                                                  43,
-                                                                                  83,
-                                                                                  1),
-                                                                              width:
-                                                                              1),
-                                                                          gradient:
-                                                                          isTenantSelected
+                                                                            color: const Color.fromRGBO(21, 43, 83, 1),
+                                                                            width: 1,
+                                                                          ),
+                                                                          gradient: isTenantSelected
                                                                               ? const LinearGradient(
                                                                             colors: [
                                                                               Color.fromRGBO(21, 43, 83, 1),
@@ -1530,62 +2185,41 @@ class _Edit_leaseState extends State<Edit_lease>
                                                                             ],
                                                                           )
                                                                               : null,
-                                                                          borderRadius:
-                                                                          const BorderRadius
-                                                                              .only(
-                                                                            topLeft: Radius
-                                                                                .circular(
-                                                                                4),
-                                                                            bottomLeft:
-                                                                            Radius.circular(
-                                                                                4),
+                                                                          borderRadius: const BorderRadius.only(
+                                                                            topLeft: Radius.circular(4),
+                                                                            bottomLeft: Radius.circular(4),
                                                                           ),
                                                                         ),
-                                                                        alignment:
-                                                                        Alignment
-                                                                            .center,
+                                                                        alignment: Alignment.center,
                                                                         padding: isTenantSelected
-                                                                            ? const EdgeInsets
-                                                                            .symmetric(
-                                                                            vertical:
-                                                                            13)
-                                                                            : const EdgeInsets
-                                                                            .symmetric(
-                                                                            vertical:
-                                                                            12),
+                                                                            ? const EdgeInsets.symmetric(vertical: 13)
+                                                                            : const EdgeInsets.symmetric(vertical: 12),
                                                                         child: isTenantSelected
                                                                             ? Text(
                                                                           "Tenant",
-                                                                          style:
-                                                                          TextStyle(
+                                                                          style: TextStyle(
                                                                             color: !isTenantSelected
                                                                                 ? Colors.transparent
                                                                                 : Colors.white,
-                                                                            fontWeight:
-                                                                            FontWeight.bold,
+                                                                            fontWeight: FontWeight.bold,
                                                                           ),
                                                                         )
                                                                             : ShaderMask(
-                                                                          shaderCallback:
-                                                                              (bounds) {
+                                                                          shaderCallback: (bounds) {
                                                                             return const LinearGradient(
                                                                               colors: [
                                                                                 Color.fromRGBO(21, 43, 83, 1),
                                                                                 Color.fromRGBO(21, 43, 83, 1),
                                                                               ],
-                                                                            ).createShader(
-                                                                                bounds);
+                                                                            ).createShader(bounds);
                                                                           },
-                                                                          child:
-                                                                          Text(
+                                                                          child: Text(
                                                                             "Tenant",
-                                                                            style:
-                                                                            TextStyle(
+                                                                            style: TextStyle(
                                                                               color: isTenantSelected
                                                                                   ? Colors.transparent
                                                                                   : Colors.white,
-                                                                              fontWeight:
-                                                                              FontWeight.bold,
+                                                                              fontWeight: FontWeight.bold,
                                                                             ),
                                                                           ),
                                                                         ),
@@ -1593,102 +2227,63 @@ class _Edit_leaseState extends State<Edit_lease>
                                                                     ),
                                                                   ),
                                                                   Expanded(
-                                                                    child:
-                                                                    GestureDetector(
+                                                                    child: GestureDetector(
                                                                       onTap: () {
                                                                         setState(() {
-                                                                          isTenantSelected =
-                                                                          false;
+                                                                          isTenantSelected = false;
                                                                         });
                                                                       },
                                                                       child: Container(
-                                                                        decoration:
-                                                                        BoxDecoration(
-                                                                          border: isTenantSelected ==
-                                                                              false
+                                                                        decoration: BoxDecoration(
+                                                                          border: isTenantSelected == false
                                                                               ? null
                                                                               : Border.all(
-                                                                              color: const Color
-                                                                                  .fromRGBO(
-                                                                                  21,
-                                                                                  43,
-                                                                                  83,
-                                                                                  1),
-                                                                              width:
-                                                                              1),
-                                                                          gradient: isTenantSelected ==
-                                                                              false
+                                                                            color: const Color.fromRGBO(21, 43, 83, 1),
+                                                                            width: 1,
+                                                                          ),
+                                                                          gradient: isTenantSelected == false
                                                                               ? const LinearGradient(
                                                                             colors: [
-                                                                              Color.fromRGBO(
-                                                                                  21,
-                                                                                  43,
-                                                                                  83,
-                                                                                  1),
-                                                                              Color.fromRGBO(
-                                                                                  21,
-                                                                                  43,
-                                                                                  83,
-                                                                                  1),
+                                                                              Color.fromRGBO(21, 43, 83, 1),
+                                                                              Color.fromRGBO(21, 43, 83, 1),
                                                                             ],
                                                                           )
                                                                               : null,
-                                                                          borderRadius:
-                                                                          const BorderRadius
-                                                                              .only(
-                                                                            topRight: Radius
-                                                                                .circular(
-                                                                                4),
-                                                                            bottomRight:
-                                                                            Radius.circular(
-                                                                                4),
+                                                                          borderRadius: const BorderRadius.only(
+                                                                            topRight: Radius.circular(4),
+                                                                            bottomRight: Radius.circular(4),
                                                                           ),
                                                                         ),
-                                                                        alignment:
-                                                                        Alignment
-                                                                            .center,
+                                                                        alignment: Alignment.center,
                                                                         padding: isTenantSelected
-                                                                            ? const EdgeInsets
-                                                                            .symmetric(
-                                                                            vertical:
-                                                                            12)
-                                                                            : const EdgeInsets
-                                                                            .symmetric(
-                                                                            vertical:
-                                                                            13),
+                                                                            ? const EdgeInsets.symmetric(vertical: 12)
+                                                                            : const EdgeInsets.symmetric(vertical: 13),
                                                                         child: !isTenantSelected
                                                                             ? Text(
                                                                           "Cosigner",
-                                                                          style:
-                                                                          TextStyle(
+                                                                          style: TextStyle(
                                                                             color: isTenantSelected
                                                                                 ? Colors.transparent
                                                                                 : Colors.white,
-                                                                            fontWeight:
-                                                                            FontWeight.bold,
+                                                                            fontWeight: FontWeight.bold,
                                                                           ),
                                                                         )
                                                                             : ShaderMask(
-                                                                          shaderCallback:
-                                                                              (bounds) {
+                                                                          shaderCallback: (bounds) {
                                                                             return const LinearGradient(
                                                                               colors: [
                                                                                 Color.fromRGBO(21, 43, 83, 1),
                                                                                 Color.fromRGBO(21, 43, 83, 1),
                                                                               ],
-                                                                            ).createShader(
-                                                                                bounds);
+                                                                            ).createShader(bounds);
                                                                           },
-                                                                          child:
-                                                                          Text(
+                                                                          child: Text(
                                                                             "Cosigner",
-                                                                            style:
-                                                                            TextStyle(
+                                                                            style: TextStyle(
                                                                               color: !isTenantSelected
                                                                                   ? Colors.transparent
                                                                                   : Colors.white,
-                                                                              fontWeight:
-                                                                              FontWeight.bold,
+                                                                              fontWeight: FontWeight.bold,
                                                                             ),
                                                                           ),
                                                                         ),
@@ -1707,77 +2302,22 @@ class _Edit_leaseState extends State<Edit_lease>
                                                     ),
                                                   ),
                                                 ),
-                                                // actions: [
-                                                //   Container(
-                                                //       height: 50,
-                                                //       width: 90,
-                                                //       decoration: BoxDecoration(
-                                                //           borderRadius:
-                                                //               BorderRadius.circular(
-                                                //                   8.0)),
-                                                //       child: ElevatedButton(
-                                                //           style: ElevatedButton.styleFrom(
-                                                //               backgroundColor:
-                                                //                   const Color(
-                                                //                       0xFF152b51),
-                                                //               shape:
-                                                //                   RoundedRectangleBorder(
-                                                //                       borderRadius:
-                                                //                           BorderRadius
-                                                //                               .circular(
-                                                //                                   8.0))),
-                                                //           onPressed: () {
-                                                //             if (_addRecurringFormKey
-                                                //                 .currentState!
-                                                //                 .validate()) {
-                                                //               print('object valid');
-                                                //             } else {
-                                                //               print('object invalid');
-                                                //             }
-                                                //           },
-                                                //           child: const Text(
-                                                //             'Add',
-                                                //             style: TextStyle(
-                                                //                 color:
-                                                //                     Color(0xFFf7f8f9)),
-                                                //           ))),
-                                                //   Container(
-                                                //       height: 50,
-                                                //       width: 94,
-                                                //       decoration: BoxDecoration(
-                                                //           borderRadius:
-                                                //               BorderRadius.circular(
-                                                //                   8.0)),
-                                                //       child: ElevatedButton(
-                                                //           style: ElevatedButton.styleFrom(
-                                                //               backgroundColor:
-                                                //                   const Color(
-                                                //                       0xFFffffff),
-                                                //               shape:
-                                                //                   RoundedRectangleBorder(
-                                                //                       borderRadius:
-                                                //                           BorderRadius
-                                                //                               .circular(
-                                                //                                   8.0))),
-                                                //           onPressed: () {
-                                                //             Navigator.pop(context);
-                                                //           },
-                                                //           child: const Text(
-                                                //             'Cancel',
-                                                //             style: TextStyle(
-                                                //                 color:
-                                                //                     Color(0xFF748097)),
-                                                //           )))
-                                                // ],
                                               );
-                                            });
-                                      });
-                                },
-                                child: const Text('+ Add Tenant or Cosigner',
-                                    style: TextStyle(
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: const Text(
+                                      '+ Add Tenant or Cosigner',
+                                      style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.bold,
-                                        color: Color(0xFF2ec433))),
+                                        color: Color(0xFF2ec433),
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                               const SizedBox(
                                 height: 10,
@@ -1803,111 +2343,178 @@ class _Edit_leaseState extends State<Edit_lease>
                               if (Provider.of<SelectedTenantsProvider>(context)
                                   .selectedTenants
                                   .isNotEmpty)
-                              // Padding(
-                              //   padding: const EdgeInsets.only(left: 13),
-                              //   child: SingleChildScrollView(
-                              //     scrollDirection: Axis.horizontal,
-                              //     child: Column(
-                              //       crossAxisAlignment: CrossAxisAlignment.start,
-                              //       children: [
-                              //         Container(
-                              //           decoration: BoxDecoration(
-                              //               border: Border.all(color: blueColor)),
-                              //           child: DataTable(
-                              //             columnSpacing: 25,
-                              //             headingRowHeight: 30,
-                              //             dataRowHeight: 30,
-                              //             headingRowColor: MaterialStateColor
-                              //                 .resolveWith((states) =>
-                              //                 Color.fromRGBO(21, 43, 83, 1)),
-                              //             headingTextStyle: TextStyle(
-                              //                 color: Colors.white,
-                              //                 fontWeight: FontWeight.bold),
-                              //             columns: [
-                              //               DataColumn(
-                              //                   label: Text('First Name',
-                              //                       style:
-                              //                       TextStyle(fontSize: 13))),
-                              //               DataColumn(
-                              //                   label: Text('Rent share',
-                              //                       style:
-                              //                       TextStyle(fontSize: 13))),
-                              //               DataColumn(
-                              //                   label: Text('Action',
-                              //                       style:
-                              //                       TextStyle(fontSize: 13))),
-                              //             ],
-                              //             rows: Provider.of<
-                              //                 SelectedTenantsProvider>(
-                              //                 context)
-                              //                 .selectedTenants
-                              //                 .map((tenant) {
-                              //               return DataRow(
-                              //                 cells: [
-                              //                   DataCell(
-                              //                     Text(
-                              //                         '${tenant.tenantFirstName} ${tenant.tenantLastName}',
-                              //                         style: TextStyle(
-                              //                             fontSize: 12)),
-                              //                   ),
-                              //                   DataCell(
-                              //                     Center(
-                              //                       child: Material(
-                              //                         elevation: 3,
-                              //                         child: Container(
-                              //                           height: 30,
-                              //                           width: 60,
-                              //                           decoration: BoxDecoration(
-                              //                             color: Colors.white,
-                              //                             // border: Border.all(color: blueColor),
-                              //                           ),
-                              //                           child: Center(
-                              //                             child: Padding(
-                              //                               padding:
-                              //                               const EdgeInsets
-                              //                                   .all(8.0),
-                              //                               child: TextField(
-                              //                                 controller:rentShareControllers,
-                              //                                 style: TextStyle(
-                              //                                     fontSize: 8),
-                              //                                 keyboardType:
-                              //                                 TextInputType
-                              //                                     .number,
-                              //                                 decoration:
-                              //                                 InputDecoration(
-                              //                                   hintText: "0",
-                              //                                   border:
-                              //                                   InputBorder
-                              //                                       .none,
-                              //                                 ),
-                              //                               ),
-                              //                             ),
-                              //                           ),
-                              //                         ),
-                              //                       ),
-                              //                     ),
-                              //                   ),
-                              //                   DataCell(
-                              //                     InkWell(
-                              //                       onTap: () {
-                              //                         Provider.of<SelectedTenantsProvider>(
-                              //                             context,
-                              //                             listen: false)
-                              //                             .removeTenant(tenant);
-                              //                       },
-                              //                       child: Icon(Icons.delete,
-                              //                           size: 15),
-                              //                     ),
-                              //                   ),
-                              //                 ],
-                              //               );
-                              //             }).toList(),
-                              //           ),
-                              //         ),
-                              //       ],
-                              //     ),
-                              //   ),
-                              // ),
+
+                                // Padding(
+                                //   padding: const EdgeInsets.only(left: 4, right: 4),
+                                //   child: Column(
+                                //     crossAxisAlignment: CrossAxisAlignment.start,
+                                //     children: [
+                                //       Table(
+                                //         border: TableBorder.all(
+                                //           width: 1,
+                                //           color:
+                                //           const Color.fromRGBO(21, 43, 83, 1),
+                                //         ),
+                                //         columnWidths: const {
+                                //           0: FlexColumnWidth(2),
+                                //           1: FlexColumnWidth(2),
+                                //           2: FlexColumnWidth(1.3),
+                                //         },
+                                //         children: [
+                                //           TableRow(
+                                //             decoration: BoxDecoration(
+                                //               color: Color.fromRGBO(21, 43, 83, 1),
+                                //             ),
+                                //             children: [
+                                //               Padding(
+                                //                 padding: const EdgeInsets.all(8.0),
+                                //                 child: Text(
+                                //                   'First Name',
+                                //                   style: TextStyle(
+                                //                     color: Colors.white,
+                                //                     fontWeight: FontWeight.bold,
+                                //                     fontSize: MediaQuery.of(context)
+                                //                         .size
+                                //                         .width <
+                                //                         500
+                                //                         ? 14
+                                //                         : 20,
+                                //                   ),
+                                //                 ),
+                                //               ),
+                                //               Padding(
+                                //                 padding: const EdgeInsets.all(8.0),
+                                //                 child: Text(
+                                //                   'Rent share',
+                                //                   style: TextStyle(
+                                //                     color: Colors.white,
+                                //                     fontWeight: FontWeight.bold,
+                                //                     fontSize: MediaQuery.of(context)
+                                //                         .size
+                                //                         .width <
+                                //                         500
+                                //                         ? 14
+                                //                         : 20,
+                                //                   ),
+                                //                 ),
+                                //               ),
+                                //               Padding(
+                                //                 padding: const EdgeInsets.all(8.0),
+                                //                 child: Text(
+                                //                   'Action',
+                                //                   style: TextStyle(
+                                //                     color: Colors.white,
+                                //                     fontWeight: FontWeight.bold,
+                                //                     fontSize: MediaQuery.of(context)
+                                //                         .size
+                                //                         .width <
+                                //                         500
+                                //                         ? 14
+                                //                         : 20,
+                                //                   ),
+                                //                 ),
+                                //               ),
+                                //             ],
+                                //           ),
+                                //           ... Provider.of<SelectedTenantsProvider>(context)
+                                //               .selectedTenants
+                                //               .asMap()
+                                //               .entries
+                                //               .map((entry) {
+                                //             final index = entry.key;
+                                //             final tenant = entry.value;
+                                //             final controller = Provider.of<SelectedTenantsProvider>(context).rentShareControllers[index];
+                                //
+                                //             return TableRow(
+                                //               children: [
+                                //                 Padding(
+                                //                   padding: const EdgeInsets.only(left: 10, top: 15),
+                                //                   child: Text(
+                                //                     '${tenant.tenantFirstName} ${tenant.tenantLastName}',
+                                //                     style: TextStyle(
+                                //                       fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                                //                       fontWeight: FontWeight.w700,
+                                //                       color: const Color.fromRGBO(21, 43, 83, 1),
+                                //                     ),
+                                //                   ),
+                                //                 ),
+                                //                 Padding(
+                                //                   padding: const EdgeInsets.all(8.0),
+                                //                   child: Material(
+                                //                     elevation: 3,
+                                //                     borderRadius: BorderRadius.circular(8),
+                                //                     child: Container(
+                                //                       height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                                //                       width: MediaQuery.of(context).size.width < 500 ? 70 : 400,
+                                //                       decoration: BoxDecoration(
+                                //                         color: Colors.white,
+                                //                         borderRadius: BorderRadius.circular(8),
+                                //                         border: Border.all(
+                                //                           color: Colors.grey[300]!,
+                                //                           width: 1,
+                                //                         ),
+                                //                       ),
+                                //                       child: Center(
+                                //                         child: Padding(
+                                //                           padding: const EdgeInsets.only(left: 10, bottom: 7),
+                                //                           child: TextField(
+                                //                             controller: controller,
+                                //                             style: TextStyle(
+                                //                               fontSize: MediaQuery.of(context).size.width < 500 ? 12 : 16,
+                                //                               fontWeight: FontWeight.bold,
+                                //                               color: Colors.black,
+                                //                             ),
+                                //                             onChanged: (value) {
+                                //                               double enteredValue = double.tryParse(value) ?? 0;
+                                //                               if (enteredValue > 100) {
+                                //                                 controller.text = '100';
+                                //                                 controller.selection = TextSelection.fromPosition(
+                                //                                   TextPosition(offset: controller.text.length),
+                                //                                 );
+                                //                               }
+                                //                               Provider.of<SelectedTenantsProvider>(context, listen: false)
+                                //                                   .validateRentShares();
+                                //                             },
+                                //                             keyboardType: TextInputType.number,
+                                //                             decoration: const InputDecoration(
+                                //                               hintText: "0",
+                                //                               border: InputBorder.none,
+                                //                               contentPadding: EdgeInsets.symmetric(vertical: 10),
+                                //                             ),
+                                //                           ),
+                                //                         ),
+                                //                       ),
+                                //                     ),
+                                //                   ),
+                                //                 ),
+                                //                 Padding(
+                                //                   padding: const EdgeInsets.only(top: 15),
+                                //                   child: Row(
+                                //                     mainAxisAlignment: MainAxisAlignment.center,
+                                //                     crossAxisAlignment: CrossAxisAlignment.center,
+                                //                     children: [
+                                //                       InkWell(
+                                //                         onTap: () {
+                                //                           Provider.of<SelectedTenantsProvider>(context, listen: false)
+                                //                               .removeTenant(tenant);
+                                //                         },
+                                //                         child: Icon(
+                                //                           Icons.delete,
+                                //                           color: const Color.fromRGBO(21, 43, 83, 1),
+                                //                           size: MediaQuery.of(context).size.width < 500 ? 18 : 25,
+                                //                         ),
+                                //                       ),
+                                //                     ],
+                                //                   ),
+                                //                 ),
+                                //               ],
+                                //             );
+                                //           }).toList(),
+                                //         ],
+                                //       ),
+                                //     ],
+                                //   ),
+                                // ),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 4, right: 4),
                                   child: Column(
@@ -2039,6 +2646,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                               Provider.of<SelectedTenantsProvider>(context, listen: false)
                                                                   .validateRentShares();
                                                             },
+
                                                             keyboardType: TextInputType.number,
                                                             decoration: const InputDecoration(
                                                               hintText: "0",
@@ -2079,7 +2687,6 @@ class _Edit_leaseState extends State<Edit_lease>
                                     ],
                                   ),
                                 ),
-
                               if (Provider.of<SelectedTenantsProvider>(context)
                                   .selectedTenants
                                   .isNotEmpty)
@@ -2103,6 +2710,14 @@ class _Edit_leaseState extends State<Edit_lease>
                                     ),
 
                                   ],
+                                ),
+                              if (_errorMessage != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 3.0),
+                                  child: Text(
+                                    _errorMessage!,
+                                    style: TextStyle(color: Colors.red),
+                                  ),
                                 ),
                               const SizedBox(height: 8.0),
                               if (Provider.of<SelectedCosignersProvider>(context)
@@ -2475,84 +3090,190 @@ class _Edit_leaseState extends State<Edit_lease>
                                             //     _updateNextDueDate();
                                             //   },
                                             // ),
-                                            DropdownButtonHideUnderline(
-                                              child: DropdownButton2<String>(
-                                                isExpanded: true,
-                                                hint: const Row(
-                                                  children: [
-                                                    SizedBox(
-                                                      width: 4,
-                                                    ),
-                                                    Expanded(
-                                                      child: Text(
-                                                        'Rent Cycle',
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight: FontWeight.bold,
-                                                          color: Colors.black,
+                                            // DropdownButtonHideUnderline(
+                                            //   child: DropdownButton2<String>(
+                                            //     isExpanded: true,
+                                            //     hint: const Row(
+                                            //       children: [
+                                            //         SizedBox(
+                                            //           width: 4,
+                                            //         ),
+                                            //         Expanded(
+                                            //           child: Text(
+                                            //             'Rent Cycle',
+                                            //             style: TextStyle(
+                                            //               fontSize: 14,
+                                            //               fontWeight: FontWeight.bold,
+                                            //               color: Colors.black,
+                                            //             ),
+                                            //             overflow: TextOverflow.ellipsis,
+                                            //           ),
+                                            //         ),
+                                            //       ],
+                                            //     ),
+                                            //     items: rentCycleitems
+                                            //         .map(
+                                            //             (String item) => DropdownMenuItem<String>(
+                                            //           value: item,
+                                            //           child: Text(
+                                            //             item,
+                                            //             style: const TextStyle(
+                                            //               fontSize: 14,
+                                            //               fontWeight: FontWeight.bold,
+                                            //               color: Colors.black,
+                                            //             ),
+                                            //             overflow: TextOverflow.ellipsis,
+                                            //           ),
+                                            //         ))
+                                            //         .toList(),
+                                            //     value: _selectedRent,
+                                            //     onChanged: (value) {
+                                            //       setState(() {
+                                            //         _selectedRent = value;
+                                            //       });
+                                            //     },
+                                            //     buttonStyleData: ButtonStyleData(
+                                            //       height: 50,
+                                            //       width: 230,
+                                            //       padding:
+                                            //       const EdgeInsets.only(left: 14, right: 14),
+                                            //       decoration: BoxDecoration(
+                                            //         borderRadius: BorderRadius.circular(10),
+                                            //         border: Border.all(
+                                            //           color: Colors.black26,
+                                            //         ),
+                                            //         color: Colors.white,
+                                            //       ),
+                                            //       elevation: 3,
+                                            //     ),
+                                            //     dropdownStyleData: DropdownStyleData(
+                                            //       maxHeight: 200,
+                                            //       width: 230,
+                                            //       decoration: BoxDecoration(
+                                            //         borderRadius: BorderRadius.circular(14),
+                                            //         //color: Colors.redAccent,
+                                            //       ),
+                                            //       offset: const Offset(-20, 0),
+                                            //       scrollbarTheme: ScrollbarThemeData(
+                                            //         radius: const Radius.circular(40),
+                                            //         thickness: MaterialStateProperty.all(6),
+                                            //         thumbVisibility:
+                                            //         MaterialStateProperty.all(true),
+                                            //       ),
+                                            //     ),
+                                            //     menuItemStyleData: const MenuItemStyleData(
+                                            //       height: 40,
+                                            //       padding: EdgeInsets.only(left: 14, right: 14),
+                                            //     ),
+                                            //   ),
+                                            // ),
+                                          FormField<String>(
+                                            initialValue: _selectedRent,
+                                            builder: (FormFieldState<String> state) {
+                                              return Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  DropdownButtonHideUnderline(
+                                                    child: DropdownButton2<String>(
+                                                      isExpanded: true,
+                                                      hint: const Row(
+                                                        children: [
+                                                          SizedBox(
+                                                            width: 4,
+                                                          ),
+                                                          Expanded(
+                                                            child: Text(
+                                                              'Rent Cycle',
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight: FontWeight.bold,
+                                                                color: Colors.black,
+                                                              ),
+                                                              overflow: TextOverflow.ellipsis,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      items: rentCycleitems
+                                                          .map(
+                                                            (String item) => DropdownMenuItem<String>(
+                                                          value: item,
+                                                          child: Text(
+                                                            item,
+                                                            style: const TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight: FontWeight.bold,
+                                                              color: Colors.black,
+                                                            ),
+                                                            overflow: TextOverflow.ellipsis,
+                                                          ),
                                                         ),
-                                                        overflow: TextOverflow.ellipsis,
+                                                      )
+                                                          .toList(),
+                                                      value: _selectedRent,
+                                                      onChanged: (value) {
+                                                        state.didChange(value); // Update the FormField state
+                                                        setState(() {
+                                                          _selectedRent = value;
+                                                          state.didChange(value);
+                                                        });
+                                                        state.reset();
+                                                      },
+                                                      buttonStyleData: ButtonStyleData(
+                                                        height: 50,
+                                                        width: 230,
+                                                        padding: const EdgeInsets.only(left: 14, right: 14),
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(10),
+                                                          border: Border.all(
+                                                            color: Colors.black26,
+                                                          ),
+                                                          color: Colors.white,
+                                                        ),
+                                                        elevation: 3,
+                                                      ),
+                                                      dropdownStyleData: DropdownStyleData(
+                                                        maxHeight: 200,
+                                                        width: 230,
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(14),
+                                                        ),
+                                                        offset: const Offset(-20, 0),
+                                                        scrollbarTheme: ScrollbarThemeData(
+                                                          radius: const Radius.circular(40),
+                                                          thickness: MaterialStateProperty.all(6),
+                                                          thumbVisibility: MaterialStateProperty.all(true),
+                                                        ),
+                                                      ),
+                                                      menuItemStyleData: const MenuItemStyleData(
+                                                        height: 40,
+                                                        padding: EdgeInsets.only(left: 14, right: 14),
                                                       ),
                                                     ),
-                                                  ],
-                                                ),
-                                                items: rentCycleitems
-                                                    .map(
-                                                        (String item) => DropdownMenuItem<String>(
-                                                      value: item,
+                                                  ),
+                                                  if (state.hasError)
+                                                    Padding(
+                                                      padding: const EdgeInsets.only(left: 14, top: 8),
                                                       child: Text(
-                                                        item,
+                                                        state.errorText!,
                                                         style: const TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight: FontWeight.bold,
-                                                          color: Colors.black,
+                                                          color: Colors.red,
+                                                          fontSize: 12,
                                                         ),
-                                                        overflow: TextOverflow.ellipsis,
                                                       ),
-                                                    ))
-                                                    .toList(),
-                                                value: _selectedRent,
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    _selectedRent = value;
-                                                  });
-                                                },
-                                                buttonStyleData: ButtonStyleData(
-                                                  height: 50,
-                                                  width: 230,
-                                                  padding:
-                                                  const EdgeInsets.only(left: 14, right: 14),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(10),
-                                                    border: Border.all(
-                                                      color: Colors.black26,
                                                     ),
-                                                    color: Colors.white,
-                                                  ),
-                                                  elevation: 3,
-                                                ),
-                                                dropdownStyleData: DropdownStyleData(
-                                                  maxHeight: 200,
-                                                  width: 230,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(14),
-                                                    //color: Colors.redAccent,
-                                                  ),
-                                                  offset: const Offset(-20, 0),
-                                                  scrollbarTheme: ScrollbarThemeData(
-                                                    radius: const Radius.circular(40),
-                                                    thickness: MaterialStateProperty.all(6),
-                                                    thumbVisibility:
-                                                    MaterialStateProperty.all(true),
-                                                  ),
-                                                ),
-                                                menuItemStyleData: const MenuItemStyleData(
-                                                  height: 40,
-                                                  padding: EdgeInsets.only(left: 14, right: 14),
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(height: 5),
+                                                ],
+                                              );
+                                            },
+                                            validator: (value) {
+                                              if (_selectedRent == null ) {
+                                                return 'Please select a rent cycle';
+                                              }
+                                              return null;
+                                            },
+                                          ),
+
+                                          SizedBox(height: 5),
                                           ],
                                         ),
                                       ),
@@ -2603,14 +3324,15 @@ class _Edit_leaseState extends State<Edit_lease>
                                                   },
                                                 );
                                                 if (pickedDate != null) {
-                                                  String formattedDate =
-                                                      "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                                  // String formattedDate =
+                                                  //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                                  String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
 
                                                   DateTime nextDueDate = calculateNextDueDate(
                                                       pickedDate, _selectedRent ?? 'Daily');
-                                                  String formattedNextDueDate =
-                                                      "${nextDueDate.year}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.day.toString().padLeft(2, '0')}";
-
+                                                  // String formattedNextDueDate =
+                                                  //     "${nextDueDate.year}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.day.toString().padLeft(2, '0')}";
+                                                  String formattedNextDueDate = "${nextDueDate.day.toString().padLeft(2, '0')}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.year}";
                                                   setState(() {
                                                     rentNextDueDate.text = formattedNextDueDate;
                                                     rentNextDueDate.text = formattedDate;
@@ -2619,6 +3341,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                   print(rentNextDueDate.text);
                                                 }
                                               },
+                                              optional: true,
                                               readOnnly: true,
                                               suffixIcon: IconButton(
                                                 onPressed: () {},
@@ -2669,84 +3392,110 @@ class _Edit_leaseState extends State<Edit_lease>
                               //     _updateNextDueDate();
                               //   },
                               // ),
-                                DropdownButtonHideUnderline(
-                                  child: DropdownButton2<String>(
-                                    isExpanded: true,
-                                    hint: const Row(
+                                FormField<String>(
+                                  initialValue: _selectedRent,
+                                  builder: (FormFieldState<String> state) {
+                                    return Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        SizedBox(
-                                          width: 4,
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                            'Rent Cycle',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
+                                        DropdownButtonHideUnderline(
+                                          child: DropdownButton2<String>(
+                                            isExpanded: true,
+                                            hint: const Row(
+                                              children: [
+                                                SizedBox(
+                                                  width: 4,
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    'Rent Cycle',
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.black,
+                                                    ),
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                            overflow: TextOverflow.ellipsis,
+                                            items: rentCycleitems
+                                                .map(
+                                                  (String item) => DropdownMenuItem<String>(
+                                                value: item,
+                                                child: Text(
+                                                  item,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black,
+                                                  ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            )
+                                                .toList(),
+                                            value: _selectedRent,
+                                            onChanged: (value) {
+                                              state.didChange(value); // Update the FormField state
+                                              setState(() {
+                                                _selectedRent = value;
+                                                state.didChange(value);
+                                              });
+                                              state.reset();
+                                            },
+                                            buttonStyleData: ButtonStyleData(
+                                              height: 50,
+                                              width: 230,
+                                              padding: const EdgeInsets.only(left: 14, right: 14),
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(10),
+                                                border: Border.all(
+                                                  color: Colors.black26,
+                                                ),
+                                                color: Colors.white,
+                                              ),
+                                              elevation: 3,
+                                            ),
+                                            dropdownStyleData: DropdownStyleData(
+                                              maxHeight: 200,
+                                              width: 230,
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(14),
+                                              ),
+                                              offset: const Offset(-20, 0),
+                                              scrollbarTheme: ScrollbarThemeData(
+                                                radius: const Radius.circular(40),
+                                                thickness: MaterialStateProperty.all(6),
+                                                thumbVisibility: MaterialStateProperty.all(true),
+                                              ),
+                                            ),
+                                            menuItemStyleData: const MenuItemStyleData(
+                                              height: 40,
+                                              padding: EdgeInsets.only(left: 14, right: 14),
+                                            ),
                                           ),
                                         ),
+                                        if (state.hasError)
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 14, top: 8),
+                                            child: Text(
+                                              state.errorText!,
+                                              style: const TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
                                       ],
-                                    ),
-                                    items: rentCycleitems
-                                        .map(
-                                            (String item) => DropdownMenuItem<String>(
-                                          value: item,
-                                          child: Text(
-                                            item,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ))
-                                        .toList(),
-                                    value: _selectedRent,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _selectedRent = value;
-
-                                      });
-                                      _updateNextDueDate();
-                                    },
-                                    buttonStyleData: ButtonStyleData(
-                                      height: 50,
-                                      //width: 200,
-                                      padding:
-                                      const EdgeInsets.only(left: 14, right: 14),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(
-                                          color: Colors.black26,
-                                        ),
-                                        color: Colors.white,
-                                      ),
-                                      elevation: 3,
-                                    ),
-                                    dropdownStyleData: DropdownStyleData(
-                                      maxHeight: 200,
-                                      width: 200,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(14),
-                                        //color: Colors.redAccent,
-                                      ),
-                                      offset: const Offset(-20, 0),
-                                      scrollbarTheme: ScrollbarThemeData(
-                                        radius: const Radius.circular(40),
-                                        thickness: MaterialStateProperty.all(6),
-                                        thumbVisibility:
-                                        MaterialStateProperty.all(true),
-                                      ),
-                                    ),
-                                    menuItemStyleData: const MenuItemStyleData(
-                                      height: 40,
-                                      padding: EdgeInsets.only(left: 14, right: 14),
-                                    ),
-                                  ),
+                                    );
+                                  },
+                                  validator: (value) {
+                                    if (_selectedRent == null ) {
+                                      return 'Please select a rent cycle';
+                                    }
+                                    return null;
+                                  },
                                 ),
                               if(MediaQuery.of(context).size.width < 500)
                                 const SizedBox(
@@ -2821,13 +3570,16 @@ class _Edit_leaseState extends State<Edit_lease>
                                     );
 
                                     if (pickedDate != null) {
-                                      String formattedDate =
-                                          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                      String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+
+                                      // String formattedDate =
+                                      //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                                       setState(() {
                                         rentNextDueDate.text = formattedDate;
                                       });
                                     }
                                   },
+                                  optional: true,
                                   readOnnly: true,
                                   suffixIcon: IconButton(
                                       onPressed: () {},
@@ -4048,218 +4800,247 @@ class _Edit_leaseState extends State<Edit_lease>
                                             BorderRadius.circular(8.0))),
                                     onPressed: () async {
                                       if (_formKey.currentState?.validate() ?? false) {
-
                                         final provider = Provider.of<SelectedTenantsProvider>(context, listen: false);
                                         final rentShareControllers = provider.rentShareControllers;
-                                        for (int i = 0; i < rentShareControllers.length; i++) {
-                                          print('Tenant ${i + 1}: ${rentShareControllers[i].text}');
-                                        }
-                                        bool hasError = false;
-                                        if (hasError || provider.validationMessage != null) {
+                                        // final provider = Provider.of<SelectedTenantsProvider>(context, listen: false);
+                                        // final rentShareControllers = provider.rentShareControllers;
+                                        // for (int i = 0; i < rentShareControllers.length; i++) {
+                                        //   print('Tenant ${i + 1}: ${rentShareControllers[i].text}');
+                                        // }
+                                        // bool hasError = false;
+                                        // if (hasError || provider.validationMessage != null) {
+                                        //   setState(() {
+                                        //
+                                        //   });
+                                        //   return;
+                                        // }
+                                        // provider.clearValidationMessage();
+                                        if (rentShareControllers.length <1 ) {
                                           setState(() {
+                                            _errorMessage = "required tenants";
+                                            // _errorMessagetenants = 'Please select at least one tenant or cosigner.';
+                                            // _errorMessage = null;
+                                          });
+                                          return;
+                                        }
+
+                                        setState(() {
+                                          // _errorMessagetenants = null;
+                                          _errorMessage = null;
+                                        });
+                                        double totalRentShare = 0.0;
+                                        for (var controller in rentShareControllers) {
+                                          double rentShare = double.tryParse(controller.text) ?? 0.0;
+                                          totalRentShare += rentShare;
+                                        }
+                                        if (totalRentShare != 100.0){
+                                          setState(() {
+                                            _errorMessage = 'Total rent share must equal 100';
 
                                           });
                                           return;
                                         }
-                                        provider.clearValidationMessage();
-                                        SharedPreferences prefs =
-                                        await SharedPreferences.getInstance();
-                                        String adminId =
-                                        prefs.getString("adminId")!;
-                                        bool _isLeaseAdded = false;
-                                        // // Printing ChargeData object
-                                        // // Printing ChargeData object
-                                        //Changes
-                                        List<Map<String, dynamic>>
-                                        mergedFormDataList = [
-                                          ...formDataOneTimeList,
-                                          ...formDataRecurringList,
-                                        ];
-                                        log(mergedFormDataList.toString());
-                                        // Creating Entry objects from the merged list
-                                        print("rentDueDate ${rentNextDueDate.text}");
-                                        List<Entry> chargeEntries =
-                                        mergedFormDataList.map((data) {
-                                          print(data['account']);
-                                          return Entry(
-                                            entry_id: data['entry_id'] ??"",
-                                            account: data['account'] ?? '',
-                                            amount: double.tryParse(
-                                                data['amount'] ?? '0.0') ??
-                                                0.0,
-                                            chargeType: data['charge_type'] ?? '',
-                                            date: data['date'] ?? '',
-                                            isRepeatable: data['is_repeatable']
-                                                ?.toLowerCase() ==
-                                                'true',
-                                            memo: data['memo'] ?? '',
-                                            rentCycle: data[
-                                            'rent_cycle'], // Assuming this field might be present
-                                            tenantId: data[
-                                            'tenant_id'], // Assuming this field might be present
-                                          );
-                                        }).toList();
-                                        chargeEntries.add(Entry(
 
-                                            account: "Rent Income",
-                                            amount:
-                                            double.tryParse(rentAmount.text) ??
+                                        else{
+                                          SharedPreferences prefs =
+                                          await SharedPreferences.getInstance();
+                                          String adminId =
+                                          prefs.getString("adminId")!;
+                                          bool _isLeaseAdded = false;
+                                          // // Printing ChargeData object
+                                          // // Printing ChargeData object
+                                          //Changes
+                                          List<Map<String, dynamic>>
+                                          mergedFormDataList = [
+                                            ...formDataOneTimeList,
+                                            ...formDataRecurringList,
+                                          ];
+                                          log(mergedFormDataList.toString());
+                                          // Creating Entry objects from the merged list
+                                          print("rentDueDate ${rentNextDueDate.text}");
+                                          List<Entry> chargeEntries =
+                                          mergedFormDataList.map((data) {
+                                            print(data['account']);
+                                            return Entry(
+                                              entry_id: data['entry_id'] ??"",
+                                              account: data['account'] ?? '',
+                                              amount: double.tryParse(
+                                                  data['amount'] ?? '0.0') ??
+                                                  0.0,
+                                              chargeType: data['charge_type'] ?? '',
+                                              date: data['date'] ?? '',
+                                              isRepeatable: data['is_repeatable']
+                                                  ?.toLowerCase() ==
+                                                  'true',
+                                              memo: data['memo'] ?? '',
+                                              rentCycle: data[
+                                              'rent_cycle'], // Assuming this field might be present
+                                              tenantId: data[
+                                              'tenant_id'], // Assuming this field might be present
+                                            );
+                                          }).toList();
+                                          chargeEntries.add(Entry(
+
+                                              account: "Rent Income",
+                                              amount:
+                                              double.tryParse(rentAmount.text) ??
+                                                  0.0,
+                                              chargeType: 'Rent',
+                                              date: reverseFormatDate(rentNextDueDate.text),
+                                              isRepeatable:
+                                              false, // Set to false if it's not repeatable, adjust as needed
+                                              memo: 'Last Month\'s Rent',
+                                              rentCycle:
+                                              _selectedRent,
+                                              entry_id: rent_entry_id
+
+                                            // Set default value or adjust as needed
+                                          ));
+                                          chargeEntries.add(Entry(
+                                            entry_id: rent_security_id,
+                                            account: "Security Deposit",
+                                            amount: double.tryParse(
+                                                securityDepositeAmount.text) ??
                                                 0.0,
-                                            chargeType: 'Rent',
-                                            date: reverseFormatDate(rentNextDueDate.text),
+                                            chargeType: 'Security Deposit',
+                                            date:  reverseFormatDate(rentNextDueDate.text),
                                             isRepeatable:
                                             false, // Set to false if it's not repeatable, adjust as needed
-                                            memo: 'Last Month\'s Rent',
+                                            memo: 'Security Deposit',
                                             rentCycle:
-                                            _selectedRent,
-                                            entry_id: rent_entry_id
-
-                                          // Set default value or adjust as needed
-                                        ));
-                                        chargeEntries.add(Entry(
-                                          entry_id: rent_security_id,
-                                          account: "Security Deposit",
-                                          amount: double.tryParse(
-                                              securityDepositeAmount.text) ??
-                                              0.0,
-                                          chargeType: 'Security Deposit',
-                                          date:  reverseFormatDate(rentNextDueDate.text),
-                                          isRepeatable:
-                                          false, // Set to false if it's not repeatable, adjust as needed
-                                          memo: 'Security Deposit',
-                                          rentCycle:
-                                          _selectedRent, // Set default value or adjust as needed
-                                        ));
-                                        // Creating ChargeData object
-                                        ChargeData chargeData = ChargeData(
-                                          adminId: adminId,
-                                          entry: chargeEntries,
-                                          isLeaseAdded: _isLeaseAdded,
-                                        );
-                                        //Tenant
-                                        List<TenantData> tenants = [];
-                                        Map<String, String>? firstCosigner =
-                                        cosignersMap.isNotEmpty
-                                            ? cosignersMap[0]
-                                            : {};
-                                        List<TenantData> tenantDataList =
-                                        tenantsMap.entries.map((entry) {
-                                          int index = entry.key;
-                                          final tenantMap = entry.value;
-                                          print(tenantMap['firstName']);
-                                          print(tenantMap['firstName']);
-                                          return TenantData(
-                                              adminId: adminId,
-                                              comments: tenantMap['comments'] ?? '',
-                                              emergencyContact: EmergencyContacts(
-                                                name: tenantMap[
-                                                'emergencyContactName'] ??
-                                                    '',
-                                                relation:
-                                                tenantMap['emergencyRelation'] ??
-                                                    '',
-                                                email:
-                                                tenantMap['emergencyEmail'] ?? '',
-                                                phoneNumber: tenantMap[
-                                                'emergencyPhoneNumber'] ??
-                                                    '',
-                                              ),
-                                              isDelete:
-                                              tenantMap['isDelete'] == 'true',
-                                              taxPayerId:
-                                              tenantMap['taxPayerId'] ?? '',
-                                              rentalAddress:
-                                              tenantMap['rental_adress'],
-                                              rentalUnit: tenantMap['rental_unit'],
-                                              tenantAlternativeEmail:
-                                              tenantMap['alterEmail'] ?? '',
-                                              tenantAlternativeNumber:
-                                              tenantMap['workNumber'] ?? '',
-                                              tenantBirthDate:
-                                              tenantMap['dob'].toString() ?? '',
-                                              tenantEmail: tenantMap['email'] ?? '',
-                                              createdAt: tenantMap['createdAt'],
-                                              tenantFirstName:
-                                              tenantMap['firstName'] ?? '',
-                                              tenantId: tenantMap['tenantId'] ?? '',
-                                              tenantLastName:
-                                              tenantMap['lastName'] ?? '',
-                                              tenantPassword:
-                                              tenantMap['passWord'] ?? '',
-                                              tenantPhoneNumber:
-                                              tenantMap['phoneNumber'] ?? '',
-                                              rentShare:rentShareControllers[index].text
-
+                                            _selectedRent, // Set default value or adjust as needed
+                                          ));
+                                          // Creating ChargeData object
+                                          ChargeData chargeData = ChargeData(
+                                            adminId: adminId,
+                                            entry: chargeEntries,
+                                            isLeaseAdded: _isLeaseAdded,
                                           );
-                                        }).toList();
-                                        // Assuming tenantDataList is a List<TenantData>
-                                        List<String> tenantIds = tenantDataList
-                                            .map((tenant) => tenant.tenantId ?? '')
-                                            .toList();
+                                          //Tenant
+                                          List<TenantData> tenants = [];
+                                          Map<String, String>? firstCosigner =
+                                          cosignersMap.isNotEmpty
+                                              ? cosignersMap[0]
+                                              : {};
+                                          List<TenantData> tenantDataList =
+                                          tenantsMap.entries.map((entry) {
+                                            int index = entry.key;
+                                            final tenantMap = entry.value;
+                                            print(tenantMap['firstName']);
+                                            print(tenantMap['firstName']);
+                                            return TenantData(
+                                                adminId: adminId,
+                                                comments: tenantMap['comments'] ?? '',
+                                                emergencyContact: EmergencyContacts(
+                                                  name: tenantMap[
+                                                  'emergencyContactName'] ??
+                                                      '',
+                                                  relation:
+                                                  tenantMap['emergencyRelation'] ??
+                                                      '',
+                                                  email:
+                                                  tenantMap['emergencyEmail'] ?? '',
+                                                  phoneNumber: tenantMap[
+                                                  'emergencyPhoneNumber'] ??
+                                                      '',
+                                                ),
+                                                isDelete:
+                                                tenantMap['isDelete'] == 'true',
+                                                taxPayerId:
+                                                tenantMap['taxPayerId'] ?? '',
+                                                rentalAddress:
+                                                tenantMap['rental_adress'],
+                                                rentalUnit: tenantMap['rental_unit'],
+                                                tenantAlternativeEmail:
+                                                tenantMap['alterEmail'] ?? '',
+                                                tenantAlternativeNumber:
+                                                tenantMap['workNumber'] ?? '',
+                                                tenantBirthDate:
+                                                tenantMap['dob'].toString() ?? '',
+                                                tenantEmail: tenantMap['email'] ?? '',
+                                                createdAt: tenantMap['createdAt'],
+                                                tenantFirstName:
+                                                tenantMap['firstName'] ?? '',
+                                                tenantId: tenantMap['tenantId'] ?? '',
+                                                tenantLastName:
+                                                tenantMap['lastName'] ?? '',
+                                                tenantPassword:
+                                                tenantMap['passWord'] ?? '',
+                                                tenantPhoneNumber:
+                                                tenantMap['phoneNumber'] ?? '',
+                                                rentShare:rentShareControllers[index].text
 
-                                        // print('selected rent ${_selectedRent}');
-                                        // print('rent amount ${rentAmount}');
-                                        // print(
-                                        //     'start date ${startDateController.text}');
-                                        // print('deposite ${securityDepositeAmount}');
+                                            );
+                                          }).toList();
+                                          // Assuming tenantDataList is a List<TenantData>
+                                          List<String> tenantIds = tenantDataList
+                                              .map((tenant) => tenant.tenantId ?? '')
+                                              .toList();
 
-                                        print('Rental Id : ${renderId}');
-                                        Lease lease = Lease(
-                                          chargeData: ChargeData(
-                                            adminId: adminId ?? "",
-                                            entry: chargeEntries,
-                                            isLeaseAdded: true,
-                                          ),
-                                          cosignerData: CosignerData(
-                                              cosignerId: firstCosigner?['c_id'],
-                                              cosignerFirstName:
-                                              firstCosigner?['firstName'] ?? '',
-                                              cosignerLastName:
-                                              firstCosigner?['lastName'] ?? '',
-                                              cosignerPhoneNumber:
-                                              firstCosigner?['phoneNumber'] ??
-                                                  '',
-                                              cosignerEmail:
-                                              firstCosigner?['email'] ?? '',
-                                              cosignerAlternativeEmail:
-                                              firstCosigner?['alterEmail'] ??
-                                                  '',
-                                              cosignerAddress:
-                                              firstCosigner?['streetAddress'] ??
-                                                  '',
-                                              cosignerCity:
-                                              firstCosigner?['city'] ?? '',
-                                              cosignerCountry:
-                                              firstCosigner?['country'] ?? '',
-                                              cosignerPostalcode:
-                                              firstCosigner?['postalCode'] ??
-                                                  '',
-                                              adminId: adminId),
-                                          leaseData: LeaseData(
-                                            leaseId: widget.leaseId,
-                                            adminId: adminId ?? "",
-                                            companyName: companyName,
-                                            endDate: reverseFormatDate(endDateController.text),
-                                            entry: chargeEntries,
-                                            leaseAmount: rentAmount.text,
-                                            leaseType: _selectedLeaseType ?? "",
-                                            rentalId: renderId,
-                                            startDate: reverseFormatDate(startDateController.text),
-                                            tenantId: tenantDataList
-                                                .map((tenant) =>
-                                            tenant.tenantId ?? '')
-                                                .toList(),
-                                            tenantResidentStatus: false,
-                                            unitId: _selectedUnit,
-                                            // memo: rentMemo.text,
-                                            uploadedFile: _uploadedFileNames,
-                                          ),
-                                          tenantData: tenantDataList,
-                                        );
+                                          // print('selected rent ${_selectedRent}');
+                                          // print('rent amount ${rentAmount}');
+                                          // print(
+                                          //     'start date ${startDateController.text}');
+                                          // print('deposite ${securityDepositeAmount}');
 
-                                        updateLeaseAndNavigate(lease);
+                                          print('Rental Id : ${renderId}');
+                                          Lease lease = Lease(
+                                            chargeData: ChargeData(
+                                              adminId: adminId ?? "",
+                                              entry: chargeEntries,
+                                              isLeaseAdded: true,
+                                            ),
+                                            cosignerData: CosignerData(
+                                                cosignerId: firstCosigner?['c_id'],
+                                                cosignerFirstName:
+                                                firstCosigner?['firstName'] ?? '',
+                                                cosignerLastName:
+                                                firstCosigner?['lastName'] ?? '',
+                                                cosignerPhoneNumber:
+                                                firstCosigner?['phoneNumber'] ??
+                                                    '',
+                                                cosignerEmail:
+                                                firstCosigner?['email'] ?? '',
+                                                cosignerAlternativeEmail:
+                                                firstCosigner?['alterEmail'] ??
+                                                    '',
+                                                cosignerAddress:
+                                                firstCosigner?['streetAddress'] ??
+                                                    '',
+                                                cosignerCity:
+                                                firstCosigner?['city'] ?? '',
+                                                cosignerCountry:
+                                                firstCosigner?['country'] ?? '',
+                                                cosignerPostalcode:
+                                                firstCosigner?['postalCode'] ??
+                                                    '',
+                                                adminId: adminId),
+                                            leaseData: LeaseData(
+                                              leaseId: widget.leaseId,
+                                              adminId: adminId ?? "",
+                                              companyName: companyName,
+                                              endDate: reverseFormatDate(endDateController.text),
+                                              entry: chargeEntries,
+                                              leaseAmount: rentAmount.text,
+                                              leaseType: _selectedLeaseType ?? "",
+                                              rentalId: renderId,
+                                              startDate: reverseFormatDate(startDateController.text),
+                                              tenantId: tenantDataList
+                                                  .map((tenant) =>
+                                              tenant.tenantId ?? '')
+                                                  .toList(),
+                                              tenantResidentStatus: false,
+                                              unitId: _selectedUnit,
+                                              // memo: rentMemo.text,
+                                              uploadedFile: _uploadedFileNames,
+                                            ),
+                                            tenantData: tenantDataList,
+                                          );
 
-                                        print('valid');
+                                          updateLeaseAndNavigate(lease);
+
+                                          print('valid');
+                                        }
 
                                       } else {
                                         SharedPreferences prefs =
@@ -4375,6 +5156,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                         //print( _selectedRent ??"");
                                         print(_selectedRent);
                                       }
+
+
                                     },
                                     child: const Text(
                                       'Edit Lease',
