@@ -10,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -215,10 +216,7 @@ class _DashboardState extends State<Dashboard> {
         appBar: widget_302.App_Bar(context: context),
         body: Center(
             child: loading
-                ?  SpinKitSpinningLines(
-              color: blueColor,
-              size: 50.0,
-            )
+                ?    Lottie.asset('assets/images/loader.json',height: 150,width: 100)
                 : ListView(
               children: [
                 // Material(

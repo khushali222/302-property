@@ -1878,7 +1878,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                           MediaQuery.of(context).size.height *
                                               0.01),
                                 //  if (selectedOwner != null)
-                                    Padding(
+                                 /*   Padding(
                                       padding: const EdgeInsets.only(left: 13),
                                       child: Column(
                                         crossAxisAlignment:
@@ -2114,7 +2114,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                         ),
                                       ),
                                     ],
-                                  ),
+                                  ),*/
                                   SizedBox(
                                       height:
                                           MediaQuery.of(context).size.height *

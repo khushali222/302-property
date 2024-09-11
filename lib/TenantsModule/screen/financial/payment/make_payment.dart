@@ -948,85 +948,96 @@ class _MakePaymentState extends State<MakePayment> {
                                                         fontSize: 16,
                                                         fontWeight: FontWeight.bold,
                                                         color: Colors.grey)),
-                                                tenants.isEmpty
-                                                    ? const Center(
-                                                  child: SpinKitFadingCircle(
-                                                    color: Colors.black,
-                                                    size: 50.0,
-                                                  ),
-                                                )
-                                                    : DropdownButtonHideUnderline(
-                                                  child: DropdownButton2<String>(
-                                                    isExpanded: true,
-                                                    hint: const Text('Select Lease'),
-                                                    value: selectedTenantId,
-                                                    items: tenants.map((tenant) {
-                                                      return DropdownMenuItem<String>(
-                                                        value: tenant['tenant_id'],
-                                                        child: Text("${tenant['tenant_name']!} (${tenant['status']})"),
-                                                      );
-                                                    }).toList(),
-                                                    // onChanged: (value) {
-                                                    //   setState(() {
-                                                    //     selectedTenantId = value;
-                                                    //     fetchChargesForSelectedTenant(widget.tenantId,);
-                                                    //    // ChargeRepositorys().fetchChargesTable(widget.leaseId, widget.tenantId);
-                                                    //   });
-                                                    //   print(
-                                                    //       'Selected tenant_id: $selectedTenantId');
-                                                    // },
-                                                    onChanged: (value) async {
-                                                      setState(() {
-                                                        selectedTenantId = value;
-                                                        fetchChargesForSelectedTenant(
-                                                            value!);
-                                                      });
-                                                      // await fetchcreditcard(value!);
-                                                      print(
-                                                          'Selected tenant_id: $selectedTenantId');
+                                                Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: FormField<String>(
+                                                    validator: (value) {
+                                                      if (selectedTenantId == null ) {
+                                                        return 'Please select a lease';
+                                                      }
+                                                      return null;
                                                     },
-                                                    buttonStyleData: ButtonStyleData(
-                                                      height: 55,
-                                                      width: 250,
-                                                      padding: const EdgeInsets.only(
-                                                          left: 14, right: 14),
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                        BorderRadius.circular(6),
-                                                        color: Colors.white,
-                                                      ),
-                                                      elevation: 2,
-                                                    ),
-                                                    iconStyleData: const IconStyleData(
-                                                      icon: Icon(
-                                                        Icons.arrow_drop_down,
-                                                      ),
-                                                      iconSize: 24,
-                                                      iconEnabledColor: Color(0xFFb0b6c3),
-                                                      iconDisabledColor: Colors.grey,
-                                                    ),
-                                                    dropdownStyleData: DropdownStyleData(
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                        BorderRadius.circular(6),
-                                                        color: Colors.white,
-                                                      ),
-                                                      scrollbarTheme: ScrollbarThemeData(
-                                                        radius: const Radius.circular(6),
-                                                        thickness:
-                                                        MaterialStateProperty.all(6),
-                                                        thumbVisibility:
-                                                        MaterialStateProperty.all(true),
-                                                      ),
-                                                    ),
-                                                    menuItemStyleData:
-                                                    const MenuItemStyleData(
-                                                      height: 45,
-                                                      padding: EdgeInsets.only(
-                                                          left: 14, right: 14),
-                                                    ),
+                                                    builder: (FormFieldState<String> state) {
+                                                      return Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          tenants.isEmpty
+                                                              ? const Center(
+                                                            child: SpinKitFadingCircle(
+                                                              color: Colors.black,
+                                                              size: 50.0,
+                                                            ),
+                                                          )
+                                                              : DropdownButtonHideUnderline(
+                                                            child: DropdownButton2<String>(
+                                                              isExpanded: true,
+                                                              hint: const Text('Select Lease'),
+                                                              value: selectedTenantId,
+                                                              items: tenants.map((tenant) {
+                                                                return DropdownMenuItem<String>(
+                                                                  value: tenant['tenant_id'],
+                                                                  child: Text(
+                                                                      "${tenant['tenant_name']!} (${tenant['status']})"),
+                                                                );
+                                                              }).toList(),
+                                                              onChanged: (value) async {
+                                                                setState(() {
+                                                                  selectedTenantId = value;
+                                                                  fetchChargesForSelectedTenant(value!);
+                                                                  state.didChange(value); // Notify FormField of change
+                                                                });
+                                                                state.reset();
+                                                                print('Selected tenant_id: $selectedTenantId');
+                                                              },
+                                                              buttonStyleData: ButtonStyleData(
+                                                                height: 55,
+                                                                width: 250,
+                                                                padding: const EdgeInsets.only(left: 14, right: 14),
+                                                                decoration: BoxDecoration(
+                                                                  borderRadius: BorderRadius.circular(6),
+                                                                  color: Colors.white,
+                                                                ),
+                                                                elevation: 2,
+                                                              ),
+                                                              iconStyleData: const IconStyleData(
+                                                                icon: Icon(
+                                                                  Icons.arrow_drop_down,
+                                                                ),
+                                                                iconSize: 24,
+                                                                iconEnabledColor: Color(0xFFb0b6c3),
+                                                                iconDisabledColor: Colors.grey,
+                                                              ),
+                                                              dropdownStyleData: DropdownStyleData(
+                                                                decoration: BoxDecoration(
+                                                                  borderRadius: BorderRadius.circular(6),
+                                                                  color: Colors.white,
+                                                                ),
+                                                                scrollbarTheme: ScrollbarThemeData(
+                                                                  radius: const Radius.circular(6),
+                                                                  thickness: MaterialStateProperty.all(6),
+                                                                  thumbVisibility: MaterialStateProperty.all(true),
+                                                                ),
+                                                              ),
+                                                              menuItemStyleData: const MenuItemStyleData(
+                                                                height: 45,
+                                                                padding: EdgeInsets.only(left: 14, right: 14),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          if (state.hasError)
+                                                            Padding(
+                                                              padding: const EdgeInsets.only(top: 5),
+                                                              child: Text(
+                                                                state.errorText ?? '',
+                                                                style: const TextStyle(color: Colors.red, fontSize: 12),
+                                                              ),
+                                                            ),
+                                                        ],
+                                                      );
+                                                    },
                                                   ),
                                                 ),
+
                                               ],
                                             ),
                                           ),
@@ -1101,6 +1112,11 @@ class _MakePaymentState extends State<MakePayment> {
                                       ),
 
                                       const SizedBox(height: 8),
+                                      const Text('Payment Method',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey)),
                                       const SizedBox(
                                         height: 12,
                                       ),
@@ -1710,212 +1726,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                // isLoading
-                                //     ? const Center(
-                                //   child: SpinKitFadingCircle(
-                                //     color: Colors.black,
-                                //     size: 50.0,
-                                //   ),
-                                // )
-                                //     : hasError
-                                //     ? const Center(child: Text('Failed to load data'))
-                                //     : Padding(
-                                //   padding: const EdgeInsets.only(left: 8, right: 8),
-                                //   child: Table(
-                                //     border: TableBorder.all(width: 1),
-                                //     columnWidths: const {
-                                //       0: FlexColumnWidth(2),
-                                //       1: FlexColumnWidth(2),
-                                //       2: FlexColumnWidth(1),
-                                //     },
-                                //     children: [
-                                //       const TableRow(children: [
-                                //         Padding(
-                                //           padding: EdgeInsets.all(8.0),
-                                //           child: Center(
-                                //             child: Text('Account',
-                                //                 style: TextStyle(
-                                //                     color: Color.fromRGBO(21, 43, 83, 1),
-                                //                     fontWeight: FontWeight.bold)),
-                                //           ),
-                                //         ),
-                                //         Padding(
-                                //           padding: EdgeInsets.all(8.0),
-                                //           child: Center(
-                                //             child: Text('Amount',
-                                //                 style: TextStyle(
-                                //                     color: Color.fromRGBO(21, 43, 83, 1),
-                                //                     fontWeight: FontWeight.bold)),
-                                //           ),
-                                //         ),
-                                //         Padding(
-                                //           padding: EdgeInsets.all(8.0),
-                                //           child: Center(
-                                //             child: Text('Actions',
-                                //                 style: TextStyle(
-                                //                     color: Color.fromRGBO(21, 43, 83, 1),
-                                //                     fontWeight: FontWeight.bold)),
-                                //           ),
-                                //         ),
-                                //       ]),
-                                //       ...rows.asMap().entries.map((entry) {
-                                //         int index = entry.key;
-                                //         Map<String,dynamic> row = entry.value;
-                                //         print(row['account']);
-                                //         print(row);
-                                //         return TableRow(children: [
-                                //           Padding(
-                                //             padding: const EdgeInsets.all(8.0),
-                                //             child: DropdownButtonHideUnderline(
-                                //               child: DropdownButton2<String>(
-                                //                 isExpanded: true,
-                                //                 value: row['account'],
-                                //                 items: [
-                                //                   ...categorizedData.entries.expand((entry) {
-                                //                     return [
-                                //                       DropdownMenuItem<String>(
-                                //                         enabled: false,
-                                //                         child: Text(
-                                //                           entry.key,
-                                //                           style: const TextStyle(
-                                //                             fontWeight: FontWeight.bold,
-                                //                             color: Color.fromRGBO(21, 43, 81, 1),
-                                //                           ),
-                                //                         ),
-                                //                       ),
-                                //                       ...entry.value.map((item) {
-                                //                         return DropdownMenuItem<String>(
-                                //                           value: item,
-                                //                           child: Padding(
-                                //                             padding: const EdgeInsets.only(left: 16.0),
-                                //                             child: Text(
-                                //                               item,
-                                //                               style: const TextStyle(
-                                //                                 color: Colors.black,
-                                //                                 fontWeight: FontWeight.w400,
-                                //                               ),
-                                //                             ),
-                                //                           ),
-                                //                         );
-                                //                       }).toList(),
-                                //                     ];
-                                //                   }).toList(),
-                                //                 ],
-                                //                 onChanged: (value) {
-                                //                   dynamic? chargeType;
-                                //                   for (var entry in categorizedData.entries) {
-                                //                     if (entry.value.contains(value)) {
-                                //                       chargeType = entry.key;
-                                //                       break;
-                                //                     }
-                                //                   }
-                                //                   print(value);
-                                //                   setState(() {
-                                //                     rows[index]['account'] = value;
-                                //                     rows[index]['charge_type'];
-                                //                   });
-                                //                 },
-                                //                 buttonStyleData: ButtonStyleData(
-                                //                   height: 45,
-                                //                   width: 220,
-                                //                   padding: const EdgeInsets.only(left: 14, right: 14),
-                                //                   decoration: BoxDecoration(
-                                //                     borderRadius: BorderRadius.circular(6),
-                                //                     color: Colors.white,
-                                //                   ),
-                                //                   elevation: 2,
-                                //                 ),
-                                //                 iconStyleData: const IconStyleData(
-                                //                   icon: Icon(Icons.arrow_drop_down),
-                                //                   iconSize: 24,
-                                //                   iconEnabledColor: Color(0xFFb0b6c3),
-                                //                   iconDisabledColor: Colors.grey,
-                                //                 ),
-                                //                 dropdownStyleData: DropdownStyleData(
-                                //                   width: 250,
-                                //                   decoration: BoxDecoration(
-                                //                     borderRadius: BorderRadius.circular(6),
-                                //                     color: Colors.white,
-                                //                   ),
-                                //                   scrollbarTheme: ScrollbarThemeData(
-                                //                     radius: const Radius.circular(6),
-                                //                     thickness: MaterialStateProperty.all(6),
-                                //                     thumbVisibility: MaterialStateProperty.all(true),
-                                //                   ),
-                                //                 ),
-                                //                 hint: const Text('Select an account'),
-                                //               ),
-                                //             ),
-                                //           ),
-                                //           Padding(
-                                //             padding: const EdgeInsets.all(8.0),
-                                //             child: TextField(
-                                //               keyboardType: TextInputType.number,
-                                //               onChanged: (value) => updateAmount(index, value),
-                                //               decoration: const InputDecoration(
-                                //                 border: OutlineInputBorder(),
-                                //                 hintText: 'Enter amount',
-                                //               ),
-                                //              // controller: controllers[index],
-                                //             ),
-                                //           ),
-                                //           Padding(
-                                //             padding: const EdgeInsets.all(8.0),
-                                //             child: IconButton(
-                                //               icon: const Icon(Icons.delete, color: Colors.red),
-                                //               onPressed: () => deleteRow(index),
-                                //             ),
-                                //           ),
-                                //         ]);
-                                //       }).toList(),
-                                //       TableRow(children: [
-                                //         const
-                                //         Padding(
-                                //           padding: EdgeInsets.all(8.0),
-                                //           child: Text('Total', style: TextStyle(fontWeight: FontWeight.bold)),
-                                //         ),
-                                //         Padding(
-                                //           padding: const EdgeInsets.all(8.0),
-                                //           child: Text('\$${totalAmount.toStringAsFixed(2)}'),
-                                //         ),
-                                //         const SizedBox.shrink(),
-                                //       ]),
-                                //       TableRow(children: [
-                                //         Padding(
-                                //           padding: const EdgeInsets.all(8.0),
-                                //           child: Container(
-                                //             height: 34,
-                                //             decoration: BoxDecoration(
-                                //               color: Colors.white,
-                                //               border: Border.all(width: 1),
-                                //               borderRadius: BorderRadius.circular(10.0),
-                                //             ),
-                                //             child: ElevatedButton(
-                                //               style: ElevatedButton.styleFrom(
-                                //                 shape: RoundedRectangleBorder(
-                                //                   borderRadius: BorderRadius.circular(10.0),
-                                //                 ),
-                                //                 elevation: 0,
-                                //                 backgroundColor: Colors.white,
-                                //               ),
-                                //               onPressed: addRow,
-                                //               child: const Text(
-                                //                 'Add Row',
-                                //                 style: TextStyle(
-                                //                   color: Color.fromRGBO(21, 43, 83, 1),
-                                //                 ),
-                                //               ),
-                                //             ),
-                                //           ),
-                                //         ),
-                                //         const SizedBox.shrink(),
-                                //         const SizedBox.shrink(),
-                                //       ]),
-                                //     ],
-                                //   ),
-                                // ),
-                                // SizedBox(height: 15),
-                                // const SizedBox(height: 5),
+
                                 Padding(
                                   padding: const EdgeInsets.all(10.0),
                                   child: Table(
@@ -3150,85 +2961,89 @@ class _MakePaymentState extends State<MakePayment> {
                                             fontSize: 13,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.grey)),
-                                    tenants.isEmpty
-                                        ? const Center(
-                                      child: SpinKitFadingCircle(
-                                        color: Colors.black,
-                                        size: 50.0,
-                                      ),
-                                    )
-                                        : DropdownButtonHideUnderline(
-                                      child: DropdownButton2<String>(
-                                        isExpanded: true,
-                                        hint: const Text('Select Lease'),
-                                        value: selectedTenantId,
-                                        items: tenants.map((tenant) {
-                                          return DropdownMenuItem<String>(
-                                            value: tenant['tenant_id'],
-                                            child: Text("${tenant['tenant_name']!} (${tenant['status']})"),
-                                          );
-                                        }).toList(),
-                                        // onChanged: (value) {
-                                        //   setState(() {
-                                        //     selectedTenantId = value;
-                                        //     fetchChargesForSelectedTenant(widget.tenantId,);
-                                        //    // ChargeRepositorys().fetchChargesTable(widget.leaseId, widget.tenantId);
-                                        //   });
-                                        //   print(
-                                        //       'Selected tenant_id: $selectedTenantId');
-                                        // },
-                                        onChanged: (value) async {
-                                          setState(() {
-                                            selectedTenantId = value;
-                                            fetchChargesForSelectedTenant(
-                                                value!);
-                                          });
-                                          // await fetchcreditcard(value!);
-                                          print(
-                                              'Selected tenant_id: $selectedTenantId');
+                                    Padding(
+                                      padding: const EdgeInsets.all(0),
+                                      child: FormField<String>(
+                                        validator: (value) {
+                                          if (selectedTenantId == null ) {
+                                            return 'Please select a lease';
+                                          }
+                                          return null;
                                         },
-                                        buttonStyleData: ButtonStyleData(
-                                          height: 45,
-                                          width: 250,
-                                          padding: const EdgeInsets.only(
-                                              left: 14, right: 14),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                            BorderRadius.circular(6),
-                                            color: Colors.white,
-                                          ),
-                                          elevation: 2,
-                                        ),
-                                        iconStyleData: const IconStyleData(
-                                          icon: Icon(
-                                            Icons.arrow_drop_down,
-                                          ),
-                                          iconSize: 24,
-                                          iconEnabledColor: Color(0xFFb0b6c3),
-                                          iconDisabledColor: Colors.grey,
-                                        ),
-                                        dropdownStyleData: DropdownStyleData(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                            BorderRadius.circular(6),
-                                            color: Colors.white,
-                                          ),
-                                          scrollbarTheme: ScrollbarThemeData(
-                                            radius: const Radius.circular(6),
-                                            thickness:
-                                            MaterialStateProperty.all(6),
-                                            thumbVisibility:
-                                            MaterialStateProperty.all(true),
-                                          ),
-                                        ),
-                                        menuItemStyleData:
-                                        const MenuItemStyleData(
-                                          height: 45,
-                                          padding: EdgeInsets.only(
-                                              left: 14, right: 14),
-                                        ),
+                                        builder: (FormFieldState<String> state) {
+                                          return Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                             DropdownButtonHideUnderline(
+                                                child: DropdownButton2<String>(
+                                                  isExpanded: true,
+                                                  hint: const Text('Select Lease'),
+                                                  value: selectedTenantId,
+                                                  items: tenants.map((tenant) {
+                                                    return DropdownMenuItem<String>(
+                                                      value: tenant['tenant_id'],
+                                                      child: Text(
+                                                          "${tenant['tenant_name']!} (${tenant['status']})"),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged: (value) async {
+                                                    setState(() {
+                                                      selectedTenantId = value;
+                                                      fetchChargesForSelectedTenant(value!);
+                                                      state.didChange(value); // Notify FormField of change
+                                                    });
+                                                    state.reset();
+                                                    print('Selected tenant_id: $selectedTenantId');
+                                                  },
+                                                  buttonStyleData: ButtonStyleData(
+                                                    height: 55,
+                                                   // width: 250,
+                                                    padding: const EdgeInsets.only(left: 14, right: 14),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(6),
+                                                      color: Colors.white,
+                                                    ),
+                                                    elevation: 2,
+                                                  ),
+                                                  iconStyleData: const IconStyleData(
+                                                    icon: Icon(
+                                                      Icons.arrow_drop_down,
+                                                    ),
+                                                    iconSize: 24,
+                                                    iconEnabledColor: Color(0xFFb0b6c3),
+                                                    iconDisabledColor: Colors.grey,
+                                                  ),
+                                                  dropdownStyleData: DropdownStyleData(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(6),
+                                                      color: Colors.white,
+                                                    ),
+                                                    scrollbarTheme: ScrollbarThemeData(
+                                                      radius: const Radius.circular(6),
+                                                      thickness: MaterialStateProperty.all(6),
+                                                      thumbVisibility: MaterialStateProperty.all(true),
+                                                    ),
+                                                  ),
+                                                  menuItemStyleData: const MenuItemStyleData(
+                                                    height: 45,
+                                                    padding: EdgeInsets.only(left: 14, right: 14),
+                                                  ),
+                                                ),
+                                              ),
+                                              if (state.hasError)
+                                                Padding(
+                                                  padding: const EdgeInsets.only(top: 5),
+                                                  child: Text(
+                                                    state.errorText ?? '',
+                                                    style: const TextStyle(color: Colors.red, fontSize: 12),
+                                                  ),
+                                                ),
+                                            ],
+                                          );
+                                        },
                                       ),
                                     ),
+
                                     const SizedBox(
                                       height: 8,
                                     ),
@@ -3253,77 +3068,98 @@ class _MakePaymentState extends State<MakePayment> {
                                       onChanged2: (value) => validateAmounts(),
                                     ),
                                     const SizedBox(height: 8),
+                                    const Text('Payment Method',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey)),
                                     const SizedBox(
                                       height: 12,
                                     ),
-                                    DropdownButtonHideUnderline(
-                                      child: DropdownButton2<String>(
-                                        isExpanded: true,
-                                        hint: const Text('Select Method'),
-                                        value: _selectedPaymentMethod,
-                                        items: _paymentMethods.map((method) {
-                                          return DropdownMenuItem<String>(
-                                            value: method,
-                                            child: Text(method),
-                                          );
-                                        }).toList(),
-                                        onChanged: (String? newValue) {
-                                          // setState(() {
-                                          //   _selectedPaymentMethod = newValue;
-                                          //   //_selectedPaymentMethod = addRow();
-                                          //   if(_selectedPaymentMethod == 'Card')
-                                          //   addRow();
-                                          //   if(_selectedPaymentMethod == 'Check')
-                                          //    Text("hello");
-                                          //
-                                          // });
-                                          setState(() {
-                                            _selectedPaymentMethod = newValue;
-                                            AddFields();
-                                          });
-                                          print(_selectedPaymentMethod == "Card");
-                                          print(
-                                              'Selected payment method: $_selectedPaymentMethod');
-                                          surge_count();
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: FormField<String>(
+                                        validator: (value) {
+                                          if (_selectedPaymentMethod == null ) {
+                                            return 'Please select a payment method';
+                                          }
+                                          return null;
                                         },
-                                        buttonStyleData: ButtonStyleData(
-                                          height: 45,
-                                          width: 200,
-                                          padding: const EdgeInsets.only(
-                                              left: 14, right: 14),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(6),
-                                            color: Colors.white,
-                                          ),
-                                          elevation: 2,
-                                        ),
-                                        iconStyleData: const IconStyleData(
-                                          icon: Icon(
-                                            Icons.arrow_drop_down,
-                                          ),
-                                          iconSize: 24,
-                                          iconEnabledColor: Color(0xFFb0b6c3),
-                                          iconDisabledColor: Colors.grey,
-                                        ),
-                                        dropdownStyleData: DropdownStyleData(
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(6),
-                                            color: Colors.white,
-                                          ),
-                                          scrollbarTheme: ScrollbarThemeData(
-                                            radius: const Radius.circular(6),
-                                            thickness: MaterialStateProperty.all(6),
-                                            thumbVisibility:
-                                            MaterialStateProperty.all(true),
-                                          ),
-                                        ),
-                                        menuItemStyleData: const MenuItemStyleData(
-                                          height: 40,
-                                          padding:
-                                          EdgeInsets.only(left: 14, right: 14),
-                                        ),
+                                        builder: (FormFieldState<String> state) {
+                                          return Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              DropdownButtonHideUnderline(
+                                                child: DropdownButton2<String>(
+                                                  isExpanded: true,
+                                                  hint: const Text('Select Method'),
+                                                  value: _selectedPaymentMethod,
+                                                  items: _paymentMethods.map((method) {
+                                                    return DropdownMenuItem<String>(
+                                                      value: method,
+                                                      child: Text(method),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged: (String? newValue) {
+                                                    setState(() {
+                                                      _selectedPaymentMethod = newValue;
+                                                      AddFields(); // Your custom method
+                                                      state.didChange(newValue); // Notify form field of change
+                                                    });
+                                                    state.reset();
+                                                    print(_selectedPaymentMethod == "Card");
+                                                    print('Selected payment method: $_selectedPaymentMethod');
+                                                    surge_count(); // Your custom method
+                                                  },
+                                                  buttonStyleData: ButtonStyleData(
+                                                    height: 45,
+                                                    width: 200,
+                                                    padding: const EdgeInsets.only(left: 14, right: 14),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(6),
+                                                      color: Colors.white,
+                                                    ),
+                                                    elevation: 2,
+                                                  ),
+                                                  iconStyleData: const IconStyleData(
+                                                    icon: Icon(
+                                                      Icons.arrow_drop_down,
+                                                    ),
+                                                    iconSize: 24,
+                                                    iconEnabledColor: Color(0xFFb0b6c3),
+                                                    iconDisabledColor: Colors.grey,
+                                                  ),
+                                                  dropdownStyleData: DropdownStyleData(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(6),
+                                                      color: Colors.white,
+                                                    ),
+                                                    scrollbarTheme: ScrollbarThemeData(
+                                                      radius: const Radius.circular(6),
+                                                      thickness: MaterialStateProperty.all(6),
+                                                      thumbVisibility: MaterialStateProperty.all(true),
+                                                    ),
+                                                  ),
+                                                  menuItemStyleData: const MenuItemStyleData(
+                                                    height: 40,
+                                                    padding: EdgeInsets.only(left: 14, right: 14),
+                                                  ),
+                                                ),
+                                              ),
+                                              if (state.hasError)
+                                                Padding(
+                                                  padding: const EdgeInsets.only(top: 5),
+                                                  child: Text(
+                                                    state.errorText ?? '',
+                                                    style: const TextStyle(color: Colors.red, fontSize: 12),
+                                                  ),
+                                                ),
+                                            ],
+                                          );
+                                        },
                                       ),
                                     ),
+
                                     const SizedBox(
                                       height: 12,
                                     ),
@@ -3334,268 +3170,281 @@ class _MakePaymentState extends State<MakePayment> {
                                           color: Colors.blueGrey[50],
                                           borderRadius: BorderRadius.circular(8),
                                         ),
-                                        child: Column(
-                                          children: [
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            const Row(
-                                              children: [
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Text(
-                                                  "Cards",
-                                                  style: TextStyle(
-                                                      fontWeight: FontWeight.bold),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(
-                                              height: 5,
-                                            ),
-                                            cardDetails.isEmpty
-                                                ? Container(
-                                              child: Center(
-                                                  child: Text(
-                                                      'No Cards Avaiable')),
-                                            )
-                                                : SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: DataTable(
-                                                dataRowHeight: 70,
-                                                horizontalMargin: 0.0,
-                                                columnSpacing: 30.0,
-                                                columns: const [
-                                                  DataColumn(
-                                                    label: Text(
-                                                      'Select',
-                                                      style: TextStyle(
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 81, 1)),
-                                                    ),
+                                        child:    FormField<String>(
+                                            validator: (value) {
+                                              if (selectedcardindex == null || _selectedPaymentMethod!.isEmpty) {
+                                                return 'Please select a card';
+                                              }
+                                              return null;
+                                            },
+                                            builder: (FormFieldState<String> state) {
+                                              return Column(
+                                                children: [
+                                                  const SizedBox(
+                                                    height: 10,
                                                   ),
-                                                  DataColumn(
-                                                    label: Text(
-                                                      'Card Number',
-                                                      style: TextStyle(
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 81, 1)),
-                                                    ),
-                                                  ),
-                                                  DataColumn(
-                                                    label: Text(
-                                                      'Card Type',
-                                                      style: TextStyle(
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 81, 1)),
-                                                    ),
-                                                  ),
-                                                ],
-                                                rows: cardDetails
-                                                    .asMap()
-                                                    .entries
-                                                    .map((entry) {
-                                                  int index = entry.key;
-                                                  BillingData item =
-                                                      entry.value;
-                                                  String month = item.ccExp!
-                                                      .substring(0, 2);
-                                                  String year = item.ccExp!
-                                                      .substring(2, 4);
-                                                  //  print(month);
-                                                  String currentMonth =
-                                                  DateTime.now()
-                                                      .month
-                                                      .toString()
-                                                      .padLeft(2, '0');
-
-                                                  String currentYear =
-                                                  DateTime.now()
-                                                      .year
-                                                      .toString()
-                                                      .substring(2);
-
-                                                  String currentMonthYear =
-                                                      currentMonth +
-                                                          currentYear;
-                                                  /* print(
-                                                          'Current: $currentMonthYear');*/
-
-                                                  String expMonthYear =
-                                                  item.ccExp!;
-                                                  String expMonth = expMonthYear
-                                                      .substring(0, 2);
-                                                  String expYear = expMonthYear
-                                                      .substring(2, 4);
-                                                  bool isExpired = int.parse(
-                                                      expYear) <
-                                                      int.parse(
-                                                          currentYear) ||
-                                                      (int.parse(expYear) ==
-                                                          int.parse(
-                                                              currentYear) &&
-                                                          int.parse(expMonth) <
-                                                              int.parse(
-                                                                  currentMonth));
-
-                                                  /* print(
-                                                          'Expiration date passed: $isExpired');
-            */
-                                                  return DataRow(cells: [
-                                                    DataCell(
-                                                      isExpired == true
-                                                          ? const Text(
-                                                          'Expired',
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .red))
-                                                          : Checkbox(
-                                                        value:
-                                                        selectedcardindex ==
-                                                            index
-                                                            ? true
-                                                            : false,
-                                                        onChanged: (bool?
-                                                        value) async {
-                                                          setState(() {
-                                                            selectedcardindex =
-                                                                index;
-                                                          });
-                                                          await fetchSurcharge();
-                                                        },
+                                                  const Row(
+                                                    children: [
+                                                      SizedBox(
+                                                        width: 10,
                                                       ),
-                                                    ),
-                                                    DataCell(Text(
-                                                      item.ccNumber!,
-                                                      style: const TextStyle(
-                                                          fontSize: 13,
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 81, 1)),
-                                                    )),
-                                                    DataCell(Column(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .center,
-                                                      children: [
-                                                        const SizedBox(
-                                                            height: 4),
-                                                        _buildLogosBlock(
-                                                            item.ccType!),
-                                                        const SizedBox(
-                                                            height: 4),
-                                                        Text(
-                                                          '${item.binResult} CARD',
-                                                          style:
-                                                          const TextStyle(
-                                                              fontSize: 12,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                  21,
-                                                                  43,
-                                                                  81,
-                                                                  1)),
+                                                      Text(
+                                                        "Cards",
+                                                        style: TextStyle(
+                                                            fontWeight: FontWeight.bold),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  cardDetails.isEmpty
+                                                      ? Container(
+                                                    child: Center(
+                                                        child: Text(
+                                                            'No Cards Avaiable')),
+                                                  )
+                                                      : SingleChildScrollView(
+                                                    scrollDirection: Axis.horizontal,
+                                                    child: DataTable(
+                                                      dataRowHeight: 75,
+                                                      horizontalMargin: 0.0,
+                                                      columnSpacing: 40.0,
+                                                      columns: const [
+                                                        DataColumn(
+                                                          label: Text(
+                                                            'Select',
+                                                            style: TextStyle(
+                                                                color: Color.fromRGBO(
+                                                                    21, 43, 81, 1)),
+                                                          ),
+                                                        ),
+                                                        DataColumn(
+                                                          label: Text(
+                                                            'Card Number',
+                                                            style: TextStyle(
+                                                                color: Color.fromRGBO(
+                                                                    21, 43, 81, 1)),
+                                                          ),
+                                                        ),
+                                                        DataColumn(
+                                                          label: Text(
+                                                            'Card Type',
+                                                            style: TextStyle(
+                                                                color: Color.fromRGBO(
+                                                                    21, 43, 81, 1)),
+                                                          ),
                                                         ),
                                                       ],
-                                                    )),
-                                                  ]);
-                                                }).toList(),
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(16.0),
-                                              child: Row(
-                                                children: [
-                                                  if (surCharge != null)
-                                                  // ignore: unrelated_type_equality_checks
-                                                    Text(
-                                                      '${cardDetails[selectedcardindex!].binResult} card transactions will charge $surCharge%',
-                                                      style: const TextStyle(
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 81, 1),
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                          FontWeight.w500),
-                                                    ),
-                                                ],
-                                              ),
-                                            ),
-                                            Row(
-                                              children: [
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                GestureDetector(
-                                                  onTap: () async {
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                AddCard(
+                                                      rows: cardDetails
+                                                          .asMap()
+                                                          .entries
+                                                          .map((entry) {
+                                                        int index = entry.key;
+                                                        BillingData item =
+                                                            entry.value;
+                                                        String month = item.ccExp!
+                                                            .substring(0, 2);
+                                                        String year = item.ccExp!
+                                                            .substring(2, 4);
+                                                        //  print(month);
+                                                        String currentMonth =
+                                                        DateTime.now()
+                                                            .month
+                                                            .toString()
+                                                            .padLeft(2, '0');
 
-                                                                )));
-                                                  },
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                    BorderRadius.circular(5.0),
-                                                    child: Container(
-                                                      height: MediaQuery.of(context)
-                                                          .size
-                                                          .height *
-                                                          .04,
-                                                      // width: MediaQuery.of(context).size.width * .36,
-                                                      width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                          .2,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                        BorderRadius.circular(
-                                                            5.0),
-                                                        color: const Color.fromRGBO(
-                                                            21, 43, 81, 1),
-                                                        boxShadow: [
-                                                          const BoxShadow(
-                                                            color: Colors.grey,
-                                                            offset: Offset(
-                                                                0.0, 1.0), //(x,y)
-                                                            blurRadius: 6.0,
+                                                        String currentYear =
+                                                        DateTime.now()
+                                                            .year
+                                                            .toString()
+                                                            .substring(2);
+
+                                                        String currentMonthYear =
+                                                            currentMonth +
+                                                                currentYear;
+                                                        /* print(
+                                                          'Current: $currentMonthYear');*/
+
+                                                        String expMonthYear =
+                                                        item.ccExp!;
+                                                        String expMonth = expMonthYear
+                                                            .substring(0, 2);
+                                                        String expYear = expMonthYear
+                                                            .substring(2, 4);
+                                                        bool isExpired = int.parse(
+                                                            expYear) <
+                                                            int.parse(
+                                                                currentYear) ||
+                                                            (int.parse(expYear) ==
+                                                                int.parse(
+                                                                    currentYear) &&
+                                                                int.parse(expMonth) <
+                                                                    int.parse(
+                                                                        currentMonth));
+
+                                                        /* print(
+                                                          'Expiration date passed: $isExpired');
+                                      */
+                                                        return DataRow(cells: [
+                                                          DataCell(
+                                                            isExpired == true
+                                                                ? const Text(
+                                                                'Expired',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .red))
+                                                                : Checkbox(
+                                                              value:
+                                                              selectedcardindex ==
+                                                                  index
+                                                                  ? true
+                                                                  : false,
+                                                              onChanged: (bool?
+                                                              value) async {
+                                                                setState(() {
+                                                                  state.didChange(index.toString());
+                                                                  selectedcardindex =
+                                                                      index;
+                                                                });
+                                                                state.reset();
+                                                                await fetchSurcharge();
+                                                              },
+                                                            ),
                                                           ),
-                                                        ],
-                                                      ),
-                                                      child: Center(
-                                                        child: isLoading
-                                                            ? const SpinKitFadingCircle(
-                                                          color: Colors.white,
-                                                          size: 25.0,
-                                                        )
-                                                            : Text(
-                                                          "Add Card",
-                                                          style: TextStyle(
-                                                              color:
-                                                              Colors.white,
-                                                              fontWeight:
-                                                              FontWeight
-                                                                  .bold,
-                                                              fontSize: MediaQuery.of(
-                                                                  context)
-                                                                  .size
-                                                                  .width *
-                                                                  .025),
-                                                        ),
-                                                      ),
+                                                          DataCell(Text(
+                                                            item.ccNumber!,
+                                                            style: const TextStyle(
+                                                                fontSize: 13,
+                                                                color: Color.fromRGBO(
+                                                                    21, 43, 81, 1)),
+                                                          )),
+                                                          DataCell(Column(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                            children: [
+                                                              const SizedBox(
+                                                                  height: 4),
+                                                              _buildLogosBlock(
+                                                                  item.ccType!),
+                                                              const SizedBox(
+                                                                  height: 4),
+                                                              Text(
+                                                                '${item.binResult} CARD',
+                                                                style:
+                                                                const TextStyle(
+                                                                    fontSize: 12,
+                                                                    color: Color
+                                                                        .fromRGBO(
+                                                                        21,
+                                                                        43,
+                                                                        81,
+                                                                        1)),
+                                                              ),
+                                                            ],
+                                                          )),
+                                                        ]);
+                                                      }).toList(),
                                                     ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                          ],
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.all(16.0),
+                                                    child: Row(
+                                                      children: [
+                                                        if (surCharge != null)
+                                                        // ignore: unrelated_type_equality_checks
+                                                          Text(
+                                                            '${cardDetails[selectedcardindex!].binResult} card transactions will charge $surCharge%',
+                                                            style: const TextStyle(
+                                                                color: Color.fromRGBO(
+                                                                    21, 43, 81, 1),
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                FontWeight.w500),
+                                                          ),
+                                                        if(state.hasError)
+                                                          Padding(
+                                                            padding: const EdgeInsets.only(top: 5),
+                                                            child: Text(
+                                                              state.errorText ?? '',
+                                                              style: const TextStyle(color: Colors.red, fontSize: 12),
+                                                            ),
+                                                          ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      const SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      GestureDetector(
+                                                        onTap: () async {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder: (context) =>
+                                                                      AddCard(
+
+                                                                      )));
+                                                        },
+                                                        child: ClipRRect(
+                                                          borderRadius:
+                                                          BorderRadius.circular(5.0),
+                                                          child: Container(
+                                                            height: MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                                .04,
+                                                            // width: MediaQuery.of(context).size.width * .36,
+                                                            width:MediaQuery.of(context).size.width < 500 ? 80 :90,
+                                                            decoration: BoxDecoration(
+                                                              borderRadius:
+                                                              BorderRadius.circular(
+                                                                  5.0),
+                                                              color: const Color.fromRGBO(
+                                                                  21, 43, 81, 1),
+                                                              boxShadow: [
+                                                                const BoxShadow(
+                                                                  color: Colors.grey,
+                                                                  offset: Offset(
+                                                                      0.0, 1.0), //(x,y)
+                                                                  blurRadius: 6.0,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            child: Center(
+                                                              child: isLoading
+                                                                  ? const SpinKitFadingCircle(
+                                                                color: Colors.white,
+                                                                size: 25.0,
+                                                              )
+                                                                  : Text(
+                                                                "Add Card",
+                                                                style: TextStyle(
+                                                                    color:
+                                                                    Colors.white,
+                                                                    fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 :17),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                ],
+                                              );
+                                            }
                                         ),
                                       ),
                                       const SizedBox(height: 15),
@@ -3671,75 +3520,246 @@ class _MakePaymentState extends State<MakePayment> {
                                         ),
                                       ),
                                       SizedBox(height: 10),
-                                      Padding(
-                                        padding: const EdgeInsets.all(4.0),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton2<String>(
-                                            isExpanded: true,
-                                            hint: Text('Select Account'),
-                                            value: selectedAccount,
-                                            items: _selecttype.map((method) {
-                                              return DropdownMenuItem<String>(
-                                                value: method,
-                                                child: Text(method),
-                                              );
-                                            }).toList(),
-                                            onChanged: (String? newValue) {
-                                              // setState(() {
-                                              //   _selectedPaymentMethod = newValue;
-                                              //   //_selectedPaymentMethod = addRow();
-                                              //   if(_selectedPaymentMethod == 'Card')
-                                              //   addRow();
-                                              //   if(_selectedPaymentMethod == 'Check')
-                                              //    Text("hello");
-                                              //
-                                              // });
-                                              setState(() {
-                                                selectedAccount = newValue;
-                                              });
-                                              // print();
-                                              print(
-                                                  'Selected payment method: $selectedAccount ${selectedAccount == "Card"}');
-                                            },
-                                            buttonStyleData: ButtonStyleData(
-                                              height: 45,
-                                              width: 250,
-                                              padding: const EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(6),
-                                                color: Colors.white,
-                                              ),
-                                              elevation: 2,
-                                            ),
-                                            iconStyleData: const IconStyleData(
-                                              icon: Icon(
-                                                Icons.arrow_drop_down,
-                                              ),
-                                              iconSize: 24,
-                                              iconEnabledColor: Color(0xFFb0b6c3),
-                                              iconDisabledColor: Colors.grey,
-                                            ),
-                                            dropdownStyleData: DropdownStyleData(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(6),
-                                                color: Colors.white,
-                                              ),
-                                              scrollbarTheme: ScrollbarThemeData(
-                                                radius: const Radius.circular(6),
-                                                thickness: MaterialStateProperty.all(6),
-                                                thumbVisibility:
-                                                MaterialStateProperty.all(true),
-                                              ),
-                                            ),
-                                            menuItemStyleData: const MenuItemStyleData(
-                                              height: 40,
-                                              padding:
-                                              EdgeInsets.only(left: 14, right: 14),
+                                      if(MediaQuery.of(context).size.width < 500 )
+                                        Padding(
+                                          padding: const EdgeInsets.all(4.0),
+                                          child: DropdownButtonHideUnderline(
+                                            child: FormField<String>(
+                                              validator: (value) {
+                                                if (selectedAccount == null || selectedAccount!.isEmpty) {
+                                                  return 'Please select an account';
+                                                }
+                                                return null;
+                                              },
+                                              builder: (FormFieldState<String> state) {
+                                                return Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    DropdownButton2<String>(
+                                                      isExpanded: true,
+                                                      hint: const Text('Select Account'),
+                                                      value: selectedAccount,
+                                                      items: _selecttype.map((method) {
+                                                        return DropdownMenuItem<String>(
+                                                          value: method,
+                                                          child: Text(method),
+                                                        );
+                                                      }).toList(),
+                                                      onChanged: (String? newValue) {
+                                                        setState(() {
+                                                          selectedAccount = newValue;
+                                                        });
+                                                        state.reset();
+                                                        print(
+                                                            'Selected account: $selectedAccount ${selectedAccount == "Card"}');
+                                                      },
+                                                      buttonStyleData: ButtonStyleData(
+                                                        height: 45,
+                                                        width: 200,
+                                                        padding: const EdgeInsets.only(left: 14, right: 14),
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(6),
+                                                          color: Colors.white,
+                                                        ),
+                                                        elevation: 2,
+                                                      ),
+                                                      iconStyleData: const IconStyleData(
+                                                        icon: Icon(
+                                                          Icons.arrow_drop_down,
+                                                        ),
+                                                        iconSize: 24,
+                                                        iconEnabledColor: Color(0xFFb0b6c3),
+                                                        iconDisabledColor: Colors.grey,
+                                                      ),
+                                                      dropdownStyleData: DropdownStyleData(
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(6),
+                                                          color: Colors.white,
+                                                        ),
+                                                        scrollbarTheme: ScrollbarThemeData(
+                                                          radius: const Radius.circular(6),
+                                                          thickness: MaterialStateProperty.all(6),
+                                                          thumbVisibility: MaterialStateProperty.all(true),
+                                                        ),
+                                                      ),
+                                                      menuItemStyleData: const MenuItemStyleData(
+                                                        height: 40,
+                                                        padding: EdgeInsets.only(left: 14, right: 14),
+                                                      ),
+                                                    ),
+                                                    if (state.hasError)
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(left: 14, top: 5),
+                                                        child: Text(
+                                                          state.errorText ?? '',
+                                                          style: const TextStyle(color: Colors.red, fontSize: 12),
+                                                        ),
+                                                      ),
+                                                  ],
+                                                );
+                                              },
                                             ),
                                           ),
                                         ),
-                                      ),
+
+                                      if(MediaQuery.of(context).size.width > 500 )
+                                        Row(
+                                          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            // First Column
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.all(4.0),
+                                                    child: DropdownButtonHideUnderline(
+                                                      child: DropdownButton2<String>(
+                                                        isExpanded: true,
+                                                        hint: Text('Select Account'),
+                                                        value: selectedAccount,
+                                                        items: _selecttype.map((method) {
+                                                          return DropdownMenuItem<String>(
+                                                            value: method,
+                                                            child: Text(method),
+                                                          );
+                                                        }).toList(),
+                                                        onChanged: (String? newValue) {
+                                                          // setState(() {
+                                                          //   _selectedPaymentMethod = newValue;
+                                                          //   //_selectedPaymentMethod = addRow();
+                                                          //   if(_selectedPaymentMethod == 'Card')
+                                                          //   addRow();
+                                                          //   if(_selectedPaymentMethod == 'Check')
+                                                          //    Text("hello");
+                                                          //
+                                                          // });
+                                                          setState(() {
+                                                            selectedAccount = newValue;
+                                                          });
+                                                          // print();
+                                                          print(
+                                                              'Selected payment method: $selectedAccount ${selectedAccount == "Card"}');
+                                                        },
+                                                        buttonStyleData: ButtonStyleData(
+                                                          height: 55,
+                                                          width: 250,
+                                                          padding: const EdgeInsets.only(
+                                                              left: 14, right: 14),
+                                                          decoration: BoxDecoration(
+                                                            borderRadius: BorderRadius.circular(6),
+                                                            color: Colors.white,
+                                                          ),
+                                                          elevation: 2,
+                                                        ),
+                                                        iconStyleData: const IconStyleData(
+                                                          icon: Icon(
+                                                            Icons.arrow_drop_down,
+                                                          ),
+                                                          iconSize: 24,
+                                                          iconEnabledColor: Color(0xFFb0b6c3),
+                                                          iconDisabledColor: Colors.grey,
+                                                        ),
+                                                        dropdownStyleData: DropdownStyleData(
+                                                          decoration: BoxDecoration(
+                                                            borderRadius: BorderRadius.circular(6),
+                                                            color: Colors.white,
+                                                          ),
+                                                          scrollbarTheme: ScrollbarThemeData(
+                                                            radius: const Radius.circular(6),
+                                                            thickness: MaterialStateProperty.all(6),
+                                                            thumbVisibility:
+                                                            MaterialStateProperty.all(true),
+                                                          ),
+                                                        ),
+                                                        menuItemStyleData: const MenuItemStyleData(
+                                                          height: 40,
+                                                          padding:
+                                                          EdgeInsets.only(left: 14, right: 14),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Spacer(),
+                                            // Second Column
+                                            Expanded(
+                                              child: Column(
+                                                //crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  DropdownButtonHideUnderline(
+                                                    child: DropdownButton2<String>(
+                                                      isExpanded: true,
+                                                      hint: Text('Select Account Holder Type'),
+                                                      value: _selectedHoldertype,
+                                                      items: _selectholder.map((method) {
+                                                        return DropdownMenuItem<String>(
+                                                          value: method,
+                                                          child: Text(method),
+                                                        );
+                                                      }).toList(),
+                                                      onChanged: (String? newValue) {
+                                                        // setState(() {
+                                                        //   _selectedPaymentMethod = newValue;
+                                                        //   //_selectedPaymentMethod = addRow();
+                                                        //   if(_selectedPaymentMethod == 'Card')
+                                                        //   addRow();
+                                                        //   if(_selectedPaymentMethod == 'Check')
+                                                        //    Text("hello");
+                                                        //
+                                                        // });
+                                                        setState(() {
+                                                          _selectedHoldertype = newValue;
+                                                        });
+                                                        print(
+                                                            'Selected payment method: $_selectedHoldertype');
+                                                      },
+                                                      buttonStyleData: ButtonStyleData(
+                                                        height: 55,
+                                                        // width: 300,
+                                                        padding: const EdgeInsets.only(
+                                                            left: 14, right: 14),
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(6),
+                                                          color: Colors.white,
+                                                        ),
+                                                        elevation: 2,
+                                                      ),
+                                                      iconStyleData: const IconStyleData(
+                                                        icon: Icon(
+                                                          Icons.arrow_drop_down,
+                                                        ),
+                                                        iconSize: 24,
+                                                        iconEnabledColor: Color(0xFFb0b6c3),
+                                                        iconDisabledColor: Colors.grey,
+                                                      ),
+                                                      dropdownStyleData: DropdownStyleData(
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(6),
+                                                          color: Colors.white,
+                                                        ),
+                                                        scrollbarTheme: ScrollbarThemeData(
+                                                          radius: const Radius.circular(6),
+                                                          thickness: MaterialStateProperty.all(6),
+                                                          thumbVisibility:
+                                                          MaterialStateProperty.all(true),
+                                                        ),
+                                                      ),
+                                                      menuItemStyleData: const MenuItemStyleData(
+                                                        height: 40,
+                                                        padding:
+                                                        EdgeInsets.only(left: 14, right: 14),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            SizedBox(width: 5),
+                                          ],
+                                        ),
                                       SizedBox(height: 10),
                                       Padding(
                                         padding: const EdgeInsets.all(4.0),
@@ -3763,74 +3783,87 @@ class _MakePaymentState extends State<MakePayment> {
                                         ),
                                       ),
                                       SizedBox(height: 10),
-                                      Padding(
-                                        padding: const EdgeInsets.all(4.0),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton2<String>(
-                                            isExpanded: true,
-                                            hint: Text('Select Account Holder Type'),
-                                            value: _selectedHoldertype,
-                                            items: _selectholder.map((method) {
-                                              return DropdownMenuItem<String>(
-                                                value: method,
-                                                child: Text(method),
-                                              );
-                                            }).toList(),
-                                            onChanged: (String? newValue) {
-                                              // setState(() {
-                                              //   _selectedPaymentMethod = newValue;
-                                              //   //_selectedPaymentMethod = addRow();
-                                              //   if(_selectedPaymentMethod == 'Card')
-                                              //   addRow();
-                                              //   if(_selectedPaymentMethod == 'Check')
-                                              //    Text("hello");
-                                              //
-                                              // });
-                                              setState(() {
-                                                _selectedHoldertype = newValue;
-                                              });
-                                              print(
-                                                  'Selected payment method: $_selectedHoldertype');
+                                      if(MediaQuery.of(context).size.width < 500 )
+                                        Padding(
+                                          padding: const EdgeInsets.all(4.0),
+                                          child: FormField<String>(
+                                            validator: (value) {
+                                              if (value == null || value.isEmpty) {
+                                                return 'Please select an account holder type';
+                                              }
+                                              return null;
                                             },
-                                            buttonStyleData: ButtonStyleData(
-                                              height: 50,
-                                              width: 300,
-                                              padding: const EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(6),
-                                                color: Colors.white,
-                                              ),
-                                              elevation: 2,
-                                            ),
-                                            iconStyleData: const IconStyleData(
-                                              icon: Icon(
-                                                Icons.arrow_drop_down,
-                                              ),
-                                              iconSize: 24,
-                                              iconEnabledColor: Color(0xFFb0b6c3),
-                                              iconDisabledColor: Colors.grey,
-                                            ),
-                                            dropdownStyleData: DropdownStyleData(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(6),
-                                                color: Colors.white,
-                                              ),
-                                              scrollbarTheme: ScrollbarThemeData(
-                                                radius: const Radius.circular(6),
-                                                thickness: MaterialStateProperty.all(6),
-                                                thumbVisibility:
-                                                MaterialStateProperty.all(true),
-                                              ),
-                                            ),
-                                            menuItemStyleData: const MenuItemStyleData(
-                                              height: 40,
-                                              padding:
-                                              EdgeInsets.only(left: 14, right: 14),
-                                            ),
+                                            builder: (FormFieldState<String> state) {
+                                              return Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  DropdownButtonHideUnderline(
+                                                    child: DropdownButton2<String>(
+                                                      isExpanded: true,
+                                                      hint: const Text('Select Account Holder Type'),
+                                                      value: _selectedHoldertype,
+                                                      items: _selectholder.map((holderType) {
+                                                        return DropdownMenuItem<String>(
+                                                          value: holderType,
+                                                          child: Text(holderType),
+                                                        );
+                                                      }).toList(),
+                                                      onChanged: (String? newValue) {
+                                                        setState(() {
+                                                          _selectedHoldertype = newValue;
+                                                          state.didChange(newValue); // Notify FormField of change
+                                                        });
+                                                        state.reset();
+                                                      },
+                                                      buttonStyleData: ButtonStyleData(
+                                                        height: 45,
+                                                        padding: const EdgeInsets.only(left: 0, right: 14),
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(6),
+                                                          color: Colors.white,
+                                                        ),
+                                                        elevation: 3,
+                                                      ),
+                                                      iconStyleData: const IconStyleData(
+                                                        icon: Icon(Icons.arrow_drop_down),
+                                                        iconSize: 24,
+                                                        iconEnabledColor: Color(0xFFb0b6c3),
+                                                        iconDisabledColor: Colors.grey,
+                                                      ),
+                                                      dropdownStyleData: DropdownStyleData(
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(6),
+                                                          color: Colors.white,
+                                                        ),
+                                                        scrollbarTheme: ScrollbarThemeData(
+                                                          radius: const Radius.circular(6),
+                                                          thickness: MaterialStateProperty.all(6),
+                                                          thumbVisibility: MaterialStateProperty.all(true),
+                                                        ),
+                                                      ),
+                                                      menuItemStyleData: const MenuItemStyleData(
+                                                        height: 40,
+                                                        padding: EdgeInsets.only(left: 14, right: 14),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  if (state.hasError)
+                                                    Padding(
+                                                      padding: const EdgeInsets.only(top: 5),
+                                                      child: Text(
+                                                        state.errorText ?? '',
+                                                        style: const TextStyle(
+                                                          color: Colors.red,
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                ],
+                                              );
+                                            },
                                           ),
                                         ),
-                                      ),
+
                                       SizedBox(height: 10),
                                     ],
                                     const SizedBox(
@@ -3851,6 +3884,7 @@ class _MakePaymentState extends State<MakePayment> {
                                         }
                                         return null;
                                       },
+                                      optional: true,
                                       keyboardType: TextInputType.text,
                                       hintText: 'Enter Memo',
                                       controller: Memo,
@@ -3872,212 +3906,7 @@ class _MakePaymentState extends State<MakePayment> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              // isLoading
-                              //     ? const Center(
-                              //   child: SpinKitFadingCircle(
-                              //     color: Colors.black,
-                              //     size: 50.0,
-                              //   ),
-                              // )
-                              //     : hasError
-                              //     ? const Center(child: Text('Failed to load data'))
-                              //     : Padding(
-                              //   padding: const EdgeInsets.only(left: 8, right: 8),
-                              //   child: Table(
-                              //     border: TableBorder.all(width: 1),
-                              //     columnWidths: const {
-                              //       0: FlexColumnWidth(2),
-                              //       1: FlexColumnWidth(2),
-                              //       2: FlexColumnWidth(1),
-                              //     },
-                              //     children: [
-                              //       const TableRow(children: [
-                              //         Padding(
-                              //           padding: EdgeInsets.all(8.0),
-                              //           child: Center(
-                              //             child: Text('Account',
-                              //                 style: TextStyle(
-                              //                     color: Color.fromRGBO(21, 43, 83, 1),
-                              //                     fontWeight: FontWeight.bold)),
-                              //           ),
-                              //         ),
-                              //         Padding(
-                              //           padding: EdgeInsets.all(8.0),
-                              //           child: Center(
-                              //             child: Text('Amount',
-                              //                 style: TextStyle(
-                              //                     color: Color.fromRGBO(21, 43, 83, 1),
-                              //                     fontWeight: FontWeight.bold)),
-                              //           ),
-                              //         ),
-                              //         Padding(
-                              //           padding: EdgeInsets.all(8.0),
-                              //           child: Center(
-                              //             child: Text('Actions',
-                              //                 style: TextStyle(
-                              //                     color: Color.fromRGBO(21, 43, 83, 1),
-                              //                     fontWeight: FontWeight.bold)),
-                              //           ),
-                              //         ),
-                              //       ]),
-                              //       ...rows.asMap().entries.map((entry) {
-                              //         int index = entry.key;
-                              //         Map<String,dynamic> row = entry.value;
-                              //         print(row['account']);
-                              //         print(row);
-                              //         return TableRow(children: [
-                              //           Padding(
-                              //             padding: const EdgeInsets.all(8.0),
-                              //             child: DropdownButtonHideUnderline(
-                              //               child: DropdownButton2<String>(
-                              //                 isExpanded: true,
-                              //                 value: row['account'],
-                              //                 items: [
-                              //                   ...categorizedData.entries.expand((entry) {
-                              //                     return [
-                              //                       DropdownMenuItem<String>(
-                              //                         enabled: false,
-                              //                         child: Text(
-                              //                           entry.key,
-                              //                           style: const TextStyle(
-                              //                             fontWeight: FontWeight.bold,
-                              //                             color: Color.fromRGBO(21, 43, 81, 1),
-                              //                           ),
-                              //                         ),
-                              //                       ),
-                              //                       ...entry.value.map((item) {
-                              //                         return DropdownMenuItem<String>(
-                              //                           value: item,
-                              //                           child: Padding(
-                              //                             padding: const EdgeInsets.only(left: 16.0),
-                              //                             child: Text(
-                              //                               item,
-                              //                               style: const TextStyle(
-                              //                                 color: Colors.black,
-                              //                                 fontWeight: FontWeight.w400,
-                              //                               ),
-                              //                             ),
-                              //                           ),
-                              //                         );
-                              //                       }).toList(),
-                              //                     ];
-                              //                   }).toList(),
-                              //                 ],
-                              //                 onChanged: (value) {
-                              //                   dynamic? chargeType;
-                              //                   for (var entry in categorizedData.entries) {
-                              //                     if (entry.value.contains(value)) {
-                              //                       chargeType = entry.key;
-                              //                       break;
-                              //                     }
-                              //                   }
-                              //                   print(value);
-                              //                   setState(() {
-                              //                     rows[index]['account'] = value;
-                              //                     rows[index]['charge_type'];
-                              //                   });
-                              //                 },
-                              //                 buttonStyleData: ButtonStyleData(
-                              //                   height: 45,
-                              //                   width: 220,
-                              //                   padding: const EdgeInsets.only(left: 14, right: 14),
-                              //                   decoration: BoxDecoration(
-                              //                     borderRadius: BorderRadius.circular(6),
-                              //                     color: Colors.white,
-                              //                   ),
-                              //                   elevation: 2,
-                              //                 ),
-                              //                 iconStyleData: const IconStyleData(
-                              //                   icon: Icon(Icons.arrow_drop_down),
-                              //                   iconSize: 24,
-                              //                   iconEnabledColor: Color(0xFFb0b6c3),
-                              //                   iconDisabledColor: Colors.grey,
-                              //                 ),
-                              //                 dropdownStyleData: DropdownStyleData(
-                              //                   width: 250,
-                              //                   decoration: BoxDecoration(
-                              //                     borderRadius: BorderRadius.circular(6),
-                              //                     color: Colors.white,
-                              //                   ),
-                              //                   scrollbarTheme: ScrollbarThemeData(
-                              //                     radius: const Radius.circular(6),
-                              //                     thickness: MaterialStateProperty.all(6),
-                              //                     thumbVisibility: MaterialStateProperty.all(true),
-                              //                   ),
-                              //                 ),
-                              //                 hint: const Text('Select an account'),
-                              //               ),
-                              //             ),
-                              //           ),
-                              //           Padding(
-                              //             padding: const EdgeInsets.all(8.0),
-                              //             child: TextField(
-                              //               keyboardType: TextInputType.number,
-                              //               onChanged: (value) => updateAmount(index, value),
-                              //               decoration: const InputDecoration(
-                              //                 border: OutlineInputBorder(),
-                              //                 hintText: 'Enter amount',
-                              //               ),
-                              //              // controller: controllers[index],
-                              //             ),
-                              //           ),
-                              //           Padding(
-                              //             padding: const EdgeInsets.all(8.0),
-                              //             child: IconButton(
-                              //               icon: const Icon(Icons.delete, color: Colors.red),
-                              //               onPressed: () => deleteRow(index),
-                              //             ),
-                              //           ),
-                              //         ]);
-                              //       }).toList(),
-                              //       TableRow(children: [
-                              //         const
-                              //         Padding(
-                              //           padding: EdgeInsets.all(8.0),
-                              //           child: Text('Total', style: TextStyle(fontWeight: FontWeight.bold)),
-                              //         ),
-                              //         Padding(
-                              //           padding: const EdgeInsets.all(8.0),
-                              //           child: Text('\$${totalAmount.toStringAsFixed(2)}'),
-                              //         ),
-                              //         const SizedBox.shrink(),
-                              //       ]),
-                              //       TableRow(children: [
-                              //         Padding(
-                              //           padding: const EdgeInsets.all(8.0),
-                              //           child: Container(
-                              //             height: 34,
-                              //             decoration: BoxDecoration(
-                              //               color: Colors.white,
-                              //               border: Border.all(width: 1),
-                              //               borderRadius: BorderRadius.circular(10.0),
-                              //             ),
-                              //             child: ElevatedButton(
-                              //               style: ElevatedButton.styleFrom(
-                              //                 shape: RoundedRectangleBorder(
-                              //                   borderRadius: BorderRadius.circular(10.0),
-                              //                 ),
-                              //                 elevation: 0,
-                              //                 backgroundColor: Colors.white,
-                              //               ),
-                              //               onPressed: addRow,
-                              //               child: const Text(
-                              //                 'Add Row',
-                              //                 style: TextStyle(
-                              //                   color: Color.fromRGBO(21, 43, 83, 1),
-                              //                 ),
-                              //               ),
-                              //             ),
-                              //           ),
-                              //         ),
-                              //         const SizedBox.shrink(),
-                              //         const SizedBox.shrink(),
-                              //       ]),
-                              //     ],
-                              //   ),
-                              // ),
-                              // SizedBox(height: 15),
-                              // const SizedBox(height: 5),
+
                               ...rows.asMap().entries.map((entry) {
                                 int index = entry.key;
                                 Map<String, dynamic> row = entry.value;
@@ -4126,110 +3955,114 @@ class _MakePaymentState extends State<MakePayment> {
                                             Padding(
                                               padding: const EdgeInsets.all(8.0),
                                               child: DropdownButtonHideUnderline(
-                                                child: DropdownButton2<String>(
-                                                  isExpanded: true,
-                                                  value: row['account'],
-                                                  items: [
-                                                    ...categorizedData.entries
-                                                        .expand((entry) {
-                                                      return [
-                                                        DropdownMenuItem<String>(
-                                                          enabled: false,
-                                                          child: Text(
-                                                            entry.key,
-                                                            style: const TextStyle(
-                                                              fontWeight:
-                                                              FontWeight.bold,
-                                                              color: Color.fromRGBO(
-                                                                  21, 43, 81, 1),
+                                                child: FormField<String>(
+                                                  validator: (value) {
+                                                    if ( rows[index]['account'] == null ) {
+                                                      return 'Please select an account';
+                                                    }
+                                                    return null;
+                                                  },
+                                                  builder: (FormFieldState<String> state) {
+                                                    return Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        DropdownButton2<String>(
+                                                          isExpanded: true,
+                                                          value: row['account'],
+                                                          items: [
+                                                            ...categorizedData.entries.expand((entry) {
+                                                              return [
+                                                                DropdownMenuItem<String>(
+                                                                  enabled: false,
+                                                                  child: Text(
+                                                                    entry.key,
+                                                                    style: const TextStyle(
+                                                                      fontWeight: FontWeight.bold,
+                                                                      color: Color.fromRGBO(21, 43, 81, 1),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                ...entry.value.map((item) {
+                                                                  return DropdownMenuItem<String>(
+                                                                    value: item,
+                                                                    child: Padding(
+                                                                      padding: const EdgeInsets.only(left: 16.0),
+                                                                      child: Text(
+                                                                        item,
+                                                                        style: const TextStyle(
+                                                                          color: Colors.black,
+                                                                          fontWeight: FontWeight.w400,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  );
+                                                                }).toList(),
+                                                              ];
+                                                            }).toList(),
+                                                          ],
+                                                          onChanged: (value) {
+                                                            dynamic? chargeType;
+                                                            for (var entry in categorizedData.entries) {
+                                                              if (entry.value.contains(value)) {
+                                                                chargeType = entry.key;
+                                                                break;
+                                                              }
+                                                            }
+                                                            setState(() {
+                                                              rows[index]['account'] = value;
+                                                              rows[index]['charge_type'] = chargeType;
+                                                              state.didChange(value); // Update the FormField state
+                                                            });
+                                                            state.reset();
+                                                          },
+                                                          buttonStyleData: ButtonStyleData(
+                                                            height: 45,
+                                                            // width: 220,
+                                                            padding: const EdgeInsets.only(left: 10, right: 14),
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(6),
+                                                              color: Colors.white,
+                                                            ),
+                                                            elevation: 2,
+                                                          ),
+                                                          iconStyleData: const IconStyleData(
+                                                            icon: Icon(Icons.arrow_drop_down),
+                                                            iconSize: 24,
+                                                            iconEnabledColor: Color(0xFFb0b6c3),
+                                                            iconDisabledColor: Colors.grey,
+                                                          ),
+                                                          dropdownStyleData: DropdownStyleData(
+                                                            width: 250,
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(6),
+                                                              color: Colors.white,
+                                                            ),
+                                                            scrollbarTheme: ScrollbarThemeData(
+                                                              radius: const Radius.circular(6),
+                                                              thickness: MaterialStateProperty.all(6),
+                                                              thumbVisibility: MaterialStateProperty.all(true),
                                                             ),
                                                           ),
+                                                          hint: const Text('Select an account'),
                                                         ),
-                                                        ...entry.value.map((item) {
-                                                          return DropdownMenuItem<
-                                                              String>(
-                                                            value: item,
-                                                            child: Padding(
-                                                              padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 16.0),
-                                                              child: Text(
-                                                                item,
-                                                                style:
-                                                                const TextStyle(
-                                                                  color: Colors.black,
-                                                                  fontWeight:
-                                                                  FontWeight.w400,
-                                                                ),
+                                                        if (state.hasError) // Display the validation error
+                                                          Padding(
+                                                            padding: const EdgeInsets.only(left: 16.0, top: 5.0),
+                                                            child: Text(
+                                                              state.errorText ?? '',
+                                                              style: const TextStyle(
+                                                                color: Colors.red,
+                                                                fontSize: 12,
                                                               ),
                                                             ),
-                                                          );
-                                                        }).toList(),
-                                                      ];
-                                                    }).toList(),
-                                                  ],
-                                                  onChanged: (value) {
-                                                    dynamic? chargeType;
-                                                    for (var entry
-                                                    in categorizedData.entries) {
-                                                      if (entry.value
-                                                          .contains(value)) {
-                                                        chargeType = entry.key;
-                                                        break;
-                                                      }
-                                                    }
-                                                    print(value);
-                                                    setState(() {
-                                                      rows[index]['account'] = value;
-                                                      rows[index]['charge_type'] =
-                                                          chargeType;
-                                                    });
+                                                          ),
+                                                      ],
+                                                    );
                                                   },
-                                                  buttonStyleData: ButtonStyleData(
-                                                    height: 45,
-                                                    width: 220,
-                                                    padding: const EdgeInsets.only(
-                                                        left: 14, right: 14),
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                      BorderRadius.circular(6),
-                                                      color: Colors.white,
-                                                    ),
-                                                    elevation: 2,
-                                                  ),
-                                                  iconStyleData: const IconStyleData(
-                                                    icon: Icon(Icons.arrow_drop_down),
-                                                    iconSize: 24,
-                                                    iconEnabledColor:
-                                                    Color(0xFFb0b6c3),
-                                                    iconDisabledColor: Colors.grey,
-                                                  ),
-                                                  dropdownStyleData:
-                                                  DropdownStyleData(
-                                                    width: 250,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                      BorderRadius.circular(6),
-                                                      color: Colors.white,
-                                                    ),
-                                                    scrollbarTheme:
-                                                    ScrollbarThemeData(
-                                                      radius:
-                                                      const Radius.circular(6),
-                                                      thickness:
-                                                      MaterialStateProperty.all(
-                                                          6),
-                                                      thumbVisibility:
-                                                      MaterialStateProperty.all(
-                                                          true),
-                                                    ),
-                                                  ),
-                                                  hint:
-                                                  const Text('Select an account'),
                                                 ),
                                               ),
                                             ),
+
                                             SizedBox(height: 12.0),
                                             Padding(
                                               padding: const EdgeInsets.only(

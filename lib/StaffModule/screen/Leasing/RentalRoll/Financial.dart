@@ -3211,7 +3211,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                   .transparent,
                                                             ),
                                                             Expanded(flex: 4,
-                                                              child: Column(
+                                                                child: Column(
                                                                 crossAxisAlignment:
                                                                 CrossAxisAlignment
                                                                     .start,

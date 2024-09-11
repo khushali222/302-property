@@ -82,6 +82,7 @@ dependencies:
   pdf: ^3.11.0
   keyboard_actions:
   flutter_blurhash: ^0.6.0
+  lottie: ^3.1.2
 
   # pdf:
 

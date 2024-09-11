@@ -1654,7 +1654,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                  ],
                                ),
                              ),
-                             Padding(
+                           /*  Padding(
                                padding: const EdgeInsets.only(left: 13),
                                child: Column(
                                  crossAxisAlignment:
@@ -1849,7 +1849,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                  ),
                                ),
                              ],
-                           ),
+                           ),*/
                            SizedBox(
                                height: MediaQuery.of(
                                    context)

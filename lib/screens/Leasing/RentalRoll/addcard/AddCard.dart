@@ -1767,6 +1767,7 @@ class CustomTextField extends StatefulWidget {
   final bool? amount_check;
   final String? max_amount;
   final String? error_mess;
+  final bool? optional;
   final List<TextInputFormatter>? formatter;
 
   CustomTextField({
@@ -1786,7 +1787,8 @@ class CustomTextField extends StatefulWidget {
     this.amount_check,
     this.max_amount,
     this.error_mess,
-    this.formatter
+    this.formatter,
+    this.optional = false,
 
     // Initialize onTap
   }) : super(key: key);
@@ -1851,7 +1853,7 @@ class CustomTextFieldState extends State<CustomTextField> {
       clipBehavior: Clip.none,
       children: <Widget>[
         FormField<String>(
-          validator: (value) {
+          validator:  widget.optional! ? null : (value) {
             if (widget.controller!.text.isEmpty) {
               setState(() {
                 if(widget.label == null)
@@ -1914,19 +1916,27 @@ class CustomTextFieldState extends State<CustomTextField> {
                       inputFormatters:widget.formatter ?? [],
                       onFieldSubmitted: widget.onChanged2,
                       onChanged:(value){
-                        print("object calin $value");
+                      //  print("object calin $value");
                         if(value.isNotEmpty){
                           setState(() {
                             _errorMessage = null;
                           });
                         }
 
-                        widget.onChanged;
-                        print("callllll");
+                        widget.onChanged!(value);
+                       // print("callllll");
                       },
 
                  focusNode: _focusNode,
-                      onTap: widget.onTap,
+                      onTap: (){
+                        if(widget.onTap != null){
+                          widget.onTap!();
+                          setState(() {
+                            _errorMessage = null;
+                          });
+                        }
+
+                      },
                       obscureText: widget.obscureText,
                       readOnly: widget.readOnnly,
                       keyboardType: widget.keyboardType,
@@ -1947,7 +1957,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                     ),
                   ),
                 ),
-                if (state.hasError || widget.amount_check != null)
+                if (state.hasError && _errorMessage != null || widget.amount_check != null)
                   SizedBox(height: 24),
                 // Reserve space for error message
               ],
@@ -1970,7 +1980,7 @@ class CustomTextFieldState extends State<CustomTextField> {
     );
     return shouldUseKeyboardActions
         ? SizedBox(
-      height:  widget.amount_check != null ?widget.amount_check! ?  75 :60:60,
+      height:  widget.amount_check != null ?widget.amount_check! ?  75 :60: _errorMessage != null  ?75 :60,
       width: MediaQuery.of(context).size.width * .98,
       child: KeyboardActions(
         config: _buildConfig(context),
