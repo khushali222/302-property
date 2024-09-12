@@ -2734,181 +2734,491 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                   width: 25,
                 ),
               GestureDetector(
+                // onTap: () async {
+                //   if (name.text.isEmpty) {
+                //     setState(() {
+                //       nameerror = true;
+                //       namemessage = "required";
+                //     });
+                //   } else {
+                //     setState(() {
+                //       nameerror = false;
+                //     });
+                //   }
+                //   if (comname.text.isEmpty) {
+                //     setState(() {
+                //       comnameerror = true;
+                //       comnamemessage = "required";
+                //     });
+                //   } else {
+                //     setState(() {
+                //       comnameerror = false;
+                //     });
+                //   }
+                //   // if (birthdateController.text.isEmpty) {
+                //   //   setState(() {
+                //   //     birthdateerror = true;
+                //   //     birthdatemessage = "required";
+                //   //   });
+                //   // } else {
+                //   //   setState(() {
+                //   //     birthdateerror = false;
+                //   //   });
+                //   // }
+                //   if (startdateController.text.isEmpty) {
+                //     setState(() {
+                //       startdatederror = true;
+                //       startdatemessage = "required";
+                //     });
+                //   } else {
+                //     setState(() {
+                //       startdatederror = false;
+                //     });
+                //   }
+                //   if (enddateController.text.isEmpty) {
+                //     setState(() {
+                //       enddatederror = true;
+                //       enddatemessage = "required";
+                //     });
+                //   } else {
+                //     setState(() {
+                //       enddatederror = false;
+                //     });
+                //   }
+                //   if (primaryemail.text.isEmpty) {
+                //     setState(() {
+                //       primaryemailerror = true;
+                //       primaryemailmessage = "required";
+                //     });
+                //   } else {
+                //     setState(() {
+                //       primaryemailerror = false;
+                //     });
+                //   }
+                //   if (alternativeemail.text.isEmpty) {
+                //     setState(() {
+                //       alternativeerror = true;
+                //       alternativemessage = "required";
+                //     });
+                //   } else {
+                //     setState(() {
+                //       alternativeerror = false;
+                //     });
+                //   }
+                //   if (phonenum.text.isEmpty) {
+                //     setState(() {
+                //       phonenumerror = true;
+                //       phonenummessage = "required";
+                //     });
+                //   } else {
+                //     setState(() {
+                //       phonenumerror = false;
+                //     });
+                //   }
+                //   if (homenum.text.isEmpty) {
+                //     setState(() {
+                //       homenumerror = true;
+                //       homenummessage = "required";
+                //     });
+                //   } else {
+                //     setState(() {
+                //       homenumerror = false;
+                //     });
+                //   }
+                //   if (officenum.text.isEmpty) {
+                //     setState(() {
+                //       officenumerror = true;
+                //       officenummessage = "required";
+                //     });
+                //   } else {
+                //     setState(() {
+                //       officenumerror = false;
+                //     });
+                //   }
+                //   if (street2.text.isEmpty) {
+                //     setState(() {
+                //       street2error = true;
+                //       street2message = "required";
+                //     });
+                //   } else {
+                //     setState(() {
+                //       street2error = false;
+                //     });
+                //   }
+                //   if (city2.text.isEmpty) {
+                //     setState(() {
+                //       city2error = true;
+                //       city2message = "required";
+                //     });
+                //   } else {
+                //     setState(() {
+                //       city2error = false;
+                //     });
+                //   }
+                //   if (state2.text.isEmpty) {
+                //     setState(() {
+                //       state2error = true;
+                //       state2message = "required";
+                //     });
+                //   } else {
+                //     setState(() {
+                //       state2error = false;
+                //     });
+                //   }
+                //   if (city2.text.isEmpty) {
+                //     setState(() {
+                //       city2error = true;
+                //       city2message = "required";
+                //     });
+                //   } else {
+                //     setState(() {
+                //       city2error = false;
+                //     });
+                //   }
+                //   if (county2.text.isEmpty) {
+                //     setState(() {
+                //       county2error = true;
+                //       county2message = "required";
+                //     });
+                //   } else {
+                //     setState(() {
+                //       county2error = false;
+                //     });
+                //   }
+                //   if (code2.text.isEmpty) {
+                //     setState(() {
+                //       code2error = true;
+                //       code2message = "required";
+                //     });
+                //   } else {
+                //     setState(() {
+                //       code2error = false;
+                //     });
+                //   }
+                //   if (taxtype.text.isEmpty) {
+                //     setState(() {
+                //       taxtypeerror = true;
+                //       taxtypemessage = "required";
+                //     });
+                //   } else {
+                //     setState(() {
+                //       taxtypeerror = false;
+                //     });
+                //   }
+                //   if (taxid.text.isEmpty) {
+                //     setState(() {
+                //       taxiderror = true;
+                //       taxidmessage = "required";
+                //     });
+                //   } else {
+                //     setState(() {
+                //       taxiderror = false;
+                //     });
+                //   }
+                //
+                //   SharedPreferences prefs =
+                //       await SharedPreferences.getInstance();
+                //   String? adminId = prefs.getString("adminId");
+                //   // if (adminId != null &&
+                //   //     name.text.isNotEmpty &&
+                //   //     comname.text.isNotEmpty &&
+                //   //     startdateController.text.isNotEmpty &&
+                //   //     enddateController.text.isNotEmpty &&
+                //   //     primaryemail.text.isNotEmpty &&
+                //   //     alternativeemail.text.isNotEmpty &&
+                //   //     phonenum.text.isNotEmpty &&
+                //   //     homenum.text.isNotEmpty &&
+                //   //     officenum.text.isNotEmpty &&
+                //   //     street2.text.isNotEmpty &&
+                //   //     city2.text.isNotEmpty &&
+                //   //     state2.text.isNotEmpty &&
+                //   //     county2.text.isNotEmpty &&
+                //   //     code2.text.isNotEmpty &&
+                //   //     taxtype.text.isNotEmpty &&
+                //   //     taxid.text.isNotEmpty) {
+                //   //   try {
+                //   //     await RentalOwnerService().Edit_Rentalowners(
+                //   //       adminId: adminId,
+                //   //       rentalownerId: widget.rentalOwner.rentalownerId,
+                //   //       rentalOwnerName: name.text,
+                //   //       rentalOwnerPrimaryEmail: primaryemail.text,
+                //   //       rentalOwnerAlternateEmail: alternativeemail.text,
+                //   //       rentalOwnerPhoneNumber: phonenum.text,
+                //   //       rentalOwnerHomeNumber: homenum.text,
+                //   //       rentalOwnerBusinessNumber: officenum.text,
+                //   //       startDate: startdateController.text,
+                //   //       endDate: enddateController.text,
+                //   //       texpayerId: taxid.text,
+                //   //       textIdentityType: taxtype.text,
+                //   //       city: city2.text,
+                //   //       state: state2.text,
+                //   //       streetAddress: street2.text,
+                //   //       country: county2.text,
+                //   //       postalCode: code2.text,
+                //   //     );
+                //   //     setState(() {
+                //   //       isLoading = false;
+                //   //     });
+                //   //     Navigator.of(context).pop(true);
+                //   //     reload_Screen();
+                //   //   } catch (e) {
+                //   //     setState(() {
+                //   //       isLoading = false;
+                //   //     });
+                //   //     // Handle error
+                //   //   }
+                //   // }
+                //
+                //   // List<ProcessorList> processorList = [];
+                //   // _controllers.forEach((key, controller) {
+                //   //   if (controller.text.isNotEmpty) {
+                //   //     processorList.add(ProcessorList(processorId: controller.text));
+                //   //   }
+                //   // });
+                //   List<ProcessorList> processorList = [];
+                //   _controllers.forEach((key, controller) {
+                //     if (controller.text.isNotEmpty) {
+                //       processorList.add(ProcessorList(processorId: controller.text));
+                //     }
+                //   });
+                //   RentalOwnerService()
+                //       .Edit_Rentalowners(
+                //     adminId: adminId,
+                //     rentalownerId: widget.rentalOwner.rentalownerId,
+                //     rentalOwnerName: name.text,
+                //     rentalOwnerCompanyName: comname.text,
+                //     rentalOwnerPrimaryEmail: primaryemail.text,
+                //     rentalOwnerAlternateEmail: alternativeemail.text,
+                //     rentalOwnerPhoneNumber: phonenum.text,
+                //     rentalOwnerHomeNumber: homenum.text,
+                //     rentalOwnerBusinessNumber: officenum.text,
+                //     startDate: startdateController.text,
+                //     endDate: enddateController.text,
+                //     texpayerId: taxid.text,
+                //     textIdentityType: taxtype.text,
+                //     city: city2.text,
+                //     state: state2.text,
+                //     streetAddress: street2.text,
+                //     country: county2.text,
+                //     postalCode: code2.text,
+                //     processorList:processorList,
+                //   ).then((value) {
+                //     setState(() {
+                //       widget.rentalOwner.rentalOwnername = name.text;
+                //       widget.rentalOwner.rentalOwnerCompanyName = comname.text;
+                //        widget.rentalOwner.rentalOwnerPrimaryEmail = primaryemail.text;
+                //        widget.rentalOwner.rentalOwnerAlternateEmail = alternativeemail.text;
+                //        widget.rentalOwner.rentalOwnerPhoneNumber = phonenum.text;
+                //        widget.rentalOwner.rentalOwnerHomeNumber = homenum.text;
+                //        widget.rentalOwner.rentalOwnerBusinessNumber = officenum.text;
+                //        widget.rentalOwner.startDate = startdateController.text;
+                //        widget.rentalOwner.endDate = enddateController.text;
+                //        widget.rentalOwner.texpayerId = taxid.text;
+                //        widget.rentalOwner.textIdentityType = taxtype.text;
+                //        widget.rentalOwner.city = city2.text;
+                //        widget.rentalOwner.state = state2.text;
+                //        widget.rentalOwner.streetAddress = street2.text;
+                //        widget.rentalOwner.country = county2.text;
+                //        widget.rentalOwner.postalCode = code2.text;
+                //       widget.rentalOwner.processorList = processorList;
+                //       isLoading = false;
+                //     });
+                //     Navigator.pop(context, true);
+                //   }).catchError((e) {
+                //     setState(() {
+                //       isLoading = false;
+                //     });
+                //   });
+                // },
                 onTap: () async {
+                  bool isFormValid = true;
+
+                  // Validate each field and update the state accordingly
                   if (name.text.isEmpty) {
                     setState(() {
                       nameerror = true;
                       namemessage = "required";
+                      isFormValid = false;
                     });
                   } else {
                     setState(() {
                       nameerror = false;
                     });
                   }
+
                   if (comname.text.isEmpty) {
                     setState(() {
                       comnameerror = true;
                       comnamemessage = "required";
+                      isFormValid = false;
                     });
                   } else {
                     setState(() {
                       comnameerror = false;
                     });
                   }
-                  // if (birthdateController.text.isEmpty) {
-                  //   setState(() {
-                  //     birthdateerror = true;
-                  //     birthdatemessage = "required";
-                  //   });
-                  // } else {
-                  //   setState(() {
-                  //     birthdateerror = false;
-                  //   });
-                  // }
+
                   if (startdateController.text.isEmpty) {
                     setState(() {
                       startdatederror = true;
                       startdatemessage = "required";
+                      isFormValid = false;
                     });
                   } else {
                     setState(() {
                       startdatederror = false;
                     });
                   }
+
                   if (enddateController.text.isEmpty) {
                     setState(() {
                       enddatederror = true;
                       enddatemessage = "required";
+                      isFormValid = false;
                     });
                   } else {
                     setState(() {
                       enddatederror = false;
                     });
                   }
+
                   if (primaryemail.text.isEmpty) {
                     setState(() {
                       primaryemailerror = true;
                       primaryemailmessage = "required";
+                      isFormValid = false;
                     });
                   } else {
                     setState(() {
                       primaryemailerror = false;
                     });
                   }
+
                   if (alternativeemail.text.isEmpty) {
                     setState(() {
                       alternativeerror = true;
                       alternativemessage = "required";
+                      isFormValid = false;
                     });
                   } else {
                     setState(() {
                       alternativeerror = false;
                     });
                   }
+
                   if (phonenum.text.isEmpty) {
                     setState(() {
                       phonenumerror = true;
                       phonenummessage = "required";
+                      isFormValid = false;
                     });
                   } else {
                     setState(() {
                       phonenumerror = false;
                     });
                   }
+
                   if (homenum.text.isEmpty) {
                     setState(() {
                       homenumerror = true;
                       homenummessage = "required";
+                      isFormValid = false;
                     });
                   } else {
                     setState(() {
                       homenumerror = false;
                     });
                   }
+
                   if (officenum.text.isEmpty) {
                     setState(() {
                       officenumerror = true;
                       officenummessage = "required";
+                      isFormValid = false;
                     });
                   } else {
                     setState(() {
                       officenumerror = false;
                     });
                   }
+
                   if (street2.text.isEmpty) {
                     setState(() {
                       street2error = true;
                       street2message = "required";
+                      isFormValid = false;
                     });
                   } else {
                     setState(() {
                       street2error = false;
                     });
                   }
+
                   if (city2.text.isEmpty) {
                     setState(() {
                       city2error = true;
                       city2message = "required";
+                      isFormValid = false;
                     });
                   } else {
                     setState(() {
                       city2error = false;
                     });
                   }
+
                   if (state2.text.isEmpty) {
                     setState(() {
                       state2error = true;
                       state2message = "required";
+                      isFormValid = false;
                     });
                   } else {
                     setState(() {
                       state2error = false;
                     });
                   }
-                  if (city2.text.isEmpty) {
-                    setState(() {
-                      city2error = true;
-                      city2message = "required";
-                    });
-                  } else {
-                    setState(() {
-                      city2error = false;
-                    });
-                  }
+
                   if (county2.text.isEmpty) {
                     setState(() {
                       county2error = true;
                       county2message = "required";
+                      isFormValid = false;
                     });
                   } else {
                     setState(() {
                       county2error = false;
                     });
                   }
+
                   if (code2.text.isEmpty) {
                     setState(() {
                       code2error = true;
                       code2message = "required";
+                      isFormValid = false;
                     });
                   } else {
                     setState(() {
                       code2error = false;
                     });
                   }
+
                   if (taxtype.text.isEmpty) {
                     setState(() {
                       taxtypeerror = true;
                       taxtypemessage = "required";
+                      isFormValid = false;
                     });
                   } else {
                     setState(() {
                       taxtypeerror = false;
                     });
                   }
+
                   if (taxid.text.isEmpty) {
                     setState(() {
                       taxiderror = true;
                       taxidmessage = "required";
+                      isFormValid = false;
                     });
                   } else {
                     setState(() {
@@ -2916,119 +3226,72 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     });
                   }
 
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  String? adminId = prefs.getString("adminId");
-                  // if (adminId != null &&
-                  //     name.text.isNotEmpty &&
-                  //     comname.text.isNotEmpty &&
-                  //     startdateController.text.isNotEmpty &&
-                  //     enddateController.text.isNotEmpty &&
-                  //     primaryemail.text.isNotEmpty &&
-                  //     alternativeemail.text.isNotEmpty &&
-                  //     phonenum.text.isNotEmpty &&
-                  //     homenum.text.isNotEmpty &&
-                  //     officenum.text.isNotEmpty &&
-                  //     street2.text.isNotEmpty &&
-                  //     city2.text.isNotEmpty &&
-                  //     state2.text.isNotEmpty &&
-                  //     county2.text.isNotEmpty &&
-                  //     code2.text.isNotEmpty &&
-                  //     taxtype.text.isNotEmpty &&
-                  //     taxid.text.isNotEmpty) {
-                  //   try {
-                  //     await RentalOwnerService().Edit_Rentalowners(
-                  //       adminId: adminId,
-                  //       rentalownerId: widget.rentalOwner.rentalownerId,
-                  //       rentalOwnerName: name.text,
-                  //       rentalOwnerPrimaryEmail: primaryemail.text,
-                  //       rentalOwnerAlternateEmail: alternativeemail.text,
-                  //       rentalOwnerPhoneNumber: phonenum.text,
-                  //       rentalOwnerHomeNumber: homenum.text,
-                  //       rentalOwnerBusinessNumber: officenum.text,
-                  //       startDate: startdateController.text,
-                  //       endDate: enddateController.text,
-                  //       texpayerId: taxid.text,
-                  //       textIdentityType: taxtype.text,
-                  //       city: city2.text,
-                  //       state: state2.text,
-                  //       streetAddress: street2.text,
-                  //       country: county2.text,
-                  //       postalCode: code2.text,
-                  //     );
-                  //     setState(() {
-                  //       isLoading = false;
-                  //     });
-                  //     Navigator.of(context).pop(true);
-                  //     reload_Screen();
-                  //   } catch (e) {
-                  //     setState(() {
-                  //       isLoading = false;
-                  //     });
-                  //     // Handle error
-                  //   }
-                  // }
+                  if (!isFormValid) {
+                    return; // Exit early if the form is not valid
+                  }
 
-                  // List<ProcessorList> processorList = [];
-                  // _controllers.forEach((key, controller) {
-                  //   if (controller.text.isNotEmpty) {
-                  //     processorList.add(ProcessorList(processorId: controller.text));
-                  //   }
-                  // });
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  String? adminId = prefs.getString("adminId");
+
+                  // Prepare the processor list
                   List<ProcessorList> processorList = [];
                   _controllers.forEach((key, controller) {
                     if (controller.text.isNotEmpty) {
                       processorList.add(ProcessorList(processorId: controller.text));
                     }
                   });
-                  RentalOwnerService()
-                      .Edit_Rentalowners(
-                    adminId: adminId,
-                    rentalownerId: widget.rentalOwner.rentalownerId,
-                    rentalOwnerName: name.text,
-                    rentalOwnerCompanyName: comname.text,
-                    rentalOwnerPrimaryEmail: primaryemail.text,
-                    rentalOwnerAlternateEmail: alternativeemail.text,
-                    rentalOwnerPhoneNumber: phonenum.text,
-                    rentalOwnerHomeNumber: homenum.text,
-                    rentalOwnerBusinessNumber: officenum.text,
-                    startDate: startdateController.text,
-                    endDate: enddateController.text,
-                    texpayerId: taxid.text,
-                    textIdentityType: taxtype.text,
-                    city: city2.text,
-                    state: state2.text,
-                    streetAddress: street2.text,
-                    country: county2.text,
-                    postalCode: code2.text,
-                    processorList:processorList,
-                  ).then((value) {
+
+                  try {
+                    await RentalOwnerService().Edit_Rentalowners(
+                      adminId: adminId,
+                      rentalownerId: widget.rentalOwner.rentalownerId,
+                      rentalOwnerName: name.text,
+                      rentalOwnerCompanyName: comname.text,
+                      rentalOwnerPrimaryEmail: primaryemail.text,
+                      rentalOwnerAlternateEmail: alternativeemail.text,
+                      rentalOwnerPhoneNumber: phonenum.text,
+                      rentalOwnerHomeNumber: homenum.text,
+                      rentalOwnerBusinessNumber: officenum.text,
+                      startDate: startdateController.text,
+                      endDate: enddateController.text,
+                      texpayerId: taxid.text,
+                      textIdentityType: taxtype.text,
+                      city: city2.text,
+                      state: state2.text,
+                      streetAddress: street2.text,
+                      country: county2.text,
+                      postalCode: code2.text,
+                      processorList: processorList,
+                    );
+
                     setState(() {
                       widget.rentalOwner.rentalOwnername = name.text;
                       widget.rentalOwner.rentalOwnerCompanyName = comname.text;
-                       widget.rentalOwner.rentalOwnerPrimaryEmail = primaryemail.text;
-                       widget.rentalOwner.rentalOwnerAlternateEmail = alternativeemail.text;
-                       widget.rentalOwner.rentalOwnerPhoneNumber = phonenum.text;
-                       widget.rentalOwner.rentalOwnerHomeNumber = homenum.text;
-                       widget.rentalOwner.rentalOwnerBusinessNumber = officenum.text;
-                       widget.rentalOwner.startDate = startdateController.text;
-                       widget.rentalOwner.endDate = enddateController.text;
-                       widget.rentalOwner.texpayerId = taxid.text;
-                       widget.rentalOwner.textIdentityType = taxtype.text;
-                       widget.rentalOwner.city = city2.text;
-                       widget.rentalOwner.state = state2.text;
-                       widget.rentalOwner.streetAddress = street2.text;
-                       widget.rentalOwner.country = county2.text;
-                       widget.rentalOwner.postalCode = code2.text;
+                      widget.rentalOwner.rentalOwnerPrimaryEmail = primaryemail.text;
+                      widget.rentalOwner.rentalOwnerAlternateEmail = alternativeemail.text;
+                      widget.rentalOwner.rentalOwnerPhoneNumber = phonenum.text;
+                      widget.rentalOwner.rentalOwnerHomeNumber = homenum.text;
+                      widget.rentalOwner.rentalOwnerBusinessNumber = officenum.text;
+                      widget.rentalOwner.startDate = startdateController.text;
+                      widget.rentalOwner.endDate = enddateController.text;
+                      widget.rentalOwner.texpayerId = taxid.text;
+                      widget.rentalOwner.textIdentityType = taxtype.text;
+                      widget.rentalOwner.city = city2.text;
+                      widget.rentalOwner.state = state2.text;
+                      widget.rentalOwner.streetAddress = street2.text;
+                      widget.rentalOwner.country = county2.text;
+                      widget.rentalOwner.postalCode = code2.text;
                       widget.rentalOwner.processorList = processorList;
                       isLoading = false;
                     });
+
                     Navigator.pop(context, true);
-                  }).catchError((e) {
+                  } catch (e) {
                     setState(() {
                       isLoading = false;
                     });
-                  });
+                    // Handle error
+                  }
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(5.0),

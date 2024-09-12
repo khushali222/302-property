@@ -2065,11 +2065,11 @@ class _AddRentalownersState extends State<AddRentalowners> {
                               OwnerDetailsProvider>()
                               .setOwnerDetails(
                               Ownersdetails!);
-                          context
-                              .read<
-                              OwnerDetailsProvider>()
-                              .selectedprocessid(
-                              processor_id!);
+                          // context
+                          //     .read<
+                          //     OwnerDetailsProvider>()
+                          //     .selectedprocessid(
+                          //     processor_id!);
                           // Navigator.pop(
                           //     context);
 

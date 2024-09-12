@@ -2150,11 +2150,11 @@ class _EditRentalownersState extends State<EditRentalowners> {
                           postalCode: code2.text,
                           processorList: selectedProcessors,
                         );
-                        context
-                            .read<
-                            OwnerDetailsProvider>()
-                            .selectedprocessid(
-                            processor_id!);
+                        // context
+                        //     .read<
+                        //     OwnerDetailsProvider>()
+                        //     .selectedprocessid(
+                        //     processor_id!);
                         context.read<OwnerDetailsProvider>().setOwnerDetails(Ownersdetails!);
                         Fluttertoast.showToast(
                           msg: "Rental Owner Added Successfully!",
