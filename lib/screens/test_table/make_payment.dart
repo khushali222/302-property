@@ -315,6 +315,7 @@ class _MakePaymentState extends State<MakePayment> {
       List<Entrycharge>? charges = await ChargeRepositorys().fetchChargesTable(widget.leaseId, tenantId);
       print('leaseid ${widget.leaseId}');
       print('tenantid $tenantId');
+      print("charges length:- ${charges!.length}");
       for(var i = 0; i< charges!.length ; i++){
         if(i==0){
           charges_balances[0] = charges[i].chargeAmount!;
@@ -333,13 +334,15 @@ class _MakePaymentState extends State<MakePayment> {
             'date': entry.date,
           };
         }).toList() ?? [];
+        print("rows length:- ${rows.length}");
+        print("charges length:- ${charges.length}");
            print(rows.first['account']);
            print(rows.first['charge_amount']);
            print(rows.first['charge_amount']);
            controllers = rows.map((row) {
           return TextEditingController(text: row['charge_amount'].toString());
         }).toList();
-           print(rows);
+
         totalAmount = rows.fold(0.0, (sum, row) => sum + (row[Amount.text] ?? 0));
         isLoading = false;
       });

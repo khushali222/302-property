@@ -254,7 +254,7 @@ class _MakePaymentState extends State<MakePayment> {
 
   List<Map<String, dynamic>> rows = [];
 
-  List<int> charges_balances = [0];
+  List<double> charges_balances = [0];
 
   //Security Deposite
   // void addRow() {
@@ -476,15 +476,16 @@ class _MakePaymentState extends State<MakePayment> {
         print(rows.first['charge_amount']);
         print(rows.first['charge_amount']);*/
         controllers = rows.map((row) {
-          print("add the textcontroller");
           return TextEditingController(text: "".toString());
         }).toList();
         print(rows);
         totalAmount = rows.fold(
             0.0, (sum, row) => sum + (row[amountController.text] ?? 0));
         isLoading = false;
+        print(controllers.length);
       });
     } catch (e) {
+      print(e);
       setState(() {
         hasError = true;
         isLoading = false;
@@ -544,7 +545,7 @@ class _MakePaymentState extends State<MakePayment> {
           print(charge);
           print(amount);
           rows[index]['amount'] = amount;
-          charges_balances[index] = (charge.toDouble() + amount).toInt();
+          charges_balances[index] = (charge.toDouble() + amount).toDouble();
           totalAmount += amount;
 
           totalAmount = 0.0;
@@ -556,11 +557,11 @@ class _MakePaymentState extends State<MakePayment> {
           }
         } else {
           double amount = double.tryParse(value) ?? 0.0;
-          int charge = rows[index]["charge_amount"];
+          double charge = rows[index]["charge_amount"];
           print(charge);
           print(amount);
           rows[index]['amount'] = amount;
-          charges_balances[index] = (charge.toDouble() - amount).toInt();
+          charges_balances[index] = (charge.toDouble() - amount).toDouble();
           totalAmount += amount;
 
           totalAmount = 0.0;
@@ -3065,7 +3066,7 @@ class _MakePaymentState extends State<MakePayment> {
                                       keyboardType: TextInputType.number,
                                       hintText: 'Enter Amount',
                                       controller: amountController,
-                                      onChanged2: (value) => validateAmounts(),
+                                      onChanged: (value) => validateAmounts(),
                                     ),
                                     const SizedBox(height: 8),
                                     const Text('Payment Method',
@@ -3909,6 +3910,7 @@ class _MakePaymentState extends State<MakePayment> {
 
                               ...rows.asMap().entries.map((entry) {
                                 int index = entry.key;
+                                print("controllersss ${controllers.length}");
                                 Map<String, dynamic> row = entry.value;
                                 return Padding(
                                   padding: const EdgeInsets.all(10.0),
@@ -4087,8 +4089,8 @@ class _MakePaymentState extends State<MakePayment> {
                                                 "Amount must be less than or equal to balance",
                                                 keyboardType: TextInputType.number,
                                                 hintText: 'Enter Amount',
-                                                controller: controllers[index],
-                                                onChanged2: (value) =>
+                                            //    controller: controllers[index],
+                                                onChanged: (value) =>
                                                     updateAmount(index, value),
                                               ),
                                             ),

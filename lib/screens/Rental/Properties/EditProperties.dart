@@ -2607,13 +2607,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                               //     rentalOwnerPhoneNumber: phonenum.text,
                                                               //     rentalOwnerFirstName: firstname.text,
                                                               //   );
-                                                              print("hello");
-                                                              setState(() {
-                                                                RentalOwner?
-                                                                owner;
-                                                                Ownersdetails =
-                                                                    owner;
-                                                              });
+                                                              context.read<OwnerDetailsProvider>().clearOwners();
                                                             },
                                                             child: Container(
                                                               padding:

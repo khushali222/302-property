@@ -36,7 +36,7 @@ class ChargeRepositorys {
       print(tenantId);
 
       final response = await http.get(
-        Uri.parse('$Api_url/api/charge/charges/$leaseId/$tenantId'),
+        Uri.parse('$Api_url/api/charge/tenant_charges/$leaseId/$tenantId'),
         headers: {
           "authorization": "CRM $token",
           "id": "CRM $id",
@@ -44,16 +44,36 @@ class ChargeRepositorys {
       );
 
       print('charge ${response.body}');
-      print('$Api_url/api/charge/charges/$leaseId/$tenantId');
+      print('$Api_url/api/charge/tenant_charges/$leaseId/$tenantId');
       print(jsonEncode.hashCode);
 
       if (response.statusCode == 200) {
-        Map<String ,dynamic> jsonResponse = json.decode(response.body);
-        ChargeResponses chargesList =   ChargeResponses.fromJson(jsonResponse as Map<String, dynamic>);
-        // List<ChargeResponses> chargesList = jsonResponse
-        //     .map((data) => )
-        //     .toList();
-        return  chargesList.entry;
+        Map<String, dynamic> jsonResponse = json.decode(response.body);
+     // log(jsonResponse.toString());
+
+        // Check if 'totalCharges' exists in the response
+        if (jsonResponse.containsKey('totalCharges') && jsonResponse['totalCharges'] is List) {
+          List<Entrycharge> allEntries = [];
+
+          // Extract 'totalCharges'
+          List<dynamic> totalCharges = jsonResponse['totalCharges'];
+
+          // Loop through 'totalCharges' to get all 'entry' objects
+          for (var charge in totalCharges) {
+            if (charge.containsKey('entry') && charge['entry'] is List) {
+              List<dynamic> entryList = charge['entry'];
+
+              // Loop through the entry list and add each entry to allEntries
+              for (var entry in entryList) {
+                allEntries.add(Entrycharge.fromJson(entry));
+              }
+            }
+          }
+          print("Total entry charges: ${allEntries.length}");
+          return allEntries;
+        } else {
+          throw Exception('No charges found');
+        }
       } else {
         throw Exception('Failed to load');
       }

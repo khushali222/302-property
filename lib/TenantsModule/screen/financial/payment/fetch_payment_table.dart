@@ -171,7 +171,7 @@ class Entrycharge {
   bool? isRepeatable;
   String? chargeType;
   String? id;
-  dynamic? chargeAmount;
+  double? chargeAmount;
   String? chargeId;
 
   Entrycharge({
@@ -202,7 +202,9 @@ class Entrycharge {
       isRepeatable: json['is_repeatable'] as bool?,
       chargeType: json['charge_type'] as String?,
       id: json['_id'] as String?,
-      chargeAmount: json['charge_amount'] ,
+      chargeAmount: (json['due_amount'] is int)
+          ? (json['due_amount'] as int).toDouble()
+          : json['due_amount'] as double?,
       chargeId: json['charge_id'] as String?,
     );
   }
@@ -219,7 +221,7 @@ class Entrycharge {
       'is_repeatable': isRepeatable,
       'charge_type': chargeType,
       '_id': id,
-      'charge_amount': chargeAmount,
+      'due_amount': chargeAmount,
       'charge_id': chargeId,
     };
   }

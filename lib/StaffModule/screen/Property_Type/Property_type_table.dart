@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
+import '../../repository/staffpermission_provider.dart';
 import '../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../../Model/propertytype.dart';
@@ -15,6 +17,7 @@ import '../../widgets/drawer_tiles.dart';
 import 'Edit_property_type.dart';
 import 'Add_property_type.dart';
 import '../../widgets/custom_drawer.dart';
+import '../../model/staffpermission.dart';
 class PropertyTable extends StatefulWidget {
   @override
   _PropertyTableState createState() => _PropertyTableState();
@@ -600,6 +603,9 @@ class _PropertyTableState extends State<PropertyTable> {
   final _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
+    final permissionProvider = Provider.of<StaffPermissionProvider>(context);
+    StaffPermission? permissions = permissionProvider.permissions;
+
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -611,6 +617,7 @@ class _PropertyTableState extends State<PropertyTable> {
               height: 20,
             ),
             //add propertytype
+            if(permissions!.propertytypeAdd!)
             Padding(
               padding: const EdgeInsets.only(left: 0, right: 0),
               child: Row(
@@ -683,6 +690,79 @@ class _PropertyTableState extends State<PropertyTable> {
                 ],
               ),
             ),
+            if(!permissions!.propertytypeAdd!)
+              Padding(
+                padding: const EdgeInsets.only(left: 0, right: 0),
+                child: Row(
+                  //mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: titleBar(
+                        width: MediaQuery.of(context).size.width * .93,
+                        title: 'Property Type',
+                      ),
+                    ),
+                   /* GestureDetector(
+                      onTap: () async {
+                        final result = await Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => Add_property()));
+                        if (result == true) {
+                          setState(() {
+                            futurePropertyTypes =
+                                PropertyTypeRepository().fetchPropertyTypes();
+                          });
+                        }
+                      },
+                      child: Container(
+                        height: (MediaQuery.of(context).size.width < 500)
+                            ? 50
+                            : MediaQuery.of(context).size.width * 0.062,
+
+                        // height:  MediaQuery.of(context).size.width * 0.07,
+                        // height:  40,
+                        width: (MediaQuery.of(context).size.width < 500)
+                            ? MediaQuery.of(context).size.width * 0.25
+                            : MediaQuery.of(context).size.width * 0.25,
+                        decoration: BoxDecoration(
+                          color: Color.fromRGBO(21, 43, 81, 1),
+                          borderRadius: BorderRadius.circular(5),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey,
+                              offset: Offset(0.0, 4.0),
+                              blurRadius: 6.0,
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "+ Add",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize:
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 16
+                                      : 20,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (MediaQuery.of(context).size.width < 500)
+                      SizedBox(width: 6),
+                    if (MediaQuery.of(context).size.width > 500)
+                      SizedBox(width: 22),*/
+                  ],
+                ),
+              ),
             SizedBox(height: 10),
             //search
             Padding(
@@ -1099,152 +1179,14 @@ class _PropertyTableState extends State<PropertyTable> {
                                                           ],
                                                         ),
                                                       ),
-                                                      // SizedBox(width: 5),
-                                                      // Expanded(
-                                                      //   child: Column(
-                                                      //     crossAxisAlignment:
-                                                      //     CrossAxisAlignment.start,
-                                                      //     children: <Widget>[
-                                                      //       Text.rich(
-                                                      //         TextSpan(
-                                                      //           children: [
-                                                      //             TextSpan(
-                                                      //               text:
-                                                      //               'Sample Header: ',
-                                                      //               style: TextStyle(
-                                                      //                   fontWeight:
-                                                      //                   FontWeight
-                                                      //                       .bold,
-                                                      //                   color:
-                                                      //                   blueColor), // Bold and black
-                                                      //             ),
-                                                      //             TextSpan(
-                                                      //               text: 'Sample Data',
-                                                      //               style: TextStyle(
-                                                      //                   fontWeight:
-                                                      //                   FontWeight
-                                                      //                       .w700,
-                                                      //                   color: Colors
-                                                      //                       .grey), // Light and grey
-                                                      //             ),
-                                                      //           ],
-                                                      //         ),
-                                                      //       ),
-                                                      //       Text.rich(
-                                                      //         TextSpan(
-                                                      //           children: [
-                                                      //             TextSpan(
-                                                      //               text:
-                                                      //               'Sample Header : ',
-                                                      //               style: TextStyle(
-                                                      //                   fontWeight:
-                                                      //                   FontWeight
-                                                      //                       .bold,
-                                                      //                   color:
-                                                      //                   blueColor), // Bold and black
-                                                      //             ),
-                                                      //             TextSpan(
-                                                      //               text: 'Sample Data',
-                                                      //               style: TextStyle(
-                                                      //                   fontWeight:
-                                                      //                   FontWeight
-                                                      //                       .w700,
-                                                      //                   color: Colors
-                                                      //                       .grey), // Light and grey
-                                                      //             ),
-                                                      //           ],
-                                                      //         ),
-                                                      //       ),
-                                                      //       Text.rich(
-                                                      //         TextSpan(
-                                                      //           children: [
-                                                      //             TextSpan(
-                                                      //               text:
-                                                      //               'Sample Header : ',
-                                                      //               style: TextStyle(
-                                                      //                   fontWeight:
-                                                      //                   FontWeight
-                                                      //                       .bold,
-                                                      //                   color:
-                                                      //                   blueColor), // Bold and black
-                                                      //             ),
-                                                      //             TextSpan(
-                                                      //               text: 'Sample Data',
-                                                      //               style: TextStyle(
-                                                      //                   fontWeight:
-                                                      //                   FontWeight
-                                                      //                       .w700,
-                                                      //                   color: Colors
-                                                      //                       .grey), // Light and grey
-                                                      //             ),
-                                                      //           ],
-                                                      //         ),
-                                                      //       ),
-                                                      //     ],
-                                                      //   ),
-                                                      // ),
-                                                      // Container(
-                                                      //   width: 40,
-                                                      //   child: Column(
-                                                      //     children: [
-                                                      //       IconButton(
-                                                      //         icon: FaIcon(
-                                                      //           FontAwesomeIcons
-                                                      //               .edit,
-                                                      //           size: 20,
-                                                      //           color: Color
-                                                      //               .fromRGBO(
-                                                      //                   21,
-                                                      //                   43,
-                                                      //                   83,
-                                                      //                   1),
-                                                      //         ),
-                                                      //         onPressed:
-                                                      //             () async {
-                                                      //           // handleEdit(Propertytype);
-                                                      //
-                                                      //           var check = await Navigator.push(
-                                                      //               context,
-                                                      //               MaterialPageRoute(
-                                                      //                   builder: (context) => Edit_property_type(
-                                                      //                         property: Propertytype,
-                                                      //                       )));
-                                                      //           if (check ==
-                                                      //               true) {
-                                                      //             setState(
-                                                      //                 () {});
-                                                      //           }
-                                                      //         },
-                                                      //       ),
-                                                      //       IconButton(
-                                                      //         icon: FaIcon(
-                                                      //           FontAwesomeIcons
-                                                      //               .trashCan,
-                                                      //           size: 20,
-                                                      //           color: Color
-                                                      //               .fromRGBO(
-                                                      //                   21,
-                                                      //                   43,
-                                                      //                   83,
-                                                      //                   1),
-                                                      //         ),
-                                                      //         onPressed: () {
-                                                      //           //handleDelete(Propertytype);
-                                                      //           _showAlert(
-                                                      //               context,
-                                                      //               Propertytype
-                                                      //                   .propertyId!);
-                                                      //         },
-                                                      //       ),
-                                                      //     ],
-                                                      //   ),
-                                                      // ),
+
 
                                                     ],
                                                   ),
                                                   Row(
                                                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
+                                                      if(permissions!.propertytypeEdit!)
                                                       Expanded(
                                                         child: GestureDetector(
                                                           onTap:()async{
@@ -1283,7 +1225,9 @@ class _PropertyTableState extends State<PropertyTable> {
                                                           ),
                                                         ),
                                                       ),
+                                                      if(permissions!.propertytypeDelete!)
                                                       SizedBox(width: 5,),
+                                                      if(permissions!.propertytypeDelete!)
                                                       Expanded(
                                                         child: GestureDetector(
                                                           onTap:(){

@@ -2136,6 +2136,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                             .where((processor) => processor.processorId!.isNotEmpty) // Filter out empty IDs
                             .toList();
                         Ownersdetails = RentalOwner(
+                          rentalOwnerId: selectedOwner!.rentalOwnerId??null,
                           rentalOwnerPhoneNumber: phonenum.text,
                           rentalOwnerName: firstname.text,
                           rentalOwnerCompanyName: comname.text,
@@ -2150,21 +2151,13 @@ class _EditRentalownersState extends State<EditRentalowners> {
                           postalCode: code2.text,
                           processorList: selectedProcessors,
                         );
-                        context
+                      /*  context
                             .read<
                             OwnerDetailsProvider>()
                             .selectedprocessid(
-                            processor_id!);
+                            processor_id!);*/
                         context.read<OwnerDetailsProvider>().setOwnerDetails(Ownersdetails!);
-                        Fluttertoast.showToast(
-                          msg: "Rental Owner Added Successfully!",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.TOP,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Colors.green,
-                          textColor: Colors.white,
-                          fontSize: 16.0,
-                        );
+
                         setState(() {
                           hasError = false; // Set error state if needed
                         });

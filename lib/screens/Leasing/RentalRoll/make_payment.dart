@@ -222,7 +222,7 @@ class _MakePaymentState extends State<MakePayment> {
 
   List<Map<String, dynamic>> rows = [];
 
-  List<int> charges_balances = [0];
+  List<double> charges_balances = [0.0];
 
   //Security Deposite
   // void addRow() {
@@ -407,11 +407,14 @@ class _MakePaymentState extends State<MakePayment> {
     try {
       List<Entrycharge>? charges =
           await ChargeRepositorys().fetchChargesTable(widget.leaseId, tenantId);
+      print('charge details ${charges!.length}');
       List<Entrycharge> filteredCharges =
           charges?.where((entry) => entry.chargeAmount! > 0).toList() ?? [];
-
+      print("charges length:- ${charges!.length}");
       print('leaseid ${widget.leaseId}');
-      print('tenantid $tenantId');
+
+      print('tenantid '
+          '$tenantId');
 
       setState(() {
         rows = charges?.where((entry) => entry.chargeAmount! > 0).map((entry) {
@@ -429,12 +432,12 @@ class _MakePaymentState extends State<MakePayment> {
             [];
         for (var i = 0; i < filteredCharges!.length; i++) {
           if (i == 0) {
-            charges_balances[0] = filteredCharges[i].chargeAmount!;
+            charges_balances[0] = filteredCharges[i].chargeAmount!.toDouble();
           } else {
-            charges_balances.add(filteredCharges[i].chargeAmount!);
+            charges_balances.add(filteredCharges[i].chargeAmount!.toDouble());
           }
         }
-
+        print("rows length:- ${rows!.length}");
         /*  print(rows.first['account']);
         print(rows.first['charge_amount']);
         print(rows.first['charge_amount']);*/
@@ -506,7 +509,7 @@ class _MakePaymentState extends State<MakePayment> {
           print(charge);
           print(amount);
           rows[index]['amount'] = amount;
-          charges_balances[index] = (charge.toDouble() + amount).toInt();
+          charges_balances[index] = (charge.toDouble() + amount).toDouble();
           totalAmount += amount;
 
           totalAmount = 0.0;
@@ -522,7 +525,7 @@ class _MakePaymentState extends State<MakePayment> {
           print(charge);
           print(amount);
           rows[index]['amount'] = amount;
-          charges_balances[index] = (charge.toDouble() - amount).toInt();
+          charges_balances[index] = (charge.toDouble() - amount).toDouble();
           totalAmount += amount;
 
           totalAmount = 0.0;

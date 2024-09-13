@@ -1,6 +1,7 @@
 // lib/models.dart
 class RentalOwners {
   String? adminId;
+  String? rentalowner_id;
   String? firstName;
   String? companyName;
   String? primaryEmail;
@@ -23,7 +24,8 @@ class RentalOwners {
      this.state,
      this.country,
      this.postalCode,
-    this.processorid
+    this.processorid,
+    this.rentalowner_id
   });
 
   Map<String, dynamic> toJson() => {
@@ -36,6 +38,7 @@ class RentalOwners {
     'state': state,
     'country': country,
     'postal_code': postalCode,
+    'rentalowner_id':rentalowner_id,
     if(processorList != null)
     'processor_list': processorList,
     if(processorid != null)

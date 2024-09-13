@@ -12950,8 +12950,8 @@ class _Summery_pageState extends State<Summery_page>
                       data = data
                           .where((workorder) => workorder.status != 'Completed')
                           .toList();
-                      Provider.of<WorkOrderCountProvider>(context)
-                          .updateCount(data.length);
+                    /*  Provider.of<WorkOrderCountProvider>(context)
+                          .updateCount(data.length);*/
                     }
                     sortData(data);
                     final totalPages = (data.length / itemsPerPage).ceil();

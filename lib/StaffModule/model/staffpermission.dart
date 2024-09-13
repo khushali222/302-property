@@ -1,4 +1,3 @@
-
 class StaffPermission {
   bool? propertydetailView;
   bool? workorderdetailView;
@@ -24,30 +23,69 @@ class StaffPermission {
   bool? workorderAdd;
   bool? workorderDelete;
 
-  StaffPermission(
-      {this.propertydetailView,
-        this.workorderdetailView,
-        this.paymentView,
-        this.paymentAdd,
-        this.paymentEdit,
-        this.paymentDelete,
-        this.propertyView,
-        this.leaseAdd,
-        this.workorderEdit,
-        this.propertyAdd,
-        this.propertyEdit,
-        this.propertyDelete,
-        this.tenantView,
-        this.tenantAdd,
-        this.tenantEdit,
-        this.tenantDelete,
-        this.leaseView,
-        this.leaseEdit,
-        this.leaseDelete,
-        this.leasedetailView,
-        this.workorderView,
-        this.workorderAdd,
-        this.workorderDelete});
+  // New variables for additional permissions
+  bool? settingView;
+  bool? propertytypeView;
+  bool? propertytypeAdd;
+  bool? propertytypeEdit;
+  bool? propertytypeDelete;
+  bool? rentalownerView;
+  bool? rentalownerAdd;
+  bool? rentalownerEdit;
+  bool? rentalownerDelete;
+  bool? applicantView;
+  bool? applicantAdd;
+  bool? applicantEdit;
+  bool? applicantDelete;
+  bool? vendorView;
+  bool? vendorAdd;
+  bool? vendorEdit;
+  bool? vendorDelete;
+
+  StaffPermission({
+    this.propertydetailView,
+    this.workorderdetailView,
+    this.paymentView,
+    this.paymentAdd,
+    this.paymentEdit,
+    this.paymentDelete,
+    this.propertyView,
+    this.leaseAdd,
+    this.workorderEdit,
+    this.propertyAdd,
+    this.propertyEdit,
+    this.propertyDelete,
+    this.tenantView,
+    this.tenantAdd,
+    this.tenantEdit,
+    this.tenantDelete,
+    this.leaseView,
+    this.leaseEdit,
+    this.leaseDelete,
+    this.leasedetailView,
+    this.workorderView,
+    this.workorderAdd,
+    this.workorderDelete,
+
+    // New permissions
+    this.settingView,
+    this.propertytypeView,
+    this.propertytypeAdd,
+    this.propertytypeEdit,
+    this.propertytypeDelete,
+    this.rentalownerView,
+    this.rentalownerAdd,
+    this.rentalownerEdit,
+    this.rentalownerDelete,
+    this.applicantView,
+    this.applicantAdd,
+    this.applicantEdit,
+    this.applicantDelete,
+    this.vendorView,
+    this.vendorAdd,
+    this.vendorEdit,
+    this.vendorDelete,
+  });
 
   StaffPermission.fromJson(Map<String, dynamic> json) {
     propertydetailView = json['propertydetail_view'];
@@ -73,6 +111,25 @@ class StaffPermission {
     workorderView = json['workorder_view'];
     workorderAdd = json['workorder_add'];
     workorderDelete = json['workorder_delete'];
+
+    // Deserialize new permissions
+    settingView = json['setting_view'];
+    propertytypeView = json['propertytype_view'];
+    propertytypeAdd = json['propertytype_add'];
+    propertytypeEdit = json['propertytype_edit'];
+    propertytypeDelete = json['propertytype_delete'];
+    rentalownerView = json['rentalowner_view'];
+    rentalownerAdd = json['rentalowner_add'];
+    rentalownerEdit = json['rentalowner_edit'];
+    rentalownerDelete = json['rentalowner_delete'];
+    applicantView = json['applicant_view'];
+    applicantAdd = json['applicant_add'];
+    applicantEdit = json['applicant_edit'];
+    applicantDelete = json['applicant_delete'];
+    vendorView = json['vendor_view'];
+    vendorAdd = json['vendor_add'];
+    vendorEdit = json['vendor_edit'];
+    vendorDelete = json['vendor_delete'];
   }
 
   Map<String, dynamic> toJson() {
@@ -100,6 +157,26 @@ class StaffPermission {
     data['workorder_view'] = this.workorderView;
     data['workorder_add'] = this.workorderAdd;
     data['workorder_delete'] = this.workorderDelete;
+
+    // Serialize new permissions
+    data['setting_view'] = this.settingView;
+    data['propertytype_view'] = this.propertytypeView;
+    data['propertytype_add'] = this.propertytypeAdd;
+    data['propertytype_edit'] = this.propertytypeEdit;
+    data['propertytype_delete'] = this.propertytypeDelete;
+    data['rentalowner_view'] = this.rentalownerView;
+    data['rentalowner_add'] = this.rentalownerAdd;
+    data['rentalowner_edit'] = this.rentalownerEdit;
+    data['rentalowner_delete'] = this.rentalownerDelete;
+    data['applicant_view'] = this.applicantView;
+    data['applicant_add'] = this.applicantAdd;
+    data['applicant_edit'] = this.applicantEdit;
+    data['applicant_delete'] = this.applicantDelete;
+    data['vendor_view'] = this.vendorView;
+    data['vendor_add'] = this.vendorAdd;
+    data['vendor_edit'] = this.vendorEdit;
+    data['vendor_delete'] = this.vendorDelete;
+
     return data;
   }
 }

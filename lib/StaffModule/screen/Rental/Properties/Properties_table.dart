@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../repository/staffpermission_provider.dart';
 import 'add_new_property.dart';
 import 'summery_page.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
@@ -27,6 +28,7 @@ import 'package:http/http.dart' as http;
 
 import 'EditProperties.dart';
 import '../../../widgets/custom_drawer.dart';
+import '../../../model/staffpermission.dart';
 class _Dessert {
   _Dessert(
     this.name,
@@ -364,11 +366,14 @@ class _PropertiesTableState extends State<PropertiesTable> {
           onPressed: () async {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             print(id);
+
             var data = PropertiesRepository().DeleteProperties(property_id: id,);
+            fetchRentaladded();
             setState(() {
               futureRentalOwners = PropertiesRepository().fetchProperties();
               //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
             });
+
             Navigator.pop(context);
           },
           color: Colors.red,
@@ -478,6 +483,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
 
   @override
   Widget build(BuildContext context) {
+    final permissionProvider = Provider.of<StaffPermissionProvider>(context);
+    StaffPermission? permissions = permissionProvider.permissions;
+
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -488,6 +496,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
             SizedBox(
               height: 20,
             ),
+            if (permissions!.propertyAdd == true)
             Padding(
               padding: const EdgeInsets.only(left: 0, right: 0),
               child: Row(
@@ -565,6 +574,23 @@ class _PropertiesTableState extends State<PropertiesTable> {
                 ],
               ),
             ),
+            if (permissions!.propertyAdd != true)
+              Padding(
+                padding: const EdgeInsets.only(left: 0, right: 0),
+                child: Row(
+                  //mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: titleBar(
+                        width: MediaQuery.of(context).size.width * .93,
+                        title: 'Properties',
+                      ),
+                    ),
+
+                  ],
+                ),
+              ),
             // SizedBox(height: 10),
             SizedBox(height: 10),
             Padding(
