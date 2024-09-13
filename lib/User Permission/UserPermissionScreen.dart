@@ -1195,6 +1195,11 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                                   leaseView: staffLeaseView,
                                   leaseEdit: staffLeaseEdit,
                                   leaseDelete: staffLeaseDelete,
+
+
+
+
+
                             //      leasedetailView: staffLeasedetailView,
                                   workorderView: staffWorkorderView,
                                   workorderAdd: staffWorkorderAdd,
@@ -1279,6 +1284,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
       ),
     );
   }
+
 
   Widget _buildPermissionTable(String title, List<Widget> checkboxes) {
     return LayoutBuilder(

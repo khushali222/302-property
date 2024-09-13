@@ -359,6 +359,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
             setState(() {
               futureRentalOwners = RentalOwnerService().fetchRentalOwners("");
             });
+            fetchRentalOwneradded();
             Navigator.pop(context);
           },
           color: Colors.red,
@@ -497,6 +498,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                 RentalOwnerService().fetchRentalOwners("");
                             //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
                           });
+                          fetchRentalOwneradded();
                         }
                       } else {
                         _showAlertforLimit(context);

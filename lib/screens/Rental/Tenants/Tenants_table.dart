@@ -299,6 +299,7 @@ class _Tenants_tableState extends State<Tenants_table> {
             setState(() {
               futureTenants = TenantsRepository().fetchTenants();
             });
+            fetchtenantsadded();
             Navigator.pop(context);
           },
           color: Colors.red,
@@ -741,6 +742,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                             futureTenants = TenantsRepository().fetchTenants();
                             //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
                           });
+                          fetchtenantsadded();
                         }
                       } else {
                         _showAlertforLimit(context);

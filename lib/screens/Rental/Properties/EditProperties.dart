@@ -987,6 +987,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     ? selectedProperty
                                                     : null)
                                                     : null,
+
+
                                                 hint: Text(
                                                   'Add Property Type',
                                                   style: TextStyle(
@@ -2634,6 +2636,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                               //     rentalOwnerPhoneNumber: phonenum.text,
                                                               //     rentalOwnerFirstName: firstname.text,
                                                               //   );
+                                                              provider.clearOwners();
                                                               print("hello");
                                                               setState(() {
                                                                 RentalOwner?

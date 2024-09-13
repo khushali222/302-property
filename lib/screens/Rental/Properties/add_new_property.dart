@@ -8006,7 +8006,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                     //     rentalOwnerPhoneNumber: phonenum.text,
                                                                     //     rentalOwnerFirstName: firstname.text,
                                                                     //   );
-                                                
+                                                                    provider.clearOwners();
                                                                     print("hello");
                                                                     setState(() {
                                                                       RentalOwner?
