@@ -9613,51 +9613,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                     SizedBox(width: MediaQuery.of(context).size.width * 0.01),
                     GestureDetector(
                       onTap: () async {
-
-                      //  final ownerDetails = Provider.of<OwnerDetailsProvider>(context).OwnerDetails;
-
-                      /*  List<ProcessorLists> selectedProcessors = _processorGroups
+                        //  final ownerDetails = Provider.of<OwnerDetailsProvider>(context).OwnerDetails;
+                        /*  List<ProcessorLists> selectedProcessors = _processorGroups
                             .where((group) => group.isChecked)
                             .map((group) => ProcessorLists(processorId: group.controller.text.trim())) // Create ProcessorList objects
                             .where((processor) => processor.processorId!.isNotEmpty) // Filter out empty IDs
                             .toList();*/
-                        RentalOwner? ownerDetails = context.read<OwnerDetailsProvider>().ownerDetails;
-
-                        String processorId = context.read<OwnerDetailsProvider>().selectedprocessorlist ?? "";
-                        List<Map<String, String>> processorIds = ownerDetails!.processorList!.map((processor) {
-                          return {
-                            'processor_id': processor.processorId ?? "",
-                          };
-                        }).toList();
-
-                        SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                        String? adminId = prefs.getString("adminId");
-                        final updatedOwner = RentalOwner(
-                          rentalOwnerName: firstnameController.text,
-                          rentalOwnerCompanyName: comnameController.text,
-                          rentalOwnerPrimaryEmail: primaryemailController.text,
-                          rentalOwnerPhoneNumber: phonenumController.text,
-                          city: cityController.text,
-                          state: stateController.text,
-                          country: countyController.text,
-                          postalCode: codeController.text,
-                        );
-                        Provider.of<OwnerDetailsProvider>(context, listen: false).setOwnerDetails(updatedOwner);
-                        RentalOwners owners = RentalOwners(
-                          adminId: adminId,
-                          firstName: updatedOwner.rentalOwnerName,
-                          companyName:updatedOwner.rentalOwnerCompanyName,
-                          primaryEmail: updatedOwner.rentalOwnerPrimaryEmail,
-                          phoneNumber: updatedOwner.rentalOwnerPhoneNumber,
-                          city: updatedOwner.city,
-                          state: updatedOwner.state,
-                          country: updatedOwner.country,
-                          postalCode: updatedOwner.postalCode,
-                          processorid: processorIds!,
-                        );
-
-
                         if (address.text.isEmpty) {
                           setState(() {
                             addresserror = true;
@@ -9728,9 +9689,39 @@ class _Add_new_propertyState extends State<Add_new_property> {
                             loading = true;
                           });
                           print(selectedpropertytypedata!.propertyId);
+                          RentalOwner? ownerDetails = context.read<OwnerDetailsProvider>().ownerDetails;
+                          String processorId = context.read<OwnerDetailsProvider>().selectedprocessorlist ?? "";
+                          List<Map<String, String>> processorIds = ownerDetails!.processorList!.map((processor) {
+                            return {
+                              'processor_id': processor.processorId ?? "",
+                            };
+                          }).toList();
                           SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
+                          await SharedPreferences.getInstance();
                           String? adminId = prefs.getString("adminId");
+                          final updatedOwner = RentalOwner(
+                            rentalOwnerName: firstnameController.text,
+                            rentalOwnerCompanyName: comnameController.text,
+                            rentalOwnerPrimaryEmail: primaryemailController.text,
+                            rentalOwnerPhoneNumber: phonenumController.text,
+                            city: cityController.text,
+                            state: stateController.text,
+                            country: countyController.text,
+                            postalCode: codeController.text,
+                          );
+                          Provider.of<OwnerDetailsProvider>(context, listen: false).setOwnerDetails(updatedOwner);
+                          RentalOwners owners = RentalOwners(
+                            adminId: adminId,
+                            firstName: updatedOwner.rentalOwnerName,
+                            companyName:updatedOwner.rentalOwnerCompanyName,
+                            primaryEmail: updatedOwner.rentalOwnerPrimaryEmail,
+                            phoneNumber: updatedOwner.rentalOwnerPhoneNumber,
+                            city: updatedOwner.city,
+                            state: updatedOwner.state,
+                            country: updatedOwner.country,
+                            postalCode: updatedOwner.postalCode,
+                            processorid: processorIds!,
+                          );
                           if (adminId != null) {
                             //  try {
                             Rental rentals = Rental(

@@ -5664,7 +5664,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
             child: Material(
               child: Container(
                   color: Colors.white,
-                  height: _isInvalid ? 326 : 350,
+                  height: _isInvalid ? 327 : 365,
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -6396,7 +6396,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         child: Material(
           child: Container(
             color: Colors.white,
-            height: _isInvalid ? 326 : 350,
+            height: _isInvalid ? 327 : 365,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

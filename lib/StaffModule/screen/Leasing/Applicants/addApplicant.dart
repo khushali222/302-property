@@ -330,222 +330,251 @@ class _AddApplicantState extends State<AddApplicant> {
                           hintText: 'Enter telephone number',
                           controller: telePhoneNumber,
                         ),
-
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        const Text('Property',
+                            style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey)),
+                        const SizedBox(
+                          height: 4,
+                        ),
                         Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  DropdownButtonHideUnderline(
-                                    child: DropdownButtonFormField2<String>(
-                                      decoration: InputDecoration(
-                                          border: InputBorder.none),
-                                      isExpanded: true,
-                                      hint: const Row(
-                                        children: [
-                                          Expanded(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            FormField<String>(
+                              validator: (value) {
+                                if (_selectedPropertyId == null) {
+                                  return 'Please select an option';
+                                }
+                                return null;
+                              },
+                              builder: (FormFieldState<String> state) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    DropdownButtonHideUnderline(
+                                      child: DropdownButtonFormField2<String>(
+                                        decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                        ),
+                                        isExpanded: true,
+                                        hint: const Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                'Select Property',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Color(0xFFb0b6c3),
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        items: properties.keys.map((rentalId) {
+                                          return DropdownMenuItem<String>(
+                                            value: rentalId,
                                             child: Text(
-                                              'Select Property',
-                                              style: TextStyle(
+                                              properties[rentalId]!,
+                                              style: const TextStyle(
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w400,
-                                                color: Color(0xFFb0b6c3),
+                                                color: Colors.black87,
                                               ),
                                               overflow: TextOverflow.ellipsis,
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      items: properties.keys.map((rentalId) {
-                                        return DropdownMenuItem<String>(
-                                          value: rentalId,
-                                          child: Text(
-                                            properties[rentalId]!,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.black87,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        );
-                                      }).toList(),
-                                      value: _selectedPropertyId,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedUnitId = null;
-                                          _selectedPropertyId = value;
-                                          _selectedProperty = properties[
-                                              value]; // Store selected rental_adress
+                                          );
+                                        }).toList(),
+                                        value: _selectedPropertyId,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            // Notify form field of the change
+                                            _selectedUnitId = null;
+                                            _selectedPropertyId = value;
+                                            _selectedProperty = properties[value]; // Store selected property
 
-                                          renderId = value.toString();
-                                          print(
-                                              'Selected Property: $_selectedProperty');
-                                          _loadUnits(
-                                              value!); // Fetch units for the selected property
-                                        });
-                                      },
-                                      buttonStyleData: ButtonStyleData(
-                                        height: 45,
-                                        width: 160,
-                                        padding: const EdgeInsets.only(
-                                            left: 14, right: 14),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                          color: Colors.white,
+                                            renderId = value.toString();
+                                            print('Selected Property: $_selectedProperty');
+                                            _loadUnits(value!);
+                                            state.didChange(value);// Fetch units for the selected property
+                                          });
+                                          state.reset();
+                                        },
+                                        buttonStyleData: ButtonStyleData(
+                                          height: 45,
+                                          width: 160,
+                                          padding: const EdgeInsets.only(left: 14, right: 14),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(6),
+                                            color: Colors.white,
+                                          ),
+                                          elevation: 2,
                                         ),
-                                        elevation: 2,
-                                      ),
-                                      iconStyleData: const IconStyleData(
-                                        icon: Icon(
-                                          Icons.arrow_drop_down,
+                                        iconStyleData: const IconStyleData(
+                                          icon: Icon(
+                                            Icons.arrow_drop_down,
+                                          ),
+                                          iconSize: 24,
+                                          iconEnabledColor: Color(0xFFb0b6c3),
+                                          iconDisabledColor: Colors.grey,
                                         ),
-                                        iconSize: 24,
-                                        iconEnabledColor: Color(0xFFb0b6c3),
-                                        iconDisabledColor: Colors.grey,
-                                      ),
-                                      dropdownStyleData: DropdownStyleData(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                          color: Colors.white,
+                                        dropdownStyleData: DropdownStyleData(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(6),
+                                            color: Colors.white,
+                                          ),
+                                          scrollbarTheme: ScrollbarThemeData(
+                                            radius: const Radius.circular(6),
+                                            thickness: MaterialStateProperty.all(6),
+                                            thumbVisibility: MaterialStateProperty.all(true),
+                                          ),
                                         ),
-                                        scrollbarTheme: ScrollbarThemeData(
-                                          radius: const Radius.circular(6),
-                                          thickness:
-                                              MaterialStateProperty.all(6),
-                                          thumbVisibility:
-                                              MaterialStateProperty.all(true),
+                                        menuItemStyleData: const MenuItemStyleData(
+                                          height: 40,
+                                          padding: EdgeInsets.only(left: 14, right: 14),
                                         ),
                                       ),
-                                      menuItemStyleData:
-                                          const MenuItemStyleData(
-                                        height: 40,
-                                        padding: EdgeInsets.only(
-                                            left: 14, right: 14),
-                                      ),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please select an option';
-                                        }
-                                        return null;
-                                      },
                                     ),
-                                  ),
-                                  units.isNotEmpty
-                                      ? const Text('Unit',
-                                          style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.grey))
-                                      : Container(),
-                                  const SizedBox(height: 0),
-                                  units.isNotEmpty
-                                      ? DropdownButtonHideUnderline(
-                                          child:
-                                              DropdownButtonFormField2<String>(
-                                            decoration: InputDecoration(
-                                                border: InputBorder.none),
-                                            isExpanded: true,
-                                            hint: const Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Text(
-                                                    'Select Unit',
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      color: Color(0xFFb0b6c3),
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            items: units.keys.map((unitId) {
-                                              return DropdownMenuItem<String>(
-                                                value: unitId,
-                                                child: Text(
-                                                  units[unitId]!,
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w400,
-                                                    color: Colors.black87,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              );
-                                            }).toList(),
-                                            value: _selectedUnitId,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                unitId = value.toString();
-                                                _selectedUnitId = value;
-                                                _selectedUnit = units[
-                                                    value]; // Store selected rental_unit
-
-                                                print(
-                                                    'Selected Unit: $_selectedUnit');
-                                              });
-                                            },
-                                            buttonStyleData: ButtonStyleData(
-                                              height: 45,
-                                              width: 160,
-                                              padding: const EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                color: Colors.white,
-                                              ),
-                                              elevation: 2,
-                                            ),
-                                            iconStyleData: const IconStyleData(
-                                              icon: Icon(Icons.arrow_drop_down),
-                                              iconSize: 24,
-                                              iconEnabledColor:
-                                                  Color(0xFFb0b6c3),
-                                              iconDisabledColor: Colors.grey,
-                                            ),
-                                            dropdownStyleData:
-                                                DropdownStyleData(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                color: Colors.white,
-                                              ),
-                                              scrollbarTheme:
-                                                  ScrollbarThemeData(
-                                                radius:
-                                                    const Radius.circular(6),
-                                                thickness:
-                                                    MaterialStateProperty.all(
-                                                        6),
-                                                thumbVisibility:
-                                                    MaterialStateProperty.all(
-                                                        true),
-                                              ),
-                                            ),
-                                            menuItemStyleData:
-                                                const MenuItemStyleData(
-                                              height: 40,
-                                              padding: EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                            ),
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'Please select an option';
-                                              }
-                                              return null;
-                                            },
+                                    if (state.hasError)
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 14, top: 8),
+                                        child: Text(
+                                          state.errorText!,
+                                          style: const TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 12,
                                           ),
-                                        )
-                                      : Container(),
-                                ],
-                              ),
+                                        ),
+                                      ),
+                                  ],
+                                );
+                              },
+                            ),
+
+                            units.isNotEmpty
+                                ? const Text('Unit',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey))
+                                : Container(),
+                            const SizedBox(height: 0),
+                            units.isNotEmpty
+                                ? FormField<String>(
+                              validator: (value) {
+                                if (_selectedUnitId == null) {
+                                  return 'Please select an option';
+                                }
+                                return null;
+                              },
+                              builder: (FormFieldState<String> state) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    DropdownButtonHideUnderline(
+                                      child: DropdownButtonFormField2<String>(
+                                        decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                        ),
+                                        isExpanded: true,
+                                        hint: const Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                'Select Unit',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Color(0xFFb0b6c3),
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        items: units.keys.map((unitId) {
+                                          return DropdownMenuItem<String>(
+                                            value: unitId,
+                                            child: Text(
+                                              units[unitId]!,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.black87,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          );
+                                        }).toList(),
+                                        value: _selectedUnitId,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            // Notify form field of the change
+                                            unitId = value.toString();
+                                            _selectedUnitId = value;
+                                            _selectedUnit = units[value]; // Store selected unit
+                                            state.didChange(value);
+                                            print('Selected Unit: $_selectedUnit');
+                                          });
+                                          state.reset();
+                                        },
+                                        buttonStyleData: ButtonStyleData(
+                                          height: 45,
+                                          width: 160,
+                                          padding: const EdgeInsets.only(left: 14, right: 14),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(6),
+                                            color: Colors.white,
+                                          ),
+                                          elevation: 2,
+                                        ),
+                                        iconStyleData: const IconStyleData(
+                                          icon: Icon(Icons.arrow_drop_down),
+                                          iconSize: 24,
+                                          iconEnabledColor: Color(0xFFb0b6c3),
+                                          iconDisabledColor: Colors.grey,
+                                        ),
+                                        dropdownStyleData: DropdownStyleData(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(6),
+                                            color: Colors.white,
+                                          ),
+                                          scrollbarTheme: ScrollbarThemeData(
+                                            radius: const Radius.circular(6),
+                                            thickness: MaterialStateProperty.all(6),
+                                            thumbVisibility: MaterialStateProperty.all(true),
+                                          ),
+                                        ),
+                                        menuItemStyleData: const MenuItemStyleData(
+                                          height: 40,
+                                          padding: EdgeInsets.only(left: 14, right: 14),
+                                        ),
+                                      ),
+                                    ),
+                                    if (state.hasError)
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 14, top: 8),
+                                        child: Text(
+                                          state.errorText!,
+                                          style: const TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                );
+                              },
+                            )
+
+                                : Container(),
+                          ],
+                        ),
                       ],
                     ),
                   ),

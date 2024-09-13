@@ -1365,7 +1365,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                             width: 2,
                           ),
                           Text(
-                            "Primary E-mail",
+                            "Primary E-mail *",
                             style: TextStyle(
                                 color: Color(0xFF8A95A8),
                                 fontWeight: FontWeight.bold,
@@ -1580,7 +1580,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                             width: 2,
                           ),
                           Text(
-                            "Phone Number",
+                            "Phone Number *",
                             style: TextStyle(
                                 // color: Colors.grey,
                                 color: Color(0xFF8A95A8),

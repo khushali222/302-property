@@ -371,6 +371,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
               futureRentalOwners = PropertiesRepository().fetchProperties();
               //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
             });
+            fetchRentaladded();
             Navigator.pop(context);
           },
           color: Colors.red,
@@ -515,6 +516,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                 PropertiesRepository().fetchProperties();
                             //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
                           });
+                          fetchRentaladded();
                         }
                       } else {
                         _showAlertforLimit(context);
@@ -1410,8 +1412,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                       Expanded(
                                                         child: GestureDetector(
                                                           onTap:(){
-                                                            _showAlert(context, rentals.rentalId!);
-                                                          },
+                                                           setState(() {
+                                                             _showAlert(context, rentals.rentalId!);
+
+                                                           });
+                                                           },
                                                           child: Container(
                                                             height:40,
                                                             decoration: BoxDecoration(

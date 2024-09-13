@@ -529,92 +529,191 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                             SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.004),
                           GestureDetector(
+                            // onTap: () async {
+                            //   if (name.text.isEmpty) {
+                            //     setState(() {
+                            //       nameerror = true;
+                            //       namemessage = "name is required";
+                            //     });
+                            //   } else {
+                            //     setState(() {
+                            //       nameerror = false;
+                            //     });
+                            //   }
+                            //   if (designation.text.isEmpty) {
+                            //     setState(() {
+                            //       designationerror = true;
+                            //       designationmessage =
+                            //       "designation is required";
+                            //     });
+                            //   } else {
+                            //     setState(() {
+                            //       designationerror = false;
+                            //     });
+                            //   }
+                            //   if (phonenumber.text.isEmpty) {
+                            //     setState(() {
+                            //       phonenumbererror = true;
+                            //       phonenumbermessage = "number is required";
+                            //     });
+                            //   } else {
+                            //     setState(() {
+                            //       phonenumbererror = false;
+                            //     });
+                            //   }
+                            //   if (email.text.isEmpty) {
+                            //     setState(() {
+                            //       emailerror = true;
+                            //       emailmessage = "email is required";
+                            //     });
+                            //   } else {
+                            //     setState(() {
+                            //       emailerror = false;
+                            //     });
+                            //   }
+                            //   if (nameerror &&
+                            //       designationerror &&
+                            //       phonenumbererror &&
+                            //       emailerror) {
+                            //     setState(() {
+                            //       isLoading = true;
+                            //     });
+                            //   }
+                            //   SharedPreferences prefs =
+                            //   await SharedPreferences.getInstance();
+                            //   String? adminId = prefs.getString("adminId");
+                            //   if (adminId != null) {
+                            //     try {
+                            //       await StaffMemberRepository()
+                            //           .Edit_staff_member(
+                            //           adminId: adminId,
+                            //           staffmemberName: name.text,
+                            //           staffmemberDesignation:
+                            //           designation.text,
+                            //           staffmemberPhoneNumber:
+                            //           phonenumber.text,
+                            //           staffmemberEmail: email.text,
+                            //           Sid: widget.staff!.staffmemberId);
+                            //       setState(() {
+                            //         widget.staff?.staffmemberName = name.text;
+                            //         widget.staff?.staffmemberDesignation =
+                            //             designation.text;
+                            //         widget.staff?.staffmemberPhoneNumber =
+                            //             phonenumber.text;
+                            //         widget.staff?.staffmemberEmail = email.text;
+                            //         widget.staff?.staffmemberId =
+                            //             widget.staff!.staffmemberId;
+                            //         widget.staff?.adminId = adminId;
+                            //         isLoading = false;
+                            //       });
+                            //       Navigator.of(context).pop(true);
+                            //     } catch (e) {
+                            //       setState(() {
+                            //         isLoading = false;
+                            //       });
+                            //       // Handle error
+                            //     }
+                            //   }
+                            // },
                             onTap: () async {
+                              // Validate Name Field
                               if (name.text.isEmpty) {
                                 setState(() {
                                   nameerror = true;
-                                  namemessage = "name is required";
+                                  namemessage = "Name is required";
                                 });
                               } else {
                                 setState(() {
                                   nameerror = false;
                                 });
                               }
+
+                              // Validate Designation Field
                               if (designation.text.isEmpty) {
                                 setState(() {
                                   designationerror = true;
-                                  designationmessage =
-                                  "designation is required";
+                                  designationmessage = "Designation is required";
                                 });
                               } else {
                                 setState(() {
                                   designationerror = false;
                                 });
                               }
+
+                              // Validate Phone Number Field
                               if (phonenumber.text.isEmpty) {
                                 setState(() {
                                   phonenumbererror = true;
-                                  phonenumbermessage = "number is required";
+                                  phonenumbermessage = "Phone number is required";
                                 });
                               } else {
                                 setState(() {
                                   phonenumbererror = false;
                                 });
                               }
+
+                              // Validate Email Field
                               if (email.text.isEmpty) {
                                 setState(() {
                                   emailerror = true;
-                                  emailmessage = "email is required";
+                                  emailmessage = "Email is required";
                                 });
                               } else {
                                 setState(() {
                                   emailerror = false;
                                 });
                               }
-                              if (!nameerror &&
-                                  !designationerror &&
-                                  !phonenumbererror &&
-                                  !emailerror) {
-                                setState(() {
-                                  isLoading = true;
-                                });
+
+                              // If any validation fails, return early and do not proceed with API call or navigation
+                              if (nameerror || designationerror || phonenumbererror || emailerror) {
+                                return; // This prevents the navigation and edit if any field is invalid
                               }
-                              SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
+
+                              // Show loading spinner while waiting for API call
+                              setState(() {
+                                isLoading = true;
+                              });
+
+                              // Get the adminId from shared preferences
+                              SharedPreferences prefs = await SharedPreferences.getInstance();
                               String? adminId = prefs.getString("adminId");
+
                               if (adminId != null) {
                                 try {
-                                  await StaffMemberRepository()
-                                      .Edit_staff_member(
-                                      adminId: adminId,
-                                      staffmemberName: name.text,
-                                      staffmemberDesignation:
-                                      designation.text,
-                                      staffmemberPhoneNumber:
-                                      phonenumber.text,
-                                      staffmemberEmail: email.text,
-                                      Sid: widget.staff!.staffmemberId);
+                                  // API call to edit staff member
+                                  await StaffMemberRepository().Edit_staff_member(
+                                    adminId: adminId,
+                                    staffmemberName: name.text,
+                                    staffmemberDesignation: designation.text,
+                                    staffmemberPhoneNumber: phonenumber.text,
+                                    staffmemberEmail: email.text,
+                                    Sid: widget.staff!.staffmemberId,
+                                  );
+
+                                  // Update the staff details after successful edit
                                   setState(() {
                                     widget.staff?.staffmemberName = name.text;
-                                    widget.staff?.staffmemberDesignation =
-                                        designation.text;
-                                    widget.staff?.staffmemberPhoneNumber =
-                                        phonenumber.text;
+                                    widget.staff?.staffmemberDesignation = designation.text;
+                                    widget.staff?.staffmemberPhoneNumber = phonenumber.text;
                                     widget.staff?.staffmemberEmail = email.text;
-                                    widget.staff?.staffmemberId =
-                                        widget.staff!.staffmemberId;
+                                    widget.staff?.staffmemberId = widget.staff!.staffmemberId;
                                     widget.staff?.adminId = adminId;
                                     isLoading = false;
                                   });
+
+                                  // Navigate back with success response
                                   Navigator.of(context).pop(true);
+
                                 } catch (e) {
+                                  // Handle error and stop the loading spinner
                                   setState(() {
                                     isLoading = false;
                                   });
-                                  // Handle error
+                                  // You can add further error handling here
                                 }
                               }
                             },
+
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),
                               child: Container(
