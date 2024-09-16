@@ -164,7 +164,7 @@ class Entrycharge {
   String? entryId;
   String? memo;
   String? account;
-  int? amount;
+  double? amount;
   String? date;
   bool? isPaid;
   bool? isLateFee;
@@ -195,7 +195,9 @@ class Entrycharge {
       entryId: json['entry_id'] as String?,
       memo: json['memo'] as String?,
       account: json['account'] as String?,
-      amount: json['amount'] as int?,
+      amount: (json['amount'] is int)
+          ? (json['amount'] as int).toDouble()
+          : json['amount'] as double?,
       date: json['date'] as String?,
       isPaid: json['is_paid'] as bool?,
       isLateFee: json['is_lateFee'] as bool?,

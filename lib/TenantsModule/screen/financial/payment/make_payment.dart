@@ -95,12 +95,12 @@ class _MakePaymentState extends State<MakePayment> {
       },
       body: json.encode({"token": token}),
     );
-    print(response.body);
+  //  print(response.body);
     final jsonData = json.decode(response.body);
     if (jsonData['id'] != "") {
-      print(jsonData);
+      //print(jsonData);
       setState(() {
-        print("object ${jsonData['override_fee']}");
+       // print("object ${jsonData['override_fee']}");
         override_fee = jsonData['override_fee'].toString();
       });
       //prefs.setString('checkedToken',jsonData["token"]);
@@ -168,10 +168,10 @@ class _MakePaymentState extends State<MakePayment> {
         "id": "CRM $id",
       },
     );
-    print('$Api_url/api/leases/get_leases/${widget.tenantId}');
+   // print('$Api_url/api/leases/get_leases/${widget.tenantId}');
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      print(data);
+    //  print(data);
       final List<Map<String, String>> fetchedTenants = [];
 
       for (var tenant in data['data']['leases']) {
@@ -205,8 +205,8 @@ class _MakePaymentState extends State<MakePayment> {
       String? id = prefs.getString("tenant_id");
       String? admin_id = prefs.getString("adminId");
       String? token = prefs.getString('token');
-      print(token);
-      print('lease ${widget.leaseId}');
+     // print(token);
+   //   print('lease ${widget.leaseId}');
       //   String? id = prefs.getString("adminId");
       final response = await http.get(
         Uri.parse('$Api_url/api/accounts/accounts/$admin_id'),
@@ -309,7 +309,7 @@ class _MakePaymentState extends State<MakePayment> {
         validationMessage = null;
       });
     }
-    print(totalAmount);
+  //  print(totalAmount);
     surge_count();
   }
 
@@ -359,7 +359,7 @@ class _MakePaymentState extends State<MakePayment> {
   }
 
   Future<String?> uploadPdf(File pdfFile) async {
-    print(pdfFile.path);
+    //print(pdfFile.path);
     final String uploadUrl = '${Api_url}/api/images/upload';
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
@@ -441,14 +441,15 @@ class _MakePaymentState extends State<MakePayment> {
       List<Entrycharge> filteredCharges =
           charges?.where((entry) => entry.chargeAmount! > 0).toList() ?? [];
 
-      print('leaseid ${widget.leaseId}');
-      print('tenantid $tenantId');
-      print(charges!.length);
-      print("aaaa ${filteredCharges.length}");
+      // print('leaseid ${widget.leaseId}');
+      // print('tenantid $tenantId');
+      // print(charges!.length);
+      // print("aaaa ${filteredCharges.length}");
 
       setState(() {
         rows = charges?.where((entry) => entry.chargeAmount! > 0).map((entry) {
           return {
+            'entry_id':entry.entryId,
             'account': entry.account,
             'amount': 0.0,
             'charge_amount': entry.chargeAmount,
@@ -459,8 +460,8 @@ class _MakePaymentState extends State<MakePayment> {
           };
         }).toList() ??
             [];
-        print(rows.length);
-        print(filteredCharges.length);
+   //     print(rows.length);
+ //       print(filteredCharges.length);
         for (var i = 0; i < filteredCharges.length; i++) {
           print("calling");
           if (i == 0) {
@@ -470,7 +471,7 @@ class _MakePaymentState extends State<MakePayment> {
             charges_balances.add(filteredCharges[i].chargeAmount!);
           }
         }
-        print("charges ${charges_balances}");
+     //   print("charges ${charges_balances}");
         // print(rows.length);
         /*  print(rows.first['account']);
         print(rows.first['charge_amount']);
@@ -478,11 +479,11 @@ class _MakePaymentState extends State<MakePayment> {
         controllers = rows.map((row) {
           return TextEditingController(text: "".toString());
         }).toList();
-        print(rows);
+    //    print(rows);
         totalAmount = rows.fold(
             0.0, (sum, row) => sum + (row[amountController.text] ?? 0));
         isLoading = false;
-        print(controllers.length);
+     //   print(controllers.length);
       });
     } catch (e) {
       print(e);
@@ -542,8 +543,8 @@ class _MakePaymentState extends State<MakePayment> {
         if (rows[index]["newfield"] == true) {
           double amount = double.tryParse(value) ?? 0.0;
           double charge = rows[index]["charge_amount"];
-          print(charge);
-          print(amount);
+          // print(charge);
+          // print(amount);
           rows[index]['amount'] = amount;
           charges_balances[index] = (charge.toDouble() + amount).toDouble();
           totalAmount += amount;
@@ -551,15 +552,15 @@ class _MakePaymentState extends State<MakePayment> {
           totalAmount = 0.0;
 
           for (var i = 0; i < rows.length; i++) {
-            print(rows[i]["amount"]);
+       //     print(rows[i]["amount"]);
             if (rows[i]["amount"] != 0.0)
               totalAmount = totalAmount + rows[i]["amount"];
           }
         } else {
           double amount = double.tryParse(value) ?? 0.0;
           double charge = rows[index]["charge_amount"];
-          print(charge);
-          print(amount);
+          // print(charge);
+          // print(amount);
           rows[index]['amount'] = amount;
           charges_balances[index] = (charge.toDouble() - amount).toDouble();
           totalAmount += amount;
@@ -567,7 +568,7 @@ class _MakePaymentState extends State<MakePayment> {
           totalAmount = 0.0;
 
           for (var i = 0; i < rows.length; i++) {
-            print(rows[i]["amount"]);
+           // print(rows[i]["amount"]);
             if (rows[i]["amount"] != 0.0)
               totalAmount = totalAmount + rows[i]["amount"];
           }
@@ -604,17 +605,17 @@ class _MakePaymentState extends State<MakePayment> {
       List<dynamic> cardDetailsList = jsonResponse['card_detail'];
 
       // Debug print to check the response structure
-      print('JSON Response: $jsonResponse');
+     // print('JSON Response: $jsonResponse');
 
       for (var cardDetail in cardDetailsList) {
         // Debug print to check each card detail
-        print('Card Detail: $cardDetail');
+    //    print('Card Detail: $cardDetail');
 
         //  BillingData billingData = BillingData.fromJson(cardDetail);
         // print('Parsed Billing ID: ${billingData.billingId}');
 
         // Assuming this is part of the logic to print billing_id
-        print('Billing ID: ${cardDetail['billing_id']}');
+    //    print('Billing ID: ${cardDetail['billing_id']}');
       }
 
       CustomerData? customerData =
@@ -678,10 +679,10 @@ class _MakePaymentState extends State<MakePayment> {
       },
       body: json.encode(requestBody),
     );
-    print(response.body);
+  //  print(response.body);
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
-      print(jsonResponse);
+    //  print(jsonResponse);
       var customerJson = jsonResponse['data']['customer'];
       if (customerJson == null) {
         print('Failed to post data: ${response.statusCode}');
@@ -699,7 +700,7 @@ class _MakePaymentState extends State<MakePayment> {
         customerData.billing[i].binResult = binResults[i];
       }
 
-      print('Number of BIN check results: ${binResults.length}');
+    //  print('Number of BIN check results: ${binResults.length}');
       binResults.forEach((result) {
         print('BIN Check Result: $result');
       });
@@ -735,7 +736,7 @@ class _MakePaymentState extends State<MakePayment> {
     String adminId = prefs.getString('adminId') ?? '';
     String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
-    print(adminId);
+  //  print(adminId);
 
     final response = await http.get(
       Uri.parse('$Api_url/api/surcharge/surcharge/getadmin/$adminId'),
@@ -746,7 +747,7 @@ class _MakePaymentState extends State<MakePayment> {
     );
 
     if (response.statusCode == 200) {
-      print('Response: ${response.body}');
+    //  print('Response: ${response.body}');
       var jsonResponse = jsonDecode(response.body);
 
       // Accessing the first element in the 'data' list
@@ -774,8 +775,8 @@ class _MakePaymentState extends State<MakePayment> {
         surChargeAchflat = surchargeData['surcharge_flat_ACH'];
       });
 
-      print(surChargeAchper);
-      print(surChargeAchflat);
+      // print(surChargeAchper);
+      // print(surChargeAchflat);
     } else {
       print('Failed to fetch the surcharge: ${response}');
       var jsonResponse = jsonDecode(response.body);
@@ -988,7 +989,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                                   state.didChange(value); // Notify FormField of change
                                                                 });
                                                                 state.reset();
-                                                                print('Selected tenant_id: $selectedTenantId');
+                                                            //    print('Selected tenant_id: $selectedTenantId');
                                                               },
                                                               buttonStyleData: ButtonStyleData(
                                                                 height: 55,
@@ -1146,9 +1147,9 @@ class _MakePaymentState extends State<MakePayment> {
                                               _selectedPaymentMethod = newValue;
                                               AddFields();
                                             });
-                                            print(_selectedPaymentMethod == "Card");
-                                            print(
-                                                'Selected payment method: $_selectedPaymentMethod');
+                                            // print(_selectedPaymentMethod == "Card");
+                                            // print(
+                                            //     'Selected payment method: $_selectedPaymentMethod');
                                             surge_count();
                                           },
                                           buttonStyleData: ButtonStyleData(
@@ -1570,8 +1571,8 @@ class _MakePaymentState extends State<MakePayment> {
                                                   selectedAccount = newValue;
                                                 });
                                                 // print();
-                                                print(
-                                                    'Selected payment method: $selectedAccount ${selectedAccount == "Card"}');
+                                                // print(
+                                                //     'Selected payment method: $selectedAccount ${selectedAccount == "Card"}');
                                               },
                                               buttonStyleData: ButtonStyleData(
                                                 height: 45,
@@ -1661,8 +1662,8 @@ class _MakePaymentState extends State<MakePayment> {
                                                 setState(() {
                                                   _selectedHoldertype = newValue;
                                                 });
-                                                print(
-                                                    'Selected payment method: $_selectedHoldertype');
+                                                // print(
+                                                //     'Selected payment method: $_selectedHoldertype');
                                               },
                                               buttonStyleData: ButtonStyleData(
                                                 height: 45,
@@ -1864,7 +1865,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                       break;
                                                     }
                                                   }
-                                                  print(value);
+                                                  // print(value);
                                                   setState(() {
                                                     rows[index]['account'] = value;
                                                     rows[index]['charge_type'] =
@@ -2485,7 +2486,7 @@ class _MakePaymentState extends State<MakePayment> {
                                             });
                                           }
                                           else{
-                                            print("adminId ${id}");
+                                            // print("adminId ${id}");
                                             String? first_name = prefs.getString("first_name");
                                             String? last_name = prefs.getString("last_name");
                                             String? email = prefs.getString("email");
@@ -2994,7 +2995,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                       state.didChange(value); // Notify FormField of change
                                                     });
                                                     state.reset();
-                                                    print('Selected tenant_id: $selectedTenantId');
+                                                 //   print('Selected tenant_id: $selectedTenantId');
                                                   },
                                                   buttonStyleData: ButtonStyleData(
                                                     height: 55,
@@ -3108,8 +3109,8 @@ class _MakePaymentState extends State<MakePayment> {
                                                       state.didChange(newValue); // Notify form field of change
                                                     });
                                                     state.reset();
-                                                    print(_selectedPaymentMethod == "Card");
-                                                    print('Selected payment method: $_selectedPaymentMethod');
+                                                    // print(_selectedPaymentMethod == "Card");
+                                                    // print('Selected payment method: $_selectedPaymentMethod');
                                                     surge_count(); // Your custom method
                                                   },
                                                   buttonStyleData: ButtonStyleData(
@@ -3551,8 +3552,8 @@ class _MakePaymentState extends State<MakePayment> {
                                                           selectedAccount = newValue;
                                                         });
                                                         state.reset();
-                                                        print(
-                                                            'Selected account: $selectedAccount ${selectedAccount == "Card"}');
+                                                        // print(
+                                                        //     'Selected account: $selectedAccount ${selectedAccount == "Card"}');
                                                       },
                                                       buttonStyleData: ButtonStyleData(
                                                         height: 45,
@@ -3639,8 +3640,8 @@ class _MakePaymentState extends State<MakePayment> {
                                                             selectedAccount = newValue;
                                                           });
                                                           // print();
-                                                          print(
-                                                              'Selected payment method: $selectedAccount ${selectedAccount == "Card"}');
+                                                          // print(
+                                                          //     'Selected payment method: $selectedAccount ${selectedAccount == "Card"}');
                                                         },
                                                         buttonStyleData: ButtonStyleData(
                                                           height: 55,
@@ -3714,8 +3715,8 @@ class _MakePaymentState extends State<MakePayment> {
                                                         setState(() {
                                                           _selectedHoldertype = newValue;
                                                         });
-                                                        print(
-                                                            'Selected payment method: $_selectedHoldertype');
+                                                        // print(
+                                                        //     'Selected payment method: $_selectedHoldertype');
                                                       },
                                                       buttonStyleData: ButtonStyleData(
                                                         height: 55,
@@ -3910,7 +3911,7 @@ class _MakePaymentState extends State<MakePayment> {
 
                               ...rows.asMap().entries.map((entry) {
                                 int index = entry.key;
-                                print("controllersss ${controllers.length}");
+                               // print("controllersss ${controllers.length}");
                                 Map<String, dynamic> row = entry.value;
                                 return Padding(
                                   padding: const EdgeInsets.all(10.0),
@@ -4089,7 +4090,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                 "Amount must be less than or equal to balance",
                                                 keyboardType: TextInputType.number,
                                                 hintText: 'Enter Amount',
-                                            //    controller: controllers[index],
+                                                controller: controllers[index],
                                                 onChanged: (value) =>
                                                     updateAmount(index, value),
                                               ),
@@ -4414,7 +4415,7 @@ class _MakePaymentState extends State<MakePayment> {
                                           });
                                         }
                                         else{
-                                          print("adminId ${id}");
+                                        //  print("adminId ${id}");
                                           String? first_name = prefs.getString("first_name");
                                           String? last_name = prefs.getString("last_name");
                                           String? email = prefs.getString("email");
@@ -4463,7 +4464,7 @@ class _MakePaymentState extends State<MakePayment> {
                                             setState(() {
                                               _isLoading = false;
                                             });
-                                            print(e.toString().split("Exception")[1].toString().trimLeft());
+                                          //  print(e.toString().split("Exception")[1].toString().trimLeft());
                                             setState(() {
                                               _isLoading = false;
                                             });
@@ -4489,8 +4490,8 @@ class _MakePaymentState extends State<MakePayment> {
                                               ],
                                             ).show();
 
-                                            Fluttertoast.showToast(
-                                                msg: "Payment failed $e");
+                                           /* Fluttertoast.showToast(
+                                                msg: "Payment failed $e");*/
                                           });
                                         }
 
@@ -4539,7 +4540,7 @@ class _MakePaymentState extends State<MakePayment> {
                                           });
                                           Navigator.pop(context, true);
                                         }).catchError((e) {
-                                          print(e.toString().split("Exception")[1].toString().trimLeft());
+                                       //   print(e.toString().split("Exception")[1].toString().trimLeft());
                                           setState(() {
                                             _isLoading = false;
                                           });

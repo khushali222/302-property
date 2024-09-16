@@ -20,12 +20,14 @@ class LeaseMoveoutRepository {
       'admin_id': adminId,
       'tenant_id': tenantId,
       'lease_id': leaseId,
-      'moveout_notice_given_date': moveoutNoticeGivenDate,
-      'moveout_date': moveoutDate,
+      'moveout_notice_given_date': reverseFormatDate( moveoutNoticeGivenDate!),
+      'moveout_date': reverseFormatDate(moveoutDate!),
     };
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
+
+    print(data);
     final http.Response response = await http.post(
       Uri.parse('${Api_url}/api/moveout/lease_moveout/$leaseId'),
       headers: <String, String>{

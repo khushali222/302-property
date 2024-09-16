@@ -521,7 +521,7 @@ class _MakePaymentState extends State<MakePayment> {
           }
         } else {
           double amount = double.tryParse(value) ?? 0.0;
-          int charge = rows[index]["charge_amount"];
+          double charge = rows[index]["charge_amount"];
           print(charge);
           print(amount);
           rows[index]['amount'] = amount;
@@ -2175,6 +2175,18 @@ class _MakePaymentState extends State<MakePayment> {
                                               return null;
                                             },
                                             builder: (FormFieldState<String> state) {
+                                              String? selectedAccount = row['account'];
+
+                                              // List of all dropdown items, including missing ones
+                                              Map<String, List<String>> categorizedDataCopy = Map.from(categorizedData);
+
+                                              // Ensure the selected value is present in the list
+                                              if (selectedAccount != null && !categorizedData.values.expand((list) => list).contains(selectedAccount)) {
+                                                if (categorizedDataCopy['Other'] == null) {
+                                                  categorizedDataCopy['Other'] = [];
+                                                }
+                                                categorizedDataCopy['Other']!.add(selectedAccount);
+                                              }
                                               return Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
@@ -2182,7 +2194,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                     isExpanded: true,
                                                     value: row['account'],
                                                     items: [
-                                                      ...categorizedData.entries.expand((entry) {
+                                                      ...categorizedDataCopy.entries.expand((entry) {
                                                         return [
                                                           DropdownMenuItem<String>(
                                                             enabled: false,

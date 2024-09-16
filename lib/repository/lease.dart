@@ -479,7 +479,36 @@ class LeaseRepository {
       throw Exception('Failed to load lease summary');
     }
   }
+ static Future<List<LeaseTenant>> fetchLeaseTenants(String leaseId) async {
+    final url = Uri.parse('$Api_url/api/tenant/leases/$leaseId');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString("adminId");
+  //  try {
+      final response = await http.get(url,
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
 
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // Parsing the list of leases from the response
+        List<dynamic> leaseList = data['data'];
+        List<LeaseTenant> leaseTenants = leaseList.map((leaseJson) {
+          return LeaseTenant.fromJson(leaseJson);
+        }).toList();
+
+        return leaseTenants;
+      } else {
+        throw Exception('Failed to load lease data');
+      }
+  /*  } catch (e) {
+      throw Exception('Error fetching lease data: $e');
+    }*/
+  }
   Future<LeaseLedger?> fetchLeaseLedger(String leaseId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');

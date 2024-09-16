@@ -344,8 +344,8 @@ class Properies_summery_Repo{
           "Content-Type": "application/json"
         }
     );
-    log(response.body);
-    print(rentalId);
+    //log(response.body);
+   // print(rentalId);
     print('${Api_url}/api/rentals/rental_summary/$rentalId');
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);

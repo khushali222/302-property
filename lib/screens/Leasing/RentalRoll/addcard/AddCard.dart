@@ -1912,7 +1912,6 @@ class CustomTextFieldState extends State<CustomTextField> {
                         print(value);
                         widget.onChanged2;
                       },*/
-
                       inputFormatters:widget.formatter ?? [],
                       onFieldSubmitted: widget.onChanged2,
                       onChanged:(value){
@@ -1922,12 +1921,11 @@ class CustomTextFieldState extends State<CustomTextField> {
                             _errorMessage = null;
                           });
                         }
-
-                        widget.onChanged!(value);
+                          if(widget.onChanged != null)
+                          widget.onChanged!(value);
                        // print("callllll");
                       },
-
-                 focusNode: _focusNode,
+                      focusNode: _focusNode,
                       onTap: (){
                         if(widget.onTap != null){
                           widget.onTap!();

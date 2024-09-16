@@ -1178,6 +1178,7 @@ class CustomTextFieldState extends State<CustomTextField> {
       children: <Widget>[
         FormField<String>(
           validator: widget.optional! ? null : (value) {
+
             if (widget.controller!.text.isEmpty) {
               setState(() {
                 _errorMessage = widget.label == null

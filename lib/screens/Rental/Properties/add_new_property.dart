@@ -9731,6 +9731,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                           await SharedPreferences.getInstance();
                           String? adminId = prefs.getString("adminId");
                           final updatedOwner = RentalOwner(
+                            rentalOwnerId: ownerDetails!.rentalOwnerId ?? null,
                             rentalOwnerName: firstnameController.text,
                             rentalOwnerCompanyName: comnameController.text,
                             rentalOwnerPrimaryEmail: primaryemailController.text,
@@ -9742,6 +9743,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                           );
                           Provider.of<OwnerDetailsProvider>(context, listen: false).setOwnerDetails(updatedOwner);
                           RentalOwners owners = RentalOwners(
+                            rentalowner_id: updatedOwner.rentalOwnerId,
                             adminId: adminId,
                             firstName: updatedOwner.rentalOwnerName,
                             companyName:updatedOwner.rentalOwnerCompanyName,

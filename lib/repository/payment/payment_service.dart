@@ -140,7 +140,7 @@ class PaymentService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-
+    print(entries);
     final response = await http.post(
       Uri.parse(baseUrl),
       headers: {
