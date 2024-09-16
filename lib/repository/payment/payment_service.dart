@@ -7,6 +7,8 @@ import 'package:three_zero_two_property/model/lease.dart';
 import '../../constant/constant.dart';
 
 class PaymentService {
+
+
   Future<String> makePaymentforcard({
     required String adminId,
     required String firstName,
@@ -85,7 +87,6 @@ class PaymentService {
               responseText: jsonData["data"]["responsetext"],
               surcharge: surcharge)
           ]);
-
           return "Payment Success";
         } else {
           throw Exception(' ${jsonData["message"]}');
@@ -445,7 +446,8 @@ class PaymentService {
             uploadedFile: "",
             checknumber: Check_number,
             responseText: "PENDING",
-            surcharge: surcharge);
+            surcharge: surcharge
+        );
         return "Payment Successfully";
       } catch (e) {
         throw Exception(e);
@@ -503,4 +505,113 @@ class PaymentService {
           'Failed to payment ${jsonDecode(response.body)["message"]}');
     }
   }
+
+
+
+  // Future<String> makePaymentforCashier({
+  //   required String adminId,
+  //   required String firstName,
+  //   required String lastName,
+  //   required String emailName,
+  //   //  required String customerVaultId,
+  //   //required String billingId,
+  //   required String surcharge,
+  //   required String amount,
+  //   required String tenantId,
+  //   required String date,
+  //   required String address1,
+  //   required String processorId,
+  //   required String leaseid,
+  //   required String company_name,
+  //   /* required String account_type,
+  //   required String account_holder_type,
+  //   required String checkaccount,
+  //   required String checkaba,
+  //   required String checkname,*/
+  //   required bool future_Date,
+  //   required String Check_number,
+  //   required bool Check,
+  //   required String uploadedFile,
+  //   required List<Map<String, dynamic>> entries,
+  // }) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? id = prefs.getString('adminId');
+  //   String? token = prefs.getString('token');
+  //
+  //   print("surcharge: $surcharge");
+  //
+  //   // Using '/payment/payment' API for Cashier payments
+  //   final String baseUrl = '$Api_url/api/payment/payment';
+  //   print(baseUrl);
+  //
+  //   Map<String, dynamic> paymentDetails = {
+  //     'admin_id': adminId,
+  //     'first_name': firstName,
+  //     'last_name': lastName,
+  //     'email_name': emailName,
+  //     'surcharge': surcharge,
+  //     'amount': amount,
+  //     'tenantId': tenantId,
+  //     'date': date,
+  //     'address1': address1,
+  //     'processor_id': processorId,
+  //     'leaseId': leaseid,
+  //   };
+  //
+  //   print("Payment Details: $paymentDetails");
+  //
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(baseUrl),
+  //       headers: {
+  //         "authorization": "CRM $token",
+  //         "id": "CRM $id",
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: jsonEncode({
+  //         "paymentDetails": paymentDetails,
+  //         "uploadedFile": uploadedFile,
+  //         "entries": entries,
+  //         "payment_type": "Cashier", // Specify the payment type
+  //         "future_date": future_Date,
+  //         "check_number": Check_number,
+  //       }),
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       var jsonData = jsonDecode(response.body);
+  //       if (jsonData["statusCode"] == 100) {
+  //         print("Response Text: ${jsonData["data"]["responsetext"]}");
+  //         print("Transaction ID: ${jsonData["data"]["transactionid"]}");
+  //
+  //         // Store payment after successful response
+  //         storePaymentfornormal(
+  //           companyName: company_name,
+  //           adminId: adminId,
+  //           tenantId: tenantId,
+  //           leaseId: leaseid,
+  //           paymentType: "Cashier",
+  //           entries: entries,
+  //           totalAmount: amount,
+  //           isLeaseAdded: false,
+  //           uploadedFile: uploadedFile,
+  //           transactionId: jsonData["data"]["transactionid"],
+  //           responseText: jsonData["data"]["responsetext"],
+  //           surcharge: surcharge, checknumber: '',
+  //         );
+  //         return "Payment Successful";
+  //       } else {
+  //         throw Exception('Payment failed: ${jsonData["message"]}');
+  //       }
+  //     } else {
+  //       throw Exception('Failed to make payment');
+  //     }
+  //   } catch (e) {
+  //     throw Exception('Error: $e');
+  //   }
+  // }
+
+
+
+
 }

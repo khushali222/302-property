@@ -318,10 +318,10 @@ class _MakePaymentState extends State<MakePayment> {
       print("charges length:- ${charges!.length}");
       for(var i = 0; i< charges!.length ; i++){
         if(i==0){
-          charges_balances[0] = charges[i].chargeAmount!;
+          charges_balances[0] = charges[i].chargeAmount! as int;
         }
         else{
-          charges_balances.add(charges[i].chargeAmount!);
+          charges_balances.add(charges[i].chargeAmount! as int);
         }
       }
       setState(() {
@@ -330,7 +330,7 @@ class _MakePaymentState extends State<MakePayment> {
             'account': entry.account,
            'amount': entry.amount,
             'charge_amount':entry.chargeAmount,
-            'memo': entry.memo,
+            ' as intmemo': entry.memo,
             'date': entry.date,
           };
         }).toList() ?? [];

@@ -354,13 +354,16 @@ class _MakePaymentState extends State<MakePayment> {
 
   String? _selectedHoldertype;
   double? surchage_percent;
-  final List<String> _paymentMethods = ['Card', 'Check', 'Cash', 'ACH',];
+  final List<String> _paymentMethods = ['Card', 'Check', 'Cash', 'ACH','Cashier \'s Check','Money Order','Manual'];
   final List<String> _paymentMethodsforfree = [ 'Check', 'Cash' ];
   final List<String> _selecttype = ['Checking', 'Savings'];
   final List<String> _selectholder = ['Business', 'Personal'];
   bool showCardNumberField = false;
   bool showCheckNumberField = false;
   bool showACHFields = false;
+  bool showCashiersFields = false;
+  bool showMoneyorderFields = false;
+  bool showMenualFields = false;
   int? customervaultid;
 
   void AddFields() {
@@ -368,10 +371,14 @@ class _MakePaymentState extends State<MakePayment> {
       showCardNumberField = _selectedPaymentMethod == 'Card';
       showCheckNumberField = _selectedPaymentMethod == 'Check';
       showACHFields = _selectedPaymentMethod == 'ACH';
+      showCashiersFields = _selectedPaymentMethod == 'Cashier \'s Check';
+      showMoneyorderFields = _selectedPaymentMethod == 'Money Order';
+      showMenualFields = _selectedPaymentMethod == 'Manual';
     });
   }
 
   TextEditingController checknumber = TextEditingController();
+  TextEditingController reference = TextEditingController();
   TextEditingController bankrountingnum = TextEditingController();
   TextEditingController accountnum = TextEditingController();
   TextEditingController achname = TextEditingController();
@@ -1369,10 +1376,32 @@ class _MakePaymentState extends State<MakePayment> {
                                     );
                                   },
                                 ),
-
                               const SizedBox(
                                 height: 12,
                               ),
+                              SizedBox(height: 10),
+                              Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text("Reference"),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: CustomTextField(
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter reference';
+                                    }
+                                    return null;
+                                  },
+                                  keyboardType: TextInputType.text,
+                                  hintText: 'Enter reference',
+                                  controller: reference,
+                                ),
+                              ),
+                              SizedBox(height: 10),
                               if (showCardNumberField) ...[
                                 const SizedBox(height: 15),
                                 Container(
@@ -2077,6 +2106,85 @@ class _MakePaymentState extends State<MakePayment> {
 
                                 SizedBox(height: 10),
                               ],
+                              if (showCashiersFields) ...[
+                                SizedBox(height: 10),
+                                Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Text("Check Number"),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: CustomTextField(
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter check number';
+                                      }
+                                      return null;
+                                    },
+                                    optional: false,
+                                    keyboardType: TextInputType.text,
+                                    hintText: 'Enter check number',
+                                    controller: checknumber,
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                              ],
+                              if (showMoneyorderFields) ...[
+                                SizedBox(height: 10),
+                                Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Text("Check Number"),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: CustomTextField(
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter check number';
+                                      }
+                                      return null;
+                                    },
+                                    optional: false,
+                                    keyboardType: TextInputType.text,
+                                    hintText: 'Enter check number',
+                                    controller: checknumber,
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                              ],
+                              if (showMenualFields) ...[
+                                //checkfield is not required
+                                SizedBox(height: 10),
+                                Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Text("Check Number"),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: CustomTextField(
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter check number';
+                                      }
+                                      return null;
+                                    },
+                                    optional: true,
+                                    keyboardType: TextInputType.text,
+                                    hintText: 'Enter check number',
+                                    controller: checknumber,
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                              ],
                               const SizedBox(
                                 height: 8,
                               ),
@@ -2731,7 +2839,6 @@ class _MakePaymentState extends State<MakePayment> {
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
-
                         const SizedBox(height: 5),
                         Container(
                           width: double.infinity,
@@ -2842,6 +2949,7 @@ class _MakePaymentState extends State<MakePayment> {
                                           BorderRadius.circular(10.0)),
                                   child: Column(
                                     children: [
+
                                       if (_selectedPaymentMethod == "Card" ||
                                           _selectedPaymentMethod == "ACH")
                                         buildAmountContainer(
@@ -2945,7 +3053,8 @@ class _MakePaymentState extends State<MakePayment> {
                                   setState(() {
                                     _isLoading = false;
                                   });
-                                } else if (_selectedPaymentMethod == "Card") {
+                                }
+                                else if (_selectedPaymentMethod == "Card") {
                                   print("adminId ${id}");
                                   print(
                                       "adminId ${cardDetails[selectedcardindex!].company}");
@@ -2991,7 +3100,8 @@ class _MakePaymentState extends State<MakePayment> {
                                         company_name: companyName,
                                         entries: rows,
                                         tenantname: tenantname,
-                                        future_Date: futuredate!, uploadedFile: _uploadedFileNames)
+                                        future_Date: futuredate!,
+                                        uploadedFile: _uploadedFileNames)
                                         .then((value) {
                                       Fluttertoast.showToast(msg: "$value");
                                       setState(() {
@@ -3028,7 +3138,8 @@ class _MakePaymentState extends State<MakePayment> {
                                     });
                                   }
 
-                                } else if (_selectedPaymentMethod == "ACH") {
+                                }
+                                else if (_selectedPaymentMethod == "ACH") {
                                   List<Map<String, String>> filteredTenants =
                                       tenants.where((tenant) {
                                     return tenant['tenant_id'] ==
@@ -3097,7 +3208,8 @@ class _MakePaymentState extends State<MakePayment> {
                                     ).show();
 
                                   });
-                                } else if (_selectedPaymentMethod == "Check") {
+                                }
+                                else if (_selectedPaymentMethod == "Check") {
                                   List<Map<String, String>> filteredTenants =
                                       tenants.where((tenant) {
                                     return tenant['tenant_id'] ==
@@ -3138,7 +3250,8 @@ class _MakePaymentState extends State<MakePayment> {
                                     Fluttertoast.showToast(
                                         msg: "Payment failed $e");
                                   });
-                                } else if (_selectedPaymentMethod == "Cash") {
+                                }
+                                else if (_selectedPaymentMethod == "Cash") {
                                   List<Map<String, String>> filteredTenants =
                                       tenants.where((tenant) {
                                     return tenant['tenant_id'] ==
@@ -3182,6 +3295,8 @@ class _MakePaymentState extends State<MakePayment> {
                                         msg: "Payment failed $e");
                                   });
                                 }
+
+
                                 //print(_selectedPaymentMethod);
                               }
                               /* print(cardDetails[selectedcardindex!].ccNumber);

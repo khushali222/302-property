@@ -1575,11 +1575,13 @@ class _AddRentalownersState extends State<AddRentalowners> {
                           );*/
                           print("callllllllling");
                           List<ProcessorList> selectedProcessors = _processorGroups
-
                               .map((group) => ProcessorList(processorId: group.controller.text.trim())) // Create ProcessorList objects
                               .where((processor) => processor.processorId!.isNotEmpty) // Filter out empty IDs
                               .toList();
                           print(selectedProcessors.length);
+                          SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                          var adminId = prefs.getString("adminId");
                           Ownersdetails =
                               RentalOwner(
                                 rentalOwnerId: selectedOwner!.rentalOwnerId,
@@ -1601,8 +1603,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                 postalCode: code2.text,
                                 processorList:selectedProcessors,
                               );
-                            print(Ownersdetails!.toJson());
-                          context
+                             print(Ownersdetails!.toJson());
+                             context
                               .read<
                               OwnerDetailsProvider>()
                               .setOwnerDetails(
@@ -1619,7 +1621,6 @@ class _AddRentalownersState extends State<AddRentalowners> {
                               processor_id!);*/
                           // Navigator.pop(
                           //     context);
-
                         } else {
                           var response = await Rental_PropertiesRepository().checkIfRentalOwnerExists(
                             rentalOwner_name: firstname.text,
@@ -1636,7 +1637,12 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                 .map((group) => ProcessorList(processorId: group.controller.text.trim())) // Create ProcessorList objects
                                 .where((processor) => processor.processorId!.isNotEmpty) // Filter out empty IDs
                                 .toList();
+                            SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                            var adminId = prefs.getString("adminId");
                             Ownersdetails = RentalOwner(
+                              adminId: adminId,
+                            //  rentalOwnerId: selectedOwner!.rentalOwnerId,
                               rentalOwnerPhoneNumber: phonenum.text,
                               rentalOwnerName: firstname.text,
                               rentalOwnerCompanyName: comname.text,
@@ -1807,6 +1813,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
 }
 class Owner {
   final String id;
+  final String propertyid;
   final String rentalOwnerId;
   final String adminId;
   final String rentalOwnername;
@@ -1833,6 +1840,7 @@ class Owner {
 
   Owner({
     required this.id,
+    required this.propertyid,
     required this.rentalOwnerId,
     required this.adminId,
     required this.rentalOwnername,
@@ -1864,7 +1872,8 @@ class Owner {
     list.map((i) => Processor.fromJson(i)).toList();
 
     return Owner(
-      id: json['_id'],
+      id: json['_id']??"",
+      propertyid: json['property_id'] ?? "",
       rentalOwnerId: json['rentalowner_id'] ?? "",
       adminId: json['admin_id'] ?? "",
       rentalOwnername: json['rentalOwner_name'] ?? "",
