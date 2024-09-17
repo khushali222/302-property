@@ -330,7 +330,7 @@ class _MakePaymentState extends State<MakePayment> {
             'account': entry.account,
            'amount': entry.amount,
             'charge_amount':entry.chargeAmount,
-            'memo': entry.memo,
+            ' as intmemo': entry.memo,
             'date': entry.date,
           };
         }).toList() ?? [];

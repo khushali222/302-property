@@ -118,6 +118,8 @@ class PropertiesRepository {
       "rentalOwner_companyName": rentalRequest.rentalOwnerData?.rentalOwnerCompanyName,
       "rentalOwner_primaryEmail": rentalRequest.rentalOwnerData?.rentalOwnerPrimaryEmail,
       "rentalOwner_phoneNumber": rentalRequest.rentalOwnerData?.rentalOwnerPhoneNumber,
+      "rentalOwner_homeNumber":rentalRequest.rentalOwnerData?.rentalOwnerHomeNumber??"",
+      "rentalOwner_businessNumber":rentalRequest.rentalOwnerData?.rentalOwnerBuisinessNumber??"",
       "city": rentalRequest.rentalOwnerData?.city,
       "state": rentalRequest.rentalOwnerData?.state,
       "country": rentalRequest.rentalOwnerData?.country,

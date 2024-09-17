@@ -2921,7 +2921,6 @@ class _Summery_pageState extends State<Summery_page>
       LayoutBuilder(
         builder: (context, constraints) {
           bool isTablet = constraints.maxWidth > 600;
-
           return FutureBuilder<List<TenantData>>(
             future: Properies_summery_Repo()
                 .fetchPropertiessummery(widget.properties.rentalId!),

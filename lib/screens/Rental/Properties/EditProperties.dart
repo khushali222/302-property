@@ -4480,6 +4480,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                   rentalOwnerCompanyName: updatedOwner.rentalOwnerCompanyName,
                                   rentalOwnerPrimaryEmail: updatedOwner.rentalOwnerPrimaryEmail,
                                   rentalOwnerPhoneNumber: updatedOwner.rentalOwnerPhoneNumber,
+                                  rentalOwnerHomeNumber: updatedOwner.rentalOwnerHomeNumber,
+                                  rentalOwnerBuisinessNumber: updatedOwner.rentalOwnerBusinessNumber,
                                   city: updatedOwner.city,
                                   state: updatedOwner.state,
                                   country: updatedOwner.country,

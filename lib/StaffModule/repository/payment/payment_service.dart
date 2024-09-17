@@ -364,6 +364,7 @@ class PaymentService {
     required String checkaccount,
     required String checkaba,
     required String checkname,*/
+    required String payment_method,
     required bool future_Date,
     required String Check_number,
     required bool Check,
@@ -434,19 +435,22 @@ class PaymentService {
       }
     } else {
       try {
-        storePaymentfornormal(
-            companyName: company_name,
-            adminId: adminId,
-            tenantId: tenantId,
-            leaseId: leaseid,
-            paymentType: Check ? "Check" : "Cash",
-            entries: entries,
-            totalAmount: amount,
-            isLeaseAdded: false,
-            uploadedFile: "",
-            checknumber: Check_number,
-            responseText: "PENDING",
-            surcharge: surcharge);
+        await Future.wait([
+          storePaymentfornormal(
+              companyName: company_name,
+              adminId: adminId,
+              tenantId: tenantId,
+              leaseId: leaseid,
+              paymentType: payment_method,
+              entries: entries,
+              totalAmount: amount,
+              isLeaseAdded: false,
+              uploadedFile: "",
+              checknumber: Check_number,
+              responseText: "PENDING",
+              surcharge: surcharge
+          )
+        ]);
         return "Payment Successfully";
       } catch (e) {
         throw Exception(e);

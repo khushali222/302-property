@@ -1804,12 +1804,7 @@ class CustomTextFieldState extends State<CustomTextField> {
 
   late FocusNode _focusNode;
   @override
-  void dispose() {
-    _textController.dispose(); // Dispose the controller when not needed anymore
-    super.dispose();
-    _focusNode.dispose();
 
-  }
   @override
   void initState() {
     super.initState();

@@ -2128,8 +2128,6 @@ class _EditRentalownersState extends State<EditRentalowners> {
                   children: [
                     GestureDetector(
                       onTap: () async {
-
-
                         List<ProcessorList> selectedProcessors = _processorGroups
                         //  .where((group) => group.isChecked)
                             .map((group) => ProcessorList(processorId: group.controller.text.trim())) // Create ProcessorList objects
@@ -2159,7 +2157,6 @@ class _EditRentalownersState extends State<EditRentalowners> {
                         //     .selectedprocessid(
                         //     processor_id!);
                         context.read<OwnerDetailsProvider>().setOwnerDetails(Ownersdetails!);
-
                         setState(() {
                           hasError = false; // Set error state if needed
                         });
