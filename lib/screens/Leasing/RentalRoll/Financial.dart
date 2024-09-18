@@ -2188,7 +2188,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                               final value = await  Navigator.push(
                                                                   context,
                                                                   MaterialPageRoute(
-                                                                      builder: (context) => enterCharge(
+                                                                      builder: (context) =>  enterCharge(
                                                                         leaseId: widget.leaseId,
                                                                         chargeid: data.chargeId,
                                                                       )));

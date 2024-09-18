@@ -11,6 +11,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../widgets/custom_drawer.dart';
+import 'ReportScreens/dailytransaction.dart';
 class ReportsMainScreen extends StatefulWidget {
   @override
   State<ReportsMainScreen> createState() => _ReportsMainScreenState();
@@ -565,5 +566,10 @@ List<ReportCardModel> reportCards = [
     title: "Completed Work Orders",
     description: "Report of all completed Work Orders",
     destination: CompletedWorkOrders(),
+  ),
+  ReportCardModel(
+    title: "Daily Transaction Report",
+    description: "Report of daily transaction",
+    destination: DailyTransactions(),
   ),
 ];

@@ -91,6 +91,7 @@ class ColabShimmerLoadingWidget extends StatelessWidget {
             ),
           ),
         ),
+        SizedBox(height: 20,),
         Container(
           decoration: BoxDecoration(
             border: Border.all(color: blueColor),

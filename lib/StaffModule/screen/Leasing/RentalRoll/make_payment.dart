@@ -642,7 +642,7 @@ class _MakePaymentState extends State<MakePayment> {
     final response = await http.post(
       Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'applic ation/json',
         "id": "CRM $id",
         "authorization": "CRM $token",
       },
