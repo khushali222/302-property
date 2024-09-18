@@ -1915,15 +1915,15 @@ class CustomTextFieldState extends State<CustomTextField> {
                       inputFormatters:widget.formatter ?? [],
                       onFieldSubmitted: widget.onChanged2,
                       onChanged:(value){
-                        print("object calin $value");
+                       // print("object calin $value");
                         if(value.isNotEmpty){
                           setState(() {
                             _errorMessage = null;
                           });
                         }
-
+                        if(widget.onChanged != null)
                         widget.onChanged!(value);
-                        print("callllll");
+                      //  print("callllll");
                       },
 
                  focusNode: _focusNode,

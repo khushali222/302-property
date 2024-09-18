@@ -2133,6 +2133,8 @@ class _EditRentalownersState extends State<EditRentalowners> {
                             .map((group) => ProcessorList(processorId: group.controller.text.trim())) // Create ProcessorList objects
                             .where((processor) => processor.processorId!.isNotEmpty) // Filter out empty IDs
                             .toList();
+
+                        print(selectedOwner!.rentalOwnerId);
                         Ownersdetails = RentalOwner(
                           rentalOwnerId: selectedOwner!.rentalOwnerId??null,
                           rentalOwnerPhoneNumber: phonenum.text,

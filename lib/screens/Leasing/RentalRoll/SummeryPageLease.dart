@@ -1478,12 +1478,15 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   TextEditingController enddateController = TextEditingController();
   List formDataRecurringList = [];
   late Future<LeaseSummary> futureLeaseSummary;
+  late Future<List<LeaseTenant>> futureLeasetenant;
 
   TabController? _tabController;
   @override
   void initState() {
     // TODO: implement initState
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
+    futureLeasetenant = LeaseRepository.fetchLeaseTenants(widget.leaseId);
+
     _tabController = TabController(length: 3, vsync: this);
     moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     if(widget.isredirectpayment != null && widget.isredirectpayment!){
@@ -1651,7 +1654,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     DateTime start = DateFormat('yyyy-MM-dd').parse(startDate);
     DateTime end = DateFormat('yyyy-MM-dd').parse(endDate);
     DateTime today = DateTime.now();
-
+    print(start);
+    print(end);
     if (today.isBefore(start)) {
       return 'Future';
     } else if (today.isAfter(end)) {
@@ -2263,17 +2267,24 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       builder: (context, constraints) {
         bool isTablet = constraints.maxWidth > 600;
         return
-          FutureBuilder<LeaseSummary>(
-            future: futureLeaseSummary,
+          FutureBuilder<List<LeaseTenant>>(
+            future: futureLeasetenant,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return SpinKitFadingCircle(
+                  color: blueColor,
+                  size: 40.0,
+                );
               } else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else if (!snapshot.hasData || snapshot.data == null) {
                 return Center(child: Text('No data found.'));
               } else {
-                String status = determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate);
+
+
+
+
+               // print(status);
                 return isTablet
                     ?
                 SingleChildScrollView(
@@ -2290,7 +2301,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                       spacing: MediaQuery.of(context).size.width * 0.03,
                       runSpacing: MediaQuery.of(context).size.width * 0.035,
                       children: List.generate(
-                        snapshot.data!.data!.tenantData!.length,
+                        snapshot.data!.length,
                             (index) => Material(
                           elevation: 3,
                           borderRadius: BorderRadius.circular(10),
@@ -2341,7 +2352,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               Container(
                                                 width: 150,
                                                 child: Text(
-                                                  '${snapshot.data!.data!.tenantData![index].tenantFirstName} ${snapshot.data!.data!.tenantData![index].tenantLastName}',
+                                                  '${snapshot.data![index].tenantFirstName} ${snapshot.data![index].tenantLastName}',
                                                   style: const TextStyle(
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.bold,
@@ -2365,7 +2376,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               SizedBox(
                                                 width: 140,
                                                 child: Text(
-                                                  '${snapshot.data!.data!.rentalAddress!}',
+                                                  '${snapshot.data![index].rentalAddress}',
                                                   maxLines: 4, // Set maximum number of lines
                                                   overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
                                                   style: TextStyle(
@@ -2393,7 +2404,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                      backgroundColor: Colors.white,
                                                      surfaceTintColor: Colors.white,
                                                      content:
-                                                     buildMoveout(snapshot.data!),
+                                                     buildMoveout(snapshot.data![index]),
                                                    );
                                                  },
                                                );
@@ -2426,7 +2437,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     children: [
                                       const SizedBox(width: 65),
                                       Text(
-                                        '${snapshot.data!.data!.startDate} to',
+                                        '${snapshot.data![index].startDate} to',
                                         style: const TextStyle(
                                           fontSize: 15,
                                           color: Color.fromRGBO(21, 43, 81, 1),
@@ -2439,7 +2450,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     children: [
                                       const SizedBox(width: 65),
                                       Text(
-                                        '${snapshot.data!.data!.endDate}',
+                                        '${snapshot.data![index].endDate}',
                                         style: const TextStyle(
                                           fontSize: 15,
                                           color: Color.fromRGBO(21, 43, 81, 1),
@@ -2459,7 +2470,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       ),
                                       const SizedBox(width: 5),
                                       Text(
-                                        '${snapshot.data!.data!.tenantData![index].tenantPhoneNumber}',
+                                        '${snapshot.data![index].tenantPhoneNumber}',
                                         style: const TextStyle(
                                           fontSize: 13,
                                           color: Color.fromRGBO(21, 43, 81, 1),
@@ -2480,7 +2491,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       const SizedBox(width: 5),
                                       Expanded(
                                         child: Text(
-                                          '${snapshot.data!.data!.tenantData![index].tenantEmail}',
+                                          '${snapshot.data![index].tenantEmail}',
                                           style: const TextStyle(
                                             fontSize: 15,
                                             color: Color.fromRGBO(21, 43, 81, 1),
@@ -2508,8 +2519,20 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                         spacing: MediaQuery.of(context).size.width * 0.03,
                         runSpacing: MediaQuery.of(context).size.width * 0.02,
                         children: List.generate(
-                          snapshot.data!.data!.tenantData!.length,
-                              (index) => Padding(
+                          snapshot.data!.length,
+                              (index) {
+                                DateTime currentDate = DateTime.now();
+                                DateTime moveoutDate;
+                                bool? ismove = false;
+                                if(snapshot.data![index].moveoutDate!!= ""){
+                                  moveoutDate = DateFormat('yyyy-MM-dd').parse(snapshot.data![index].moveoutDate!);
+                                 ismove =  moveoutDate.difference(currentDate).inDays < 1;
+                                }
+
+
+
+                                print("moveout date..${snapshot.data![index].moveoutDate}");
+                            return Padding(
                             padding: const EdgeInsets.only(
                               left: 20, right: 20, top: 20,),
                             child: Material(
@@ -2560,7 +2583,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 children: [
                                                   const SizedBox(width: 2),
                                                   Text(
-                                                    '${snapshot.data!.data!.tenantData![index].tenantFirstName} ${snapshot.data!.data!.tenantData![index].tenantLastName}',
+                                                    '${snapshot.data![index].tenantFirstName} ${snapshot.data![index].tenantLastName}',
                                                     style: const TextStyle(
                                                       fontSize: 16,
                                                       fontWeight: FontWeight.bold,
@@ -2576,7 +2599,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                   SizedBox(
                                                     width: MediaQuery.of(context).size.width > 500 ? 200: 150,
                                                     child: Text(
-                                                      '${snapshot.data!.data!.rentalAddress!}',
+                                                      '${snapshot.data![index].rentalAddress}',
                                                       maxLines: 4, // Set maximum number of lines
                                                       overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
                                                       style: TextStyle(
@@ -2597,7 +2620,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                             ],
                                           ),
                                           const Spacer(),
-                                          if (isMovedOut == true || status != 'Expired' )
+                                          if (snapshot.data![index].moveoutDate == "" || ismove ==false )
                                            InkWell(
                                              onTap: () {
                                                showDialog(
@@ -2612,7 +2635,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                          backgroundColor: Colors.white,
                                                          surfaceTintColor: Colors.white,
                                                          content:
-                                                         buildMoveout(snapshot.data!),
+                                                         buildMoveout(snapshot.data![index]),
                                                        );
                                                      },
                                                    );
@@ -2639,7 +2662,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               ],
                                                                                    ),
                                            ),
-                                         if(isMovedOut || status == 'Expired')
+                                      //   if(isMovedOut || status == 'Expired')
+                                          if (snapshot.data![index].moveoutDate != "" && ismove)
                                            Row(
                                              children: [
                                                FaIcon(
@@ -2667,7 +2691,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                         children: [
                                           const SizedBox(width: 65),
                                           Text(
-                                            '${snapshot.data!.data!.startDate} to',
+                                            '${snapshot.data![index].startDate} to',
                                             style: const TextStyle(
                                               fontSize: 15,
                                               color: Color.fromRGBO(21, 43, 81, 1),
@@ -2680,7 +2704,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                         children: [
                                           const SizedBox(width: 65),
                                           Text(
-                                            '${snapshot.data!.data!.endDate}',
+                                            '${snapshot.data![index].endDate}',
                                             style: const TextStyle(
                                               fontSize: 15,
                                               color: Color.fromRGBO(21, 43, 81, 1),
@@ -2700,7 +2724,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           ),
                                           const SizedBox(width: 5),
                                           Text(
-                                            '${snapshot.data!.data!.tenantData![index].tenantPhoneNumber}',
+                                            '${snapshot.data![index].tenantPhoneNumber}',
                                             style: const TextStyle(
                                               fontSize: 15,
                                               color: Color.fromRGBO(21, 43, 81, 1),
@@ -2721,7 +2745,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           const SizedBox(width: 5),
                                           Expanded(
                                             child: Text(
-                                              '${snapshot.data!.data!.tenantData![index].tenantEmail}',
+                                              '${snapshot.data![index].tenantEmail}',
                                               maxLines: 3, // Set maximum number of lines
                                               overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
                                               style: TextStyle(
@@ -2748,7 +2772,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
 
                               ),
                             ),
-                          ),
+                          );}
                         ),
                       ),
                       SizedBox(
@@ -2766,7 +2790,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     );
 
   }
-  Widget buildMoveout(LeaseSummary tenant) {
+  Widget buildMoveout(LeaseTenant tenant) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2832,21 +2856,21 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                       children: [
                         buildTableCell(Text('Address/Unit',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
                           fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 17,),)),
-                        buildTableCell(Text('${tenant.data?.rentalAddress}')),
+                        buildTableCell(Text('${tenant.rentalAddress}')),
                       ],
                     ),
                     TableRow(
                       children: [
                         buildTableCell(Text('Lease Type',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
                           fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
-                        buildTableCell(Text('${tenant.data?.leaseType}')),
+                        buildTableCell(Text('${tenant.leaseType}')),
                       ],
                     ),
                     TableRow(
                       children: [
                         buildTableCell(Text('Start End',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
                           fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
-                        buildTableCell(Text('${tenant.data?.startDate} ${tenant.data?.endDate}')),
+                        buildTableCell(Text('${tenant.startDate} ${tenant.endDate}')),
                       ],
                     ),
 
@@ -2881,7 +2905,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                     children: [
                       buildTableCell(Text('Tenants',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
                         fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
-                      buildTableCell(Text('${tenant.data?.tenantData?.first.tenantFirstName} ${tenant.data?.tenantData?.first.tenantLastName}')),
+                      buildTableCell(Text('${tenant.tenantFirstName} ${tenant.tenantLastName}')),
                     ],
                   ),
                   TableRow(
@@ -2964,8 +2988,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
               SizedBox(width: 10),
               InkWell(
                 onTap: ()async{
-                  String? tenantId = tenant.data?.tenantId != null
-                      ? tenant.data?.tenantId!.first
+                  String? tenantId = tenant.tenantId != null
+                      ? tenant.tenantId!
                       : null;
                   SharedPreferences prefs =
                       await SharedPreferences.getInstance();
@@ -2974,14 +2998,17 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                       .addMoveoutTenant(
                     adminId: id!,
                     tenantId: tenantId,
-                    leaseId: tenant.data?.leaseId,
+                    leaseId: tenant.leaseId,
                     moveoutDate: moveOutDate,
                     moveoutNoticeGivenDate: startdateController.text,
                   ).then((value) {
+
                     setState(() {
+                      futureLeasetenant = LeaseRepository.fetchLeaseTenants(widget.leaseId);
                       isLoading = false;
                       isMovedOut = true;
                     });
+
                     Navigator.pop(context, true);
                   }).catchError((e) {
                     setState(() {

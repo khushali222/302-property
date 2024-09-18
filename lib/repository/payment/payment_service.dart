@@ -97,6 +97,7 @@ class PaymentService {
       }
     } else {
       try {
+        await Future.wait([
         storePayment(
             companyName: company_name,
             adminId: adminId,
@@ -111,7 +112,8 @@ class PaymentService {
             uploadedFile: [],
             transactionId: "",
             responseText: "PENDING",
-            surcharge: surcharge);
+            surcharge: surcharge)
+        ]);
         return "Payment Scheduled Successfully";
       } catch (e) {
         throw Exception(e);
@@ -141,7 +143,7 @@ class PaymentService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-
+    print(entries);
     final response = await http.post(
       Uri.parse(baseUrl),
       headers: {
@@ -271,6 +273,7 @@ class PaymentService {
       }
     } else {
       try {
+        await Future.wait([
         storePaymentAch(
             companyName: company_name,
             adminId: adminId,
@@ -283,7 +286,8 @@ class PaymentService {
             uploadedFile: [],
             transactionId: "",
             responseText: "PENDING",
-            surcharge: surcharge);
+            surcharge: surcharge)
+    ]);
         return "Payment Scheduled Successfully";
       } catch (e) {
         throw Exception(e);
@@ -368,6 +372,7 @@ class PaymentService {
     required bool future_Date,
     required String Check_number,
     required bool Check,
+    required String payment_method,
     required List<String>? uploadedFile,
     required List<Map<String, dynamic>> entries,
   }) async {
@@ -434,12 +439,13 @@ class PaymentService {
       }
     } else {
       try {
+        await Future.wait([
         storePaymentfornormal(
             companyName: company_name,
             adminId: adminId,
             tenantId: tenantId,
             leaseId: leaseid,
-            paymentType: Check ? "Check" : "Cash",
+            paymentType: payment_method,
             entries: entries,
             totalAmount: amount,
             isLeaseAdded: false,
@@ -447,7 +453,8 @@ class PaymentService {
             checknumber: Check_number,
             responseText: "PENDING",
             surcharge: surcharge
-        );
+        )
+        ]);
         return "Payment Successfully";
       } catch (e) {
         throw Exception(e);

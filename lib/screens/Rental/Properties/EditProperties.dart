@@ -217,8 +217,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
     // Add property group based on selected subproperty type
     addPropertyGroup();
     fetchOwners();
-    print(selectedStaff);
-    print(widget.properties.rentalOwnerData!.processorList);
+    // print(selectedStaff);
+    // print(widget.properties.rentalOwnerData!.processorList);
 
     Ownersdetails = RentalOwner(
         rentalOwnerId: widget.properties.rentalOwnerId,
@@ -248,7 +248,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
         );
       }
     });
-    print(widget.rentalId);
+    // print(widget.rentalId);
     fetchDetails1(widget.rentalId);
   }
 
@@ -256,14 +256,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
     try {
       Rentals fetchedDetails =
       await Properies_summery_Repo().fetchrentalDetails(rentalId);
-      print(fetchedDetails);
-      print(rentalId);
-      print(fetchedDetails.rentalCountry);
-      print(fetchedDetails.rentalOwnerData?.rentalOwnerName);
-      print(fetchedDetails.staffMemberData?.staffmemberName);
+      // print(fetchedDetails);
+      // print(rentalId);
+      // print(fetchedDetails.rentalCountry);
+      // print(fetchedDetails.rentalOwnerData?.rentalOwnerName);
+      // print(fetchedDetails.staffMemberData?.staffmemberName);
       await Future.delayed(const Duration(seconds: 1));
       setState(() {
-        print(fetchedDetails.rentalAddress);
+        // print(fetchedDetails.rentalAddress);
         // selectedpropertytype = fetchedDetails.propertyTypeData?.propertyType;
         selectedpropertytype = fetchedDetails.propertyTypeData?.propertyType;
         selectedpropertytype = fetchedDetails.propertyTypeData?.propertySubType;
@@ -300,27 +300,27 @@ class _Edit_propertiesState extends State<Edit_properties> {
         fetchedDetails.rentalOwnerData!.rentalOwnerPrimaryEmail!;
         alternativeemail.text =
         fetchedDetails.rentalOwnerData!.rentalOwnerAlternativeEmail!;
-        print(alternativeemail);
+        // print(alternativeemail);
         phonenum.text = fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber!;
-        print(phonenum);
+        // print(phonenum);
         homenum.text = fetchedDetails.rentalOwnerData!.rentalOwnerHomeNumber!;
-        print(homenum);
+        // print(homenum);
         businessnum.text =
         fetchedDetails.rentalOwnerData!.rentalOwnerBuisinessNumber!;
-        print(widget.properties.rentalOwnerData!.rentalOwnerBuisinessNumber);
+        // print(widget.properties.rentalOwnerData!.rentalOwnerBuisinessNumber);
         street2.text = fetchedDetails.rentalOwnerData!.Address!;
         city2.text = fetchedDetails.rentalOwnerData!.city!;
         state2.text = fetchedDetails.rentalOwnerData!.state!;
         county2.text = fetchedDetails.rentalOwnerData!.country!;
         code2.text = fetchedDetails.rentalOwnerData!.postalCode!;
         selectedStaff =  fetchedDetails.staffMemberId!.isEmpty ? null : fetchedDetails.staffMemberId ?? null;
-        print(selectedStaffmember);
+        // print(selectedStaffmember);
         Provider.of<OwnerDetailsProvider>(context,listen: false).setOwnerDetails(Ownersdetails!);
 
         // _selectedProperty = fetchedDetails.rentalId; // Uncomment and update based on your use case
       });
     } catch (e) {
-      print('Failed to fetch property details: $e');
+      // print('Failed to fetch property details: $e');
     }
   }
 
@@ -400,12 +400,12 @@ class _Edit_propertiesState extends State<Edit_properties> {
   //   });
   // }
   //  void addPropertyGroup() {
-  //    print("hello");
+  //    // print("hello");
   //    List<Widget> fields = [];
   //    List<Widget> photos = [];
   //    List<TextEditingController> controllers = [];
   //    List<File?> propertyGroupImages = [];
-  //    print(selectedpropertytype);
+  //    // print(selectedpropertytype);
   //   if(selectedpropertytype == 'Commercial' && selectedIsMultiUnit == true){
   //     var unitController = TextEditingController();
   //     var unitAddressController = TextEditingController();
@@ -487,24 +487,24 @@ class _Edit_propertiesState extends State<Edit_properties> {
     if (pickedFile != null) {
       // try {
       String? filename = await uploadImage(File(pickedFile.path));
-      print(index);
-      print(filename);
+      // print(index);
+      // print(filename);
       setState(() {
         propertyGroupImagenames[index] = filename!;
         //  _uploadedFilename = filename;
       });
       // } catch (e) {
-      // print('Error uploading image: $e');
+      // // print('Error uploading image: $e');
       //}09
     }
     setState(() {
       if (pickedFile != null) {
-        print('Image selected: ${pickedFile.path}');
-        print('Before: ${propertyGroupImages.length}');
+        // print('Image selected: ${pickedFile.path}');
+        // print('Before: ${propertyGroupImages.length}');
         propertyGroupImages[index] = File(pickedFile.path);
-        print('After : ${propertyGroupImages.length}');
+        // print('After : ${propertyGroupImages.length}');
       } else {
-        print('No image selected.');
+        // print('No image selected.');
       }
     });
   }
@@ -515,7 +515,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
   List<String?> propertyGroupImagenames = [];
   File? _image;
   Future<String?> uploadImage(File imageFile) async {
-    print(imageFile.path!);
+    // print(imageFile.path!);
     // API URL
     //   final String uploadUrl = 'http://192.168.1.17:4000/api/images/upload';
     final String uploadUrl = '${image_upload_url}/api/images/upload';
@@ -542,14 +542,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
     var response = await request.send();
     // Parse the response
     var responseData = await http.Response.fromStream(response);
-    print(responseData.body);
+    // print(responseData.body);
     var responseBody = json.decode(responseData.body);
 
     // Extract the filename from the response
     if (responseBody['status'] == 'ok') {
       List file = responseBody['files'];
-      print(file.first["filename"]);
-      print(file.first.runtimeType);
+      // print(file.first["filename"]);
+      // print(file.first.runtimeType);
       return file.first["filename"];
     } else {
       throw Exception('Failed to upload file: ${responseBody['message']}');
@@ -662,11 +662,11 @@ class _Edit_propertiesState extends State<Edit_properties> {
   }
 
   void addPropertyGroup() {
-    print("hello");
+    // print("hello");
     List<Widget> fields = [];
     List<TextEditingController> controllers = [];
 
-    print(selectedpropertytype);
+    // print(selectedpropertytype);
 
     if (selectedpropertytype == 'Commercial' && selectedIsMultiUnit == true) {
       var unitController = TextEditingController();
@@ -767,19 +767,19 @@ class _Edit_propertiesState extends State<Edit_properties> {
       }
     }
 
-    print(propertyGroupControllers.length);
+    // print(propertyGroupControllers.length);
 
     for (int i = 0; i < propertyGroupControllers.length; i++) {
       List<TextEditingController> controllers = propertyGroupControllers[i];
       for (int j = 0; j < controllers.length; j++) {
-        print(controllers[j].text);
+        // print(controllers[j].text);
       }
     }
   }
 
   void handleEdit(RentalOwner rental) async {
     // Handle edit action
-    // print('Edit ${rental.sId}');
+    // // print('Edit ${rental.sId}');
     // // final result = await Navigator.push(
     // //     context,
     // //     MaterialPageRoute(
@@ -814,8 +814,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
   bool showError = false;
   @override
   Widget build(BuildContext context) {
-    // print(selectedIsMultiUnit);
-    // print(selectedProperty);
+    // // print(selectedIsMultiUnit);
+    // // print(selectedProperty);
     final ownerDetails = Provider.of<OwnerDetailsProvider>(context).OwnerDetails;
 
     final firstnameController = TextEditingController(text: ownerDetails?.rentalOwnerName);
@@ -1306,7 +1306,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                       });
                                                                                     });
                                                                                   }
-                                                                                  print(selectedValue);
+                                                                                  // print(selectedValue);
                                                                                 },
                                                                                 child: ClipRRect(
                                                                                   borderRadius: BorderRadius.circular(5.0),
@@ -1399,7 +1399,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                               .propertysubType ==
                                                               newValue)
                                                               .first;
-                                                      print(selectedProperty);
+                                                      // print(selectedProperty);
                                                       selectedProperty = newValue;
                                                       propertyGroups = [];
                                                       // Call the method here
@@ -2637,7 +2637,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                               //     rentalOwnerFirstName: firstname.text,
                                                               //   );
                                                               provider.clearOwners();
-                                                              print("hello");
+                                                              // print("hello");
                                                               setState(() {
                                                                 RentalOwner?
                                                                 owner;
@@ -3707,7 +3707,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                 } else {
                                                   setState(() {
                                                     selectedStaff = newValue;
-                                                    print(selectedStaff);
+                                                    // print(selectedStaff);
                                                   });
                                                 }
                                               },
@@ -4333,8 +4333,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             hasError = false;
                           });
                           // print(selectedpropertytypedata!.propertyId);
-                          print('hiii${widget.properties.propertyId}');
-                          print('staff${widget.properties.staffMemberId}');
+                          // print('hiii${widget.properties.propertyId}');
+                          // print('staff${widget.properties.staffMemberId}');
                           SharedPreferences prefs =
                           await SharedPreferences.getInstance();
                           String? id = prefs.getString("adminId");
@@ -4409,7 +4409,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                               }
                               List<TextEditingController> controllers =
                               propertyGroupControllers[i];
-                              print(controllers.length);
+                              // print(controllers.length);
                               units[i].sqft = controllers[0].text;
                               units[i].bath = controllers[1].text;
                               units[i].bed = controllers[2].text;
@@ -4432,8 +4432,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
 //                                  units[i].unit = controllers[0].text;
                             }
                           }
+
                           RentalOwners owners = RentalOwners(
                             adminId: id,
+
                             firstName: firstname.text,
                             companyName: comname.text,
                             primaryEmail: primaryemail.text,
@@ -4468,7 +4470,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           }).toList();
 
                           //Provider.of<OwnerDetailsProvider>(context, listen: false).setOwnerDetails(updatedOwner);
-
+                          print(ownerDetails.rentalOwnerId);
                           Rentals properties = Rentals(
                               adminId: id,
                               rentalOwnerData: RentalOwnerData(
@@ -4533,7 +4535,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           ]);
                           Navigator.of(context).pop(true);
                         }
-                        print(selectedValue);
+                        // print(selectedValue);
                       },
 
                       child: ClipRRect(

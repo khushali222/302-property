@@ -528,7 +528,7 @@ class _MakePaymentState extends State<MakePayment> {
           }
         } else {
           double amount = double.tryParse(value) ?? 0.0;
-          int charge = rows[index]["charge_amount"];
+          double charge = rows[index]["charge_amount"];
           print(charge);
           print(amount);
           rows[index]['amount'] = amount;
@@ -1396,6 +1396,7 @@ class _MakePaymentState extends State<MakePayment> {
                                     }
                                     return null;
                                   },
+                                  optional: true,
                                   keyboardType: TextInputType.text,
                                   hintText: 'Enter reference',
                                   controller: reference,
@@ -2283,6 +2284,18 @@ class _MakePaymentState extends State<MakePayment> {
                                               return null;
                                             },
                                             builder: (FormFieldState<String> state) {
+                                              String? selectedAccount = row['account'];
+
+                                              // List of all dropdown items, including missing ones
+                                              Map<String, List<String>> categorizedDataCopy = Map.from(categorizedData);
+
+                                              // Ensure the selected value is present in the list
+                                              if (selectedAccount != null && !categorizedData.values.expand((list) => list).contains(selectedAccount)) {
+                                                if (categorizedDataCopy['Other'] == null) {
+                                                  categorizedDataCopy['Other'] = [];
+                                                }
+                                                categorizedDataCopy['Other']!.add(selectedAccount);
+                                              }
                                               return Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
@@ -2290,7 +2303,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                     isExpanded: true,
                                                     value: row['account'],
                                                     items: [
-                                                      ...categorizedData.entries.expand((entry) {
+                                                      ...categorizedDataCopy.entries.expand((entry) {
                                                         return [
                                                           DropdownMenuItem<String>(
                                                             enabled: false,
@@ -3209,7 +3222,7 @@ class _MakePaymentState extends State<MakePayment> {
 
                                   });
                                 }
-                                else if (_selectedPaymentMethod == "Check") {
+                                else if (_selectedPaymentMethod == "Check" || _selectedPaymentMethod =="Money Order" || _selectedPaymentMethod =="Cashier 's Check") {
                                   List<Map<String, String>> filteredTenants =
                                       tenants.where((tenant) {
                                     return tenant['tenant_id'] ==
@@ -3237,6 +3250,7 @@ class _MakePaymentState extends State<MakePayment> {
                                     future_Date: true,
                                     Check_number: checknumber.text,
                                     Check: true, uploadedFile: _uploadedFileNames,
+                                    payment_method: _selectedPaymentMethod!,
                                   ).then((value) {
                                     Fluttertoast.showToast(msg: "$value");
                                     setState(() {
@@ -3251,7 +3265,7 @@ class _MakePaymentState extends State<MakePayment> {
                                         msg: "Payment failed $e");
                                   });
                                 }
-                                else if (_selectedPaymentMethod == "Cash") {
+                                else if (_selectedPaymentMethod == "Cash" || _selectedPaymentMethod == "Manual") {
                                   List<Map<String, String>> filteredTenants =
                                       tenants.where((tenant) {
                                     return tenant['tenant_id'] ==
@@ -3278,6 +3292,7 @@ class _MakePaymentState extends State<MakePayment> {
                                     entries: rows,
                                     future_Date: true,
                                     Check_number: "",
+                                    payment_method: _selectedPaymentMethod!,
                                     Check: false, uploadedFile: _uploadedFileNames,
                                   ).then((value) {
                                     Fluttertoast.showToast(msg: "$value");

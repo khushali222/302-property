@@ -138,7 +138,7 @@ class PaymentService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
-
+    print(entries);
     final response = await http.post(
       Uri.parse(baseUrl),
       headers: {
@@ -164,6 +164,7 @@ class PaymentService {
         'response': responseText,
       }),
     );
+
     print(response);
     if (response.statusCode == 200) {
       print(response.body);

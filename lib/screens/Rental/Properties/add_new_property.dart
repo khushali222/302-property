@@ -10029,7 +10029,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               await SharedPreferences.getInstance();
                           String? adminId = prefs.getString("adminId");
                           final updatedOwner = RentalOwner(
-                            //rentalOwnerId: ,
+                            rentalOwnerId: ownerDetails!.rentalOwnerId ?? null,
                             rentalOwnerName: firstnameController.text,
                             rentalOwnerCompanyName: comnameController.text,
                             rentalOwnerPrimaryEmail:
