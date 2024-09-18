@@ -1486,7 +1486,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     // TODO: implement initState
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
     futureLeasetenant = LeaseRepository.fetchLeaseTenants(widget.leaseId);
-
     _tabController = TabController(length: 3, vsync: this);
     moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     if(widget.isredirectpayment != null && widget.isredirectpayment!){
@@ -1629,6 +1628,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: FinancialTable(
+                            rentalUnit:  snapshot.data!.data?.rentalUnit,
+                            rentalAddress: snapshot.data!.data?.rentalAddress,
                               leaseId: widget.leaseId,
                               status:
                                   '${determineStatus(snapshot.data!.data?.startDate, snapshot.data!.data?.endDate).toString()}',
@@ -1748,7 +1749,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     child: Padding(
                                   padding: const EdgeInsets.only(top: 12),
                                   child: Text(
-                                    '${snapshot.data!.data!.rentalAddress}',
+                                    '${snapshot.data!.data!.rentalAddress}  -  ${snapshot.data!.data!.rentalUnit}',
                                     style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
@@ -2262,7 +2263,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   }
 
   Tenant(context) {
-
     return LayoutBuilder(
       builder: (context, constraints) {
         bool isTablet = constraints.maxWidth > 600;
@@ -2788,7 +2788,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
           );
       },
     );
-
   }
   Widget buildMoveout(LeaseTenant tenant) {
     return SingleChildScrollView(

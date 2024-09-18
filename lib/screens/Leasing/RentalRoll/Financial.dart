@@ -1,12 +1,18 @@
 import 'dart:convert';
 import 'dart:ffi';
-
+import 'dart:io';
+import 'package:csv/csv.dart';
+import 'package:flutter/services.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
+import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/propertytype.dart';
@@ -20,9 +26,10 @@ import '../../../Model/Preminum Plans/checkPlanPurchaseModel.dart';
 import '../../../Model/Preminum Plans/checkPlanPurchaseModel.dart';
 import '../../../provider/Plan Purchase/plancheckProvider.dart';
 import 'make_payment.dart';
-
+import 'package:three_zero_two_property/Model/profile.dart';
+import 'package:printing/printing.dart';
 import 'package:three_zero_two_property/screens/Property_Type/Edit_property_type.dart';
-
+import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import '../../../model/LeaseLedgerModel.dart';
 
 import 'addcard/AddCard.dart';
@@ -33,8 +40,10 @@ class FinancialTable extends StatefulWidget {
   final String leaseId;
   final String tenantId;
   final String status;
+  final String? rentalAddress;
+  final String? rentalUnit;
   FinancialTable(
-      {required this.leaseId, required this.status, required this.tenantId});
+      {required this.leaseId, required this.status, required this.tenantId,this.rentalAddress,this.rentalUnit});
   @override
   _FinancialTableState createState() => _FinancialTableState();
 }
@@ -968,6 +977,397 @@ class _FinancialTableState extends State<FinancialTable> {
     return date;
   }
 
+  //for pdf xlsx and csv
+  Future<void> generateWorkOrderPdf(
+      List<Data> ledgerdata) async {
+    final GetAddressAdminPdfService service = GetAddressAdminPdfService();
+    profile? profileData;
+    try {
+      profileData = await service.fetchAdminAddress();
+    } catch (e) {
+      // Handle error
+      print("Error fetching profile data: $e");
+      return;
+    }
+    final pdf = pw.Document();
+    final image = pw.MemoryImage(
+      (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
+    );
+    final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
+    pdf.addPage(
+      pw.MultiPage(
+       pageFormat: PdfPageFormat.a4.landscape,
+        margin: const pw.EdgeInsets.all(30),
+        header: (pw.Context context) =>
+            pw.Column(
+             children: [
+               pw.Row(
+                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                 children: [
+                   pw.Image(image, width: 50, height: 50),
+                   pw.SizedBox(width: 50),
+                   pw.Column(
+                     crossAxisAlignment: pw.CrossAxisAlignment.center,
+                     children: [
+                       pw.Text(
+                         'Tenant Statement',
+                         style: pw.TextStyle(
+                           fontSize: 18,
+                           fontWeight: pw.FontWeight.bold,
+                         ),
+                       ),
+                       pw.SizedBox(height: 10),
+                       pw.Row(
+                           children: [
+                             pw.Text(
+                               '${widget.rentalAddress}  - ',
+                               style: pw.TextStyle(
+                                 fontSize: 18,
+                                 fontWeight: pw.FontWeight.bold,
+                               ),
+                             ),
+                             pw.SizedBox(width: 5),
+                             pw.Text(
+                               '${widget.rentalUnit}',
+                               style: pw.TextStyle(
+                                 fontSize: 18,
+                                 fontWeight: pw.FontWeight.bold,
+                               ),
+                             ),
+                           ]
+                       ),
+
+                     ],
+                   ),
+                   pw.Column(
+                     crossAxisAlignment: pw.CrossAxisAlignment.end,
+                     children: [
+                       pw.Text(
+                         profileData?.companyName?.isNotEmpty == true
+                             ? profileData!.companyName!
+                             : 'N/A',
+                         style: pw.TextStyle(
+                           fontSize: 10,
+                           fontWeight: pw.FontWeight.bold,
+                         ),
+                       ),
+                       pw.Text(
+                         profileData?.companyAddress?.isNotEmpty == true
+                             ? profileData!.companyAddress!
+                             : 'N/A',
+                         style: pw.TextStyle(
+                           fontSize: 10,
+                           fontWeight: pw.FontWeight.bold,
+                         ),
+                       ),
+                       pw.Text(
+                         '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
+                             '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
+                             '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
+                         style: pw.TextStyle(
+                           fontSize: 10,
+                           fontWeight: pw.FontWeight.bold,
+                         ),
+                       ),
+                       pw.Text(
+                         profileData?.companyPostalCode?.isNotEmpty == true
+                             ? profileData!.companyPostalCode!
+                             : 'N/A',
+                         style: pw.TextStyle(
+                           fontSize: 10,
+                           fontWeight: pw.FontWeight.bold,
+                         ),
+                       ),
+                     ],
+                   ),
+
+                 ],
+               ),
+               pw.SizedBox(height: 15),
+             ],
+           ),
+        footer: (pw.Context context) {
+          return pw.Container(
+            alignment: pw.Alignment.centerRight,
+            margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
+            child: pw.Text(
+              'Page ${context.pageNumber} of ${context.pagesCount}',
+              style: pw.TextStyle(color: PdfColors.grey),
+            ),
+          );
+        },
+        build: (pw.Context context) => [
+          // pw.SizedBox(height: 15),
+          pw.Table.fromTextArray(
+            headers: [
+              'Date',
+              'Tenants',
+              'Type',
+              'Transaction',
+              'Increase',
+              'Decrease',
+              'Balance'
+            ],
+            data: ledgerdata.reversed.map((ledger) {
+              return [
+                formatDate4(
+                    '${ledger.entry?.first.date}') ?? "",
+                ledger.tenantData !=
+                    null
+                    ? '${ledger.tenantData["tenant_firstName"] ?? ""} ${ledger.tenantData["tenant_lastName"] ?? ""}'
+                    : 'N/A' ?? '',
+                ledger.type ?? '',
+                'Manual ${ledger.type} ${ledger.response} For ${ledger.paymenttype}'?? '',
+                pw.Align(
+                  alignment:pw.Alignment.centerRight,
+                  child:pw.Text(ledger.type == "Refund" ||
+                      ledger.type == "Charge"
+                      ? '\$${ledger.totalAmount}'
+                      : '-',),
+                ),
+                pw.Align(
+                  alignment:pw.Alignment.centerRight,
+                  child:pw.Text(ledger.type != "Refund" && ledger.type != "Charge"
+                      ? '\$${ledger.totalAmount}'
+                      : '-',),
+                ),
+                ledger.balance! < 0 ?
+               pw.Align(
+                 alignment:pw.Alignment.centerRight,
+                 child:pw.Text(''
+                     '\$(${ledger.balance!.abs().toStringAsFixed(2)})',),
+               ):
+              pw.Align(
+              alignment:pw.Alignment.centerRight,
+              child:pw.Text(''
+              '\$${ledger.balance!.abs().toStringAsFixed(2)}',),
+              )
+
+              ];
+            }).toList(),
+            border: pw.TableBorder.all(
+              color: PdfColors.black,
+              width: 1,
+            ),
+            cellAlignment: pw.Alignment.centerLeft,
+            headerDecoration: pw.BoxDecoration(
+              color: PdfColor.fromHex("#5A86D5"),
+              //color:PdfColor.fromRYB(90, 134, 213,)
+            ),
+            headerStyle: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              fontSize: 12,
+              color: PdfColors.white
+              
+            ),
+            headerAlignment: pw.Alignment.centerLeft,
+            cellStyle: pw.TextStyle(
+              fontSize: 10,
+            ),
+            cellHeight: 30,
+            columnWidths: {
+              0: pw.FlexColumnWidth(1.2), // Date
+              1: pw.FlexColumnWidth(1.4), // tenants
+              2: pw.FlexColumnWidth(1.3), // type
+              3: pw.FlexColumnWidth(2.2), // transaction
+              4: pw.FlexColumnWidth(1.3), // increase
+              5: pw.FlexColumnWidth(1.3), // decrease
+              6: pw.FlexColumnWidth(1.3), // balance
+            },
+          ),
+          pw.SizedBox(
+            height: 15
+          ),
+          pw.Row(
+            children: [
+              pw.Align(
+                alignment:pw.Alignment.centerLeft,
+                child:pw.Text('Balance Due',style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+              ),
+              pw.Spacer(),
+              pw.Align(
+                alignment:pw.Alignment.centerRight,
+                child:pw.Text('\$${ledgerdata.first.balance?.toStringAsFixed(2)}',style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+              ),
+            ],
+          ),
+          pw.SizedBox(
+              height: 8
+          ),
+          pw.Divider(color: PdfColors.black),
+          pw.Divider(color: PdfColors.black),
+
+        ],
+
+      ),
+    );
+
+    await Printing.layoutPdf(
+      onLayout: (PdfPageFormat format) async => pdf.save(),
+    );
+  }
+
+  Future<void> generateWorkOrderExcel(
+      List<Data> ledgerdata) async {
+    ledgerdata = ledgerdata.reversed.toList();
+    final syncXlsx.Workbook workbook = syncXlsx.Workbook();
+    final syncXlsx.Worksheet sheet = workbook.worksheets[0];
+    sheet.getRangeByName('A1:G1').columnWidth = 15;
+    sheet.getRangeByName('D1').columnWidth = 45;
+
+    final List<String> headers = [
+      'Date',
+      'Tenants',
+      'Type',
+      'Transaction',
+      'Charge',
+      'Payments',
+      'Balance',
+    ];
+
+    final syncXlsx.Style headerCellStyle =
+    workbook.styles.add('headerCellStyle',);
+    headerCellStyle.fontSize = 14;
+    headerCellStyle.bold = true;
+    headerCellStyle.backColor = '#D3D3D3';
+    headerCellStyle.hAlign = syncXlsx.HAlignType.left;
+
+    for (int i = 0; i < headers.length; i++) {
+      final cell = sheet.getRangeByIndex(1, i + 1);
+      cell.setText(headers[i]);
+      cell.cellStyle = headerCellStyle;
+    }
+
+    for (int i = 0; i < ledgerdata.reversed.length; i++) {
+      final ledger = ledgerdata[i];
+
+      // Safe date parsing with default/fallback value
+       String formattedDate;
+       try {
+        formattedDate = ledger != null
+            ? DateFormat('yyyy-MM-dd')
+            .format(DateFormat('yyyy-MM-dd').parse(ledger.entry?.first.date! ?? ''))
+            : 'Invalid Date';
+
+      } catch (e) {
+
+        formattedDate = 'Invalid Date';
+
+      }
+      sheet.getRangeByIndex( 2 + i, 5 ).cellStyle.hAlign =
+          syncXlsx.HAlignType.right;
+       sheet.getRangeByIndex( 2 + i, 7).cellStyle.hAlign =
+          syncXlsx.HAlignType.right;
+       sheet.getRangeByIndex( 2 + i, 6).cellStyle.hAlign =
+          syncXlsx.HAlignType.right;
+
+      sheet.getRangeByIndex(2 + i, 1).setText(ledger.entry?.first.date);
+      sheet.getRangeByIndex(2 + i, 2).setText(ledger.tenantData !=
+                null
+                ? '${ledger.tenantData["tenant_firstName"] ?? ""} ${ledger.tenantData["tenant_lastName"] ?? ""}'
+                : 'N/A' ?? '');
+      sheet.getRangeByIndex(2 + i, 3).setText(ledger.type ?? '');
+      sheet.getRangeByIndex(2 + i, 4).setText( ledger.type == "Charge" ?  "-----------------------------" :'Manual ${ledger.type} ${ledger.response} For ${ledger.paymenttype}'?? '');
+      sheet.getRangeByIndex(2 + i, 5).setText(
+        ledger.type == "Refund" ||
+                ledger.type == "Charge"
+                ? '\$${ledger.totalAmount}'
+                : '-',);
+
+      sheet.getRangeByIndex(2 + i, 6).setText(ledger.type != "Refund" && ledger.type != "Charge"
+                  ? '\$${ledger.totalAmount}'
+                  : '-',);
+      print(ledger.balance);
+      ledger.balance! < 0 ?
+      sheet.getRangeByIndex(2 + i, 7).setText('\$(${ledger.balance!.abs().toStringAsFixed(2)})',)
+  :     sheet.getRangeByIndex(2 + i, 7).setText('\$${ledger.balance!.abs().toStringAsFixed(2)}',);
+
+    }
+
+    final List<int> bytes = workbook.saveAsStream();
+    workbook.dispose();
+    final DateTime now = DateTime.now();
+    final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
+    final String fileName = 'CompletedWorkOrderReport_$formattedDate.xlsx';
+    final directory = Directory('/storage/emulated/0/Download');
+    final path = '${directory.path}/$fileName';
+    if (!await directory.exists()) {
+      await directory.create(recursive: true);
+    }
+
+    final File file = File(path);
+    await file.writeAsBytes(bytes, flush: true);
+
+    Fluttertoast.showToast(
+      msg: 'Excel file saved to $path',
+    );
+  }
+
+  Future<void> generateWorkOrderCsv(
+      List<Data> ledgerdata,
+      ) async {
+    ledgerdata = ledgerdata.reversed.toList();
+
+    // No need for workbook and worksheet objects in CSV generation
+
+    final List<String> headers = [
+      'Date',
+      'Tenants',
+      'Type',
+      'Transaction',
+      'Charge',
+      'Payments',
+      'Balance',
+    ];
+
+    final List<List<String>> csvData = [];
+    csvData.add(headers);
+
+    for (int i = 0; i < ledgerdata.reversed.length; i++) {
+      final ledger = ledgerdata[i];
+
+      // Safe date parsing with default/fallback value
+      String formattedDate;
+      try {
+        formattedDate = ledger != null
+            ? DateFormat('yyyy-MM-dd')
+            .format(DateFormat('yyyy-MM-dd').parse(ledger.entry?.first.date! ?? ''))
+            : 'Invalid Date';
+      } catch (e) {
+        formattedDate = 'Invalid Date';
+      }
+
+      final rowData = [
+        formattedDate,
+        ledger.tenantData != null
+            ? '${ledger.tenantData["tenant_firstName"] ?? ""} ${ledger.tenantData["tenant_lastName"] ?? ""}'
+            : 'N/A',
+        ledger.type ?? '',
+        ledger.type == "Charge" ? "-----------------------------" : 'Manual ${ledger.type} ${ledger.response} For ${ledger.paymenttype}',
+        ledger.type == "Refund" || ledger.type == "Charge" ? '\$${ledger.totalAmount}' : '-',
+        ledger.type != "Refund" && ledger.type != "Charge" ? '\$${ledger.totalAmount}' : '-',
+        '\$${ledger.balance!.abs().toStringAsFixed(2)}',
+      ];
+      csvData.add(rowData);
+    }
+
+    final String csvContent = ListToCsvConverter().convert(csvData);
+    final DateTime now = DateTime.now();
+    final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
+    final String fileName = 'CompletedWorkOrderReport_$formattedDate.csv';
+    final directory = Directory('/storage/emulated/0/Download');
+    final path = '${directory.path}/$fileName';
+    if (!await directory.exists()) {
+      await directory.create(recursive: true);
+    }
+
+    final File file = File(path);
+    await file.writeAsString(csvContent);
+
+    Fluttertoast.showToast(
+      msg: 'CSV file saved to $path',
+    );
+  }
   @override
   Widget build(BuildContext context) {
     bool isFreePlan = Provider.of<checkPlanPurchaseProiver>(context)
@@ -1114,6 +1514,7 @@ class _FinancialTableState extends State<FinancialTable> {
                       ),
                     )
                   : Container(),
+
               const SizedBox(
                 height: 6,
               ),
@@ -1567,10 +1968,112 @@ class _FinancialTableState extends State<FinancialTable> {
                       } else {
                         final leaseLedger = snapshot.data!;
                         final data = leaseLedger.data!.toList();
-
                         return SingleChildScrollView(
                           child: Column(
                             children: [
+                              const SizedBox(
+                                height: 6,
+                              ),
+                              Expanded(
+                                flex: 0,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 5.0, vertical: 5),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Material(
+                                        elevation: 3,
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 0),
+                                          // height: 40,
+                                          height:
+                                          MediaQuery.of(context).size.width <
+                                              500
+                                              ? 48
+                                              : 50,
+                                          width: MediaQuery.of(context).size.width <
+                                              500
+                                              ? MediaQuery.of(context).size.width *
+                                              .50
+                                              : MediaQuery.of(context).size.width *
+                                              .4,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(8),
+                                            border: Border.all(
+                                                color: const Color(0xFF8A95A8)),
+                                          ),
+                                          child: TextField(
+                                            onChanged: (value) {
+                                              setState(() {
+                                                searchvalue = value;
+                                              });
+                                            },
+                                            decoration: const InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: "Search here...",
+                                              hintStyle: TextStyle(
+                                                  color: Color(0xFF8A95A8)),
+                                              // contentPadding: EdgeInsets.all(10),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: blueColor,
+                                        ),
+                                        onPressed: () {},
+                                        child: PopupMenuButton<String>(
+                                          onSelected: (value) async {
+                                            // Add your export logic here based on the selected value
+                                            if (value == 'PDF') {
+                                              print('pdf');
+                                              generateWorkOrderPdf(data);
+                                              // Export as PDF
+                                            } else if (value == 'XLSX') {
+                                              print('XLSX');
+                                              generateWorkOrderExcel(data);
+                                              // Export as XLSX
+                                            } else if (value == 'CSV') {
+                                              print('CSV');
+                                              generateWorkOrderCsv(data);
+                                              // Export as CSV
+                                            }
+                                          },
+                                          itemBuilder: (BuildContext context) =>
+                                          <PopupMenuEntry<String>>[
+                                            const PopupMenuItem<String>(
+                                              value: 'PDF',
+                                              child: Text('PDF'),
+                                            ),
+                                            const PopupMenuItem<String>(
+                                              value: 'XLSX',
+                                              child: Text('XLSX'),
+                                            ),
+                                            const PopupMenuItem<String>(
+                                              value: 'CSV',
+                                              child: Text('CSV'),
+                                            ),
+                                          ],
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text('Export'),
+                                              Icon(Icons.arrow_drop_down),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 10),
                               const SizedBox(height: 5),
                               _buildHeaders(),
                               const SizedBox(height: 20),
