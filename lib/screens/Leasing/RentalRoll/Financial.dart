@@ -20,6 +20,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/Property_type.dart';
 import 'package:three_zero_two_property/repository/lease.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/editApplicant.dart';
+import 'package:three_zero_two_property/widgets/CustomDateField.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../Model/Preminum Plans/checkPlanPurchaseModel.dart';
@@ -665,6 +666,7 @@ class _FinancialTableState extends State<FinancialTable> {
     _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(widget.leaseId);
     _expanded = List.generate(_pagedData.length, (_) => false);
   }
+
   // @override
   // void initState() {
   //   super.initState();
@@ -1288,7 +1290,7 @@ class _FinancialTableState extends State<FinancialTable> {
     workbook.dispose();
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
-    final String fileName = 'CompletedWorkOrderReport_$formattedDate.xlsx';
+    final String fileName = 'Tenant_statement.xlsx';
     final directory = Directory('/storage/emulated/0/Download');
     final path = '${directory.path}/$fileName';
     if (!await directory.exists()) {
@@ -1325,7 +1327,6 @@ class _FinancialTableState extends State<FinancialTable> {
 
     for (int i = 0; i < ledgerdata.reversed.length; i++) {
       final ledger = ledgerdata[i];
-
       // Safe date parsing with default/fallback value
       String formattedDate;
       try {
@@ -1336,7 +1337,6 @@ class _FinancialTableState extends State<FinancialTable> {
       } catch (e) {
         formattedDate = 'Invalid Date';
       }
-
       final rowData = [
         formattedDate,
         ledger.tenantData != null
@@ -1346,7 +1346,9 @@ class _FinancialTableState extends State<FinancialTable> {
         ledger.type == "Charge" ? "-----------------------------" : 'Manual ${ledger.type} ${ledger.response} For ${ledger.paymenttype}',
         ledger.type == "Refund" || ledger.type == "Charge" ? '\$${ledger.totalAmount}' : '-',
         ledger.type != "Refund" && ledger.type != "Charge" ? '\$${ledger.totalAmount}' : '-',
-        '\$${ledger.balance!.abs().toStringAsFixed(2)}',
+        ledger.balance! < 0 ?
+    '\$(${ledger.balance!.abs().toStringAsFixed(2)})'
+    :'\$${ledger.balance!.abs().toStringAsFixed(2)}',
       ];
       csvData.add(rowData);
     }
@@ -1354,7 +1356,7 @@ class _FinancialTableState extends State<FinancialTable> {
     final String csvContent = ListToCsvConverter().convert(csvData);
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
-    final String fileName = 'CompletedWorkOrderReport_$formattedDate.csv';
+    final String fileName = 'Tenant_statement.csv';
     final directory = Directory('/storage/emulated/0/Download');
     final path = '${directory.path}/$fileName';
     if (!await directory.exists()) {
@@ -1368,8 +1370,13 @@ class _FinancialTableState extends State<FinancialTable> {
       msg: 'CSV file saved to $path',
     );
   }
+  final _formKey = GlobalKey<FormState>();
+
+  final TextEditingController _fromDateController = TextEditingController();
+  final TextEditingController _toDateController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     bool isFreePlan = Provider.of<checkPlanPurchaseProiver>(context)
             .checkplanpurchaseModel
             ?.data
@@ -1983,46 +1990,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                     mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Material(
-                                        elevation: 3,
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 0),
-                                          // height: 40,
-                                          height:
-                                          MediaQuery.of(context).size.width <
-                                              500
-                                              ? 48
-                                              : 50,
-                                          width: MediaQuery.of(context).size.width <
-                                              500
-                                              ? MediaQuery.of(context).size.width *
-                                              .50
-                                              : MediaQuery.of(context).size.width *
-                                              .4,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(8),
-                                            border: Border.all(
-                                                color: const Color(0xFF8A95A8)),
-                                          ),
-                                          child: TextField(
-                                            onChanged: (value) {
-                                              setState(() {
-                                                searchvalue = value;
-                                              });
-                                            },
-                                            decoration: const InputDecoration(
-                                              border: InputBorder.none,
-                                              hintText: "Search here...",
-                                              hintStyle: TextStyle(
-                                                  color: Color(0xFF8A95A8)),
-                                              // contentPadding: EdgeInsets.all(10),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
+                                     Spacer(),
                                       ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: blueColor,
