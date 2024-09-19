@@ -12,6 +12,7 @@ import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../widgets/custom_drawer.dart';
 import 'ReportScreens/dailytransaction.dart';
+import 'ReportScreens/rentalownerreport.dart';
 class ReportsMainScreen extends StatefulWidget {
   @override
   State<ReportsMainScreen> createState() => _ReportsMainScreenState();
@@ -440,7 +441,7 @@ class NarrowScreenLayout extends StatelessWidget {
               padding: const EdgeInsets.only(left: 10, right: 10),
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  mainAxisExtent: 180,
+                  mainAxisExtent: 170,
                   crossAxisCount: crossAxisCount,
                   childAspectRatio: 1.0, // Adjust the aspect ratio as needed
                   crossAxisSpacing: 8,
@@ -511,7 +512,7 @@ class ReportCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.only(left: 16.0,top: 16,right: 10),
               child: Text(
                 description,
                 style: TextStyle(
@@ -571,5 +572,10 @@ List<ReportCardModel> reportCards = [
     title: "Daily Transaction Report",
     description: "Report of daily transaction",
     destination: DailyTransactions(),
+  ),
+  ReportCardModel(
+    title: "Rental Owner Report",
+    description: "Report of rental owner transaction",
+    destination: RentalOwnerReports(),
   ),
 ];
