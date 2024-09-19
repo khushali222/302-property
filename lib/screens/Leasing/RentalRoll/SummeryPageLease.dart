@@ -1438,13 +1438,15 @@
 //   }
 // }
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/RenewLease.dart';
+import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'package:three_zero_two_property/Model/tenants.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -1460,10 +1462,13 @@ import '../../../../model/lease.dart';
 import '../../../../repository/Rental_ownersData.dart';
 import '../../../../repository/properties_summery.dart';
 import '../../../../widgets/drawer_tiles.dart';
+import '../../../model/LeaseLedgerModel.dart';
 import '../../../model/LeaseSummary.dart';
+import '../../../widgets/CustomTableShimmer.dart';
 import '../../Rental/Properties/moveout/repository.dart';
 import 'Financial.dart';
 import '../../../widgets/custom_drawer.dart';
+import 'make_payment.dart';
 class SummeryPageLease extends StatefulWidget {
   bool? isredirectpayment;
   String leaseId;
@@ -1479,13 +1484,14 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   List formDataRecurringList = [];
   late Future<LeaseSummary> futureLeaseSummary;
   late Future<List<LeaseTenant>> futureLeasetenant;
-
+  late Future<LeaseLedger?> _leaseLedgerFuture;
   TabController? _tabController;
   @override
   void initState() {
     // TODO: implement initState
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
     futureLeasetenant = LeaseRepository.fetchLeaseTenants(widget.leaseId);
+    _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(widget.leaseId);
     _tabController = TabController(length: 3, vsync: this);
     moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     if(widget.isredirectpayment != null && widget.isredirectpayment!){
@@ -1493,9 +1499,18 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     }
     super.initState();
   }
+  final TextEditingController startDateController = TextEditingController();
+  DateTime? _startDate;
+  final TextEditingController endDateController = TextEditingController();
   String moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
   bool isLoading = false;
   bool isMovedOut = false;
+  String? _selectedLeaseType;
+  final List<String> leaseTypeitems = [
+    'Fixed',
+    'Fixed w/rollover',
+    'At-will(month to month)',
+  ];
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -1677,8 +1692,10 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
 
 
   SummaryPage() {
+   // final prefs = await SharedPreferences.getInstance();
     var width = MediaQuery.of(context).size.width;
-    return FutureBuilder<LeaseSummary>(
+    return
+      FutureBuilder<LeaseSummary>(
       future: futureLeaseSummary,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -1688,6 +1705,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
         } else if (!snapshot.hasData || snapshot.data == null) {
           return Center(child: Text('No data found.'));
         } else {
+          final leasesummery = snapshot.data!;
+          // prefs.setDouble('rent', leasesummery.data!.amount.toString());
+           //prefs.setString('dueDate', leasesummery.data?.date ?? '');
           return ListView(
             scrollDirection: Axis.vertical,
             children: [
@@ -1841,6 +1861,201 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                   ),
                 ),
               ),
+              SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 10.0, right: 10.0, bottom: 10.0),
+                child: FutureBuilder<LeaseLedger?>(
+                  future: _leaseLedgerFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return ColabShimmerLoadingWidget();
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData) {
+                      return Center(child: Text('No data found'));
+                    } else {
+                      final leaseLedger = snapshot.data!;
+
+                      //final data = leaseLedger.data!.toList();
+                      return SingleChildScrollView(
+                        child:
+                        Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 15, right: 15),
+                              child: Material(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                        color: const Color.fromRGBO(21, 43, 81, 1)),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 25, right: 25, top: 20, bottom: 30),
+                                    child: Column(
+                                      children: [
+                                        Table(
+                                          children: [
+                                            TableRow(children: [
+                                              TableCell(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(12.0),
+                                                    child: Text(
+                                                      'Balance',
+                                                      style: TextStyle(
+                                                          color: const Color(0xFF8A95A8),
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: 16),
+                                                    ),
+                                                  )),
+                                              TableCell(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(top: 12),
+                                                    child: Text(
+                                                      '\$ ${leaseLedger.data?.first.balance}',
+                                                      style: TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: blueColor),
+                                                    ),
+                                                  )),
+                                            ]),
+                                            TableRow(children: [
+                                              TableCell(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(12.0),
+                                                    child: Text(
+                                                      'Rent',
+                                                      style: TextStyle(
+                                                          color: const Color(0xFF8A95A8),
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: 16),
+                                                    ),
+                                                  )),
+                                              TableCell(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(top: 12),
+                                                    child: Text(
+                                                      '\$ ${leasesummery.data?.amount}',
+                                                      style: TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: blueColor),
+                                                    ),
+                                                  )),
+                                            ]),
+                                            TableRow(children: [
+                                              TableCell(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(12.0),
+                                                    child: Text(
+                                                      'Due date',
+                                                      style: TextStyle(
+                                                          color: const Color(0xFF8A95A8),
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: 16),
+                                                    ),
+                                                  )),
+                                              TableCell(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(top: 12),
+                                                    child: Text(
+                                                      '${leasesummery.data?.date}',
+                                                      style: TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: blueColor),
+                                                    ),
+                                                  )),
+                                            ]),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 15,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Container(
+                                                height: MediaQuery.of(context).size.width < 500
+                                                    ? 45
+                                                    : 45,
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    border: Border.all(width: 1,color: Color.fromRGBO(21, 43, 83, 1)),
+                                                    borderRadius: BorderRadius.circular(5.0)),
+                                                child: ElevatedButton(
+                                                    style: ElevatedButton.styleFrom(
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                            BorderRadius.circular(5.0)),
+                                                        elevation: 0,
+                                                        backgroundColor: Colors.white),
+                                                    onPressed: () async {
+                                                      final value = await Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) => MakePayment(
+                                                                leaseId: widget.leaseId,
+                                                                tenantId:' ${
+                                                                    leasesummery.data?.tenantId
+                                                                }',
+                                                              )));
+                                                      if (value == true) {
+                                                        setState(() {
+                                                          _leaseLedgerFuture = LeaseRepository()
+                                                              .fetchLeaseLedger(widget.leaseId);
+                                                        });
+                                                      }
+                                                    },
+                                                    child: Text(
+                                                      'Make Payment',
+                                                      style: TextStyle(
+                                                          fontSize:
+                                                          MediaQuery.of(context).size.width <
+                                                              500
+                                                              ? 14
+                                                              : 18,
+                                                          color: Color.fromRGBO(21, 43, 83, 1)),
+                                                    ))),
+                                            SizedBox(
+                                                width:15
+                                            ),
+                                            GestureDetector(
+                                                onTap: (){
+                                                  setState(() {
+                                                    print("hello");
+                                                    if (_tabController != null) {
+                                                      _tabController!.animateTo(1);
+                                                    }
+                                                  });
+                                                },
+                                                child: Text("Lease Ledger",style: TextStyle(
+                                                  color: blueColor,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15,
+                                                ),
+                                                )),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.only(
                     left: 25, right: 25, top: 25, bottom: 25),
@@ -1874,6 +2089,34 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18),
                                 ),
+                                Spacer(),
+                                GestureDetector(
+                                  onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>Renewlease(
+                                leaseId: widget.leaseId, lease: leasesummery,)));
+                                  },
+                                  child: Container(
+                                      height:  MediaQuery.of(context).size.width < 500 ? 35 :45,
+                                      width: MediaQuery.of(context).size.width < 500 ? 120 : 165,
+
+                                      decoration: BoxDecoration(
+                                          color: blueColor,
+                                          borderRadius: BorderRadius.circular(5.0)),
+                                      child: Center(
+                                        child: Text(
+                                          'Renew Lease',
+                                          style: TextStyle(
+                                              fontSize:
+                                              MediaQuery.of(context).size.width <
+                                                  500
+                                                  ? 14
+                                                  : 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white),
+                                        ),
+                                      )),
+                                ),
+
                               ],
                             ),
                           if (MediaQuery.of(context).size.width < 500)
@@ -2280,11 +2523,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
               } else if (!snapshot.hasData || snapshot.data == null) {
                 return Center(child: Text('No data found.'));
               } else {
-
-
-
-
-               // print(status);
+                final leasetenant = snapshot.data!;
+                // print(status);
                 return isTablet
                     ?
                 SingleChildScrollView(
@@ -2778,6 +3018,204 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                       SizedBox(
                         height: 20,
                       ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10.0, right: 10.0, bottom: 10.0),
+                        child: FutureBuilder<LeaseSummary?>(
+                          future: futureLeaseSummary, // Your summary API call
+                          builder: (context, summarySnapshot) {
+                            if (summarySnapshot.connectionState == ConnectionState.waiting) {
+                              return ColabShimmerLoadingWidget();
+                            } else if (summarySnapshot.hasError) {
+                              return Center(child: Text('Error: ${summarySnapshot.error}'));
+                            } else if (!summarySnapshot.hasData) {
+                              return Center(child: Text('No summary data found.'));
+                            } else {
+                              final leaseSummary = summarySnapshot.data!;
+
+                              return FutureBuilder<LeaseLedger?>(
+                                future: _leaseLedgerFuture,
+                                builder: (context, ledgerSnapshot) {
+                                  if (ledgerSnapshot.connectionState == ConnectionState.waiting) {
+                                    return ColabShimmerLoadingWidget();
+                                  } else if (ledgerSnapshot.hasError) {
+                                    return Center(child: Text('Error: ${ledgerSnapshot.error}'));
+                                  } else if (!ledgerSnapshot.hasData) {
+                                    return Center(child: Text('No ledger data found'));
+                                  } else {
+                                    final leaseLedger = ledgerSnapshot.data!;
+
+                                    return SingleChildScrollView(
+                                      child: Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 15, right: 15),
+                                            child: Material(
+                                              borderRadius: BorderRadius.circular(10),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  border: Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      left: 25, right: 25, top: 20, bottom: 30),
+                                                  child: Column(
+                                                    children: [
+                                                      Table(
+                                                        children: [
+                                                          TableRow(children: [
+                                                            TableCell(
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets.all(12.0),
+                                                                  child: Text(
+                                                                    'Balance',
+                                                                    style: TextStyle(
+                                                                        color: const Color(0xFF8A95A8),
+                                                                        fontWeight: FontWeight.bold,
+                                                                        fontSize: 16),
+                                                                  ),
+                                                                )),
+                                                            TableCell(
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets.only(top: 12),
+                                                                  child: Text(
+                                                                    '\$ ${leaseLedger.data?.first.balance}',
+                                                                    style: TextStyle(
+                                                                        fontSize: 15,
+                                                                        fontWeight: FontWeight.bold,
+                                                                        color: blueColor),
+                                                                  ),
+                                                                )),
+                                                          ]),
+                                                          TableRow(children: [
+                                                            TableCell(
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets.all(12.0),
+                                                                  child: Text(
+                                                                    'Rent',
+                                                                    style: TextStyle(
+                                                                        color: const Color(0xFF8A95A8),
+                                                                        fontWeight: FontWeight.bold,
+                                                                        fontSize: 16),
+                                                                  ),
+                                                                )),
+                                                            TableCell(
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets.only(top: 12),
+                                                                  child: Text(
+                                                                    '\$ ${leaseSummary.data?.amount}', // Replace with the actual rent amount from summary
+                                                                    style: TextStyle(
+                                                                        fontSize: 15,
+                                                                        fontWeight: FontWeight.bold,
+                                                                        color: blueColor),
+                                                                  ),
+                                                                )),
+                                                          ]),
+                                                          TableRow(children: [
+                                                            TableCell(
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets.all(12.0),
+                                                                  child: Text(
+                                                                    'Due Date',
+                                                                    style: TextStyle(
+                                                                        color: const Color(0xFF8A95A8),
+                                                                        fontWeight: FontWeight.bold,
+                                                                        fontSize: 16),
+                                                                  ),
+                                                                )),
+                                                            TableCell(
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets.only(top: 12),
+                                                                  child: Text(
+                                                                    '${leaseSummary.data?.date}', // Replace with the actual due date from summary
+                                                                    style: TextStyle(
+                                                                        fontSize: 15,
+                                                                        fontWeight: FontWeight.bold,
+                                                                        color: blueColor),
+                                                                  ),
+                                                                )),
+                                                          ]),
+                                                        ],
+                                                      ),
+                                                      SizedBox(height: 15),
+                                                      Row(
+                                                        children: [
+                                                          Container(
+                                                            height: MediaQuery.of(context).size.width < 500 ? 45 : 45,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors.white,
+                                                                border: Border.all(width: 1, color: Color.fromRGBO(21, 43, 83, 1)),
+                                                                borderRadius: BorderRadius.circular(5.0)),
+                                                            child: ElevatedButton(
+                                                              style: ElevatedButton.styleFrom(
+                                                                  shape: RoundedRectangleBorder(
+                                                                      borderRadius: BorderRadius.circular(5.0)),
+                                                                  elevation: 0,
+                                                                  backgroundColor: Colors.white),
+                                                              onPressed: () async {
+                                                                final value = await Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder: (context) => MakePayment(
+                                                                      leaseId: widget.leaseId,
+                                                                      tenantId: '${leasetenant.first.tenantId}',
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                                if (value == true) {
+                                                                  setState(() {
+                                                                    _leaseLedgerFuture = LeaseRepository()
+                                                                        .fetchLeaseLedger(widget.leaseId);
+                                                                  });
+                                                                }
+                                                              },
+                                                              child: Text(
+                                                                'Make Payment',
+                                                                style: TextStyle(
+                                                                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                                                                    color: Color.fromRGBO(21, 43, 83, 1)),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 15),
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              setState(() {
+                                                                if (_tabController != null) {
+                                                                  _tabController!.animateTo(1);
+                                                                }
+                                                              });
+                                                            },
+                                                            child: Text(
+                                                              "Lease Ledger",
+                                                              style: TextStyle(
+                                                                color: blueColor,
+                                                                fontWeight: FontWeight.bold,
+                                                                fontSize: 15,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                },
+                              );
+                            }
+                          },
+                        ),
+                      ),
+
                     ],
                   ),
                 );
@@ -2789,6 +3227,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       },
     );
   }
+
   Widget buildMoveout(LeaseTenant tenant) {
     return SingleChildScrollView(
       child: Column(
@@ -3078,6 +3517,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       readOnly: true,
     );
   }
+
 }
 
 class FinancialPage extends StatefulWidget {

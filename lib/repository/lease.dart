@@ -464,6 +464,7 @@ class LeaseRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
+
     print('$Api_url/api/leases/lease_summary/$leaseId');
     final response = await http.get(
       Uri.parse('$Api_url/api/leases/lease_summary/$leaseId'),
@@ -475,6 +476,7 @@ class LeaseRepository {
     log(response.body);
     if (response.statusCode == 200) {
       return LeaseSummary.fromJson(jsonDecode(response.body));
+
     } else {
       throw Exception('Failed to load lease summary');
     }
