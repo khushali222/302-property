@@ -539,6 +539,13 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                       fontWeight: pw.FontWeight.bold,
                     ),
                   ),
+                  pw.Text(
+                    'Date : - ${fromDate.text}',
+                    style: pw.TextStyle(
+                      fontSize: 14,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
               pw.Column(
@@ -1299,8 +1306,8 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                           _buildHeaders(),
                           const SizedBox(height: 20),
                           Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(color: blueColor)),
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
                             child: Column(
                               children:
                                   currentPageData.asMap().entries.map((entry) {
@@ -1311,7 +1318,8 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
 
                                 return Container(
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: blueColor),
+                                    color: rowIndex %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                    border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                                   ),
                                   child: Column(
                                     children: <Widget>[

@@ -1536,6 +1536,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                       onTap: () {
                                         _pickDate(context);
                                       },
+                                      readOnly: true,
                                       textInputAction: TextInputAction.next,
                                       textAlignVertical:
                                       TextAlignVertical.center,
@@ -1680,6 +1681,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                       onTap: () {
                                         _pickDate(context);
                                       },
+                                      readOnly: true,
                                       textInputAction: TextInputAction.next,
                                       textAlignVertical:
                                       TextAlignVertical.center,

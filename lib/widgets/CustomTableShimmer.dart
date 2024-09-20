@@ -7,6 +7,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 class ColabShimmerLoadingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
     return Column(
       children: [
         Container(
@@ -94,7 +95,7 @@ class ColabShimmerLoadingWidget extends StatelessWidget {
         SizedBox(height: 20,),
         Container(
           decoration: BoxDecoration(
-            border: Border.all(color: blueColor),
+            border:Border.all(color: Color.fromRGBO(152, 162, 179,1))
           ),
           child: Column(
             children: <Widget>[
