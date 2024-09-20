@@ -1457,7 +1457,6 @@ import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newModel.dart
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
 import '../../../../Model/RentalOwnersData.dart';
-
 import '../../../../model/lease.dart';
 import '../../../../repository/Rental_ownersData.dart';
 import '../../../../repository/properties_summery.dart';
@@ -1692,6 +1691,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
 
 
   SummaryPage() {
+
    // final prefs = await SharedPreferences.getInstance();
     var width = MediaQuery.of(context).size.width;
     return
@@ -1699,7 +1699,10 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       future: futureLeaseSummary,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return  SpinKitFadingCircle(
+            color: blueColor,
+            size: 40.0,
+          );
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data == null) {
@@ -1871,14 +1874,16 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                   future: _leaseLedgerFuture,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return ColabShimmerLoadingWidget();
+                      return  SpinKitFadingCircle(
+                        color: blueColor,
+                        size: 40.0,
+                      );
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData) {
                       return Center(child: Text('No data found'));
                     } else {
                       final leaseLedger = snapshot.data!;
-
                       //final data = leaseLedger.data!.toList();
                       return SingleChildScrollView(
                         child:
@@ -3044,7 +3049,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     return Center(child: Text('No ledger data found'));
                                   } else {
                                     final leaseLedger = ledgerSnapshot.data!;
-
                                     return SingleChildScrollView(
                                       child: Column(
                                         children: [

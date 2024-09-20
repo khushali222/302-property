@@ -4262,6 +4262,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                     SizedBox(width: MediaQuery.of(context).size.width * 0.01),
                     GestureDetector(
                       onTap: () async {
+                        print("calling");
                         if(selectedProperty == null){
                           setState(() {
                             showError = true;
@@ -4435,7 +4436,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
                           RentalOwners owners = RentalOwners(
                             adminId: id,
-
                             firstName: firstname.text,
                             companyName: comname.text,
                             primaryEmail: primaryemail.text,

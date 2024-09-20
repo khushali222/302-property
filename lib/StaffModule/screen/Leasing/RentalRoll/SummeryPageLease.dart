@@ -1627,6 +1627,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: FinancialTable(
+                            rentalUnit:  snapshot.data!.data?.rentalUnit,
+                            rentalAddress: snapshot.data!.data?.rentalAddress,
                               leaseId: widget.leaseId,
                               status:
                                   '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate).toString()}',

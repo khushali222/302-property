@@ -33,11 +33,10 @@ class _RenewleaseState extends State<Renewlease> {
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
    // _tabController = TabController(length: 3, vsync: this);
     _selectedLeaseType = widget.lease.data?.leaseType;
-    startDateController.text = widget.lease.data!.startDate ?? "";
-    endDateController.text = widget.lease.data!.endDate ?? "";
+     startDateController.text = widget.lease.data!.startDate ?? "";
+     endDateController.text = widget.lease.data!.endDate ?? "";
      rent.text = widget.lease.data!.amount.toString();
-
-    super.initState();
+     super.initState();
   }
   TextEditingController rent = TextEditingController();
   final TextEditingController startDateController = TextEditingController();

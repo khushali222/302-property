@@ -150,6 +150,7 @@ class PropertiesRepository {
 
     final rentalOwnerResponse = responseBody['data']['rentalOwner'];
     print('Rental Owner Data from Response: ${jsonEncode(rentalOwnerResponse)}');
+    print('update Rental: ${response.body}');
 
     if (response.statusCode == 200) {
       Fluttertoast.showToast(msg: "Properties updated successfully");

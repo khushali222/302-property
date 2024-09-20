@@ -1007,7 +1007,7 @@ class _FinancialTableState extends State<FinancialTable> {
                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                  children: [
                    pw.Image(image, width: 50, height: 50),
-                   pw.SizedBox(width: 50),
+                   // pw.SizedBox(width: 50),
                    pw.Column(
                      crossAxisAlignment: pw.CrossAxisAlignment.center,
                      children: [
@@ -1022,15 +1022,16 @@ class _FinancialTableState extends State<FinancialTable> {
                        pw.Row(
                            children: [
                              pw.Text(
-                               '${widget.rentalAddress}  - ',
+                               '${widget.rentalAddress}',
                                style: pw.TextStyle(
                                  fontSize: 18,
                                  fontWeight: pw.FontWeight.bold,
                                ),
                              ),
                              pw.SizedBox(width: 5),
+                             if(widget.rentalUnit != null)
                              pw.Text(
-                               '${widget.rentalUnit}',
+                               ' - ${widget.rentalUnit}',
                                style: pw.TextStyle(
                                  fontSize: 18,
                                  fontWeight: pw.FontWeight.bold,
@@ -1106,44 +1107,44 @@ class _FinancialTableState extends State<FinancialTable> {
               'Tenants',
               'Type',
               'Transaction',
-              'Increase',
-              'Decrease',
+              'Amount',
               'Balance'
             ],
             data: ledgerdata.reversed.map((ledger) {
               return [
                 formatDate4(
                     '${ledger.entry?.first.date}') ?? "",
+
                 ledger.tenantData !=
                     null
                     ? '${ledger.tenantData["tenant_firstName"] ?? ""} ${ledger.tenantData["tenant_lastName"] ?? ""}'
                     : 'N/A' ?? '',
+
                 ledger.type ?? '',
+
+                ledger.type == 'Charge'?' ${ledger.entry?.first.memo}':
                 'Manual ${ledger.type} ${ledger.response} For ${ledger.paymenttype}'?? '',
+
                 pw.Align(
                   alignment:pw.Alignment.centerRight,
                   child:pw.Text(ledger.type == "Refund" ||
                       ledger.type == "Charge"
                       ? '\$${ledger.totalAmount}'
-                      : '-',),
+                      : ' - \$${ledger.totalAmount}',),
                 ),
-                pw.Align(
-                  alignment:pw.Alignment.centerRight,
-                  child:pw.Text(ledger.type != "Refund" && ledger.type != "Charge"
-                      ? '\$${ledger.totalAmount}'
-                      : '-',),
-                ),
+
                 ledger.balance! < 0 ?
-               pw.Align(
-                 alignment:pw.Alignment.centerRight,
-                 child:pw.Text(''
-                     '\$(${ledger.balance!.abs().toStringAsFixed(2)})',),
-               ):
-              pw.Align(
-              alignment:pw.Alignment.centerRight,
-              child:pw.Text(''
-              '\$${ledger.balance!.abs().toStringAsFixed(2)}',),
-              )
+                 pw.Align(
+                  alignment:pw.Alignment.centerRight,
+                  child:pw.Text(''
+                      ' - \$${ledger.balance!.abs().toStringAsFixed(2)}',),
+                ):
+                 pw.Align(
+                   alignment:pw.Alignment.centerRight,
+                   child:pw.Text(''
+                       ' \$${ledger.balance!.abs().toStringAsFixed(2)}',),
+                 ),
+
 
               ];
             }).toList(),
@@ -1214,7 +1215,7 @@ class _FinancialTableState extends State<FinancialTable> {
     ledgerdata = ledgerdata.reversed.toList();
     final syncXlsx.Workbook workbook = syncXlsx.Workbook();
     final syncXlsx.Worksheet sheet = workbook.worksheets[0];
-    sheet.getRangeByName('A1:G1').columnWidth = 15;
+    sheet.getRangeByName('A1:f1').columnWidth = 15;
     sheet.getRangeByName('D1').columnWidth = 45;
 
     final List<String> headers = [
@@ -1222,8 +1223,7 @@ class _FinancialTableState extends State<FinancialTable> {
       'Tenants',
       'Type',
       'Transaction',
-      'Charge',
-      'Payments',
+      'Amount',
       'Balance',
     ];
 
@@ -1258,31 +1258,32 @@ class _FinancialTableState extends State<FinancialTable> {
       }
       sheet.getRangeByIndex( 2 + i, 5 ).cellStyle.hAlign =
           syncXlsx.HAlignType.right;
-       sheet.getRangeByIndex( 2 + i, 7).cellStyle.hAlign =
-          syncXlsx.HAlignType.right;
        sheet.getRangeByIndex( 2 + i, 6).cellStyle.hAlign =
           syncXlsx.HAlignType.right;
 
       sheet.getRangeByIndex(2 + i, 1).setText(ledger.entry?.first.date);
+
       sheet.getRangeByIndex(2 + i, 2).setText(ledger.tenantData !=
                 null
                 ? '${ledger.tenantData["tenant_firstName"] ?? ""} ${ledger.tenantData["tenant_lastName"] ?? ""}'
                 : 'N/A' ?? '');
+
       sheet.getRangeByIndex(2 + i, 3).setText(ledger.type ?? '');
-      sheet.getRangeByIndex(2 + i, 4).setText( ledger.type == "Charge" ?  "-----------------------------" :'Manual ${ledger.type} ${ledger.response} For ${ledger.paymenttype}'?? '');
+
+      sheet.getRangeByIndex(2 + i, 4).setText( ledger.type == "Charge" ?  "${ledger.entry?.first.memo}" :'Manual ${ledger.type} ${ledger.response} For ${ledger.paymenttype}'?? '');
+
       sheet.getRangeByIndex(2 + i, 5).setText(
         ledger.type == "Refund" ||
                 ledger.type == "Charge"
                 ? '\$${ledger.totalAmount}'
-                : '-',);
+                : ' - \$${ledger.totalAmount}',);
 
-      sheet.getRangeByIndex(2 + i, 6).setText(ledger.type != "Refund" && ledger.type != "Charge"
-                  ? '\$${ledger.totalAmount}'
-                  : '-',);
+
       print(ledger.balance);
+
       ledger.balance! < 0 ?
-      sheet.getRangeByIndex(2 + i, 7).setText('\$(${ledger.balance!.abs().toStringAsFixed(2)})',)
-  :     sheet.getRangeByIndex(2 + i, 7).setText('\$${ledger.balance!.abs().toStringAsFixed(2)}',);
+      sheet.getRangeByIndex(2 + i, 6).setText('-\$${ledger.balance!.abs().toStringAsFixed(2)}',)
+  :     sheet.getRangeByIndex(2 + i, 6).setText('\$${ledger.balance!.abs().toStringAsFixed(2)}',);
 
     }
 
@@ -1317,8 +1318,7 @@ class _FinancialTableState extends State<FinancialTable> {
       'Tenants',
       'Type',
       'Transaction',
-      'Charge',
-      'Payments',
+      'Amount',
       'Balance',
     ];
 
@@ -1339,16 +1339,21 @@ class _FinancialTableState extends State<FinancialTable> {
       }
       final rowData = [
         formattedDate,
+
         ledger.tenantData != null
             ? '${ledger.tenantData["tenant_firstName"] ?? ""} ${ledger.tenantData["tenant_lastName"] ?? ""}'
             : 'N/A',
+
         ledger.type ?? '',
-        ledger.type == "Charge" ? "-----------------------------" : 'Manual ${ledger.type} ${ledger.response} For ${ledger.paymenttype}',
-        ledger.type == "Refund" || ledger.type == "Charge" ? '\$${ledger.totalAmount}' : '-',
-        ledger.type != "Refund" && ledger.type != "Charge" ? '\$${ledger.totalAmount}' : '-',
+
+        ledger.type == "Charge" ? "${ledger.entry?.first.memo}" : 'Manual ${ledger.type} ${ledger.response} For ${ledger.paymenttype}',
+
+        ledger.type == "Refund" || ledger.type == "Charge" ? '\$${ledger.totalAmount}' : ' - \$${ledger.totalAmount}',
+
         ledger.balance! < 0 ?
-    '\$(${ledger.balance!.abs().toStringAsFixed(2)})'
+       ' - \$${ledger.balance!.abs().toStringAsFixed(2)}'
     :'\$${ledger.balance!.abs().toStringAsFixed(2)}',
+
       ];
       csvData.add(rowData);
     }
@@ -1370,6 +1375,7 @@ class _FinancialTableState extends State<FinancialTable> {
       msg: 'CSV file saved to $path',
     );
   }
+
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _fromDateController = TextEditingController();
@@ -2042,7 +2048,6 @@ class _FinancialTableState extends State<FinancialTable> {
                                 ),
                               ),
                               SizedBox(height: 10),
-                              const SizedBox(height: 5),
                               _buildHeaders(),
                               const SizedBox(height: 20),
                               Container(
@@ -2245,7 +2250,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                     if(data.type == "Charge")
                                                                       TextSpan(
                                                                         text:
-                                                                        '---------------------------',
+                                                                        '${data.entry?.first.memo}',
                                                                         style: TextStyle(
                                                                             fontWeight: FontWeight
                                                                                 .w700,
@@ -2778,7 +2783,6 @@ class _FinancialTableState extends State<FinancialTable> {
                     } else {
                       _tableData = snapshot.data!.data!;
                       totalrecords = _tableData.length;
-
                       return SingleChildScrollView(
                         child: Column(
                           children: [
