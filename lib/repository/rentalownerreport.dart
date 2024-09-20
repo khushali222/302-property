@@ -9,13 +9,19 @@ import '../Model/rentalownerreport.dart';
 class RentalOwnerReportService {
   final String baseUrl = '$Api_url/api/rental_owner';
 
-  Future<List<RentalOwnerReport>> fetchRentalOwnerReport(String adminId, String selectedStartDate, String selectedEndDate) async {
+  Future<List<RentalOwnerReport>> fetchRentalOwnerReport(String adminId, String selectedStartDate, String selectedEndDate,{String? rentalownerid , String? chargetype}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     final String endpoint = '/todayspaymentrentalowner/$adminId';
-    final String url = '$baseUrl$endpoint?selectedStartDate=$selectedStartDate&selectedEndDate=$selectedEndDate';
-
+    String url = '$baseUrl$endpoint?selectedStartDate=$selectedStartDate&selectedEndDate=$selectedEndDate';
+    if(rentalownerid != null){
+      url = '$url&rentalowner_id=$rentalownerid';
+    }
+    if(chargetype != null){
+      url = '$url&selectedChargeType=$chargetype';
+    }
+    print(url);
     try {
       final response = await http.get(Uri.parse(url), headers: {
         'Content-Type': 'application/json',

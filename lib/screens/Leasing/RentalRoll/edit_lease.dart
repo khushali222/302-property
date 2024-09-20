@@ -96,7 +96,7 @@ class _Edit_leaseState extends State<Edit_lease>
     // print();
 
     // print(fetchedDetails.re);
-    print(leaseId);
+    /*print(leaseId);
     print('rental id ${fetchedDetails.rental.rentalId}');
     print('property id ${fetchedDetails.rental.propertyId}');
     print(
@@ -108,7 +108,7 @@ class _Edit_leaseState extends State<Edit_lease>
     print('Rent amt ${fetchedDetails.securityCharges!.first!.amount}');
     print('Rent date ${fetchedDetails.rentCharges!.first!.date}');
     print(
-        'Rent amount ${fetchedDetails.rentCharges!.first!.amount.toString()}');
+        'Rent amount ${fetchedDetails.rentCharges!.first!.amount.toString()}');*/
 
     await Future.delayed(const Duration(seconds: 1));
     setState(() {

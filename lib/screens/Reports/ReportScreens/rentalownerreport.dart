@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -51,17 +53,34 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
   @override
   void initState() {
     super.initState();
-    _futureRentersInsurance = fetchDelinquentTenantsData();
+    fetchRentalOwners();
+    fetchReport();
+
   }
 
-  Future<List<RentalOwnerReport>> fetchDelinquentTenantsData() async {
+  fetchReport(){
+    setState(() {
+      daterange = "Today";
+      fromDate.text = formatDate(
+          DateTime.now().toString());
+      toDate.text = formatDate(
+          DateTime.now().toString());
+    });
+    DateTime time = DateTime.now();
+    DateTime date =  DateFormat('yyyy-MM-dd').parse(time.toString());
+    _futureRentersInsurance = fetchDelinquentTenantsData(formatDate(date.toString()),formatDate(date.toString()));
+  }
+  Future<List<RentalOwnerReport>> fetchDelinquentTenantsData(String fromDate, String toDate,{String? rentalownerid,String? charge}) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
       String? token = prefs.getString('token');
 
+      String? chargedata = chargeType == "All" ? null : chargeType;
+
       List<RentalOwnerReport> data = await RentalOwnerReportService()
-          .fetchRentalOwnerReport(id!, "2024-09-01", "2024-09-30");
+          .fetchRentalOwnerReport(id!,reverseFormatDate(fromDate),reverseFormatDate(toDate),rentalownerid: selectedrenatalownerid,chargetype: chargedata);
+
       setState(() {
         DelinquentTenantsModel = data;
         isLoading = false;
@@ -199,7 +218,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
   Widget _buildHeader<T>(String text, int columnIndex,
       Comparable<T> Function(DelinquentTenantsData d)? getField) {
     return TableCell(
-      child: InkWell(
+      child: GestureDetector(
         onTap: getField != null
             ? () {
                 _sort(getField, columnIndex, !_sortAscending);
@@ -275,7 +294,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
               ),
             ),
             Expanded(
-              child: InkWell(
+              child: GestureDetector(
                 onTap: () {
                   setState(() {
                     if (sorting1 == true) {
@@ -297,13 +316,13 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                   });
                 },
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 24),
+                  padding: const EdgeInsets.only(left: 0),
                   child: Row(
                     children: [
                       width < 400
-                          ? const Text("Leases",
+                          ? const Text("Rental Owner",
                               style: TextStyle(color: Colors.white))
-                          : const Text("Leases",
+                          : const Text("Rental Owner",
                               style: TextStyle(color: Colors.white)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
@@ -330,7 +349,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
               ),
             ),
             // Expanded(
-            //   child: InkWell(
+            //   child: GestureDetector(
             //     onTap: () {
             //       setState(() {
             //         if (sorting2) {
@@ -377,7 +396,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
             //   ),
             // ),
             // Expanded(
-            //   child: InkWell(
+            //   child: GestureDetector(
             //     onTap: () {
             //       setState(() {
             //         if (sorting3) {
@@ -464,7 +483,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
   }
 
   bool istenantDataLoading = false;
-
+  bool customdate = false;
   Future<void> generateDelinquentTenantsPdf(
       List<RentalOwnerReport> delinquentTenantsData) async {
     final GetAddressAdminPdfService service = GetAddressAdminPdfService();
@@ -520,7 +539,6 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                       fontWeight: pw.FontWeight.bold,
                     ),
                   ),
-
                 ],
               ),
               pw.Column(
@@ -546,8 +564,8 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                   ),
                   pw.Text(
                     '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
-                        '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
-                        '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
+                    '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
+                    '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
                     style: pw.TextStyle(
                       fontSize: 10,
                       fontWeight: pw.FontWeight.bold,
@@ -571,7 +589,6 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
         ]),
         build: (pw.Context context) {
           return [
-
             pw.Table.fromTextArray(
                 headers: [
                   'Property',
@@ -585,7 +602,8 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                   'Total',
                 ],
                 data: _generateTableData(delinquentTenantsData),
-                headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold,color: PdfColors.white),
+                headerStyle: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold, color: PdfColors.white),
                 headerDecoration: pw.BoxDecoration(
                   color: PdfColor.fromHex("#5A86D5"),
                   //color:PdfColor.fromRYB(90, 134, 213,)
@@ -596,17 +614,15 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                 border: null),
             pw.Divider(thickness: 3),
             pw.Padding(
-              padding: pw.EdgeInsets.symmetric(horizontal: 5),
-              child:  pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text('Grand Total',
-                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                    pw.Text('\$${grandtotal.toStringAsFixed(2)}',
-                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold))
-                  ])
-            ),
-
+                padding: pw.EdgeInsets.symmetric(horizontal: 5),
+                child: pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text('Grand Total',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      pw.Text('\$${grandtotal.toStringAsFixed(2)}',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold))
+                    ])),
           ];
         },
       ),
@@ -626,7 +642,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
       // Main row for the rental owner name
       tableData.add([
         pw.Text(owner.rentalOwnerName,
-            style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10)),
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
         '',
         '',
         '',
@@ -640,7 +656,10 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
       for (var property in owner.payments) {
         tableData.add([
           pw.Padding(
-              child: pw.Text('${property.rentalData.rentalAddress ?? 'N/A'}',  style: pw.TextStyle(fontSize: 10),),
+              child: pw.Text(
+                '${property.rentalData.rentalAddress ?? 'N/A'}',
+                style: pw.TextStyle(fontSize: 10),
+              ),
               padding: pw.EdgeInsets.only(left: 15)), // Property Name
           '${property.tenantData.tenantFirstName ?? 'N/A'} ${property.tenantData.tenantLastName ?? 'N/A'}', // Tenant Name
           property.createdAt.toString(), // Payment Date
@@ -663,8 +682,8 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
         for (var payment in property.entry) {
           tableData.add([
             pw.Padding(
-                child: pw.Text('${payment.account ?? 'N/A'}',style: pw.TextStyle(fontSize: 10)),
-
+                child: pw.Text('${payment.account ?? 'N/A'}',
+                    style: pw.TextStyle(fontSize: 10)),
                 padding: pw.EdgeInsets.only(left: 15)), // Account Name
             '', // Account Amount
             '', '', '', '', '', '',
@@ -681,18 +700,20 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
         if (property.surcharge != 0.0) {
           tableData.add([
             pw.Padding(
-                child: pw.Text('Surcharge',style: pw.TextStyle(fontSize: 10),),
+                child: pw.Text(
+                  'Surcharge',
+                  style: pw.TextStyle(fontSize: 10),
+                ),
                 padding: pw.EdgeInsets.only(left: 15)),
             '', // Account Amount
             '', '', '', '', '', '',
-    pw.Align(
-    alignment: pw.Alignment.centerRight,
-    child:
-            pw.Text(
-                '\$${(property.surcharge ?? 0.0).toStringAsFixed(2)}', // Surcharge formatted to 2 decimal places
-                style: pw.TextStyle(fontSize: 10),
-                textAlign: pw.TextAlign.right // Align text to the right
-                ))
+            pw.Align(
+                alignment: pw.Alignment.centerRight,
+                child: pw.Text(
+                    '\$${(property.surcharge ?? 0.0).toStringAsFixed(2)}', // Surcharge formatted to 2 decimal places
+                    style: pw.TextStyle(fontSize: 10),
+                    textAlign: pw.TextAlign.right // Align text to the right
+                    ))
           ]);
         }
       }
@@ -701,13 +722,14 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
       tableData.add([
         pw.Padding(
             child: pw.Text('Subtotal ${owner.rentalOwnerName ?? 'N/A'}',
-                style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10)),
+                style:
+                    pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
             padding: pw.EdgeInsets.only(
                 left: 15)), // Label for rental owner subtotal
         '', '', '', '', '', '', '',
         pw.Text(
             '\$${(owner.subTotal ?? 0.0).toStringAsFixed(2)}', // Subtotal formatted to 2 decimal places
-            style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10),
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
             textAlign: pw.TextAlign.right // Align text to the right
             )
       ]);
@@ -722,14 +744,12 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
     return tableData;
   }
 
-  Future<void> generateRentalOwnerReportExcel(List<RentalOwnerReport> rentalOwnerReports) async {
-
+  Future<void> generateRentalOwnerReportExcel(
+      List<RentalOwnerReport> rentalOwnerReports) async {
     final syncXlsx.Workbook workbook = syncXlsx.Workbook();
     final syncXlsx.Worksheet sheet = workbook.worksheets[0];
 
-
     sheet.getRangeByName('A1:I1').columnWidth = 20;
-
 
     final List<String> headers = [
       'Property',
@@ -743,25 +763,26 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
       'Total',
     ];
 
-
-    final syncXlsx.Style headerCellStyle = workbook.styles.add('headerCellStyle');
+    final syncXlsx.Style headerCellStyle =
+        workbook.styles.add('headerCellStyle');
     headerCellStyle.bold = true;
     headerCellStyle.backColor = '#5A86D5';
     headerCellStyle.fontColor = '#FFFFFF';
     headerCellStyle.fontSize = 16;
     headerCellStyle.hAlign = syncXlsx.HAlignType.center;
 
-
-    final syncXlsx.Style currencyCellStyle = workbook.styles.add('currencyCellStyle');
+    final syncXlsx.Style currencyCellStyle =
+        workbook.styles.add('currencyCellStyle');
     currencyCellStyle.numberFormat = '\$#,##0.00'; // Currency format
     currencyCellStyle.hAlign = syncXlsx.HAlignType.right; // Right-align amounts
 
-
-    final syncXlsx.Style boldAmountStyle = workbook.styles.add('boldAmountStyle');
+    final syncXlsx.Style boldAmountStyle =
+        workbook.styles.add('boldAmountStyle');
     boldAmountStyle.bold = true;
     boldAmountStyle.numberFormat = '\$#,##0.00';
     boldAmountStyle.hAlign = syncXlsx.HAlignType.right;
-    final syncXlsx.Style AmountTitleStyle = workbook.styles.add('AmountTitleStyle');
+    final syncXlsx.Style AmountTitleStyle =
+        workbook.styles.add('AmountTitleStyle');
     boldAmountStyle.bold = true;
     boldAmountStyle.numberFormat = '\$#,##0.00';
 
@@ -775,7 +796,6 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
     double grandTotal = 0.0;
 
     for (var owner in rentalOwnerReports) {
-
       final rentalOwnerCell = sheet.getRangeByIndex(rowIndex, 1);
       rentalOwnerCell.setText(owner.rentalOwnerName ?? '');
       rentalOwnerCell.cellStyle.bold = true;
@@ -783,19 +803,26 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
       rowIndex++;
 
       for (var property in owner.payments) {
-
-        sheet.getRangeByIndex(rowIndex, 1).setText(property.rentalData.rentalAddress ?? 'N/A');
-        sheet.getRangeByIndex(rowIndex, 2).setText('${property.tenantData.tenantFirstName ?? 'N/A'} ${property.tenantData.tenantLastName ?? 'N/A'}');
-        sheet.getRangeByIndex(rowIndex, 3).setText(property.createdAt.toString());
+        sheet
+            .getRangeByIndex(rowIndex, 1)
+            .setText(property.rentalData.rentalAddress ?? 'N/A');
+        sheet.getRangeByIndex(rowIndex, 2).setText(
+            '${property.tenantData.tenantFirstName ?? 'N/A'} ${property.tenantData.tenantLastName ?? 'N/A'}');
+        sheet
+            .getRangeByIndex(rowIndex, 3)
+            .setText(property.createdAt.toString());
         sheet.getRangeByIndex(rowIndex, 4).setText(property.paymentType ?? '');
-        sheet.getRangeByIndex(rowIndex, 5).setText(property.transactionId ?? '');
+        sheet
+            .getRangeByIndex(rowIndex, 5)
+            .setText(property.transactionId ?? '');
         sheet.getRangeByIndex(rowIndex, 6).setText(property.paymentId ?? '');
         sheet.getRangeByIndex(rowIndex, 7).setText(property.ccType ?? '');
         sheet.getRangeByIndex(rowIndex, 8).setText(property.ccNumber ?? '');
-        sheet.getRangeByIndex(rowIndex, 9).setNumber(property.totalAmount ?? 0.0);
+        sheet
+            .getRangeByIndex(rowIndex, 9)
+            .setNumber(property.totalAmount ?? 0.0);
         sheet.getRangeByIndex(rowIndex, 9).cellStyle = currencyCellStyle;
         rowIndex++;
-
 
         for (var payment in property.entry) {
           sheet.getRangeByIndex(rowIndex, 1).setText(payment.account ?? 'N/A');
@@ -803,7 +830,6 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
           sheet.getRangeByIndex(rowIndex, 9).cellStyle = currencyCellStyle;
           rowIndex++;
         }
-
 
         if (property.surcharge != 0.0) {
           sheet.getRangeByIndex(rowIndex, 1).setText('Surcharge');
@@ -813,8 +839,9 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
         }
       }
 
-
-      sheet.getRangeByIndex(rowIndex, 1).setText('Subtotal - ${owner.rentalOwnerName}');
+      sheet
+          .getRangeByIndex(rowIndex, 1)
+          .setText('Subtotal - ${owner.rentalOwnerName}');
       sheet.getRangeByIndex(rowIndex, 1).cellStyle.bold = true;
       sheet.getRangeByIndex(rowIndex, 9).setNumber(owner.subTotal ?? 0.0);
       sheet.getRangeByIndex(rowIndex, 9).cellStyle = boldAmountStyle;
@@ -824,31 +851,25 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
       grandTotal += owner.subTotal ?? 0.0;
     }
 
-
     sheet.getRangeByIndex(rowIndex, 1).setText('Grand Total');
     sheet.getRangeByIndex(rowIndex, 1).cellStyle.bold = true;
     sheet.getRangeByIndex(rowIndex, 9).setNumber(grandTotal);
     sheet.getRangeByIndex(rowIndex, 9).cellStyle = boldAmountStyle;
     sheet.getRangeByName('A$rowIndex:H$rowIndex').merge();
 
-
     final List<int> bytes = workbook.saveAsStream();
     workbook.dispose();
-
 
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'RentalOwnerReport_$formattedDate.xlsx';
 
-
     final directory = Directory('/storage/emulated/0/Download');
     final path = '${directory.path}/$fileName';
-
 
     if (!await directory.exists()) {
       await directory.create(recursive: true);
     }
-
 
     final File file = File(path);
     await file.writeAsBytes(bytes, flush: true);
@@ -857,7 +878,8 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
     );
   }
 
-  Future<void> generateRentalOwnerReportCsv(List<RentalOwnerReport> rentalOwnerReports) async {
+  Future<void> generateRentalOwnerReportCsv(
+      List<RentalOwnerReport> rentalOwnerReports) async {
     // Define headers for CSV
     final List<String> headers = [
       'Property',
@@ -887,7 +909,8 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
       // Iterate through each property for the current rental owner
       for (var property in owner.payments) {
         // Replace commas in the rental address with spaces
-        final String sanitizedAddress = (property.rentalData.rentalAddress ?? 'N/A').replaceAll(',', ' ');
+        final String sanitizedAddress =
+            (property.rentalData.rentalAddress ?? 'N/A').replaceAll(',', ' ');
 
         // Add property and tenant details
         csvBuffer.writeln([
@@ -990,8 +1013,6 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
     );
   }
 
-
-
   Future<void> generateDelinquentTenantsCsv(
       List<DelinquentTenantsData> delinquentTenantsData) async {
     setState(() {
@@ -1083,7 +1104,107 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
       msg: 'CSV file saved to $path',
     );
   }
+  Future<void> _pickDate(BuildContext context) async {
+    DateTime? _selectedDate ;
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: Color.fromRGBO(21, 43, 83, 1),
+            colorScheme: ColorScheme.light(
+              primary: Color.fromRGBO(21, 43, 83, 1),
+            ),
+            buttonTheme: ButtonThemeData(
+              textTheme: ButtonTextTheme.primary,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() {
+        _selectedDate = picked;
 
+        fromDate.text = DateFormat('yyyy-MM-dd')
+            .parse(picked.toString())
+            .toString()
+            .split(" ")[0];
+        fromDate.text = formatDate(fromDate.text);
+        _futureRentersInsurance = fetchDelinquentTenantsData(fromDate.text,toDate.text);
+      });
+
+      // Notify the FormField state of the change
+    }
+  }
+  Future<void> _endDate(BuildContext context) async {
+    DateTime? _selectedDate ;
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: Color.fromRGBO(21, 43, 83, 1),
+            colorScheme: ColorScheme.light(
+              primary: Color.fromRGBO(21, 43, 83, 1),
+            ),
+            buttonTheme: ButtonThemeData(
+              textTheme: ButtonTextTheme.primary,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() {
+        _selectedDate = picked;
+
+        toDate.text = DateFormat('yyyy-MM-dd')
+            .parse(picked.toString())
+            .toString()
+            .split(" ")[0];
+        toDate.text = formatDate(toDate.text);
+        _futureRentersInsurance = fetchDelinquentTenantsData(fromDate.text,toDate.text);
+      });
+
+      // Notify the FormField state of the change
+    }
+  }
+  List<Map<String,dynamic>> rentalowners = [];
+  Future<void> fetchRentalOwners() async {
+    print("calling");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    final response = await http
+        .get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'), headers: {
+      "authorization": "CRM $token",
+      "id": "CRM $id",
+    });
+    final jsonData = json.decode(response.body);
+    print(jsonData);
+    if (response.statusCode ==200) {
+      setState(() {
+       rentalowners =  (jsonDecode(response.body) as List).map((e) => e as Map<String, dynamic>)!.toList();
+      });
+      log(rentalowners.toString());
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+  TextEditingController fromDate = TextEditingController();
+  TextEditingController toDate = TextEditingController();
+  String? daterange;
+  String? chargeType;
+  String? selectedrenatalownerid;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1106,62 +1227,58 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
               FutureBuilder<List<RentalOwnerReport>>(
                 future: _futureRentersInsurance,
                 builder: (context, snapshot) {
-                  if (isLoading) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
                     return Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: ColabShimmerLoadingWidget(),
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Column(
+                        children: [
+                          filters(),
+                          SizedBox(height: 10,),
+                          ColabShimmerLoadingWidget(),
+                        ],
+                      ),
                     );
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Container(
-                      height: MediaQuery.of(context).size.height * .5,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "assets/images/no_data.jpg",
-                              height: 200,
-                              width: 200,
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Column(
+                        children: [
+                          filters(),
+                          Container(
+                            height: MediaQuery.of(context).size.height * .5,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "No Data Available",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
+                                  )
+                                ],
+                              ),
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              "No Data Available",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: blueColor,
-                                  fontSize: 16),
-                            )
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     );
                   }
 
                   var data = snapshot.data!;
 
-                  /*  // Apply filtering based on selectedValue and searchValue
-                  if (selectedValue == null && searchvalue.isEmpty) {
-                    data = snapshot.data!;
-                  } else if (selectedValue == "All") {
-                    data = snapshot.data!;
-                  } else if (searchvalue.isNotEmpty) {
-                    data = snapshot.data!
-                        .where((item) =>
-                    item.rentalAddress!
-                        .toLowerCase()
-                        .contains(searchvalue.toLowerCase()) ||
-                        item.tenants!.any((tenant) => tenant.tenantName!
-                            .toLowerCase()
-                            .contains(searchvalue.toLowerCase())))
-                        .toList();
-                  } else {
-                    data = snapshot.data!
-                        .where((item) => item.rentalAddress == selectedValue)
-                        .toList();
-                  }*/
+
 
                   // Pagination logic
                   final totalPages = (data.length / itemsPerPage).ceil();
@@ -1172,100 +1289,13 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
 
                   return SingleChildScrollView(
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 5),
                       child: Column(
                         children: [
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 0.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Material(
-                                    elevation: 3,
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10),
-                                      height:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 48
-                                              : 50,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                            color: const Color(0xFF8A95A8)),
-                                      ),
-                                      child: TextField(
-                                        onChanged: (value) {
-                                          setState(() {
-                                            searchvalue = value;
-                                          });
-                                        },
-                                        decoration: const InputDecoration(
-                                          border: InputBorder.none,
-                                          hintText: "Search here...",
-                                          hintStyle: TextStyle(
-                                              color: Color(0xFF8A95A8)),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: blueColor,
-                                  ),
-                                  onPressed: () {},
-                                  child: PopupMenuButton<String>(
-                                    onSelected: (value) async {
-                                      // Export logic
-                                      if (value == 'PDF') {
-                                        print('pdf');
-                                        generateDelinquentTenantsPdf(data);
-                                      } else if (value == 'XLSX') {
-                                        print('XLSX');
-                                        generateRentalOwnerReportExcel(data);
-                                        //generateDelinquentTenantsExcel(data);
-                                      } else if (value == 'CSV') {
-                                        print('CSV');
-                                        generateRentalOwnerReportCsv(data);
-                                        //  generateDelinquentTenantsCsv(data);
-                                      }
-                                    },
-                                    itemBuilder: (BuildContext context) =>
-                                        <PopupMenuEntry<String>>[
-                                      const PopupMenuItem<String>(
-                                          value: 'PDF', child: Text('PDF')),
-                                      const PopupMenuItem<String>(
-                                          value: 'XLSX', child: Text('XLSX')),
-                                      const PopupMenuItem<String>(
-                                          value: 'CSV', child: Text('CSV')),
-                                    ],
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        istenantDataLoading
-                                            ? const Center(
-                                                child: SpinKitFadingCircle(
-                                                  color: Colors.white,
-                                                  size: 21.0,
-                                                ),
-                                              )
-                                            : Text('Export'),
-                                        Icon(Icons.arrow_drop_down),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          /*   const SizedBox(height: 20),
+
+                          filters(data: data),
+                          const SizedBox(height: 10),
                           _buildHeaders(),
                           const SizedBox(height: 20),
                           Container(
@@ -1273,7 +1303,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                 border: Border.all(color: blueColor)),
                             child: Column(
                               children:
-                              currentPageData.asMap().entries.map((entry) {
+                                  currentPageData.asMap().entries.map((entry) {
                                 int rowIndex = entry.key;
                                 var item = entry.value;
                                 bool isRowExpanded =
@@ -1291,11 +1321,11 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                           padding: const EdgeInsets.all(2.0),
                                           child: Row(
                                             mainAxisAlignment:
-                                            MainAxisAlignment.start,
+                                                MainAxisAlignment.start,
                                             crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                                CrossAxisAlignment.center,
                                             children: <Widget>[
-                                              InkWell(
+                                              GestureDetector(
                                                 onTap: () {
                                                   setState(() {
                                                     if (expandedRowIndex ==
@@ -1309,35 +1339,30 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                 },
                                                 child: Container(
                                                   margin: const EdgeInsets.only(
-                                                      left: 5),
+                                                      left: 5, right: 5),
                                                   padding: !isRowExpanded
                                                       ? const EdgeInsets.only(
-                                                      bottom: 10)
+                                                          bottom: 10)
                                                       : const EdgeInsets.only(
-                                                      top: 10),
+                                                          top: 10),
                                                   child: FaIcon(
                                                     isRowExpanded
                                                         ? FontAwesomeIcons
-                                                        .sortUp
+                                                            .sortUp
                                                         : FontAwesomeIcons
-                                                        .sortDown,
+                                                            .sortDown,
                                                     size: 20,
                                                     color: isRowExpanded
                                                         ? Color.fromARGB(
-                                                        255, 35, 67, 126)
+                                                            255, 35, 67, 126)
                                                         : Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                            21, 43, 83, 1),
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                      .04),
                                               Expanded(
                                                 child: Text(
-                                                  '${item.rentalAddress ?? '-'}',
+                                                  '${item.rentalOwnerName ?? '-'}',
                                                   style: TextStyle(
                                                     color: blueColor,
                                                     fontWeight: FontWeight.bold,
@@ -1351,7 +1376,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                       ),
                                       if (isRowExpanded)
                                         Column(
-                                          children: item.tenants!
+                                          children: item.payments!
                                               .asMap()
                                               .entries
                                               .map((tenantEntry) {
@@ -1362,365 +1387,140 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                     tenantIndex;
 
                                             return Column(
-                                              children: <Widget>[
-                                                Divider(
-                                                  color: blueColor,
-                                                ),
-                                                ListTile(
-                                                  contentPadding:
-                                                  EdgeInsets.zero,
-                                                  title: Padding(
-                                                    padding:
-                                                    const EdgeInsets.all(
-                                                        2.0),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .start,
-                                                      crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .center,
-                                                      children: <Widget>[
-                                                        InkWell(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              if (expandedTenantIndex[
-                                                              rowIndex] ==
-                                                                  tenantIndex) {
-                                                                expandedTenantIndex[
-                                                                rowIndex] =
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          if (expandedTenantIndex[
+                                                                  rowIndex] ==
+                                                              tenantIndex) {
+                                                            expandedTenantIndex[
+                                                                    rowIndex] =
                                                                 null;
-                                                              } else {
-                                                                expandedTenantIndex[
-                                                                rowIndex] =
-                                                                    tenantIndex;
-                                                              }
-                                                            });
-                                                          },
-                                                          child: Container(
-                                                            margin:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                left: 5),
-                                                            padding: !isTenantExpanded
-                                                                ? const EdgeInsets
+                                                          } else {
+                                                            expandedTenantIndex[
+                                                                    rowIndex] =
+                                                                tenantIndex;
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        margin: const EdgeInsets
+                                                            .only(
+                                                            left: 5, right: 5),
+                                                        padding: !isTenantExpanded
+                                                            ? const EdgeInsets
                                                                 .only(
                                                                 bottom: 10)
-                                                                : const EdgeInsets
-                                                                .only(
-                                                                top: 10),
-                                                            child: Padding(
-                                                              padding:
+                                                            : const EdgeInsets
+                                                                .only(top: 10),
+                                                        child: Padding(
+                                                          padding:
                                                               const EdgeInsets
                                                                   .only(
-                                                                  left: 24),
-                                                              child: FaIcon(
-                                                                isTenantExpanded
-                                                                    ? FontAwesomeIcons
+                                                                  left: 10),
+                                                          child: FaIcon(
+                                                            isTenantExpanded
+                                                                ? FontAwesomeIcons
                                                                     .sortUp
-                                                                    : FontAwesomeIcons
+                                                                : FontAwesomeIcons
                                                                     .sortDown,
-                                                                size: 20,
-                                                                color: isTenantExpanded
-                                                                    ? Color
+                                                            size: 20,
+                                                            color: isTenantExpanded
+                                                                ? Color
                                                                     .fromARGB(
-                                                                    255,
-                                                                    35,
-                                                                    67,
-                                                                    126)
-                                                                    : Color
+                                                                        255,
+                                                                        35,
+                                                                        67,
+                                                                        126)
+                                                                : Color
                                                                     .fromRGBO(
-                                                                    21,
-                                                                    43,
-                                                                    83,
-                                                                    1),
-                                                              ),
-                                                            ),
+                                                                        21,
+                                                                        43,
+                                                                        83,
+                                                                        1),
                                                           ),
                                                         ),
-                                                        SizedBox(
-                                                            width: MediaQuery.of(
-                                                                context)
-                                                                .size
-                                                                .width *
-                                                                .02),
-                                                        Expanded(
-                                                          child: RichText(
-                                                              text: TextSpan(
-                                                                  children: [
-                                                                    TextSpan(
-                                                                      text:
-                                                                      'Tenant ${tenantIndex + 1} ',
-                                                                      style:
-                                                                      TextStyle(
-                                                                        color: Colors
-                                                                            .grey[
-                                                                        600],
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                        fontSize:
-                                                                        14,
-                                                                      ),
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text:
-                                                                      ': ${tenant.tenantName ?? '-'}',
-                                                                      style:
-                                                                      TextStyle(
-                                                                        color:
-                                                                        blueColor,
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        fontSize:
-                                                                        14,
-                                                                      ),
-                                                                    ),
-                                                                  ])),
-                                                        ),
-                                                      ],
+                                                      ),
                                                     ),
-                                                  ),
+                                                    Expanded(
+                                                        child: Text(
+                                                      "${tenant.rentalData.rentalAddress}",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: blueColor),
+                                                    )),
+                                                    Expanded(
+                                                        child: Text(
+                                                      "${formatDate(tenant.createdAt.toString())}",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: blueColor),
+                                                    ))
+                                                  ],
                                                 ),
                                                 if (isTenantExpanded)
-                                                  Container(
-                                                    width: double.infinity,
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .start,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                          const EdgeInsets
-                                                              .only(
-                                                              left: 36.0),
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                            children: [
-                                                              Padding(
-                                                                padding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    left:
-                                                                    0),
-                                                                child:
-                                                                Text.rich(
-                                                                  TextSpan(
-                                                                    children: [
-                                                                      TextSpan(
-                                                                        text:
-                                                                        'Total Amount',
-                                                                        style:
-                                                                        TextStyle(
-                                                                          color:
-                                                                          blueColor,
-                                                                          fontWeight:
-                                                                          FontWeight.bold,
-                                                                          fontSize:
-                                                                          14,
-                                                                        ),
-                                                                      ),
-                                                                      TextSpan(
-                                                                        text:
-                                                                        ' :  \$${tenant.pdfDelinquentTenantsData!.totalDaysAmount ?? '-'}',
-                                                                        style:
-                                                                        TextStyle(
-                                                                          color:
-                                                                          Colors.grey[500],
-                                                                          fontWeight:
-                                                                          FontWeight.bold,
-                                                                          fontSize:
-                                                                          15,
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                height: 10,
-                                                              ),
-                                                              Padding(
-                                                                padding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    left:
-                                                                    0),
-                                                                child:
-                                                                Text.rich(
-                                                                  TextSpan(
-                                                                    children: [
-                                                                      TextSpan(
-                                                                        text:
-                                                                        'Last 30 Days',
-                                                                        style:
-                                                                        TextStyle(
-                                                                          color:
-                                                                          blueColor,
-                                                                          fontWeight:
-                                                                          FontWeight.bold,
-                                                                          fontSize:
-                                                                          14,
-                                                                        ),
-                                                                      ),
-                                                                      TextSpan(
-                                                                        text:
-                                                                        ' :  \$${tenant.pdfDelinquentTenantsData!.last30Days ?? '-'}',
-                                                                        style:
-                                                                        TextStyle(
-                                                                          color:
-                                                                          Colors.grey[500],
-                                                                          fontWeight:
-                                                                          FontWeight.bold,
-                                                                          fontSize:
-                                                                          15,
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                height: 10,
-                                                              ),
-                                                              Padding(
-                                                                padding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    left:
-                                                                    0),
-                                                                child:
-                                                                Text.rich(
-                                                                  TextSpan(
-                                                                    children: [
-                                                                      TextSpan(
-                                                                        text:
-                                                                        'Last 31 to 60 days',
-                                                                        style:
-                                                                        TextStyle(
-                                                                          color:
-                                                                          blueColor,
-                                                                          fontWeight:
-                                                                          FontWeight.bold,
-                                                                          fontSize:
-                                                                          14,
-                                                                        ),
-                                                                      ),
-                                                                      TextSpan(
-                                                                        text:
-                                                                        ' :  \$${tenant.pdfDelinquentTenantsData!.last31To60Days ?? '-'}',
-                                                                        style:
-                                                                        TextStyle(
-                                                                          color:
-                                                                          Colors.grey[500],
-                                                                          fontWeight:
-                                                                          FontWeight.bold,
-                                                                          fontSize:
-                                                                          15,
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                height: 10,
-                                                              ),
-                                                              Padding(
-                                                                padding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    left:
-                                                                    0),
-                                                                child:
-                                                                Text.rich(
-                                                                  TextSpan(
-                                                                    children: [
-                                                                      TextSpan(
-                                                                        text:
-                                                                        'Last 61 to 90 Days',
-                                                                        style:
-                                                                        TextStyle(
-                                                                          color:
-                                                                          blueColor,
-                                                                          fontWeight:
-                                                                          FontWeight.bold,
-                                                                          fontSize:
-                                                                          14,
-                                                                        ),
-                                                                      ),
-                                                                      TextSpan(
-                                                                        text:
-                                                                        ' :  \$${tenant.pdfDelinquentTenantsData!.last61To90Days ?? '-'}',
-                                                                        style:
-                                                                        TextStyle(
-                                                                          color:
-                                                                          Colors.grey[500],
-                                                                          fontWeight:
-                                                                          FontWeight.bold,
-                                                                          fontSize:
-                                                                          15,
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                height: 10,
-                                                              ),
-                                                              Padding(
-                                                                padding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    left:
-                                                                    0),
-                                                                child:
-                                                                Text.rich(
-                                                                  TextSpan(
-                                                                    children: [
-                                                                      TextSpan(
-                                                                        text:
-                                                                        'Last 91+ Days',
-                                                                        style:
-                                                                        TextStyle(
-                                                                          color:
-                                                                          blueColor,
-                                                                          fontWeight:
-                                                                          FontWeight.bold,
-                                                                          fontSize:
-                                                                          14,
-                                                                        ),
-                                                                      ),
-                                                                      TextSpan(
-                                                                        text:
-                                                                        ' :  \$${tenant.pdfDelinquentTenantsData!.last91PlusDays ?? '-'}',
-                                                                        style:
-                                                                        TextStyle(
-                                                                          color:
-                                                                          Colors.grey[500],
-                                                                          fontWeight:
-                                                                          FontWeight.bold,
-                                                                          fontSize:
-                                                                          15,
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                  height: 8),
-                                                            ],
-                                                          ),
+                                                  Row(
+                                                    children: [
+                                                      SizedBox(
+                                                        width: 20,
+                                                      ),
+                                                      Expanded(
+                                                        child: Table(
+                                                          columnWidths: {
+                                                            // 0: FixedColumnWidth(150.0), // Adjust width as needed
+                                                            // 1: FlexColumnWidth(),
+                                                            0: FlexColumnWidth(), // Distribute columns equally
+                                                            1: FlexColumnWidth(),
+                                                          },
+                                                          children: [
+                                                            _buildTableRow(
+                                                                'Rental Owners Name:',
+                                                                _getDisplayValue(item
+                                                                    .rentalOwnerName),
+                                                                'Property:',
+                                                                _getDisplayValue(tenant
+                                                                    .rentalData
+                                                                    .rentalAddress)),
+                                                            _buildTableRow(
+                                                                'Tenant Name:',
+                                                                _getDisplayValue(
+                                                                    "${tenant.tenantData.tenantFirstName} ${tenant.tenantData.tenantLastName}"),
+                                                                'Transaction Id',
+                                                                _getDisplayValue(
+                                                                    tenant
+                                                                        .transactionId)),
+                                                            _buildTableRow(
+                                                                'Transaction Date:',
+                                                                _getDisplayValue(
+                                                                    formatDate(tenant
+                                                                        .createdAt
+                                                                        .toString())),
+                                                                'Transaction Type:',
+                                                                _getDisplayValue(
+                                                                    tenant
+                                                                        .paymentType)),
+                                                            _buildTableRow(
+                                                                'Payment Details:',
+                                                                _getDisplayValue(
+                                                                    "${tenant.ccType} ${tenant.ccNumber}"),
+                                                                'Payment Amount:',
+                                                                _getDisplayValue(
+                                                                    "\$${tenant.totalAmount}")),
+                                                          ],
                                                         ),
-                                                      ],
-                                                    ),
+                                                      ),
+                                                    ],
                                                   ),
+                                                if (item.payments.length - 1 !=
+                                                    tenantIndex)
+                                                  Divider(
+                                                    thickness: 2,
+                                                  )
                                               ],
                                             );
                                           }).toList(),
@@ -1761,7 +1561,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                             setState(() {
                                               itemsPerPage = newValue!;
                                               currentPage =
-                                              0; // Reset to first page when items per page change
+                                                  0; // Reset to first page when items per page change
                                             });
                                           },
                                         ),
@@ -1782,10 +1582,10 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                     onPressed: currentPage == 0
                                         ? null
                                         : () {
-                                      setState(() {
-                                        currentPage--;
-                                      });
-                                    },
+                                            setState(() {
+                                              currentPage--;
+                                            });
+                                          },
                                   ),
                                   Text(
                                       'Page ${currentPage + 1} of $totalPages'),
@@ -1798,16 +1598,16 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                     ),
                                     onPressed: currentPage < totalPages - 1
                                         ? () {
-                                      setState(() {
-                                        currentPage++;
-                                      });
-                                    }
+                                            setState(() {
+                                              currentPage++;
+                                            });
+                                          }
                                         : null,
                                   ),
                                 ],
                               ),
                             ],
-                          ),*/
+                          ),
                         ],
                       ),
                     ),
@@ -1978,7 +1778,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                             crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                             children: <Widget>[
-                                              InkWell(
+                                              GestureDetector(
                                                 onTap: () {
                                                   setState(() {
                                                     if (expandedRowIndex ==
@@ -2064,7 +1864,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                       CrossAxisAlignment
                                                           .center,
                                                       children: <Widget>[
-                                                        InkWell(
+                                                        GestureDetector(
                                                           onTap: () {
                                                             setState(() {
                                                               if (expandedTenantIndex[
@@ -2470,6 +2270,59 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
     );
   }
 
+  String _getDisplayValue(String? value) {
+    // Return 'N/A' if the value is null or empty, otherwise return the value
+    return (value == null || value.trim().isEmpty) ? 'N/A' : value;
+  }
+
+  TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel,
+      String rightValue) {
+    return TableRow(
+      children: [
+        TableCell(
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  leftLabel,
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                ),
+                SizedBox(height: 4.0), // Space between label and value
+                Text(
+                  leftValue,
+                  style: TextStyle(color: grey),
+                ),
+              ],
+            ),
+          ),
+        ),
+        TableCell(
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  rightLabel,
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                ),
+                SizedBox(height: 4.0), // Space between label and value
+                Text(
+                  rightValue,
+                  style: TextStyle(color: grey),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   List<TableRow> _buildExpandableRows(
       int rowIndex, DelinquentTenantsData item) {
     return [
@@ -2515,5 +2368,338 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
           ],
         ),
     ];
+  }
+  filters({List<RentalOwnerReport>? data}){
+    return Column(
+      children: [
+        Padding (
+          padding:
+          const EdgeInsets.symmetric(horizontal: 0.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                height: 42,
+                width: 160,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: Colors.grey)),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: selectedrenatalownerid,
+                    padding:
+                    EdgeInsets.symmetric(horizontal: 5),
+                    hint: Text(
+                      "Rental Owner",
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    items:  rentalowners.map((property) {
+                      return DropdownMenuItem<String>(
+                        value: property['rentalowner_id'],
+                        child: Text(
+                          property['rentalOwner_name']!,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black87,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedrenatalownerid = value;
+                        _futureRentersInsurance = fetchDelinquentTenantsData(fromDate.text,toDate.text,rentalownerid: value);
+                      });
+                      // Handle the selected charge type
+                      print(value);
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+
+              Container(
+                height: 42,
+                width: 170,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: Colors.grey)),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: chargeType,
+                    padding:
+                    EdgeInsets.symmetric(horizontal: 5),
+                    hint: Text(
+                      "Charge type",
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    items: const [
+                      DropdownMenuItem<String>(
+                        value: 'Card',
+                        child: Text('Card'),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'ACH',
+                        child: Text('ACH'),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'Check',
+                        child: Text('Check'),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'Money Order',
+                        child: Text('Money Order'),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: "Cashier's Check",
+                        child: Text("Cashier's Check"),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: "All",
+                        child: Text('All'),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        chargeType = value;
+                        _futureRentersInsurance = fetchDelinquentTenantsData(fromDate.text,toDate.text,charge: value);
+                      });
+                      // Handle the selected charge type
+                      print(value);
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        Padding (
+          padding:
+          const EdgeInsets.symmetric(horizontal: 0.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+
+              Container(
+                height: 42,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: Colors.grey)),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: daterange,
+                    padding:
+                    EdgeInsets.symmetric(horizontal: 5),
+                    hint: Text(
+                      "Date Range",
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    items: const [
+                      DropdownMenuItem<String>(
+                        value: 'Today',
+                        child: Text('Today'),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'This Week',
+                        child: Text('This Week'),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'This Month',
+                        child: Text('This Month'),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'This Year',
+                        child: Text('This Year'),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'Custom',
+                        child: Text('Custom'),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        daterange = value;
+                        if (value == "Today") {
+                          fromDate.text = formatDate(
+                              DateTime.now().toString());
+                          toDate.text = formatDate(
+                              DateTime.now().toString());
+                        } else if (value == "This Week") {
+                          DateTime now = DateTime.now();
+                          //  fromDate.text = formatDate(now.toString());
+
+                          fromDate.text = formatDate(now
+                              .subtract(Duration(
+                              days: now.weekday - 1))
+                              .toString());
+                          toDate.text = formatDate(now
+                              .add(Duration(
+                              days: DateTime.daysPerWeek -
+                                  now.weekday))
+                              .toString());
+                        } else if (value == "This Month") {
+                          DateTime now = DateTime.now();
+                          fromDate.text = formatDate(
+                              DateTime(now.year, now.month, 1)
+                                  .toString());
+                          toDate.text = formatDate(DateTime(
+                              now.year, now.month + 1, 0)
+                              .toString());
+                        } else if (value == "This Year") {
+                          DateTime now = DateTime.now();
+                          fromDate.text = formatDate(
+                              DateTime(now.year, 1, 1)
+                                  .toString());
+                          toDate.text = formatDate(
+                              DateTime(now.year, 12, 31)
+                                  .toString());
+                        } else if (value == "Custom") {
+                          customdate = true;
+                        }
+                        if(value != "Custom" && customdate ==true){
+                          customdate = false;
+                          fromDate.text = "";
+                          toDate.text = "";
+                        }
+                        if(value != "Custom") {
+                          _futureRentersInsurance = fetchDelinquentTenantsData(fromDate.text,toDate.text);
+                        }
+                      });
+                      // Handle the selected charge type
+                      print(value);
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              Container(
+                width: 110,
+                child: TextFormField(
+                  controller: fromDate,
+                  enabled: customdate,
+                  onTap: () {
+                    _pickDate(context);
+                  },
+                  readOnly: true,
+                  style: TextStyle(fontSize: 14),
+                  textInputAction: TextInputAction.next,
+                  textAlignVertical: TextAlignVertical.center,
+                  decoration: InputDecoration(
+                    contentPadding:
+                    const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 10), //Imp Line
+                    isDense: true,
+
+                    hintText: "From",
+                    border: OutlineInputBorder(
+                        borderRadius:
+                        BorderRadius.circular(5),
+                        borderSide: const BorderSide(
+                          width: 0.5,
+                        )),
+                  ),
+                ),
+              ),
+
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        Padding(
+          padding:
+          const EdgeInsets.symmetric(horizontal: 0.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+
+              Container(
+                width: 110,
+                child: TextFormField(
+                  controller: toDate,
+                  enabled: customdate,
+                  style: TextStyle(fontSize: 14),
+                  onTap: () {
+                    _endDate(context);
+                  },
+                  readOnly: true,
+                  textInputAction: TextInputAction.next,
+                  textAlignVertical: TextAlignVertical.center,
+                  decoration: InputDecoration(
+                    contentPadding:
+                    const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 10), //Imp Line
+                    isDense: true,
+                    hintText: "To",
+
+                    border: OutlineInputBorder(
+                        borderRadius:
+                        BorderRadius.circular(5),
+                        borderSide: const BorderSide(
+                          width: 0.5,
+                        )),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              SizedBox(
+                width: 100,
+                height: 42,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: blueColor,
+                  ),
+                  onPressed: () {},
+                  child: PopupMenuButton<String>(
+                    onSelected: (value) async {
+                      // Export logic
+                      if (value == 'PDF' && data !=null ) {
+                        print('pdf');
+                        generateDelinquentTenantsPdf(data);
+                      } else if (value == 'XLSX' && data !=null) {
+                        print('XLSX');
+                        generateRentalOwnerReportExcel(data);
+                        //generateDelinquentTenantsExcel(data);
+                      } else if (value == 'CSV' && data !=null) {
+                        print('CSV');
+                        generateRentalOwnerReportCsv(data);
+                        //  generateDelinquentTenantsCsv(data);
+                      }
+                    },
+                    itemBuilder: (BuildContext context) =>
+                    <PopupMenuEntry<String>>[
+                      const PopupMenuItem<String>(
+                          value: 'PDF', child: Text('PDF')),
+                      const PopupMenuItem<String>(
+                          value: 'XLSX', child: Text('XLSX')),
+                      const PopupMenuItem<String>(
+                          value: 'CSV', child: Text('CSV')),
+                    ],
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        istenantDataLoading
+                            ? const Center(
+                          child: SpinKitFadingCircle(
+                            color: Colors.white,
+                            size: 21.0,
+                          ),
+                        )
+                            : Text('Export'),
+                        Icon(Icons.arrow_drop_down),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }
