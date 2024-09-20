@@ -17,6 +17,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:three_zero_two_property/provider/property_summery.dart';
+import 'package:three_zero_two_property/screens/Leasing/Applicants/Applicants_table.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/unit.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/rental_widget.dart';
@@ -28,6 +29,7 @@ import '../../../model/properties_summery.dart';
 import '../../../model/properties_workorders.dart';
 import '../../../model/unitsummery_propeties.dart';
 import '../../../model/workordr.dart';
+import '../../../provider/lease_provider.dart';
 import '../../../provider/properties_workorders.dart';
 import '../../../repository/properties.dart';
 import '../../../repository/properties_summery.dart';
@@ -7475,7 +7477,9 @@ class _Summery_pageState extends State<Summery_page>
                                                         : 48,
                                                     //  width: double.infinity,
                                                     child: ElevatedButton(
-                                                      onPressed: () {},
+                                                      onPressed: () {
+
+                                                      },
                                                       child: Text(
                                                         'Create Applicant',
                                                         style: TextStyle(
@@ -7632,6 +7636,12 @@ class _Summery_pageState extends State<Summery_page>
                                               width: double.infinity,
                                               child: ElevatedButton(
                                                 onPressed: () {
+                                                  Provider.of<SelectedTenantsProvider>(context,
+                                                      listen: false)
+                                                      .clearTenant();
+                                                  Provider.of<SelectedCosignersProvider>(context,
+                                                      listen: false)
+                                                      .clearCosigner();
                                                   Navigator.of(context).push(MaterialPageRoute(builder: (context)=>addLease3(rentalId: widget.properties.rentalId,)));
                                                 },
                                                 child: Text(
@@ -7694,7 +7704,9 @@ class _Summery_pageState extends State<Summery_page>
                                                   : 48,
                                               width: double.infinity,
                                               child: ElevatedButton(
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Applicants_table()));
+                                                },
                                                 child: Text(
                                                   'Create Applicant',
                                                   style: TextStyle(
@@ -15400,6 +15412,9 @@ class _AppliancesPartState extends State<AppliancesPart> {
                     padding: const EdgeInsets.all(8.0),
                     child: GestureDetector(
                       onTap: () {
+                        _name.clear();
+                        _description.clear();
+                        _installedDate.clear();
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {

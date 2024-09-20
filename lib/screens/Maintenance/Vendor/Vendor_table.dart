@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import '../../../Model/vendor.dart';
@@ -12,7 +15,7 @@ import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/titleBar.dart';
 import 'add_vendor.dart';
 import 'edit_vendor.dart';
-
+import 'package:http/http.dart' as http;
 
 import '../../../widgets/custom_drawer.dart';
 class Vendor_table extends StatefulWidget {
@@ -247,6 +250,7 @@ class _Vendor_tableState extends State<Vendor_table> {
   void initState() {
     super.initState();
     futurePropertyTypes = VendorRepository(baseUrl: '').getVendors();
+    fetchvendoradded();
   }
 
   void handleEdit(Vendor property) async {
@@ -314,6 +318,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                 futurePropertyTypes =
                     VendorRepository(baseUrl: '').getVendors();
               });
+              fetchvendoradded();
             });
             // Add your delete logic here
 
@@ -525,6 +530,35 @@ class _Vendor_tableState extends State<Vendor_table> {
     );
   }
 
+  int vendorCountLimit = 0;
+  int vendorCount = 0;
+
+  Future<void> fetchvendoradded() async {
+    print("calling");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    final response = await http
+        .get(Uri.parse('${Api_url}/api/vendor/limitation/$id'), headers: {
+      "authorization": "CRM $token",
+      "id": "CRM $id",
+    });
+    final jsonData = json.decode(response.body);
+    print(jsonData);
+    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
+      print("error ${vendorCount}");
+      print("error ${vendorCountLimit}");
+      setState(() {
+        vendorCount = jsonData['vendorCount'];
+        print(vendorCount);
+        vendorCountLimit = jsonData['vendorCountLimit'];
+        print(vendorCountLimit);
+      });
+    } else {
+      throw Exception('Failed to load data the count');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -558,6 +592,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                           futurePropertyTypes =
                               VendorRepository(baseUrl: '').getVendors();
                         });
+                        fetchvendoradded();
                       }
                     },
                     child: Container(
@@ -666,89 +701,39 @@ class _Vendor_tableState extends State<Vendor_table> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 15),
-                  /*  DropdownButtonHideUnderline(
-                    child: Material(
-                      elevation: 3,
-                      child: DropdownButton2<String>(
-                        isExpanded: true,
-                        hint: const Row(
-                          children: [
-                            SizedBox(
-                              width: 4,
-                            ),
-                            Expanded(
-                              child: Text(
-                                'Type',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  // fontWeight: FontWeight.bold,
-                                  color: Color(0xFF8A95A8),
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                        items: items
-                            .map((String item) => DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(
-                            item,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ))
-                            .toList(),
-                        value: selectedValue,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedValue = value;
-                          });
-                        },
-                        buttonStyleData: ButtonStyleData(
-                          height:
-                          MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                          // width: 180,
-                          width: MediaQuery.of(context).size.width < 500
-                              ? MediaQuery.of(context).size.width * .35
-                              : MediaQuery.of(context).size.width * .4,
-                          padding: const EdgeInsets.only(left: 14, right: 14),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(2),
-                            border: Border.all(
-                              // color: Colors.black26,
-                              color: Color(0xFF8A95A8),
-                            ),
-                            color: Colors.white,
-                          ),
-                          elevation: 0,
-                        ),
-                        dropdownStyleData: DropdownStyleData(
-                          maxHeight: 200,
-                          width: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(14),
-                            //color: Colors.redAccent,
-                          ),
-                          offset: const Offset(-20, 0),
-                          scrollbarTheme: ScrollbarThemeData(
-                            radius: const Radius.circular(40),
-                            thickness: MaterialStateProperty.all(6),
-                            thumbVisibility: MaterialStateProperty.all(true),
-                          ),
-                        ),
-                        menuItemStyleData: const MenuItemStyleData(
-                          height: 40,
-                          padding: EdgeInsets.only(left: 14, right: 14),
+                 Spacer(),
+                  Row(
+                    children: [
+                      Text(
+                        'Added : ${vendorCount.toString()}',
+                        // 'Added : 5',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF8A95A8),
+                          fontSize:
+                          MediaQuery.of(context).size.width < 500 ? 13 : 21,
                         ),
                       ),
-                    ),
-                  ),*/
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
+                      Text(
+                        'Total: ${vendorCountLimit.toString()}',
+                        // 'Total: 10',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF8A95A8),
+                          fontSize:
+                          MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (MediaQuery.of(context).size.width < 500)
+                    const SizedBox(width: 5),
+                  if (MediaQuery.of(context).size.width > 500)
+                    const SizedBox(width: 25),
                 ],
               ),
             ),
