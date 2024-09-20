@@ -1691,6 +1691,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
 
 
   SummaryPage() {
+
    // final prefs = await SharedPreferences.getInstance();
     var width = MediaQuery.of(context).size.width;
     return
