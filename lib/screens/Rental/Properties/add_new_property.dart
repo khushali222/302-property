@@ -1794,7 +1794,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                           Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 15.0),
-                            child: Row(
+                            child:
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 // First Column

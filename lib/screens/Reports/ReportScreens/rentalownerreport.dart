@@ -1293,14 +1293,18 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                           horizontal: 16.0, vertical: 5),
                       child: Column(
                         children: [
-
+                          SizedBox(
+                            height: 5,
+                          ),
                           filters(data: data),
                           const SizedBox(height: 10),
                           _buildHeaders(),
                           const SizedBox(height: 20),
                           Container(
                             decoration: BoxDecoration(
-                                border: Border.all(color: blueColor)),
+                                border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                            // decoration: BoxDecoration(
+                            //     border: Border.all(color: blueColor)),
                             child: Column(
                               children:
                                   currentPageData.asMap().entries.map((entry) {
@@ -1310,8 +1314,12 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                     expandedRowIndex == rowIndex;
 
                                 return Container(
+                                  // decoration: BoxDecoration(
+                                  //   border: Border.all(color: blueColor),
+                                  // ),
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: blueColor),
+                                    color: rowIndex %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                    border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
                                   ),
                                   child: Column(
                                     children: <Widget>[
@@ -2372,106 +2380,152 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
   filters({List<RentalOwnerReport>? data}){
     return Column(
       children: [
+        SizedBox(
+          height: 10,
+        ),
         Padding (
           padding:
           const EdgeInsets.symmetric(horizontal: 0.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                height: 42,
-                width: 160,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: Colors.grey)),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: selectedrenatalownerid,
-                    padding:
-                    EdgeInsets.symmetric(horizontal: 5),
-                    hint: Text(
-                      "Rental Owner",
-                      style: TextStyle(fontSize: 14),
-                    ),
-                    items:  rentalowners.map((property) {
-                      return DropdownMenuItem<String>(
-                        value: property['rentalowner_id'],
-                        child: Text(
-                          property['rentalOwner_name']!,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black87,
+              Expanded(
+                child: Container(
+                  height: 42,
+                  //width: 160,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: Colors.grey)),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: selectedrenatalownerid,
+                      padding:
+                      EdgeInsets.symmetric(horizontal: 5),
+                      hint: Text(
+                        "Rental Owner",
+                        style: TextStyle(fontSize: 14,color: Colors.black),
+                      ),
+                      items:  rentalowners.map((property) {
+                        return DropdownMenuItem<String>(
+                          value: property['rentalowner_id'],
+                          child: Text(
+                            property['rentalOwner_name']!,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black87,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedrenatalownerid = value;
-                        _futureRentersInsurance = fetchDelinquentTenantsData(fromDate.text,toDate.text,rentalownerid: value);
-                      });
-                      // Handle the selected charge type
-                      print(value);
-                    },
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedrenatalownerid = value;
+                          _futureRentersInsurance = fetchDelinquentTenantsData(fromDate.text,toDate.text,rentalownerid: value);
+                        });
+                        // Handle the selected charge type
+                        print(value);
+                      },
+                    ),
                   ),
                 ),
               ),
               const SizedBox(width: 6),
+              Expanded(
+                child: Container(
+                  height: 42,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: Colors.grey)),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: daterange,
+                      padding:
+                      EdgeInsets.symmetric(horizontal: 5),
+                      hint: Text(
+                        "Date Range",
+                        style: TextStyle(fontSize: 14,color: Colors.black),
+                      ),
+                      items: const [
+                        DropdownMenuItem<String>(
+                          value: 'Today',
+                          child: Text('Today'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'This Week',
+                          child: Text('This Week'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'This Month',
+                          child: Text('This Month'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'This Year',
+                          child: Text('This Year'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'Custom',
+                          child: Text('Custom'),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          daterange = value;
+                          if (value == "Today") {
+                            fromDate.text = formatDate(
+                                DateTime.now().toString());
+                            toDate.text = formatDate(
+                                DateTime.now().toString());
+                          } else if (value == "This Week") {
+                            DateTime now = DateTime.now();
+                            //  fromDate.text = formatDate(now.toString());
 
-              Container(
-                height: 42,
-                width: 170,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: Colors.grey)),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: chargeType,
-                    padding:
-                    EdgeInsets.symmetric(horizontal: 5),
-                    hint: Text(
-                      "Charge type",
-                      style: TextStyle(fontSize: 14),
+                            fromDate.text = formatDate(now
+                                .subtract(Duration(
+                                days: now.weekday - 1))
+                                .toString());
+                            toDate.text = formatDate(now
+                                .add(Duration(
+                                days: DateTime.daysPerWeek -
+                                    now.weekday))
+                                .toString());
+                          } else if (value == "This Month") {
+                            DateTime now = DateTime.now();
+                            fromDate.text = formatDate(
+                                DateTime(now.year, now.month, 1)
+                                    .toString());
+                            toDate.text = formatDate(DateTime(
+                                now.year, now.month + 1, 0)
+                                .toString());
+                          } else if (value == "This Year") {
+                            DateTime now = DateTime.now();
+                            fromDate.text = formatDate(
+                                DateTime(now.year, 1, 1)
+                                    .toString());
+                            toDate.text = formatDate(
+                                DateTime(now.year, 12, 31)
+                                    .toString());
+                          } else if (value == "Custom") {
+                            customdate = true;
+                          }
+                          if(value != "Custom" && customdate ==true){
+                            customdate = false;
+                            fromDate.text = "";
+                            toDate.text = "";
+                          }
+                          if(value != "Custom") {
+                            _futureRentersInsurance = fetchDelinquentTenantsData(fromDate.text,toDate.text);
+                          }
+                        });
+                        // Handle the selected charge type
+                        print(value);
+                      },
                     ),
-                    items: const [
-                      DropdownMenuItem<String>(
-                        value: 'Card',
-                        child: Text('Card'),
-                      ),
-                      DropdownMenuItem<String>(
-                        value: 'ACH',
-                        child: Text('ACH'),
-                      ),
-                      DropdownMenuItem<String>(
-                        value: 'Check',
-                        child: Text('Check'),
-                      ),
-                      DropdownMenuItem<String>(
-                        value: 'Money Order',
-                        child: Text('Money Order'),
-                      ),
-                      DropdownMenuItem<String>(
-                        value: "Cashier's Check",
-                        child: Text("Cashier's Check"),
-                      ),
-                      DropdownMenuItem<String>(
-                        value: "All",
-                        child: Text('All'),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        chargeType = value;
-                        _futureRentersInsurance = fetchDelinquentTenantsData(fromDate.text,toDate.text,charge: value);
-                      });
-                      // Handle the selected charge type
-                      print(value);
-                    },
                   ),
                 ),
               ),
+              const SizedBox(width: 6),
             ],
           ),
         ),
@@ -2480,131 +2534,73 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
           padding:
           const EdgeInsets.symmetric(horizontal: 0.0),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-
-              Container(
-                height: 42,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: Colors.grey)),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: daterange,
-                    padding:
-                    EdgeInsets.symmetric(horizontal: 5),
-                    hint: Text(
-                      "Date Range",
-                      style: TextStyle(fontSize: 14),
-                    ),
-                    items: const [
-                      DropdownMenuItem<String>(
-                        value: 'Today',
-                        child: Text('Today'),
-                      ),
-                      DropdownMenuItem<String>(
-                        value: 'This Week',
-                        child: Text('This Week'),
-                      ),
-                      DropdownMenuItem<String>(
-                        value: 'This Month',
-                        child: Text('This Month'),
-                      ),
-                      DropdownMenuItem<String>(
-                        value: 'This Year',
-                        child: Text('This Year'),
-                      ),
-                      DropdownMenuItem<String>(
-                        value: 'Custom',
-                        child: Text('Custom'),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        daterange = value;
-                        if (value == "Today") {
-                          fromDate.text = formatDate(
-                              DateTime.now().toString());
-                          toDate.text = formatDate(
-                              DateTime.now().toString());
-                        } else if (value == "This Week") {
-                          DateTime now = DateTime.now();
-                          //  fromDate.text = formatDate(now.toString());
-
-                          fromDate.text = formatDate(now
-                              .subtract(Duration(
-                              days: now.weekday - 1))
-                              .toString());
-                          toDate.text = formatDate(now
-                              .add(Duration(
-                              days: DateTime.daysPerWeek -
-                                  now.weekday))
-                              .toString());
-                        } else if (value == "This Month") {
-                          DateTime now = DateTime.now();
-                          fromDate.text = formatDate(
-                              DateTime(now.year, now.month, 1)
-                                  .toString());
-                          toDate.text = formatDate(DateTime(
-                              now.year, now.month + 1, 0)
-                              .toString());
-                        } else if (value == "This Year") {
-                          DateTime now = DateTime.now();
-                          fromDate.text = formatDate(
-                              DateTime(now.year, 1, 1)
-                                  .toString());
-                          toDate.text = formatDate(
-                              DateTime(now.year, 12, 31)
-                                  .toString());
-                        } else if (value == "Custom") {
-                          customdate = true;
-                        }
-                        if(value != "Custom" && customdate ==true){
-                          customdate = false;
-                          fromDate.text = "";
-                          toDate.text = "";
-                        }
-                        if(value != "Custom") {
-                          _futureRentersInsurance = fetchDelinquentTenantsData(fromDate.text,toDate.text);
-                        }
-                      });
-                      // Handle the selected charge type
-                      print(value);
+              Expanded(
+                child: Container(
+                  // width: 110,
+                  child: TextFormField(
+                    controller: toDate,
+                    enabled: customdate,
+                    style: TextStyle(fontSize: 14,color: Colors.black),
+                    onTap: () {
+                      _endDate(context);
                     },
+                    readOnly: true,
+                    textInputAction: TextInputAction.next,
+                    textAlignVertical: TextAlignVertical.center,
+                    decoration: InputDecoration(
+                      contentPadding:
+                      const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 10), //Imp Line
+                      isDense: true,
+                      hintText: "To",
+
+                      border: OutlineInputBorder(
+                          borderRadius:
+                          BorderRadius.circular(5),
+                          borderSide: const BorderSide(
+                            width: 0.5,
+                          )),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: Container(
+                 // width: 110,
+                  child: TextFormField(
+                    controller: fromDate,
+                    enabled: customdate,
+                    onTap: () {
+                      _pickDate(context);
+                    },
+                    readOnly: true,
+                    style: TextStyle(fontSize: 14,color: Colors.black),
+                    textInputAction: TextInputAction.next,
+                    textAlignVertical: TextAlignVertical.center,
+                    decoration: InputDecoration(
+                      contentPadding:
+                      const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 10), //Imp Line
+                      isDense: true,
+                
+                      hintText: "From",
+
+                      border: OutlineInputBorder(
+                          borderRadius:
+                          BorderRadius.circular(5),
+                          borderSide: const BorderSide(
+                            width: 0.5,
+                          )),
+                    ),
                   ),
                 ),
               ),
               const SizedBox(width: 6),
-              Container(
-                width: 110,
-                child: TextFormField(
-                  controller: fromDate,
-                  enabled: customdate,
-                  onTap: () {
-                    _pickDate(context);
-                  },
-                  readOnly: true,
-                  style: TextStyle(fontSize: 14),
-                  textInputAction: TextInputAction.next,
-                  textAlignVertical: TextAlignVertical.center,
-                  decoration: InputDecoration(
-                    contentPadding:
-                    const EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 10), //Imp Line
-                    isDense: true,
-
-                    hintText: "From",
-                    border: OutlineInputBorder(
-                        borderRadius:
-                        BorderRadius.circular(5),
-                        borderSide: const BorderSide(
-                          width: 0.5,
-                        )),
-                  ),
-                ),
-              ),
-
             ],
           ),
         ),
@@ -2616,82 +2612,109 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
 
-              Container(
-                width: 110,
-                child: TextFormField(
-                  controller: toDate,
-                  enabled: customdate,
-                  style: TextStyle(fontSize: 14),
-                  onTap: () {
-                    _endDate(context);
-                  },
-                  readOnly: true,
-                  textInputAction: TextInputAction.next,
-                  textAlignVertical: TextAlignVertical.center,
-                  decoration: InputDecoration(
-                    contentPadding:
-                    const EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 10), //Imp Line
-                    isDense: true,
-                    hintText: "To",
-
-                    border: OutlineInputBorder(
-                        borderRadius:
-                        BorderRadius.circular(5),
-                        borderSide: const BorderSide(
-                          width: 0.5,
-                        )),
+              Expanded(
+                child: Container(
+                  height: 42,
+                  // width: 170,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: Colors.grey)),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: chargeType,
+                      padding:
+                      EdgeInsets.symmetric(horizontal: 5),
+                      hint: Text(
+                        "Charge type",
+                        style: TextStyle(fontSize: 14,color: Colors.black),
+                      ),
+                      items: const [
+                        DropdownMenuItem<String>(
+                          value: 'Card',
+                          child: Text('Card'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'ACH',
+                          child: Text('ACH'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'Check',
+                          child: Text('Check'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'Money Order',
+                          child: Text('Money Order'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: "Cashier's Check",
+                          child: Text("Cashier's Check"),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: "All",
+                          child: Text('All'),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          chargeType = value;
+                          _futureRentersInsurance = fetchDelinquentTenantsData(fromDate.text,toDate.text,charge: value);
+                        });
+                        // Handle the selected charge type
+                        print(value);
+                      },
+                    ),
                   ),
                 ),
               ),
               const SizedBox(width: 6),
-              SizedBox(
-                width: 100,
-                height: 42,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: blueColor,
-                  ),
-                  onPressed: () {},
-                  child: PopupMenuButton<String>(
-                    onSelected: (value) async {
-                      // Export logic
-                      if (value == 'PDF' && data !=null ) {
-                        print('pdf');
-                        generateDelinquentTenantsPdf(data);
-                      } else if (value == 'XLSX' && data !=null) {
-                        print('XLSX');
-                        generateRentalOwnerReportExcel(data);
-                        //generateDelinquentTenantsExcel(data);
-                      } else if (value == 'CSV' && data !=null) {
-                        print('CSV');
-                        generateRentalOwnerReportCsv(data);
-                        //  generateDelinquentTenantsCsv(data);
-                      }
-                    },
-                    itemBuilder: (BuildContext context) =>
-                    <PopupMenuEntry<String>>[
-                      const PopupMenuItem<String>(
-                          value: 'PDF', child: Text('PDF')),
-                      const PopupMenuItem<String>(
-                          value: 'XLSX', child: Text('XLSX')),
-                      const PopupMenuItem<String>(
-                          value: 'CSV', child: Text('CSV')),
-                    ],
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        istenantDataLoading
-                            ? const Center(
-                          child: SpinKitFadingCircle(
-                            color: Colors.white,
-                            size: 21.0,
-                          ),
-                        )
-                            : Text('Export'),
-                        Icon(Icons.arrow_drop_down),
+              Expanded(
+                child: SizedBox(
+                //  width: 100,
+                  height: 42,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: blueColor,
+                    ),
+                    onPressed: () {},
+                    child: PopupMenuButton<String>(
+                      onSelected: (value) async {
+                        // Export logic
+                        if (value == 'PDF' && data !=null ) {
+                          print('pdf');
+                          generateDelinquentTenantsPdf(data);
+                        } else if (value == 'XLSX' && data !=null) {
+                          print('XLSX');
+                          generateRentalOwnerReportExcel(data);
+                          //generateDelinquentTenantsExcel(data);
+                        } else if (value == 'CSV' && data !=null) {
+                          print('CSV');
+                          generateRentalOwnerReportCsv(data);
+                          //  generateDelinquentTenantsCsv(data);
+                        }
+                      },
+                      itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<String>>[
+                        const PopupMenuItem<String>(
+                            value: 'PDF', child: Text('PDF')),
+                        const PopupMenuItem<String>(
+                            value: 'XLSX', child: Text('XLSX')),
+                        const PopupMenuItem<String>(
+                            value: 'CSV', child: Text('CSV')),
                       ],
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          istenantDataLoading
+                              ? const Center(
+                            child: SpinKitFadingCircle(
+                              color: Colors.white,
+                              size: 21.0,
+                            ),
+                          )
+                              : Text('Export'),
+                          Icon(Icons.arrow_drop_down),
+                        ],
+                      ),
                     ),
                   ),
                 ),
