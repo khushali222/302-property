@@ -3019,6 +3019,7 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   Widget buildTenantCard(TenantData tenant) {
+    print(tenant.updatedAt);
     return Column(
       children: [
         const SizedBox(height: 10),
@@ -3064,7 +3065,7 @@ class _Summery_pageState extends State<Summery_page>
                   ],
                 ),
                 const SizedBox(height: 6),
-                Row(
+               /* Row(
                   children: [
                     const SizedBox(width: 2),
                     Text(
@@ -3076,7 +3077,7 @@ class _Summery_pageState extends State<Summery_page>
                       ),
                     ),
                   ],
-                ),
+                ),*/
 
               ],
             ),
@@ -3150,7 +3151,7 @@ class _Summery_pageState extends State<Summery_page>
           children: [
             const SizedBox(width: 65),
             Text(
-              '${tenant.createdAt} to',
+              '${tenant.startDate} to',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
                 color: Color.fromRGBO(21, 43, 81, 1),
@@ -3163,7 +3164,7 @@ class _Summery_pageState extends State<Summery_page>
           children: [
             const SizedBox(width: 65),
             Text(
-              '${tenant.updatedAt}',
+              '${tenant.endDate}',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
                 color: Color.fromRGBO(21, 43, 81, 1),
