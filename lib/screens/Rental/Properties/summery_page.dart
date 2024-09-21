@@ -2800,7 +2800,7 @@ class _Summery_pageState extends State<Summery_page>
                   children: [
                     const SizedBox(width: 2),
                     Text(
-                      formatDate(tenant.updatedAt!),
+                      formatDate(tenant.endDate!),
                       style: TextStyle(
                         fontSize:
                         MediaQuery.of(context).size.width < 500 ? 15 : 17,
@@ -2882,7 +2882,7 @@ class _Summery_pageState extends State<Summery_page>
           children: [
             const SizedBox(width: 65),
             Text(
-              '${tenant.createdAt} to',
+              '${tenant.startDate} to',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
                 color: Color.fromRGBO(21, 43, 81, 1),
@@ -2895,7 +2895,7 @@ class _Summery_pageState extends State<Summery_page>
           children: [
             const SizedBox(width: 65),
             Text(
-              '${tenant.updatedAt}',
+              '${tenant.endDate}',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
                 color: Color.fromRGBO(21, 43, 81, 1),

@@ -2632,7 +2632,6 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-
               Expanded(
                 child: Container(
                   height: 42,

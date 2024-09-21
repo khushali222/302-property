@@ -734,7 +734,7 @@ class TenantData {
   factory TenantData.fromJson(Map<String, dynamic> json) {
     return TenantData(
       id: json['_id'],
-      tenantId: json['tenant_id'] != null ? List<String>.from(json['tenant_id']) : null,
+      tenantId: json['tenant_id'] != null ? [json['tenant_id']] : null,
       adminId: json['admin_id'],
       firstName: json['tenant_firstName'],
       lastName: json['tenant_lastName'],
