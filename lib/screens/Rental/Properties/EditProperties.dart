@@ -4491,6 +4491,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                               rentalId: widget.rentalId,
                               propertyId: widget.properties.propertyId,
                               rentalAddress: address.text,
+                              rentalOwnerId: ownerDetails.rentalOwnerId,
                               rentalCity: city.text,
                               rentalState: state.text,
                               rentalCountry: country.text,

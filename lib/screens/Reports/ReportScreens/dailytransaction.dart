@@ -1338,10 +1338,14 @@ class _DailyTransactionsState extends State<DailyTransactions> {
         ? 'DailyTransactionReport_${selectdate.text}.xlsx'
         : 'DailyTransactionReport_${formattedDate}.xlsx';
 
-    final directory = Directory('/storage/emulated/0/Download');
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Download');
+
     final path = '${directory.path}/$fileName';
 
-    if (!await directory.exists()) {
+    // Create directory if it doesn't exist (for Android)
+    if (!await directory.exists() && !Platform.isIOS) {
       await directory.create(recursive: true);
     }
 
@@ -1469,13 +1473,17 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'DailyTransactionReport_$formattedDate.csv';
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Download');
 
-    final directory = Directory('/storage/emulated/0/Download');
     final path = '${directory.path}/$fileName';
 
-    if (!await directory.exists()) {
+    // Create directory if it doesn't exist (for Android)
+    if (!await directory.exists() && !Platform.isIOS) {
       await directory.create(recursive: true);
     }
+
 
     final File file = File(path);
     await file.writeAsString(csvContent);
@@ -1536,6 +1544,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                       onTap: () {
                                         _pickDate(context);
                                       },
+                                      readOnly: true,
                                       textInputAction: TextInputAction.next,
                                       textAlignVertical:
                                       TextAlignVertical.center,
@@ -1680,6 +1689,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                       onTap: () {
                                         _pickDate(context);
                                       },
+                                      readOnly: true,
                                       textInputAction: TextInputAction.next,
                                       textAlignVertical:
                                       TextAlignVertical.center,

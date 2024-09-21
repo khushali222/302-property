@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/DelinquentTenantsModel.dart';
@@ -539,6 +540,13 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                       fontWeight: pw.FontWeight.bold,
                     ),
                   ),
+                  pw.Text(
+                    'Date : - ${fromDate.text}',
+                    style: pw.TextStyle(
+                      fontSize: 14,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
               pw.Column(
@@ -864,12 +872,17 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'RentalOwnerReport_$formattedDate.xlsx';
 
-    final directory = Directory('/storage/emulated/0/Download');
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Download');
+
     final path = '${directory.path}/$fileName';
 
-    if (!await directory.exists()) {
+    // Create directory if it doesn't exist (for Android)
+    if (!await directory.exists() && !Platform.isIOS) {
       await directory.create(recursive: true);
     }
+
 
     final File file = File(path);
     await file.writeAsBytes(bytes, flush: true);
@@ -995,13 +1008,17 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
     final String fileName = 'RentalOwnerReport_$formattedDate.csv';
 
     // Define file path
-    final directory = Directory('/storage/emulated/0/Download');
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Download');
+
     final path = '${directory.path}/$fileName';
 
-    // Create directory if it doesn't exist
-    if (!await directory.exists()) {
+    // Create directory if it doesn't exist (for Android)
+    if (!await directory.exists() && !Platform.isIOS) {
       await directory.create(recursive: true);
     }
+
 
     // Write CSV file to the path
     final File file = File(path);
@@ -1087,13 +1104,17 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
     final String fileName = 'DelinquentTenantsReport_$formattedDate.csv';
 
     // Define file path
-    final directory = Directory('/storage/emulated/0/Download');
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Download');
+
     final path = '${directory.path}/$fileName';
 
-    // Create directory if it doesn't exist
-    if (!await directory.exists()) {
+    // Create directory if it doesn't exist (for Android)
+    if (!await directory.exists() && !Platform.isIOS) {
       await directory.create(recursive: true);
     }
+
 
     // Write file to the path
     final File file = File(path);
@@ -1301,10 +1322,8 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                           _buildHeaders(),
                           const SizedBox(height: 20),
                           Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
-                            // decoration: BoxDecoration(
-                            //     border: Border.all(color: blueColor)),
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
                             child: Column(
                               children:
                                   currentPageData.asMap().entries.map((entry) {
@@ -2600,6 +2619,8 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                   ),
                 ),
               ),
+
+
               const SizedBox(width: 6),
             ],
           ),

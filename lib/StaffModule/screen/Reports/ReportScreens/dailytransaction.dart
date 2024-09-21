@@ -27,7 +27,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 
 import 'package:three_zero_two_property/repository/OpenWorkOrderReportService.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
+
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:pdf/pdf.dart';
@@ -42,6 +42,7 @@ import 'dart:io';
 import '../../../repository/daily_transaction_report.dart';
 import '../../../../widgets/CustomDateField.dart';
 import '../../../widgets/custom_drawer.dart';
+import '../../../widgets/appbar.dart';
 // Sample data model class
 
 // Create a function to generate PDF
@@ -1680,6 +1681,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                       onTap: () {
                                         _pickDate(context);
                                       },
+                                      readOnly: true,
                                       textInputAction: TextInputAction.next,
                                       textAlignVertical:
                                       TextAlignVertical.center,
@@ -1876,6 +1878,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                       onTap: () {
                                         _pickDate(context);
                                       },
+                                      readOnly: true,
                                       textInputAction: TextInputAction.next,
                                       textAlignVertical:
                                           TextAlignVertical.center,
