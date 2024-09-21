@@ -1464,6 +1464,7 @@ import '../../../../model/LeaseSummary.dart';
 import '../../Rental/Properties/moveout/repository.dart';
 import 'Financial.dart';
 import '../../../widgets/custom_drawer.dart';
+import '../RentalRoll/RenewLease.dart';
 class SummeryPageLease extends StatefulWidget {
   bool? isredirectpayment;
   String leaseId;
@@ -1686,6 +1687,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
         } else if (!snapshot.hasData || snapshot.data == null) {
           return Center(child: Text('No data found.'));
         } else {
+          final leasesummery = snapshot.data!;
           return ListView(
             scrollDirection: Axis.vertical,
             children: [
@@ -1871,6 +1873,32 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           const Color.fromRGBO(21, 43, 81, 1),
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18),
+                                ),
+                                Spacer(),
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=> Renewlease(leaseId: widget.leaseId, lease: leasesummery)));
+                                  },
+                                  child: Container(
+                                      height:  MediaQuery.of(context).size.width < 500 ? 35 :45,
+                                      width: MediaQuery.of(context).size.width < 500 ? 120 : 165,
+
+                                      decoration: BoxDecoration(
+                                          color: blueColor,
+                                          borderRadius: BorderRadius.circular(5.0)),
+                                      child: Center(
+                                        child: Text(
+                                          'Renew Lease',
+                                          style: TextStyle(
+                                              fontSize:
+                                              MediaQuery.of(context).size.width <
+                                                  500
+                                                  ? 14
+                                                  : 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white),
+                                        ),
+                                      )),
                                 ),
                               ],
                             ),
@@ -2190,6 +2218,32 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           const Color.fromRGBO(21, 43, 81, 1),
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20),
+                                ),
+                                Spacer(),
+                                GestureDetector(
+                                  onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> Renewlease(leaseId: widget.leaseId, lease: leasesummery)));
+                                  },
+                                  child: Container(
+                                      height:  MediaQuery.of(context).size.width < 500 ? 35 :45,
+                                      width: MediaQuery.of(context).size.width < 500 ? 120 : 165,
+
+                                      decoration: BoxDecoration(
+                                          color: blueColor,
+                                          borderRadius: BorderRadius.circular(5.0)),
+                                      child: Center(
+                                        child: Text(
+                                          'Renew Lease',
+                                          style: TextStyle(
+                                              fontSize:
+                                              MediaQuery.of(context).size.width <
+                                                  500
+                                                  ? 14
+                                                  : 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white),
+                                        ),
+                                      )),
                                 ),
                               ],
                             ),

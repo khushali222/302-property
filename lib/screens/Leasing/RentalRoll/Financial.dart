@@ -1106,7 +1106,7 @@ class _FinancialTableState extends State<FinancialTable> {
               'Date',
               'Tenants',
               'Type',
-              'Transaction',
+              'Description',
               'Amount',
               'Balance'
             ],
@@ -1222,7 +1222,7 @@ class _FinancialTableState extends State<FinancialTable> {
       'Date',
       'Tenants',
       'Type',
-      'Transaction',
+      'Description',
       'Amount',
       'Balance',
     ];
@@ -1317,7 +1317,7 @@ class _FinancialTableState extends State<FinancialTable> {
       'Date',
       'Tenants',
       'Type',
-      'Transaction',
+      'Description',
       'Amount',
       'Balance',
     ];
@@ -2230,7 +2230,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                   children: [
                                                                     TextSpan(
                                                                       text:
-                                                                          'Transaction : ',
+                                                                          'Description : ',
                                                                       style: TextStyle(
                                                                           fontWeight: FontWeight
                                                                               .bold,
@@ -2978,7 +2978,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                     .toString());
                                           case 2:
                                             return _buildHeader(
-                                                'Transaction', 2, null);
+                                                'Description', 2, null);
                                           case 3:
                                             return _buildHeader(
                                                 'Increase', 3, null);

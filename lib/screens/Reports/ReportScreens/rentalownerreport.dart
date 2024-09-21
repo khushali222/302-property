@@ -2540,6 +2540,39 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                 child: Container(
                   // width: 110,
                   child: TextFormField(
+                    controller: fromDate,
+                    enabled: customdate,
+                    onTap: () {
+                      _pickDate(context);
+                    },
+                    readOnly: true,
+                    style: TextStyle(fontSize: 14,color: Colors.black),
+                    textInputAction: TextInputAction.next,
+                    textAlignVertical: TextAlignVertical.center,
+                    decoration: InputDecoration(
+                      contentPadding:
+                      const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 10), //Imp Line
+                      isDense: true,
+
+                      hintText: "From",
+
+                      border: OutlineInputBorder(
+                          borderRadius:
+                          BorderRadius.circular(5),
+                          borderSide: const BorderSide(
+                            width: 0.5,
+                          )),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: Container(
+                  // width: 110,
+                  child: TextFormField(
                     controller: toDate,
                     enabled: customdate,
                     style: TextStyle(fontSize: 14,color: Colors.black),
@@ -2567,39 +2600,6 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                   ),
                 ),
               ),
-              SizedBox(width: 10),
-              Expanded(
-                child: Container(
-                 // width: 110,
-                  child: TextFormField(
-                    controller: fromDate,
-                    enabled: customdate,
-                    onTap: () {
-                      _pickDate(context);
-                    },
-                    readOnly: true,
-                    style: TextStyle(fontSize: 14,color: Colors.black),
-                    textInputAction: TextInputAction.next,
-                    textAlignVertical: TextAlignVertical.center,
-                    decoration: InputDecoration(
-                      contentPadding:
-                      const EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 10), //Imp Line
-                      isDense: true,
-                
-                      hintText: "From",
-
-                      border: OutlineInputBorder(
-                          borderRadius:
-                          BorderRadius.circular(5),
-                          borderSide: const BorderSide(
-                            width: 0.5,
-                          )),
-                    ),
-                  ),
-                ),
-              ),
               const SizedBox(width: 6),
             ],
           ),
@@ -2611,7 +2611,6 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-
               Expanded(
                 child: Container(
                   height: 42,
