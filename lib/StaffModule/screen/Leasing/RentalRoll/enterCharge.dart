@@ -19,6 +19,7 @@ import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 
 import '../../../../model/EnterChargeModel.dart';
 import '../../../widgets/custom_drawer.dart';
+
 class Chargedata {
   String? id;
   String? chargeId;
@@ -60,13 +61,14 @@ class Chargedata {
       tenantId: json['tenant_id'],
       leaseId: json['lease_id'],
       entry: json['entry'] != null
-          ? List<Entrydata>.from(json['entry'].map((x) => Entrydata.fromJson(x)))
+          ? List<Entrydata>.from(
+              json['entry'].map((x) => Entrydata.fromJson(x)))
           : [],
-      totalAmount:  json['total_amount'] != null ?  json['total_amount'].toDouble() : 0.0,
+      totalAmount:
+          json['total_amount'] != null ? json['total_amount'].toDouble() : 0.0,
       isLeaseAdded: json['is_leaseAdded'],
       type: json['type'],
       uploadedFile: json['uploaded_file'] ?? [],
-
       tenantData: json['tenantData'] != null
           ? TenantData.fromJson(json['tenantData'])
           : null,
@@ -107,7 +109,8 @@ class Entrydata {
       memo: json['memo'],
       account: json['account'],
       amount: json['amount'].toDouble(),
-      dueAmount: json['due_amount'] != null?  json['due_amount'].toDouble():0.0,
+      dueAmount:
+          json['due_amount'] != null ? json['due_amount'].toDouble() : 0.0,
       date: DateTime.parse(json['date']),
       isPaid: json['is_paid'],
       isLateFee: json['is_lateFee'],
@@ -193,12 +196,11 @@ class EmergencyContact {
   }
 }
 
-
 class enterCharge extends StatefulWidget {
   final String leaseId;
   String? chargeid;
 
-  enterCharge({required this.leaseId,this.chargeid});
+  enterCharge({required this.leaseId, this.chargeid});
 
   @override
   State<enterCharge> createState() => _enterChargeState();
@@ -224,10 +226,11 @@ class _enterChargeState extends State<enterCharge> {
     super.initState();
     fetchTenants();
     fetchDropdownData();
-    if(widget.chargeid != null){
+    if (widget.chargeid != null) {
       fetchchargeData();
     }
   }
+
   Future<void> fetchchargeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -250,13 +253,14 @@ class _enterChargeState extends State<enterCharge> {
       setState(() {
         selectedTenantId = fetchedCharge!.tenantId;
         Amount.text = fetchedCharge.totalAmount.toString();
-        _startDate.text = formatDate(fetchedCharge.entry!.first!.date.toString());
+        _startDate.text =
+            formatDate(fetchedCharge.entry!.first!.date.toString());
         Memo.text = fetchedCharge.entry!.first.memo!;
-        double  total = 0;
+        double total = 0;
 
         //  Memo.text = fetchedCharge["entry"]![0]["memo"];
 
-        for (var i = 0 ;i< fetchedCharge.entry!.length ;i++) {
+        for (var i = 0; i < fetchedCharge.entry!.length; i++) {
           print(fetchedCharge.entry![i].amount);
           rows.add({
             'account': fetchedCharge.entry![i].account,
@@ -300,7 +304,7 @@ class _enterChargeState extends State<enterCharge> {
         fetchedTenants.add({
           'tenant_id': tenant['tenant_id'],
           'tenant_name':
-          '${tenant['tenant_firstName']} ${tenant['tenant_lastName']}',
+              '${tenant['tenant_firstName']} ${tenant['tenant_lastName']}',
         });
       }
 
@@ -406,7 +410,7 @@ class _enterChargeState extends State<enterCharge> {
     if (enteredAmount != totalAmount) {
       setState(() {
         validationMessage =
-        "The charge's amount must match the total applied to balance. The difference is ${(enteredAmount - totalAmount).abs().toStringAsFixed(2)}";
+            "The charge's amount must match the total applied to balance. The difference is ${(enteredAmount - totalAmount).abs().toStringAsFixed(2)}";
       });
     } else {
       setState(() {
@@ -491,22 +495,27 @@ class _enterChargeState extends State<enterCharge> {
         KeyboardActionsItem(
           focusNode: _nodeText1,
         ),
-
       ],
     );
   }
+
   final FocusNode _nodeText1 = FocusNode();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: widget_302.App_Bar(context: context),
         backgroundColor: Colors.white,
-        drawer:CustomDrawer(currentpage: "Rent Roll",dropdown: true,),
+        drawer: CustomDrawer(
+          currentpage: "Rent Roll",
+          dropdown: true,
+        ),
         body: SingleChildScrollView(
           child: Form(
             key: _formKey,
             child: Padding(
-              padding:  EdgeInsets.only(left:MediaQuery.of(context).size.width < 500 ? 16 : 35,right:MediaQuery.of(context).size.width < 500 ? 16 : 35 ),
+              padding: EdgeInsets.only(
+                  left: MediaQuery.of(context).size.width < 500 ? 16 : 35,
+                  right: MediaQuery.of(context).size.width < 500 ? 16 : 35),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -534,19 +543,21 @@ class _enterChargeState extends State<enterCharge> {
                             ),
                           ],
                         ),
-                        child: widget.chargeid != null ? const Text(
-                          "Edit Charge",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18),
-                        ):const Text(
-                          "Add Charge",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18),
-                        ),
+                        child: widget.chargeid != null
+                            ? const Text(
+                                "Edit Charge",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18),
+                              )
+                            : const Text(
+                                "Add Charge",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18),
+                              ),
                       ),
                     ),
                   ),
@@ -555,21 +566,20 @@ class _enterChargeState extends State<enterCharge> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-
                         const SizedBox(
                           height: 8,
                         ),
-                        if(MediaQuery.of(context).size.width < 500)
+                        if (MediaQuery.of(context).size.width < 500)
                           const Text('Received From *',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey)),
-                        if(MediaQuery.of(context).size.width < 500)
+                        if (MediaQuery.of(context).size.width < 500)
                           const SizedBox(
                             height: 8,
                           ),
-                        if(MediaQuery.of(context).size.width < 500)
+                        if (MediaQuery.of(context).size.width < 500)
                           DropdownButtonHideUnderline(
                             child: FormField<String>(
                               validator: (value) {
@@ -595,17 +605,21 @@ class _enterChargeState extends State<enterCharge> {
                                       onChanged: (value) {
                                         setState(() {
                                           selectedTenantId = value;
-                                          state.didChange(value); // Notify form field state
+                                          state.didChange(
+                                              value); // Notify form field state
                                         });
                                         state.reset();
-                                        print('Selected tenant_id: $selectedTenantId');
+                                        print(
+                                            'Selected tenant_id: $selectedTenantId');
                                       },
                                       buttonStyleData: ButtonStyleData(
                                         height: 50,
                                         width: 200,
-                                        padding: const EdgeInsets.only(left: 14, right: 14),
+                                        padding: const EdgeInsets.only(
+                                            left: 14, right: 14),
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(6),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
                                           color: Colors.white,
                                         ),
                                         elevation: 2,
@@ -620,18 +634,23 @@ class _enterChargeState extends State<enterCharge> {
                                       ),
                                       dropdownStyleData: DropdownStyleData(
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(6),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
                                           color: Colors.white,
                                         ),
                                         scrollbarTheme: ScrollbarThemeData(
                                           radius: const Radius.circular(6),
-                                          thickness: MaterialStateProperty.all(6),
-                                          thumbVisibility: MaterialStateProperty.all(true),
+                                          thickness:
+                                              MaterialStateProperty.all(6),
+                                          thumbVisibility:
+                                              MaterialStateProperty.all(true),
                                         ),
                                       ),
-                                      menuItemStyleData: const MenuItemStyleData(
+                                      menuItemStyleData:
+                                          const MenuItemStyleData(
                                         height: 40,
-                                        padding: EdgeInsets.only(left: 14, right: 14),
+                                        padding: EdgeInsets.only(
+                                            left: 14, right: 14),
                                       ),
                                     ),
                                     if (state.hasError)
@@ -650,21 +669,21 @@ class _enterChargeState extends State<enterCharge> {
                               },
                             ),
                           ),
-                        if(MediaQuery.of(context).size.width < 500)
+                        if (MediaQuery.of(context).size.width < 500)
                           const SizedBox(
                             height: 20,
                           ),
-                        if(MediaQuery.of(context).size.width < 500)
+                        if (MediaQuery.of(context).size.width < 500)
                           const Text('Date',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey)),
-                        if(MediaQuery.of(context).size.width < 500)
+                        if (MediaQuery.of(context).size.width < 500)
                           const SizedBox(
                             height: 8,
                           ),
-                        if(MediaQuery.of(context).size.width < 500)
+                        if (MediaQuery.of(context).size.width < 500)
                           CustomTextField(
                             onTap: () async {
                               DateTime? pickedDate = await showDatePicker(
@@ -680,7 +699,7 @@ class _enterChargeState extends State<enterCharge> {
                                         primary: Color.fromRGBO(21, 43, 83,
                                             1), // header background color
                                         onPrimary:
-                                        Colors.white, // header text color
+                                            Colors.white, // header text color
                                         onSurface: Color.fromRGBO(
                                             21, 43, 83, 1), // body text color
                                       ),
@@ -688,7 +707,10 @@ class _enterChargeState extends State<enterCharge> {
                                         style: TextButton.styleFrom(
                                           foregroundColor: Colors.white,
                                           backgroundColor: const Color.fromRGBO(
-                                              21, 43, 83, 1), // button text color
+                                              21,
+                                              43,
+                                              83,
+                                              1), // button text color
                                         ),
                                       ),
                                     ),
@@ -718,20 +740,22 @@ class _enterChargeState extends State<enterCharge> {
                             hintText: 'dd-mm-yyyy',
                             controller: _startDate,
                           ),
-                        if(MediaQuery.of(context).size.width < 500)
+                        if (MediaQuery.of(context).size.width < 500)
                           const SizedBox(
                             height: 8,
                           ),
-                        if(MediaQuery.of(context).size.width > 500)
+                        if (MediaQuery.of(context).size.width > 500)
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 // First Column
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text('Received From *',
                                           style: TextStyle(
@@ -741,93 +765,136 @@ class _enterChargeState extends State<enterCharge> {
                                       SizedBox(height: 8),
                                       tenants.isEmpty
                                           ? const Center(
-                                        child: SpinKitFadingCircle(
-                                          color: Colors.black,
-                                          size: 50.0,
-                                        ),
-                                      )
+                                              child: SpinKitFadingCircle(
+                                                color: Colors.black,
+                                                size: 50.0,
+                                              ),
+                                            )
                                           : DropdownButtonHideUnderline(
-                                        child: FormField<String>(
-                                          validator: (value) {
-                                            print(selectedTenantId);
-                                            if (selectedTenantId == null) {
-                                              return 'Please select a tenant sss';
-                                            }
-                                            return ""; // No error if valid
-                                          },
-                                          builder: (FormFieldState<String> state) {
-                                            print(state.hasError);
-                                            return Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                DropdownButton2<String>(
-                                                  isExpanded: true,
-                                                  hint: const Text('Select Tenant'),
-                                                  value: selectedTenantId,
-                                                  items: tenants.map((tenant) {
-                                                    return DropdownMenuItem<String>(
-                                                      value: tenant['tenant_id'],
-                                                      child: Text(tenant['tenant_name']!),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      selectedTenantId = value;
-                                                      state.didChange(value); // Notify form field state
-                                                    });
-                                                    state.reset();
-                                                    print('Selected tenant_id: $selectedTenantId');
-                                                  },
-                                                  buttonStyleData: ButtonStyleData(
-                                                    height: 50,
-                                                    width: 200,
-                                                    padding: const EdgeInsets.only(left: 14, right: 14),
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(6),
-                                                      color: Colors.white,
-                                                    ),
-                                                    elevation: 2,
-                                                  ),
-                                                  iconStyleData: const IconStyleData(
-                                                    icon: Icon(
-                                                      Icons.arrow_drop_down,
-                                                    ),
-                                                    iconSize: 24,
-                                                    iconEnabledColor: Color(0xFFb0b6c3),
-                                                    iconDisabledColor: Colors.grey,
-                                                  ),
-                                                  dropdownStyleData: DropdownStyleData(
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(6),
-                                                      color: Colors.white,
-                                                    ),
-                                                    scrollbarTheme: ScrollbarThemeData(
-                                                      radius: const Radius.circular(6),
-                                                      thickness: MaterialStateProperty.all(6),
-                                                      thumbVisibility: MaterialStateProperty.all(true),
-                                                    ),
-                                                  ),
-                                                  menuItemStyleData: const MenuItemStyleData(
-                                                    height: 40,
-                                                    padding: EdgeInsets.only(left: 14, right: 14),
-                                                  ),
-                                                ),
-                                                if (state.hasError)
-                                                  Padding(
-                                                    padding: const EdgeInsets.only(top: 5),
-                                                    child: Text(
-                                                      state.errorText!,
-                                                      style: const TextStyle(
-                                                        color: Colors.red,
-                                                        fontSize: 12,
+                                              child: FormField<String>(
+                                                validator: (value) {
+                                                  print(selectedTenantId);
+                                                  if (selectedTenantId ==
+                                                      null) {
+                                                    return 'Please select a tenant sss';
+                                                  }
+                                                  return ""; // No error if valid
+                                                },
+                                                builder: (FormFieldState<String>
+                                                    state) {
+                                                  print(state.hasError);
+                                                  return Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      DropdownButton2<String>(
+                                                        isExpanded: true,
+                                                        hint: const Text(
+                                                            'Select Tenant'),
+                                                        value: selectedTenantId,
+                                                        items: tenants
+                                                            .map((tenant) {
+                                                          return DropdownMenuItem<
+                                                              String>(
+                                                            value: tenant[
+                                                                'tenant_id'],
+                                                            child: Text(tenant[
+                                                                'tenant_name']!),
+                                                          );
+                                                        }).toList(),
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            selectedTenantId =
+                                                                value;
+                                                            state.didChange(
+                                                                value); // Notify form field state
+                                                          });
+                                                          state.reset();
+                                                          print(
+                                                              'Selected tenant_id: $selectedTenantId');
+                                                        },
+                                                        buttonStyleData:
+                                                            ButtonStyleData(
+                                                          height: 50,
+                                                          width: 200,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  left: 14,
+                                                                  right: 14),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        6),
+                                                            color: Colors.white,
+                                                          ),
+                                                          elevation: 2,
+                                                        ),
+                                                        iconStyleData:
+                                                            const IconStyleData(
+                                                          icon: Icon(
+                                                            Icons
+                                                                .arrow_drop_down,
+                                                          ),
+                                                          iconSize: 24,
+                                                          iconEnabledColor:
+                                                              Color(0xFFb0b6c3),
+                                                          iconDisabledColor:
+                                                              Colors.grey,
+                                                        ),
+                                                        dropdownStyleData:
+                                                            DropdownStyleData(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        6),
+                                                            color: Colors.white,
+                                                          ),
+                                                          scrollbarTheme:
+                                                              ScrollbarThemeData(
+                                                            radius: const Radius
+                                                                .circular(6),
+                                                            thickness:
+                                                                MaterialStateProperty
+                                                                    .all(6),
+                                                            thumbVisibility:
+                                                                MaterialStateProperty
+                                                                    .all(true),
+                                                          ),
+                                                        ),
+                                                        menuItemStyleData:
+                                                            const MenuItemStyleData(
+                                                          height: 40,
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 14,
+                                                                  right: 14),
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ),
-                                              ],
-                                            );
-                                          },
-                                        ),
-                                      ),
+                                                      if (state.hasError)
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(top: 5),
+                                                          child: Text(
+                                                            state.errorText!,
+                                                            style:
+                                                                const TextStyle(
+                                                              color: Colors.red,
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                    ],
+                                                  );
+                                                },
+                                              ),
+                                            ),
                                     ],
                                   ),
                                 ),
@@ -835,7 +902,8 @@ class _enterChargeState extends State<enterCharge> {
                                 // Second Column
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text('Date',
                                           style: TextStyle(
@@ -845,28 +913,41 @@ class _enterChargeState extends State<enterCharge> {
                                       SizedBox(height: 5),
                                       CustomTextField(
                                         onTap: () async {
-                                          DateTime? pickedDate = await showDatePicker(
+                                          DateTime? pickedDate =
+                                              await showDatePicker(
                                             context: context,
                                             initialDate: DateTime.now(),
                                             firstDate: DateTime(2000),
                                             lastDate: DateTime(2101),
                                             locale: const Locale('en', 'US'),
-                                            builder: (BuildContext context, Widget? child) {
+                                            builder: (BuildContext context,
+                                                Widget? child) {
                                               return Theme(
-                                                data: ThemeData.light().copyWith(
-                                                  colorScheme: const ColorScheme.light(
-                                                    primary: Color.fromRGBO(21, 43, 83,
+                                                data:
+                                                    ThemeData.light().copyWith(
+                                                  colorScheme:
+                                                      const ColorScheme.light(
+                                                    primary: Color.fromRGBO(
+                                                        21,
+                                                        43,
+                                                        83,
                                                         1), // header background color
-                                                    onPrimary:
-                                                    Colors.white, // header text color
+                                                    onPrimary: Colors
+                                                        .white, // header text color
                                                     onSurface: Color.fromRGBO(
-                                                        21, 43, 83, 1), // body text color
+                                                        21,
+                                                        43,
+                                                        83,
+                                                        1), // body text color
                                                   ),
-                                                  textButtonTheme: TextButtonThemeData(
+                                                  textButtonTheme:
+                                                      TextButtonThemeData(
                                                     style: TextButton.styleFrom(
-                                                      foregroundColor: Colors.white,
-                                                      backgroundColor: const Color.fromRGBO(
-                                                          21, 43, 83, 1), // button text color
+                                                      foregroundColor:
+                                                          Colors.white,
+                                                      backgroundColor: const Color
+                                                          .fromRGBO(21, 43, 83,
+                                                          1), // button text color
                                                     ),
                                                   ),
                                                 ),
@@ -885,7 +966,8 @@ class _enterChargeState extends State<enterCharge> {
                                         readOnnly: true,
                                         suffixIcon: IconButton(
                                             onPressed: () {},
-                                            icon: const Icon(Icons.date_range_rounded)),
+                                            icon: const Icon(
+                                                Icons.date_range_rounded)),
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
                                             return 'Please select start date';
@@ -897,7 +979,6 @@ class _enterChargeState extends State<enterCharge> {
                                         controller: _startDate,
                                       ),
                                       SizedBox(height: 5),
-
                                     ],
                                   ),
                                 ),
@@ -964,8 +1045,7 @@ class _enterChargeState extends State<enterCharge> {
                   const SizedBox(
                     height: 10,
                   ),
-
-                   Table(
+                  Table(
                     border: TableBorder.all(width: 1),
                     columnWidths: const {
                       0: FlexColumnWidth(2),
@@ -979,8 +1059,7 @@ class _enterChargeState extends State<enterCharge> {
                           child: Center(
                             child: Text('Account',
                                 style: TextStyle(
-                                    color:
-                                    Color.fromRGBO(21, 43, 83, 1),
+                                    color: Color.fromRGBO(21, 43, 83, 1),
                                     fontWeight: FontWeight.bold)),
                           ),
                         ),
@@ -989,8 +1068,7 @@ class _enterChargeState extends State<enterCharge> {
                           child: Center(
                             child: Text('Amount',
                                 style: TextStyle(
-                                    color:
-                                    Color.fromRGBO(21, 43, 83, 1),
+                                    color: Color.fromRGBO(21, 43, 83, 1),
                                     fontWeight: FontWeight.bold)),
                           ),
                         ),
@@ -999,8 +1077,7 @@ class _enterChargeState extends State<enterCharge> {
                           child: Center(
                             child: Text('Actions',
                                 style: TextStyle(
-                                    color:
-                                    Color.fromRGBO(21, 43, 83, 1),
+                                    color: Color.fromRGBO(21, 43, 83, 1),
                                     fontWeight: FontWeight.bold)),
                           ),
                         ),
@@ -1017,35 +1094,30 @@ class _enterChargeState extends State<enterCharge> {
                                 style: TextStyle(fontSize: 14),
                                 value: row['account'],
                                 items: [
-                                  ...categorizedData.entries
-                                      .expand((entry) {
+                                  ...categorizedData.entries.expand((entry) {
                                     return [
                                       DropdownMenuItem<String>(
                                         enabled: false,
                                         child: Text(
                                           entry.key,
                                           style: const TextStyle(
-                                            fontWeight:
-                                            FontWeight.bold,
-                                            color: Color.fromRGBO(
-                                                21, 43, 81, 1),
+                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                Color.fromRGBO(21, 43, 81, 1),
                                           ),
                                         ),
                                       ),
                                       ...entry.value.map((item) {
-                                        return DropdownMenuItem<
-                                            String>(
+                                        return DropdownMenuItem<String>(
                                           value: item,
                                           child: Padding(
-                                            padding:
-                                            const EdgeInsets.only(
+                                            padding: const EdgeInsets.only(
                                                 left: 0.0),
                                             child: Text(
                                               item,
                                               style: const TextStyle(
                                                 color: Colors.black,
-                                                fontWeight:
-                                                FontWeight.w400,
+                                                fontWeight: FontWeight.w400,
                                               ),
                                             ),
                                           ),
@@ -1056,8 +1128,7 @@ class _enterChargeState extends State<enterCharge> {
                                 ],
                                 onChanged: (value) {
                                   String? chargeType;
-                                  for (var entry
-                                  in categorizedData.entries) {
+                                  for (var entry in categorizedData.entries) {
                                     if (entry.value.contains(value)) {
                                       chargeType = entry.key;
                                       break;
@@ -1066,18 +1137,16 @@ class _enterChargeState extends State<enterCharge> {
 
                                   setState(() {
                                     rows[index]['account'] = value;
-                                    rows[index]['charge_type'] =
-                                        chargeType;
+                                    rows[index]['charge_type'] = chargeType;
                                   });
                                 },
                                 buttonStyleData: ButtonStyleData(
                                   height: 50,
                                   width: 220,
-                                  padding: const EdgeInsets.only(
-                                      left: 8, right: 5),
+                                  padding:
+                                      const EdgeInsets.only(left: 8, right: 5),
                                   decoration: BoxDecoration(
-                                    borderRadius:
-                                    BorderRadius.circular(6),
+                                    borderRadius: BorderRadius.circular(6),
                                     color: Colors.white,
                                   ),
                                   elevation: 2,
@@ -1091,17 +1160,14 @@ class _enterChargeState extends State<enterCharge> {
                                 dropdownStyleData: DropdownStyleData(
                                   width: 250,
                                   decoration: BoxDecoration(
-                                    borderRadius:
-                                    BorderRadius.circular(6),
+                                    borderRadius: BorderRadius.circular(6),
                                     color: Colors.white,
                                   ),
                                   scrollbarTheme: ScrollbarThemeData(
                                     radius: const Radius.circular(6),
-                                    thickness:
-                                    MaterialStateProperty.all(6),
+                                    thickness: MaterialStateProperty.all(6),
                                     thumbVisibility:
-                                    MaterialStateProperty.all(
-                                        true),
+                                        MaterialStateProperty.all(true),
                                   ),
                                 ),
                                 hint: const Text('Select an account'),
@@ -1113,11 +1179,13 @@ class _enterChargeState extends State<enterCharge> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: SizedBox(
-                                height:50,
+                                height: 50,
                                 child: KeyboardActions(
                                   config: _buildConfig(context),
                                   child: TextFormField(
-                                    initialValue:  widget.chargeid != null ? rows[index]["amount"].toString() : "0", // Make sure 0 is a string,
+                                    initialValue: widget.chargeid != null
+                                        ? rows[index]["amount"].toString()
+                                        : "0", // Make sure 0 is a string,
                                     focusNode: focusNodes[index],
                                     keyboardType: TextInputType.number,
                                     onChanged: (value) =>
@@ -1126,10 +1194,8 @@ class _enterChargeState extends State<enterCharge> {
                                         border: OutlineInputBorder(),
                                         hintText: 'Enter amount',
                                         hintStyle: TextStyle(fontSize: 14),
-
-                                        contentPadding: EdgeInsets.only(top: 7,left: 7)
-                                    ),
-
+                                        contentPadding:
+                                            EdgeInsets.only(top: 7, left: 7)),
                                   ),
                                 ),
                               ),
@@ -1138,8 +1204,7 @@ class _enterChargeState extends State<enterCharge> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: IconButton(
-                              icon: const Icon(Icons.delete,
-                                  color: Colors.red),
+                              icon: const Icon(Icons.delete, color: Colors.red),
                               onPressed: () => deleteRow(index),
                             ),
                           ),
@@ -1149,41 +1214,47 @@ class _enterChargeState extends State<enterCharge> {
                         const Padding(
                           padding: EdgeInsets.all(8.0),
                           child: Text('Total',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold)),
+                              style: TextStyle(fontWeight: FontWeight.bold)),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                              '\$${totalAmount.toStringAsFixed(2)}'),
+                          child: Text('\$${totalAmount.toStringAsFixed(2)}'),
                         ),
                         const SizedBox.shrink(),
                       ]),
                       TableRow(children: [
                         Padding(
-                          padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width < 500 ? 16 : 70,right: MediaQuery.of(context).size.width < 500 ? 16 : 70,top: 10,bottom: 10),
+                          padding: EdgeInsets.only(
+                              left: MediaQuery.of(context).size.width < 500
+                                  ? 16
+                                  : 70,
+                              right: MediaQuery.of(context).size.width < 500
+                                  ? 16
+                                  : 70,
+                              top: 10,
+                              bottom: 10),
                           child: Container(
                             height: 40,
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 border: Border.all(width: 1),
-                                borderRadius:
-                                BorderRadius.circular(10.0)),
+                                borderRadius: BorderRadius.circular(10.0)),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
-                                      BorderRadius.circular(
-                                          10.0)),
+                                          BorderRadius.circular(10.0)),
                                   elevation: 0,
                                   backgroundColor: Colors.white),
                               onPressed: addRow,
-                              child:  Text(
+                              child: Text(
                                 'Add Row',
                                 style: TextStyle(
-                                  fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 18,
-                                  color:
-                                  Color.fromRGBO(21, 43, 83, 1),
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 16
+                                          : 18,
+                                  color: Color.fromRGBO(21, 43, 83, 1),
                                 ),
                               ),
                             ),
@@ -1308,7 +1379,6 @@ class _enterChargeState extends State<enterCharge> {
                               ),
                             ),
                           ],
-
                         ],
                       ),
                     ),
@@ -1321,15 +1391,17 @@ class _enterChargeState extends State<enterCharge> {
                       // SizedBox(width: 5,),
                       Container(
                           height: 50,
-                          width: MediaQuery.of(context).size.width < 500 ? 130 :150,
+                          width: MediaQuery.of(context).size.width < 500
+                              ? 130
+                              : 150,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8.0)),
                           child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor:blueColor,
+                                  backgroundColor: blueColor,
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
-                                      BorderRadius.circular(8.0))),
+                                          BorderRadius.circular(8.0))),
                               onPressed: () async {
                                 if (_formKey.currentState?.validate() ??
                                     false) {
@@ -1337,28 +1409,27 @@ class _enterChargeState extends State<enterCharge> {
                                     _isLoading = true;
                                   });
 
-                                  print(rows.where((e)=> e["charge_type"] == null));
+                                  print(rows
+                                      .where((e) => e["charge_type"] == null));
 
-
-
-                                  if(validationMessage == null){
-                                    if(widget.chargeid != null){
+                                  if (validationMessage == null) {
+                                    if (widget.chargeid != null) {
                                       SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
+                                          await SharedPreferences.getInstance();
                                       String adminId =
-                                      prefs.getString('adminId').toString();
+                                          prefs.getString('adminId').toString();
 
                                       List<Entry> entryList = rows.map((row) {
                                         return Entry(
                                           account: row['account'],
                                           amount: row['amount']?.toInt() ?? 0,
                                           dueAmount:
-                                          0, // Adjust according to your requirement
+                                              0, // Adjust according to your requirement
                                           memo: row['memo'],
                                           date: reverseFormatDate(row['date']),
                                           chargeType: row['charge_type'],
                                           isRepeatable:
-                                          false, // Adjust according to your requirement
+                                              false, // Adjust according to your requirement
                                         );
                                       }).toList();
 
@@ -1377,9 +1448,10 @@ class _enterChargeState extends State<enterCharge> {
                                       print('file ${_uploadedFileNames}');
 
                                       LeaseRepository apiService =
-                                      LeaseRepository();
+                                          LeaseRepository();
                                       int statusCode =
-                                      await apiService.EditCharge(charge,widget.chargeid!);
+                                          await apiService.EditCharge(
+                                              charge, widget.chargeid!);
 
                                       if (statusCode == 200) {
                                         setState(() {
@@ -1388,7 +1460,7 @@ class _enterChargeState extends State<enterCharge> {
                                         Fluttertoast.showToast(
                                           msg: "Charge Edited successfully",
                                         );
-                                        Navigator.pop(context,true);
+                                        Navigator.pop(context, true);
                                       } else {
                                         setState(() {
                                           _isLoading = false;
@@ -1400,24 +1472,23 @@ class _enterChargeState extends State<enterCharge> {
                                           _isLoading = false;
                                         });
                                       }
-                                    }
-                                    else{
+                                    } else {
                                       SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
+                                          await SharedPreferences.getInstance();
                                       String adminId =
-                                      prefs.getString('adminId').toString();
+                                          prefs.getString('adminId').toString();
 
                                       List<Entry> entryList = rows.map((row) {
                                         return Entry(
                                           account: row['account'],
                                           amount: row['amount']?.toInt() ?? 0,
                                           dueAmount:
-                                          0, // Adjust according to your requirement
+                                              0, // Adjust according to your requirement
                                           memo: row['memo'],
                                           date: reverseFormatDate(row['date']),
                                           chargeType: row['charge_type'],
                                           isRepeatable:
-                                          false, // Adjust according to your requirement
+                                              false, // Adjust according to your requirement
                                         );
                                       }).toList();
 
@@ -1435,9 +1506,9 @@ class _enterChargeState extends State<enterCharge> {
                                       print('file ${_uploadedFileNames}');
 
                                       LeaseRepository apiService =
-                                      LeaseRepository();
+                                          LeaseRepository();
                                       int statusCode =
-                                      await apiService.postCharge(charge);
+                                          await apiService.postCharge(charge);
 
                                       if (statusCode == 200) {
                                         setState(() {
@@ -1446,7 +1517,7 @@ class _enterChargeState extends State<enterCharge> {
                                         Fluttertoast.showToast(
                                           msg: "Charge posted successfully",
                                         );
-                                        Navigator.pop(context,true);
+                                        Navigator.pop(context, true);
                                       } else {
                                         setState(() {
                                           _isLoading = false;
@@ -1459,10 +1530,7 @@ class _enterChargeState extends State<enterCharge> {
                                         });
                                       }
                                     }
-
                                   }
-
-
 
                                   //charges
                                 } else {
@@ -1475,15 +1543,29 @@ class _enterChargeState extends State<enterCharge> {
                                   print(Memo.text);
                                 }
                               },
-                              child:widget.chargeid != null ? Text(
-                                'Edit charge',
-                                style: TextStyle(color: Color(0xFFf7f8f9),
-                                    fontSize: MediaQuery.of(context).size.width < 500 ? 16 :18),
-                              ):  Text(
-                                'Add charge',
-                                style: TextStyle(color: Color(0xFFf7f8f9),
-                                    fontSize: MediaQuery.of(context).size.width < 500 ? 16 :18),
-                              ))),
+                              child: widget.chargeid != null
+                                  ? Text(
+                                      'Edit charge',
+                                      style: TextStyle(
+                                          color: Color(0xFFf7f8f9),
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 16
+                                              : 18),
+                                    )
+                                  : Text(
+                                      'Add charge',
+                                      style: TextStyle(
+                                          color: Color(0xFFf7f8f9),
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 16
+                                              : 18),
+                                    ))),
                       const SizedBox(
                         width: 8,
                       ),
@@ -1497,7 +1579,7 @@ class _enterChargeState extends State<enterCharge> {
                                   backgroundColor: const Color(0xFFffffff),
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
-                                      BorderRadius.circular(8.0))),
+                                          BorderRadius.circular(8.0))),
                               onPressed: () {
                                 Navigator.pop(context);
                                 // firstName.clear();
@@ -1510,9 +1592,9 @@ class _enterChargeState extends State<enterCharge> {
                                 // _selectedProperty = null;
                                 // _selectedUnit = null;
                               },
-                              child:  Text(
+                              child: Text(
                                 'Cancel',
-                                style: TextStyle(color:blueColor),
+                                style: TextStyle(color: blueColor),
                               )))
                     ],
                   ),

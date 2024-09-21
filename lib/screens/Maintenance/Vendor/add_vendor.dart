@@ -13,6 +13,7 @@ import '../../../Model/vendor.dart';
 import '../../../repository/vendor_repository.dart';
 import '../../../widgets/titleBar.dart';
 import '../../../widgets/custom_drawer.dart';
+
 class Add_vendor extends StatefulWidget {
   const Add_vendor({super.key});
 
@@ -43,7 +44,10 @@ class _Add_vendorState extends State<Add_vendor> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Vendor",dropdown: true,),
+      drawer: CustomDrawer(
+        currentpage: "Vendor",
+        dropdown: true,
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           if (constraints.maxWidth > 500) {
@@ -128,7 +132,8 @@ class _Add_vendorState extends State<Add_vendor> {
                                 height: 10,
                               ),
                               CustomTextField(
-                                keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                                keyboardType: TextInputType.numberWithOptions(
+                                    signed: true, decimal: true),
                                 hintText: 'Enter phone number',
                                 controller: phoneNumber,
                                 validator: (value) {
@@ -427,7 +432,8 @@ class _Add_vendorState extends State<Add_vendor> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                              keyboardType: TextInputType.numberWithOptions(
+                                  signed: true, decimal: true),
                               hintText: 'Enter phone number',
                               controller: phoneNumber,
                               validator: (value) {
@@ -710,7 +716,9 @@ class CustomTextField extends StatefulWidget {
     this.suffixIcon,
     this.validator,
     this.onSuffixIconPressed,
-    this.onTap, this.onChanged, this.onChanged2, // Initialize onTap
+    this.onTap,
+    this.onChanged,
+    this.onChanged2, // Initialize onTap
   }) : super(key: key);
 
   @override
@@ -722,30 +730,28 @@ class CustomTextFieldState extends State<CustomTextField> {
   TextEditingController _textController =
       TextEditingController(); // Add this line
 
-
-
   late FocusNode _focusNode;
   @override
   void dispose() {
     _textController.dispose(); // Dispose the controller when not needed anymore
     super.dispose();
     _focusNode.dispose();
-
   }
+
   @override
   void initState() {
     super.initState();
     _textController = widget.controller ?? TextEditingController();
     _focusNode = FocusNode();
-
   }
+
   KeyboardActionsConfig _buildConfig(BuildContext context) {
     return KeyboardActionsConfig(
       actions: [
         KeyboardActionsItem(
           focusNode: _focusNode,
           toolbarButtons: [
-                (node) {
+            (node) {
               return GestureDetector(
                 onTap: () {
                   if (widget.onChanged2 != null) {
@@ -755,10 +761,11 @@ class CustomTextFieldState extends State<CustomTextField> {
                 },
                 child: Padding(
                   padding: EdgeInsets.all(14.0),
-                  child: Text("Done",style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold
-                  ),),
+                  child: Text(
+                    "Done",
+                    style: TextStyle(
+                        color: Colors.blue, fontWeight: FontWeight.bold),
+                  ),
                 ),
               );
             },
@@ -770,7 +777,8 @@ class CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
-    final shouldUseKeyboardActions = widget.keyboardType == TextInputType.number;
+    final shouldUseKeyboardActions =
+        widget.keyboardType == TextInputType.number;
     Widget textfield = Stack(
       clipBehavior: Clip.none,
       children: <Widget>[
@@ -849,13 +857,13 @@ class CustomTextFieldState extends State<CustomTextField> {
     );
     return shouldUseKeyboardActions
         ? SizedBox(
-      height: 60,
-      width: MediaQuery.of(context).size.width * .98,
-      child: KeyboardActions(
-        config: _buildConfig(context),
-        child: textfield,
-      ),
-    )
+            height: 60,
+            width: MediaQuery.of(context).size.width * .98,
+            child: KeyboardActions(
+              config: _buildConfig(context),
+              child: textfield,
+            ),
+          )
         : textfield;
   }
 }

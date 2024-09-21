@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,6 +6,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 
 import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/custom_drawer.dart';
+
 class Properties extends StatefulWidget {
   const Properties({Key? key}) : super(key: key);
 
@@ -23,17 +22,21 @@ class _PropertiesState extends State<Properties> {
 
   String? selectedValue;
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "RentalOwner",dropdown: false,),
+      drawer: CustomDrawer(
+        currentpage: "RentalOwner",
+        dropdown: false,
+      ),
       body: Container(
         child: Column(
           children: [
-            SizedBox(height: 10,),
+            SizedBox(
+              height: 10,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -52,7 +55,12 @@ class _PropertiesState extends State<Properties> {
                       ),
                     ],
                   ),
-                  child: Center(child: Text("Add New Property",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),)),
+                  child: Center(
+                      child: Text(
+                    "Add New Property",
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                  )),
                 )
               ],
             ),
@@ -93,21 +101,15 @@ class _PropertiesState extends State<Properties> {
                   width: 150,
                   child: TextFormField(
                     decoration: InputDecoration(
-                      hintText: "Search here...",
-                      border: OutlineInputBorder()
-
-                    ),
+                        hintText: "Search here...",
+                        border: OutlineInputBorder()),
                   ),
                 ),
-
               ],
             )
           ],
         ),
       ),
-
-
     );
   }
-
 }

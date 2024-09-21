@@ -20,7 +20,7 @@ import '../screens/Staff_Member/Add_staffmember.dart';
 import '../screens/Dashboard/dashboard_one.dart';
 import '../screens/Rental/Properties/properties.dart';
 import '../screens/Property_Type/Property_type_table.dart';
-import '../screens/Staff_Member/Staffmember_table.dart';
+
 import '../screens/Rental/Rentalowner/Rentalowner_table.dart';
 import '../screens/Staff_Member/Staffmemvertable.dart';
 

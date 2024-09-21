@@ -847,23 +847,6 @@ class _LeasesTableState extends State<LeasesTable> {
                     return Center(child: Text('You don\'t have any lease for this unit right now ..'));
                   } else {
                     var data = snapshot.data!;
-                    // if (searchValue == null || searchValue!.isEmpty) {
-                    //   data = snapshot.data!;
-                    // } else if (searchValue == "All") {
-                    //   data = snapshot.data!;
-                    // } else if (searchValue!.isNotEmpty) {
-                    //   data = snapshot.data!
-                    //       .where((rentals) => rentals.!
-                    //       .toLowerCase()
-                    //       .contains(searchValue!.toLowerCase()))
-                    //       .toList();
-                    // } else {
-                    //   data = snapshot.data!
-                    //       .where((rentals) =>
-                    //   rentals.applianceName == searchValue)
-                    //       .toList();
-                    // }
-                    // sortData(data);
                     final totalPages = (data.length / itemsPerPage).ceil();
                     final currentPageData = data
                         .skip(currentPage * itemsPerPage)

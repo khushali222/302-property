@@ -15,6 +15,7 @@ import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../../widgets/custom_drawer.dart';
+
 class AdminTenantInsuranceTable extends StatefulWidget {
   final String tenantid;
   AdminTenantInsuranceTable({required this.tenantid});
@@ -459,7 +460,10 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
       key: key,
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Tenants",dropdown: true,),
+      drawer: CustomDrawer(
+        currentpage: "Tenants",
+        dropdown: true,
+      ),
       body: Column(
         children: [
           const SizedBox(
@@ -490,8 +494,6 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                     height: (MediaQuery.of(context).size.width < 500)
                         ? 40
                         : MediaQuery.of(context).size.width * 0.055,
-
-                    
                     width: (MediaQuery.of(context).size.width < 500)
                         ? MediaQuery.of(context).size.width * 0.4
                         : MediaQuery.of(context).size.width * 0.3,
@@ -533,7 +535,7 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
             title: 'Insurance',
           ),
           //search
-          
+
           if (MediaQuery.of(context).size.width > 500)
             const SizedBox(height: 25),
           if (MediaQuery.of(context).size.width < 500)

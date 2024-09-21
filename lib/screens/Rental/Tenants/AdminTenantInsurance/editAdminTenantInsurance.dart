@@ -22,6 +22,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../../widgets/custom_drawer.dart';
+
 class editAdminInsurance extends StatefulWidget {
   AdminTenantInsuranceModel data;
   editAdminInsurance({super.key, required this.data});
@@ -195,7 +196,10 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
         key: key,
         appBar: widget_302.App_Bar(context: context),
         backgroundColor: Colors.white,
-        drawer:CustomDrawer(currentpage: "Tenants",dropdown: true,),
+        drawer: CustomDrawer(
+          currentpage: "Tenants",
+          dropdown: true,
+        ),
         body: Form(
           key: _formkey,
           child: Container(

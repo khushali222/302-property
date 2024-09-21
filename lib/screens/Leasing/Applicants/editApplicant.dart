@@ -17,6 +17,7 @@ import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../../model/ApplicantModel.dart';
 import '../../../widgets/custom_drawer.dart';
+
 class EditApplicant extends StatefulWidget {
   Datum applicant;
 
@@ -73,79 +74,6 @@ class _EditApplicantState extends State<EditApplicant> {
   String? _selectedUnitId;
   String? _selectedUnit;
 
-  // Future<void> _loadProperties() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? id = prefs.getString("adminId");
-
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
-
-  //   try {
-  //     final response =
-  //         await http.get(Uri.parse('${Api_url}/api/rentals/rentals/$id'));
-  //     print('${Api_url}/api/rentals/rentals/$id');
-
-  //     if (response.statusCode == 200) {
-  //       List jsonResponse = json.decode(response.body)['data'];
-  //       Map<String, String> addresses = {};
-  //       jsonResponse.forEach((data) {
-  //         addresses[data['rental_id'].toString()] =
-  //             data['rental_adress'].toString();
-  //       });
-
-  //       setState(() {
-  //         properties = addresses;
-  //         _isLoading = false;
-  //       });
-  //     } else {
-  //       throw Exception('Failed to load data');
-  //     }
-  //   } catch (e) {
-  //     setState(() {
-  //       _isLoading = false;
-  //     });
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Failed to fetch properties: $e')),
-  //     );
-  //   }
-  // }
-
-  // Future<void> _loadUnits(String rentalId) async {
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
-
-  //   try {
-  //     final response =
-  //         await http.get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'));
-  //     print('$Api_url/api/unit/rental_unit/$rentalId');
-
-  //     if (response.statusCode == 200) {
-  //       List jsonResponse = json.decode(response.body)['data'];
-  //       Map<String, String> unitAddresses = {};
-  //       jsonResponse.forEach((data) {
-  //         unitAddresses[data['unit_id'].toString()] =
-  //             data['rental_unit'].toString();
-  //       });
-
-  //       setState(() {
-  //         units = unitAddresses;
-  //         _isLoading = false;
-  //       });
-  //     } else {
-  //       throw Exception('Failed to load units');
-  //     }
-  //   } catch (e) {
-  //     setState(() {
-  //       _isLoading = false;
-  //     });
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Failed to fetch units: $e')),
-  //     );
-  //   }
-  // }
-
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   String renderId = '';
   String unitId = '';
@@ -154,7 +82,10 @@ class _EditApplicantState extends State<EditApplicant> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Applicants",dropdown: true,),
+      drawer: CustomDrawer(
+        currentpage: "Applicants",
+        dropdown: true,
+      ),
       body: SingleChildScrollView(
         child: Form(
           key: _formkey,
@@ -262,7 +193,8 @@ class _EditApplicantState extends State<EditApplicant> {
                             }
                             return null;
                           },
-                          keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                          keyboardType: TextInputType.numberWithOptions(
+                              signed: true, decimal: true),
                           hintText: 'Enter mobile number',
                           controller: mobileNumber,
                         ),
@@ -284,7 +216,8 @@ class _EditApplicantState extends State<EditApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                          keyboardType: TextInputType.numberWithOptions(
+                              signed: true, decimal: true),
                           hintText: 'Enter home number',
                           controller: homeNumber,
                         ),
@@ -306,7 +239,8 @@ class _EditApplicantState extends State<EditApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                          keyboardType: TextInputType.numberWithOptions(
+                              signed: true, decimal: true),
                           hintText: 'Enter business number',
                           controller: bussinessNumber,
                         ),
@@ -328,232 +262,11 @@ class _EditApplicantState extends State<EditApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                          keyboardType: TextInputType.numberWithOptions(
+                              signed: true, decimal: true),
                           hintText: 'Enter telephone number',
                           controller: telePhoneNumber,
                         ),
-                        // _isLoading
-                        //     ? const Center(
-                        //         child: SpinKitFadingCircle(
-                        //           color: Colors.black,
-                        //           size: 50.0,
-                        //         ),
-                        //       )
-                        //     : Column(
-                        //         crossAxisAlignment: CrossAxisAlignment.start,
-                        //         children: [
-                        //           DropdownButtonHideUnderline(
-                        //             child: DropdownButtonFormField2<String>(
-                        //               decoration: InputDecoration(
-                        //                   border: InputBorder.none),
-                        //               isExpanded: true,
-                        //               hint: const Row(
-                        //                 children: [
-                        //                   Expanded(
-                        //                     child: Text(
-                        //                       'Select Property',
-                        //                       style: TextStyle(
-                        //                         fontSize: 14,
-                        //                         fontWeight: FontWeight.w400,
-                        //                         color: Color(0xFFb0b6c3),
-                        //                       ),
-                        //                       overflow: TextOverflow.ellipsis,
-                        //                     ),
-                        //                   ),
-                        //                 ],
-                        //               ),
-                        //               items: properties.keys.map((rentalId) {
-                        //                 return DropdownMenuItem<String>(
-                        //                   value: rentalId,
-                        //                   child: Text(
-                        //                     properties[rentalId]!,
-                        //                     style: const TextStyle(
-                        //                       fontSize: 14,
-                        //                       fontWeight: FontWeight.w400,
-                        //                       color: Colors.black87,
-                        //                     ),
-                        //                     overflow: TextOverflow.ellipsis,
-                        //                   ),
-                        //                 );
-                        //               }).toList(),
-                        //               value: _selectedPropertyId,
-                        //               onChanged: (value) {
-                        //                 setState(() {
-                        //                   _selectedUnitId = null;
-                        //                   _selectedPropertyId = value;
-                        //                   _selectedProperty = properties[
-                        //                       value]; // Store selected rental_adress
-
-                        //                   renderId = value.toString();
-                        //                   print(
-                        //                       'Selected Property: $_selectedProperty');
-                        //                   _loadUnits(
-                        //                       value!); // Fetch units for the selected property
-                        //                 });
-                        //               },
-                        //               buttonStyleData: ButtonStyleData(
-                        //                 height: 45,
-                        //                 width: 160,
-                        //                 padding: const EdgeInsets.only(
-                        //                     left: 14, right: 14),
-                        //                 decoration: BoxDecoration(
-                        //                   borderRadius:
-                        //                       BorderRadius.circular(6),
-                        //                   color: Colors.white,
-                        //                 ),
-                        //                 elevation: 2,
-                        //               ),
-                        //               iconStyleData: const IconStyleData(
-                        //                 icon: Icon(
-                        //                   Icons.arrow_drop_down,
-                        //                 ),
-                        //                 iconSize: 24,
-                        //                 iconEnabledColor: Color(0xFFb0b6c3),
-                        //                 iconDisabledColor: Colors.grey,
-                        //               ),
-                        //               dropdownStyleData: DropdownStyleData(
-                        //                 decoration: BoxDecoration(
-                        //                   borderRadius:
-                        //                       BorderRadius.circular(6),
-                        //                   color: Colors.white,
-                        //                 ),
-                        //                 scrollbarTheme: ScrollbarThemeData(
-                        //                   radius: const Radius.circular(6),
-                        //                   thickness:
-                        //                       MaterialStateProperty.all(6),
-                        //                   thumbVisibility:
-                        //                       MaterialStateProperty.all(true),
-                        //                 ),
-                        //               ),
-                        //               menuItemStyleData:
-                        //                   const MenuItemStyleData(
-                        //                 height: 40,
-                        //                 padding: EdgeInsets.only(
-                        //                     left: 14, right: 14),
-                        //               ),
-                        //               validator: (value) {
-                        //                 if (value == null || value.isEmpty) {
-                        //                   return 'Please select an option';
-                        //                 }
-                        //                 return null;
-                        //               },
-                        //             ),
-                        //           ),
-                        //           units.isNotEmpty
-                        //               ? const Text('Unit',
-                        //                   style: TextStyle(
-                        //                       fontSize: 13,
-                        //                       fontWeight: FontWeight.bold,
-                        //                       color: Colors.grey))
-                        //               : Container(),
-                        //           const SizedBox(height: 0),
-                        //           units.isNotEmpty
-                        //               ? DropdownButtonHideUnderline(
-                        //                   child:
-                        //                       DropdownButtonFormField2<String>(
-                        //                     decoration: InputDecoration(
-                        //                         border: InputBorder.none),
-                        //                     isExpanded: true,
-                        //                     hint: const Row(
-                        //                       children: [
-                        //                         Expanded(
-                        //                           child: Text(
-                        //                             'Select Unit',
-                        //                             style: TextStyle(
-                        //                               fontSize: 14,
-                        //                               fontWeight:
-                        //                                   FontWeight.w400,
-                        //                               color: Color(0xFFb0b6c3),
-                        //                             ),
-                        //                             overflow:
-                        //                                 TextOverflow.ellipsis,
-                        //                           ),
-                        //                         ),
-                        //                       ],
-                        //                     ),
-                        //                     items: units.keys.map((unitId) {
-                        //                       return DropdownMenuItem<String>(
-                        //                         value: unitId,
-                        //                         child: Text(
-                        //                           units[unitId]!,
-                        //                           style: const TextStyle(
-                        //                             fontSize: 14,
-                        //                             fontWeight: FontWeight.w400,
-                        //                             color: Colors.black87,
-                        //                           ),
-                        //                           overflow:
-                        //                               TextOverflow.ellipsis,
-                        //                         ),
-                        //                       );
-                        //                     }).toList(),
-                        //                     value: _selectedUnitId,
-                        //                     onChanged: (value) {
-                        //                       setState(() {
-                        //                         unitId = value.toString();
-                        //                         _selectedUnitId = value;
-                        //                         _selectedUnit = units[
-                        //                             value]; // Store selected rental_unit
-
-                        //                         print(
-                        //                             'Selected Unit: $_selectedUnit');
-                        //                       });
-                        //                     },
-                        //                     buttonStyleData: ButtonStyleData(
-                        //                       height: 45,
-                        //                       width: 160,
-                        //                       padding: const EdgeInsets.only(
-                        //                           left: 14, right: 14),
-                        //                       decoration: BoxDecoration(
-                        //                         borderRadius:
-                        //                             BorderRadius.circular(6),
-                        //                         color: Colors.white,
-                        //                       ),
-                        //                       elevation: 2,
-                        //                     ),
-                        //                     iconStyleData: const IconStyleData(
-                        //                       icon: Icon(Icons.arrow_drop_down),
-                        //                       iconSize: 24,
-                        //                       iconEnabledColor:
-                        //                           Color(0xFFb0b6c3),
-                        //                       iconDisabledColor: Colors.grey,
-                        //                     ),
-                        //                     dropdownStyleData:
-                        //                         DropdownStyleData(
-                        //                       decoration: BoxDecoration(
-                        //                         borderRadius:
-                        //                             BorderRadius.circular(6),
-                        //                         color: Colors.white,
-                        //                       ),
-                        //                       scrollbarTheme:
-                        //                           ScrollbarThemeData(
-                        //                         radius:
-                        //                             const Radius.circular(6),
-                        //                         thickness:
-                        //                             MaterialStateProperty.all(
-                        //                                 6),
-                        //                         thumbVisibility:
-                        //                             MaterialStateProperty.all(
-                        //                                 true),
-                        //                       ),
-                        //                     ),
-                        //                     menuItemStyleData:
-                        //                         const MenuItemStyleData(
-                        //                       height: 40,
-                        //                       padding: EdgeInsets.only(
-                        //                           left: 14, right: 14),
-                        //                     ),
-                        //                     validator: (value) {
-                        //                       if (value == null ||
-                        //                           value.isEmpty) {
-                        //                         return 'Please select an option';
-                        //                       }
-                        //                       return null;
-                        //                     },
-                        //                   ),
-                        //                 )
-                        //               : Container(),
-                        //         ],
-                        //       ),
                       ],
                     ),
                   ),
@@ -644,14 +357,15 @@ class _EditApplicantState extends State<EditApplicant> {
                                 widget.applicant.applicant!
                                     .applicantHomeNumber = homeNumber.text;
                                 widget.applicant.applicant!
-                                    .applicantBusinessNumber = bussinessNumber.text;
+                                        .applicantBusinessNumber =
+                                    bussinessNumber.text;
                                 widget.applicant.applicant!
-                                    .applicantTelephoneNumber = telePhoneNumber.text;
+                                        .applicantTelephoneNumber =
+                                    telePhoneNumber.text;
                                 widget.applicant.applicant!.applicantEmail =
                                     email.text;
                                 isLoading = false;
                               });
-
                             } catch (e) {
                               setState(() {
                                 isLoading = false;
@@ -662,7 +376,7 @@ class _EditApplicantState extends State<EditApplicant> {
                               isLoading = false;
                               errorMessage = "Admin ID not found";
                             });
-                          //  Fluttertoast.showToast(msg: "Admin ID not found");
+                            //  Fluttertoast.showToast(msg: "Admin ID not found");
                           }
                         },
                         child: isLoading
