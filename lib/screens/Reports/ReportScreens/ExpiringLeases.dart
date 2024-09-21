@@ -294,13 +294,17 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
     final String fileName = 'ExpiringLeaseReport_$formattedDate.xlsx';
 
     // Get the directory to save the file.
-    final directory = Directory('/storage/emulated/0/Download');
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Download');
+
     final path = '${directory.path}/$fileName';
 
-    // Ensure the directory exists
-    if (!await directory.exists()) {
+    // Create directory if it doesn't exist (for Android)
+    if (!await directory.exists() && !Platform.isIOS) {
       await directory.create(recursive: true);
     }
+
 
     // Save the file.
     final File file = File(path);
@@ -358,13 +362,17 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
     final String fileName = 'ExpiringLeaseReport_$formattedDate.csv';
 
     // Get the directory to save the file.
-    final directory = Directory('/storage/emulated/0/Download');
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Download');
+
     final path = '${directory.path}/$fileName';
 
-    // Ensure the directory exists
-    if (!await directory.exists()) {
+    // Create directory if it doesn't exist (for Android)
+    if (!await directory.exists() && !Platform.isIOS) {
       await directory.create(recursive: true);
     }
+
 
     // Save the file
     final File file = File(path);

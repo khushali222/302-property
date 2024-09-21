@@ -133,6 +133,7 @@ class PropertiesRepository {
         "company_name": rentalRequest.rentalOwnerData?.rentalOwnerCompanyName,
         "rental_id": rentalRequest.rentalId,
         "property_id": rentalRequest.propertyId,
+        "rentalowner_id":rentalRequest.rentalOwnerId,
         "rental_adress": rentalRequest.rentalAddress,
         "rental_city": rentalRequest.rentalCity,
         "rental_state": rentalRequest.rentalState,

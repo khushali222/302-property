@@ -197,7 +197,7 @@ class _FinancialTableState extends State<FinancialTable> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                     InkWell(
+                     GestureDetector(
                       onTap: () async {
                         setState(() {
                           isLoading = true; // Set loading to true when starting the refund process
@@ -273,7 +273,7 @@ class _FinancialTableState extends State<FinancialTable> {
                             )),
                       ),
                     ),
-                    InkWell(
+                    GestureDetector(
                       onTap: () {
                         Navigator.pop(context);
                       },
@@ -501,7 +501,7 @@ class _FinancialTableState extends State<FinancialTable> {
               ),
             ),
             Expanded(
-              child: InkWell(
+              child: GestureDetector(
                 onTap: () {
                   setState(() {
                     if (sorting1 == true) {
@@ -553,7 +553,7 @@ class _FinancialTableState extends State<FinancialTable> {
               ),
             ),
             Expanded(
-              child: InkWell(
+              child: GestureDetector(
                 onTap: () {
                   setState(() {
                     if (sorting2) {
@@ -601,7 +601,7 @@ class _FinancialTableState extends State<FinancialTable> {
               ),
             ),
             Expanded(
-              child: InkWell(
+              child: GestureDetector(
                 onTap: () {
                   setState(() {
                     if (sorting3) {
@@ -770,7 +770,7 @@ class _FinancialTableState extends State<FinancialTable> {
   Widget _buildHeader<T>(
       String text, int columnIndex, Comparable<T> Function(Data? d)? getField) {
     return TableCell(
-      child: InkWell(
+      child: GestureDetector(
         onTap: getField != null
             ? () {
                 _sort(getField, columnIndex, !_sortAscending);
@@ -816,7 +816,7 @@ class _FinancialTableState extends State<FinancialTable> {
               const SizedBox(
                 width: 20,
               ),
-              InkWell(
+              GestureDetector(
                 onTap: () {
                   handleEdit(data);
                 },
@@ -828,7 +828,7 @@ class _FinancialTableState extends State<FinancialTable> {
               const SizedBox(
                 width: 15,
               ),
-              InkWell(
+              GestureDetector(
                 onTap: () {
                   handleDelete(data);
                 },
@@ -958,7 +958,7 @@ class _FinancialTableState extends State<FinancialTable> {
 
   Widget _buildInteractiveCells(String content, VoidCallback onTap) {
     return TableCell(
-      child: InkWell(
+      child: GestureDetector(
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -1583,7 +1583,7 @@ class _FinancialTableState extends State<FinancialTable> {
                 //                                   crossAxisAlignment:
                 //                                   CrossAxisAlignment.center,
                 //                                   children: <Widget>[
-                //                                     InkWell(
+                //                                     GestureDetector(
                 //                                       onTap: () {
                 //                                         setState(() {
                 //                                           if (expandedIndex ==
@@ -1981,6 +1981,7 @@ class _FinancialTableState extends State<FinancialTable> {
                       } else {
                         final leaseLedger = snapshot.data!;
                         final data = leaseLedger.data!.toList();
+
                         return SingleChildScrollView(
                           child: Column(
                             children: [
@@ -2096,7 +2097,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.center,
                                                 children: <Widget>[
-                                                  InkWell(
+                                                  GestureDetector(
                                                     onTap: () {
                                                       setState(() {
                                                         if (expandedIndex ==
@@ -2268,7 +2269,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                   children: [
                                                                     const TextSpan(
                                                                       text:
-                                                                          'Increase : ',
+                                                                          'Amount : ',
                                                                       style:
                                                                           TextStyle(
                                                                         fontWeight:
@@ -2281,16 +2282,16 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                       ),
                                                                     ),
                                                                     TextSpan(
-                                                                      text: (data.type == "Refund" ||
-                                                                              data.type == "Charge")
-                                                                          ? '${data.totalAmount}'
-                                                                          : 'N/A',
+                                                                      text: data.type == "Refund" ||
+                                                                      data.type == "Charge"
+                                                                    ? '\$${data.totalAmount!.toStringAsFixed(2)}'
+                                                                        : ' - \$${data.totalAmount!.toStringAsFixed(2)}'
+                                                                         ,
                                                                       style:
-                                                                          const TextStyle(
+                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.w700,
-                                                                        color: Colors
-                                                                            .grey,
+                                                                        color: grey,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -2319,51 +2320,23 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                           ? '${data.tenantData["tenant_firstName"] ?? ""} ${data.tenantData["tenant_lastName"] ?? ""}'
                                                                           : 'N/A',
                                                                       style:
-                                                                          const TextStyle(
+                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.w700,
-                                                                        color: Colors
-                                                                            .grey,
+                                                                        color:grey,
                                                                       ),
                                                                     ),
                                                                   ],
                                                                 ),
                                                               ),
-                                                              (data.type !=
-                                                                      'Charge')
-                                                                  ? Text.rich(
-                                                                      TextSpan(
-                                                                        children: [
-                                                                          TextSpan(
-                                                                            text:
-                                                                                'Decrease: ',
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: blueColor,
-                                                                            ),
-                                                                          ),
-                                                                          TextSpan(
-                                                                            text: (data.type != "Refund" && data.type != "Charge")
-                                                                                ? '${data.totalAmount}'
-                                                                                : 'N/A',
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontWeight: FontWeight.w700,
-                                                                              color: grey,
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    )
-                                                                  : Container(),
+
                                                             ],
                                                           ),
                                                         ),
 
                                                       ],
                                                     ),
-                                                    if(data.paymenttype == "payment")
+                                                    if(data.type == "Payment" || data.type == "Charge")
                                                     Padding(
                                                       padding:
                                                           const EdgeInsets.only(
@@ -2448,7 +2421,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                       ),
                                                     ),
                                                     SizedBox(height: 10,),
-                                                    if(data.paymenttype == "payment")
+                                                    if(data.type == "Payment" || data.type == "Charge")
                                                     Column(
                                                       children: uniqueEntries
                                                           .map((entry) {
@@ -2529,8 +2502,8 @@ class _FinancialTableState extends State<FinancialTable> {
                                                         );
                                                       }).toList(),
                                                     ),
-                                                    if (data.paymenttype ==
-                                                        "Card" &&  data.paymenttype == "payment")
+                                                   /* if (data.paymenttype ==
+                                                        "Card" &&  data.type == "Payment")
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
@@ -2608,15 +2581,14 @@ class _FinancialTableState extends State<FinancialTable> {
                                                             ),
                                                           ],
                                                         ),
-                                                      ),
+                                                      ),*/
                                                   if (data.type != "Refund" && data.type != "Charge")
                                                     Row(
                                                       //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: [
-
                                                         // SizedBox(width: 5,),
                                                         Expanded(
-                                                          child: InkWell(
+                                                          child: GestureDetector(
                                                             onTap:(){
                                                               setState(() {
                                                                 _amountController.text = (data.totalAmount! - data.surcharge!).toString();
@@ -2651,7 +2623,6 @@ class _FinancialTableState extends State<FinancialTable> {
                                                             ),
                                                           ),
                                                         ),
-
                                                       ],
                                                     ),
                                                     if ( data.type == "Charge")
@@ -3247,7 +3218,7 @@ class _FinancialTableState extends State<FinancialTable> {
 
   Widget _buildInteractiveCell(String text, VoidCallback onTap) {
     return TableCell(
-      child: InkWell(
+      child: GestureDetector(
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
