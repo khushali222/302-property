@@ -2089,7 +2089,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           );
                                                         }).toList(),
                                                       ),
-                                                    if (data.paymenttype ==
+                                                   /* if (data.paymenttype ==
                                                             "Card" &&
                                                         data.paymenttype ==
                                                             "payment")
