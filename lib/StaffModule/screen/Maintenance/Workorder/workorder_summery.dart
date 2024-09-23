@@ -83,7 +83,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? staffid = prefs.getString("staff_id");
-  //  String? id = prefs.getString("adminId");
+    //  String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     setState(() {
       _isLoadingstaff = true;
@@ -101,10 +101,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> staffnames = {};
         jsonResponse.forEach((data) {
-
           staffnames[data['staffmember_id'].toString()] =
               data['staffmember_name'].toString();
-
         });
 
         setState(() {
@@ -115,7 +113,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
         throw Exception('Failed to load data');
       }
     } catch (e) {
-
       setState(() {
         _isLoadingstaff = false;
       });
@@ -133,7 +130,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
       key: key,
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Work Order",dropdown: true,),
+      drawer: CustomDrawer(
+        currentpage: "Work Order",
+        dropdown: true,
+      ),
       body: Column(
         children: [
           SizedBox(
@@ -3160,59 +3160,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
     );
   }
 
-  //
-  // updatecheckBox() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //
-  //   String? id = prefs.getString("adminId");
-  //   String? token = prefs.getString('token');
-  //   var checkvalue = {"applicant_checkedChecklist": applicantChecklist};
-  //   final response = await http.put(
-  //     Uri.parse('$Api_url/api/applicant/applicant/${widget.applicant_id}'),
-  //     headers: <String, String>{
-  //       "id": "CRM $id",
-  //       "authorization": "CRM $token",
-  //       'Content-Type': 'application/json; charset=UTF-8',
-  //     },
-  //     body: jsonEncode(checkvalue),
-  //   );
-  //   if (response.statusCode == 200) {
-  //     // Fluttertoast.showToast(msg: 'Applicant Updated Successfully');
-  //
-  //     setState(() {});
-  //   } else {
-  //     // Log the response body for debugging
-  //     print('Failed to update data: ${response.body}');
-  //     throw Exception('Failed to update applicant data');
-  //   }
-  // }
-  //
-  // updatecheckBoxnew(List applicant) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //
-  //   String? id = prefs.getString("adminId");
-  //   String? token = prefs.getString('token');
-  //   var checkvalue = {"applicant_checklist": applicant};
-  //   final response = await http.put(
-  //     Uri.parse(
-  //         '$Api_url/api/applicant/applicant/${widget.applicant_id}/checklist'),
-  //     headers: <String, String>{
-  //       "id": "CRM $id",
-  //       "authorization": "CRM $token",
-  //       'Content-Type': 'application/json; charset=UTF-8',
-  //     },
-  //     body: jsonEncode(checkvalue),
-  //   );
-  //   if (response.statusCode == 200) {
-  //     // Fluttertoast.showToast(msg: 'Applicant Updated Successfully');
-  //
-  //     setState(() {});
-  //   } else {
-  //     // Log the response body for debugging
-  //     print('Failed to update data: ${response.body}');
-  //     throw Exception('Failed to update applicant data');
-  //   }
-  // }
   void showUpdateDialog(BuildContext context) {
     // Initialize variables to store user input
     String? selectedStatus;

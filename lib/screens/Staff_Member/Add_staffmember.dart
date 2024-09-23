@@ -636,11 +636,11 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 Text(
                                   passwordmessage,
                                   style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              .037,
-                                     ),
+                                    color: Colors.red,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            .037,
+                                  ),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -769,7 +769,6 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 }
                               }
                             },
-
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),
                               child: Container(

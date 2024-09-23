@@ -12,30 +12,29 @@ import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart'
 class Renewlease extends StatefulWidget {
   LeaseSummary lease;
   String leaseId;
-   Renewlease({super.key, required this.leaseId,required this.lease});
+  Renewlease({super.key, required this.leaseId, required this.lease});
 
   @override
   State<Renewlease> createState() => _RenewleaseState();
 }
 
 class _RenewleaseState extends State<Renewlease> {
-
   List formDataRecurringList = [];
   late Future<LeaseSummary> futureLeaseSummary;
-
 
   TabController? _tabController;
   @override
   void initState() {
     // TODO: implement initState
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
-   // _tabController = TabController(length: 3, vsync: this);
+    // _tabController = TabController(length: 3, vsync: this);
     _selectedLeaseType = widget.lease.data?.leaseType;
-     startDateController.text = widget.lease.data!.startDate ?? "";
-     endDateController.text = widget.lease.data!.endDate ?? "";
-     rent.text = widget.lease.data!.amount.toString();
-     super.initState();
+    startDateController.text = widget.lease.data!.startDate ?? "";
+    endDateController.text = widget.lease.data!.endDate ?? "";
+    rent.text = widget.lease.data!.amount.toString();
+    super.initState();
   }
+
   TextEditingController rent = TextEditingController();
   final TextEditingController startDateController = TextEditingController();
   DateTime? _startDate;
@@ -54,15 +53,17 @@ class _RenewleaseState extends State<Renewlease> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Rent Roll",dropdown: true,),
-      body:
-      ListView(
+      drawer: CustomDrawer(
+        currentpage: "Rent Roll",
+        dropdown: true,
+      ),
+      body: ListView(
         children: [
           SizedBox(
             height: 25,
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 20,right: 20),
+            padding: const EdgeInsets.only(left: 20, right: 20),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(5.0),
               child: Container(
@@ -100,10 +101,12 @@ class _RenewleaseState extends State<Renewlease> {
               future: futureLeaseSummary,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: SpinKitSpinningLines(
-                    color: blueColor,
-                    size: 55.0,
-                  ),);
+                  return Center(
+                    child: SpinKitSpinningLines(
+                      color: blueColor,
+                      size: 55.0,
+                    ),
+                  );
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData) {
@@ -112,15 +115,21 @@ class _RenewleaseState extends State<Renewlease> {
                   final leasesummery = snapshot.data!;
                   //final data = leaseLedger.data!.toList();
                   return Padding(
-                    padding: const EdgeInsets.only(left: 20,right: 20,top: 10,bottom: 20),
+                    padding: const EdgeInsets.only(
+                        left: 20, right: 20, top: 10, bottom: 20),
                     child: SingleChildScrollView(
-                      child:
-                      Column(
+                      child: Column(
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text('${leasesummery.data?.rentalAddress}',style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: blueColor),),
+                              Text(
+                                '${leasesummery.data?.rentalAddress}',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor),
+                              ),
                             ],
                           ),
                           SizedBox(
@@ -140,23 +149,30 @@ class _RenewleaseState extends State<Renewlease> {
                                     left: 8, right: 8, top: 10, bottom: 30),
                                 child: Column(
                                   children: [
-
                                     Container(
                                       height: 40,
-
                                       decoration: BoxDecoration(
                                           color: grey,
-                                          borderRadius: BorderRadius.only(topLeft: Radius.circular(8),
-                                              topRight: Radius.circular(8))
-                                      ),
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(8),
+                                              topRight: Radius.circular(8))),
                                       child: Column(
                                         // crossAxisAlignment: CrossAxisAlignment.center,
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           Row(
                                             children: [
-                                              SizedBox(width: 10,),
-                                              Text("Current terms",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.black),),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              Text(
+                                                "Current terms",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 15,
+                                                    color: Colors.black),
+                                              ),
                                             ],
                                           ),
                                         ],
@@ -170,78 +186,83 @@ class _RenewleaseState extends State<Renewlease> {
                                         TableRow(children: [
                                           TableCell(
                                               child: Padding(
-                                                padding: const EdgeInsets.all(12.0),
-                                                child: Text(
-                                                  'Lease Type',
-                                                  style: TextStyle(
-                                                      color: const Color(0xFF8A95A8),
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 16),
-                                                ),
-                                              )),
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: Text(
+                                              'Lease Type',
+                                              style: TextStyle(
+                                                  color:
+                                                      const Color(0xFF8A95A8),
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16),
+                                            ),
+                                          )),
                                           TableCell(
                                               child: Padding(
-                                                padding: const EdgeInsets.only(top: 12),
-                                                child: Text(
-                                                  '${leasesummery.data?.leaseType}',
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight: FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              )),
+                                            padding:
+                                                const EdgeInsets.only(top: 12),
+                                            child: Text(
+                                              '${leasesummery.data?.leaseType}',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: blueColor),
+                                            ),
+                                          )),
                                         ]),
                                         TableRow(children: [
                                           TableCell(
                                               child: Padding(
-                                                padding: const EdgeInsets.all(12.0),
-                                                child: Text(
-                                                  'Start - End ',
-                                                  style: TextStyle(
-                                                      color: const Color(0xFF8A95A8),
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 16),
-                                                ),
-                                              )),
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: Text(
+                                              'Start - End ',
+                                              style: TextStyle(
+                                                  color:
+                                                      const Color(0xFF8A95A8),
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16),
+                                            ),
+                                          )),
                                           TableCell(
                                               child: Padding(
-                                                padding: const EdgeInsets.only(top: 12),
-                                                child: Text(
-                                                  '${leasesummery.data?.startDate} to ${leasesummery.data?.endDate}',
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight: FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              )),
+                                            padding:
+                                                const EdgeInsets.only(top: 12),
+                                            child: Text(
+                                              '${leasesummery.data?.startDate} to ${leasesummery.data?.endDate}',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: blueColor),
+                                            ),
+                                          )),
                                         ]),
                                         TableRow(children: [
                                           TableCell(
                                               child: Padding(
-                                                padding: const EdgeInsets.all(12.0),
-                                                child: Text(
-                                                  'Rent',
-                                                  style: TextStyle(
-                                                      color: const Color(0xFF8A95A8),
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 16),
-                                                ),
-                                              )),
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: Text(
+                                              'Rent',
+                                              style: TextStyle(
+                                                  color:
+                                                      const Color(0xFF8A95A8),
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16),
+                                            ),
+                                          )),
                                           TableCell(
                                               child: Padding(
-                                                padding: const EdgeInsets.only(top: 12),
-                                                child: Text(
-                                                  '${leasesummery.data?.amount}',
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight: FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              )),
+                                            padding:
+                                                const EdgeInsets.only(top: 12),
+                                            child: Text(
+                                              '${leasesummery.data?.amount}',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: blueColor),
+                                            ),
+                                          )),
                                         ]),
                                       ],
                                     ),
-
                                   ],
                                 ),
                               ),
@@ -268,17 +289,26 @@ class _RenewleaseState extends State<Renewlease> {
                                       height: 40,
                                       decoration: BoxDecoration(
                                           color: grey,
-                                          borderRadius: BorderRadius.only(topLeft: Radius.circular(8),
-                                              topRight: Radius.circular(8))
-                                      ),
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(8),
+                                              topRight: Radius.circular(8))),
                                       child: Column(
                                         // crossAxisAlignment: CrossAxisAlignment.center,
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           Row(
                                             children: [
-                                              SizedBox(width: 10,),
-                                              Text("Offer",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.black),),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              Text(
+                                                "Offer",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 15,
+                                                    color: Colors.black),
+                                              ),
                                             ],
                                           ),
                                         ],
@@ -306,16 +336,21 @@ class _RenewleaseState extends State<Renewlease> {
                                     ),
                                     Row(
                                       children: [
-                                        SizedBox(width: 5,),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
                                         Expanded(
                                           child: FormField<String>(
                                             initialValue: _selectedLeaseType,
-                                            builder: (FormFieldState<String> state) {
+                                            builder:
+                                                (FormFieldState<String> state) {
                                               return Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   DropdownButtonHideUnderline(
-                                                    child: DropdownButton2<String>(
+                                                    child:
+                                                        DropdownButton2<String>(
                                                       isExpanded: true,
                                                       hint: const Row(
                                                         children: [
@@ -327,74 +362,114 @@ class _RenewleaseState extends State<Renewlease> {
                                                               'Type',
                                                               style: TextStyle(
                                                                 fontSize: 14,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.black,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: Colors
+                                                                    .black,
                                                               ),
-                                                              overflow: TextOverflow.ellipsis,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                             ),
                                                           ),
                                                         ],
                                                       ),
                                                       items: leaseTypeitems
                                                           .map(
-                                                            (String item) => DropdownMenuItem<String>(
-                                                          value: item,
-                                                          child: Text(
-                                                            item,
-                                                            style: const TextStyle(
-                                                              fontSize: 14,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.black,
+                                                            (String item) =>
+                                                                DropdownMenuItem<
+                                                                    String>(
+                                                              value: item,
+                                                              child: Text(
+                                                                item,
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontSize: 14,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .black,
+                                                                ),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                              ),
                                                             ),
-                                                            overflow: TextOverflow.ellipsis,
-                                                          ),
-                                                        ),
-                                                      )
+                                                          )
                                                           .toList(),
                                                       value: _selectedLeaseType,
                                                       onChanged: (value) {
                                                         // Update the FormField state
                                                         setState(() {
-                                                          _selectedLeaseType = value;
-                                                          state.didChange(value);
+                                                          _selectedLeaseType =
+                                                              value;
+                                                          state
+                                                              .didChange(value);
                                                         });
                                                         state.reset();
                                                       },
-                                                      buttonStyleData: ButtonStyleData(
+                                                      buttonStyleData:
+                                                          ButtonStyleData(
                                                         height: 50,
-
-                                                        padding: const EdgeInsets.only(left: 14, right: 14),
-                                                        decoration: BoxDecoration(
-                                                          borderRadius: BorderRadius.circular(6),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 14,
+                                                                right: 14),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(6),
                                                           border: Border.all(
-                                                            color: Colors.black26,
+                                                            color:
+                                                                Colors.black26,
                                                           ),
                                                           color: Colors.white,
                                                         ),
                                                         elevation: 3,
                                                       ),
-                                                      dropdownStyleData: DropdownStyleData(
+                                                      dropdownStyleData:
+                                                          DropdownStyleData(
                                                         maxHeight: 200,
                                                         width: 200,
-                                                        decoration: BoxDecoration(
-                                                          borderRadius: BorderRadius.circular(14),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(14),
                                                         ),
-                                                        offset: const Offset(-20, 0),
-                                                        scrollbarTheme: ScrollbarThemeData(
-                                                          radius: const Radius.circular(40),
-                                                          thickness: MaterialStateProperty.all(6),
-                                                          thumbVisibility: MaterialStateProperty.all(true),
+                                                        offset: const Offset(
+                                                            -20, 0),
+                                                        scrollbarTheme:
+                                                            ScrollbarThemeData(
+                                                          radius: const Radius
+                                                              .circular(40),
+                                                          thickness:
+                                                              MaterialStateProperty
+                                                                  .all(6),
+                                                          thumbVisibility:
+                                                              MaterialStateProperty
+                                                                  .all(true),
                                                         ),
                                                       ),
-                                                      menuItemStyleData: const MenuItemStyleData(
+                                                      menuItemStyleData:
+                                                          const MenuItemStyleData(
                                                         height: 40,
-                                                        padding: EdgeInsets.only(left: 14, right: 14),
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 14,
+                                                                right: 14),
                                                       ),
                                                     ),
                                                   ),
                                                   if (state.hasError)
                                                     Padding(
-                                                      padding: const EdgeInsets.only(left: 14, top: 8),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 14, top: 8),
                                                       child: Text(
                                                         state.errorText!,
                                                         style: const TextStyle(
@@ -414,7 +489,9 @@ class _RenewleaseState extends State<Renewlease> {
                                             },
                                           ),
                                         ),
-                                        SizedBox(width: 5,),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
                                       ],
                                     ),
                                     const SizedBox(
@@ -439,30 +516,40 @@ class _RenewleaseState extends State<Renewlease> {
                                       padding: const EdgeInsets.all(8.0),
                                       child: CustomTextField(
                                         onTap: () async {
-                                          DateTime? pickedDate = await showDatePicker(
+                                          DateTime? pickedDate =
+                                              await showDatePicker(
                                             context: context,
                                             initialDate: DateTime.now(),
                                             firstDate: DateTime(2000),
                                             lastDate: DateTime(2101),
                                             locale: const Locale('en', 'US'),
-                                            builder: (BuildContext context, Widget? child) {
+                                            builder: (BuildContext context,
+                                                Widget? child) {
                                               return Theme(
-                                                data: ThemeData.light().copyWith(
-                                                  colorScheme: const ColorScheme.light(
-                                                    primary: Color.fromRGBO(21, 43, 83,
+                                                data:
+                                                    ThemeData.light().copyWith(
+                                                  colorScheme:
+                                                      const ColorScheme.light(
+                                                    primary: Color.fromRGBO(
+                                                        21,
+                                                        43,
+                                                        83,
                                                         1), // header background color
-                                                    onPrimary:
-                                                    Colors.white, // header text color
+                                                    onPrimary: Colors
+                                                        .white, // header text color
                                                     onSurface: Color.fromRGBO(
-                                                        21, 43, 83, 1), // body text color
+                                                        21,
+                                                        43,
+                                                        83,
+                                                        1), // body text color
                                                   ),
-                                                  textButtonTheme: TextButtonThemeData(
+                                                  textButtonTheme:
+                                                      TextButtonThemeData(
                                                     style: TextButton.styleFrom(
-                                                      foregroundColor: Colors.white,
-                                                      backgroundColor: const Color.fromRGBO(
-                                                          21,
-                                                          43,
-                                                          83,
+                                                      foregroundColor:
+                                                          Colors.white,
+                                                      backgroundColor: const Color
+                                                          .fromRGBO(21, 43, 83,
                                                           1), // button text color
                                                     ),
                                                   ),
@@ -475,24 +562,27 @@ class _RenewleaseState extends State<Renewlease> {
                                           if (pickedDate != null) {
                                             // String formattedStartDate =
                                             //     "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                                            String formattedStartDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                                            DateTime endDate = DateTime(pickedDate.year,
-                                                pickedDate.month + 1, pickedDate.day);
-
+                                            String formattedStartDate =
+                                                "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                            DateTime endDate = DateTime(
+                                                pickedDate.year,
+                                                pickedDate.month + 1,
+                                                pickedDate.day);
 
                                             // String formattedEndDate =
                                             //     "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
                                             setState(() {
-                                              startDateController.text = formattedStartDate;
+                                              startDateController.text =
+                                                  formattedStartDate;
                                               _startDate = pickedDate;
-
                                             });
                                           }
                                         },
                                         readOnnly: true,
                                         suffixIcon: IconButton(
                                             onPressed: () {},
-                                            icon: const Icon(Icons.date_range_rounded)),
+                                            icon: const Icon(
+                                                Icons.date_range_rounded)),
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
                                             return 'Please select start date';
@@ -526,30 +616,40 @@ class _RenewleaseState extends State<Renewlease> {
                                       padding: const EdgeInsets.all(8.0),
                                       child: CustomTextField(
                                         onTap: () async {
-                                          DateTime? pickedDate = await showDatePicker(
+                                          DateTime? pickedDate =
+                                              await showDatePicker(
                                             context: context,
                                             initialDate: DateTime.now(),
                                             firstDate: DateTime(2000),
                                             lastDate: DateTime(2101),
                                             locale: const Locale('en', 'US'),
-                                            builder: (BuildContext context, Widget? child) {
+                                            builder: (BuildContext context,
+                                                Widget? child) {
                                               return Theme(
-                                                data: ThemeData.light().copyWith(
-                                                  colorScheme: const ColorScheme.light(
-                                                    primary: Color.fromRGBO(21, 43, 83,
+                                                data:
+                                                    ThemeData.light().copyWith(
+                                                  colorScheme:
+                                                      const ColorScheme.light(
+                                                    primary: Color.fromRGBO(
+                                                        21,
+                                                        43,
+                                                        83,
                                                         1), // header background color
-                                                    onPrimary:
-                                                    Colors.white, // header text color
+                                                    onPrimary: Colors
+                                                        .white, // header text color
                                                     onSurface: Color.fromRGBO(
-                                                        21, 43, 83, 1), // body text color
+                                                        21,
+                                                        43,
+                                                        83,
+                                                        1), // body text color
                                                   ),
-                                                  textButtonTheme: TextButtonThemeData(
+                                                  textButtonTheme:
+                                                      TextButtonThemeData(
                                                     style: TextButton.styleFrom(
-                                                      foregroundColor: Colors.white,
-                                                      backgroundColor: const Color.fromRGBO(
-                                                          21,
-                                                          43,
-                                                          83,
+                                                      foregroundColor:
+                                                          Colors.white,
+                                                      backgroundColor: const Color
+                                                          .fromRGBO(21, 43, 83,
                                                           1), // button text color
                                                     ),
                                                   ),
@@ -562,16 +662,19 @@ class _RenewleaseState extends State<Renewlease> {
                                           if (pickedDate != null) {
                                             // String formattedDate =
                                             //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                            String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                            String formattedDate =
+                                                "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                                             setState(() {
-                                              endDateController.text = formattedDate;
+                                              endDateController.text =
+                                                  formattedDate;
                                             });
                                           }
                                         },
                                         readOnnly: true,
                                         suffixIcon: IconButton(
                                             onPressed: () {},
-                                            icon: const Icon(Icons.date_range_rounded)),
+                                            icon: const Icon(
+                                                Icons.date_range_rounded)),
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
                                             return 'Please select end date';
@@ -606,7 +709,6 @@ class _RenewleaseState extends State<Renewlease> {
                                       hintText: 'Enter rent',
                                       controller: rent,
                                     ),
-
                                   ],
                                 ),
                               ),
@@ -618,23 +720,28 @@ class _RenewleaseState extends State<Renewlease> {
                           Row(
                             children: [
                               GestureDetector(
-                                onTap: (){
-
-                                },
+                                onTap: () {},
                                 child: Container(
-                                    height:  MediaQuery.of(context).size.width < 500 ? 40 :45,
-                                    width: MediaQuery.of(context).size.width < 500 ? 90 : 150,
-
+                                    height:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 40
+                                            : 45,
+                                    width:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 90
+                                            : 150,
                                     decoration: BoxDecoration(
                                         color: blueColor,
-                                        borderRadius: BorderRadius.circular(5.0)),
+                                        borderRadius:
+                                            BorderRadius.circular(5.0)),
                                     child: Center(
                                       child: Text(
                                         'Ok',
                                         style: TextStyle(
-                                            fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                500
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
                                                 ? 16
                                                 : 18,
                                             fontWeight: FontWeight.bold,
@@ -643,23 +750,30 @@ class _RenewleaseState extends State<Renewlease> {
                                     )),
                               ),
                               GestureDetector(
-                                onTap: (){
+                                onTap: () {
                                   Navigator.pop(context);
                                 },
                                 child: Container(
-                                    height:  MediaQuery.of(context).size.width < 500 ? 35 :45,
-                                    width: MediaQuery.of(context).size.width < 500 ? 120 : 165,
-
+                                    height:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 35
+                                            : 45,
+                                    width:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 120
+                                            : 165,
                                     decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius: BorderRadius.circular(5.0)),
+                                        borderRadius:
+                                            BorderRadius.circular(5.0)),
                                     child: Center(
                                       child: Text(
                                         'Cancel',
                                         style: TextStyle(
-                                            fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                500
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
                                                 ? 16
                                                 : 18,
                                             fontWeight: FontWeight.bold,

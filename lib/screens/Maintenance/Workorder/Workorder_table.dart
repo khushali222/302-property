@@ -18,6 +18,7 @@ import '../../../constant/constant.dart';
 import '../../../model/workordr.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/custom_drawer.dart';
+
 class Workorder_table extends StatefulWidget {
   const Workorder_table({super.key});
 
@@ -224,23 +225,6 @@ class _Workorder_tableState extends State<Workorder_table> {
                     const Text("      Billable ",
                         style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
-                    /*ascending3
-                        ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),*/
                   ],
                 ),
               ),
@@ -279,17 +263,6 @@ class _Workorder_tableState extends State<Workorder_table> {
     if (check == true) {
       setState(() {});
     }
-    // final result = await Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (context) => Edit_property_type(
-    //               property: property,
-    //             )));
-    /* if (result == true) {
-      setState(() {
-        futureDatas = DataRepository().fetchDatas();
-      });
-    }*/
   }
 
   void _showAlert(BuildContext context, String id) {
@@ -316,7 +289,8 @@ class _Workorder_tableState extends State<Workorder_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data =  await WorkOrderRepository().DeleteWorkOrder(workOrderid: id);
+            var data =
+                await WorkOrderRepository().DeleteWorkOrder(workOrderid: id);
             // Add your delete logic here
             setState(() {
               futureworkorders = WorkOrderRepository().fetchWorkOrders();
@@ -369,37 +343,6 @@ class _Workorder_tableState extends State<Workorder_table> {
     print('Delete ${workorder.workOrderData?.workOrderId!}');
   }
 
-  // Widget _buildHeader<T>(String text, int columnIndex,
-  //     Comparable<T> Function(Data d)? getField) {
-  //   return Container(
-  //     height: 70,
-  //     // color: Colors.blue,
-  //     child: TableCell(
-  //       child: InkWell(
-  //         onTap: getField != null
-  //             ? () {
-  //                 _sort(getField, columnIndex, !_sortAscending);
-  //               }
-  //             : null,
-  //         child: Padding(
-  //           padding: const EdgeInsets.all(14.0),
-  //           child: Row(
-  //             children: [
-  //               SizedBox(width: 10),
-  //               Text(text,
-  //                   style:
-  //                       TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-  //               if (_sortColumnIndex == columnIndex)
-  //                 Icon(_sortAscending
-  //                     ? Icons.arrow_drop_down_outlined
-  //                     : Icons.arrow_drop_up_outlined),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
   Widget _buildHeader<T>(
       String text, int columnIndex, Comparable<T> Function(Data d)? getField) {
     return TableCell(
@@ -465,45 +408,6 @@ class _Workorder_tableState extends State<Workorder_table> {
     );
   }
 
-  // Widget _buildActionsCell(Data data) {
-  //   return Padding(
-  //     padding: const EdgeInsets.all(5.0),
-  //     child: Container(
-  //       height: 50,
-  //       // color: Colors.blue,
-  //       child: TableCell(
-  //         child: Row(
-  //           children: [
-  //             SizedBox(
-  //               width: 20,
-  //             ),
-  //             InkWell(
-  //               onTap: () {
-  //                 handleEdit(data);
-  //               },
-  //               child: FaIcon(
-  //                 FontAwesomeIcons.edit,
-  //                 size: 30,
-  //               ),
-  //             ),
-  //             SizedBox(
-  //               width: 15,
-  //             ),
-  //             InkWell(
-  //               onTap: () {
-  //                 handleDelete(data);
-  //               },
-  //               child: FaIcon(
-  //                 FontAwesomeIcons.trashCan,
-  //                 size: 30,
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
   Widget _buildActionsCell(Data data) {
     return TableCell(
       child: Padding(
@@ -634,7 +538,10 @@ class _Workorder_tableState extends State<Workorder_table> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Work Order",dropdown: true,),
+      drawer: CustomDrawer(
+        currentpage: "Work Order",
+        dropdown: true,
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -643,7 +550,7 @@ class _Workorder_tableState extends State<Workorder_table> {
             Padding(
               padding: const EdgeInsets.only(left: 0, right: 0),
               child: Row(
-              //  mainAxisAlignment: MainAxisAlignment.end,
+                //  mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
@@ -921,7 +828,6 @@ class _Workorder_tableState extends State<Workorder_table> {
                         color: Colors.black,
                         size: 40.0,
                       ));
-
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return Container(
                         height: MediaQuery.of(context).size.height * .5,
@@ -930,9 +836,21 @@ class _Workorder_tableState extends State<Workorder_table> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
-                              SizedBox(height: 10,),
-                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                              Image.asset(
+                                "assets/images/no_data.jpg",
+                                height: 200,
+                                width: 200,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                "No Data Available",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                    fontSize: 16),
+                              )
                             ],
                           ),
                         ),
@@ -945,10 +863,10 @@ class _Workorder_tableState extends State<Workorder_table> {
                         data = snapshot.data!;
                       } else if (searchvalue!.isNotEmpty) {
                         data = snapshot.data!
-                            .where((workorder) =>
-                                workorder.workOrderData!.workSubject!
-                                    .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()) )
+                            .where((workorder) => workorder
+                                .workOrderData!.workSubject!
+                                .toLowerCase()
+                                .contains(searchvalue!.toLowerCase()))
                             .toList();
                       } else {
                         data = snapshot.data!
@@ -977,7 +895,9 @@ class _Workorder_tableState extends State<Workorder_table> {
                             const SizedBox(height: 20),
                             Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                                  border: Border.all(
+                                      color:
+                                          Color.fromRGBO(152, 162, 179, .5))),
                               // decoration: BoxDecoration(
                               //     border: Border.all(color: blueColor)),
                               child: Column(
@@ -991,8 +911,12 @@ class _Workorder_tableState extends State<Workorder_table> {
                                   //return CustomExpansionTile(data: Data, index: index);
                                   return Container(
                                     decoration: BoxDecoration(
-                                      color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                                      color: index % 2 != 0
+                                          ? Colors.white
+                                          : blueColor.withOpacity(0.09),
+                                      border: Border.all(
+                                          color: Color.fromRGBO(
+                                              152, 162, 179, .5)),
                                     ),
                                     // decoration: BoxDecoration(
                                     //   border: Border.all(color: blueColor),
@@ -1036,7 +960,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                   child: Container(
                                                     margin:
                                                         const EdgeInsets.only(
-                                                            left: 5,right: 5),
+                                                            left: 5, right: 5),
                                                     padding: !isExpanded
                                                         ? const EdgeInsets.only(
                                                             bottom: 10)
@@ -1056,7 +980,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  flex:3,
+                                                  flex: 3,
                                                   child: InkWell(
                                                     onTap: () {
                                                       setState(() {
@@ -1086,7 +1010,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                                 .width *
                                                             .05),
                                                 Expanded(
-                                                  flex:2,
+                                                  flex: 2,
                                                   child: Text(
                                                     '${workOrder.workOrderData?.status}',
                                                     style: TextStyle(
@@ -1105,7 +1029,6 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                             .03),
                                                 Expanded(
                                                   child: Row(
-
                                                     children: [
                                                       if (workOrder
                                                               .workOrderData
@@ -1407,12 +1330,12 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                       FaIcon(
                                                         isExpanded
                                                             ? FontAwesomeIcons
-                                                            .sortUp
+                                                                .sortUp
                                                             : FontAwesomeIcons
-                                                            .sortDown,
+                                                                .sortDown,
                                                         size: 30,
                                                         color:
-                                                        Colors.transparent,
+                                                            Colors.transparent,
                                                       ),
                                                       Expanded(
                                                         child: Table(
@@ -1424,21 +1347,37 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                           },
                                                           children: [
                                                             _buildTableRow(
-                                                                'Property:', _getDisplayValue(workOrder.rentalAddress?.rentalAdress),
-                                                                'Assign:', _getDisplayValue(workOrder.staffMember?.staffmemberName)
-                                                            ),
+                                                                'Property:',
+                                                                _getDisplayValue(
+                                                                    workOrder
+                                                                        .rentalAddress
+                                                                        ?.rentalAdress),
+                                                                'Assign:',
+                                                                _getDisplayValue(
+                                                                    workOrder
+                                                                        .staffMember
+                                                                        ?.staffmemberName)),
                                                             _buildTableRow(
-                                                                'Category :', _getDisplayValue(workOrder.workOrderData?.workCategory),
-                                                                'Created At:', formatDate('${workOrder.workOrderData?.createdAt}')
-                                                            ),
+                                                                'Category :',
+                                                                _getDisplayValue(
+                                                                    workOrder
+                                                                        .workOrderData
+                                                                        ?.workCategory),
+                                                                'Created At:',
+                                                                formatDate(
+                                                                    '${workOrder.workOrderData?.createdAt}')),
                                                             _buildTableRow(
-                                                                'Updated At:', formatDate('${workOrder.workOrderData?.updatedAt}}'),
-                                                                '', ''
-                                                            ),
+                                                                'Updated At:',
+                                                                formatDate(
+                                                                    '${workOrder.workOrderData?.updatedAt}}'),
+                                                                '',
+                                                                ''),
                                                           ],
                                                         ),
                                                       ),
-                                                      SizedBox(width: 5,),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
                                                       // Column(
                                                       //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       //   children: [
@@ -1492,15 +1431,16 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                     children: [
                                                       Expanded(
                                                         child: GestureDetector(
-                                                          onTap:()async{
-                                                            var check = await Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder: (context) => ResponsiveEditWorkOrder(
-                                                                      workorderId: workOrder.workOrderData!.workOrderId!,
-                                                                    )));
-                                                            if (check ==
-                                                                true) {
+                                                          onTap: () async {
+                                                            var check = await Navigator
+                                                                .push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) =>
+                                                                            ResponsiveEditWorkOrder(
+                                                                              workorderId: workOrder.workOrderData!.workOrderId!,
+                                                                            )));
+                                                            if (check == true) {
                                                               setState(() {
                                                                 futureworkorders =
                                                                     WorkOrderRepository()
@@ -1509,32 +1449,49 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                             }
                                                           },
                                                           child: Container(
-                                                            height:40,
+                                                            height: 40,
                                                             decoration: BoxDecoration(
-                                                                color: Colors.grey[350]
-                                                            ),                                               // color:Colors.grey[100],
+                                                                color: Colors
+                                                                        .grey[
+                                                                    350]), // color:Colors.grey[100],
                                                             child: Row(
                                                               mainAxisAlignment:
-                                                              MainAxisAlignment.center,
+                                                                  MainAxisAlignment
+                                                                      .center,
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment.center,
+                                                                  CrossAxisAlignment
+                                                                      .center,
                                                               children: [
                                                                 FaIcon(
-                                                                  FontAwesomeIcons.edit,
+                                                                  FontAwesomeIcons
+                                                                      .edit,
                                                                   size: 15,
-                                                                  color:blueColor,
+                                                                  color:
+                                                                      blueColor,
                                                                 ),
-                                                                SizedBox(width: 10,),
-                                                                Text("Edit",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                                                                SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                Text(
+                                                                  "Edit",
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                          blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                ),
                                                               ],
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(width: 5,),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
                                                       Expanded(
                                                         child: GestureDetector(
-                                                          onTap:(){
+                                                          onTap: () {
                                                             _showAlert(
                                                                 context,
                                                                 workOrder
@@ -1542,70 +1499,103 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                                     .workOrderId!);
                                                           },
                                                           child: Container(
-                                                            height:40,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors.grey[350]
-                                                            ),
+                                                            height: 40,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        350]),
                                                             child: Row(
                                                               mainAxisAlignment:
-                                                              MainAxisAlignment.center,
+                                                                  MainAxisAlignment
+                                                                      .center,
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment.center,
+                                                                  CrossAxisAlignment
+                                                                      .center,
                                                               children: [
                                                                 FaIcon(
-                                                                  FontAwesomeIcons.trashCan,
+                                                                  FontAwesomeIcons
+                                                                      .trashCan,
                                                                   size: 15,
-                                                                  color:blueColor,
+                                                                  color:
+                                                                      blueColor,
                                                                 ),
-                                                                SizedBox(width: 10,),
-                                                                Text("Delete",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
+                                                                SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                Text(
+                                                                  "Delete",
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                          blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                )
                                                               ],
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(width: 5,),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
                                                       Expanded(
                                                         child: GestureDetector(
                                                           onTap: () {
                                                             Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(
-                                                                    builder: (context) =>
-                                                                        Workorder_summery(
-                                                                          workorder_id:
-                                                                          workOrder
-                                                                              .workOrderData
-                                                                              ?.workOrderId,
-                                                                        )));
-
+                                                                    builder:
+                                                                        (context) =>
+                                                                            Workorder_summery(
+                                                                              workorder_id: workOrder.workOrderData?.workOrderId,
+                                                                            )));
                                                           },
                                                           child: Container(
-                                                            height:40,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors.grey[350]
-                                                            ),
+                                                            height: 40,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        350]),
                                                             child: Row(
                                                               mainAxisAlignment:
-                                                              MainAxisAlignment.center,
+                                                                  MainAxisAlignment
+                                                                      .center,
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment.center,
+                                                                  CrossAxisAlignment
+                                                                      .center,
                                                               children: [
-                                                                SizedBox(width: 5,),
-                                                                Image.asset('assets/icons/view.png'),
+                                                                SizedBox(
+                                                                  width: 5,
+                                                                ),
+                                                                Image.asset(
+                                                                    'assets/icons/view.png'),
                                                                 // FaIcon(
                                                                 //   FontAwesomeIcons.trashCan,
                                                                 //   size: 15,
                                                                 //   color:blueColor,
                                                                 // ),
-                                                                SizedBox(width: 8,),
-                                                                Text("View Summery",style: TextStyle(fontSize: 11,color: blueColor,fontWeight: FontWeight.bold),)
+                                                                SizedBox(
+                                                                  width: 8,
+                                                                ),
+                                                                Text(
+                                                                  "View Summery",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          11,
+                                                                      color:
+                                                                          blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                )
                                                               ],
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-
                                                     ],
                                                   ),
                                                 ],
@@ -1647,13 +1637,16 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                            onChanged: data.length >
+                                                    itemsPerPageOptions
+                                                        .first // Condition to check if dropdown should be enabled
                                                 ? (newValue) {
-                                              setState(() {
-                                                itemsPerPage = newValue!;
-                                                currentPage = 0; // Reset to first page when items per page change
-                                              });
-                                            }
+                                                    setState(() {
+                                                      itemsPerPage = newValue!;
+                                                      currentPage =
+                                                          0; // Reset to first page when items per page change
+                                                    });
+                                                  }
                                                 : null,
                                           ),
                                         ),
@@ -2007,7 +2000,9 @@ class _Workorder_tableState extends State<Workorder_table> {
       ),
     );
   }
-  TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel, String rightValue) {
+
+  TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel,
+      String rightValue) {
     return TableRow(
       children: [
         TableCell(
@@ -2018,7 +2013,8 @@ class _Workorder_tableState extends State<Workorder_table> {
               children: [
                 Text(
                   leftLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
                 SizedBox(height: 2.0), // Space between label and value
                 Text(
@@ -2037,7 +2033,8 @@ class _Workorder_tableState extends State<Workorder_table> {
               children: [
                 Text(
                   rightLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
                 SizedBox(height: 2.0), // Space between label and value
                 Text(

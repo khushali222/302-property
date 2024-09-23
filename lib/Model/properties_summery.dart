@@ -732,6 +732,8 @@ class TenantData {
   });
 
   factory TenantData.fromJson(Map<String, dynamic> json) {
+    print('tenanta id ${json['tenant_id']}');
+
     return TenantData(
       id: json['_id'],
       tenantId: json['tenant_id'] != null ? [json['tenant_id']] : null,

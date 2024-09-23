@@ -35,7 +35,7 @@ import '../../../model/LeaseLedgerModel.dart';
 
 import 'addcard/AddCard.dart';
 import 'enterCharge.dart';
-import 'package:http/http.dart'as http;
+import 'package:http/http.dart' as http;
 
 class FinancialTable extends StatefulWidget {
   final String leaseId;
@@ -44,7 +44,11 @@ class FinancialTable extends StatefulWidget {
   final String? rentalAddress;
   final String? rentalUnit;
   FinancialTable(
-      {required this.leaseId, required this.status, required this.tenantId,this.rentalAddress,this.rentalUnit});
+      {required this.leaseId,
+      required this.status,
+      required this.tenantId,
+      this.rentalAddress,
+      this.rentalUnit});
   @override
   _FinancialTableState createState() => _FinancialTableState();
 }
@@ -63,22 +67,6 @@ class _FinancialTableState extends State<FinancialTable> {
     50,
     100,
   ]; // Options for items per page
-
-  // void sortData(List<leaseLedger> data) {
-  //   if (sorting1) {
-  //     data.sort((a, b) => ascending1
-  //         ? a.propertyType!.compareTo(b.propertyType!)
-  //         : b.propertyType!.compareTo(a.propertyType!));
-  //   } else if (sorting2) {
-  //     data.sort((a, b) => ascending2
-  //         ? a.propertysubType!.compareTo(b.propertysubType!)
-  //         : b.propertysubType!.compareTo(a.propertysubType!));
-  //   } else if (sorting3) {
-  //     data.sort((a, b) => ascending3
-  //         ? a.createdAt!.compareTo(b.createdAt!)
-  //         : b.createdAt!.compareTo(a.createdAt!));
-  //   }
-  // }
 
   int? expandedIndex;
   Set<int> expandedIndices = {};
@@ -112,8 +100,12 @@ class _FinancialTableState extends State<FinancialTable> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(5.0),
                       child: Container(
-                        height: (MediaQuery.of(context).size.width < 500) ? 50 : 60,
-                        padding: EdgeInsets.only(top: MediaQuery.of(context).size.width < 500 ? 9 : 5, left: 10),
+                        height:
+                            (MediaQuery.of(context).size.width < 500) ? 50 : 60,
+                        padding: EdgeInsets.only(
+                            top:
+                                MediaQuery.of(context).size.width < 500 ? 9 : 5,
+                            left: 10),
                         width: 250,
                         margin: const EdgeInsets.only(bottom: 6.0),
                         decoration: BoxDecoration(
@@ -152,14 +144,17 @@ class _FinancialTableState extends State<FinancialTable> {
                             return Theme(
                               data: ThemeData.light().copyWith(
                                 colorScheme: const ColorScheme.light(
-                                  primary: Color.fromRGBO(21, 43, 83, 1), // header background color
+                                  primary: Color.fromRGBO(
+                                      21, 43, 83, 1), // header background color
                                   onPrimary: Colors.white, // header text color
-                                  onSurface: Color.fromRGBO(21, 43, 83, 1), // body text color
+                                  onSurface: Color.fromRGBO(
+                                      21, 43, 83, 1), // body text color
                                 ),
                                 textButtonTheme: TextButtonThemeData(
                                   style: TextButton.styleFrom(
                                     foregroundColor: Colors.white,
-                                    backgroundColor: const Color.fromRGBO(21, 43, 83, 1), // button text color
+                                    backgroundColor: const Color.fromRGBO(
+                                        21, 43, 83, 1), // button text color
                                   ),
                                 ),
                               ),
@@ -169,7 +164,8 @@ class _FinancialTableState extends State<FinancialTable> {
                         );
                         if (pickedDate != null) {
                           bool isfuture = pickedDate.isAfter(DateTime.now());
-                          String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                          String formattedDate =
+                              "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                           _dateController.text = formattedDate;
                         }
                       },
@@ -197,15 +193,17 @@ class _FinancialTableState extends State<FinancialTable> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                     GestureDetector(
+                    GestureDetector(
                       onTap: () async {
                         setState(() {
-                          isLoading = true; // Set loading to true when starting the refund process
+                          isLoading =
+                              true; // Set loading to true when starting the refund process
                         });
-                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
                         String? adminId = prefs.getString("adminId");
                         print(data.paymentId);
-                     final message = await   processRefund(
+                        final message = await processRefund(
                           paymentType: data.paymenttype!,
                           paymentId: data.paymentId!, // Add your paymentId here
                           responseData: data,
@@ -215,8 +213,8 @@ class _FinancialTableState extends State<FinancialTable> {
                           adminId: adminId!,
                         );
                         print(message);
-                        if(message !="success"){
-                       //   Navigator.pop(context);
+                        if (message != "success") {
+                          //   Navigator.pop(context);
                           Alert(
                             context: context,
                             type: AlertType.error,
@@ -230,32 +228,26 @@ class _FinancialTableState extends State<FinancialTable> {
                               DialogButton(
                                 child: Text(
                                   "Ok",
-                                  style: TextStyle(color: Colors.white, fontSize: 18),
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18),
                                 ),
-                                onPressed: (){
-                                Navigator.of(context).pop();
-                                Navigator.of(context).pop();
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).pop();
                                 },
                                 color: blueColor,
                               ),
-
                             ],
                           ).show();
                         }
-                        if(message !="success"){
+                        if (message != "success") {
                           Navigator.pop(context);
                         }
                         setState(() {
-                          isLoading = false; // Set loading to false after the refund process is done
+                          isLoading =
+                              false; // Set loading to false after the refund process is done
                           reload_screen();
-
                         });
-
-
-
-
-
-
                       },
                       child: Container(
                         width: 120,
@@ -266,11 +258,14 @@ class _FinancialTableState extends State<FinancialTable> {
                         ),
                         child: Center(
                             child: isLoading
-                                ? CircularProgressIndicator(color: Colors.white,) // Show loading indicator when isLoading is true
+                                ? CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ) // Show loading indicator when isLoading is true
                                 : Text(
-                              'Make Refund',
-                              style: TextStyle(fontSize: 14, color: Colors.white),
-                            )),
+                                    'Make Refund',
+                                    style: TextStyle(
+                                        fontSize: 14, color: Colors.white),
+                                  )),
                       ),
                     ),
                     GestureDetector(
@@ -297,7 +292,6 @@ class _FinancialTableState extends State<FinancialTable> {
     );
   }
 
-
   // Refund API function
   Future<String> processRefund({
     required String paymentType,
@@ -312,53 +306,52 @@ class _FinancialTableState extends State<FinancialTable> {
       // Prepare the commonData based on payment type
       final Map<String, dynamic> commonData = paymentType == "Card"
           ? {
-        'admin_id': adminId,
-        'transactionId': responseData.transactionid,
-        'customer_vault_id': responseData.customer_vault_id,
-        'billing_id': responseData.billing_id,
-        'amount': amount,
-
-        'payment_type': responseData.paymenttype,
-        'total_amount': amount,
-        'tenant_firstName': responseData.tenantData["tenant_firstName"],
-        'tenant_lastName': responseData.tenantData["tenant_firstName"],
-        'tenant_id': responseData.tenantData["tenant_id"],
-        'lease_id': responseData.leaseId,
-        'email_name': responseData.tenantData["tenant_email"],
-        'type': responseData.type,
-        'entry': responseData.entry!.map((entry) {
-          return {
-            'amount': entry.amount,
-            'account': entry.account,
-            'date': date,
-            'memo': memo,
-          };
-        }).toList(),
-      }
+              'admin_id': adminId,
+              'transactionId': responseData.transactionid,
+              'customer_vault_id': responseData.customer_vault_id,
+              'billing_id': responseData.billing_id,
+              'amount': amount,
+              'payment_type': responseData.paymenttype,
+              'total_amount': amount,
+              'tenant_firstName': responseData.tenantData["tenant_firstName"],
+              'tenant_lastName': responseData.tenantData["tenant_firstName"],
+              'tenant_id': responseData.tenantData["tenant_id"],
+              'lease_id': responseData.leaseId,
+              'email_name': responseData.tenantData["tenant_email"],
+              'type': responseData.type,
+              'entry': responseData.entry!.map((entry) {
+                return {
+                  'amount': entry.amount,
+                  'account': entry.account,
+                  'date': date,
+                  'memo': memo,
+                };
+              }).toList(),
+            }
           : {
-        'admin_id': adminId,
-        'transactionId': responseData.transactionid,
-        'amount': amount,
-        'payment_type': responseData.paymenttype,
-        'total_amount': amount,
-        'tenant_firstName': responseData.tenantData["tenant_firstName"],
-        'tenant_lastName': responseData.tenantData["tenant_firstName"],
-        'tenant_id': responseData.tenantData["tenant_id"],
-        //'tenant_firstName': responseData.tenantData.firstName,
-        //'tenant_lastName': responseData.tenantData.lastName,
-        //'tenant_id': responseData.tenantId,
-        'lease_id': responseData.leaseId,
-        'email_name': responseData.tenantData["tenant_email"],
-        'type': responseData.type,
-        'entry': responseData.entry!.map((entry) {
-          return {
-            'amount': entry.amount,
-            'account': entry.account,
-            'date': date,
-            'memo': memo,
-          };
-        }).toList(),
-      };
+              'admin_id': adminId,
+              'transactionId': responseData.transactionid,
+              'amount': amount,
+              'payment_type': responseData.paymenttype,
+              'total_amount': amount,
+              'tenant_firstName': responseData.tenantData["tenant_firstName"],
+              'tenant_lastName': responseData.tenantData["tenant_firstName"],
+              'tenant_id': responseData.tenantData["tenant_id"],
+              //'tenant_firstName': responseData.tenantData.firstName,
+              //'tenant_lastName': responseData.tenantData.lastName,
+              //'tenant_id': responseData.tenantId,
+              'lease_id': responseData.leaseId,
+              'email_name': responseData.tenantData["tenant_email"],
+              'type': responseData.type,
+              'entry': responseData.entry!.map((entry) {
+                return {
+                  'amount': entry.amount,
+                  'account': entry.account,
+                  'date': date,
+                  'memo': memo,
+                };
+              }).toList(),
+            };
 
       // API URLs based on payment type
       String apiUrl;
@@ -372,14 +365,14 @@ class _FinancialTableState extends State<FinancialTable> {
       print(apiUrl);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       //String? id = prefs.getString("rentalid");
-      String?  id = prefs.getString('adminId');
+      String? id = prefs.getString('adminId');
       String? token = prefs.getString('token');
       // Perform the POST request
       final response = await http.post(
         Uri.parse(apiUrl),
-
         headers: {
-          "authorization" : "CRM $token","id":"CRM $id",
+          "authorization": "CRM $token",
+          "id": "CRM $id",
           'Content-Type': 'application/json',
         },
         body: jsonEncode({'refundDetails': commonData}),
@@ -396,20 +389,20 @@ class _FinancialTableState extends State<FinancialTable> {
         // Handle error case
         print('Refund failed: ${response.statusCode} ${response.body}');
       }
-
     } catch (e) {
       return e.toString();
       // Handle exceptions during API calls
       print('Refund error: $e');
     }
   }
-  reload_screen(){
+
+  reload_screen() {
     setState(() {
       _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(widget.leaseId);
     });
   }
-  Widget buildCustomTextField({
 
+  Widget buildCustomTextField({
     required TextEditingController controller,
     required String hintText,
     final void Function()? onTap,
@@ -473,7 +466,8 @@ class _FinancialTableState extends State<FinancialTable> {
       ),
     );
   }
-    Widget _buildHeaders() {
+
+  Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
@@ -531,23 +525,6 @@ class _FinancialTableState extends State<FinancialTable> {
                             style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
-                    /* ascending1
-                        ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),*/
                   ],
                 ),
               ),
@@ -579,23 +556,6 @@ class _FinancialTableState extends State<FinancialTable> {
                     const Text("Balance      ",
                         style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
-                    /*ascending2
-                        ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),*/
                   ],
                 ),
               ),
@@ -628,23 +588,6 @@ class _FinancialTableState extends State<FinancialTable> {
                     const Text("      Date",
                         style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 5),
-                    /* ascending3
-                        ? const Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),*/
                   ],
                 ),
               ),
@@ -667,26 +610,7 @@ class _FinancialTableState extends State<FinancialTable> {
     _expanded = List.generate(_pagedData.length, (_) => false);
   }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-  // }
-
-  void handleEdit(Data? ledge) async {
-    // Handle edit action
-    // print('Edit ${applicant.sId}');
-    // var check = await Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (context) => EditApplicant(
-    //               applicant: ,
-    //               applicantId: ,
-    //             )));
-    // if (check == true) {
-    //   setState(() {});
-    // }
-  }
+  void handleEdit(Data? ledge) async {}
 
   void _showAlert(BuildContext context, String id) {
     Alert(
@@ -712,13 +636,13 @@ class _FinancialTableState extends State<FinancialTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data = await LeaseRepository().DeleteCharge( id);
+            var data = await LeaseRepository().DeleteCharge(id);
             // Add your delete logic here
-            if(data == 200)
-            setState(() {
-              _leaseLedgerFuture = LeaseRepository()
-                  .fetchLeaseLedger(widget.leaseId);
-            });
+            if (data == 200)
+              setState(() {
+                _leaseLedgerFuture =
+                    LeaseRepository().fetchLeaseLedger(widget.leaseId);
+              });
             Navigator.pop(context);
           },
           color: Colors.red,
@@ -980,8 +904,7 @@ class _FinancialTableState extends State<FinancialTable> {
   }
 
   //for pdf xlsx and csv
-  Future<void> generateWorkOrderPdf(
-      List<Data> ledgerdata) async {
+  Future<void> generateWorkOrderPdf(List<Data> ledgerdata) async {
     final GetAddressAdminPdfService service = GetAddressAdminPdfService();
     profile? profileData;
     try {
@@ -998,97 +921,92 @@ class _FinancialTableState extends State<FinancialTable> {
     final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
     pdf.addPage(
       pw.MultiPage(
-       pageFormat: PdfPageFormat.a4.landscape,
+        pageFormat: PdfPageFormat.a4.landscape,
         margin: const pw.EdgeInsets.all(30),
-        header: (pw.Context context) =>
-            pw.Column(
-             children: [
-               pw.Row(
-                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                 children: [
-                   pw.Image(image, width: 50, height: 50),
-                   // pw.SizedBox(width: 50),
-                   pw.Column(
-                     crossAxisAlignment: pw.CrossAxisAlignment.center,
-                     children: [
-                       pw.Text(
-                         'Tenant Statement',
-                         style: pw.TextStyle(
-                           fontSize: 18,
-                           fontWeight: pw.FontWeight.bold,
-                         ),
-                       ),
-                       pw.SizedBox(height: 10),
-                       pw.Row(
-                           children: [
-                             pw.Text(
-                               '${widget.rentalAddress}',
-                               style: pw.TextStyle(
-                                 fontSize: 18,
-                                 fontWeight: pw.FontWeight.bold,
-                               ),
-                             ),
-                             pw.SizedBox(width: 5),
-                             if(widget.rentalUnit != null)
-                             pw.Text(
-                               ' - ${widget.rentalUnit}',
-                               style: pw.TextStyle(
-                                 fontSize: 18,
-                                 fontWeight: pw.FontWeight.bold,
-                               ),
-                             ),
-                           ]
-                       ),
-
-                     ],
-                   ),
-                   pw.Column(
-                     crossAxisAlignment: pw.CrossAxisAlignment.end,
-                     children: [
-                       pw.Text(
-                         profileData?.companyName?.isNotEmpty == true
-                             ? profileData!.companyName!
-                             : 'N/A',
-                         style: pw.TextStyle(
-                           fontSize: 10,
-                           fontWeight: pw.FontWeight.bold,
-                         ),
-                       ),
-                       pw.Text(
-                         profileData?.companyAddress?.isNotEmpty == true
-                             ? profileData!.companyAddress!
-                             : 'N/A',
-                         style: pw.TextStyle(
-                           fontSize: 10,
-                           fontWeight: pw.FontWeight.bold,
-                         ),
-                       ),
-                       pw.Text(
-                         '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
-                             '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
-                             '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
-                         style: pw.TextStyle(
-                           fontSize: 10,
-                           fontWeight: pw.FontWeight.bold,
-                         ),
-                       ),
-                       pw.Text(
-                         profileData?.companyPostalCode?.isNotEmpty == true
-                             ? profileData!.companyPostalCode!
-                             : 'N/A',
-                         style: pw.TextStyle(
-                           fontSize: 10,
-                           fontWeight: pw.FontWeight.bold,
-                         ),
-                       ),
-                     ],
-                   ),
-
-                 ],
-               ),
-               pw.SizedBox(height: 15),
-             ],
-           ),
+        header: (pw.Context context) => pw.Column(
+          children: [
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Image(image, width: 50, height: 50),
+                // pw.SizedBox(width: 50),
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.center,
+                  children: [
+                    pw.Text(
+                      'Tenant Statement',
+                      style: pw.TextStyle(
+                        fontSize: 18,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                    pw.SizedBox(height: 10),
+                    pw.Row(children: [
+                      pw.Text(
+                        '${widget.rentalAddress}',
+                        style: pw.TextStyle(
+                          fontSize: 18,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
+                      pw.SizedBox(width: 5),
+                      if (widget.rentalUnit != null)
+                        pw.Text(
+                          ' - ${widget.rentalUnit}',
+                          style: pw.TextStyle(
+                            fontSize: 18,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                    ]),
+                  ],
+                ),
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.end,
+                  children: [
+                    pw.Text(
+                      profileData?.companyName?.isNotEmpty == true
+                          ? profileData!.companyName!
+                          : 'N/A',
+                      style: pw.TextStyle(
+                        fontSize: 10,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                    pw.Text(
+                      profileData?.companyAddress?.isNotEmpty == true
+                          ? profileData!.companyAddress!
+                          : 'N/A',
+                      style: pw.TextStyle(
+                        fontSize: 10,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                    pw.Text(
+                      '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
+                      '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
+                      '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
+                      style: pw.TextStyle(
+                        fontSize: 10,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                    pw.Text(
+                      profileData?.companyPostalCode?.isNotEmpty == true
+                          ? profileData!.companyPostalCode!
+                          : 'N/A',
+                      style: pw.TextStyle(
+                        fontSize: 10,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            pw.SizedBox(height: 15),
+          ],
+        ),
         footer: (pw.Context context) {
           return pw.Container(
             alignment: pw.Alignment.centerRight,
@@ -1112,40 +1030,38 @@ class _FinancialTableState extends State<FinancialTable> {
             ],
             data: ledgerdata.reversed.map((ledger) {
               return [
-                formatDate4(
-                    '${ledger.entry?.first.date}') ?? "",
-
-                ledger.tenantData !=
-                    null
+                formatDate4('${ledger.entry?.first.date}') ?? "",
+                ledger.tenantData != null
                     ? '${ledger.tenantData["tenant_firstName"] ?? ""} ${ledger.tenantData["tenant_lastName"] ?? ""}'
                     : 'N/A' ?? '',
-
                 ledger.type ?? '',
-
-                ledger.type == 'Charge'?' ${ledger.entry?.first.memo}':
-                'Manual ${ledger.type} ${ledger.response} For ${ledger.paymenttype}'?? '',
-
+                ledger.type == 'Charge'
+                    ? ' ${ledger.entry?.first.memo}'
+                    : 'Manual ${ledger.type} ${ledger.response} For ${ledger.paymenttype}' ??
+                        '',
                 pw.Align(
-                  alignment:pw.Alignment.centerRight,
-                  child:pw.Text(ledger.type == "Refund" ||
-                      ledger.type == "Charge"
-                      ? '\$${ledger.totalAmount}'
-                      : ' - \$${ledger.totalAmount}',),
+                  alignment: pw.Alignment.centerRight,
+                  child: pw.Text(
+                    ledger.type == "Refund" || ledger.type == "Charge"
+                        ? '\$${ledger.totalAmount}'
+                        : ' - \$${ledger.totalAmount}',
+                  ),
                 ),
-
-                ledger.balance! < 0 ?
-                 pw.Align(
-                  alignment:pw.Alignment.centerRight,
-                  child:pw.Text(''
-                      ' - \$${ledger.balance!.abs().toStringAsFixed(2)}',),
-                ):
-                 pw.Align(
-                   alignment:pw.Alignment.centerRight,
-                   child:pw.Text(''
-                       ' \$${ledger.balance!.abs().toStringAsFixed(2)}',),
-                 ),
-
-
+                ledger.balance! < 0
+                    ? pw.Align(
+                        alignment: pw.Alignment.centerRight,
+                        child: pw.Text(
+                          ''
+                          ' - \$${ledger.balance!.abs().toStringAsFixed(2)}',
+                        ),
+                      )
+                    : pw.Align(
+                        alignment: pw.Alignment.centerRight,
+                        child: pw.Text(
+                          ''
+                          ' \$${ledger.balance!.abs().toStringAsFixed(2)}',
+                        ),
+                      ),
               ];
             }).toList(),
             border: pw.TableBorder.all(
@@ -1158,11 +1074,9 @@ class _FinancialTableState extends State<FinancialTable> {
               //color:PdfColor.fromRYB(90, 134, 213,)
             ),
             headerStyle: pw.TextStyle(
-              fontWeight: pw.FontWeight.bold,
-              fontSize: 12,
-              color: PdfColors.white
-              
-            ),
+                fontWeight: pw.FontWeight.bold,
+                fontSize: 12,
+                color: PdfColors.white),
             headerAlignment: pw.Alignment.centerLeft,
             cellStyle: pw.TextStyle(
               fontSize: 10,
@@ -1178,30 +1092,27 @@ class _FinancialTableState extends State<FinancialTable> {
               6: pw.FlexColumnWidth(1.3), // balance
             },
           ),
-          pw.SizedBox(
-            height: 15
-          ),
+          pw.SizedBox(height: 15),
           pw.Row(
             children: [
               pw.Align(
-                alignment:pw.Alignment.centerLeft,
-                child:pw.Text('Balance Due',style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                alignment: pw.Alignment.centerLeft,
+                child: pw.Text('Balance Due',
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
               ),
               pw.Spacer(),
               pw.Align(
-                alignment:pw.Alignment.centerRight,
-                child:pw.Text('\$${ledgerdata.first.balance?.toStringAsFixed(2)}',style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                alignment: pw.Alignment.centerRight,
+                child: pw.Text(
+                    '\$${ledgerdata.first.balance?.toStringAsFixed(2)}',
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
               ),
             ],
           ),
-          pw.SizedBox(
-              height: 8
-          ),
+          pw.SizedBox(height: 8),
           pw.Divider(color: PdfColors.black),
           pw.Divider(color: PdfColors.black),
-
         ],
-
       ),
     );
 
@@ -1210,8 +1121,7 @@ class _FinancialTableState extends State<FinancialTable> {
     );
   }
 
-  Future<void> generateWorkOrderExcel(
-      List<Data> ledgerdata) async {
+  Future<void> generateWorkOrderExcel(List<Data> ledgerdata) async {
     ledgerdata = ledgerdata.reversed.toList();
     final syncXlsx.Workbook workbook = syncXlsx.Workbook();
     final syncXlsx.Worksheet sheet = workbook.worksheets[0];
@@ -1227,8 +1137,9 @@ class _FinancialTableState extends State<FinancialTable> {
       'Balance',
     ];
 
-    final syncXlsx.Style headerCellStyle =
-    workbook.styles.add('headerCellStyle',);
+    final syncXlsx.Style headerCellStyle = workbook.styles.add(
+      'headerCellStyle',
+    );
     headerCellStyle.fontSize = 14;
     headerCellStyle.bold = true;
     headerCellStyle.backColor = '#D3D3D3';
@@ -1244,47 +1155,48 @@ class _FinancialTableState extends State<FinancialTable> {
       final ledger = ledgerdata[i];
 
       // Safe date parsing with default/fallback value
-       String formattedDate;
-       try {
+      String formattedDate;
+      try {
         formattedDate = ledger != null
-            ? DateFormat('yyyy-MM-dd')
-            .format(DateFormat('yyyy-MM-dd').parse(ledger.entry?.first.date! ?? ''))
+            ? DateFormat('yyyy-MM-dd').format(
+                DateFormat('yyyy-MM-dd').parse(ledger.entry?.first.date! ?? ''))
             : 'Invalid Date';
-
       } catch (e) {
-
         formattedDate = 'Invalid Date';
-
       }
-      sheet.getRangeByIndex( 2 + i, 5 ).cellStyle.hAlign =
+      sheet.getRangeByIndex(2 + i, 5).cellStyle.hAlign =
           syncXlsx.HAlignType.right;
-       sheet.getRangeByIndex( 2 + i, 6).cellStyle.hAlign =
+      sheet.getRangeByIndex(2 + i, 6).cellStyle.hAlign =
           syncXlsx.HAlignType.right;
 
       sheet.getRangeByIndex(2 + i, 1).setText(ledger.entry?.first.date);
 
-      sheet.getRangeByIndex(2 + i, 2).setText(ledger.tenantData !=
-                null
-                ? '${ledger.tenantData["tenant_firstName"] ?? ""} ${ledger.tenantData["tenant_lastName"] ?? ""}'
-                : 'N/A' ?? '');
+      sheet.getRangeByIndex(2 + i, 2).setText(ledger.tenantData != null
+          ? '${ledger.tenantData["tenant_firstName"] ?? ""} ${ledger.tenantData["tenant_lastName"] ?? ""}'
+          : 'N/A' ?? '');
 
       sheet.getRangeByIndex(2 + i, 3).setText(ledger.type ?? '');
 
-      sheet.getRangeByIndex(2 + i, 4).setText( ledger.type == "Charge" ?  "${ledger.entry?.first.memo}" :'Manual ${ledger.type} ${ledger.response} For ${ledger.paymenttype}'?? '');
+      sheet.getRangeByIndex(2 + i, 4).setText(ledger.type == "Charge"
+          ? "${ledger.entry?.first.memo}"
+          : 'Manual ${ledger.type} ${ledger.response} For ${ledger.paymenttype}' ??
+              '');
 
       sheet.getRangeByIndex(2 + i, 5).setText(
-        ledger.type == "Refund" ||
-                ledger.type == "Charge"
+            ledger.type == "Refund" || ledger.type == "Charge"
                 ? '\$${ledger.totalAmount}'
-                : ' - \$${ledger.totalAmount}',);
-
+                : ' - \$${ledger.totalAmount}',
+          );
 
       print(ledger.balance);
 
-      ledger.balance! < 0 ?
-      sheet.getRangeByIndex(2 + i, 6).setText('-\$${ledger.balance!.abs().toStringAsFixed(2)}',)
-  :     sheet.getRangeByIndex(2 + i, 6).setText('\$${ledger.balance!.abs().toStringAsFixed(2)}',);
-
+      ledger.balance! < 0
+          ? sheet.getRangeByIndex(2 + i, 6).setText(
+                '-\$${ledger.balance!.abs().toStringAsFixed(2)}',
+              )
+          : sheet.getRangeByIndex(2 + i, 6).setText(
+                '\$${ledger.balance!.abs().toStringAsFixed(2)}',
+              );
     }
 
     final List<int> bytes = workbook.saveAsStream();
@@ -1307,8 +1219,8 @@ class _FinancialTableState extends State<FinancialTable> {
   }
 
   Future<void> generateWorkOrderCsv(
-      List<Data> ledgerdata,
-      ) async {
+    List<Data> ledgerdata,
+  ) async {
     ledgerdata = ledgerdata.reversed.toList();
 
     // No need for workbook and worksheet objects in CSV generation
@@ -1331,29 +1243,27 @@ class _FinancialTableState extends State<FinancialTable> {
       String formattedDate;
       try {
         formattedDate = ledger != null
-            ? DateFormat('yyyy-MM-dd')
-            .format(DateFormat('yyyy-MM-dd').parse(ledger.entry?.first.date! ?? ''))
+            ? DateFormat('yyyy-MM-dd').format(
+                DateFormat('yyyy-MM-dd').parse(ledger.entry?.first.date! ?? ''))
             : 'Invalid Date';
       } catch (e) {
         formattedDate = 'Invalid Date';
       }
       final rowData = [
         formattedDate,
-
         ledger.tenantData != null
             ? '${ledger.tenantData["tenant_firstName"] ?? ""} ${ledger.tenantData["tenant_lastName"] ?? ""}'
             : 'N/A',
-
         ledger.type ?? '',
-
-        ledger.type == "Charge" ? "${ledger.entry?.first.memo}" : 'Manual ${ledger.type} ${ledger.response} For ${ledger.paymenttype}',
-
-        ledger.type == "Refund" || ledger.type == "Charge" ? '\$${ledger.totalAmount}' : ' - \$${ledger.totalAmount}',
-
-        ledger.balance! < 0 ?
-       ' - \$${ledger.balance!.abs().toStringAsFixed(2)}'
-    :'\$${ledger.balance!.abs().toStringAsFixed(2)}',
-
+        ledger.type == "Charge"
+            ? "${ledger.entry?.first.memo}"
+            : 'Manual ${ledger.type} ${ledger.response} For ${ledger.paymenttype}',
+        ledger.type == "Refund" || ledger.type == "Charge"
+            ? '\$${ledger.totalAmount}'
+            : ' - \$${ledger.totalAmount}',
+        ledger.balance! < 0
+            ? ' - \$${ledger.balance!.abs().toStringAsFixed(2)}'
+            : '\$${ledger.balance!.abs().toStringAsFixed(2)}',
       ];
       csvData.add(rowData);
     }
@@ -1499,8 +1409,8 @@ class _FinancialTableState extends State<FinancialTable> {
                                               BorderRadius.circular(10.0)),
                                       elevation: 0,
                                       backgroundColor: Colors.white),
-                                  onPressed: ()async {
-                                    final value = await  Navigator.push(
+                                  onPressed: () async {
+                                    final value = await Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => enterCharge(
@@ -1527,445 +1437,12 @@ class _FinancialTableState extends State<FinancialTable> {
                       ),
                     )
                   : Container(),
-
               const SizedBox(
                 height: 6,
               ),
               if (MediaQuery.of(context).size.width > 500)
                 const SizedBox(height: 25),
               if (MediaQuery.of(context).size.width < 500)
-                // Padding(
-                //     padding: const EdgeInsets.only(
-                //         left: 10.0, right: 10.0, bottom: 10.0),
-                //     child: FutureBuilder<LeaseLedger?>(
-                //       future: _leaseLedgerFuture,
-                //       builder: (context, snapshot) {
-                //         if (snapshot.connectionState == ConnectionState.waiting) {
-                //           return ColabShimmerLoadingWidget();
-                //         } else if (snapshot.hasError) {
-                //           return Center(child: Text('Error: ${snapshot.error}'));
-                //         } else if (!snapshot.hasData) {
-                //           return Center(child: Text('No data found'));
-                //         } else {
-                //           final leaseLedger = snapshot.data!;
-                //           return SingleChildScrollView(
-                //             child: Column(
-                //               children: [
-                //                 const SizedBox(height: 5),
-                //                 _buildHeaders(),
-                //                 const SizedBox(height: 20),
-                //                 Container(
-                //                   decoration: BoxDecoration(
-                //                     border: Border.all(color: blueColor),
-                //                   ),
-                //                   child: Column(
-                //                     children: leaseLedger.data!
-                //                         .asMap()
-                //                         .entries
-                //                         .map((entry) {
-                //                       int index = entry.key;
-                //                       bool isExpanded = expandedIndex == index;
-                //                       Data data = entry.value;
-                //                       return Container(
-                //                         decoration: BoxDecoration(
-                //                           border: Border.all(color: blueColor),
-                //                         ),
-                //                         child: Column(
-                //                           children: <Widget>[
-                //                             ListTile(
-                //                               contentPadding: EdgeInsets.zero,
-                //                               title: Padding(
-                //                                 padding:
-                //                                 const EdgeInsets.all(2.0),
-                //                                 child: Row(
-                //                                   mainAxisAlignment:
-                //                                   MainAxisAlignment.start,
-                //                                   crossAxisAlignment:
-                //                                   CrossAxisAlignment.center,
-                //                                   children: <Widget>[
-                //                                     GestureDetector(
-                //                                       onTap: () {
-                //                                         setState(() {
-                //                                           if (expandedIndex ==
-                //                                               index) {
-                //                                             expandedIndex = null;
-                //                                           } else {
-                //                                             expandedIndex = index;
-                //                                           }
-                //                                         });
-                //                                       },
-                //                                       child: Container(
-                //                                         margin:
-                //                                         const EdgeInsets.only(
-                //                                             left: 5),
-                //                                         padding: !isExpanded
-                //                                             ? const EdgeInsets
-                //                                             .only(bottom: 10)
-                //                                             : const EdgeInsets
-                //                                             .only(top: 10),
-                //                                         child: FaIcon(
-                //                                           isExpanded
-                //                                               ? FontAwesomeIcons
-                //                                               .sortUp
-                //                                               : FontAwesomeIcons
-                //                                               .sortDown,
-                //                                           size: 20,
-                //                                           color: const Color
-                //                                               .fromRGBO(
-                //                                               21, 43, 83, 1),
-                //                                         ),
-                //                                       ),
-                //                                     ),
-                //                                     Expanded(
-                //                                       child: Padding(
-                //                                         padding:
-                //                                         const EdgeInsets.all(
-                //                                             8.0),
-                //                                         child: Text(
-                //                                           ' ${data.type}'??"", // Assuming you want to show the charge type here
-                //                                           style: TextStyle(
-                //                                             color: blueColor,
-                //                                             fontWeight:
-                //                                             FontWeight.bold,
-                //                                             fontSize: 13,
-                //                                           ),
-                //                                         ),
-                //                                       ),
-                //                                     ),
-                //                                     SizedBox(
-                //                                         width:
-                //                                         MediaQuery.of(context)
-                //                                             .size
-                //                                             .width *
-                //                                             .08),
-                //                                     Expanded(
-                //                                       child: Text(
-                //                                         ' \$${data.balance!.toStringAsFixed(2)}', // Show total amount
-                //                                         style: TextStyle(
-                //                                           color: blueColor,
-                //                                           fontWeight:
-                //                                           FontWeight.bold,
-                //                                           fontSize: 13,
-                //                                         ),
-                //                                       ),
-                //                                     ),
-                //                                     SizedBox(
-                //                                         width:
-                //                                         MediaQuery.of(context)
-                //                                             .size
-                //                                             .width *
-                //                                             .08),
-                //                                     Expanded(
-                //                                       child: Text(
-                //                                         formatDate(
-                //                                             '${data.createdAt}'), // Format and show created date
-                //                                         style: TextStyle(
-                //                                           color: blueColor,
-                //                                           fontWeight:
-                //                                           FontWeight.bold,
-                //                                           fontSize: 13,
-                //                                         ),
-                //                                       ),
-                //                                     ),
-                //                                     SizedBox(
-                //                                         width:
-                //                                         MediaQuery.of(context)
-                //                                             .size
-                //                                             .width *
-                //                                             .02),
-                //                                   ],
-                //                                 ),
-                //                               ),
-                //                             ),
-                //                             if (isExpanded)
-                //                               Container(
-                //                                 padding:
-                //                                 const EdgeInsets.symmetric(
-                //                                     horizontal: 8.0),
-                //                                 margin: const EdgeInsets.only(
-                //                                     bottom: 20),
-                //                                 child: SingleChildScrollView(
-                //                                   child: Column(
-                //                                     children: [
-                //                                       Row(
-                //                                         mainAxisAlignment:
-                //                                         MainAxisAlignment
-                //                                             .start,
-                //                                         children: [
-                //                                           FaIcon(
-                //                                             isExpanded
-                //                                                 ? FontAwesomeIcons
-                //                                                 .sortUp
-                //                                                 : FontAwesomeIcons
-                //                                                 .sortDown,
-                //                                             size: 50,
-                //                                             color: Colors
-                //                                                 .transparent,
-                //                                           ),
-                //                                           Expanded(
-                //                                             child: Column(
-                //                                               crossAxisAlignment:
-                //                                               CrossAxisAlignment
-                //                                                   .start,
-                //                                               children: <Widget>[
-                //                                                 Text.rich(
-                //                                                   TextSpan(
-                //                                                     children: [
-                //                                                       const TextSpan(
-                //                                                         text:
-                //                                                         'Increase : ',
-                //                                                         style: TextStyle(
-                //                                                             fontWeight: FontWeight
-                //                                                                 .bold,
-                //                                                             color: Color.fromRGBO(
-                //                                                                 21,
-                //                                                                 43,
-                //                                                                 83,
-                //                                                                 1)),
-                //                                                       ),
-                //                                                       TextSpan(
-                //                                                         text: (data.type == "Refund" || data.type == "Charge")
-                //                                                             ? '${data.totalAmount}'
-                //                                                             : 'N/A',
-                //                                                         style: const TextStyle(
-                //                                                             fontWeight: FontWeight
-                //                                                                 .w700,
-                //                                                             color:
-                //                                                             grey),
-                //                                                       ),
-                //                                                     ],
-                //                                                   ),
-                //                                                 ),
-                //                                                 Text.rich(
-                //                                                   TextSpan(
-                //                                                     children: [
-                //                                                       const TextSpan(
-                //                                                         text:
-                //                                                         'Tenant : ',
-                //                                                         style: TextStyle(
-                //                                                             fontWeight: FontWeight
-                //                                                                 .bold,
-                //                                                             color: Color.fromRGBO(
-                //                                                                 21,
-                //                                                                 43,
-                //                                                                 83,
-                //                                                                 1)),
-                //                                                       ),
-                //                                                       TextSpan(
-                //                                                         text:data.tenantData != null
-                //                                                             ? '${data.tenantData["tenant_firstName"] ?? ""} ${data.tenantData["tenant_lastName"] ?? ""}'
-                //                                                             : 'N/A',
-                //                                                         style: const TextStyle(
-                //                                                             fontWeight: FontWeight
-                //                                                                 .w700,
-                //                                                             color:
-                //                                                             grey),
-                //                                                       ),
-                //                                                     ],
-                //                                                   ),
-                //                                                 ),
-                //                                               ],
-                //                                             ),
-                //                                           ),
-                //                                           SizedBox(
-                //                                             width: 40,
-                //                                             child: Column(
-                //                                               children: [
-                //                                                 IconButton(
-                //                                                   icon:
-                //                                                   const FaIcon(
-                //                                                     FontAwesomeIcons
-                //                                                         .edit,
-                //                                                     size: 20,
-                //                                                     color: Color
-                //                                                         .fromRGBO(
-                //                                                         21,
-                //                                                         43,
-                //                                                         83,
-                //                                                         1),
-                //                                                   ),
-                //                                                   onPressed:
-                //                                                       () async {
-                //                                                     // handleEdit(applicant);
-                //                                                     // var check = await Navigator.push(
-                //                                                     //     context,
-                //                                                     //     MaterialPageRoute(
-                //                                                     //         builder: (context) => EditApplicant(
-                //                                                     //               applicant: applicant,
-                //                                                     //               applicantId: applicant.applicantId!,
-                //                                                     //             )));
-                //                                                     // if (check ==
-                //                                                     //     true) {
-                //                                                     //   setState(
-                //                                                     //       () {});
-                //                                                     // }
-                //                                                   },
-                //                                                 ),
-                //                                                 IconButton(
-                //                                                   icon:
-                //                                                   const FaIcon(
-                //                                                     FontAwesomeIcons
-                //                                                         .trashCan,
-                //                                                     size: 20,
-                //                                                     color: Color
-                //                                                         .fromRGBO(
-                //                                                         21,
-                //                                                         43,
-                //                                                         83,
-                //                                                         1),
-                //                                                   ),
-                //                                                   onPressed: () {
-                //                                                     // handleDelete(applicant);
-                //                                                     // _showDeleteAlert(
-                //                                                     //     context,
-                //                                                     //     applicant
-                //                                                     //         .applicantId!);
-                //                                                   },
-                //                                                 ),
-                //                                               ],
-                //                                             ),
-                //                                           ),
-                //                                         ],
-                //                                       ),
-                //                                       Column(
-                //                                         children: data.entry!
-                //                                             .map((entry) {
-                //                                           return Row(
-                //                                             mainAxisAlignment:
-                //                                             MainAxisAlignment
-                //                                                 .start,
-                //                                             children: [
-                //                                               FaIcon(
-                //                                                 isExpanded
-                //                                                     ? FontAwesomeIcons
-                //                                                     .sortUp
-                //                                                     : FontAwesomeIcons
-                //                                                     .sortDown,
-                //                                                 size: 50,
-                //                                                 color: Colors
-                //                                                     .transparent,
-                //                                               ),
-                //                                               Expanded(
-                //                                                 child: Column(
-                //                                                   crossAxisAlignment:
-                //                                                   CrossAxisAlignment
-                //                                                       .start,
-                //                                                   children: <Widget>[
-                //                                                     // Text.rich(
-                //                                                     //   TextSpan(
-                //                                                     //     children: [
-                //                                                     //       TextSpan(
-                //                                                     //         text:
-                //                                                     //         'Transaction: ',
-                //                                                     //         style: TextStyle(
-                //                                                     //             fontWeight: FontWeight.bold,
-                //                                                     //             color: blueColor),
-                //                                                     //       ),
-                //                                                     //       TextSpan(
-                //                                                     //         text:
-                //                                                     //         "Manual ${data.type} FOR ${data.response} ${data.paymenttype} (#${data.transactionid})   ",
-                //                                                     //         style: const TextStyle(
-                //                                                     //             fontWeight: FontWeight.w700,
-                //                                                     //             color: grey),
-                //                                                     //       ),
-                //                                                     //
-                //                                                     //     ],
-                //                                                     //   ),
-                //                                                     // ),
-                //                                                     data.type != 'Charge'
-                //                                                         ? Text.rich(
-                //                                                       TextSpan(
-                //                                                         children: [
-                //                                                           TextSpan(
-                //                                                             text: 'Transaction: ',
-                //                                                             style: TextStyle(
-                //                                                               fontWeight: FontWeight.bold,
-                //                                                               color: blueColor,
-                //                                                             ),
-                //                                                           ),
-                //                                                           TextSpan(
-                //                                                             text: "Manual ${data.type} FOR ${data.response} ${data.paymenttype} (#${data.transactionid})   ",
-                //                                                             style: const TextStyle(
-                //                                                               fontWeight: FontWeight.w700,
-                //                                                               color: grey,
-                //                                                             ),
-                //                                                           ),
-                //                                                         ],
-                //                                                       ),
-                //                                                     )
-                //                                                         : Container(),
-                //                                                     // Text.rich(
-                //                                                     //   TextSpan(
-                //                                                     //     children: [
-                //                                                     //       TextSpan(
-                //                                                     //         text:
-                //                                                     //         'Decrease: ',
-                //                                                     //         style: TextStyle(
-                //                                                     //             fontWeight: FontWeight.bold,
-                //                                                     //             color: blueColor),
-                //                                                     //       ),
-                //                                                     //       TextSpan(
-                //                                                     //         text:(data.type != "Refund" && data.type != "Charge")
-                //                                                     //             ? '${data.totalAmount}'
-                //                                                     //             : 'N/A',
-                //                                                     //         style: const TextStyle(
-                //                                                     //             fontWeight: FontWeight.w700,
-                //                                                     //             color: grey),
-                //                                                     //       ),
-                //                                                     //
-                //                                                     //     ],
-                //                                                     //   ),
-                //                                                     // ),
-                //                                                     (data.type != 'Charge')
-                //                                                         ? Text.rich(
-                //                                                       TextSpan(
-                //                                                         children: [
-                //                                                           TextSpan(
-                //                                                             text: 'Decrease: ',
-                //                                                             style: TextStyle(
-                //                                                               fontWeight: FontWeight.bold,
-                //                                                               color: blueColor,
-                //                                                             ),
-                //                                                           ),
-                //                                                           TextSpan(
-                //                                                             text: (data.type != "Refund" && data.type != "Charge")
-                //                                                                 ? '${data.totalAmount}'
-                //                                                                 : 'N/A',
-                //                                                             style: const TextStyle(
-                //                                                               fontWeight: FontWeight.w700,
-                //                                                               color: grey,
-                //                                                             ),
-                //                                                           ),
-                //                                                         ],
-                //                                                       ),
-                //                                                     )
-                //                                                         : Container(),
-                //
-                //                                                   ],
-                //                                                 ),
-                //                                               ),
-                //                                             ],
-                //                                           );
-                //                                         }).toList(),
-                //                                       ),
-                //                                     ],
-                //                                   ),
-                //                                 ),
-                //                               ),
-                //                             // SizedBox(height: 13,),
-                //                           ],
-                //                         ),
-                //                       );
-                //                     }).toList(),
-                //                   ),
-                //                 ),
-                //                 const SizedBox(height: 20),
-                //               ],
-                //             ),
-                //           );
-                //         }
-                //       },
-                //     )),
                 Padding(
                   padding: const EdgeInsets.only(
                       left: 10.0, right: 10.0, bottom: 10.0),
@@ -1995,9 +1472,9 @@ class _FinancialTableState extends State<FinancialTable> {
                                       horizontal: 5.0, vertical: 5),
                                   child: Row(
                                     mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                     Spacer(),
+                                      Spacer(),
                                       ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: blueColor,
@@ -2021,7 +1498,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                             }
                                           },
                                           itemBuilder: (BuildContext context) =>
-                                          <PopupMenuEntry<String>>[
+                                              <PopupMenuEntry<String>>[
                                             const PopupMenuItem<String>(
                                               value: 'PDF',
                                               child: Text('PDF'),
@@ -2067,8 +1544,15 @@ class _FinancialTableState extends State<FinancialTable> {
                                     double? surcharge = data?.surcharge;
                                     double? totalAmount = data?.totalAmount;
 
-                                    String percentage = (surcharge != null && totalAmount != null && totalAmount > 0)
-                                        ? ((surcharge / (totalAmount-surcharge)) * 100).toStringAsFixed(2) + "%"
+                                    String percentage = (surcharge != null &&
+                                            totalAmount != null &&
+                                            totalAmount > 0)
+                                        ? ((surcharge /
+                                                        (totalAmount -
+                                                            surcharge)) *
+                                                    100)
+                                                .toStringAsFixed(2) +
+                                            "%"
                                         : "N/A";
                                     final uniqueEntries =
                                         data.entry?.toSet().toList() ?? [];
@@ -2154,7 +1638,6 @@ class _FinancialTableState extends State<FinancialTable> {
                                                             .08,
                                                   ),
                                                   Expanded(
-
                                                     child: Text(
                                                       ' \$${data.balance!.abs().toStringAsFixed(2)}',
                                                       style: TextStyle(
@@ -2200,8 +1683,11 @@ class _FinancialTableState extends State<FinancialTable> {
                                               padding:
                                                   const EdgeInsets.symmetric(
                                                       horizontal: 8.0),
-                                              margin:  EdgeInsets.only(
-                                                  bottom: (data.type != "Refund") ? 2 :20),
+                                              margin: EdgeInsets.only(
+                                                  bottom:
+                                                      (data.type != "Refund")
+                                                          ? 2
+                                                          : 20),
                                               child: SingleChildScrollView(
                                                 child: Column(
                                                   children: [
@@ -2238,25 +1724,25 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                           color:
                                                                               blueColor), // Bold and black
                                                                     ),
-                                                                    if(data.type != "Charge")
-                                                                    TextSpan(
-                                                                      text:
-                                                                          'Manual ${data.type} ${data.response} For ${data.paymenttype}',
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .w700,
-                                                                          color:
-                                                                              grey), // Light and grey
-                                                                    ),
-                                                                    if(data.type == "Charge")
+                                                                    if (data.type !=
+                                                                        "Charge")
                                                                       TextSpan(
                                                                         text:
-                                                                        '${data.entry?.first.memo}',
+                                                                            'Manual ${data.type} ${data.response} For ${data.paymenttype}',
                                                                         style: TextStyle(
-                                                                            fontWeight: FontWeight
-                                                                                .w700,
-                                                                            color:
-                                                                            grey), // Light and grey
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: grey), // Light and grey
+                                                                      ),
+                                                                    if (data.type ==
+                                                                        "Charge")
+                                                                      TextSpan(
+                                                                        text:
+                                                                            '${data.entry?.first.memo}',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: grey), // Light and grey
                                                                       ),
                                                                   ],
                                                                 ),
@@ -2283,15 +1769,15 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                     ),
                                                                     TextSpan(
                                                                       text: data.type == "Refund" ||
-                                                                      data.type == "Charge"
-                                                                    ? '\$${data.totalAmount!.toStringAsFixed(2)}'
-                                                                        : ' - \$${data.totalAmount!.toStringAsFixed(2)}'
-                                                                         ,
+                                                                              data.type == "Charge"
+                                                                          ? '\$${data.totalAmount!.toStringAsFixed(2)}'
+                                                                          : ' - \$${data.totalAmount!.toStringAsFixed(2)}',
                                                                       style:
-                                                                           TextStyle(
+                                                                          TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.w700,
-                                                                        color: grey,
+                                                                        color:
+                                                                            grey,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -2320,189 +1806,194 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                           ? '${data.tenantData["tenant_firstName"] ?? ""} ${data.tenantData["tenant_lastName"] ?? ""}'
                                                                           : 'N/A',
                                                                       style:
-                                                                           TextStyle(
+                                                                          TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.w700,
-                                                                        color:grey,
+                                                                        color:
+                                                                            grey,
                                                                       ),
                                                                     ),
                                                                   ],
                                                                 ),
                                                               ),
-
                                                             ],
                                                           ),
                                                         ),
-
                                                       ],
                                                     ),
-                                                    if(data.type == "Payment" || data.type == "Charge")
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 10.0,
-                                                              top: 10),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          FaIcon(
-                                                            isExpanded
-                                                                ? FontAwesomeIcons
-                                                                    .sortUp
-                                                                : FontAwesomeIcons
-                                                                    .sortDown,
-                                                            size: 20,
-                                                            color: Colors
-                                                                .transparent,
-                                                          ),
-                                                          Expanded(
-                                                            flex: 4,
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: <Widget>[
-                                                                Text.rich(
-                                                                  TextSpan(
-                                                                    children: [
-                                                                      const TextSpan(
-                                                                        text:
-                                                                            'Account : ',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ],
+                                                    if (data.type ==
+                                                            "Payment" ||
+                                                        data.type == "Charge")
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 10.0,
+                                                                top: 10),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            FaIcon(
+                                                              isExpanded
+                                                                  ? FontAwesomeIcons
+                                                                      .sortUp
+                                                                  : FontAwesomeIcons
+                                                                      .sortDown,
+                                                              size: 20,
+                                                              color: Colors
+                                                                  .transparent,
                                                             ),
-                                                          ),
-                                                          Expanded(
-                                                            flex: 2,
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: <Widget>[
-                                                                Text.rich(
-                                                                  TextSpan(
-                                                                    children: [
-                                                                      const TextSpan(
-                                                                        text:
-                                                                            '  Amount : ',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
+                                                            Expanded(
+                                                              flex: 4,
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: <Widget>[
+                                                                  Text.rich(
+                                                                    TextSpan(
+                                                                      children: [
+                                                                        const TextSpan(
+                                                                          text:
+                                                                              'Account : ',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: Color.fromRGBO(
+                                                                                21,
+                                                                                43,
+                                                                                83,
+                                                                                1),
+                                                                          ),
                                                                         ),
-                                                                      ),
-                                                                    ],
+                                                                      ],
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                              ],
+                                                                ],
+                                                              ),
                                                             ),
-                                                          ),
-                                                        ],
+                                                            Expanded(
+                                                              flex: 2,
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: <Widget>[
+                                                                  Text.rich(
+                                                                    TextSpan(
+                                                                      children: [
+                                                                        const TextSpan(
+                                                                          text:
+                                                                              '  Amount : ',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: Color.fromRGBO(
+                                                                                21,
+                                                                                43,
+                                                                                83,
+                                                                                1),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
+                                                    SizedBox(
+                                                      height: 10,
                                                     ),
-                                                    SizedBox(height: 10,),
-                                                    if(data.type == "Payment" || data.type == "Charge")
-                                                    Column(
-                                                      children: uniqueEntries
-                                                          .map((entry) {
-                                                        return Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 10.0,bottom: 10),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              FaIcon(
-                                                                isExpanded
-                                                                    ? FontAwesomeIcons
-                                                                        .sortUp
-                                                                    : FontAwesomeIcons
-                                                                        .sortDown,
-                                                                size: 20,
-                                                                color: Colors
-                                                                    .transparent,
-                                                              ),
-                                                              Expanded(
-                                                                flex: 4,
-                                                                child: Column(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: <Widget>[
-                                                                    Text.rich(
-                                                                      TextSpan(
-                                                                        children: [
-                                                                          TextSpan(
-                                                                            text:
-                                                                                '${entry.account ?? "N/A"}',
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontWeight: FontWeight.w700,
-                                                                              color: grey,
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ],
+                                                    if (data.type ==
+                                                            "Payment" ||
+                                                        data.type == "Charge")
+                                                      Column(
+                                                        children: uniqueEntries
+                                                            .map((entry) {
+                                                          return Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    left: 10.0,
+                                                                    bottom: 10),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                FaIcon(
+                                                                  isExpanded
+                                                                      ? FontAwesomeIcons
+                                                                          .sortUp
+                                                                      : FontAwesomeIcons
+                                                                          .sortDown,
+                                                                  size: 20,
+                                                                  color: Colors
+                                                                      .transparent,
                                                                 ),
-                                                              ),
-                                                              SizedBox(width: 15,),
-                                                              Expanded(
-                                                                flex: 2,
-                                                                child: Column(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: <Widget>[
-                                                                    Text.rich(
-                                                                      TextSpan(
-                                                                        children: [
-                                                                          TextSpan(
-                                                                            text:
-                                                                                ' \$ ${entry.amount ?? "N/A"}',
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontWeight: FontWeight.w700,
-                                                                              color: grey,
+                                                                Expanded(
+                                                                  flex: 4,
+                                                                  child: Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: <Widget>[
+                                                                      Text.rich(
+                                                                        TextSpan(
+                                                                          children: [
+                                                                            TextSpan(
+                                                                              text: '${entry.account ?? "N/A"}',
+                                                                              style: TextStyle(
+                                                                                fontWeight: FontWeight.w700,
+                                                                                color: grey,
+                                                                              ),
                                                                             ),
-                                                                          ),
-                                                                        ],
+                                                                          ],
+                                                                        ),
                                                                       ),
-                                                                    ),
-                                                                    // Add additional fields if needed
-                                                                  ],
+                                                                    ],
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        );
-                                                      }).toList(),
-                                                    ),
-                                                   /* if (data.paymenttype ==
+                                                                SizedBox(
+                                                                  width: 15,
+                                                                ),
+                                                                Expanded(
+                                                                  flex: 2,
+                                                                  child: Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: <Widget>[
+                                                                      Text.rich(
+                                                                        TextSpan(
+                                                                          children: [
+                                                                            TextSpan(
+                                                                              text: ' \$ ${entry.amount ?? "N/A"}',
+                                                                              style: TextStyle(
+                                                                                fontWeight: FontWeight.w700,
+                                                                                color: grey,
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                      // Add additional fields if needed
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
+                                                        }).toList(),
+                                                      ),
+                                                    /* if (data.paymenttype ==
                                                         "Card" &&  data.type == "Payment")
                                                       Padding(
                                                         padding:
@@ -2582,142 +2073,205 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           ],
                                                         ),
                                                       ),*/
-                                                  if (data.type != "Refund" && data.type != "Charge")
-                                                    Row(
-                                                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      children: [
-                                                        // SizedBox(width: 5,),
-                                                        Expanded(
-                                                          child: GestureDetector(
-                                                            onTap:(){
-                                                              setState(() {
-                                                                _amountController.text = (data.totalAmount! - data.surcharge!).toString();
-                                                                _dateController.text = formatDate(DateTime.now().toString());
-                                                              });
-                                                              _showRefundDialog(context,data);
-                                                              // Navigator.of(context)
-                                                              //     .push(MaterialPageRoute(builder: (context) => Workorder_summery(workorder_id: workorder.workOrderId,)));
-                                                            },
-                                                            child: Container(
-                                                              height:40,
-                                                              decoration: BoxDecoration(
-                                                                  color: Colors.grey[350]
-                                                              ),
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                MainAxisAlignment.center,
-                                                                crossAxisAlignment:
-                                                                CrossAxisAlignment.center,
-                                                                children: [
-                                                                  SizedBox(width: 5,),
-                                                                 Icon(Icons.wallet),
-                                                                  // FaIcon(
-                                                                  //   FontAwesomeIcons.trashCan,
-                                                                  //   size: 15,
-                                                                  //   color:blueColor,
-                                                                  // ),
-                                                                  SizedBox(width: 8,),
-                                                                  Text("Refund",style: TextStyle(fontSize: 12,color: blueColor,fontWeight: FontWeight.bold),)
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    if ( data.type == "Charge")
-                                                    Row(
-                                                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      children: [
-                                                        Expanded(
-                                                          child: GestureDetector(
-                                                            onTap:()async{
-                                                              final value = await  Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder: (context) =>  enterCharge(
-                                                                        leaseId: widget.leaseId,
-                                                                        chargeid: data.chargeId,
-                                                                      )));
-                                                              if (value == true) {
+                                                    if (data.type != "Refund" &&
+                                                        data.type != "Charge")
+                                                      Row(
+                                                        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                          // SizedBox(width: 5,),
+                                                          Expanded(
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap: () {
                                                                 setState(() {
-                                                                  _leaseLedgerFuture = LeaseRepository()
-                                                                      .fetchLeaseLedger(widget.leaseId);
+                                                                  _amountController
+                                                                      .text = (data
+                                                                              .totalAmount! -
+                                                                          data.surcharge!)
+                                                                      .toString();
+                                                                  _dateController
+                                                                      .text = formatDate(DateTime
+                                                                          .now()
+                                                                      .toString());
                                                                 });
-                                                              }
-                                                              // var check = await Navigator.push(
-                                                              //   context,
-                                                              //   MaterialPageRoute(
-                                                              //     builder: (context) => Edit_properties(
-                                                              //       properties: rentals,
-                                                              //       rentalId: rentals.rentalId!,
-                                                              //     ),
-                                                              //   ),
-                                                              // );
-                                                              // if (check == true) {
-                                                              //   setState(() {
-                                                              //     futureRentalOwners = PropertiesRepository().fetchProperties();
-                                                              //
-                                                              //   });
-                                                              //   // Update State
-                                                              // }
-                                                            },
-                                                            child: Container(
-                                                              height:40,
-                                                              decoration: BoxDecoration(
-                                                                  color: Colors.grey[350]
-                                                              ),                                               // color:Colors.grey[100],
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                MainAxisAlignment.center,
-                                                                crossAxisAlignment:
-                                                                CrossAxisAlignment.center,
-                                                                children: [
-                                                                  FaIcon(
-                                                                    FontAwesomeIcons.edit,
-                                                                    size: 15,
-                                                                    color:blueColor,
-                                                                  ),
-                                                                  SizedBox(width: 10,),
-                                                                  Text("Edit",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
-                                                                ],
+                                                                _showRefundDialog(
+                                                                    context,
+                                                                    data);
+                                                                // Navigator.of(context)
+                                                                //     .push(MaterialPageRoute(builder: (context) => Workorder_summery(workorder_id: workorder.workOrderId,)));
+                                                              },
+                                                              child: Container(
+                                                                height: 40,
+                                                                decoration: BoxDecoration(
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        350]),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    SizedBox(
+                                                                      width: 5,
+                                                                    ),
+                                                                    Icon(Icons
+                                                                        .wallet),
+                                                                    // FaIcon(
+                                                                    //   FontAwesomeIcons.trashCan,
+                                                                    //   size: 15,
+                                                                    //   color:blueColor,
+                                                                    // ),
+                                                                    SizedBox(
+                                                                      width: 8,
+                                                                    ),
+                                                                    Text(
+                                                                      "Refund",
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              12,
+                                                                          color:
+                                                                              blueColor,
+                                                                          fontWeight:
+                                                                              FontWeight.bold),
+                                                                    )
+                                                                  ],
+                                                                ),
                                                               ),
                                                             ),
                                                           ),
-                                                        ),
-                                                        SizedBox(width: 5,),
-                                                        Expanded(
-                                                          child: GestureDetector(
-                                                            onTap:(){
-                                                              _showAlert(context,data.chargeId!);
-                                                          //   _showAlert(context, rentals.rentalId!);
-                                                            },
-                                                            child: Container(
-                                                              height:40,
-                                                              decoration: BoxDecoration(
-                                                                  color: Colors.grey[350]
-                                                              ),
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                MainAxisAlignment.center,
-                                                                crossAxisAlignment:
-                                                                CrossAxisAlignment.center,
-                                                                children: [
-                                                                  FaIcon(
-                                                                    FontAwesomeIcons.trashCan,
-                                                                    size: 15,
-                                                                    color:blueColor,
-                                                                  ),
-                                                                  SizedBox(width: 10,),
-                                                                  Text("Delete",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
-                                                                ],
+                                                        ],
+                                                      ),
+                                                    if (data.type == "Charge")
+                                                      Row(
+                                                        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                          Expanded(
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap: () async {
+                                                                final value = await Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) => enterCharge(
+                                                                              leaseId: widget.leaseId,
+                                                                              chargeid: data.chargeId,
+                                                                            )));
+                                                                if (value ==
+                                                                    true) {
+                                                                  setState(() {
+                                                                    _leaseLedgerFuture =
+                                                                        LeaseRepository()
+                                                                            .fetchLeaseLedger(widget.leaseId);
+                                                                  });
+                                                                }
+                                                                // var check = await Navigator.push(
+                                                                //   context,
+                                                                //   MaterialPageRoute(
+                                                                //     builder: (context) => Edit_properties(
+                                                                //       properties: rentals,
+                                                                //       rentalId: rentals.rentalId!,
+                                                                //     ),
+                                                                //   ),
+                                                                // );
+                                                                // if (check == true) {
+                                                                //   setState(() {
+                                                                //     futureRentalOwners = PropertiesRepository().fetchProperties();
+                                                                //
+                                                                //   });
+                                                                //   // Update State
+                                                                // }
+                                                              },
+                                                              child: Container(
+                                                                height: 40,
+                                                                decoration: BoxDecoration(
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        350]), // color:Colors.grey[100],
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .edit,
+                                                                      size: 15,
+                                                                      color:
+                                                                          blueColor,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: 10,
+                                                                    ),
+                                                                    Text(
+                                                                      "Edit",
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              blueColor,
+                                                                          fontWeight:
+                                                                              FontWeight.bold),
+                                                                    ),
+                                                                  ],
+                                                                ),
                                                               ),
                                                             ),
                                                           ),
-                                                        ),
-
-                                                      ],
-                                                    ),
+                                                          SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          Expanded(
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap: () {
+                                                                _showAlert(
+                                                                    context,
+                                                                    data.chargeId!);
+                                                                //   _showAlert(context, rentals.rentalId!);
+                                                              },
+                                                              child: Container(
+                                                                height: 40,
+                                                                decoration: BoxDecoration(
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        350]),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .trashCan,
+                                                                      size: 15,
+                                                                      color:
+                                                                          blueColor,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: 10,
+                                                                    ),
+                                                                    Text(
+                                                                      "Delete",
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              blueColor,
+                                                                          fontWeight:
+                                                                              FontWeight.bold),
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
                                                   ],
                                                 ),
                                               ),

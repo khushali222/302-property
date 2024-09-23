@@ -25,7 +25,8 @@ import '../../Leasing/RentalRoll/newAddLease.dart';
 class unitScreen extends StatefulWidget {
   Rentals? properties;
   unit_properties? unit;
-  unitScreen(BuildContext context, {
+  unitScreen(
+    BuildContext context, {
     super.key,
     this.properties,
     this.unit,
@@ -41,8 +42,7 @@ class _unitScreenState extends State<unitScreen> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      body:
-      SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(
@@ -212,7 +212,10 @@ class _unitScreenState extends State<unitScreen> {
                                 width: double.infinity,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>addLease3()));
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => addLease3()));
                                   },
                                   child: const Text(
                                     'Add Lease',
@@ -248,7 +251,11 @@ class _unitScreenState extends State<unitScreen> {
                                 width: double.infinity,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>AddApplicant()));
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                AddApplicant()));
                                   },
                                   child: const Text(
                                     'Create Applicant',
@@ -272,8 +279,10 @@ class _unitScreenState extends State<unitScreen> {
                 ),
               ),
             ),
-             LeasesTable(unit:widget.unit),
-            AppliancesPart(unit:widget.unit,),
+            LeasesTable(unit: widget.unit),
+            AppliancesPart(
+              unit: widget.unit,
+            ),
           ],
         ),
       ),
@@ -304,7 +313,7 @@ class _LeasesTableState extends State<LeasesTable> {
   void initState() {
     super.initState();
     fetchLeases();
-    futureLease = UnitData().fetchUnitLeases(widget.unit?.unitId ??"");
+    futureLease = UnitData().fetchUnitLeases(widget.unit?.unitId ?? "");
   }
 
   Future<void> fetchLeases() async {
@@ -342,8 +351,8 @@ class _LeasesTableState extends State<LeasesTable> {
       child: InkWell(
         onTap: getField != null
             ? () {
-          _sort(getField, columnIndex, !_sortAscending);
-        }
+                _sort(getField, columnIndex, !_sortAscending);
+              }
             : null,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -366,7 +375,7 @@ class _LeasesTableState extends State<LeasesTable> {
   Widget _buildDataCell(String text) {
     return TableCell(
       child: Padding(
-        padding: const EdgeInsets.only(top: 20.0, left: 16,bottom: 20),
+        padding: const EdgeInsets.only(top: 20.0, left: 16, bottom: 20),
         child: Text(text, style: const TextStyle(fontSize: 18)),
       ),
     );
@@ -460,15 +469,15 @@ class _LeasesTableState extends State<LeasesTable> {
             size: 30,
             FontAwesomeIcons.circleChevronLeft,
             color:
-            _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+                _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
           ),
           onPressed: _currentPage == 0
               ? null
               : () {
-            setState(() {
-              _currentPage--;
-            });
-          },
+                  setState(() {
+                    _currentPage--;
+                  });
+                },
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
@@ -481,15 +490,15 @@ class _LeasesTableState extends State<LeasesTable> {
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
                 : Color.fromRGBO(
-                21, 43, 83, 1), // Change color based on availability
+                    21, 43, 83, 1), // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
               : () {
-            setState(() {
-              _currentPage++;
-            });
-          },
+                  setState(() {
+                    _currentPage++;
+                  });
+                },
         ),
       ],
     );
@@ -518,8 +527,8 @@ class _LeasesTableState extends State<LeasesTable> {
     });
   }
 
-  void _sort<T>(Comparable<T> Function(unit_lease d) getField,
-      int columnIndex, bool ascending) {
+  void _sort<T>(Comparable<T> Function(unit_lease d) getField, int columnIndex,
+      bool ascending) {
     setState(() {
       _sortColumnIndex = columnIndex;
       _sortAscending = ascending;
@@ -685,21 +694,21 @@ class _LeasesTableState extends State<LeasesTable> {
                     SizedBox(width: 3),
                     ascending1
                         ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
                         : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 5),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+                            padding: const EdgeInsets.only(bottom: 7, left: 5),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -732,21 +741,21 @@ class _LeasesTableState extends State<LeasesTable> {
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
                         : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -780,21 +789,21 @@ class _LeasesTableState extends State<LeasesTable> {
                     SizedBox(width: 5),
                     ascending3
                         ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
                         : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -809,8 +818,7 @@ class _LeasesTableState extends State<LeasesTable> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    return
-      Padding(
+    return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -831,39 +839,25 @@ class _LeasesTableState extends State<LeasesTable> {
           ),
           if (MediaQuery.of(context).size.width < 500)
             Padding(
-              padding: const EdgeInsets.only(left: 10,right: 10,bottom: 10),
+              padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
               child: FutureBuilder<List<unit_lease>>(
                 future: futureLease,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(
                         child: SpinKitFadingCircle(
-                          color: Colors.black,
-                          size: 40.0,
-                        ));
+                      color: Colors.black,
+                      size: 40.0,
+                    ));
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('You don\'t have any lease for this unit right now ..'));
+                    return Center(
+                        child: Text(
+                            'You don\'t have any lease for this unit right now ..'));
                   } else {
                     var data = snapshot.data!;
-                    // if (searchValue == null || searchValue!.isEmpty) {
-                    //   data = snapshot.data!;
-                    // } else if (searchValue == "All") {
-                    //   data = snapshot.data!;
-                    // } else if (searchValue!.isNotEmpty) {
-                    //   data = snapshot.data!
-                    //       .where((rentals) => rentals.!
-                    //       .toLowerCase()
-                    //       .contains(searchValue!.toLowerCase()))
-                    //       .toList();
-                    // } else {
-                    //   data = snapshot.data!
-                    //       .where((rentals) =>
-                    //   rentals.applianceName == searchValue)
-                    //       .toList();
-                    // }
-                    // sortData(data);
+
                     final totalPages = (data.length / itemsPerPage).ceil();
                     final currentPageData = data
                         .skip(currentPage * itemsPerPage)
@@ -879,10 +873,8 @@ class _LeasesTableState extends State<LeasesTable> {
                             decoration: BoxDecoration(
                                 border: Border.all(color: blueColor)),
                             child: Column(
-                              children: currentPageData
-                                  .asMap()
-                                  .entries
-                                  .map((entry) {
+                              children:
+                                  currentPageData.asMap().entries.map((entry) {
                                 int index = entry.key;
                                 bool isExpanded = expandedIndex == index;
                                 unit_lease rentals = entry.value;
@@ -899,9 +891,9 @@ class _LeasesTableState extends State<LeasesTable> {
                                           padding: const EdgeInsets.all(2.0),
                                           child: Row(
                                             mainAxisAlignment:
-                                            MainAxisAlignment.start,
+                                                MainAxisAlignment.start,
                                             crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                                CrossAxisAlignment.center,
                                             children: <Widget>[
                                               InkWell(
                                                 onTap: () {
@@ -928,19 +920,19 @@ class _LeasesTableState extends State<LeasesTable> {
                                                   });
                                                 },
                                                 child: Container(
-                                                  margin: EdgeInsets.only(
-                                                      left: 5),
+                                                  margin:
+                                                      EdgeInsets.only(left: 5),
                                                   padding: !isExpanded
                                                       ? EdgeInsets.only(
-                                                      bottom: 10)
+                                                          bottom: 10)
                                                       : EdgeInsets.only(
-                                                      top: 10),
+                                                          top: 10),
                                                   child: FaIcon(
                                                     isExpanded
                                                         ? FontAwesomeIcons
-                                                        .sortUp
+                                                            .sortUp
                                                         : FontAwesomeIcons
-                                                        .sortDown,
+                                                            .sortDown,
                                                     size: 20,
                                                     color: Color.fromRGBO(
                                                         21, 43, 83, 1),
@@ -960,57 +952,53 @@ class _LeasesTableState extends State<LeasesTable> {
                                                     //             Rentalowners_summery(
                                                     //               rentalOwnersid: rentals.rentalownerId!,)));
                                                   },
-                                                  child: Text((getStatus(
-                                                      rentals.startDate!, rentals.endDate!)),
-
+                                                  child: Text(
+                                                    (getStatus(
+                                                        rentals.startDate!,
+                                                        rentals.endDate!)),
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
-                                                      FontWeight.bold,
+                                                          FontWeight.bold,
                                                       fontSize: 13,
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                               SizedBox(
-                                                  width:
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .width *
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
                                                       .08),
                                               Expanded(
                                                 child: Text(
                                                   '${rentals.tenantFirstName} ${rentals.tenantLastName}',
                                                   style: TextStyle(
                                                     color: blueColor,
-                                                    fontWeight:
-                                                    FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     fontSize: 12,
                                                   ),
                                                 ),
                                               ),
                                               SizedBox(
-                                                  width:
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .width *
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
                                                       .08),
                                               Expanded(
                                                 child: Text(
                                                   '${rentals.leaseType}',
                                                   style: TextStyle(
                                                     color: blueColor,
-                                                    fontWeight:
-                                                    FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     fontSize: 12,
                                                   ),
                                                 ),
                                               ),
                                               SizedBox(
-                                                  width:
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .width *
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
                                                       .02),
                                             ],
                                           ),
@@ -1026,44 +1014,43 @@ class _LeasesTableState extends State<LeasesTable> {
                                               children: [
                                                 Row(
                                                   mainAxisAlignment:
-                                                  MainAxisAlignment.start,
+                                                      MainAxisAlignment.start,
                                                   children: [
                                                     FaIcon(
                                                       isExpanded
                                                           ? FontAwesomeIcons
-                                                          .sortUp
+                                                              .sortUp
                                                           : FontAwesomeIcons
-                                                          .sortDown,
+                                                              .sortDown,
                                                       size: 50,
-                                                      color:
-                                                      Colors.transparent,
+                                                      color: Colors.transparent,
                                                     ),
                                                     Expanded(
                                                       child: Column(
                                                         crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
+                                                            CrossAxisAlignment
+                                                                .start,
                                                         children: <Widget>[
                                                           Text.rich(
                                                             TextSpan(
                                                               children: [
                                                                 TextSpan(
                                                                   text:
-                                                                  'Start-End : ',
+                                                                      'Start-End : ',
                                                                   style: TextStyle(
                                                                       fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
+                                                                          FontWeight
+                                                                              .bold,
                                                                       color:
-                                                                      blueColor), // Bold and black
+                                                                          blueColor), // Bold and black
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                  '${rentals.startDate} - ${rentals.endDate}',
+                                                                      '${rentals.startDate} - ${rentals.endDate}',
                                                                   style: TextStyle(
                                                                       fontWeight:
-                                                                      FontWeight
-                                                                          .w700,
+                                                                          FontWeight
+                                                                              .w700,
                                                                       color: Colors
                                                                           .grey), // Light and grey
                                                                 ),
@@ -1072,9 +1059,9 @@ class _LeasesTableState extends State<LeasesTable> {
                                                           ),
                                                           SizedBox(
                                                             height: MediaQuery.of(
-                                                                context)
-                                                                .size
-                                                                .height *
+                                                                        context)
+                                                                    .size
+                                                                    .height *
                                                                 .01,
                                                           ),
                                                           Text.rich(
@@ -1082,21 +1069,21 @@ class _LeasesTableState extends State<LeasesTable> {
                                                               children: [
                                                                 TextSpan(
                                                                   text:
-                                                                  'Rent : ',
+                                                                      'Rent : ',
                                                                   style: TextStyle(
                                                                       fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
+                                                                          FontWeight
+                                                                              .bold,
                                                                       color:
-                                                                      blueColor), // Bold and black
+                                                                          blueColor), // Bold and black
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                  '${rentals.amount}',
+                                                                      '${rentals.amount}',
                                                                   style: TextStyle(
                                                                       fontWeight:
-                                                                      FontWeight
-                                                                          .w700,
+                                                                          FontWeight
+                                                                              .w700,
                                                                       color: Colors
                                                                           .grey), // Light and grey
                                                                 ),
@@ -1134,8 +1121,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 12.0),
                                       decoration: BoxDecoration(
-                                        border:
-                                        Border.all(color: Colors.grey),
+                                        border: Border.all(color: Colors.grey),
                                       ),
                                       child: DropdownButtonHideUnderline(
                                         child: DropdownButton<int>(
@@ -1151,7 +1137,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                             setState(() {
                                               itemsPerPage = newValue!;
                                               currentPage =
-                                              0; // Reset to first page when items per page change
+                                                  0; // Reset to first page when items per page change
                                             });
                                           },
                                         ),
@@ -1172,10 +1158,10 @@ class _LeasesTableState extends State<LeasesTable> {
                                     onPressed: currentPage == 0
                                         ? null
                                         : () {
-                                      setState(() {
-                                        currentPage--;
-                                      });
-                                    },
+                                            setState(() {
+                                              currentPage--;
+                                            });
+                                          },
                                   ),
                                   // IconButton(
                                   //   icon: Icon(Icons.arrow_back),
@@ -1208,10 +1194,10 @@ class _LeasesTableState extends State<LeasesTable> {
                                     ),
                                     onPressed: currentPage < totalPages - 1
                                         ? () {
-                                      setState(() {
-                                        currentPage++;
-                                      });
-                                    }
+                                            setState(() {
+                                              currentPage++;
+                                            });
+                                          }
                                         : null,
                                   ),
                                 ],
@@ -1232,13 +1218,15 @@ class _LeasesTableState extends State<LeasesTable> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
                       child: SpinKitFadingCircle(
-                        color: Colors.black,
-                        size: 40.0,
-                      ));
+                    color: Colors.black,
+                    size: 40.0,
+                  ));
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('You don\'t have any lease for this unit right now ..'));
+                  return Center(
+                      child: Text(
+                          'You don\'t have any lease for this unit right now ..'));
                 } else {
                   List<unit_lease>? filteredData = [];
                   _tableData = snapshot.data!;
@@ -1249,19 +1237,21 @@ class _LeasesTableState extends State<LeasesTable> {
                   } else if (searchValue.isNotEmpty) {
                     filteredData = snapshot.data!
                         .where((staff) =>
-                    staff.tenantFirstName!
-                        .toLowerCase()
-                        .contains(searchValue.toLowerCase()) ||
-                        staff.leaseType!
-                            .toLowerCase()
-                            .contains(searchValue.toLowerCase()))
+                            staff.tenantFirstName!
+                                .toLowerCase()
+                                .contains(searchValue.toLowerCase()) ||
+                            staff.leaseType!
+                                .toLowerCase()
+                                .contains(searchValue.toLowerCase()))
                         .toList();
                   }
 
                   _tableData = filteredData!;
                   totalrecords = _tableData.length;
                   return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0,),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0,
+                    ),
                     child: Column(
                       children: [
                         SingleChildScrollView(
@@ -1273,35 +1263,22 @@ class _LeasesTableState extends State<LeasesTable> {
                               children: [
                                 TableRow(
                                   decoration:
-                                  BoxDecoration(border: Border.all()),
+                                      BoxDecoration(border: Border.all()),
                                   children: [
                                     // TableCell(child: Text('yash')),
                                     // TableCell(child: Text('yash')),
                                     // TableCell(child: Text('yash')),
                                     // TableCell(child: Text('yash')),
                                     _buildHeader('Status', 0,
-                                            (rental) => rental.startDate!),
+                                        (rental) => rental.startDate!),
+                                    _buildHeader('Start-End', 1,
+                                        (rental) => rental.endDate!),
+                                    _buildHeader('Tenant', 2,
+                                        (rental) => rental.tenantFirstName!),
+                                    _buildHeader('Type', 3,
+                                        (rental) => rental.leaseType!),
                                     _buildHeader(
-                                        'Start-End',
-                                        1,
-                                            (rental) =>
-                                        rental.endDate!),
-                                    _buildHeader(
-                                        'Tenant',
-                                        2,
-                                            (rental) =>
-                                        rental.tenantFirstName!),
-                                    _buildHeader(
-                                        'Type',
-                                        3,
-                                            (rental) =>
-                                        rental.leaseType!),
-                                    _buildHeader(
-                                        'Type',
-                                        4,
-                                            (rental) =>
-                                        rental.amount!),
-
+                                        'Type', 4, (rental) => rental.amount!),
                                   ],
                                 ),
                                 TableRow(
@@ -1311,7 +1288,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                   ),
                                   children: List.generate(
                                       5,
-                                          (index) => TableCell(
+                                      (index) => TableCell(
                                           child: Container(height: 20))),
                                 ),
                                 for (var i = 0; i < _pagedData.length; i++)
@@ -1319,47 +1296,41 @@ class _LeasesTableState extends State<LeasesTable> {
                                     decoration: BoxDecoration(
                                       border: Border(
                                         left: BorderSide(
-                                            color: Color.fromRGBO(
-                                                21, 43, 81, 1)),
+                                            color:
+                                                Color.fromRGBO(21, 43, 81, 1)),
                                         right: BorderSide(
-                                            color: Color.fromRGBO(
-                                                21, 43, 81, 1)),
+                                            color:
+                                                Color.fromRGBO(21, 43, 81, 1)),
                                         top: BorderSide(
-                                            color: Color.fromRGBO(
-                                                21, 43, 81, 1)),
+                                            color:
+                                                Color.fromRGBO(21, 43, 81, 1)),
                                         bottom: i == _pagedData.length - 1
                                             ? BorderSide(
-                                            color: Color.fromRGBO(
-                                                21, 43, 81, 1))
+                                                color: Color.fromRGBO(
+                                                    21, 43, 81, 1))
                                             : BorderSide.none,
                                       ),
                                     ),
                                     children: [
                                       _buildDataCell(
-                                        (getStatus(
-                                            _pagedData[i].startDate!, _pagedData[i].endDate!)),
+                                        (getStatus(_pagedData[i].startDate!,
+                                            _pagedData[i].endDate!)),
                                       ),
                                       // _buildDataCell('${_pagedData[i].rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerLastName ?? ''}'),
                                       _buildDataCell(
                                           '${_pagedData[i].startDate} - ${_pagedData[i].endDate}'),
                                       _buildDataCell(
-                                          '${_pagedData[i].tenantFirstName} - ${_pagedData[i].tenantLastName}'
-                                      ),
+                                          '${_pagedData[i].tenantFirstName} - ${_pagedData[i].tenantLastName}'),
                                       _buildDataCell(
-                                          '${_pagedData[i].leaseType}'
-                                      ),
-                                      _buildDataCell(
-                                          '${_pagedData[i].amount}'
-                                      ),
-
+                                          '${_pagedData[i].leaseType}'),
+                                      _buildDataCell('${_pagedData[i].amount}'),
                                     ],
                                   ),
                               ],
                             ),
                           ),
                         ),
-                        if (_tableData.isEmpty)
-                          Text("No Search Records Found"),
+                        if (_tableData.isEmpty) Text("No Search Records Found"),
                         SizedBox(height: 25),
                         _buildPaginationControls(),
                       ],
@@ -1413,8 +1384,9 @@ class AppliancesPart extends StatefulWidget {
   unit_properties? unit;
 
   AppliancesPart({
-    this.unit,this.properties ,
-});
+    this.unit,
+    this.properties,
+  });
   @override
   _AppliancesPartState createState() => _AppliancesPartState();
 }
@@ -1427,10 +1399,11 @@ class _AppliancesPartState extends State<AppliancesPart> {
   final UnitData leaseRepository = UnitData();
   List<unit_appliance> leases = [];
 
-  bool isLoading = false;  Future<void> fetchLeases() async {
+  bool isLoading = false;
+  Future<void> fetchLeases() async {
     //  try {
     final fetchedLeases =
-    await leaseRepository.fetchApplianceData(widget.unit!.unitId!);
+        await leaseRepository.fetchApplianceData(widget.unit!.unitId!);
     print(widget.unit!.unitId!);
     print('hello');
     setState(() {
@@ -1446,6 +1419,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
     //print('Failed to load leases: $e');
     //}
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -1453,10 +1427,11 @@ class _AppliancesPartState extends State<AppliancesPart> {
     fetchLeases();
     futureAppliences = UnitData().fetchApplianceData(widget.unit?.unitId ?? "");
   }
-  reload_screen(){
-    setState(() {
-    });
+
+  reload_screen() {
+    setState(() {});
   }
+
   DateTime? _selectedDate;
   //bool isLoading = false;
   bool iserror = false;
@@ -1469,8 +1444,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
       child: InkWell(
         onTap: getField != null
             ? () {
-          _sort(getField, columnIndex, !_sortAscending);
-        }
+                _sort(getField, columnIndex, !_sortAscending);
+              }
             : null,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -1587,15 +1562,15 @@ class _AppliancesPartState extends State<AppliancesPart> {
             size: 30,
             FontAwesomeIcons.circleChevronLeft,
             color:
-            _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+                _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
           ),
           onPressed: _currentPage == 0
               ? null
               : () {
-            setState(() {
-              _currentPage--;
-            });
-          },
+                  setState(() {
+                    _currentPage--;
+                  });
+                },
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
@@ -1608,15 +1583,15 @@ class _AppliancesPartState extends State<AppliancesPart> {
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
                 : Color.fromRGBO(
-                21, 43, 83, 1), // Change color based on availability
+                    21, 43, 83, 1), // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
               : () {
-            setState(() {
-              _currentPage++;
-            });
-          },
+                  setState(() {
+                    _currentPage++;
+                  });
+                },
         ),
       ],
     );
@@ -1734,8 +1709,6 @@ class _AppliancesPartState extends State<AppliancesPart> {
     print('Delete ${rental.applianceId}');
   }
 
-
-
   late Future<List<unit_appliance>> futureAppliences;
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
@@ -1826,21 +1799,21 @@ class _AppliancesPartState extends State<AppliancesPart> {
                     SizedBox(width: 3),
                     ascending1
                         ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
                         : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -1873,21 +1846,21 @@ class _AppliancesPartState extends State<AppliancesPart> {
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
                         : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -1921,21 +1894,21 @@ class _AppliancesPartState extends State<AppliancesPart> {
                     SizedBox(width: 5),
                     ascending3
                         ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
                         : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -1945,9 +1918,9 @@ class _AppliancesPartState extends State<AppliancesPart> {
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
-
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     return Padding(
@@ -1973,245 +1946,274 @@ class _AppliancesPartState extends State<AppliancesPart> {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return
-                              StatefulBuilder(
-                                builder: (BuildContext context,
-                                    StateSetter setState) {
-                                  return
-                                    AlertDialog(
-                                      backgroundColor: Colors.white,
-                                      surfaceTintColor: Colors.white,
-                                      title: const Text('Add Appliances'),
-                                      content: Form(
-                                        key: _formKey,
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            CustomTextFormField(
-                                              labelText: 'Name',
-                                              hintText: 'Enter Name',
-                                              keyboardType: TextInputType.text,
-                                              controller: _name,
-                                              // validator: (value) {
-                                              //   if (value == null || value.isEmpty) {
-                                              //     return 'Please enter name';
-                                              //   }
-                                              //   return null;
-                                              // },
-                                            ),
-                                            CustomTextFormField(
-                                              labelText: 'Description',
-                                              hintText: 'Enter description',
-                                              keyboardType: TextInputType.text,
-                                              controller: _description,
-                                              // validator: (value) {
-                                              //   if (value == null || value.isEmpty) {
-                                              //     return 'Please enter description';
-                                              //   }
-                                              //   return null;
-                                              // },
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                showDatePicker(
-                                                  context: context,
-                                                  initialDate: DateTime.now(),
-                                                  firstDate: DateTime(2000),
-                                                  lastDate: DateTime(2100),
-                                            builder: (BuildContext context, Widget? child) {
-                                              return Theme(
-                                                data: ThemeData.light().copyWith(
-                                                  // primaryColor: Color.fromRGBO(21, 43, 83, 1),
-                                                  //  hintColor: Color.fromRGBO(21, 43, 83, 1),
-                                                  colorScheme: ColorScheme.light(
-                                                    primary: Color.fromRGBO(21, 43, 83, 1),
-                                                    // onPrimary:Color.fromRGBO(21, 43, 83, 1),
-                                                    //  surface: Color.fromRGBO(21, 43, 83, 1),
-                                                    onSurface: Colors.black,
+                            return StatefulBuilder(
+                              builder:
+                                  (BuildContext context, StateSetter setState) {
+                                return AlertDialog(
+                                  backgroundColor: Colors.white,
+                                  surfaceTintColor: Colors.white,
+                                  title: const Text('Add Appliances'),
+                                  content: Form(
+                                    key: _formKey,
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        CustomTextFormField(
+                                          labelText: 'Name',
+                                          hintText: 'Enter Name',
+                                          keyboardType: TextInputType.text,
+                                          controller: _name,
+                                          // validator: (value) {
+                                          //   if (value == null || value.isEmpty) {
+                                          //     return 'Please enter name';
+                                          //   }
+                                          //   return null;
+                                          // },
+                                        ),
+                                        CustomTextFormField(
+                                          labelText: 'Description',
+                                          hintText: 'Enter description',
+                                          keyboardType: TextInputType.text,
+                                          controller: _description,
+                                          // validator: (value) {
+                                          //   if (value == null || value.isEmpty) {
+                                          //     return 'Please enter description';
+                                          //   }
+                                          //   return null;
+                                          // },
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            showDatePicker(
+                                              context: context,
+                                              initialDate: DateTime.now(),
+                                              firstDate: DateTime(2000),
+                                              lastDate: DateTime(2100),
+                                              builder: (BuildContext context,
+                                                  Widget? child) {
+                                                return Theme(
+                                                  data: ThemeData.light()
+                                                      .copyWith(
+                                                    // primaryColor: Color.fromRGBO(21, 43, 83, 1),
+                                                    //  hintColor: Color.fromRGBO(21, 43, 83, 1),
+                                                    colorScheme:
+                                                        ColorScheme.light(
+                                                      primary: Color.fromRGBO(
+                                                          21, 43, 83, 1),
+                                                      // onPrimary:Color.fromRGBO(21, 43, 83, 1),
+                                                      //  surface: Color.fromRGBO(21, 43, 83, 1),
+                                                      onSurface: Colors.black,
+                                                    ),
+                                                    buttonTheme:
+                                                        ButtonThemeData(
+                                                      textTheme: ButtonTextTheme
+                                                          .primary,
+                                                    ),
                                                   ),
-                                                  buttonTheme: ButtonThemeData(
-                                                    textTheme: ButtonTextTheme.primary,
-                                                  ),
-                                                ),
-                                                child: child!,
-                                              );
-                                            },
-                                                ).then((date) {
-                                                  if (date != null) {
-                                                    setState(() {
-                                                      _selectedDate = date;
-                                                      _installedDate.text =
-                                                          formatDate(date.toString());
-                                                    });
-                                                  }
-                                                });
+                                                  child: child!,
+                                                );
                                               },
-                                              child: AbsorbPointer(
-                                                child: CustomTextFormField(
-                                                  labelText: 'Date',
-                                                  hintText: 'Select Date',
-                                                  keyboardType: TextInputType.datetime,
-                                                  controller: _installedDate,
-                                                  // validator: (value) {
-                                                  //   if (value == null ||
-                                                  //       value.isEmpty) {
-                                                  //     return 'Please select date';
+                                            ).then((date) {
+                                              if (date != null) {
+                                                setState(() {
+                                                  _selectedDate = date;
+                                                  _installedDate.text =
+                                                      formatDate(
+                                                          date.toString());
+                                                });
+                                              }
+                                            });
+                                          },
+                                          child: AbsorbPointer(
+                                            child: CustomTextFormField(
+                                              labelText: 'Date',
+                                              hintText: 'Select Date',
+                                              keyboardType:
+                                                  TextInputType.datetime,
+                                              controller: _installedDate,
+                                              // validator: (value) {
+                                              //   if (value == null ||
+                                              //       value.isEmpty) {
+                                              //     return 'Please select date';
+                                              //   }
+                                              //   return null;
+                                              // },
+                                            ),
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Container(
+                                                height: 42,
+                                                width: 80,
+                                                child: ElevatedButton(
+                                                  style: ElevatedButton.styleFrom(
+                                                      backgroundColor:
+                                                          const Color.fromRGBO(
+                                                              21, 43, 83, 1),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8.0))),
+                                                  // onPressed: () async {
+                                                  //   if (_formKey.currentState?.validate() ?? false) {
+                                                  //     setState(() {
+                                                  //       isLoading = true;
+                                                  //       iserror = false;
+                                                  //     });
+                                                  //     SharedPreferences prefs = await SharedPreferences.getInstance();
+                                                  //     String? id = prefs.getString("adminId");
+                                                  //
+                                                  //     Properies_summery_Repo()
+                                                  //         .addappliances(
+                                                  //       appliancename: _name.text,
+                                                  //       appliancedescription: _description.text,
+                                                  //       installeddate: _installedDate.text,
+                                                  //     )
+                                                  //         .then((value) {
+                                                  //       setState(() {
+                                                  //         isLoading = false;
+                                                  //       });
+                                                  //       Navigator.pop(context, true);
+                                                  //     })
+                                                  //         .catchError((e) {
+                                                  //       setState(() {
+                                                  //         isLoading = false;
+                                                  //       });
+                                                  //     });
+                                                  //   } else {
+                                                  //     setState(() {
+                                                  //       iserror = true;
+                                                  //     });
                                                   //   }
-                                                  //   return null;
                                                   // },
+                                                  onPressed: () async {
+                                                    if (_name.text.isEmpty ||
+                                                        _description
+                                                            .text.isEmpty ||
+                                                        _installedDate
+                                                            .text.isEmpty) {
+                                                      setState(() {
+                                                        iserror = true;
+                                                      });
+                                                    } else {
+                                                      setState(() {
+                                                        isLoading = true;
+                                                        iserror = false;
+                                                      });
+                                                      SharedPreferences prefs =
+                                                          await SharedPreferences
+                                                              .getInstance();
+                                                      String? id = prefs
+                                                          .getString("adminId");
+                                                      print("calling");
+                                                      Properies_summery_Repo()
+                                                          .addappliances(
+                                                        adminId: id,
+                                                        unitId:
+                                                            widget.unit?.unitId,
+                                                        appliancename:
+                                                            _name.text,
+                                                        appliancedescription:
+                                                            _description.text,
+                                                        installeddate:
+                                                            _installedDate.text,
+                                                      )
+                                                          .then((value) {
+                                                        print(widget.properties
+                                                            ?.adminId);
+                                                        print(widget
+                                                            .unit?.unitId);
+                                                        setState(() {
+                                                          isLoading = false;
+                                                          leases.add(
+                                                              unit_appliance(
+                                                            applianceName:
+                                                                _name.text,
+                                                            applianceDescription:
+                                                                _description
+                                                                    .text,
+                                                            installedDate:
+                                                                _installedDate
+                                                                    .text,
+                                                            adminId: id,
+                                                            unitId: widget
+                                                                .unit?.unitId,
+                                                          ));
+                                                        });
+                                                        reload_screen();
+
+                                                        Navigator.pop(
+                                                            context, true);
+                                                      }).catchError((e) {
+                                                        setState(() {
+                                                          isLoading = false;
+                                                        });
+                                                      });
+                                                    }
+                                                  },
+                                                  child: const Text(
+                                                    'Save',
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.white),
+                                                  ),
                                                 ),
                                               ),
                                             ),
-
-                                            Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                              children: [
-                                                Padding(
-                                                  padding: const EdgeInsets.all(8.0),
-                                                  child: Container(
-                                                    height: 42,
-                                                    width: 80,
-                                                    child: ElevatedButton(
-                                                      style: ElevatedButton.styleFrom(
-                                                          backgroundColor:
-                                                          const Color.fromRGBO(
-                                                              21, 43, 83, 1),
-                                                          shape: RoundedRectangleBorder(
-                                                              borderRadius:
-                                                              BorderRadius.circular(
-                                                                  8.0))),
-                                                      // onPressed: () async {
-                                                      //   if (_formKey.currentState?.validate() ?? false) {
-                                                      //     setState(() {
-                                                      //       isLoading = true;
-                                                      //       iserror = false;
-                                                      //     });
-                                                      //     SharedPreferences prefs = await SharedPreferences.getInstance();
-                                                      //     String? id = prefs.getString("adminId");
-                                                      //
-                                                      //     Properies_summery_Repo()
-                                                      //         .addappliances(
-                                                      //       appliancename: _name.text,
-                                                      //       appliancedescription: _description.text,
-                                                      //       installeddate: _installedDate.text,
-                                                      //     )
-                                                      //         .then((value) {
-                                                      //       setState(() {
-                                                      //         isLoading = false;
-                                                      //       });
-                                                      //       Navigator.pop(context, true);
-                                                      //     })
-                                                      //         .catchError((e) {
-                                                      //       setState(() {
-                                                      //         isLoading = false;
-                                                      //       });
-                                                      //     });
-                                                      //   } else {
-                                                      //     setState(() {
-                                                      //       iserror = true;
-                                                      //     });
-                                                      //   }
-                                                      // },
-                                                      onPressed: () async {
-                                                        if (_name.text.isEmpty || _description.text.isEmpty || _installedDate.text.isEmpty ) {
-                                                          setState(() {
-                                                            iserror = true;
-                                                          });
-                                                        } else {
-                                                          setState(() {
-                                                            isLoading = true;
-                                                            iserror = false;
-                                                          });
-                                                          SharedPreferences prefs =
-                                                          await SharedPreferences.getInstance();
-                                                          String? id = prefs.getString("adminId");
-                                                          print("calling");
-                                                          Properies_summery_Repo()
-                                                              .addappliances(
-                                                            adminId: id,
-                                                            unitId: widget.unit?.unitId,
-                                                            appliancename: _name.text,
-                                                            appliancedescription: _description.text,
-                                                            installeddate: _installedDate.text,
-                                                          ).then((value) {
-                                                            print(widget.properties?.adminId);
-                                                            print(widget.unit?.unitId);
-                                                            setState(() {
-                                                              isLoading = false;
-                                                              leases.add(
-                                                                unit_appliance(
-                                                                  applianceName:_name.text,
-                                                                  applianceDescription: _description.text,
-                                                                  installedDate: _installedDate.text,
-                                                                  adminId: id,
-                                                                  unitId: widget.unit?.unitId,
-                                                                )
-                                                              );
-                                                            });
-                                                            reload_screen();
-
-                                                            Navigator.pop(context,true);
-                                                          }).catchError((e) {
-                                                            setState(() {
-                                                              isLoading = false;
-                                                            });
-                                                          });
-                                                        }
-
-                                                      },
-                                                      child: const Text(
-                                                        'Save',
-                                                        style: TextStyle(
-                                                            fontSize: 14,
-                                                            color: Colors.white),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.all(8.0),
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius:
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
                                                       BorderRadius.circular(8),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: Colors.black
-                                                              .withOpacity(0.25),
-                                                          spreadRadius: 0,
-                                                          blurRadius: 15,
-                                                          offset: const Offset(0.5,
-                                                              0.5), // Shadow moved to the right and bottom
-                                                        )
-                                                      ],
-                                                    ),
-                                                    height: 40,
-                                                    width: 70,
-                                                    child: Center(
-                                                      child: GestureDetector(
-                                                        onTap: () {
-                                                          Navigator.of(context).pop();
-                                                        },
-                                                        child: const Text('Cancel'),
-                                                      ),
-                                                    ),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.black
+                                                          .withOpacity(0.25),
+                                                      spreadRadius: 0,
+                                                      blurRadius: 15,
+                                                      offset: const Offset(0.5,
+                                                          0.5), // Shadow moved to the right and bottom
+                                                    )
+                                                  ],
+                                                ),
+                                                height: 40,
+                                                width: 70,
+                                                child: Center(
+                                                  child: GestureDetector(
+                                                    onTap: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: const Text('Cancel'),
                                                   ),
                                                 ),
-                                              ],
+                                              ),
                                             ),
-                                            if(iserror)
-                                              Text(
-                                                "Please fill in all fields correctly.",
-                                                style: TextStyle(color: Colors.redAccent),
-                                              )
                                           ],
                                         ),
-                                      ),
-                                    );
-                                },
-                              );
+                                        if (iserror)
+                                          Text(
+                                            "Please fill in all fields correctly.",
+                                            style: TextStyle(
+                                                color: Colors.redAccent),
+                                          )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
                           },
                         );
                       },
@@ -2231,7 +2233,6 @@ class _AppliancesPartState extends State<AppliancesPart> {
                       ),
                     ),
                   ),
-
                 ],
               ),
               if (MediaQuery.of(context).size.width < 500)
@@ -2243,13 +2244,15 @@ class _AppliancesPartState extends State<AppliancesPart> {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(
                             child: SpinKitFadingCircle(
-                              color: Colors.black,
-                              size: 40.0,
-                            ));
+                          color: Colors.black,
+                          size: 40.0,
+                        ));
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Center(child: Text('You don\'t have any applience for this unit right now ..'));
+                        return Center(
+                            child: Text(
+                                'You don\'t have any applience for this unit right now ..'));
                       } else {
                         var data = snapshot.data!;
                         if (searchValue == null || searchValue!.isEmpty) {
@@ -2259,13 +2262,13 @@ class _AppliancesPartState extends State<AppliancesPart> {
                         } else if (searchValue!.isNotEmpty) {
                           data = snapshot.data!
                               .where((rentals) => rentals.applianceName!
-                              .toLowerCase()
-                              .contains(searchValue!.toLowerCase()))
+                                  .toLowerCase()
+                                  .contains(searchValue!.toLowerCase()))
                               .toList();
                         } else {
                           data = snapshot.data!
                               .where((rentals) =>
-                          rentals.applianceName == searchValue)
+                                  rentals.applianceName == searchValue)
                               .toList();
                         }
                         sortData(data);
@@ -2301,12 +2304,13 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                           ListTile(
                                             contentPadding: EdgeInsets.zero,
                                             title: Padding(
-                                              padding: const EdgeInsets.all(2.0),
+                                              padding:
+                                                  const EdgeInsets.all(2.0),
                                               child: Row(
                                                 mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                                    MainAxisAlignment.start,
                                                 crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                                    CrossAxisAlignment.center,
                                                 children: <Widget>[
                                                   InkWell(
                                                     onTap: () {
@@ -2337,15 +2341,15 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                           left: 5),
                                                       padding: !isExpanded
                                                           ? EdgeInsets.only(
-                                                          bottom: 10)
+                                                              bottom: 10)
                                                           : EdgeInsets.only(
-                                                          top: 10),
+                                                              top: 10),
                                                       child: FaIcon(
                                                         isExpanded
                                                             ? FontAwesomeIcons
-                                                            .sortUp
+                                                                .sortUp
                                                             : FontAwesomeIcons
-                                                            .sortDown,
+                                                                .sortDown,
                                                         size: 20,
                                                         color: Color.fromRGBO(
                                                             21, 43, 83, 1),
@@ -2367,7 +2371,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
-                                                          FontWeight.bold,
+                                                              FontWeight.bold,
                                                           fontSize: 13,
                                                         ),
                                                       ),
@@ -2375,27 +2379,27 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                   ),
                                                   SizedBox(
                                                       width:
-                                                      MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                          .08),
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .08),
                                                   Expanded(
                                                     child: Text(
                                                       '${rentals.applianceDescription}',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
-                                                        FontWeight.bold,
+                                                            FontWeight.bold,
                                                         fontSize: 12,
                                                       ),
                                                     ),
                                                   ),
                                                   SizedBox(
                                                       width:
-                                                      MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                          .08),
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .08),
                                                   Expanded(
                                                     child: Container(
                                                       child: Row(
@@ -2424,10 +2428,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                 size: 20,
                                                                 color: Color
                                                                     .fromRGBO(
-                                                                    21,
-                                                                    43,
-                                                                    83,
-                                                                    1),
+                                                                        21,
+                                                                        43,
+                                                                        83,
+                                                                        1),
                                                               ),
                                                             ),
                                                           ),
@@ -2448,10 +2452,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                 size: 20,
                                                                 color: Color
                                                                     .fromRGBO(
-                                                                    21,
-                                                                    43,
-                                                                    83,
-                                                                    1),
+                                                                        21,
+                                                                        43,
+                                                                        83,
+                                                                        1),
                                                               ),
                                                             ),
                                                           ),
@@ -2461,10 +2465,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                   ),
                                                   SizedBox(
                                                       width:
-                                                      MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                          .02),
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .02),
                                                 ],
                                               ),
                                             ),
@@ -2473,61 +2477,61 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                             Container(
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 8.0),
-                                              margin: EdgeInsets.only(bottom: 20),
+                                              margin:
+                                                  EdgeInsets.only(bottom: 20),
                                               child: SingleChildScrollView(
                                                 child: Column(
                                                   children: [
                                                     Row(
                                                       mainAxisAlignment:
-                                                      MainAxisAlignment.start,
+                                                          MainAxisAlignment
+                                                              .start,
                                                       children: [
                                                         FaIcon(
                                                           isExpanded
                                                               ? FontAwesomeIcons
-                                                              .sortUp
+                                                                  .sortUp
                                                               : FontAwesomeIcons
-                                                              .sortDown,
+                                                                  .sortDown,
                                                           size: 50,
-                                                          color:
-                                                          Colors.transparent,
+                                                          color: Colors
+                                                              .transparent,
                                                         ),
                                                         Expanded(
                                                           child: Column(
                                                             crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
+                                                                CrossAxisAlignment
+                                                                    .start,
                                                             children: <Widget>[
                                                               Text.rich(
                                                                 TextSpan(
                                                                   children: [
                                                                     TextSpan(
                                                                       text:
-                                                                      'Install Date: ',
+                                                                          'Install Date: ',
                                                                       style: TextStyle(
-                                                                          fontWeight:
-                                                                          FontWeight
+                                                                          fontWeight: FontWeight
                                                                               .bold,
                                                                           color:
-                                                                          blueColor), // Bold and black
+                                                                              blueColor), // Bold and black
                                                                     ),
                                                                     TextSpan(
-                                                                      text:
-                                                                      formatDate('${rentals.installedDate}'),
+                                                                      text: formatDate(
+                                                                          '${rentals.installedDate}'),
                                                                       style: TextStyle(
-                                                                          fontWeight:
-                                                                          FontWeight
+                                                                          fontWeight: FontWeight
                                                                               .w700,
-                                                                          color: Colors
-                                                                              .grey), // Light and grey
+                                                                          color:
+                                                                              Colors.grey), // Light and grey
                                                                     ),
                                                                   ],
                                                                 ),
                                                               ),
                                                               SizedBox(
                                                                 height: MediaQuery.of(
-                                                                    context)
-                                                                    .size
-                                                                    .height *
+                                                                            context)
+                                                                        .size
+                                                                        .height *
                                                                     .01,
                                                               ),
                                                             ],
@@ -2562,7 +2566,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                               horizontal: 12.0),
                                           decoration: BoxDecoration(
                                             border:
-                                            Border.all(color: Colors.grey),
+                                                Border.all(color: Colors.grey),
                                           ),
                                           child: DropdownButtonHideUnderline(
                                             child: DropdownButton<int>(
@@ -2578,7 +2582,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                 setState(() {
                                                   itemsPerPage = newValue!;
                                                   currentPage =
-                                                  0; // Reset to first page when items per page change
+                                                      0; // Reset to first page when items per page change
                                                 });
                                               },
                                             ),
@@ -2599,10 +2603,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                         onPressed: currentPage == 0
                                             ? null
                                             : () {
-                                          setState(() {
-                                            currentPage--;
-                                          });
-                                        },
+                                                setState(() {
+                                                  currentPage--;
+                                                });
+                                              },
                                       ),
                                       // IconButton(
                                       //   icon: Icon(Icons.arrow_back),
@@ -2635,10 +2639,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                         ),
                                         onPressed: currentPage < totalPages - 1
                                             ? () {
-                                          setState(() {
-                                            currentPage++;
-                                          });
-                                        }
+                                                setState(() {
+                                                  currentPage++;
+                                                });
+                                              }
                                             : null,
                                       ),
                                     ],
@@ -2659,13 +2663,15 @@ class _AppliancesPartState extends State<AppliancesPart> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(
                           child: SpinKitFadingCircle(
-                            color: Colors.black,
-                            size: 40.0,
-                          ));
+                        color: Colors.black,
+                        size: 40.0,
+                      ));
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(child: Text('You don\'t have any applience for this unit right now ..'));
+                      return Center(
+                          child: Text(
+                              'You don\'t have any applience for this unit right now ..'));
                     } else {
                       List<unit_appliance>? filteredData = [];
                       _tableData = snapshot.data!;
@@ -2676,12 +2682,12 @@ class _AppliancesPartState extends State<AppliancesPart> {
                       } else if (searchValue.isNotEmpty) {
                         filteredData = snapshot.data!
                             .where((staff) =>
-                        staff.applianceName!
-                            .toLowerCase()
-                            .contains(searchValue.toLowerCase()) ||
-                            staff.applianceDescription!
-                                .toLowerCase()
-                                .contains(searchValue.toLowerCase()))
+                                staff.applianceName!
+                                    .toLowerCase()
+                                    .contains(searchValue.toLowerCase()) ||
+                                staff.applianceDescription!
+                                    .toLowerCase()
+                                    .contains(searchValue.toLowerCase()))
                             .toList();
                       }
 
@@ -2700,24 +2706,21 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                   children: [
                                     TableRow(
                                       decoration:
-                                      BoxDecoration(border: Border.all()),
+                                          BoxDecoration(border: Border.all()),
                                       children: [
                                         // TableCell(child: Text('yash')),
                                         // TableCell(child: Text('yash')),
                                         // TableCell(child: Text('yash')),
                                         // TableCell(child: Text('yash')),
                                         _buildHeader('Name', 0,
-                                                (rental) => rental.applianceName!),
+                                            (rental) => rental.applianceName!),
                                         _buildHeader(
                                             'Description',
                                             1,
-                                                (rental) =>
-                                            rental.applianceDescription!),
-                                        _buildHeader(
-                                            'InstalledDate',
-                                            2,
-                                                (rental) =>
-                                            rental.installedDate!),
+                                            (rental) =>
+                                                rental.applianceDescription!),
+                                        _buildHeader('InstalledDate', 2,
+                                            (rental) => rental.installedDate!),
                                         _buildHeader('Actions', 3, null),
                                       ],
                                     ),
@@ -2728,7 +2731,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                       ),
                                       children: List.generate(
                                           4,
-                                              (index) => TableCell(
+                                          (index) => TableCell(
                                               child: Container(height: 20))),
                                     ),
                                     for (var i = 0; i < _pagedData.length; i++)
@@ -2746,8 +2749,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                     21, 43, 81, 1)),
                                             bottom: i == _pagedData.length - 1
                                                 ? BorderSide(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1))
+                                                    color: Color.fromRGBO(
+                                                        21, 43, 81, 1))
                                                 : BorderSide.none,
                                           ),
                                         ),
@@ -2755,12 +2758,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                           _buildDataCell(
                                               _pagedData[i].applianceName!),
                                           // _buildDataCell('${_pagedData[i].rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerLastName ?? ''}'),
-                                          _buildDataCell(
-                                              _pagedData[i]
-                                                  .applianceDescription!),
-                                          _buildDataCell(
-                                              formatDate(_pagedData[i]
-                                                  .installedDate!)),
+                                          _buildDataCell(_pagedData[i]
+                                              .applianceDescription!),
+                                          _buildDataCell(formatDate(
+                                              _pagedData[i].installedDate!)),
                                           _buildActionsCell(_pagedData[i]),
                                         ],
                                       ),

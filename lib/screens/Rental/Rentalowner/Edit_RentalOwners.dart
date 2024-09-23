@@ -15,6 +15,7 @@ import '../../../repository/Rental_ownersData.dart';
 import '../../../repository/Staffmember.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/custom_drawer.dart';
+
 class Edit_rentalowners extends StatefulWidget {
   RentalOwnerData rentalOwner;
   Edit_rentalowners({super.key, required this.rentalOwner});
@@ -112,7 +113,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     } else {
       _controllers[0] = TextEditingController();
     }
-
   }
 
   // Add a text field
@@ -145,40 +145,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
   //DateTime? birthdate;
   DateTime? startdate;
   DateTime? enddate;
-
-  // Future<void> _birthDate(BuildContext context) async {
-  //   final DateTime? picked = await showDatePicker(
-  //     context: context,
-  //     initialDate: birthdate ?? DateTime.now(),
-  //     firstDate: DateTime(2015, 8),
-  //     lastDate: DateTime(2101),
-  //     builder: (BuildContext context, Widget? child) {
-  //       return Theme(
-  //         data: ThemeData.light().copyWith(
-  //           primaryColor:
-  //               Color.fromRGBO(21, 43, 83, 1), // Header background color
-  //           // accentColor: Colors.white, // Button text color
-  //           colorScheme: ColorScheme.light(
-  //             primary: Color.fromRGBO(21, 43, 83, 1), // Selection color
-  //             onPrimary: Colors.white, // Text color
-  //             surface: Colors.white, // Calendar background color
-  //             onSurface: Colors.black, // Calendar text color
-  //           ),
-  //           dialogBackgroundColor: Colors.white, // Background color
-  //         ),
-  //         child: child!,
-  //       );
-  //     },
-  //   );
-  //   if (picked != null && picked != birthdate) {
-  //     setState(() {
-  //       birthdate = picked;
-  //       birthdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-  //       //startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-  //       //enddateController.text = DateFormat('yyyy-MM-dd').format(picked);
-  //     });
-  //   }
-  // }
 
   Future<void> _startDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -270,12 +236,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
         ),
         KeyboardActionsItem(
           focusNode: _nodeText3,
-
-        ),KeyboardActionsItem(
-          focusNode: _nodeText4,
-
         ),
-
+        KeyboardActionsItem(
+          focusNode: _nodeText4,
+        ),
       ],
     );
   }
@@ -286,7 +250,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
       // appBar: widget302.,
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "RentalOwner",dropdown: true,),
+      drawer: CustomDrawer(
+        currentpage: "RentalOwner",
+        dropdown: true,
+      ),
       body: ListView(
         scrollDirection: Axis.vertical,
         children: [
@@ -386,7 +353,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                           Expanded(
                             child: Material(
                               elevation: 4,
-                             // borderRadius: BorderRadius.circular(8),
+                              // borderRadius: BorderRadius.circular(8),
                               child: Container(
                                 height: 50,
                                 width: MediaQuery.of(context).size.width * .6,
@@ -457,12 +424,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -570,12 +535,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -1074,12 +1037,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                     style: TextStyle(
                                         color: Colors.red,
                                         fontSize:
-                                        MediaQuery.of(context)
-                                            .size
-                                            .width <
-                                            500
-                                            ? 15
-                                            : 19),
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 15
+                                                : 19),
                                   ),
                                   SizedBox(
                                     width: 2,
@@ -1199,12 +1160,12 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                                 style: TextStyle(
                                                     color: Colors.red,
                                                     fontSize:
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                        500
-                                                        ? 15
-                                                        : 19),
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 15
+                                                            : 19),
                                               ),
                                               SizedBox(
                                                 width: 2,
@@ -1318,12 +1279,12 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                                 style: TextStyle(
                                                     color: Colors.red,
                                                     fontSize:
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                        500
-                                                        ? 15
-                                                        : 19),
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 15
+                                                            : 19),
                                               ),
                                               SizedBox(
                                                 width: 2,
@@ -1424,14 +1385,14 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                   children: [
                                     Positioned.fill(
                                       child: TextField(
-
                                         onChanged: (value) {
                                           setState(() {
                                             primaryemailerror = false;
                                           });
                                         },
                                         controller: primaryemail,
-                                        keyboardType: TextInputType.emailAddress,
+                                        keyboardType:
+                                            TextInputType.emailAddress,
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
@@ -1476,12 +1437,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -1539,7 +1498,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                           });
                                         },
                                         controller: alternativeemail,
-                                        keyboardType: TextInputType.emailAddress,
+                                        keyboardType:
+                                            TextInputType.emailAddress,
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
@@ -1584,12 +1544,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -1648,7 +1606,9 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                           });
                                         },
                                         controller: phonenum,
-                                        keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                                        keyboardType:
+                                            TextInputType.numberWithOptions(
+                                                signed: true, decimal: true),
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
@@ -1693,12 +1653,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -1757,7 +1715,9 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: homenum,
                                         focusNode: _nodeText2,
-                                        keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                                        keyboardType:
+                                            TextInputType.numberWithOptions(
+                                                signed: true, decimal: true),
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
@@ -1802,12 +1762,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -1866,7 +1824,9 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                           });
                                         },
                                         controller: officenum,
-                                        keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                                        keyboardType:
+                                            TextInputType.numberWithOptions(
+                                                signed: true, decimal: true),
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
@@ -1911,12 +1871,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -2018,12 +1976,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -2125,12 +2081,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -2232,12 +2186,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -2339,12 +2291,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -2402,7 +2352,9 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                             code2error = false;
                                           });
                                         },
-                                        keyboardType:TextInputType.numberWithOptions(signed: true,decimal: true),
+                                        keyboardType:
+                                            TextInputType.numberWithOptions(
+                                                signed: true, decimal: true),
                                         controller: code2,
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
@@ -2448,12 +2400,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -2597,12 +2547,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -2703,12 +2651,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -2734,302 +2680,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                   width: 25,
                 ),
               GestureDetector(
-                // onTap: () async {
-                //   if (name.text.isEmpty) {
-                //     setState(() {
-                //       nameerror = true;
-                //       namemessage = "required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       nameerror = false;
-                //     });
-                //   }
-                //   if (comname.text.isEmpty) {
-                //     setState(() {
-                //       comnameerror = true;
-                //       comnamemessage = "required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       comnameerror = false;
-                //     });
-                //   }
-                //   // if (birthdateController.text.isEmpty) {
-                //   //   setState(() {
-                //   //     birthdateerror = true;
-                //   //     birthdatemessage = "required";
-                //   //   });
-                //   // } else {
-                //   //   setState(() {
-                //   //     birthdateerror = false;
-                //   //   });
-                //   // }
-                //   if (startdateController.text.isEmpty) {
-                //     setState(() {
-                //       startdatederror = true;
-                //       startdatemessage = "required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       startdatederror = false;
-                //     });
-                //   }
-                //   if (enddateController.text.isEmpty) {
-                //     setState(() {
-                //       enddatederror = true;
-                //       enddatemessage = "required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       enddatederror = false;
-                //     });
-                //   }
-                //   if (primaryemail.text.isEmpty) {
-                //     setState(() {
-                //       primaryemailerror = true;
-                //       primaryemailmessage = "required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       primaryemailerror = false;
-                //     });
-                //   }
-                //   if (alternativeemail.text.isEmpty) {
-                //     setState(() {
-                //       alternativeerror = true;
-                //       alternativemessage = "required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       alternativeerror = false;
-                //     });
-                //   }
-                //   if (phonenum.text.isEmpty) {
-                //     setState(() {
-                //       phonenumerror = true;
-                //       phonenummessage = "required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       phonenumerror = false;
-                //     });
-                //   }
-                //   if (homenum.text.isEmpty) {
-                //     setState(() {
-                //       homenumerror = true;
-                //       homenummessage = "required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       homenumerror = false;
-                //     });
-                //   }
-                //   if (officenum.text.isEmpty) {
-                //     setState(() {
-                //       officenumerror = true;
-                //       officenummessage = "required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       officenumerror = false;
-                //     });
-                //   }
-                //   if (street2.text.isEmpty) {
-                //     setState(() {
-                //       street2error = true;
-                //       street2message = "required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       street2error = false;
-                //     });
-                //   }
-                //   if (city2.text.isEmpty) {
-                //     setState(() {
-                //       city2error = true;
-                //       city2message = "required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       city2error = false;
-                //     });
-                //   }
-                //   if (state2.text.isEmpty) {
-                //     setState(() {
-                //       state2error = true;
-                //       state2message = "required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       state2error = false;
-                //     });
-                //   }
-                //   if (city2.text.isEmpty) {
-                //     setState(() {
-                //       city2error = true;
-                //       city2message = "required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       city2error = false;
-                //     });
-                //   }
-                //   if (county2.text.isEmpty) {
-                //     setState(() {
-                //       county2error = true;
-                //       county2message = "required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       county2error = false;
-                //     });
-                //   }
-                //   if (code2.text.isEmpty) {
-                //     setState(() {
-                //       code2error = true;
-                //       code2message = "required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       code2error = false;
-                //     });
-                //   }
-                //   if (taxtype.text.isEmpty) {
-                //     setState(() {
-                //       taxtypeerror = true;
-                //       taxtypemessage = "required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       taxtypeerror = false;
-                //     });
-                //   }
-                //   if (taxid.text.isEmpty) {
-                //     setState(() {
-                //       taxiderror = true;
-                //       taxidmessage = "required";
-                //     });
-                //   } else {
-                //     setState(() {
-                //       taxiderror = false;
-                //     });
-                //   }
-                //
-                //   SharedPreferences prefs =
-                //       await SharedPreferences.getInstance();
-                //   String? adminId = prefs.getString("adminId");
-                //   // if (adminId != null &&
-                //   //     name.text.isNotEmpty &&
-                //   //     comname.text.isNotEmpty &&
-                //   //     startdateController.text.isNotEmpty &&
-                //   //     enddateController.text.isNotEmpty &&
-                //   //     primaryemail.text.isNotEmpty &&
-                //   //     alternativeemail.text.isNotEmpty &&
-                //   //     phonenum.text.isNotEmpty &&
-                //   //     homenum.text.isNotEmpty &&
-                //   //     officenum.text.isNotEmpty &&
-                //   //     street2.text.isNotEmpty &&
-                //   //     city2.text.isNotEmpty &&
-                //   //     state2.text.isNotEmpty &&
-                //   //     county2.text.isNotEmpty &&
-                //   //     code2.text.isNotEmpty &&
-                //   //     taxtype.text.isNotEmpty &&
-                //   //     taxid.text.isNotEmpty) {
-                //   //   try {
-                //   //     await RentalOwnerService().Edit_Rentalowners(
-                //   //       adminId: adminId,
-                //   //       rentalownerId: widget.rentalOwner.rentalownerId,
-                //   //       rentalOwnerName: name.text,
-                //   //       rentalOwnerPrimaryEmail: primaryemail.text,
-                //   //       rentalOwnerAlternateEmail: alternativeemail.text,
-                //   //       rentalOwnerPhoneNumber: phonenum.text,
-                //   //       rentalOwnerHomeNumber: homenum.text,
-                //   //       rentalOwnerBusinessNumber: officenum.text,
-                //   //       startDate: startdateController.text,
-                //   //       endDate: enddateController.text,
-                //   //       texpayerId: taxid.text,
-                //   //       textIdentityType: taxtype.text,
-                //   //       city: city2.text,
-                //   //       state: state2.text,
-                //   //       streetAddress: street2.text,
-                //   //       country: county2.text,
-                //   //       postalCode: code2.text,
-                //   //     );
-                //   //     setState(() {
-                //   //       isLoading = false;
-                //   //     });
-                //   //     Navigator.of(context).pop(true);
-                //   //     reload_Screen();
-                //   //   } catch (e) {
-                //   //     setState(() {
-                //   //       isLoading = false;
-                //   //     });
-                //   //     // Handle error
-                //   //   }
-                //   // }
-                //
-                //   // List<ProcessorList> processorList = [];
-                //   // _controllers.forEach((key, controller) {
-                //   //   if (controller.text.isNotEmpty) {
-                //   //     processorList.add(ProcessorList(processorId: controller.text));
-                //   //   }
-                //   // });
-                //   List<ProcessorList> processorList = [];
-                //   _controllers.forEach((key, controller) {
-                //     if (controller.text.isNotEmpty) {
-                //       processorList.add(ProcessorList(processorId: controller.text));
-                //     }
-                //   });
-                //   RentalOwnerService()
-                //       .Edit_Rentalowners(
-                //     adminId: adminId,
-                //     rentalownerId: widget.rentalOwner.rentalownerId,
-                //     rentalOwnerName: name.text,
-                //     rentalOwnerCompanyName: comname.text,
-                //     rentalOwnerPrimaryEmail: primaryemail.text,
-                //     rentalOwnerAlternateEmail: alternativeemail.text,
-                //     rentalOwnerPhoneNumber: phonenum.text,
-                //     rentalOwnerHomeNumber: homenum.text,
-                //     rentalOwnerBusinessNumber: officenum.text,
-                //     startDate: startdateController.text,
-                //     endDate: enddateController.text,
-                //     texpayerId: taxid.text,
-                //     textIdentityType: taxtype.text,
-                //     city: city2.text,
-                //     state: state2.text,
-                //     streetAddress: street2.text,
-                //     country: county2.text,
-                //     postalCode: code2.text,
-                //     processorList:processorList,
-                //   ).then((value) {
-                //     setState(() {
-                //       widget.rentalOwner.rentalOwnername = name.text;
-                //       widget.rentalOwner.rentalOwnerCompanyName = comname.text;
-                //        widget.rentalOwner.rentalOwnerPrimaryEmail = primaryemail.text;
-                //        widget.rentalOwner.rentalOwnerAlternateEmail = alternativeemail.text;
-                //        widget.rentalOwner.rentalOwnerPhoneNumber = phonenum.text;
-                //        widget.rentalOwner.rentalOwnerHomeNumber = homenum.text;
-                //        widget.rentalOwner.rentalOwnerBusinessNumber = officenum.text;
-                //        widget.rentalOwner.startDate = startdateController.text;
-                //        widget.rentalOwner.endDate = enddateController.text;
-                //        widget.rentalOwner.texpayerId = taxid.text;
-                //        widget.rentalOwner.textIdentityType = taxtype.text;
-                //        widget.rentalOwner.city = city2.text;
-                //        widget.rentalOwner.state = state2.text;
-                //        widget.rentalOwner.streetAddress = street2.text;
-                //        widget.rentalOwner.country = county2.text;
-                //        widget.rentalOwner.postalCode = code2.text;
-                //       widget.rentalOwner.processorList = processorList;
-                //       isLoading = false;
-                //     });
-                //     Navigator.pop(context, true);
-                //   }).catchError((e) {
-                //     setState(() {
-                //       isLoading = false;
-                //     });
-                //   });
-                // },
                 onTap: () async {
                   bool isFormValid = true;
 
@@ -3230,14 +2880,16 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     return; // Exit early if the form is not valid
                   }
 
-                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
                   String? adminId = prefs.getString("adminId");
 
                   // Prepare the processor list
                   List<ProcessorList> processorList = [];
                   _controllers.forEach((key, controller) {
                     if (controller.text.isNotEmpty) {
-                      processorList.add(ProcessorList(processorId: controller.text));
+                      processorList
+                          .add(ProcessorList(processorId: controller.text));
                     }
                   });
 
@@ -3267,11 +2919,14 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     setState(() {
                       widget.rentalOwner.rentalOwnername = name.text;
                       widget.rentalOwner.rentalOwnerCompanyName = comname.text;
-                      widget.rentalOwner.rentalOwnerPrimaryEmail = primaryemail.text;
-                      widget.rentalOwner.rentalOwnerAlternateEmail = alternativeemail.text;
+                      widget.rentalOwner.rentalOwnerPrimaryEmail =
+                          primaryemail.text;
+                      widget.rentalOwner.rentalOwnerAlternateEmail =
+                          alternativeemail.text;
                       widget.rentalOwner.rentalOwnerPhoneNumber = phonenum.text;
                       widget.rentalOwner.rentalOwnerHomeNumber = homenum.text;
-                      widget.rentalOwner.rentalOwnerBusinessNumber = officenum.text;
+                      widget.rentalOwner.rentalOwnerBusinessNumber =
+                          officenum.text;
                       widget.rentalOwner.startDate = startdateController.text;
                       widget.rentalOwner.endDate = enddateController.text;
                       widget.rentalOwner.texpayerId = taxid.text;
@@ -3293,7 +2948,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     // Handle error
                   }
                 },
-
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(5.0),
                   child: Container(

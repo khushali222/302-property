@@ -21,6 +21,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../../widgets/custom_drawer.dart';
+
 class AdminAddTenantInsurance extends StatefulWidget {
   final String tenantid;
   const AdminAddTenantInsurance({required this.tenantid});
@@ -181,7 +182,10 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
     return Scaffold(
         appBar: widget_302.App_Bar(context: context),
         backgroundColor: Colors.white,
-        drawer:CustomDrawer(currentpage: "Tenants",dropdown: true,),
+        drawer: CustomDrawer(
+          currentpage: "Tenants",
+          dropdown: true,
+        ),
         body: Form(
           key: _formkey,
           child: Container(
@@ -481,7 +485,7 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
       "EffectiveDate": reverseFormatDate(effective.text),
       "ExpirationDate": reverseFormatDate(expiration.text),
       "LiabilityCoverage": liablity.text,
-      "Policy": _uploadedFileNames.length > 0 ?  _uploadedFileNames.first : "" ,
+      "Policy": _uploadedFileNames.length > 0 ? _uploadedFileNames.first : "",
     };
     print(values);
     print('entry');

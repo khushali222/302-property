@@ -12,6 +12,7 @@ import '../../../repository/Rental_ownersData.dart';
 import '../../../repository/Staffmember.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/custom_drawer.dart';
+
 class Add_rentalowners extends StatefulWidget {
   const Add_rentalowners({super.key});
 
@@ -219,6 +220,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
       });
     }
   }
+
   final FocusNode _nodeText1 = FocusNode();
   final FocusNode _nodeText2 = FocusNode();
   final FocusNode _nodeText3 = FocusNode();
@@ -239,12 +241,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
         ),
         KeyboardActionsItem(
           focusNode: _nodeText3,
-
-        ),KeyboardActionsItem(
-          focusNode: _nodeText4,
-
         ),
-
+        KeyboardActionsItem(
+          focusNode: _nodeText4,
+        ),
       ],
     );
   }
@@ -255,7 +255,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
       // appBar: widget302.,
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "RentalOwner",dropdown: true,),
+      drawer: CustomDrawer(
+        currentpage: "RentalOwner",
+        dropdown: true,
+      ),
       body: ListView(
         scrollDirection: Axis.vertical,
         children: [
@@ -424,12 +427,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -537,12 +538,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -921,12 +920,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                     style: TextStyle(
                                         color: Colors.red,
                                         fontSize:
-                                        MediaQuery.of(context)
-                                            .size
-                                            .width <
-                                            500
-                                            ? 15
-                                            : 19),
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 15
+                                                : 19),
                                   ),
                                   SizedBox(
                                     width: 2,
@@ -982,7 +979,6 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                     children: [
                                       Positioned.fill(
                                         child: TextField(
-
                                           onChanged: (value) {
                                             setState(() {
                                               enddatederror = false;
@@ -1048,12 +1044,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                     style: TextStyle(
                                         color: Colors.red,
                                         fontSize:
-                                        MediaQuery.of(context)
-                                            .size
-                                            .width <
-                                            500
-                                            ? 15
-                                            : 19),
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 15
+                                                : 19),
                                   ),
                                   SizedBox(
                                     width: 2,
@@ -1173,12 +1167,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                 style: TextStyle(
                                                     color: Colors.red,
                                                     fontSize:
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                        500
-                                                        ? 15
-                                                        : 19),
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 15
+                                                            : 19),
                                               ),
                                               SizedBox(
                                                 width: 2,
@@ -1292,12 +1286,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                 style: TextStyle(
                                                     color: Colors.red,
                                                     fontSize:
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                        500
-                                                        ? 15
-                                                        : 19),
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 15
+                                                            : 19),
                                               ),
                                               SizedBox(
                                                 width: 2,
@@ -1403,7 +1397,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                             primaryemailerror = false;
                                           });
                                         },
-                                        keyboardType: TextInputType.emailAddress,
+                                        keyboardType:
+                                            TextInputType.emailAddress,
                                         controller: primaryemail,
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
@@ -1449,12 +1444,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -1512,7 +1505,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           });
                                         },
                                         controller: alternativeemail,
-                                        keyboardType: TextInputType.emailAddress,
+                                        keyboardType:
+                                            TextInputType.emailAddress,
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
@@ -1557,12 +1551,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -1621,7 +1613,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           });
                                         },
                                         controller: phonenum,
-                                        keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                                        keyboardType:
+                                            TextInputType.numberWithOptions(
+                                                signed: true, decimal: true),
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
@@ -1666,12 +1660,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -1730,7 +1722,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           });
                                         },
                                         controller: homenum,
-                                        keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                                        keyboardType:
+                                            TextInputType.numberWithOptions(
+                                                signed: true, decimal: true),
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
@@ -1775,12 +1769,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -1838,7 +1830,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           });
                                         },
                                         controller: officenum,
-                                        keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                                        keyboardType:
+                                            TextInputType.numberWithOptions(
+                                                signed: true, decimal: true),
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
@@ -1883,12 +1877,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -1990,12 +1982,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -2097,12 +2087,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -2204,12 +2192,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -2311,12 +2297,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -2375,7 +2359,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           });
                                         },
                                         controller: code2,
-                                        keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                                        keyboardType:
+                                            TextInputType.numberWithOptions(
+                                                signed: true, decimal: true),
                                         cursorColor:
                                             Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
@@ -2420,12 +2406,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -2569,12 +2553,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -2675,12 +2657,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize:
-                                      MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 19),
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 19),
                                 ),
                                 SizedBox(
                                   width: 2,
@@ -2920,7 +2900,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                     List<ProcessorList> processorList = [];
                     _controllers.forEach((key, controller) {
                       if (controller.text.isNotEmpty) {
-                        processorList.add(ProcessorList(processorId: controller.text));
+                        processorList
+                            .add(ProcessorList(processorId: controller.text));
                       }
                     });
                     print(processorList.length);
@@ -2947,11 +2928,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       country: county2.text,
                       textIdentityType: taxtype.text,
                       texpayerId: taxid.text,
-                     // processorLists:processorIds,
-                      processorList:processorList,
+                      // processorLists:processorIds,
+                      processorList: processorList,
                     );
                     print(processorList);
-                   // print(processorIds);
+                    // print(processorIds);
                     print('hello');
                     // var result =
                     //     await RentalOwnerService().addRentalOwner(rentalOwner);
@@ -2978,8 +2959,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       print("Error: $e");
                     });
                   }
-
-                  },
+                },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(5.0),
                   child: Container(

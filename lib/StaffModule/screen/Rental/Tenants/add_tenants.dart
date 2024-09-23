@@ -16,6 +16,7 @@ import '../../../../Model/tenants.dart';
 
 import '../../../repository/tenants.dart';
 import '../../../widgets/custom_drawer.dart';
+
 class AddTenant extends StatefulWidget {
   @override
   State<AddTenant> createState() => _AddTenantState();
@@ -113,1925 +114,2024 @@ class _AddTenantState extends State<AddTenant> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Tenants",dropdown: true,),
-      body: LayoutBuilder(
-        builder: (context,constraint) {
-          if(constraint.maxWidth > 500)
-            {
-             return Form(
-                key: _formkey,
-                child: Container(
-                  color: Colors.white,
-                  child: LayoutBuilder(
-                      builder: (BuildContext context, BoxConstraints constraints) {
-                        if(constraints.maxWidth > 600){
-                          return SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  height: 25,
-                                ),
-                                titleBar(
-                                  width: MediaQuery.of(context).size.width * .91,
-                                  title: 'Add Tenant',
-                                ),
-                                SizedBox(
-                                  height: 25,
-                                ),
-                                Padding(
-                                  padding:  EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * .04),
-                                  child: Container(
-                                    width: double.infinity,
-                                    // height: !form_valid ? 860 : 830,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10.0),
-                                        border: Border.all(
-                                          color: Color.fromRGBO(21, 43, 103, 1),
-                                        )),
-                                    child: Padding(
-                                        padding: const EdgeInsets.all(16.0),
-                                        child:  Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text('First Name *',
-                                                          style: TextStyle(
-                                                              fontSize: 13,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.grey)),
-                                                      SizedBox(height: 10),
-                                                      CustomTextField(
-                                                        keyboardType: TextInputType.text,
-                                                        hintText: 'Enter first name',
-                                                        controller: firstName,
-                                                        validator: (value) {
-                                                          if (value == null || value.isEmpty) {
-                                                            return 'please enter the first name';
-                                                          }
-                                                          return null;
-                                                        },
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(width: 20),
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text('Last Name *',
-                                                          style: TextStyle(
-                                                              fontSize: 13,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.grey)),
-                                                      SizedBox(height: 10),
-                                                      CustomTextField(
-                                                        keyboardType: TextInputType.text,
-                                                        hintText: 'Enter last name',
-                                                        controller: lastName,
-                                                        validator: (value) {
-                                                          if (value == null || value.isEmpty) {
-                                                            return 'please enter the last name';
-                                                          }
-                                                          return null;
-                                                        },
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(height: 20),
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text('Phone Number *',
-                                                          style: TextStyle(
-                                                              fontSize: 13,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.grey)),
-                                                      SizedBox(height: 10),
-                                                      CustomTextField(
-
-                                                        keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
-                                                        hintText: 'Enter phone number',
-                                                        controller: phoneNumber,
-                                                        validator: (value) {
-                                                          if (value == null || value.isEmpty) {
-                                                            return 'please enter the phone number';
-                                                          }
-                                                          return null;
-                                                        },
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(width: 20),
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text('Work Number',
-                                                          style: TextStyle(
-                                                              fontSize: 13,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.grey)),
-                                                      SizedBox(height: 10),
-                                                      CustomTextField(
-                                                        keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
-                                                        hintText: 'Enter work number',
-                                                        controller: workNumber,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(height: 20),
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text('Email *',
-                                                          style: TextStyle(
-                                                              fontSize: 13,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.grey)),
-                                                      SizedBox(height: 10),
-                                                      CustomTextField(
-                                                        keyboardType: TextInputType.emailAddress,
-                                                        hintText: 'Enter Email',
-                                                        controller: email,
-                                                        validator: (value) {
-                                                          if (value == null || value.isEmpty) {
-                                                            return 'please enter email';
-                                                          }
-                                                          return null;
-                                                        },
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(width: 20),
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text('Alternative Email',
-                                                          style: TextStyle(
-                                                              fontSize: 13,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.grey)),
-                                                      SizedBox(height: 10),
-                                                      CustomTextField(
-                                                        keyboardType: TextInputType.emailAddress,
-                                                        hintText: 'Enter alternative email',
-                                                        controller: alterEmail,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(height: 20),
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text('Password *',
-                                                          style: TextStyle(
-                                                              fontSize: 13,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.grey)),
-                                                      SizedBox(height: 10),
-                                                      /*  CustomTextField(
+      drawer: CustomDrawer(
+        currentpage: "Tenants",
+        dropdown: true,
+      ),
+      body: LayoutBuilder(builder: (context, constraint) {
+        if (constraint.maxWidth > 500) {
+          return Form(
+            key: _formkey,
+            child: Container(
+              color: Colors.white,
+              child: LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints constraints) {
+                if (constraints.maxWidth > 600) {
+                  return SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 25,
+                        ),
+                        titleBar(
+                          width: MediaQuery.of(context).size.width * .91,
+                          title: 'Add Tenant',
+                        ),
+                        SizedBox(
+                          height: 25,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  MediaQuery.of(context).size.width * .04),
+                          child: Container(
+                            width: double.infinity,
+                            // height: !form_valid ? 860 : 830,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                border: Border.all(
+                                  color: Color.fromRGBO(21, 43, 103, 1),
+                                )),
+                            child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('First Name *',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.grey)),
+                                              SizedBox(height: 10),
+                                              CustomTextField(
+                                                keyboardType:
+                                                    TextInputType.text,
+                                                hintText: 'Enter first name',
+                                                controller: firstName,
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return 'please enter the first name';
+                                                  }
+                                                  return null;
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(width: 20),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Last Name *',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.grey)),
+                                              SizedBox(height: 10),
+                                              CustomTextField(
+                                                keyboardType:
+                                                    TextInputType.text,
+                                                hintText: 'Enter last name',
+                                                controller: lastName,
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return 'please enter the last name';
+                                                  }
+                                                  return null;
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 20),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Phone Number *',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.grey)),
+                                              SizedBox(height: 10),
+                                              CustomTextField(
+                                                keyboardType: TextInputType
+                                                    .numberWithOptions(
+                                                        signed: true,
+                                                        decimal: true),
+                                                hintText: 'Enter phone number',
+                                                controller: phoneNumber,
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return 'please enter the phone number';
+                                                  }
+                                                  return null;
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(width: 20),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Work Number',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.grey)),
+                                              SizedBox(height: 10),
+                                              CustomTextField(
+                                                keyboardType: TextInputType
+                                                    .numberWithOptions(
+                                                        signed: true,
+                                                        decimal: true),
+                                                hintText: 'Enter work number',
+                                                controller: workNumber,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 20),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Email *',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.grey)),
+                                              SizedBox(height: 10),
+                                              CustomTextField(
+                                                keyboardType:
+                                                    TextInputType.emailAddress,
+                                                hintText: 'Enter Email',
+                                                controller: email,
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return 'please enter email';
+                                                  }
+                                                  return null;
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(width: 20),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Alternative Email',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.grey)),
+                                              SizedBox(height: 10),
+                                              CustomTextField(
+                                                keyboardType:
+                                                    TextInputType.emailAddress,
+                                                hintText:
+                                                    'Enter alternative email',
+                                                controller: alterEmail,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 20),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Password *',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.grey)),
+                                              SizedBox(height: 10),
+                                              /*  CustomTextField(
                                           keyboardType: TextInputType.emailAddress,
                                           hintText: 'Enter alternative email',
                                           controller: alterEmail,
                                         ),*/
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child: CustomTextField(
-                                                              keyboardType: TextInputType.text,
-                                                              obscureText: obsecure,
-                                                              hintText: 'Enter password',
-                                                              controller: passWord,
-                                                              validator: (value) {
-                                                                if (value == null || value.isEmpty) {
-                                                                  return 'please enter password';
-                                                                }
-                                                                return null;
-                                                              },
-                                                            ),
-                                                          ),
-                                                          SizedBox(width: 10),
-                                                          InkWell(
-                                                            onTap: () {
-                                                              setState(() {
-                                                                obsecure = !obsecure;
-                                                              });
-                                                            },
-                                                            child: Container(
-                                                              width: 38,
-                                                              height: 50,
-                                                              child: Center(
-                                                                child: FaIcon(
-                                                                  !obsecure ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye,
-                                                                  size: 20,
-                                                                  color: Colors.black,
-                                                                ),
-                                                              ),
-                                                              decoration: BoxDecoration(
-                                                                color: Colors.white,
-                                                                boxShadow: [
-                                                                  BoxShadow(
-                                                                    color: Colors.black26,
-                                                                    offset: Offset(1.2, 1.2),
-                                                                    blurRadius: 3.0,
-                                                                    spreadRadius: 1.0,
-                                                                  ),
-                                                                ],
-                                                                border: Border.all(width: 0, color: Colors.white),
-                                                                borderRadius: BorderRadius.circular(6.0),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-
-                                                ),
-                                                SizedBox(width: 20),
-                                                Expanded(
-                                                  child: Visibility(
-                                                    visible: false,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-                                                        Text('Alternative Email',
-                                                            style: TextStyle(
-                                                                fontSize: 13,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.grey)),
-                                                        SizedBox(height: 10),
-                                                        CustomTextField(
-                                                          keyboardType: TextInputType.emailAddress,
-                                                          hintText: 'Enter alternative email',
-                                                          controller: alterEmail,
-                                                        ),
-                                                      ],
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: CustomTextField(
+                                                      keyboardType:
+                                                          TextInputType.text,
+                                                      obscureText: obsecure,
+                                                      hintText:
+                                                          'Enter password',
+                                                      controller: passWord,
+                                                      validator: (value) {
+                                                        if (value == null ||
+                                                            value.isEmpty) {
+                                                          return 'please enter password';
+                                                        }
+                                                        return null;
+                                                      },
                                                     ),
                                                   ),
+                                                  SizedBox(width: 10),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        obsecure = !obsecure;
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                      width: 38,
+                                                      height: 50,
+                                                      child: Center(
+                                                        child: FaIcon(
+                                                          !obsecure
+                                                              ? FontAwesomeIcons
+                                                                  .eyeSlash
+                                                              : FontAwesomeIcons
+                                                                  .eye,
+                                                          size: 20,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color:
+                                                                Colors.black26,
+                                                            offset: Offset(
+                                                                1.2, 1.2),
+                                                            blurRadius: 3.0,
+                                                            spreadRadius: 1.0,
+                                                          ),
+                                                        ],
+                                                        border: Border.all(
+                                                            width: 0,
+                                                            color:
+                                                                Colors.white),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(6.0),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(width: 20),
+                                        Expanded(
+                                          child: Visibility(
+                                            visible: false,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text('Alternative Email',
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey)),
+                                                SizedBox(height: 10),
+                                                CustomTextField(
+                                                  keyboardType: TextInputType
+                                                      .emailAddress,
+                                                  hintText:
+                                                      'Enter alternative email',
+                                                  controller: alterEmail,
                                                 ),
                                               ],
                                             ),
-
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 10),
+                                  ],
+                                )),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  MediaQuery.of(context).size.width * .04),
+                          child: Container(
+                            width: double.infinity,
+                            // height: 410,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                border: Border.all(
+                                  color: Color.fromRGBO(21, 43, 103, 1),
+                                )),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Personal Information',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                          color:
+                                              Color.fromRGBO(21, 43, 103, 1))),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text('Date of Birth',
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.grey)),
                                             SizedBox(height: 10),
-                                          ],
-                                        )
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 15,),
-                                Padding(
-                                  padding:  EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * .04),
-                                  child: Container(
-                                    width: double.infinity,
-                                    // height: 410,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10.0),
-                                        border: Border.all(
-                                          color: Color.fromRGBO(21, 43, 103, 1),
-                                        )),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Personal Information',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: Color.fromRGBO(21, 43, 103, 1))),
-                                          SizedBox(
-                                            height: 15,
-                                          ),
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text('Date of Birth',
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.grey)),
-                                                    SizedBox(height: 10),
-                                                    Container(
-                                                      height: 50,
-                                                      padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 0),
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.white,
-                                                          boxShadow: [
-                                                            BoxShadow(
-                                                              color: Colors.black26,
-                                                              offset: Offset(1.2, 1.2),
-                                                              blurRadius: 3.0,
-                                                              spreadRadius: 1.0,
-                                                            ),
-                                                          ],
-                                                          border: Border.all(width: 0, color: Colors.white),
-                                                          borderRadius: BorderRadius.circular(6.0)),
-                                                      child: TextFormField(
-                                                        style: TextStyle(
-                                                          color: Color(0xFF8898aa),
-                                                          fontSize: 16.0,
-                                                          fontWeight: FontWeight.w400,
-                                                        ),
-                                                        controller: _dateController,
-                                                        decoration: InputDecoration(
-                                                          hintStyle: TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
-                                                          border: InputBorder.none,
-                                                          hintText: 'Select Date',
-                                                          suffixIcon: IconButton(
-                                                            icon: Icon(Icons.calendar_today),
-                                                            onPressed: () {
-                                                              _selectDate(context);
-                                                            },
-                                                          ),
-                                                        ),
-                                                        readOnly: true,
-                                                        onTap: () {
-                                                          _selectDate(context);
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(width: 10),
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text('TaxPayer ID',
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.grey)),
-                                                    SizedBox(height: 10),
-                                                    CustomTextField(
-                                                      keyboardType: TextInputType.text,
-                                                      hintText: 'Enter taxpayer ID',
-                                                      controller: taxPayerId,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text('Comments',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Container(
-                                            height: 90,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 12.0, vertical: 0),
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.black26,
-                                                    offset: Offset(1.2,
-                                                        1.2), // Shadow offset to the bottom right
-                                                    blurRadius:
-                                                    3.0, // How much to blur the shadow
-                                                    spreadRadius:
-                                                    1.0, // How much the shadow should spread
-                                                  ),
-                                                ],
-                                                border:
-                                                Border.all(width: 0, color: Colors.white),
-                                                borderRadius: BorderRadius.circular(6.0)),
-                                            child: TextFormField(
-                                                keyboardType: TextInputType.text,
-                                                controller: comments,
-                                                maxLines: 5,
-                                                decoration: InputDecoration(
-                                                  border: InputBorder.none,
-                                                  hintStyle: TextStyle(
-                                                      fontSize: 13, color: Color(0xFFb0b6c3)),
-                                                  hintText: 'Enter the comment',
-                                                )),
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Padding(
-                                  padding:  EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * .04),
-                                  child: Container(
-                                    width: double.infinity,
-                                    // height: form_valid ? 520 : 430,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10.0),
-                                        border: Border.all(
-                                          color: Color.fromRGBO(21, 43, 103, 1),
-                                        )),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Emergency Contact',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: Color.fromRGBO(21, 43, 103, 1))),
-                                          SizedBox(
-                                            height: 15,
-                                          ),
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text('Contact Name',
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.grey)),
-                                                    SizedBox(height: 10),
-                                                    CustomTextField(
-                                                      keyboardType: TextInputType.text,
-                                                      hintText: 'Enter contact name',
-                                                      controller: contactName,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(width: 10),
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text('Relationship to Tenant',
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.grey)),
-                                                    SizedBox(height: 10),
-                                                    CustomTextField(
-                                                      keyboardType: TextInputType.text,
-                                                      hintText: 'Enter relationship to tenant',
-                                                      controller: relationToTenant,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-
-                                          SizedBox(height: 10),
-
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text('E-Mail',
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.grey)),
-                                                    SizedBox(height: 10),
-                                                    CustomTextField(
-                                                      keyboardType: TextInputType.emailAddress,
-                                                      hintText: 'Enter email',
-                                                      controller: emergencyEmail,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(width: 10),
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text('Phone Number',
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.grey)),
-                                                    SizedBox(height: 10),
-                                                    CustomTextField(
-                                                      keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
-                                                      hintText: 'Enter phone number',
-                                                      controller: emergencyPhoneNumber,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 20,),
-                                Padding(
-                                  padding:  EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * .04),
-                                  child: Container(
-                                    width: double.infinity,
-                                    // height: form_valid ? 520 : 430,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10.0),
-                                        border: Border.all(
-                                          color: Color.fromRGBO(21, 43, 103, 1),
-                                        )),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Override Debit Card Fee',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Row(
-                                            children: [
-                                              Checkbox(
-                                                  activeColor: blueColor,
-                                                  value: enableOverrideFee,
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      enableOverrideFee = value!;
-                                                      if (!enableOverrideFee) {
-                                                        overrideFee.clear();
-                                                        overRideFeeError = '';
-                                                      }
-                                                    });
-                                                  }),
-                                              Text('Enable Debit Card Fee',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Colors.grey)),
-                                            ],
-                                          ),
-                                          enableOverrideFee
-                                              ? Material(
-                                            elevation: 2,
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            child: Container(
+                                            Container(
                                               height: 50,
                                               padding: EdgeInsets.symmetric(
-                                                  horizontal: 16.0, vertical: 0),
+                                                  horizontal: 12.0,
+                                                  vertical: 0),
                                               decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                BorderRadius.circular(8.0),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color:
-                                                    Colors.black.withOpacity(0.2),
-                                                    offset: Offset(4, 4),
-                                                    blurRadius: 3,
-                                                  ),
-                                                ],
-                                              ),
-                                              child: TextField(
-                                                keyboardType:
-                                                TextInputType.numberWithOptions(
-                                                    decimal: true),
+                                                  color: Colors.white,
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.black26,
+                                                      offset: Offset(1.2, 1.2),
+                                                      blurRadius: 3.0,
+                                                      spreadRadius: 1.0,
+                                                    ),
+                                                  ],
+                                                  border: Border.all(
+                                                      width: 0,
+                                                      color: Colors.white),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          6.0)),
+                                              child: TextFormField(
+                                                style: TextStyle(
+                                                  color: Color(0xFF8898aa),
+                                                  fontSize: 16.0,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                                controller: _dateController,
                                                 decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       fontSize: 13,
                                                       color: Color(0xFFb0b6c3)),
                                                   border: InputBorder.none,
-                                                  hintText: "Enter number...*",
-                                                  suffix: Text(
-                                                    '%',
-                                                    style: TextStyle(
-                                                        fontSize: 18,
-                                                        color: blueColor,
-                                                        fontWeight: FontWeight.bold),
+                                                  hintText: 'Select Date',
+                                                  suffixIcon: IconButton(
+                                                    icon: Icon(
+                                                        Icons.calendar_today),
+                                                    onPressed: () {
+                                                      _selectDate(context);
+                                                    },
                                                   ),
                                                 ),
-                                                onChanged: (value) {
-                                                  _validateInput();
-                                                },
-                                                controller: overrideFee,
-                                                cursorColor:
-                                                const Color.fromRGBO(21, 43, 81, 1),
-                                              ),
-                                            ),
-                                          )
-                                              : Container(),
-                                          overRideFeeError != null
-                                              ? Padding(
-                                            padding: const EdgeInsets.all(0.0),
-                                            child: Text(
-                                              overRideFeeError!,
-                                              style: TextStyle(
-                                                  color: Colors.red,
-                                                  fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                      0.023),
-                                            ),
-                                          )
-                                              : Container(),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 20,),
-                                Padding(
-                                  padding:  EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * .04),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        height: 50,
-                                        width: 150,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                        ),
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Color.fromRGBO(21, 43, 83, 1),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(8.0),
-                                            ),
-                                          ),
-                                          onPressed: () async {
-                                            setState(() {
-                                              formValid = true;
-                                            });
-                                            if (_formkey.currentState!.validate()) {
-                                              setState(() {
-                                                formValid = false;
-                                              });
-
-                                              await addTenant();
-                                            } else {
-                                              print('Form is invalid');
-                                            }
-                                          },
-                                          child: isLoading
-                                              ? Center(
-                                            child: SpinKitFadingCircle(
-                                              color: Colors.white,
-                                              size: 55.0,
-                                            ),
-                                          )
-                                              : Text(
-                                            'Add Tenant',
-                                            style: TextStyle(color: Color(0xFFf7f8f9)),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 8,
-                                      ),
-                                      Container(
-                                          height: 50,
-                                          width: 120,
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(8.0)),
-                                          child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                  backgroundColor: Color(0xFFffffff),
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                      BorderRadius.circular(8.0))),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text(
-                                                'Cancel',
-                                                style: TextStyle(color: Color(0xFF748097)),
-                                              )))
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(height: 20,),
-                              ],
-                            ),
-                          );
-                        }
-                        else{
-                          return SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  height: 25,
-                                ),
-                                titleBar(
-                                  width: MediaQuery.of(context).size.width * .91,
-                                  title: 'Add Tenant',
-                                ),
-
-                                Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Container(
-                                    width: double.infinity,
-                                    // height: !form_valid ? 860 : 830,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10.0),
-                                        border: Border.all(
-                                          color: Color.fromRGBO(21, 43, 103, 1),
-                                        )),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text('First Name *',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          CustomTextField(
-                                            keyboardType: TextInputType.text,
-                                            hintText: 'Enter first name',
-                                            controller: firstName,
-                                            validator: (value) {
-                                              if (value == null || value.isEmpty) {
-                                                return 'please enter the first name';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text('Last Name *',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          CustomTextField(
-                                            keyboardType: TextInputType.text,
-                                            hintText: 'Enter last name',
-                                            controller: lastName,
-                                            validator: (value) {
-                                              if (value == null || value.isEmpty) {
-                                                return 'please enter the last name';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text('Phone Number *',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          CustomTextField(
-                                            keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
-                                            hintText: 'Enter phone number',
-                                            controller: phoneNumber,
-                                            validator: (value) {
-                                              if (value == null || value.isEmpty) {
-                                                return 'please enter the phone number';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text('Work Number',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          CustomTextField(
-                                            keyboardType:TextInputType.numberWithOptions(signed: true,decimal: true),
-                                            hintText: 'Enter work number',
-                                            controller: workNumber,
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text('Email *',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          CustomTextField(
-                                            keyboardType: TextInputType.emailAddress,
-                                            hintText: 'Enter Email',
-                                            controller: email,
-                                            validator: (value) {
-                                              if (value == null || value.isEmpty) {
-                                                return 'please enter email';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text('Alternative Email',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          CustomTextField(
-                                            keyboardType: TextInputType.emailAddress,
-                                            hintText: 'Enter alternative email',
-                                            controller: alterEmail,
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text('Password *',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: CustomTextField(
-                                                  keyboardType: TextInputType.text,
-                                                  obscureText: obsecure,
-                                                  hintText: 'Enter password',
-                                                  controller: passWord,
-                                                  validator: (value) {
-                                                    if (value == null) {
-                                                      return 'please enter password';
-                                                    }
-                                                    return null;
-                                                  },
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                  width:
-                                                  10), // Add some space between the widgets
-                                              InkWell(
+                                                readOnly: true,
                                                 onTap: () {
-                                                  setState(() {
-                                                    obsecure = !obsecure;
-                                                  });
+                                                  _selectDate(context);
                                                 },
-                                                child: Container(
-                                                  width: 38,
-                                                  height: 50,
-                                                  child: Center(
-                                                    child: FaIcon(
-                                                      !obsecure
-                                                          ? FontAwesomeIcons.eyeSlash
-                                                          : FontAwesomeIcons.eye,
-                                                      size: 20,
-                                                      color: Colors.black,
-                                                    ),
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Colors.black26,
-                                                        offset: Offset(1.2, 1.2),
-                                                        blurRadius: 3.0,
-                                                        spreadRadius: 1.0,
-                                                      ),
-                                                    ],
-                                                    border: Border.all(
-                                                        width: 0, color: Colors.white),
-                                                    borderRadius: BorderRadius.circular(6.0),
-                                                  ),
-                                                ),
                                               ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Container(
-                                    width: double.infinity,
-                                    // height: 410,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10.0),
-                                        border: Border.all(
-                                          color: Color.fromRGBO(21, 43, 103, 1),
-                                        )),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Personal Information',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: Color.fromRGBO(21, 43, 103, 1))),
-                                          SizedBox(
-                                            height: 15,
-                                          ),
-                                          Text('Date of Birth',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Container(
-                                            height: 50,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 12.0, vertical: 0),
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.black26,
-                                                    offset: Offset(1.2,
-                                                        1.2), // Shadow offset to the bottom right
-                                                    blurRadius:
-                                                    3.0, // How much to blur the shadow
-                                                    spreadRadius:
-                                                    1.0, // How much the shadow should spread
-                                                  ),
-                                                ],
-                                                border:
-                                                Border.all(width: 0, color: Colors.white),
-                                                borderRadius: BorderRadius.circular(6.0)),
-                                            child: TextFormField(
-                                              style: TextStyle(
-                                                color: Color(0xFF8898aa), // Text color
-                                                fontSize: 16.0, // Text size
-                                                fontWeight: FontWeight.w400, // Text weight
-                                              ),
-                                              controller: _dateController,
-                                              decoration: InputDecoration(
-                                                hintStyle: TextStyle(
-                                                    fontSize: 13, color: Color(0xFFb0b6c3)),
-                                                border: InputBorder.none,
-                                                // labelText: 'Select Date',
-                                                hintText: 'Select Date',
-                                                suffixIcon: IconButton(
-                                                  icon: Icon(Icons.calendar_today),
-                                                  onPressed: () {
-                                                    _selectDate(context);
-                                                  },
-                                                ),
-                                              ),
-                                              readOnly: true,
-                                              onTap: () {
-                                                _selectDate(context);
-                                              },
                                             ),
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text('TaxPayer ID',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(height: 10),
-                                          CustomTextField(
-                                            keyboardType: TextInputType.text,
-                                            hintText: 'Enter contact name',
-                                            controller: taxPayerId,
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text('Comments',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Container(
-                                            height: 90,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 12.0, vertical: 0),
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.black26,
-                                                    offset: Offset(1.2,
-                                                        1.2), // Shadow offset to the bottom right
-                                                    blurRadius:
-                                                    3.0, // How much to blur the shadow
-                                                    spreadRadius:
-                                                    1.0, // How much the shadow should spread
-                                                  ),
-                                                ],
-                                                border:
-                                                Border.all(width: 0, color: Colors.white),
-                                                borderRadius: BorderRadius.circular(6.0)),
-                                            child: TextFormField(
-                                                keyboardType: TextInputType.text,
-                                                controller: comments,
-                                                maxLines: 5,
-                                                decoration: InputDecoration(
-                                                  border: InputBorder.none,
-                                                  hintStyle: TextStyle(
-                                                      fontSize: 13, color: Color(0xFFb0b6c3)),
-                                                  hintText: 'Enter the comment',
-                                                )),
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Container(
-                                    width: double.infinity,
-                                    // height: form_valid ? 520 : 430,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10.0),
-                                        border: Border.all(
-                                          color: Color.fromRGBO(21, 43, 103, 1),
-                                        )),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Emergency Contact',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: Color.fromRGBO(21, 43, 103, 1))),
-                                          SizedBox(
-                                            height: 15,
-                                          ),
-                                          Text('Contact Name',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          CustomTextField(
-                                            keyboardType: TextInputType.text,
-                                            hintText: 'Enter contact name',
-                                            controller: contactName,
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text('Relationship to Tenant',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          CustomTextField(
-                                            keyboardType: TextInputType.text,
-                                            hintText: 'Enter relationship to tenant',
-                                            controller: relationToTenant,
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text('E-Mail',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          CustomTextField(
-                                            keyboardType: TextInputType.emailAddress,
-                                            hintText: 'Enter email',
-                                            controller: emergencyEmail,
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text('Phone Number',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          CustomTextField(
-                                            keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
-                                            hintText: 'Enter phone number',
-                                            controller: emergencyPhoneNumber,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        height: 50,
-                                        width: 150,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                        ),
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Color.fromRGBO(21, 43, 83, 1),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(8.0),
-                                            ),
-                                          ),
-                                          onPressed: () async {
-                                            setState(() {
-                                              formValid = true;
-                                            });
-                                            if (_formkey.currentState!.validate()) {
-                                              setState(() {
-                                                formValid = false;
-                                              });
-
-                                              await addTenant();
-                                            } else {
-                                              print('Form is invalid');
-                                            }
-                                          },
-                                          child: isLoading
-                                              ? Center(
-                                            child: SpinKitFadingCircle(
-                                              color: Colors.white,
-                                              size: 55.0,
-                                            ),
-                                          )
-                                              : Text(
-                                            'Add Tenant',
-                                            style: TextStyle(color: Color(0xFFf7f8f9)),
-                                          ),
+                                          ],
                                         ),
                                       ),
-                                      SizedBox(
-                                        width: 8,
+                                      SizedBox(width: 10),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text('TaxPayer ID',
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.grey)),
+                                            SizedBox(height: 10),
+                                            CustomTextField(
+                                              keyboardType: TextInputType.text,
+                                              hintText: 'Enter taxpayer ID',
+                                              controller: taxPayerId,
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      Container(
-                                          height: 50,
-                                          width: 120,
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(8.0)),
-                                          child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                  backgroundColor: Color(0xFFffffff),
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                      BorderRadius.circular(8.0))),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text(
-                                                'Cancel',
-                                                style: TextStyle(color: Color(0xFF748097)),
-                                              )))
                                     ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-
-
-
-                      }
-                  ),
-                ),
-              );
-            }
-          return Form(
-            key: _formkey,
-            child: Container(
-              color: Colors.white,
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: 25,
-                    ),
-                    titleBar(
-                      width: MediaQuery.of(context).size.width * .91,
-                      title: 'Add Tenant',
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Container(
-                        width: double.infinity,
-                        // height: !form_valid ? 860 : 830,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            border: Border.all(
-                              color: Color.fromRGBO(21, 43, 103, 1),
-                            )),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('First Name *',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              CustomTextField(
-                                keyboardType: TextInputType.text,
-                                hintText: 'Enter first name',
-                                controller: firstName,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'please enter the first name';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text('Last Name *',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              CustomTextField(
-                                keyboardType: TextInputType.text,
-                                hintText: 'Enter last name',
-                                controller: lastName,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'please enter the last name';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text('Phone Number *',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              CustomTextField(
-
-                                keyboardType:TextInputType.numberWithOptions(signed: true,decimal: true),
-                                hintText: 'Enter phone number',
-                                controller: phoneNumber,
-
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'please enter the phone number';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text('Work Number',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              CustomTextField(
-                                keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
-                                hintText: 'Enter work number',
-                                controller: workNumber,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text('Email *',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              CustomTextField(
-                                keyboardType: TextInputType.emailAddress,
-                                hintText: 'Enter Email',
-                                controller: email,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'please enter email';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text('Alternative Email',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              CustomTextField(
-                                keyboardType: TextInputType.emailAddress,
-                                hintText: 'Enter alternative email',
-                                controller: alterEmail,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text('Password *',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: CustomTextField(
-                                      keyboardType: TextInputType.text,
-                                      obscureText: obsecure,
-                                      hintText: 'Enter password',
-                                      controller: passWord,
-                                      validator: (value) {
-                                        if (value == null) {
-                                          return 'please enter password';
-                                        }
-                                        return null;
-                                      },
-                                    ),
                                   ),
                                   SizedBox(
-                                      width:
-                                          10), // Add some space between the widgets
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        obsecure = !obsecure;
-                                      });
-                                    },
-                                    child: Container(
-                                      width: 38,
-                                      height: 50,
-                                      child: Center(
-                                        child: FaIcon(
-                                          !obsecure
-                                              ? FontAwesomeIcons.eyeSlash
-                                              : FontAwesomeIcons.eye,
-                                          size: 20,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black26,
-                                            offset: Offset(1.2, 1.2),
-                                            blurRadius: 3.0,
-                                            spreadRadius: 1.0,
-                                          ),
-                                        ],
-                                        border: Border.all(
-                                            width: 0, color: Colors.white),
-                                        borderRadius: BorderRadius.circular(6.0),
-                                      ),
-                                    ),
+                                    height: 10,
                                   ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Container(
-                        width: double.infinity,
-                        // height: 410,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            border: Border.all(
-                              color: Color.fromRGBO(21, 43, 103, 1),
-                            )),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Personal Information',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color.fromRGBO(21, 43, 103, 1))),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              Text('Date of Birth',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Container(
-                                height: 50,
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 12.0, vertical: 0),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black26,
-                                        offset: Offset(1.2,
-                                            1.2), // Shadow offset to the bottom right
-                                        blurRadius:
-                                            3.0, // How much to blur the shadow
-                                        spreadRadius:
-                                            1.0, // How much the shadow should spread
-                                      ),
-                                    ],
-                                    border:
-                                        Border.all(width: 0, color: Colors.white),
-                                    borderRadius: BorderRadius.circular(6.0)),
-                                child: TextFormField(
-                                  style: TextStyle(
-                                    color: Color(0xFF8898aa), // Text color
-                                    fontSize: 16.0, // Text size
-                                    fontWeight: FontWeight.w400, // Text weight
-                                  ),
-                                  controller: _dateController,
-                                  decoration: InputDecoration(
-                                    hintStyle: TextStyle(
-                                        fontSize: 13, color: Color(0xFFb0b6c3)),
-                                    border: InputBorder.none,
-                                    // labelText: 'Select Date',
-                                    hintText: 'Select Date',
-                                    suffixIcon: IconButton(
-                                      icon: Icon(Icons.calendar_today),
-                                      onPressed: () {
-                                        _selectDate(context);
-                                      },
-                                    ),
-                                  ),
-                                  readOnly: true,
-                                  onTap: () {
-                                    _selectDate(context);
-                                  },
-                                ),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text('TaxPayer ID',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              SizedBox(height: 10),
-                              CustomTextField(
-                                keyboardType: TextInputType.text,
-                                hintText: 'Enter contact name',
-                                controller: taxPayerId,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text('Comments',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Container(
-                                height: 90,
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 12.0, vertical: 0),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black26,
-                                        offset: Offset(1.2,
-                                            1.2), // Shadow offset to the bottom right
-                                        blurRadius:
-                                            3.0, // How much to blur the shadow
-                                        spreadRadius:
-                                            1.0, // How much the shadow should spread
-                                      ),
-                                    ],
-                                    border:
-                                        Border.all(width: 0, color: Colors.white),
-                                    borderRadius: BorderRadius.circular(6.0)),
-                                child: TextFormField(
-                                    keyboardType: TextInputType.text,
-                                    controller: comments,
-                                    maxLines: 5,
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      hintStyle: TextStyle(
-                                          fontSize: 13, color: Color(0xFFb0b6c3)),
-                                      hintText: 'Enter the comment',
-                                    )),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Container(
-                        width: double.infinity,
-                        // height: form_valid ? 520 : 430,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            border: Border.all(
-                              color: Color.fromRGBO(21, 43, 103, 1),
-                            )),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Emergency Contact',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color.fromRGBO(21, 43, 103, 1))),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              Text('Contact Name',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              CustomTextField(
-                                keyboardType: TextInputType.text,
-                                hintText: 'Enter contact name',
-                                controller: contactName,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text('Relationship to Tenant',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              CustomTextField(
-                                keyboardType: TextInputType.text,
-                                hintText: 'Enter relationship to tenant',
-                                controller: relationToTenant,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text('E-Mail',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              CustomTextField(
-                                keyboardType: TextInputType.emailAddress,
-                                hintText: 'Enter email',
-                                controller: emergencyEmail,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text('Phone Number',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              CustomTextField(
-                                keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
-                                hintText: 'Enter phone number',
-                                controller: emergencyPhoneNumber,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Container(
-                        width: double.infinity,
-                        // height: form_valid ? 520 : 430,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            border: Border.all(
-                              color: Color.fromRGBO(21, 43, 103, 1),
-                            )),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Override Debit Card Fee',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  Checkbox(
-                                      activeColor: blueColor,
-                                      value: enableOverrideFee,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          enableOverrideFee = value!;
-                                          if (!enableOverrideFee) {
-                                            overrideFee.clear();
-                                            overRideFeeError = '';
-                                          }
-                                        });
-                                      }),
-                                  Text('Enable Debit Card Fee',
+                                  Text('Comments',
                                       style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.grey)),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Container(
+                                    height: 90,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 12.0, vertical: 0),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black26,
+                                            offset: Offset(1.2,
+                                                1.2), // Shadow offset to the bottom right
+                                            blurRadius:
+                                                3.0, // How much to blur the shadow
+                                            spreadRadius:
+                                                1.0, // How much the shadow should spread
+                                          ),
+                                        ],
+                                        border: Border.all(
+                                            width: 0, color: Colors.white),
+                                        borderRadius:
+                                            BorderRadius.circular(6.0)),
+                                    child: TextFormField(
+                                        keyboardType: TextInputType.text,
+                                        controller: comments,
+                                        maxLines: 5,
+                                        decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintStyle: TextStyle(
+                                              fontSize: 13,
+                                              color: Color(0xFFb0b6c3)),
+                                          hintText: 'Enter the comment',
+                                        )),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
                                 ],
                               ),
-                              enableOverrideFee
-                                  ? Material(
-                                      elevation: 2,
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      child: Container(
-                                        height: 50,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 16.0, vertical: 0),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color:
-                                                  Colors.black.withOpacity(0.2),
-                                              offset: Offset(4, 4),
-                                              blurRadius: 3,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  MediaQuery.of(context).size.width * .04),
+                          child: Container(
+                            width: double.infinity,
+                            // height: form_valid ? 520 : 430,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                border: Border.all(
+                                  color: Color.fromRGBO(21, 43, 103, 1),
+                                )),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Emergency Contact',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                          color:
+                                              Color.fromRGBO(21, 43, 103, 1))),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text('Contact Name',
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.grey)),
+                                            SizedBox(height: 10),
+                                            CustomTextField(
+                                              keyboardType: TextInputType.text,
+                                              hintText: 'Enter contact name',
+                                              controller: contactName,
                                             ),
                                           ],
                                         ),
-                                        child: TextField(
-                                          keyboardType:
-                                              TextInputType.numberWithOptions(
-                                                  decimal: true),
-                                          decoration: InputDecoration(
-                                            hintStyle: TextStyle(
-                                                fontSize: 13,
-                                                color: Color(0xFFb0b6c3)),
-                                            border: InputBorder.none,
-                                            hintText: "Enter number...*",
-                                            suffix: Text(
-                                              '%',
-                                              style: TextStyle(
-                                                  fontSize: 18,
-                                                  color: blueColor,
-                                                  fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(width: 10),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text('Relationship to Tenant',
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.grey)),
+                                            SizedBox(height: 10),
+                                            CustomTextField(
+                                              keyboardType: TextInputType.text,
+                                              hintText:
+                                                  'Enter relationship to tenant',
+                                              controller: relationToTenant,
                                             ),
-                                          ),
-                                          onChanged: (value) {
-                                            _validateInput();
-                                          },
-                                          controller: overrideFee,
-                                          cursorColor:
-                                              const Color.fromRGBO(21, 43, 81, 1),
+                                          ],
                                         ),
                                       ),
-                                    )
-                                  : Container(),
-                              overRideFeeError != null
-                                  ? Padding(
-                                      padding: const EdgeInsets.all(0.0),
-                                      child: Text(
-                                        overRideFeeError!,
-                                        style: TextStyle(
-                                            color: Colors.red,
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.04),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text('E-Mail',
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.grey)),
+                                            SizedBox(height: 10),
+                                            CustomTextField(
+                                              keyboardType:
+                                                  TextInputType.emailAddress,
+                                              hintText: 'Enter email',
+                                              controller: emergencyEmail,
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    )
-                                  : Container(),
+                                      SizedBox(width: 10),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text('Phone Number',
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.grey)),
+                                            SizedBox(height: 10),
+                                            CustomTextField(
+                                              keyboardType: TextInputType
+                                                  .numberWithOptions(
+                                                      signed: true,
+                                                      decimal: true),
+                                              hintText: 'Enter phone number',
+                                              controller: emergencyPhoneNumber,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  MediaQuery.of(context).size.width * .04),
+                          child: Container(
+                            width: double.infinity,
+                            // height: form_valid ? 520 : 430,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                border: Border.all(
+                                  color: Color.fromRGBO(21, 43, 103, 1),
+                                )),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Override Debit Card Fee',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Checkbox(
+                                          activeColor: blueColor,
+                                          value: enableOverrideFee,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              enableOverrideFee = value!;
+                                              if (!enableOverrideFee) {
+                                                overrideFee.clear();
+                                                overRideFeeError = '';
+                                              }
+                                            });
+                                          }),
+                                      Text('Enable Debit Card Fee',
+                                          style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey)),
+                                    ],
+                                  ),
+                                  enableOverrideFee
+                                      ? Material(
+                                          elevation: 2,
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          child: Container(
+                                            height: 50,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 16.0, vertical: 0),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withOpacity(0.2),
+                                                  offset: Offset(4, 4),
+                                                  blurRadius: 3,
+                                                ),
+                                              ],
+                                            ),
+                                            child: TextField(
+                                              keyboardType: TextInputType
+                                                  .numberWithOptions(
+                                                      decimal: true),
+                                              decoration: InputDecoration(
+                                                hintStyle: TextStyle(
+                                                    fontSize: 13,
+                                                    color: Color(0xFFb0b6c3)),
+                                                border: InputBorder.none,
+                                                hintText: "Enter number...*",
+                                                suffix: Text(
+                                                  '%',
+                                                  style: TextStyle(
+                                                      fontSize: 18,
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              onChanged: (value) {
+                                                _validateInput();
+                                              },
+                                              controller: overrideFee,
+                                              cursorColor: const Color.fromRGBO(
+                                                  21, 43, 81, 1),
+                                            ),
+                                          ),
+                                        )
+                                      : Container(),
+                                  overRideFeeError != null
+                                      ? Padding(
+                                          padding: const EdgeInsets.all(0.0),
+                                          child: Text(
+                                            overRideFeeError!,
+                                            style: TextStyle(
+                                                color: Colors.red,
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.023),
+                                          ),
+                                        )
+                                      : Container(),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  MediaQuery.of(context).size.width * .04),
+                          child: Row(
+                            children: [
+                              Container(
+                                height: 50,
+                                width: 150,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        Color.fromRGBO(21, 43, 83, 1),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                  ),
+                                  onPressed: () async {
+                                    setState(() {
+                                      formValid = true;
+                                    });
+                                    if (_formkey.currentState!.validate()) {
+                                      setState(() {
+                                        formValid = false;
+                                      });
+
+                                      await addTenant();
+                                    } else {
+                                      print('Form is invalid');
+                                    }
+                                  },
+                                  child: isLoading
+                                      ? Center(
+                                          child: SpinKitFadingCircle(
+                                            color: Colors.white,
+                                            size: 55.0,
+                                          ),
+                                        )
+                                      : Text(
+                                          'Add Tenant',
+                                          style: TextStyle(
+                                              color: Color(0xFFf7f8f9)),
+                                        ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 8,
+                              ),
+                              Container(
+                                  height: 50,
+                                  width: 120,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8.0)),
+                                  child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: Color(0xFFffffff),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0))),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        'Cancel',
+                                        style:
+                                            TextStyle(color: Color(0xFF748097)),
+                                      )))
                             ],
                           ),
                         ),
-                      ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        children: [
-                          Container(
-                            height: 50,
-                            width: 150,
+                  );
+                } else {
+                  return SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 25,
+                        ),
+                        titleBar(
+                          width: MediaQuery.of(context).size.width * .91,
+                          title: 'Add Tenant',
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Container(
+                            width: double.infinity,
+                            // height: !form_valid ? 860 : 830,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(10.0),
+                                border: Border.all(
+                                  color: Color.fromRGBO(21, 43, 103, 1),
+                                )),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('First Name *',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomTextField(
+                                    keyboardType: TextInputType.text,
+                                    hintText: 'Enter first name',
+                                    controller: firstName,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'please enter the first name';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text('Last Name *',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomTextField(
+                                    keyboardType: TextInputType.text,
+                                    hintText: 'Enter last name',
+                                    controller: lastName,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'please enter the last name';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text('Phone Number *',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomTextField(
+                                    keyboardType:
+                                        TextInputType.numberWithOptions(
+                                            signed: true, decimal: true),
+                                    hintText: 'Enter phone number',
+                                    controller: phoneNumber,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'please enter the phone number';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text('Work Number',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomTextField(
+                                    keyboardType:
+                                        TextInputType.numberWithOptions(
+                                            signed: true, decimal: true),
+                                    hintText: 'Enter work number',
+                                    controller: workNumber,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text('Email *',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomTextField(
+                                    keyboardType: TextInputType.emailAddress,
+                                    hintText: 'Enter Email',
+                                    controller: email,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'please enter email';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text('Alternative Email',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomTextField(
+                                    keyboardType: TextInputType.emailAddress,
+                                    hintText: 'Enter alternative email',
+                                    controller: alterEmail,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text('Password *',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomTextField(
+                                          keyboardType: TextInputType.text,
+                                          obscureText: obsecure,
+                                          hintText: 'Enter password',
+                                          controller: passWord,
+                                          validator: (value) {
+                                            if (value == null) {
+                                              return 'please enter password';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                      SizedBox(
+                                          width:
+                                              10), // Add some space between the widgets
+                                      InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            obsecure = !obsecure;
+                                          });
+                                        },
+                                        child: Container(
+                                          width: 38,
+                                          height: 50,
+                                          child: Center(
+                                            child: FaIcon(
+                                              !obsecure
+                                                  ? FontAwesomeIcons.eyeSlash
+                                                  : FontAwesomeIcons.eye,
+                                              size: 20,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black26,
+                                                offset: Offset(1.2, 1.2),
+                                                blurRadius: 3.0,
+                                                spreadRadius: 1.0,
+                                              ),
+                                            ],
+                                            border: Border.all(
+                                                width: 0, color: Colors.white),
+                                            borderRadius:
+                                                BorderRadius.circular(6.0),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                ],
+                              ),
                             ),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Color.fromRGBO(21, 43, 83, 1),
-                                shape: RoundedRectangleBorder(
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Container(
+                            width: double.infinity,
+                            // height: 410,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                border: Border.all(
+                                  color: Color.fromRGBO(21, 43, 103, 1),
+                                )),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Personal Information',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                          color:
+                                              Color.fromRGBO(21, 43, 103, 1))),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  Text('Date of Birth',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Container(
+                                    height: 50,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 12.0, vertical: 0),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black26,
+                                            offset: Offset(1.2,
+                                                1.2), // Shadow offset to the bottom right
+                                            blurRadius:
+                                                3.0, // How much to blur the shadow
+                                            spreadRadius:
+                                                1.0, // How much the shadow should spread
+                                          ),
+                                        ],
+                                        border: Border.all(
+                                            width: 0, color: Colors.white),
+                                        borderRadius:
+                                            BorderRadius.circular(6.0)),
+                                    child: TextFormField(
+                                      style: TextStyle(
+                                        color: Color(0xFF8898aa), // Text color
+                                        fontSize: 16.0, // Text size
+                                        fontWeight:
+                                            FontWeight.w400, // Text weight
+                                      ),
+                                      controller: _dateController,
+                                      decoration: InputDecoration(
+                                        hintStyle: TextStyle(
+                                            fontSize: 13,
+                                            color: Color(0xFFb0b6c3)),
+                                        border: InputBorder.none,
+                                        // labelText: 'Select Date',
+                                        hintText: 'Select Date',
+                                        suffixIcon: IconButton(
+                                          icon: Icon(Icons.calendar_today),
+                                          onPressed: () {
+                                            _selectDate(context);
+                                          },
+                                        ),
+                                      ),
+                                      readOnly: true,
+                                      onTap: () {
+                                        _selectDate(context);
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text('TaxPayer ID',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  SizedBox(height: 10),
+                                  CustomTextField(
+                                    keyboardType: TextInputType.text,
+                                    hintText: 'Enter contact name',
+                                    controller: taxPayerId,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text('Comments',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Container(
+                                    height: 90,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 12.0, vertical: 0),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black26,
+                                            offset: Offset(1.2,
+                                                1.2), // Shadow offset to the bottom right
+                                            blurRadius:
+                                                3.0, // How much to blur the shadow
+                                            spreadRadius:
+                                                1.0, // How much the shadow should spread
+                                          ),
+                                        ],
+                                        border: Border.all(
+                                            width: 0, color: Colors.white),
+                                        borderRadius:
+                                            BorderRadius.circular(6.0)),
+                                    child: TextFormField(
+                                        keyboardType: TextInputType.text,
+                                        controller: comments,
+                                        maxLines: 5,
+                                        decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintStyle: TextStyle(
+                                              fontSize: 13,
+                                              color: Color(0xFFb0b6c3)),
+                                          hintText: 'Enter the comment',
+                                        )),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Container(
+                            width: double.infinity,
+                            // height: form_valid ? 520 : 430,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                border: Border.all(
+                                  color: Color.fromRGBO(21, 43, 103, 1),
+                                )),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Emergency Contact',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                          color:
+                                              Color.fromRGBO(21, 43, 103, 1))),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  Text('Contact Name',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomTextField(
+                                    keyboardType: TextInputType.text,
+                                    hintText: 'Enter contact name',
+                                    controller: contactName,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text('Relationship to Tenant',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomTextField(
+                                    keyboardType: TextInputType.text,
+                                    hintText: 'Enter relationship to tenant',
+                                    controller: relationToTenant,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text('E-Mail',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomTextField(
+                                    keyboardType: TextInputType.emailAddress,
+                                    hintText: 'Enter email',
+                                    controller: emergencyEmail,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text('Phone Number',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomTextField(
+                                    keyboardType:
+                                        TextInputType.numberWithOptions(
+                                            signed: true, decimal: true),
+                                    hintText: 'Enter phone number',
+                                    controller: emergencyPhoneNumber,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            children: [
+                              Container(
+                                height: 50,
+                                width: 150,
+                                decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
-                              ),
-                              onPressed: () async {
-                                setState(() {
-                                  formValid = true;
-                                });
-                                if (_formkey.currentState!.validate()) {
-                                  setState(() {
-                                    formValid = false;
-                                  });
-
-                                  await addTenant();
-                                } else {
-                                  print('Form is invalid');
-                                }
-                              },
-                              child: isLoading
-                                  ? Center(
-                                      child: SpinKitFadingCircle(
-                                        color: Colors.white,
-                                        size: 55.0,
-                                      ),
-                                    )
-                                  : Text(
-                                      'Add Tenant',
-                                      style: TextStyle(color: Color(0xFFf7f8f9)),
-                                    ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          Container(
-                              height: 50,
-                              width: 120,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.0)),
-                              child: ElevatedButton(
+                                child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor: Color(0xFFffffff),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8.0))),
-                                  onPressed: () {
-                                    Navigator.pop(context);
+                                    backgroundColor:
+                                        Color.fromRGBO(21, 43, 83, 1),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                  ),
+                                  onPressed: () async {
+                                    setState(() {
+                                      formValid = true;
+                                    });
+                                    if (_formkey.currentState!.validate()) {
+                                      setState(() {
+                                        formValid = false;
+                                      });
+
+                                      await addTenant();
+                                    } else {
+                                      print('Form is invalid');
+                                    }
                                   },
-                                  child: Text(
-                                    'Cancel',
-                                    style: TextStyle(color: Color(0xFF748097)),
-                                  )))
-                        ],
-                      ),
+                                  child: isLoading
+                                      ? Center(
+                                          child: SpinKitFadingCircle(
+                                            color: Colors.white,
+                                            size: 55.0,
+                                          ),
+                                        )
+                                      : Text(
+                                          'Add Tenant',
+                                          style: TextStyle(
+                                              color: Color(0xFFf7f8f9)),
+                                        ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 8,
+                              ),
+                              Container(
+                                  height: 50,
+                                  width: 120,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8.0)),
+                                  child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: Color(0xFFffffff),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0))),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        'Cancel',
+                                        style:
+                                            TextStyle(color: Color(0xFF748097)),
+                                      )))
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
+                  );
+                }
+              }),
             ),
           );
         }
-      ),
+        return Form(
+          key: _formkey,
+          child: Container(
+            color: Colors.white,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 25,
+                  ),
+                  titleBar(
+                    width: MediaQuery.of(context).size.width * .91,
+                    title: 'Add Tenant',
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Container(
+                      width: double.infinity,
+                      // height: !form_valid ? 860 : 830,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          border: Border.all(
+                            color: Color.fromRGBO(21, 43, 103, 1),
+                          )),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('First Name *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              keyboardType: TextInputType.text,
+                              hintText: 'Enter first name',
+                              controller: firstName,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'please enter the first name';
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text('Last Name *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              keyboardType: TextInputType.text,
+                              hintText: 'Enter last name',
+                              controller: lastName,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'please enter the last name';
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text('Phone Number *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              keyboardType: TextInputType.numberWithOptions(
+                                  signed: true, decimal: true),
+                              hintText: 'Enter phone number',
+                              controller: phoneNumber,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'please enter the phone number';
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text('Work Number',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              keyboardType: TextInputType.numberWithOptions(
+                                  signed: true, decimal: true),
+                              hintText: 'Enter work number',
+                              controller: workNumber,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text('Email *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              keyboardType: TextInputType.emailAddress,
+                              hintText: 'Enter Email',
+                              controller: email,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'please enter email';
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text('Alternative Email',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              keyboardType: TextInputType.emailAddress,
+                              hintText: 'Enter alternative email',
+                              controller: alterEmail,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text('Password *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: CustomTextField(
+                                    keyboardType: TextInputType.text,
+                                    obscureText: obsecure,
+                                    hintText: 'Enter password',
+                                    controller: passWord,
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return 'please enter password';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                    width:
+                                        10), // Add some space between the widgets
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      obsecure = !obsecure;
+                                    });
+                                  },
+                                  child: Container(
+                                    width: 38,
+                                    height: 50,
+                                    child: Center(
+                                      child: FaIcon(
+                                        !obsecure
+                                            ? FontAwesomeIcons.eyeSlash
+                                            : FontAwesomeIcons.eye,
+                                        size: 20,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black26,
+                                          offset: Offset(1.2, 1.2),
+                                          blurRadius: 3.0,
+                                          spreadRadius: 1.0,
+                                        ),
+                                      ],
+                                      border: Border.all(
+                                          width: 0, color: Colors.white),
+                                      borderRadius: BorderRadius.circular(6.0),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Container(
+                      width: double.infinity,
+                      // height: 410,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          border: Border.all(
+                            color: Color.fromRGBO(21, 43, 103, 1),
+                          )),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Personal Information',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color.fromRGBO(21, 43, 103, 1))),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Text('Date of Birth',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                              height: 50,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 12.0, vertical: 0),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      offset: Offset(1.2,
+                                          1.2), // Shadow offset to the bottom right
+                                      blurRadius:
+                                          3.0, // How much to blur the shadow
+                                      spreadRadius:
+                                          1.0, // How much the shadow should spread
+                                    ),
+                                  ],
+                                  border:
+                                      Border.all(width: 0, color: Colors.white),
+                                  borderRadius: BorderRadius.circular(6.0)),
+                              child: TextFormField(
+                                style: TextStyle(
+                                  color: Color(0xFF8898aa), // Text color
+                                  fontSize: 16.0, // Text size
+                                  fontWeight: FontWeight.w400, // Text weight
+                                ),
+                                controller: _dateController,
+                                decoration: InputDecoration(
+                                  hintStyle: TextStyle(
+                                      fontSize: 13, color: Color(0xFFb0b6c3)),
+                                  border: InputBorder.none,
+                                  // labelText: 'Select Date',
+                                  hintText: 'Select Date',
+                                  suffixIcon: IconButton(
+                                    icon: Icon(Icons.calendar_today),
+                                    onPressed: () {
+                                      _selectDate(context);
+                                    },
+                                  ),
+                                ),
+                                readOnly: true,
+                                onTap: () {
+                                  _selectDate(context);
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text('TaxPayer ID',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(height: 10),
+                            CustomTextField(
+                              keyboardType: TextInputType.text,
+                              hintText: 'Enter contact name',
+                              controller: taxPayerId,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text('Comments',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                              height: 90,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 12.0, vertical: 0),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      offset: Offset(1.2,
+                                          1.2), // Shadow offset to the bottom right
+                                      blurRadius:
+                                          3.0, // How much to blur the shadow
+                                      spreadRadius:
+                                          1.0, // How much the shadow should spread
+                                    ),
+                                  ],
+                                  border:
+                                      Border.all(width: 0, color: Colors.white),
+                                  borderRadius: BorderRadius.circular(6.0)),
+                              child: TextFormField(
+                                  keyboardType: TextInputType.text,
+                                  controller: comments,
+                                  maxLines: 5,
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintStyle: TextStyle(
+                                        fontSize: 13, color: Color(0xFFb0b6c3)),
+                                    hintText: 'Enter the comment',
+                                  )),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Container(
+                      width: double.infinity,
+                      // height: form_valid ? 520 : 430,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          border: Border.all(
+                            color: Color.fromRGBO(21, 43, 103, 1),
+                          )),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Emergency Contact',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color.fromRGBO(21, 43, 103, 1))),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Text('Contact Name',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              keyboardType: TextInputType.text,
+                              hintText: 'Enter contact name',
+                              controller: contactName,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text('Relationship to Tenant',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              keyboardType: TextInputType.text,
+                              hintText: 'Enter relationship to tenant',
+                              controller: relationToTenant,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text('E-Mail',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              keyboardType: TextInputType.emailAddress,
+                              hintText: 'Enter email',
+                              controller: emergencyEmail,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text('Phone Number',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              keyboardType: TextInputType.numberWithOptions(
+                                  signed: true, decimal: true),
+                              hintText: 'Enter phone number',
+                              controller: emergencyPhoneNumber,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Container(
+                      width: double.infinity,
+                      // height: form_valid ? 520 : 430,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          border: Border.all(
+                            color: Color.fromRGBO(21, 43, 103, 1),
+                          )),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Override Debit Card Fee',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                Checkbox(
+                                    activeColor: blueColor,
+                                    value: enableOverrideFee,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        enableOverrideFee = value!;
+                                        if (!enableOverrideFee) {
+                                          overrideFee.clear();
+                                          overRideFeeError = '';
+                                        }
+                                      });
+                                    }),
+                                Text('Enable Debit Card Fee',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey)),
+                              ],
+                            ),
+                            enableOverrideFee
+                                ? Material(
+                                    elevation: 2,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    child: Container(
+                                      height: 50,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 16.0, vertical: 0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.2),
+                                            offset: Offset(4, 4),
+                                            blurRadius: 3,
+                                          ),
+                                        ],
+                                      ),
+                                      child: TextField(
+                                        keyboardType:
+                                            TextInputType.numberWithOptions(
+                                                decimal: true),
+                                        decoration: InputDecoration(
+                                          hintStyle: TextStyle(
+                                              fontSize: 13,
+                                              color: Color(0xFFb0b6c3)),
+                                          border: InputBorder.none,
+                                          hintText: "Enter number...*",
+                                          suffix: Text(
+                                            '%',
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                color: blueColor,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        onChanged: (value) {
+                                          _validateInput();
+                                        },
+                                        controller: overrideFee,
+                                        cursorColor:
+                                            const Color.fromRGBO(21, 43, 81, 1),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                            overRideFeeError != null
+                                ? Padding(
+                                    padding: const EdgeInsets.all(0.0),
+                                    child: Text(
+                                      overRideFeeError!,
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.04),
+                                    ),
+                                  )
+                                : Container(),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 50,
+                          width: 150,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color.fromRGBO(21, 43, 83, 1),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            onPressed: () async {
+                              setState(() {
+                                formValid = true;
+                              });
+                              if (_formkey.currentState!.validate()) {
+                                setState(() {
+                                  formValid = false;
+                                });
+
+                                await addTenant();
+                              } else {
+                                print('Form is invalid');
+                              }
+                            },
+                            child: isLoading
+                                ? Center(
+                                    child: SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 55.0,
+                                    ),
+                                  )
+                                : Text(
+                                    'Add Tenant',
+                                    style: TextStyle(color: Color(0xFFf7f8f9)),
+                                  ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Container(
+                            height: 50,
+                            width: 120,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0)),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color(0xFFffffff),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0))),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(color: Color(0xFF748097)),
+                                )))
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }),
     );
   }
 
@@ -2068,7 +2168,7 @@ class _AddTenantState extends State<AddTenant> {
       enableoverrideFee: enableOverrideFee,
       overRideFee: overRideFee,
     );
- 
+
     bool success = await TenantsRepository().addTenant(tenant);
 
     setState(() {
@@ -2230,7 +2330,6 @@ class CustomTextField extends StatefulWidget {
   final String? error_mess;
   final bool? optional;
 
-
   CustomTextField({
     Key? key,
     this.onChanged,
@@ -2244,7 +2343,8 @@ class CustomTextField extends StatefulWidget {
     this.validator,
     this.onSuffixIconPressed,
     this.label,
-    this.onTap, this.onChanged2,
+    this.onTap,
+    this.onChanged2,
     this.amount_check,
     this.max_amount,
     this.error_mess,
@@ -2267,22 +2367,22 @@ class CustomTextFieldState extends State<CustomTextField> {
     _textController.dispose(); // Dispose the controller when not needed anymore
     super.dispose();
     _focusNode.dispose();
-
   }
+
   @override
   void initState() {
     super.initState();
     _textController = widget.controller ?? TextEditingController();
     _focusNode = FocusNode();
-
   }
+
   KeyboardActionsConfig _buildConfig(BuildContext context) {
     return KeyboardActionsConfig(
       actions: [
         KeyboardActionsItem(
           focusNode: _focusNode,
           toolbarButtons: [
-                (node) {
+            (node) {
               return GestureDetector(
                 onTap: () {
                   if (widget.onChanged2 != null) {
@@ -2292,10 +2392,11 @@ class CustomTextFieldState extends State<CustomTextField> {
                 },
                 child: Padding(
                   padding: EdgeInsets.all(14.0),
-                  child: Text("Done",style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold
-                  ),),
+                  child: Text(
+                    "Done",
+                    style: TextStyle(
+                        color: Colors.blue, fontWeight: FontWeight.bold),
+                  ),
                 ),
               );
             },
@@ -2304,29 +2405,34 @@ class CustomTextFieldState extends State<CustomTextField> {
       ],
     );
   }
+
   @override
   Widget build(BuildContext context) {
-    final shouldUseKeyboardActions = widget.keyboardType == TextInputType.number;
+    final shouldUseKeyboardActions =
+        widget.keyboardType == TextInputType.number;
     Widget textfield = Stack(
       clipBehavior: Clip.none,
       children: <Widget>[
         FormField<String>(
-          validator:    widget.optional! ? null :  (value) {
-            if (widget.controller!.text.isEmpty) {
-              setState(() {
-                if(widget.label == null)
-                _errorMessage = 'Please ${widget.hintText}';
-                else
-                  _errorMessage = 'Please ${widget.label}';
-              });
-              return '';
-            }
-            else if(widget.amount_check != null && double.parse(widget.controller!.text) > double.parse(widget.max_amount!))
-            setState(() {
-              _errorMessage = '${widget.error_mess}';
-            });
-            return null;
-          },
+          validator: widget.optional!
+              ? null
+              : (value) {
+                  if (widget.controller!.text.isEmpty) {
+                    setState(() {
+                      if (widget.label == null)
+                        _errorMessage = 'Please ${widget.hintText}';
+                      else
+                        _errorMessage = 'Please ${widget.label}';
+                    });
+                    return '';
+                  } else if (widget.amount_check != null &&
+                      double.parse(widget.controller!.text) >
+                          double.parse(widget.max_amount!))
+                    setState(() {
+                      _errorMessage = '${widget.error_mess}';
+                    });
+                  return null;
+                },
           builder: (FormFieldState<String> state) {
             return Column(
               children: <Widget>[
@@ -2350,7 +2456,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       ],
                     ),
                     child: TextFormField(
-                  /*    onFieldSubmitted: (value){
+                      /*    onFieldSubmitted: (value){
                         if(value.isNotEmpty){
 
                           if(widget.amount_check != null){
@@ -2371,27 +2477,25 @@ class CustomTextFieldState extends State<CustomTextField> {
                         widget.onChanged2;
                       },*/
                       onFieldSubmitted: widget.onChanged2,
-                      onChanged:(value){
+                      onChanged: (value) {
                         print("object calin $value");
-                        if(value.isNotEmpty){
+                        if (value.isNotEmpty) {
                           setState(() {
                             _errorMessage = null;
                           });
                         }
 
                         widget.onChanged!(value);
-                      print("callllll");
-                        },
-
-                focusNode: _focusNode,
-                      onTap: (){
-                        if(widget.onTap != null){
+                        print("callllll");
+                      },
+                      focusNode: _focusNode,
+                      onTap: () {
+                        if (widget.onTap != null) {
                           widget.onTap!();
                           setState(() {
                             _errorMessage = null;
                           });
                         }
-
                       },
                       obscureText: widget.obscureText,
                       readOnly: widget.readOnnly,
@@ -2436,13 +2540,13 @@ class CustomTextFieldState extends State<CustomTextField> {
     );
     return shouldUseKeyboardActions
         ? SizedBox(
-      height: 60,
-      width: MediaQuery.of(context).size.width * .98,
-      child: KeyboardActions(
-        config: _buildConfig(context),
-        child: textfield,
-      ),
-    )
+            height: 60,
+            width: MediaQuery.of(context).size.width * .98,
+            child: KeyboardActions(
+              config: _buildConfig(context),
+              child: textfield,
+            ),
+          )
         : textfield;
   }
 }

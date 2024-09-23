@@ -22,6 +22,7 @@ import '../../../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../../widgets/custom_drawer.dart';
+
 class editAdminInsurance extends StatefulWidget {
   AdminTenantInsuranceModel data;
   editAdminInsurance({super.key, required this.data});
@@ -88,23 +89,6 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
 
   Future<String?> uploadPdf(File pdfFile) async {
     print(pdfFile.path);
-    // final String uploadUrl = '${image_upload_url}/api/images/upload';
-
-    // var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
-    // request.files.add(await http.MultipartFile.fromPath('files', pdfFile.path));
-
-    // var response = await request.send();
-    // var responseData = await http.Response.fromStream(response);
-
-    // // var responseBody = json.decode(responseData.body);
-    // print(responseBody);
-    // if (responseBody['status'] == 'ok') {
-    //   Fluttertoast.showToast(msg: 'PDF added successfully');
-    //   List file = responseBody['files'];
-    //   return file.first["filename"];
-    // } else {
-    //   throw Exception('Failed to upload file: ${responseBody['message']}');
-    // }
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -195,7 +179,10 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
         key: key,
         appBar: widget_302.App_Bar(context: context),
         backgroundColor: Colors.white,
-        drawer:CustomDrawer(currentpage: "Tenants",dropdown: true,),
+        drawer: CustomDrawer(
+          currentpage: "Tenants",
+          dropdown: true,
+        ),
         body: Form(
           key: _formkey,
           child: Container(

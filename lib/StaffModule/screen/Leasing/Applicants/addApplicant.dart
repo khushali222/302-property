@@ -17,6 +17,7 @@ import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../../../model/ApplicantModel.dart';
 import '../../../widgets/custom_drawer.dart';
+
 class AddApplicant extends StatefulWidget {
   const AddApplicant({super.key});
 
@@ -142,7 +143,10 @@ class _AddApplicantState extends State<AddApplicant> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Applicants",dropdown: true,),
+      drawer: CustomDrawer(
+        currentpage: "Applicants",
+        dropdown: true,
+      ),
       body: SingleChildScrollView(
         child: Form(
           key: _formkey,
@@ -260,7 +264,8 @@ class _AddApplicantState extends State<AddApplicant> {
                             }
                             return null;
                           },
-                          keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                          keyboardType: TextInputType.numberWithOptions(
+                              signed: true, decimal: true),
                           hintText: 'Enter mobile number',
                           controller: mobileNumber,
                         ),
@@ -282,7 +287,8 @@ class _AddApplicantState extends State<AddApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                          keyboardType: TextInputType.numberWithOptions(
+                              signed: true, decimal: true),
                           hintText: 'Enter home number',
                           controller: homeNumber,
                         ),
@@ -304,7 +310,8 @@ class _AddApplicantState extends State<AddApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                          keyboardType: TextInputType.numberWithOptions(
+                              signed: true, decimal: true),
                           hintText: 'Enter business number',
                           controller: bussinessNumber,
                         ),
@@ -326,7 +333,8 @@ class _AddApplicantState extends State<AddApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                          keyboardType: TextInputType.numberWithOptions(
+                              signed: true, decimal: true),
                           hintText: 'Enter telephone number',
                           controller: telePhoneNumber,
                         ),
@@ -396,21 +404,26 @@ class _AddApplicantState extends State<AddApplicant> {
                                             // Notify form field of the change
                                             _selectedUnitId = null;
                                             _selectedPropertyId = value;
-                                            _selectedProperty = properties[value]; // Store selected property
+                                            _selectedProperty = properties[
+                                                value]; // Store selected property
 
                                             renderId = value.toString();
-                                            print('Selected Property: $_selectedProperty');
+                                            print(
+                                                'Selected Property: $_selectedProperty');
                                             _loadUnits(value!);
-                                            state.didChange(value);// Fetch units for the selected property
+                                            state.didChange(
+                                                value); // Fetch units for the selected property
                                           });
                                           state.reset();
                                         },
                                         buttonStyleData: ButtonStyleData(
                                           height: 45,
                                           width: 160,
-                                          padding: const EdgeInsets.only(left: 14, right: 14),
+                                          padding: const EdgeInsets.only(
+                                              left: 14, right: 14),
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(6),
+                                            borderRadius:
+                                                BorderRadius.circular(6),
                                             color: Colors.white,
                                           ),
                                           elevation: 2,
@@ -425,24 +438,30 @@ class _AddApplicantState extends State<AddApplicant> {
                                         ),
                                         dropdownStyleData: DropdownStyleData(
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(6),
+                                            borderRadius:
+                                                BorderRadius.circular(6),
                                             color: Colors.white,
                                           ),
                                           scrollbarTheme: ScrollbarThemeData(
                                             radius: const Radius.circular(6),
-                                            thickness: MaterialStateProperty.all(6),
-                                            thumbVisibility: MaterialStateProperty.all(true),
+                                            thickness:
+                                                MaterialStateProperty.all(6),
+                                            thumbVisibility:
+                                                MaterialStateProperty.all(true),
                                           ),
                                         ),
-                                        menuItemStyleData: const MenuItemStyleData(
+                                        menuItemStyleData:
+                                            const MenuItemStyleData(
                                           height: 40,
-                                          padding: EdgeInsets.only(left: 14, right: 14),
+                                          padding: EdgeInsets.only(
+                                              left: 14, right: 14),
                                         ),
                                       ),
                                     ),
                                     if (state.hasError)
                                       Padding(
-                                        padding: const EdgeInsets.only(left: 14, top: 8),
+                                        padding: const EdgeInsets.only(
+                                            left: 14, top: 8),
                                         child: Text(
                                           state.errorText!,
                                           style: const TextStyle(
@@ -455,123 +474,146 @@ class _AddApplicantState extends State<AddApplicant> {
                                 );
                               },
                             ),
-
                             units.isNotEmpty
                                 ? const Text('Unit',
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey))
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey))
                                 : Container(),
                             const SizedBox(height: 0),
                             units.isNotEmpty
                                 ? FormField<String>(
-                              validator: (value) {
-                                if (_selectedUnitId == null) {
-                                  return 'Please select an option';
-                                }
-                                return null;
-                              },
-                              builder: (FormFieldState<String> state) {
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    DropdownButtonHideUnderline(
-                                      child: DropdownButtonFormField2<String>(
-                                        decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                        ),
-                                        isExpanded: true,
-                                        hint: const Row(
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                'Select Unit',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: Color(0xFFb0b6c3),
+                                    validator: (value) {
+                                      if (_selectedUnitId == null) {
+                                        return 'Please select an option';
+                                      }
+                                      return null;
+                                    },
+                                    builder: (FormFieldState<String> state) {
+                                      return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          DropdownButtonHideUnderline(
+                                            child: DropdownButtonFormField2<
+                                                String>(
+                                              decoration: InputDecoration(
+                                                border: InputBorder.none,
+                                              ),
+                                              isExpanded: true,
+                                              hint: const Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      'Select Unit',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color:
+                                                            Color(0xFFb0b6c3),
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              items: units.keys.map((unitId) {
+                                                return DropdownMenuItem<String>(
+                                                  value: unitId,
+                                                  child: Text(
+                                                    units[unitId]!,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color: Colors.black87,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              value: _selectedUnitId,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  // Notify form field of the change
+                                                  unitId = value.toString();
+                                                  _selectedUnitId = value;
+                                                  _selectedUnit = units[
+                                                      value]; // Store selected unit
+                                                  state.didChange(value);
+                                                  print(
+                                                      'Selected Unit: $_selectedUnit');
+                                                });
+                                                state.reset();
+                                              },
+                                              buttonStyleData: ButtonStyleData(
+                                                height: 45,
+                                                width: 160,
+                                                padding: const EdgeInsets.only(
+                                                    left: 14, right: 14),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                  color: Colors.white,
                                                 ),
-                                                overflow: TextOverflow.ellipsis,
+                                                elevation: 2,
+                                              ),
+                                              iconStyleData:
+                                                  const IconStyleData(
+                                                icon:
+                                                    Icon(Icons.arrow_drop_down),
+                                                iconSize: 24,
+                                                iconEnabledColor:
+                                                    Color(0xFFb0b6c3),
+                                                iconDisabledColor: Colors.grey,
+                                              ),
+                                              dropdownStyleData:
+                                                  DropdownStyleData(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                  color: Colors.white,
+                                                ),
+                                                scrollbarTheme:
+                                                    ScrollbarThemeData(
+                                                  radius:
+                                                      const Radius.circular(6),
+                                                  thickness:
+                                                      MaterialStateProperty.all(
+                                                          6),
+                                                  thumbVisibility:
+                                                      MaterialStateProperty.all(
+                                                          true),
+                                                ),
+                                              ),
+                                              menuItemStyleData:
+                                                  const MenuItemStyleData(
+                                                height: 40,
+                                                padding: EdgeInsets.only(
+                                                    left: 14, right: 14),
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                        items: units.keys.map((unitId) {
-                                          return DropdownMenuItem<String>(
-                                            value: unitId,
-                                            child: Text(
-                                              units[unitId]!,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w400,
-                                                color: Colors.black87,
+                                          ),
+                                          if (state.hasError)
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 14, top: 8),
+                                              child: Text(
+                                                state.errorText!,
+                                                style: const TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 12,
+                                                ),
                                               ),
-                                              overflow: TextOverflow.ellipsis,
                                             ),
-                                          );
-                                        }).toList(),
-                                        value: _selectedUnitId,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            // Notify form field of the change
-                                            unitId = value.toString();
-                                            _selectedUnitId = value;
-                                            _selectedUnit = units[value]; // Store selected unit
-                                            state.didChange(value);
-                                            print('Selected Unit: $_selectedUnit');
-                                          });
-                                          state.reset();
-                                        },
-                                        buttonStyleData: ButtonStyleData(
-                                          height: 45,
-                                          width: 160,
-                                          padding: const EdgeInsets.only(left: 14, right: 14),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(6),
-                                            color: Colors.white,
-                                          ),
-                                          elevation: 2,
-                                        ),
-                                        iconStyleData: const IconStyleData(
-                                          icon: Icon(Icons.arrow_drop_down),
-                                          iconSize: 24,
-                                          iconEnabledColor: Color(0xFFb0b6c3),
-                                          iconDisabledColor: Colors.grey,
-                                        ),
-                                        dropdownStyleData: DropdownStyleData(
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(6),
-                                            color: Colors.white,
-                                          ),
-                                          scrollbarTheme: ScrollbarThemeData(
-                                            radius: const Radius.circular(6),
-                                            thickness: MaterialStateProperty.all(6),
-                                            thumbVisibility: MaterialStateProperty.all(true),
-                                          ),
-                                        ),
-                                        menuItemStyleData: const MenuItemStyleData(
-                                          height: 40,
-                                          padding: EdgeInsets.only(left: 14, right: 14),
-                                        ),
-                                      ),
-                                    ),
-                                    if (state.hasError)
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 14, top: 8),
-                                        child: Text(
-                                          state.errorText!,
-                                          style: const TextStyle(
-                                            color: Colors.red,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ),
-                                  ],
-                                );
-                              },
-                            )
-
+                                        ],
+                                      );
+                                    },
+                                  )
                                 : Container(),
                           ],
                         ),
@@ -699,7 +741,7 @@ class _AddApplicantState extends State<AddApplicant> {
       );
 
       // Handle successful response
-      Navigator.pop(context,true);
+      Navigator.pop(context, true);
       // print('Response: $response');
     } catch (e) {
       // Handle error

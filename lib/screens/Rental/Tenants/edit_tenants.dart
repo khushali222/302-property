@@ -326,8 +326,10 @@ class _EditTenantsState extends State<EditTenants> {
                                                     color: Colors.grey)),
                                             SizedBox(height: 10),
                                             CustomTextField(
-                                              keyboardType:
-                                              TextInputType.numberWithOptions(signed: true,decimal: true),
+                                              keyboardType: TextInputType
+                                                  .numberWithOptions(
+                                                      signed: true,
+                                                      decimal: true),
                                               hintText: 'Enter phone number',
                                               controller: phoneNumber,
                                               validator: (value) {
@@ -354,8 +356,10 @@ class _EditTenantsState extends State<EditTenants> {
                                                     color: Colors.grey)),
                                             SizedBox(height: 10),
                                             CustomTextField(
-                                              keyboardType:
-                                              TextInputType.numberWithOptions(signed: true,decimal: true),
+                                              keyboardType: TextInputType
+                                                  .numberWithOptions(
+                                                      signed: true,
+                                                      decimal: true),
                                               hintText: 'Enter work number',
                                               controller: workNumber,
                                             ),
@@ -805,7 +809,10 @@ class _EditTenantsState extends State<EditTenants> {
                                                   color: Colors.grey)),
                                           SizedBox(height: 10),
                                           CustomTextField(
-                                            keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                                            keyboardType:
+                                                TextInputType.numberWithOptions(
+                                                    signed: true,
+                                                    decimal: true),
                                             hintText: 'Enter phone number',
                                             controller: emergencyPhoneNumber,
                                           ),
@@ -1041,40 +1048,7 @@ class _EditTenantsState extends State<EditTenants> {
                                     setState(() {
                                       isLoading = false;
                                     });
-                                    // if (success) {
-                                    //   print('Form is valid');
-                                    // } else {
-                                    //   print('Form is invalid');
-                                    // }
 
-                                    // SharedPreferences prefs =
-                                    //     await SharedPreferences.getInstance();
-                                    // String adminId = prefs.getString("adminId")!;
-                                    // EmergencyContact emergencyContact =
-                                    //     EmergencyContact(
-                                    //   name: contactName.text,
-                                    //   relation: relationToTenant.text,
-                                    //   email: emergencyEmail.text,
-                                    //   phoneNumber: emergencyPhoneNumber.text,
-                                    // );
-
-                                    // Tenant tenant = Tenant(
-                                    //   adminId: adminId,
-                                    //   tenantFirstName: firstName.text,
-                                    //   tenantLastName: lastName.text,
-                                    //   tenantPhoneNumber: phoneNumber.text,
-                                    //   tenantAlternativeNumber: workNumber.text,
-                                    //   tenantEmail: email.text,
-                                    //   tenantAlternativeEmail: alterEmail.text,
-                                    //   tenantPassword: passWord.text,
-                                    //   tenantBirthDate: _dateController.text,
-                                    //   taxPayerId: taxPayerId.text,
-                                    //   comments: comments.text,
-                                    //   emergencyContact: emergencyContact,
-                                    // );
-
-                                    // bool success = await TenantsRepository()
-                                    //     .EditTenant(tenant, widget.tenantId);
                                     setState(() {
                                       isLoading = false;
                                     });
@@ -1143,7 +1117,7 @@ class _EditTenantsState extends State<EditTenants> {
                       height: 15,
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 17,right: 17),
+                      padding: const EdgeInsets.only(left: 17, right: 17),
                       child: Container(
                         width: double.infinity,
                         // height: !form_valid ? 860 : 830,
@@ -1210,7 +1184,8 @@ class _EditTenantsState extends State<EditTenants> {
                                 height: 10,
                               ),
                               CustomTextField(
-                                keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                                keyboardType: TextInputType.numberWithOptions(
+                                    signed: true, decimal: true),
                                 hintText: 'Enter phone number',
                                 controller: phoneNumber,
                                 validator: (value) {
@@ -1232,7 +1207,8 @@ class _EditTenantsState extends State<EditTenants> {
                                 height: 10,
                               ),
                               CustomTextField(
-                                keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                                keyboardType: TextInputType.numberWithOptions(
+                                    signed: true, decimal: true),
                                 hintText: 'Enter work number',
                                 controller: workNumber,
                               ),
@@ -1362,7 +1338,8 @@ class _EditTenantsState extends State<EditTenants> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 17,right: 17,top: 15,bottom: 15),
+                      padding: const EdgeInsets.only(
+                          left: 17, right: 17, top: 15, bottom: 15),
                       child: Container(
                         width: double.infinity,
                         // height: 410,
@@ -1504,7 +1481,7 @@ class _EditTenantsState extends State<EditTenants> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 17,right: 17),
+                      padding: const EdgeInsets.only(left: 17, right: 17),
                       child: Container(
                         width: double.infinity,
                         // height: form_valid ? 520 : 430,
@@ -1592,7 +1569,8 @@ class _EditTenantsState extends State<EditTenants> {
                                 height: 10,
                               ),
                               CustomTextField(
-                                keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                                keyboardType: TextInputType.numberWithOptions(
+                                    signed: true, decimal: true),
                                 hintText: 'Enter phone number',
                                 controller: emergencyPhoneNumber,
                               ),
@@ -1602,7 +1580,8 @@ class _EditTenantsState extends State<EditTenants> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 17,right: 17,top: 15),
+                      padding:
+                          const EdgeInsets.only(left: 17, right: 17, top: 15),
                       child: Container(
                         width: double.infinity,
                         // height: form_valid ? 520 : 430,
@@ -1921,126 +1900,6 @@ class _EditTenantsState extends State<EditTenants> {
   }
 }
 
-// class CustomTextField extends StatefulWidget {
-//   final String hintText;
-//   final TextEditingController? controller;
-//   final TextInputType keyboardType;
-//   final String? Function(String?)? validator;
-//   final bool obscureText;
-//
-//   final Widget? suffixIcon;
-//   final IconData? prefixIcon;
-//   final void Function()? onSuffixIconPressed;
-//   final void Function()? onTap;
-//   final bool readOnnly;
-//
-//   CustomTextField({
-//     Key? key,
-//     this.controller,
-//     required this.hintText,
-//     this.obscureText = false,
-//     this.keyboardType = TextInputType.emailAddress,
-//     this.readOnnly = false,
-//     this.prefixIcon,
-//     this.suffixIcon,
-//     this.validator,
-//     this.onSuffixIconPressed,
-//     this.onTap, // Initialize onTap
-//   }) : super(key: key);
-//
-//   @override
-//   CustomTextFieldState createState() => CustomTextFieldState();
-// }
-//
-// class CustomTextFieldState extends State<CustomTextField> {
-//   String? _errorMessage;
-//   TextEditingController _textController =
-//       TextEditingController(); // Add this line
-//
-//   @override
-//   void dispose() {
-//     _textController.dispose(); // Dispose the controller when not needed anymore
-//     super.dispose();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Stack(
-//       clipBehavior: Clip.none,
-//       children: <Widget>[
-//         FormField<String>(
-//           validator: (value) {
-//             if (widget.controller!.text.isEmpty) {
-//               setState(() {
-//                 _errorMessage = 'Please ${widget.hintText}';
-//               });
-//               return '';
-//             }
-//             setState(() {
-//               _errorMessage = null;
-//             });
-//             return null;
-//           },
-//           builder: (FormFieldState<String> state) {
-//             return Column(
-//               children: <Widget>[
-//                 Container(
-//                   height: 50,
-//                   padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
-//                   decoration: BoxDecoration(
-//                     color: Colors.white,
-//                     borderRadius: BorderRadius.circular(8.0),
-//                     boxShadow: [
-//                       BoxShadow(
-//                         color: Colors.black.withOpacity(0.2),
-//                         offset: Offset(4, 4),
-//                         blurRadius: 8,
-//                       ),
-//                     ],
-//                   ),
-//                   child: TextFormField(
-//                     onTap: widget.onTap,
-//                     obscureText: widget.obscureText,
-//                     readOnly: widget.readOnnly,
-//                     keyboardType: widget.keyboardType,
-//                     validator: (value) {
-//                       if (value == null || value.isEmpty) {
-//                         state.validate();
-//                       }
-//                       return null;
-//                     },
-//                     controller: widget.controller,
-//                     decoration: InputDecoration(
-//                       suffixIcon: widget.suffixIcon,
-//                       hintStyle:
-//                           TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
-//                       border: InputBorder.none,
-//                       hintText: widget.hintText,
-//                     ),
-//                   ),
-//                 ),
-//                 if (state.hasError)
-//                   SizedBox(height: 24), // Reserve space for error message
-//               ],
-//             );
-//           },
-//         ),
-//         if (_errorMessage != null)
-//           Positioned(
-//             top: 60,
-//             left: 8,
-//             child: Text(
-//               _errorMessage!,
-//               style: TextStyle(
-//                 color: Colors.red,
-//                 fontSize: 12.0,
-//               ),
-//             ),
-//           ),
-//       ],
-//     );
-//   }
-// }
 class CustomTextField extends StatefulWidget {
   final String hintText;
   final TextEditingController? controller;

@@ -216,61 +216,6 @@ class _SummaryContentState extends State<SummaryContent> {
       return rows;
     }
 
-    // List<Widget> buildRowsNote(
-    //     List<ApplicantNotesAndFile> statuses, int itemCount) {
-    //   List<Widget> rows = [];
-    //   for (int i = 0; i < itemCount && i < statuses.length; i++) {
-    //     final status = statuses[i];
-    //     rows.add(
-    //       Padding(
-    //         padding: const EdgeInsets.symmetric(vertical: 8.0),
-    //         child: Row(
-    //           crossAxisAlignment: CrossAxisAlignment.start,
-    //           children: [
-    //             Expanded(
-    //               flex: 2,
-    //               child: Text(
-    //                 status.applicantNotes ?? '',
-    //                 style: TextStyle(
-    //                     color: Color.fromRGBO(
-    //                       21,
-    //                       43,
-    //                       83,
-    //                       1,
-    //                     ),
-    //                     fontSize: 14,
-    //                     fontWeight: FontWeight.w500),
-    //                 softWrap: true,
-    //                 overflow: TextOverflow.visible,
-    //               ),
-    //             ),
-    //             SizedBox(width: 20),
-    //             Expanded(
-    //               flex: 2,
-    //               child: Text(
-    //                 status.applicantFile ?? 'N/A',
-    //                 style: TextStyle(
-    //                     color: Color.fromRGBO(21, 43, 83, 1),
-    //                     fontSize: 14,
-    //                     fontWeight: FontWeight.w500),
-    //                 softWrap: true,
-    //                 overflow: TextOverflow.visible,
-    //               ),
-    //             ),
-    //             SizedBox(width: 20),
-    //             Expanded(
-    //               flex: 1,
-    //               child: Icon(Icons.clear,
-    //                   color: const Color.fromRGBO(21, 43, 83, 1)),
-    //             ),
-    //           ],
-    //         ),
-    //       ),
-    //     );
-    //   }
-    //   return rows;
-    // }
-
     return SingleChildScrollView(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -806,7 +751,7 @@ class _SummaryContentState extends State<SummaryContent> {
                             width: 10,
                           ),
                           Text(
-                            "${widget.summery.applicantHomeNumber != null ? 'N/A' : widget.summery.applicantHomeNumber??"N/A"}",
+                            "${widget.summery.applicantHomeNumber != null ? 'N/A' : widget.summery.applicantHomeNumber ?? "N/A"}",
                             style: const TextStyle(
                               fontWeight: FontWeight.w500,
                               color: Color.fromRGBO(21, 43, 83, 1),
@@ -827,7 +772,7 @@ class _SummaryContentState extends State<SummaryContent> {
                             width: 10,
                           ),
                           Text(
-                            "${widget.summery.applicantBusinessNumber != null ? 'N/A' : widget.summery.applicantBusinessNumber??"N/A"}",
+                            "${widget.summery.applicantBusinessNumber != null ? 'N/A' : widget.summery.applicantBusinessNumber ?? "N/A"}",
                             style: const TextStyle(
                               fontWeight: FontWeight.w500,
                               color: Color.fromRGBO(21, 43, 83, 1),
