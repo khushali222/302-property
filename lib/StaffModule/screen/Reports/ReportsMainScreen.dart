@@ -12,6 +12,7 @@ import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../widgets/custom_drawer.dart';
 import 'ReportScreens/dailytransaction.dart';
+import 'ReportScreens/rentalownerreport.dart';
 
 class ReportsMainScreen extends StatefulWidget {
   @override
@@ -572,6 +573,11 @@ List<ReportCardModel> reportCards = [
     title: "Daily Transaction Report",
     description: "Report of daily transaction",
     destination: DailyTransactions(),
+  ),
+  ReportCardModel(
+    title: "Rental Owner Report",
+    description: "Report of rental owner transaction",
+    destination: RentalOwnerReports(),
   ),
 
 ];

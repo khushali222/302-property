@@ -3324,8 +3324,11 @@ class _FinancialTableState extends State<FinancialTable> {
                                             ),
                                           ),
                                           if (isExpanded)
-                                            if (isExpanded)
-                                              Container(
+
+
+
+                                            
+                                            Container(
                                                 padding:
                                                 const EdgeInsets.symmetric(
                                                     horizontal: 8.0),
