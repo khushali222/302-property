@@ -2606,74 +2606,82 @@ class _Summery_pageState extends State<Summery_page>
                           children: List.generate(
                             tenants.length,
                             (index) => Material(
-                              elevation: 3,
+                          elevation: 3,
+                          borderRadius: BorderRadius.circular(10),
+                          child:
+                          Container(
+                            height: 245,
+                            width: MediaQuery.of(context).size.width * .44,
+                            decoration: BoxDecoration(
+                              color:
+                              Colors.white, // Change as per your need
                               borderRadius: BorderRadius.circular(10),
-                              child: Container(
-                                height: 245,
-                                width: MediaQuery.of(context).size.width * .44,
-                                decoration: BoxDecoration(
-                                  color:
-                                      Colors.white, // Change as per your need
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: blueColor),
-                                ),
-                                child: buildTenantCard(tenants[index]),
-                              ),
+                              border: Border.all(color: blueColor),
                             ),
+                            child: buildTenantCard(tenants[index]),
                           ),
                         ),
                       ),
-                    )
-                  : SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      child: Column(
-                        children: [
-                          Wrap(
-                            alignment: WrapAlignment.start,
-                            spacing: MediaQuery.of(context).size.width * 0.03,
-                            runSpacing:
-                                MediaQuery.of(context).size.width * 0.02,
-                            children: List.generate(
-                              tenants.length,
-                              (index) => Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 20,
-                                  right: 20,
-                                  top: 20,
-                                ),
-                                child: Material(
-                                  elevation: 3,
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    // height: 230,
-                                    //  width: MediaQuery.of(context).size.width * .44,
-                                    decoration: BoxDecoration(
-                                      color: Colors
-                                          .white, // Change as per your need
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: blueColor),
+                    ),
+                  ),
+                )
+                    : SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Wrap(
+                    alignment: WrapAlignment.start,
+                    spacing: MediaQuery.of(context).size.width * 0.03,
+                    runSpacing: MediaQuery.of(context).size.width * 0.02,
+                    children: List.generate(
+                      tenants.length,
+                          (index)
+                              {
+                                DateTime currentDate = DateTime.now();
+                                DateTime moveoutDate;
+                                bool? ismove = false;
+
+                                if(snapshot.data![index].moveoutDate != null && snapshot.data![index].moveoutDate!!= "" ){
+                                  moveoutDate = DateFormat('yyyy-MM-dd').parse(snapshot.data![index].moveoutDate!);
+                                  ismove =  moveoutDate.difference(currentDate).inDays < 1;
+                                }
+                               return Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 20, right: 20, top: 20,),
+                                  child: Material(
+                                    elevation: 3,
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(
+                                      height: 230,
+                                      //  width: MediaQuery.of(context).size.width * .44,
+                                      decoration: BoxDecoration(
+                                        color:
+                                        Colors.white, // Change as per your need
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(color: blueColor),
+                                      ),
+                                      child: buildTenantCard(
+                                          tenants[index],
+                                          isMoveouts:      (snapshot.data![index].moveoutDate == "" || ismove ==false ) ? false :   (snapshot.data![index].moveoutDate != "" && ismove) ? true : false
+
+
+                                      ),
                                     ),
-                                    child: buildTenantCard(tenants[index]),
                                   ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                        ],
-                      ),
-                    );
-            }
-          },
-        );
-      },
-    );
+                                );
+                              }
+
+                    ),
+                  ),
+                );
+              }
+            },
+          );
+        },
+      );
+
+
   }
 
-  Widget buildTenantCard(TenantData tenant) {
-    print(tenant.updatedAt);
+  Widget buildTenantCard(TenantData tenant,{bool? isMoveouts }) {
     return Column(
       children: [
         const SizedBox(height: 10),
@@ -2735,7 +2743,7 @@ class _Summery_pageState extends State<Summery_page>
               ],
             ),
             const Spacer(),
-
+            if(isMoveouts ==false)
             InkWell(
               onTap: () {
                 showDialog(
@@ -2775,25 +2783,25 @@ class _Summery_pageState extends State<Summery_page>
                 ],
               ),
             ),
-            // if(isMovedOut== false)
-            //   Row(
-            //     children: [
-            //       FaIcon(
-            //         FontAwesomeIcons.check,
-            //         size: 17,
-            //         color: Color.fromRGBO(21, 43, 81, 1),
-            //       ),
-            //       SizedBox(width: 5),
-            //       Text(
-            //         "Moved out",
-            //         style: TextStyle(
-            //           fontSize: 11,
-            //           fontWeight: FontWeight.w500,
-            //           color: Color.fromRGBO(21, 43, 81, 1),
-            //         ),
-            //       ),
-            //     ],
-            //   ),
+            if(isMoveouts== true)
+              Row(
+                children: [
+                  FaIcon(
+                    FontAwesomeIcons.check,
+                    size: 17,
+                    color: Color.fromRGBO(21, 43, 81, 1),
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    "Moved out",
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                      color: Color.fromRGBO(21, 43, 81, 1),
+                    ),
+                  ),
+                ],
+              ),
             const SizedBox(width: 15),
           ],
         ),
@@ -2957,16 +2965,9 @@ class _Summery_pageState extends State<Summery_page>
                     ),
                     TableRow(
                       children: [
-                        buildTableCell(Text('Start End',
-                            style: TextStyle(
-                              color: blueColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: MediaQuery.of(context).size.width < 500
-                                  ? 15
-                                  : 17,
-                            ))),
-                        buildTableCell(
-                            Text('${tenant.createdAt} ${tenant.updatedAt}')),
+                        buildTableCell(Text('Start End',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
+                          fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
+                        buildTableCell(Text('${tenant.startDate} ${tenant.endDate}')),
                       ],
                     ),
                   ],

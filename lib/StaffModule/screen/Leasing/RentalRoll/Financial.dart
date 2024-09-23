@@ -2113,8 +2113,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                               color: Colors
                                                                   .transparent,
                                                             ),
-                                                            Expanded(
-                                                              flex: 4,
+                                                            Expanded(flex: 4,
                                                               child: Column(
                                                                 crossAxisAlignment:
                                                                     CrossAxisAlignment
@@ -2173,209 +2172,147 @@ class _FinancialTableState extends State<FinancialTable> {
                                                             ),
                                                           ],
                                                         ),
-                                                      ),
-                                                    if (data.type != "Refund" &&
-                                                        data.type != "Charge")
-                                                      Row(
-                                                        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          // SizedBox(width: 5,),
-                                                          Expanded(
-                                                            child: InkWell(
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  _amountController
-                                                                      .text = (data
-                                                                              .totalAmount! -
-                                                                          data.surcharge!)
-                                                                      .toString();
-                                                                  _dateController
-                                                                      .text = formatDate(DateTime
-                                                                          .now()
-                                                                      .toString());
-                                                                });
-                                                                _showRefundDialog(
-                                                                    context,
-                                                                    data);
-                                                                // Navigator.of(context)
-                                                                //     .push(MaterialPageRoute(builder: (context) => Workorder_summery(workorder_id: workorder.workOrderId,)));
-                                                              },
-                                                              child: Container(
-                                                                height: 40,
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]),
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    SizedBox(
-                                                                      width: 5,
-                                                                    ),
-                                                                    Icon(Icons
-                                                                        .wallet),
-                                                                    // FaIcon(
-                                                                    //   FontAwesomeIcons.trashCan,
-                                                                    //   size: 15,
-                                                                    //   color:blueColor,
-                                                                    // ),
-                                                                    SizedBox(
-                                                                      width: 8,
-                                                                    ),
-                                                                    Text(
-                                                                      "Refund",
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                              12,
-                                                                          color:
-                                                                              blueColor,
-                                                                          fontWeight:
-                                                                              FontWeight.bold),
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    if (data.type == "Charge")
-                                                      Row(
-                                                        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          Expanded(
-                                                            child:
-                                                                GestureDetector(
-                                                              onTap: () async {
-                                                                final value = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => enterCharge(
-                                                                              leaseId: widget.leaseId,
-                                                                              chargeid: data.chargeId,
-                                                                            )));
-                                                                if (value ==
-                                                                    true) {
+                                                      ),*/
+                                                      if (data.type != "Refund" && data.type != "Charge")
+                                                        Row(
+                                                          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            // SizedBox(width: 5,),
+                                                            Expanded(
+                                                              child: GestureDetector(
+                                                                onTap:(){
                                                                   setState(() {
-                                                                    _leaseLedgerFuture =
-                                                                        LeaseRepository()
-                                                                            .fetchLeaseLedger(widget.leaseId);
+                                                                    _amountController.text = (data.totalAmount! - data.surcharge!).toString();
+                                                                    _dateController.text = formatDate(DateTime.now().toString());
                                                                   });
-                                                                }
-                                                                // var check = await Navigator.push(
-                                                                //   context,
-                                                                //   MaterialPageRoute(
-                                                                //     builder: (context) => Edit_properties(
-                                                                //       properties: rentals,
-                                                                //       rentalId: rentals.rentalId!,
-                                                                //     ),
-                                                                //   ),
-                                                                // );
-                                                                // if (check == true) {
-                                                                //   setState(() {
-                                                                //     futureRentalOwners = PropertiesRepository().fetchProperties();
-                                                                //
-                                                                //   });
-                                                                //   // Update State
-                                                                // }
-                                                              },
-                                                              child: Container(
-                                                                height: 40,
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]), // color:Colors.grey[100],
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .edit,
-                                                                      size: 15,
-                                                                      color:
-                                                                          blueColor,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 10,
-                                                                    ),
-                                                                    Text(
-                                                                      "Edit",
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              blueColor,
-                                                                          fontWeight:
-                                                                              FontWeight.bold),
-                                                                    ),
-                                                                  ],
+                                                                  _showRefundDialog(context,data);
+                                                                  // Navigator.of(context)
+                                                                  //     .push(MaterialPageRoute(builder: (context) => Workorder_summery(workorder_id: workorder.workOrderId,)));
+                                                                },
+                                                                child: Container(
+                                                                  height:40,
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors.grey[350]
+                                                                  ),
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                    MainAxisAlignment.center,
+                                                                    crossAxisAlignment:
+                                                                    CrossAxisAlignment.center,
+                                                                    children: [
+                                                                      SizedBox(width: 5,),
+                                                                      Icon(Icons.wallet),
+                                                                      // FaIcon(
+                                                                      //   FontAwesomeIcons.trashCan,
+                                                                      //   size: 15,
+                                                                      //   color:blueColor,
+                                                                      // ),
+                                                                      SizedBox(width: 8,),
+                                                                      Text("Refund",style: TextStyle(fontSize: 12,color: blueColor,fontWeight: FontWeight.bold),)
+                                                                    ],
+                                                                  ),
                                                                 ),
                                                               ),
                                                             ),
-                                                          ),
-                                                          SizedBox(
-                                                            width: 5,
-                                                          ),
-                                                          Expanded(
-                                                            child:
-                                                                GestureDetector(
-                                                              onTap: () {
-                                                                _showAlert(
-                                                                    context,
-                                                                    data.chargeId!);
-                                                                //   _showAlert(context, rentals.rentalId!);
-                                                              },
-                                                              child: Container(
-                                                                height: 40,
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]),
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .trashCan,
-                                                                      size: 15,
-                                                                      color:
-                                                                          blueColor,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 10,
-                                                                    ),
-                                                                    Text(
-                                                                      "Delete",
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              blueColor,
-                                                                          fontWeight:
-                                                                              FontWeight.bold),
-                                                                    )
-                                                                  ],
+                                                          ],
+                                                        ),
+                                                      if ( data.type == "Charge")
+                                                        Row(
+                                                          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            Expanded(
+                                                              child: GestureDetector(
+                                                                onTap:()async{
+                                                                  final value = await  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) =>  enterCharge(
+                                                                            leaseId: widget.leaseId,
+                                                                            chargeid: data.chargeId,
+                                                                          )));
+                                                                  if (value == true) {
+                                                                    setState(() {
+                                                                      _leaseLedgerFuture = LeaseRepository()
+                                                                          .fetchLeaseLedger(widget.leaseId);
+                                                                    });
+                                                                  }
+                                                                  // var check = await Navigator.push(
+                                                                  //   context,
+                                                                  //   MaterialPageRoute(
+                                                                  //     builder: (context) => Edit_properties(
+                                                                  //       properties: rentals,
+                                                                  //       rentalId: rentals.rentalId!,
+                                                                  //     ),
+                                                                  //   ),
+                                                                  // );
+                                                                  // if (check == true) {
+                                                                  //   setState(() {
+                                                                  //     futureRentalOwners = PropertiesRepository().fetchProperties();
+                                                                  //
+                                                                  //   });
+                                                                  //   // Update State
+                                                                  // }
+                                                                },
+                                                                child: Container(
+                                                                  height:40,
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors.grey[350]
+                                                                  ),                                               // color:Colors.grey[100],
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                    MainAxisAlignment.center,
+                                                                    crossAxisAlignment:
+                                                                    CrossAxisAlignment.center,
+                                                                    children: [
+                                                                      FaIcon(
+                                                                        FontAwesomeIcons.edit,
+                                                                        size: 15,
+                                                                        color:blueColor,
+                                                                      ),
+                                                                      SizedBox(width: 10,),
+                                                                      Text("Edit",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                                                                    ],
+                                                                  ),
                                                                 ),
                                                               ),
                                                             ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                  ],
+                                                            SizedBox(width: 5,),
+                                                            Expanded(
+                                                              child: GestureDetector(
+                                                                onTap:(){
+                                                                  _showAlert(context,data.chargeId!);
+                                                                  //   _showAlert(context, rentals.rentalId!);
+                                                                },
+                                                                child: Container(
+                                                                  height:40,
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors.grey[350]
+                                                                  ),
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                    MainAxisAlignment.center,
+                                                                    crossAxisAlignment:
+                                                                    CrossAxisAlignment.center,
+                                                                    children: [
+                                                                      FaIcon(
+                                                                        FontAwesomeIcons.trashCan,
+                                                                        size: 15,
+                                                                        color:blueColor,
+                                                                      ),
+                                                                      SizedBox(width: 10,),
+                                                                      Text("Delete",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+
+                                                          ],
+                                                        ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
-                                            ),
                                         ],
                                       ),
                                     );
