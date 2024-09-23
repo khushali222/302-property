@@ -862,7 +862,6 @@ class _Applicants_tableState extends State<Applicants_table> {
                       );
                     } else {
                       var data = snapshot.data!;
-
                       if (selectedValue == null && searchvalue.isEmpty) {
                         data = snapshot.data!;
                       } else if (selectedValue == "All") {

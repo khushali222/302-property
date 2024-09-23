@@ -25,7 +25,9 @@ class LeaseMoveoutRepository {
     };
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    // String?  id = prefs.getString('adminId');
+    // String? adminid = prefs.getString("adminId");
+   String? id = prefs.getString("staff_id");
     final http.Response response = await http.post(
       Uri.parse('${Api_url}/api/moveout/lease_moveout/$leaseId'),
       headers: <String, String>{

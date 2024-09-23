@@ -125,6 +125,7 @@ class _Summery_pageState extends State<Summery_page>
     // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     futurerentalowners = PropertiesRepository().fetchProperties();
     displayDate = DateFormat('dd/MM/yyyy').format(DateTime.parse(moveOutDate));
+    startdateController.text = displayDate;
     // fetchunits1();
     //fetchLeases();
     // fetchAndSetCounts(context);
@@ -2627,49 +2628,56 @@ class _Summery_pageState extends State<Summery_page>
                 )
                     : SingleChildScrollView(
                   scrollDirection: Axis.vertical,
-                  child: Wrap(
-                    alignment: WrapAlignment.start,
-                    spacing: MediaQuery.of(context).size.width * 0.03,
-                    runSpacing: MediaQuery.of(context).size.width * 0.02,
-                    children: List.generate(
-                      tenants.length,
-                          (index)
-                              {
-                                DateTime currentDate = DateTime.now();
-                                DateTime moveoutDate;
-                                bool? ismove = false;
+                  child: Column(
+                    children: [
+                      Wrap(
+                        alignment: WrapAlignment.start,
+                        spacing: MediaQuery.of(context).size.width * 0.03,
+                        runSpacing: MediaQuery.of(context).size.width * 0.02,
+                        children: List.generate(
+                          tenants.length,
+                              (index)
+                                  {
+                                    DateTime currentDate = DateTime.now();
+                                    DateTime moveoutDate;
+                                    bool? ismove = false;
 
-                                if(snapshot.data![index].moveoutDate != null && snapshot.data![index].moveoutDate!!= "" ){
-                                  moveoutDate = DateFormat('yyyy-MM-dd').parse(snapshot.data![index].moveoutDate!);
-                                  ismove =  moveoutDate.difference(currentDate).inDays < 1;
-                                }
-                               return Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 20, right: 20, top: 20,),
-                                  child: Material(
-                                    elevation: 3,
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Container(
-                                      height: 230,
-                                      //  width: MediaQuery.of(context).size.width * .44,
-                                      decoration: BoxDecoration(
-                                        color:
-                                        Colors.white, // Change as per your need
+                                    if(snapshot.data![index].moveoutDate != null && snapshot.data![index].moveoutDate!!= "" ){
+                                      moveoutDate = DateFormat('yyyy-MM-dd').parse(snapshot.data![index].moveoutDate!);
+                                      ismove =  moveoutDate.difference(currentDate).inDays < 1;
+                                    }
+                                   return Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 20, right: 20, top: 20,),
+                                      child: Material(
+                                        elevation: 3,
                                         borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(color: blueColor),
+                                        child: Container(
+                                          //height: 230,
+                                          //  width: MediaQuery.of(context).size.width * .44,
+                                          decoration: BoxDecoration(
+                                            color:
+                                            Colors.white, // Change as per your need
+                                            borderRadius: BorderRadius.circular(10),
+                                            border: Border.all(color: blueColor),
+                                          ),
+                                          child: buildTenantCard(
+                                              tenants[index],
+                                              isMoveouts:      (snapshot.data![index].moveoutDate == "" || ismove ==false ) ? false :   (snapshot.data![index].moveoutDate != "" && ismove) ? true : false
+
+
+                                          ),
+                                        ),
                                       ),
-                                      child: buildTenantCard(
-                                          tenants[index],
-                                          isMoveouts:      (snapshot.data![index].moveoutDate == "" || ismove ==false ) ? false :   (snapshot.data![index].moveoutDate != "" && ismove) ? true : false
+                                    );
+                                  }
 
-
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }
-
-                    ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                    ],
                   ),
                 );
               }
@@ -2753,12 +2761,23 @@ class _Summery_pageState extends State<Summery_page>
                         false; // Moved isChecked inside the StatefulBuilder
                     return StatefulBuilder(
                       builder: (BuildContext context, StateSetter setState) {
-                        return AlertDialog(
-                          backgroundColor: Colors.white,
-                          surfaceTintColor: Colors.white,
-                          content: buildMoveout(tenant),
-                        );
-                      },
+                        return
+                          Dialog(
+                            backgroundColor: Colors.white,
+                            surfaceTintColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                BorderRadius.circular(10.0)),
+                            child:
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16,right: 16,top: 10,bottom: 10),
+                              child: Container(
+                                // width: MediaQuery.of(context).size.width - 10,
+                                  width: 900,
+                                  child: buildMoveout(tenant)),
+                            ),
+                          );
+                        },
                     );
                   },
                 );
@@ -2878,6 +2897,8 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   Widget buildMoveout(TenantData tenant) {
+    displayDate = DateFormat('dd-MM-yyyy').format(DateTime.parse(moveOutDate));
+    startdateController.text = displayDate;
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -3042,31 +3063,78 @@ class _Summery_pageState extends State<Summery_page>
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Material(
-                                  elevation: 2,
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Container(
-                                    height: 40,
-                                    width: 130,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[300],
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        displayDate,
-                                        style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 15
-                                              : 17,
+                                // Material(
+                                //   elevation: 2,
+                                //   borderRadius: BorderRadius.circular(8),
+                                //   child: Container(
+                                //     height: 40,
+                                //     width: 130,
+                                //     decoration: BoxDecoration(
+                                //       color: Colors.grey[300],
+                                //       borderRadius: BorderRadius.circular(8),
+                                //     ),
+                                //     child: Center(
+                                //       child: Text(
+                                //         displayDate,
+                                //         style: TextStyle(
+                                //           fontSize: MediaQuery.of(context)
+                                //                       .size
+                                //                       .width <
+                                //                   500
+                                //               ? 15
+                                //               : 17,
+                                //         ),
+                                //       ),
+                                //     ),
+                                //   ),
+                                // ),
+                                SizedBox(width: 4,),
+                                Expanded(
+                                  child: Material(
+                                    elevation:2,
+                                    borderRadius: BorderRadius.circular(5),
+                                    child: Container(
+                                      height:45,
+                                      // width:130,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[300],
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(left: 5,),
+                                          child:
+                                          TextField(
+                                            enabled: true,
+                                            // controller: displayDate,
+                                            decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: displayDate,
+                                              suffixIcon: IconButton(
+                                                icon: Icon(Icons.calendar_today),
+                                                onPressed: () async {
+                                                  // DateTime? pickedDate = await showDatePicker(
+                                                  //   context: context,
+                                                  //   initialDate: DateTime.now(),
+                                                  //   firstDate: DateTime(2000),
+                                                  //   lastDate: DateTime(2101),
+                                                  // );
+                                                  // if (pickedDate != null) {
+                                                  //   setState(() {
+                                                  //    // controller.text = DateFormat('dd-MM-yyyy').format(pickedDate);
+                                                  //   });
+                                                  // }
+                                                },
+                                              ),
+                                            ),
+                                            readOnly: true,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
+                                SizedBox(width:2,),
                               ],
                             ),
                           ],
@@ -3174,6 +3242,7 @@ class _Summery_pageState extends State<Summery_page>
               ),
             ],
           ),
+
           SizedBox(height: 15),
         ],
       ),
@@ -3190,29 +3259,47 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   Widget buildDateField(TextEditingController controller) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: 'Select Date',
-        suffixIcon: IconButton(
-          icon: Icon(Icons.calendar_today),
-          onPressed: () async {
-            DateTime? pickedDate = await showDatePicker(
-              context: context,
-              initialDate: DateTime.now(),
-              firstDate: DateTime(2000),
-              lastDate: DateTime(2101),
-            );
-            if (pickedDate != null) {
-              setState(() {
-                controller.text = DateFormat('dd-MM-yyyy').format(pickedDate);
-              });
-            }
-          },
+    return
+      Padding(
+        padding:  EdgeInsets.only(left: 5,right: 2),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Center(
+            child: Padding(
+              padding:  EdgeInsets.only(left: 5),
+              child:
+              TextField(
+                controller: controller,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Select Date',
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.calendar_today),
+                    onPressed: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2101),
+                      );
+                      if (pickedDate != null) {
+                        setState(() {
+                          controller.text = displayDate;
+                          controller.text = DateFormat('dd-MM-yyyy').format(pickedDate);
+                        });
+                      }
+                    },
+                  ),
+                ),
+                readOnly: true,
+              ),
+            ),
+          ),
         ),
-      ),
-      readOnly: true,
-    );
+      );
   }
 
   Unit_page(BuildContext context) {

@@ -49,7 +49,7 @@ class Data {
   String? rentalOwnerPhoneNumber;
   int? amount;
   String? date;
-
+  List<RenewLeases>? renewLeases;
   Data({
     this.leaseId,
     this.tenantId,
@@ -76,7 +76,8 @@ class Data {
     this.amount,
     this.date,
     this.moveout_date,
-    this.moveout_notice_given_date
+    this.moveout_notice_given_date,
+    this.renewLeases
   });
 
   Data.fromJson(Map<String, dynamic> json) {
@@ -110,6 +111,12 @@ class Data {
 
     amount = json['amount'];
     date = json['date'];
+    if (json['renewLeases'] != null) {
+      renewLeases = <RenewLeases>[];
+      json['renewLeases'].forEach((v) {
+        renewLeases!.add(new RenewLeases.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -140,6 +147,9 @@ class Data {
     data['rentalOwner_phoneNumber'] = rentalOwnerPhoneNumber;
     data['amount'] = amount;
     data['date'] = date;
+    if (this.renewLeases != null) {
+      data['renewLeases'] = this.renewLeases!.map((v) => v.toJson()).toList();
+    }
     return data;
   }
 }
@@ -221,5 +231,69 @@ class LeaseTenant {
       'rental_adress': rentalAddress,
       'rental_unit': rentalUnit,
     };
+  }
+}
+class RenewLeases {
+  String? sId;
+  String? renewId;
+  String? leaseId;
+  String? adminId;
+  String? leaseType;
+  String? startDate;
+  String? endDate;
+  int? amount;
+  int? leaseAmount;
+  bool? isDelete;
+  String? createdAt;
+  String? updatedAt;
+  int? iV;
+
+  RenewLeases(
+      {this.sId,
+        this.renewId,
+        this.leaseId,
+        this.adminId,
+        this.leaseType,
+        this.startDate,
+        this.endDate,
+        this.amount,
+        this.leaseAmount,
+        this.isDelete,
+        this.createdAt,
+        this.updatedAt,
+        this.iV});
+
+  RenewLeases.fromJson(Map<String, dynamic> json) {
+    sId = json['_id'];
+    renewId = json['renew_id'];
+    leaseId = json['lease_id'];
+    adminId = json['admin_id'];
+    leaseType = json['lease_type'];
+    startDate = json['start_date'];
+    endDate = json['end_date'];
+    amount = json['amount'];
+    leaseAmount = json['lease_amount'];
+    isDelete = json['is_delete'];
+    createdAt = json['createdAt'];
+    updatedAt = json['updatedAt'];
+    iV = json['__v'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['_id'] = this.sId;
+    data['renew_id'] = this.renewId;
+    data['lease_id'] = this.leaseId;
+    data['admin_id'] = this.adminId;
+    data['lease_type'] = this.leaseType;
+    data['start_date'] = this.startDate;
+    data['end_date'] = this.endDate;
+    data['amount'] = this.amount;
+    data['lease_amount'] = this.leaseAmount;
+    data['is_delete'] = this.isDelete;
+    data['createdAt'] = this.createdAt;
+    data['updatedAt'] = this.updatedAt;
+    data['__v'] = this.iV;
+    return data;
   }
 }

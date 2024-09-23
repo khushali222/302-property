@@ -77,20 +77,22 @@ class _Summery_pageState extends State<Summery_page>
   TextEditingController bed3 = TextEditingController();
   bool isLoading = false;
   bool iserror = false;
-  Future<void> _startDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: startdate ?? DateTime.now(),
-      firstDate: DateTime(2015, 8),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null && picked != startdate) {
-      setState(() {
-        startdate = picked;
-        startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-      });
-    }
-  }
+  // Future<void> _startDate(BuildContext context) async {
+  //   final DateTime? picked = await showDatePicker(
+  //     context: context,
+  //     initialDate: startdate ?? DateTime.now(),
+  //     firstDate: DateTime(2015, 8),
+  //     lastDate: DateTime(2101),
+  //
+  //   );
+  //   if (picked != null && picked != startdate) {
+  //     setState(() {
+  //
+  //       startdate = picked;
+  //       startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
+  //     });
+  //   }
+  // }
 
   Future<void> _endDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -123,7 +125,8 @@ class _Summery_pageState extends State<Summery_page>
     _fetchData();
     // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     futurerentalowners = PropertiesRepository().fetchProperties();
-    displayDate = DateFormat('dd/MM/yyyy').format(DateTime.parse(moveOutDate));
+    displayDate = DateFormat('dd-MM-yyyy').format(DateTime.parse(moveOutDate));
+startdateController.text = displayDate;
     // fetchunits1();
     //fetchLeases();
     // fetchAndSetCounts(context);
@@ -2764,11 +2767,21 @@ class _Summery_pageState extends State<Summery_page>
                     return StatefulBuilder(
                       builder: (BuildContext context,
                           StateSetter setState) {
-                        return AlertDialog(
+                        return
+                          Dialog(
                           backgroundColor: Colors.white,
                           surfaceTintColor: Colors.white,
-                          content:
-                          buildMoveout(tenant),
+                          shape: RoundedRectangleBorder(
+                              borderRadius:
+                              BorderRadius.circular(10.0)),
+                          child:
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16,right: 16,top: 10,bottom: 10),
+                            child: Container(
+                               // width: MediaQuery.of(context).size.width - 10,
+                              width: 900,
+                                child: buildMoveout(tenant)),
+                          ),
                         );
                       },
                     );
@@ -2897,10 +2910,15 @@ class _Summery_pageState extends State<Summery_page>
 
 
   Widget buildMoveout(TenantData tenant) {
+    displayDate = DateFormat('dd-MM-yyyy').format(DateTime.parse(moveOutDate));
+    startdateController.text = displayDate;
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(
+            height: 20,
+          ),
           Text(
             "Move out Tenants",
             style: TextStyle(
@@ -2911,6 +2929,7 @@ class _Summery_pageState extends State<Summery_page>
           SizedBox(height: 13),
           Text(
             "Select tenants to move out. If everyone is moving, the lease will end on the last move-out date. If some tenants are staying, you’ll need to renew the lease. Note: Renters insurance policies will be permanently deleted upon move-out.",
+            textAlign: TextAlign.justify,
             style: TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
@@ -2976,7 +2995,7 @@ class _Summery_pageState extends State<Summery_page>
                       children: [
                         buildTableCell(Text('Start End',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
                           fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
-                        buildTableCell(Text('${tenant.createdAt} ${tenant.updatedAt}')),
+                        buildTableCell(Text('${tenant.startDate} ${tenant.endDate}')),
                       ],
                     ),
 
@@ -3028,31 +3047,57 @@ class _Summery_pageState extends State<Summery_page>
                       buildTableCell(
                         Column(
                           children: [
-
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Material(
-                                  elevation:2,
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Container(
-                                    height:40,
-                                    width:130,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[300],
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        displayDate,
-                                        style: TextStyle(
-                                          fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 17,
+                                SizedBox(width: 4,),
+                                Expanded(
+                                  child: Material(
+                                    elevation:2,
+                                    borderRadius: BorderRadius.circular(5),
+                                    child: Container(
+                                      height:45,
+                                      // width:130,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[300],
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(left: 5,),
+                                          child:
+                                          TextField(
+                                            enabled: true,
+                                           // controller: displayDate,
+                                            decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: displayDate,
+                                              suffixIcon: IconButton(
+                                                icon: Icon(Icons.calendar_today),
+                                                onPressed: () async {
+                                                  // DateTime? pickedDate = await showDatePicker(
+                                                  //   context: context,
+                                                  //   initialDate: DateTime.now(),
+                                                  //   firstDate: DateTime(2000),
+                                                  //   lastDate: DateTime(2101),
+                                                  // );
+                                                  // if (pickedDate != null) {
+                                                  //   setState(() {
+                                                  //    // controller.text = DateFormat('dd-MM-yyyy').format(pickedDate);
+                                                  //   });
+                                                  // }
+                                                },
+                                              ),
+                                            ),
+                                            readOnly: true,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
+                                SizedBox(width:2,),
                               ],
                             ),
                           ],
@@ -3170,28 +3215,46 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   Widget buildDateField(TextEditingController controller) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: 'Select Date',
-        suffixIcon: IconButton(
-          icon: Icon(Icons.calendar_today),
-          onPressed: () async {
-            DateTime? pickedDate = await showDatePicker(
-              context: context,
-              initialDate: DateTime.now(),
-              firstDate: DateTime(2000),
-              lastDate: DateTime(2101),
-            );
-            if (pickedDate != null) {
-              setState(() {
-                controller.text = DateFormat('dd-MM-yyyy').format(pickedDate);
-              });
-            }
-          },
+    return
+      Padding(
+      padding:  EdgeInsets.only(left: 5,right: 2),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Center(
+          child: Padding(
+            padding:  EdgeInsets.only(left: 5),
+            child:
+            TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Select Date',
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.calendar_today),
+                  onPressed: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2101),
+                    );
+                    if (pickedDate != null) {
+                      setState(() {
+                        controller.text = displayDate;
+                        controller.text = DateFormat('dd-MM-yyyy').format(pickedDate);
+                      });
+                    }
+                  },
+                ),
+              ),
+              readOnly: true,
+            ),
+          ),
         ),
       ),
-      readOnly: true,
     );
   }
 

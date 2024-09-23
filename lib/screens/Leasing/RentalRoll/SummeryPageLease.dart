@@ -1945,7 +1945,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 padding: const EdgeInsets.only(
                                                     top: 12),
                                                 child: Text(
-                                                  '\$ ${leaseLedger.data?.first.balance}',
+                                                  '\$ ${leaseLedger.data?.first.balance!.toStringAsFixed(2)}',
                                                   style: TextStyle(
                                                       fontSize: 15,
                                                       fontWeight:
@@ -2562,12 +2562,335 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                 ),
                               ),
                             ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          if (MediaQuery.of(context).size.width < 500)
+                        if(leasesummery.data?.renewLeases != null)
+                            Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    const SizedBox(
+                                      width: 2,
+                                    ),
+                                    Text(
+                                      "Renewable History",
+                                      style: TextStyle(
+                                          color:
+                                          const Color.fromRGBO(21, 43, 81, 1),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18),
+                                    ),
+
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: blueColor,
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(13),
+                                      topRight: Radius.circular(13),
+                                    ),
+                                  ),
+                                  child: ListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    title: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.start,
+                                      children: <Widget>[
+                                        Expanded(
+                                          flex: 3,
+                                          child: InkWell(
+                                            onTap: () {},
+                                            child: Row(
+                                              children: [
+                                                width < 400
+                                                    ? const Padding(
+                                                  padding:
+                                                  EdgeInsets.only(
+                                                      left: 20.0),
+                                                  child: Text(
+                                                    "Property",
+                                                    style: TextStyle(
+                                                        color:
+                                                        Colors.white,
+                                                        fontSize: 14),
+                                                    textAlign:
+                                                    TextAlign.center,
+                                                  ),
+                                                )
+                                                    : const Text(
+                                                    "     Property",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 14),
+                                                    textAlign:
+                                                    TextAlign.center),
+                                                // Text("Property", style: TextStyle(color: Colors.white)),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: InkWell(
+                                            onTap: () {},
+                                            child: const Row(
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 0.0),
+                                                  child: Text("Status",
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 14)),
+                                                ),
+                                                SizedBox(width: 5),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: InkWell(
+                                            onTap: () {},
+                                            child: const Row(
+                                              children: [
+                                                Text(
+                                                  "Type",
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 14),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                SizedBox(width: 5),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    // color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                      border: Border.all(
+                                          color: Color.fromRGBO(
+                                              152, 162, 179, .5))),
+                                  // decoration: BoxDecoration(
+                                  //   border: Border.all(color: blueColor),
+                                  // ),
+                                  child: Column(
+                                    children: <Widget>[
+                                      ListTile(
+                                        contentPadding: EdgeInsets.zero,
+                                        title: Padding(
+                                          padding: const EdgeInsets.all(2.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    isExpanded = !isExpanded;
+                                                  });
+                                                },
+                                                child: Container(
+                                                  margin: const EdgeInsets.only(
+                                                      left: 5),
+                                                  padding: !isExpanded
+                                                      ? const EdgeInsets.only(
+                                                      bottom: 10)
+                                                      : const EdgeInsets.only(
+                                                      top: 10),
+                                                  child: FaIcon(
+                                                    isExpanded
+                                                        ? FontAwesomeIcons
+                                                        .sortUp
+                                                        : FontAwesomeIcons
+                                                        .sortDown,
+                                                    size: 20,
+                                                    color: const Color.fromRGBO(
+                                                        21, 43, 83, 1),
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 4,
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    // Handle navigation or other actions if needed
+                                                  },
+                                                  child: Padding(
+                                                    padding:
+                                                    const EdgeInsets.only(
+                                                        left: 5.0),
+                                                    child: Text(
+                                                      '${snapshot.data!.data!.rentalAddress}',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                        FontWeight.bold,
+                                                        fontSize: 13,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                    .00,
+                                              ),
+                                              Expanded(
+                                                flex: 2,
+                                                child: Text(
+                                                  '${determineStatus(snapshot.data!.data?.renewLeases?.first.startDate ?? "", snapshot.data!.data?.renewLeases?.first.endDate)}',
+                                                  style: TextStyle(
+                                                    color: blueColor,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                    .08,
+                                              ),
+                                              Expanded(
+                                                flex: 3,
+                                                child: Text(
+                                                  '${snapshot.data!.data!.renewLeases?.first.leaseType}',
+                                                  style: TextStyle(
+                                                    color: blueColor,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                    .02,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      if (isExpanded)
+                                        Container(
+                                          margin:
+                                          const EdgeInsets.only(bottom: 20),
+                                          child: SingleChildScrollView(
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                                  children: [
+                                                    FaIcon(
+                                                      isExpanded
+                                                          ? FontAwesomeIcons
+                                                          .sortUp
+                                                          : FontAwesomeIcons
+                                                          .sortDown,
+                                                      size: 50,
+                                                      color: Colors.transparent,
+                                                    ),
+                                                    Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                        children: <Widget>[
+                                                          Text.rich(
+                                                            TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                  'Start - End   ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                      color:
+                                                                      blueColor),
+                                                                ),
+                                                                TextSpan(
+                                                                  text:
+                                                                  '${snapshot.data!.data!.renewLeases?.first.startDate} to ${snapshot.data!.data!.renewLeases?.first.endDate}',
+                                                                  style: const TextStyle(
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                      color: Colors
+                                                                          .grey),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 4,
+                                                          ),
+                                                          Text.rich(
+                                                            TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                  'Amount : ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                      color:
+                                                                      blueColor),
+                                                                ),
+                                                                TextSpan(
+                                                                  text:
+                                                                  '${snapshot.data!.data!.renewLeases?.first.amount}',
+                                                                  style: const TextStyle(
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                      color: Colors
+                                                                          .grey),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                         ],
                       ),
                     ),
                   ),
                 ),
               ),
+
             ],
           );
         }
@@ -2717,15 +3040,23 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                     builder: (BuildContext
                                                             context,
                                                         StateSetter setState) {
-                                                      return AlertDialog(
-                                                        backgroundColor:
-                                                            Colors.white,
-                                                        surfaceTintColor:
-                                                            Colors.white,
-                                                        content: buildMoveout(
-                                                            snapshot
-                                                                .data![index]),
-                                                      );
+                                                      return
+                                                        Dialog(
+                                                          backgroundColor: Colors.white,
+                                                          surfaceTintColor: Colors.white,
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                              BorderRadius.circular(10.0)),
+                                                          child:
+                                                          Padding(
+                                                            padding: const EdgeInsets.only(left: 16,right: 16,top: 10,bottom: 10),
+                                                            child: Container(
+                                                              // width: MediaQuery.of(context).size.width - 10,
+                                                                width: 900,
+                                                                child: buildMoveout(snapshot.data![
+                                                                index])),
+                                                          ),
+                                                        );
                                                     },
                                                   );
                                                 },
@@ -2993,15 +3324,23 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                   context,
                                                               StateSetter
                                                                   setState) {
-                                                            return AlertDialog(
-                                                              backgroundColor:
-                                                                  Colors.white,
-                                                              surfaceTintColor:
-                                                                  Colors.white,
-                                                              content: buildMoveout(
-                                                                  snapshot.data![
-                                                                      index]),
-                                                            );
+                                                            return
+                                                              Dialog(
+                                                                backgroundColor: Colors.white,
+                                                                surfaceTintColor: Colors.white,
+                                                                shape: RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                    BorderRadius.circular(10.0)),
+                                                                child:
+                                                                Padding(
+                                                                  padding: const EdgeInsets.only(left: 16,right: 16,top: 10,bottom: 10),
+                                                                  child: Container(
+                                                                    // width: MediaQuery.of(context).size.width - 10,
+                                                                      width: 900,
+                                                                      child: buildMoveout(snapshot.data![
+                                                                      index])),
+                                                                ),
+                                                              );
                                                           },
                                                         );
                                                       },
@@ -3167,7 +3506,12 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                               builder: (context, summarySnapshot) {
                                 if (summarySnapshot.connectionState ==
                                     ConnectionState.waiting) {
-                                  return ColabShimmerLoadingWidget();
+                                  return Center(
+                                    child: SpinKitSpinningLines(
+                                      color: blueColor,
+                                      size: 55.0,
+                                    ),
+                                  );
                                 } else if (summarySnapshot.hasError) {
                                   return Center(
                                       child: Text(
@@ -3183,7 +3527,12 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     builder: (context, ledgerSnapshot) {
                                       if (ledgerSnapshot.connectionState ==
                                           ConnectionState.waiting) {
-                                        return ColabShimmerLoadingWidget();
+                                        return Center(
+                                          child: SpinKitSpinningLines(
+                                            color: blueColor,
+                                            size: 55.0,
+                                          ),
+                                        );
                                       } else if (ledgerSnapshot.hasError) {
                                         return Center(
                                             child: Text(
@@ -3253,7 +3602,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                               12),
                                                                       child:
                                                                           Text(
-                                                                        '\$ ${leaseLedger.data?.first.balance}',
+                                                                        '\$ ${leaseLedger.data?.first.balance!.toStringAsFixed(2)}',
                                                                         style: TextStyle(
                                                                             fontSize:
                                                                                 15,
@@ -3471,6 +3820,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   }
 
   Widget buildMoveout(LeaseTenant tenant) {
+    moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    startdateController.text = moveOutDate;
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -3641,31 +3992,78 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Material(
-                                  elevation: 2,
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Container(
-                                    height: 40,
-                                    width: 130,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[300],
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        moveOutDate,
-                                        style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 15
-                                              : 17,
+                                // Material(
+                                //   elevation: 2,
+                                //   borderRadius: BorderRadius.circular(8),
+                                //   child: Container(
+                                //     height: 40,
+                                //     width: 130,
+                                //     decoration: BoxDecoration(
+                                //       color: Colors.grey[300],
+                                //       borderRadius: BorderRadius.circular(8),
+                                //     ),
+                                //     child: Center(
+                                //       child: Text(
+                                //         moveOutDate,
+                                //         style: TextStyle(
+                                //           fontSize: MediaQuery.of(context)
+                                //                       .size
+                                //                       .width <
+                                //                   500
+                                //               ? 15
+                                //               : 17,
+                                //         ),
+                                //       ),
+                                //     ),
+                                //   ),
+                                // ),
+                                SizedBox(width: 4,),
+                                Expanded(
+                                  child: Material(
+                                    elevation:2,
+                                    borderRadius: BorderRadius.circular(5),
+                                    child: Container(
+                                      height:45,
+                                      // width:130,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[300],
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(left: 5,),
+                                          child:
+                                          TextField(
+                                            enabled: true,
+                                            // controller: displayDate,
+                                            decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: moveOutDate,
+                                              suffixIcon: IconButton(
+                                                icon: Icon(Icons.calendar_today),
+                                                onPressed: () async {
+                                                  // DateTime? pickedDate = await showDatePicker(
+                                                  //   context: context,
+                                                  //   initialDate: DateTime.now(),
+                                                  //   firstDate: DateTime(2000),
+                                                  //   lastDate: DateTime(2101),
+                                                  // );
+                                                  // if (pickedDate != null) {
+                                                  //   setState(() {
+                                                  //    // controller.text = DateFormat('dd-MM-yyyy').format(pickedDate);
+                                                  //   });
+                                                  // }
+                                                },
+                                              ),
+                                            ),
+                                            readOnly: true,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
+                                SizedBox(width:2,),
                               ],
                             ),
                           ],
@@ -3779,31 +4177,50 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   }
 
   Widget buildDateField(TextEditingController controller) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: 'Select Date',
-        suffixIcon: IconButton(
-          icon: Icon(Icons.calendar_today),
-          onPressed: () async {
-            DateTime? pickedDate = await showDatePicker(
-              context: context,
-              initialDate: DateTime.now(),
-              firstDate: DateTime(2000),
-              lastDate: DateTime(2101),
-            );
-            if (pickedDate != null) {
-              setState(() {
-                controller.text = DateFormat('dd-MM-yyyy').format(pickedDate);
-              });
-            }
-          },
+    return
+      Padding(
+        padding:  EdgeInsets.only(left: 5,right: 2),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Center(
+            child: Padding(
+              padding:  EdgeInsets.only(left: 5),
+              child:
+              TextField(
+                controller: controller,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Select Date',
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.calendar_today),
+                    onPressed: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2101),
+                      );
+                      if (pickedDate != null) {
+                        setState(() {
+                          controller.text = moveOutDate;
+                          controller.text = DateFormat('dd-MM-yyyy').format(pickedDate);
+                        });
+                      }
+                    },
+                  ),
+                ),
+                readOnly: true,
+              ),
+            ),
+          ),
         ),
-      ),
-      readOnly: true,
-    );
+      );
   }
 }
+
 
 class FinancialPage extends StatefulWidget {
   const FinancialPage({super.key});
