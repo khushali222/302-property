@@ -2984,7 +2984,16 @@ class _Summery_pageState extends State<Summery_page>
                     runSpacing: MediaQuery.of(context).size.width * 0.02,
                     children: List.generate(
                       tenants.length,
-                          (index) => Padding(
+                          (index) {
+                            DateTime currentDate = DateTime.now();
+                            DateTime moveoutDate;
+                            bool? ismove = false;
+
+                            if(snapshot.data![index].moveoutDate != null && snapshot.data![index].moveoutDate!!= "" ){
+                              moveoutDate = DateFormat('yyyy-MM-dd').parse(snapshot.data![index].moveoutDate!);
+                              ismove =  moveoutDate.difference(currentDate).inDays < 1;
+                            }
+                        return Padding(
                         padding: const EdgeInsets.only(
                           left: 20, right: 20, top: 20,),
                         child: Material(
@@ -3000,12 +3009,14 @@ class _Summery_pageState extends State<Summery_page>
                               border: Border.all(color: blueColor),
                             ),
                             child: buildTenantCard(
-                                tenants[index]
+                                tenants[index],
+                                isMoveouts:      (snapshot.data![index].moveoutDate == "" || ismove ==false ) ? false :   (snapshot.data![index].moveoutDate != "" && ismove) ? true : false
+
 
                             ),
                           ),
                         ),
-                      ),
+                      ) ; }
                     ),
                   ),
                 );
@@ -3018,7 +3029,7 @@ class _Summery_pageState extends State<Summery_page>
 
   }
 
-  Widget buildTenantCard(TenantData tenant) {
+  Widget buildTenantCard(TenantData tenant,{bool? isMoveouts }) {
     return Column(
       children: [
         const SizedBox(height: 10),
@@ -3068,7 +3079,7 @@ class _Summery_pageState extends State<Summery_page>
                   children: [
                     const SizedBox(width: 2),
                     Text(
-                      formatDate2(tenant.endDate!),
+                      formatDate(tenant.endDate!),
                       style: TextStyle(
                         fontSize:
                         MediaQuery.of(context).size.width < 500 ? 15 : 17,
@@ -3081,67 +3092,67 @@ class _Summery_pageState extends State<Summery_page>
               ],
             ),
             const Spacer(),
-
-            InkWell(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    bool isChecked =
-                    false; // Moved isChecked inside the StatefulBuilder
-                    return StatefulBuilder(
-                      builder: (BuildContext context,
-                          StateSetter setState) {
-                        return AlertDialog(
-                          backgroundColor: Colors.white,
-                          surfaceTintColor: Colors.white,
-                          content:
-                          buildMoveout(tenant),
-                        );
-                      },
-                    );
-                  },
-                );
-              },
-              child: Row(
+            if(isMoveouts ==false)
+              InkWell(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      bool isChecked =
+                      false; // Moved isChecked inside the StatefulBuilder
+                      return StatefulBuilder(
+                        builder: (BuildContext context,
+                            StateSetter setState) {
+                          return AlertDialog(
+                            backgroundColor: Colors.white,
+                            surfaceTintColor: Colors.white,
+                            content:
+                            buildMoveout(tenant),
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+                child: Row(
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.rightFromBracket,
+                      size: 17,
+                      color: Color.fromRGBO(21, 43, 81, 1),
+                    ),
+                    SizedBox(width: 5),
+                    Text(
+                      "Move out",
+                      style: TextStyle(
+                        fontSize:
+                        MediaQuery.of(context).size.width < 500 ? 15 : 15,
+                        fontWeight: FontWeight.w500,
+                        color: Color.fromRGBO(21, 43, 81, 1),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            if(isMoveouts== true)
+              Row(
                 children: [
                   FaIcon(
-                    FontAwesomeIcons.rightFromBracket,
+                    FontAwesomeIcons.check,
                     size: 17,
                     color: Color.fromRGBO(21, 43, 81, 1),
                   ),
                   SizedBox(width: 5),
                   Text(
-                    "Move out",
+                    "Moved out",
                     style: TextStyle(
-                      fontSize:
-                      MediaQuery.of(context).size.width < 500 ? 15 : 15,
+                      fontSize: 11,
                       fontWeight: FontWeight.w500,
                       color: Color.fromRGBO(21, 43, 81, 1),
                     ),
                   ),
                 ],
               ),
-            ),
-            // if(isMovedOut== false)
-            //   Row(
-            //     children: [
-            //       FaIcon(
-            //         FontAwesomeIcons.check,
-            //         size: 17,
-            //         color: Color.fromRGBO(21, 43, 81, 1),
-            //       ),
-            //       SizedBox(width: 5),
-            //       Text(
-            //         "Moved out",
-            //         style: TextStyle(
-            //           fontSize: 11,
-            //           fontWeight: FontWeight.w500,
-            //           color: Color.fromRGBO(21, 43, 81, 1),
-            //         ),
-            //       ),
-            //     ],
-            //   ),
             const SizedBox(width: 15),
           ],
         ),
@@ -3221,7 +3232,6 @@ class _Summery_pageState extends State<Summery_page>
       ],
     );
   }
-
   // Widget buildMoveout(TenantData tenant){
   //   return  SingleChildScrollView(
   //     child:
@@ -3913,7 +3923,7 @@ class _Summery_pageState extends State<Summery_page>
                       children: [
                         buildTableCell(Text('Start End',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
                           fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
-                        buildTableCell(Text('${tenant.createdAt} ${tenant.updatedAt}')),
+                        buildTableCell(Text('${tenant.startDate} ${tenant.endDate}')),
                       ],
                     ),
 
@@ -12961,14 +12971,12 @@ class _Summery_pageState extends State<Summery_page>
                       data = data
                           .where((workorder) => workorder.status == 'Completed')
                           .toList();
-                      Provider.of<WorkOrderCountProvider>(context)
-                          .updateCount(data.length);
+
                     } else {
                       data = data
                           .where((workorder) => workorder.status != 'Completed')
                           .toList();
-                      Provider.of<WorkOrderCountProvider>(context)
-                          .updateCount(data.length);
+
                     }
                     sortData(data);
                     final totalPages = (data.length / itemsPerPage).ceil();
