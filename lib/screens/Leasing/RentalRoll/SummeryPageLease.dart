@@ -4183,7 +4183,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     ),
                                   ),
                                 ),
-                                SizedBox(width:2,),
+                                SizedBox(width:1,),
                               ],
                             ),
                           ],
@@ -4322,6 +4322,31 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                         initialDate: DateTime.now(),
                         firstDate: DateTime(2000),
                         lastDate: DateTime(2101),
+                        builder: (BuildContext context, Widget? child) {
+                          return Theme(
+                            data: ThemeData.light().copyWith(
+                              colorScheme: const ColorScheme.light(
+                                primary: Color.fromRGBO(21, 43, 83,
+                                    1), // header background color
+                                onPrimary:
+                                Colors.white, // header text color
+                                onSurface: Color.fromRGBO(
+                                    21, 43, 83, 1), // body text color
+                              ),
+                              textButtonTheme: TextButtonThemeData(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: const Color.fromRGBO(
+                                      21,
+                                      43,
+                                      83,
+                                      1), // button text color
+                                ),
+                              ),
+                            ),
+                            child: child!,
+                          );
+                        },
                       );
                       if (pickedDate != null) {
                         setState(() {

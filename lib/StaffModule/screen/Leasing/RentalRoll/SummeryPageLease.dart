@@ -2031,7 +2031,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       children: [
                                         const SizedBox(width: 65),
                                         Text(
-                                          '${snapshot.data![index].startDate} to',
+                                          ' ${formatDate(snapshot.data![index].startDate)} to',
                                           style: const TextStyle(
                                             fontSize: 15,
                                             color: Color.fromRGBO(
@@ -2039,13 +2039,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        const SizedBox(width: 65),
                                         Text(
-                                          '${snapshot.data![index].endDate}',
+                                          ' ${formatDate(snapshot.data![index].endDate)} ',
                                           style: const TextStyle(
                                             fontSize: 15,
                                             color: Color.fromRGBO(
@@ -2055,6 +2050,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                         ),
                                       ],
                                     ),
+
                                     const SizedBox(height: 10),
                                     Row(
                                       children: [
@@ -2111,9 +2107,80 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                         //     fontWeight: FontWeight.w500,
                                         //   ),
                                         // ),
+
                                       ],
                                     ),
-                                    SizedBox(height: 15),
+                                    if (snapshot.data![index]
+                                        .moveoutDate !=
+                                        "" &&
+                                        ismove)
+                                      SizedBox(height: 15),
+                                    if (snapshot.data![index]
+                                        .moveoutDate !=
+                                        "" &&
+                                        ismove)
+                                      Row(
+                                        children: [
+                                          const SizedBox(width: 65),
+                                          Text(
+                                            'Notice Date : ',
+                                            maxLines:
+                                            3, // Set maximum number of lines
+                                            overflow: TextOverflow
+                                                .ellipsis, // Handle overflow with ellipsis
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                color: blueColor,
+                                                fontWeight:
+                                                FontWeight.bold),
+                                          ),
+                                          SizedBox(width: 5,),
+                                          Text(
+                                            '${snapshot.data!.first.moveoutNoticeGivenDate}',
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                              color: Color.fromRGBO(21, 43, 81, 1),
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    if (snapshot.data![index]
+                                        .moveoutDate !=
+                                        "" &&
+                                        ismove)
+                                      SizedBox(height: 15),
+                                    if (snapshot.data![index]
+                                        .moveoutDate !=
+                                        "" &&
+                                        ismove)
+                                      Row(
+                                        children: [
+                                          const SizedBox(width: 65),
+                                          Text(
+                                            'Move out : ',
+                                            maxLines:
+                                            3, // Set maximum number of lines
+                                            overflow: TextOverflow
+                                                .ellipsis, // Handle overflow with ellipsis
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                color: blueColor,
+                                                fontWeight:
+                                                FontWeight.bold),
+                                          ),
+                                          SizedBox(width: 5,),
+                                          Text(
+                                            '${snapshot.data!.first.moveoutDate}',
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                              color: Color.fromRGBO(21, 43, 81, 1),
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    SizedBox(height: 8),
                                   ],
                                 ),
                               ),
@@ -2693,7 +2760,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     ),
                                   ),
                                 ),
-                                SizedBox(width:2,),
+                                SizedBox(width:1,),
                               ],
                             ),
                           ],
@@ -2831,6 +2898,31 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                       initialDate: DateTime.now(),
                       firstDate: DateTime(2000),
                       lastDate: DateTime(2101),
+                      builder: (BuildContext context, Widget? child) {
+                        return Theme(
+                          data: ThemeData.light().copyWith(
+                            colorScheme: const ColorScheme.light(
+                              primary: Color.fromRGBO(21, 43, 83,
+                                  1), // header background color
+                              onPrimary:
+                              Colors.white, // header text color
+                              onSurface: Color.fromRGBO(
+                                  21, 43, 83, 1), // body text color
+                            ),
+                            textButtonTheme: TextButtonThemeData(
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: const Color.fromRGBO(
+                                    21,
+                                    43,
+                                    83,
+                                    1), // button text color
+                              ),
+                            ),
+                          ),
+                          child: child!,
+                        );
+                      },
                     );
                     if (pickedDate != null) {
                       setState(() {

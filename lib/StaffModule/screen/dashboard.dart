@@ -463,7 +463,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                         ),
                                                         child: SvgPicture.asset(
                                                           "${dashboardData.icons[index]}",
-                                                          fit: BoxFit.cover,
+                                                          //fit: BoxFit.cover,
                                                           height: 30,
                                                           width: 30,
                                                         )),

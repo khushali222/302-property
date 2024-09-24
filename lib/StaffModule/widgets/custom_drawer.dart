@@ -133,10 +133,11 @@ class _CustomDrawerState extends State<CustomDrawer> {
             [
               if (permissions.propertyView == true)
                 FaIcon(FontAwesomeIcons.buildingUser, size: 20, color: widget.currentpage == "Properties" ? Colors.white : blueColor), // Icon for Properties
-              if (permissions.tenantView == true)
-                FaIcon(FontAwesomeIcons.users, size: 20, color: widget.currentpage == "Tenants" ? Colors.white : blueColor), // Icon for Tenants
               if (permissions.rentalownerView == true)
-                FaIcon(FontAwesomeIcons.houseChimneyUser, size: 20, color: widget.currentpage == "RentalOwner" ? Colors.white : blueColor), // Icon for RentalOwner
+                FaIcon(FontAwesomeIcons.houseChimneyUser, size: 20, color: widget.currentpage == "RentalOwner" ? Colors.white : blueColor),
+              if (permissions.tenantView == true)
+                FaIcon(FontAwesomeIcons.users, size: 20, color: widget.currentpage == "Tenants" ? Colors.white : blueColor),
+
             ],
             selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
           ),

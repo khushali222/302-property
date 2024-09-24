@@ -240,7 +240,6 @@ class _DashboardState extends State<Dashboard> {
                           width: 3,
                           child: Column(
                             children: [
-
                               Container(
                                 height: MediaQuery.of(context).size.height * 0.012 +
                                     MediaQuery.of(context).size.width * 0.04 +
@@ -458,7 +457,7 @@ class _DashboardState extends State<Dashboard> {
                                                       ),
                                                       child: SvgPicture.asset(
                                                         "${dashboardData.icons[index]}",
-                                                        fit: BoxFit.cover,
+                                                       // fit: BoxFit.cover,
                                                         height: 30,
                                                         width: 30,
                                                       )),

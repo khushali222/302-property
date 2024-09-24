@@ -74,11 +74,9 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Applicants": (context) => Applicants_table(),
     "Vendor": (context) => Vendor_table(),
     // "Work Order": (context) => Cardpayment(leaseId: '',),
-
   };
-
   // if (isActive != true) {
-  Navigator.push(
+   Navigator.push(
     context,
     MaterialPageRoute(builder: routes[option]!),
   );
