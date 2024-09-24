@@ -2846,20 +2846,16 @@ startdateController.text = displayDate;
           children: [
             const SizedBox(width: 65),
             Text(
-              '${tenant.startDate} to',
+              '${formatDate('${tenant.startDate}')} to',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
                 color: Color.fromRGBO(21, 43, 81, 1),
                 fontWeight: FontWeight.w500,
               ),
             ),
-          ],
-        ),
-        Row(
-          children: [
-            const SizedBox(width: 65),
+            SizedBox(width: 5,),
             Text(
-              '${tenant.endDate}',
+              '${formatDate('${tenant.endDate}')}',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
                 color: Color.fromRGBO(21, 43, 81, 1),
@@ -2868,6 +2864,7 @@ startdateController.text = displayDate;
             ),
           ],
         ),
+
         const SizedBox(height: 10),
         Row(
           children: [
