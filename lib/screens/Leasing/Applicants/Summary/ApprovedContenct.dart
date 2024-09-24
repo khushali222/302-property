@@ -49,8 +49,7 @@ class _ApprovedContentState extends State<ApprovedContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: isLoading
+    return  isLoading
           ? Center(
               child: SpinKitSpinningLines(
               color: blueColor,
@@ -300,7 +299,7 @@ class _ApprovedContentState extends State<ApprovedContent> {
                     ),
                   );
                 })
-              : const Center(child: Text('No details found')),
-    );
+              : const Center(child: Text('No details found'));
+
   }
 }

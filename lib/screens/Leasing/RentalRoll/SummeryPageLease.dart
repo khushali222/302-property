@@ -1788,7 +1788,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     child: Padding(
                                   padding: const EdgeInsets.only(top: 12),
                                   child: Text(
-                                    '${snapshot.data!.data!.rentalAddress}  -  ${snapshot.data!.data!.rentalUnit}',
+                                    '${snapshot.data!.data!.rentalAddress}  -  ${snapshot.data!.data!.rentalUnit ?? "N/A"}',
                                     style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
