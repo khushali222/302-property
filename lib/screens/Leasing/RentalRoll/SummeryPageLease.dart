@@ -3644,12 +3644,13 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     builder: (context, ledgerSnapshot) {
                                       if (ledgerSnapshot.connectionState ==
                                           ConnectionState.waiting) {
-                                        return Center(
-                                          child: SpinKitSpinningLines(
-                                            color: blueColor,
-                                            size: 55.0,
-                                          ),
-                                        );
+                                        return Container();
+                                        //   Center(
+                                        //   child: SpinKitSpinningLines(
+                                        //     color: blueColor,
+                                        //     size: 55.0,
+                                        //   ),
+                                        // );
                                       } else if (ledgerSnapshot.hasError) {
                                         return Center(
                                             child: Text(
