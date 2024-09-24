@@ -92,7 +92,7 @@ class _Add_propertyState extends State<Add_property> {
                             width: 15,
                           ),
                           Text(
-                            "Property Type*",
+                            "Property Type *",
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold,
@@ -132,17 +132,17 @@ class _Add_propertyState extends State<Add_property> {
                               items: items
                                   .map(
                                       (String item) => DropdownMenuItem<String>(
-                                            value: item,
-                                            child: Text(
-                                              item,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ))
+                                    value: item,
+                                    child: Text(
+                                      item,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ))
                                   .toList(),
                               value: selectedValue,
                               onChanged: (value) {
@@ -154,7 +154,7 @@ class _Add_propertyState extends State<Add_property> {
                                 height: 50,
                                 width: 160,
                                 padding:
-                                    const EdgeInsets.only(left: 14, right: 14),
+                                const EdgeInsets.only(left: 14, right: 14),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
@@ -176,7 +176,7 @@ class _Add_propertyState extends State<Add_property> {
                                   radius: const Radius.circular(40),
                                   thickness: MaterialStateProperty.all(6),
                                   thumbVisibility:
-                                      MaterialStateProperty.all(true),
+                                  MaterialStateProperty.all(true),
                                 ),
                               ),
                               menuItemStyleData: const MenuItemStyleData(
@@ -196,7 +196,7 @@ class _Add_propertyState extends State<Add_property> {
                             width: 15,
                           ),
                           Text(
-                            "Property SubType*",
+                            "Property SubType *",
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold,
@@ -238,8 +238,8 @@ class _Add_propertyState extends State<Add_property> {
                       Row(
                         children: [
                           if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.05),
+                            SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.05),
                           if (MediaQuery.of(context).size.width > 500)
                             SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.02),
@@ -256,7 +256,7 @@ class _Add_propertyState extends State<Add_property> {
                                   : Colors.white,
                               checkColor: Colors.white,
                               value:
-                                  isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
+                              isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
                               onChanged: (value) {
                                 setState(() {
                                   isChecked = value ??
@@ -303,7 +303,7 @@ class _Add_propertyState extends State<Add_property> {
                                   iserror = false;
                                 });
                                 SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
+                                await SharedPreferences.getInstance();
                                 String? id = prefs.getString("adminId");
                                 PropertyTypeRepository()
                                     .addPropertyType(
@@ -344,16 +344,16 @@ class _Add_propertyState extends State<Add_property> {
                                 child: Center(
                                   child: isLoading
                                       ? SpinKitFadingCircle(
-                                          color: Colors.white,
-                                          size: 25.0,
-                                        )
+                                    color: Colors.white,
+                                    size: 25.0,
+                                  )
                                       : Text(
-                                          "Add Property Type",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :15.5),
-                                        ),
+                                    "Add Property Type",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :15.5),
+                                  ),
                                 ),
                               ),
                             ),

@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import '../../../Model/vendor.dart';
@@ -12,9 +15,10 @@ import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/titleBar.dart';
 import 'add_vendor.dart';
 import 'edit_vendor.dart';
-
+import 'package:http/http.dart' as http;
 
 import '../../../widgets/custom_drawer.dart';
+
 class Vendor_table extends StatefulWidget {
   const Vendor_table({super.key});
 
@@ -92,7 +96,7 @@ class _Vendor_tableState extends State<Vendor_table> {
             ),
             Expanded(
               flex: 3,
-              child: InkWell(
+              child: GestureDetector(
                 onTap: () {
                   setState(() {
                     if (sorting1 == true) {
@@ -143,7 +147,7 @@ class _Vendor_tableState extends State<Vendor_table> {
             ),
             Expanded(
               flex: 3,
-              child: InkWell(
+              child: GestureDetector(
                 onTap: () {
                   setState(() {
                     if (sorting2) {
@@ -191,7 +195,7 @@ class _Vendor_tableState extends State<Vendor_table> {
             ),
             // Expanded(
             //   flex: 2,
-            //   child: InkWell(
+            //   child: GestureDetector(
             //     onTap: () {
             //       setState(() {
             //         if (sorting3) {
@@ -247,6 +251,7 @@ class _Vendor_tableState extends State<Vendor_table> {
   void initState() {
     super.initState();
     futurePropertyTypes = VendorRepository(baseUrl: '').getVendors();
+    fetchvendoradded();
   }
 
   void handleEdit(Vendor property) async {
@@ -314,6 +319,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                 futurePropertyTypes =
                     VendorRepository(baseUrl: '').getVendors();
               });
+              fetchvendoradded();
             });
             // Add your delete logic here
 
@@ -371,7 +377,7 @@ class _Vendor_tableState extends State<Vendor_table> {
   Widget _buildHeader<T>(String text, int columnIndex,
       Comparable<T> Function(Vendor d)? getField) {
     return TableCell(
-      child: InkWell(
+      child: GestureDetector(
         onTap: getField != null
             ? () {
                 _sort(getField, columnIndex, !_sortAscending);
@@ -413,7 +419,7 @@ class _Vendor_tableState extends State<Vendor_table> {
               const SizedBox(
                 width: 20,
               ),
-              InkWell(
+              GestureDetector(
                 onTap: () {
                   handleEdit(data);
                 },
@@ -425,7 +431,7 @@ class _Vendor_tableState extends State<Vendor_table> {
               const SizedBox(
                 width: 15,
               ),
-              InkWell(
+              GestureDetector(
                 onTap: () {
                   handleDelete(data);
                 },
@@ -525,12 +531,85 @@ class _Vendor_tableState extends State<Vendor_table> {
     );
   }
 
+  int vendorCountLimit = 0;
+  int vendorCount = 0;
+
+  Future<void> fetchvendoradded() async {
+    print("calling");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    final response = await http
+        .get(Uri.parse('${Api_url}/api/vendor/limitation/$id'), headers: {
+      "authorization": "CRM $token",
+      "id": "CRM $id",
+    });
+    final jsonData = json.decode(response.body);
+    print(jsonData);
+    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
+      print("error ${vendorCount}");
+      print("error ${vendorCountLimit}");
+      setState(() {
+        vendorCount = jsonData['vendorCount'];
+        print(vendorCount);
+        vendorCountLimit = jsonData['vendorCountLimit'];
+        print(vendorCountLimit);
+      });
+    } else {
+      throw Exception('Failed to load data the count');
+    }
+  }
+
+  void _showAlertforLimit(BuildContext context) {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Plan Limitation",
+      desc:
+      "The limit for adding Vendor according to the plan has been reached.",
+      style: const AlertStyle(
+          backgroundColor: Color.fromRGBO(255, 255, 255, 1),
+          descStyle: TextStyle(fontSize: 14)
+        //  overlayColor: Colors.black.withOpacity(.8)
+      ),
+      buttons: [
+        DialogButton(
+          child: const Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: const Color.fromRGBO(21, 43, 83, 1),
+        ),
+        /* DialogButton(
+          child: Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+             var data = PropertiesRepository().DeleteProperties(id: id);
+
+            setState(() {
+              futureRentalOwners = PropertiesRepository().fetchProperties();
+              //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+            });
+            Navigator.pop(context);
+          },
+          color: Colors.red,
+        )*/
+      ],
+    ).show();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Vendor",dropdown: true,),
+      drawer: CustomDrawer(
+        currentpage: "Vendor",
+        dropdown: true,
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -539,7 +618,7 @@ class _Vendor_tableState extends State<Vendor_table> {
             Padding(
               padding: const EdgeInsets.only(left: 0, right: 0),
               child: Row(
-              //  mainAxisAlignment: MainAxisAlignment.end,
+                //  mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
@@ -550,14 +629,19 @@ class _Vendor_tableState extends State<Vendor_table> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      final result = await Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => Add_vendor()));
-                      if (result == true) {
-                        setState(() {
-                          futurePropertyTypes =
-                              VendorRepository(baseUrl: '').getVendors();
-                        });
+                      if (vendorCount < vendorCountLimit) {
+                        final result = await Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => Add_vendor()));
+                        if (result == true) {
+                          setState(() {
+                            futurePropertyTypes =
+                                VendorRepository(baseUrl: '').getVendors();
+                          });
+                          fetchvendoradded();
+                        }
+                      } else {
+                        _showAlertforLimit(context);
                       }
                     },
                     child: Container(
@@ -666,89 +750,39 @@ class _Vendor_tableState extends State<Vendor_table> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 15),
-                  /*  DropdownButtonHideUnderline(
-                    child: Material(
-                      elevation: 3,
-                      child: DropdownButton2<String>(
-                        isExpanded: true,
-                        hint: const Row(
-                          children: [
-                            SizedBox(
-                              width: 4,
-                            ),
-                            Expanded(
-                              child: Text(
-                                'Type',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  // fontWeight: FontWeight.bold,
-                                  color: Color(0xFF8A95A8),
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                        items: items
-                            .map((String item) => DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(
-                            item,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ))
-                            .toList(),
-                        value: selectedValue,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedValue = value;
-                          });
-                        },
-                        buttonStyleData: ButtonStyleData(
-                          height:
-                          MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                          // width: 180,
-                          width: MediaQuery.of(context).size.width < 500
-                              ? MediaQuery.of(context).size.width * .35
-                              : MediaQuery.of(context).size.width * .4,
-                          padding: const EdgeInsets.only(left: 14, right: 14),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(2),
-                            border: Border.all(
-                              // color: Colors.black26,
-                              color: Color(0xFF8A95A8),
-                            ),
-                            color: Colors.white,
-                          ),
-                          elevation: 0,
-                        ),
-                        dropdownStyleData: DropdownStyleData(
-                          maxHeight: 200,
-                          width: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(14),
-                            //color: Colors.redAccent,
-                          ),
-                          offset: const Offset(-20, 0),
-                          scrollbarTheme: ScrollbarThemeData(
-                            radius: const Radius.circular(40),
-                            thickness: MaterialStateProperty.all(6),
-                            thumbVisibility: MaterialStateProperty.all(true),
-                          ),
-                        ),
-                        menuItemStyleData: const MenuItemStyleData(
-                          height: 40,
-                          padding: EdgeInsets.only(left: 14, right: 14),
+                  Spacer(),
+                  Row(
+                    children: [
+                      Text(
+                        'Added : ${vendorCount.toString()}',
+                        // 'Added : 5',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF8A95A8),
+                          fontSize:
+                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
                         ),
                       ),
-                    ),
-                  ),*/
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
+                      Text(
+                        'Total: ${vendorCountLimit.toString()}',
+                        // 'Total: 10',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF8A95A8),
+                          fontSize:
+                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (MediaQuery.of(context).size.width < 500)
+                    const SizedBox(width: 5),
+                  if (MediaQuery.of(context).size.width > 500)
+                    const SizedBox(width: 25),
                 ],
               ),
             ),
@@ -764,16 +798,28 @@ class _Vendor_tableState extends State<Vendor_table> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                     return Container(
+                      return Container(
                         height: MediaQuery.of(context).size.height * .5,
                         child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
-                              SizedBox(height: 10,),
-                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                              Image.asset(
+                                "assets/images/no_data.jpg",
+                                height: 200,
+                                width: 200,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                "No Data Available",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                    fontSize: 16),
+                              )
                             ],
                           ),
                         ),
@@ -805,7 +851,9 @@ class _Vendor_tableState extends State<Vendor_table> {
                             SizedBox(height: 20),
                             Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                                  border: Border.all(
+                                      color:
+                                          Color.fromRGBO(152, 162, 179, .5))),
                               // decoration: BoxDecoration(
                               //     border: Border.all(color: blueColor)),
                               child: Column(
@@ -819,8 +867,12 @@ class _Vendor_tableState extends State<Vendor_table> {
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
                                     decoration: BoxDecoration(
-                                      color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                                      color: index % 2 != 0
+                                          ? Colors.white
+                                          : blueColor.withOpacity(0.09),
+                                      border: Border.all(
+                                          color: Color.fromRGBO(
+                                              152, 162, 179, .5)),
                                     ),
                                     // decoration: BoxDecoration(
                                     //   border: Border.all(color: blueColor),
@@ -837,7 +889,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
                                               children: <Widget>[
-                                                InkWell(
+                                                GestureDetector(
                                                   onTap: () {
                                                     // setState(() {
                                                     //    isExpanded = !isExpanded;
@@ -882,7 +934,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  child: InkWell(
+                                                  child: GestureDetector(
                                                     onTap:(){
                                                       setState(() {
                                                         if (expandedIndex ==
@@ -894,7 +946,9 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                       });
                                                     },
                                                     child: Padding(
-                                                      padding: const EdgeInsets.only(left: 8.0),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 8.0),
                                                       child: Text(
                                                         '${Propertytype.vendorName}',
                                                         style: TextStyle(
@@ -937,7 +991,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                 //         SizedBox(
                                                 //           width: 20,
                                                 //         ),
-                                                //         InkWell(
+                                                //         GestureDetector(
                                                 //           onTap: () async {
                                                 //             var check = await Navigator
                                                 //                 .push(
@@ -970,7 +1024,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                 //         SizedBox(
                                                 //           width: 10,
                                                 //         ),
-                                                //         InkWell(
+                                                //         GestureDetector(
                                                 //           onTap: () {
                                                 //             _showAlert(
                                                 //                 context,
@@ -1053,7 +1107,8 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .w700,
-                                                                        color: grey), // Light and grey
+                                                                        color:
+                                                                            grey), // Light and grey
                                                                   ),
                                                                 ],
                                                               ),
@@ -1163,78 +1218,113 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                     children: [
                                                       Expanded(
                                                         child: GestureDetector(
-                                                          onTap:()async{
+                                                          onTap: () async {
                                                             var check = await Navigator
                                                                 .push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder: (context) =>
-                                                                        edit_vendor(
-                                                                          vender_id: Propertytype.vendorId,
-                                                                        )));
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) =>
+                                                                            edit_vendor(
+                                                                              vender_id: Propertytype.vendorId,
+                                                                            )));
                                                             if (check == true) {
                                                               setState(() {
-                                                                futurePropertyTypes = VendorRepository(baseUrl: '').getVendors();
+                                                                futurePropertyTypes =
+                                                                    VendorRepository(
+                                                                            baseUrl:
+                                                                                '')
+                                                                        .getVendors();
                                                               });
                                                             }
                                                           },
                                                           child: Container(
-                                                            height:40,
+                                                            height: 40,
                                                             decoration: BoxDecoration(
-                                                                color: Colors.grey[350]
-                                                            ),                                               // color:Colors.grey[100],
+                                                                color: Colors
+                                                                        .grey[
+                                                                    350]), // color:Colors.grey[100],
                                                             child: Row(
                                                               mainAxisAlignment:
-                                                              MainAxisAlignment.center,
+                                                                  MainAxisAlignment
+                                                                      .center,
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment.center,
+                                                                  CrossAxisAlignment
+                                                                      .center,
                                                               children: [
                                                                 FaIcon(
-                                                                  FontAwesomeIcons.edit,
+                                                                  FontAwesomeIcons
+                                                                      .edit,
                                                                   size: 15,
-                                                                  color:blueColor,
+                                                                  color:
+                                                                      blueColor,
                                                                 ),
-                                                                SizedBox(width: 10,),
-                                                                Text("Edit",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                                                                SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                Text(
+                                                                  "Edit",
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                          blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                ),
                                                               ],
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(width: 5,),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
                                                       Expanded(
                                                         child: GestureDetector(
-                                                          onTap:(){
+                                                          onTap: () {
                                                             _showAlert(
                                                                 context,
                                                                 Propertytype
                                                                     .vendorId!);
                                                           },
                                                           child: Container(
-                                                            height:40,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors.grey[350]
-                                                            ),
+                                                            height: 40,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        350]),
                                                             child: Row(
                                                               mainAxisAlignment:
-                                                              MainAxisAlignment.center,
+                                                                  MainAxisAlignment
+                                                                      .center,
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment.center,
+                                                                  CrossAxisAlignment
+                                                                      .center,
                                                               children: [
                                                                 FaIcon(
-                                                                  FontAwesomeIcons.trashCan,
+                                                                  FontAwesomeIcons
+                                                                      .trashCan,
                                                                   size: 15,
-                                                                  color:blueColor,
+                                                                  color:
+                                                                      blueColor,
                                                                 ),
-                                                                SizedBox(width: 10,),
-                                                                Text("Delete",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
+                                                                SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                Text(
+                                                                  "Delete",
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                          blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                )
                                                               ],
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-
-
                                                     ],
                                                   ),
                                                 ],
@@ -1276,13 +1366,16 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                            onChanged: data.length >
+                                                    itemsPerPageOptions
+                                                        .first // Condition to check if dropdown should be enabled
                                                 ? (newValue) {
-                                              setState(() {
-                                                itemsPerPage = newValue!;
-                                                currentPage = 0; // Reset to first page when items per page change
-                                              });
-                                            }
+                                                    setState(() {
+                                                      itemsPerPage = newValue!;
+                                                      currentPage =
+                                                          0; // Reset to first page when items per page change
+                                                    });
+                                                  }
                                                 : null,
                                           ),
                                         ),
@@ -1364,20 +1457,32 @@ class _Vendor_tableState extends State<Vendor_table> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                   return Container(
-                        height: MediaQuery.of(context).size.height * .5,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
-                              SizedBox(height: 10,),
-                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
-                            ],
-                          ),
+                    return Container(
+                      height: MediaQuery.of(context).size.height * .5,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/images/no_data.jpg",
+                              height: 200,
+                              width: 200,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              "No Data Available",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                  fontSize: 16),
+                            )
+                          ],
                         ),
-                      );
+                      ),
+                    );
                   } else {
                     _tableData = snapshot.data!;
                     if (searchvalue != "") {
@@ -1417,7 +1522,6 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                   ),
                                             ),
                                             children: [
-
                                               _buildHeader(
                                                   'Name',
                                                   0,
@@ -1429,7 +1533,6 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                   (property) => property
                                                       .vendorPhoneNumber!),
                                               _buildHeader('Email', 2, null),
-
                                               _buildHeader('Actions', 4, null),
                                             ],
                                           ),
@@ -1468,19 +1571,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                 ),
                                               ),
                                               children: [
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // Text(
-                                                //     '${_pagedData[i].propertyType!}'),
-                                                // Text(
-                                                //     '${_pagedData[i].propertysubType!}'),
-                                                // Text(
-                                                //     '${formatDate(_pagedData[i].createdAt!)}'),
-                                                // Text(
-                                                //     '${formatDate(_pagedData[i].updatedAt!)}'),
+
                                                 _buildDataCell(
                                                     _pagedData[i].vendorName!),
                                                 _buildDataCell(_pagedData[i]

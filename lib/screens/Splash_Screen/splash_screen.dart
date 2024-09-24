@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -150,10 +151,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 width: 300,
               ),
               SizedBox(height: 30),
-              SpinKitSpinningLines(
-                color: blueColor,
-                size: 50.0,
-              ),
+              Lottie.asset('assets/images/loader.json',height: 130,width: 100),
               // LoadingAnimationWidget.fourRotatingDots(
               //  color: blueColor,
               //   size: 40,

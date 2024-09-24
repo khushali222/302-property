@@ -3625,338 +3625,629 @@ class _TabBarExampleState extends State<TabBarExample> {
    TextEditingController accountname = TextEditingController();
    TextEditingController note = TextEditingController();
 
+  // void _showAccountType(BuildContext context) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return
+  //         StatefulBuilder(builder: (context, setState) {
+  //           return
+  //             AlertDialog(
+  //               title: Text('Account Type', style: TextStyle(
+  //                 fontWeight: FontWeight.bold,
+  //                 color: Color.fromRGBO(
+  //                     21, 43, 81, 1),),),
+  //               actions: <Widget>[
+  //                 InkWell(
+  //                   onTap: (){
+  //                     Navigator.pop(context);
+  //                   },
+  //                   child: Container(
+  //                     height: 40,
+  //                     decoration: BoxDecoration(
+  //                       color: blueColor,
+  //                       borderRadius: BorderRadius.circular(3),
+  //                     ),
+  //                     child: Center(
+  //                       child: Text('Cancel',style: TextStyle(
+  //                           color: Colors.white
+  //                       ),),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ],
+  //               content: Container(
+  //                 height: 150,
+  //                 child: Column(
+  //                   children: [
+  //                     SizedBox(
+  //                       height: 20,
+  //                     ),
+  //                     Row(
+  //                       children: [
+  //                         Text("Select Account Type",
+  //                             style: TextStyle(
+  //                                 fontWeight: FontWeight.bold,
+  //                                 color: Color.fromRGBO(
+  //                                     21, 43, 81, 1),
+  //                                 fontSize: 17)
+  //                         ),
+  //                       ],
+  //                     ),
+  //                     SizedBox(
+  //                       height: 20,
+  //                     ),
+  //                     Row(
+  //                       children: [
+  //                         CustomDropdown(
+  //                           validator: (value) {
+  //                             if (value == null || value.isEmpty) {
+  //                               return 'Please select a account';
+  //                             }
+  //                             return null;
+  //                           },
+  //                           labelText: 'Select',
+  //                           items: accountitems,
+  //                           selectedValue: _selectedAccount,
+  //                           onChanged: (String? value) {
+  //                             print(_selectedAccount);
+  //                             setState(() {
+  //                               _selectedAccount = value;
+  //                               Navigator.pop(context);
+  //                               _showAccount(
+  //                                   context,_selectedAccount);
+  //                             });
+  //                           },
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //
+  //             );
+  //         });
+  //
+  //     },
+  //   );
+  // }
+
+  //popup
   void _showAccountType(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return
-          StatefulBuilder(builder: (context, setState) {
-            return
-              AlertDialog(
-                title: Text('Account Type', style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromRGBO(
-                      21, 43, 81, 1),),),
-                actions: <Widget>[
-                  InkWell(
-                    onTap: (){
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: blueColor,
-                        borderRadius: BorderRadius.circular(3),
-                      ),
-                      child: Center(
-                        child: Text('Cancel',style: TextStyle(
-                            color: Colors.white
-                        ),),
-                      ),
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            title: Text(
+              'Account Type',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color.fromRGBO(21, 43, 81, 1),
+              ),
+            ),
+            actions: <Widget>[
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                   height: 40,
+                  decoration: BoxDecoration(
+                    color: blueColor,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
-                ],
-                content: Container(
-                  height: 150,
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        children: [
-                          Text("Select Account Type",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromRGBO(
-                                      21, 43, 81, 1),
-                                  fontSize: 17)
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        children: [
-                          CustomDropdown(
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please select a account';
-                              }
-                              return null;
-                            },
-                            labelText: 'Select',
-                            items: accountitems,
-                            selectedValue: _selectedAccount,
-                            onChanged: (String? value) {
-                              print(_selectedAccount);
-                              setState(() {
-                                _selectedAccount = value;
-                                Navigator.pop(context);
-                                _showAccount(
-                                    context,_selectedAccount);
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
                 ),
-
-              );
-          });
-
+              ),
+            ],
+            content: SingleChildScrollView(
+              child: Container(
+                height: 150,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 20),
+                    Text(
+                      "Select Account Type",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromRGBO(21, 43, 81, 1),
+                        fontSize: 17,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    CustomDropdown(
+                      validator: (value) {
+                        if (_selectedAccount == null ) {
+                          return 'Please select an account';
+                        }
+                        return null;
+                      },
+                      labelText: 'Select',
+                      items: accountitems,
+                      selectedValue: _selectedAccount,
+                      onChanged: (String? value) {
+                        print(_selectedAccount);
+                        setState(() {
+                          _selectedAccount = value;
+                          Navigator.pop(context);
+                          _showAccount(context, _selectedAccount);
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
       },
     );
   }
 
-  //popup
-  void _showAccount(BuildContext context , String? selectedAccountType) {
+  // void _showAccount(BuildContext context , String? selectedAccountType) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return
+  //         StatefulBuilder(builder: (context, setState) {
+  //           return
+  //             AlertDialog(
+  //               title: Text('Add Account', style: TextStyle(
+  //                 fontWeight: FontWeight.bold,
+  //                 color: Color.fromRGBO(
+  //                     21, 43, 81, 1),),),
+  //
+  //               content: SingleChildScrollView(
+  //                 child: Column(
+  //                   children: [
+  //                     SizedBox(
+  //                       height: 20,
+  //                     ),
+  //                     Row(
+  //                       children: [
+  //                         Text("Account Name",
+  //                             style: TextStyle(
+  //                                 fontWeight: FontWeight.bold,
+  //                                 color: Color.fromRGBO(
+  //                                     21, 43, 81, 1),
+  //                                 fontSize: 16)
+  //                         ),
+  //                       ],
+  //                     ),
+  //                     SizedBox(
+  //                       height: 10,
+  //                     ),
+  //                     CustomTextField(
+  //                       validator: (value) {
+  //                         if (value == null || value.isEmpty) {
+  //                           return 'Please enter account name';
+  //                         }
+  //                         return null;
+  //                       },
+  //                       keyboardType: TextInputType.text,
+  //                       hintText: 'Enter account name',
+  //                       controller: accountname,
+  //                     ),
+  //                     SizedBox(
+  //                       height: 10,
+  //                     ),
+  //                     //account type
+  //                     Row(
+  //                       children: [
+  //                         Text("Account Type",
+  //                             style: TextStyle(
+  //                                 fontWeight: FontWeight.bold,
+  //                                 color: Color.fromRGBO(
+  //                                     21, 43, 81, 1),
+  //                                 fontSize: 16)
+  //                         ),
+  //                       ],
+  //                     ),
+  //                     SizedBox(
+  //                       height: 10,
+  //                     ),
+  //                     Row(
+  //                       children: [
+  //                         CustomDropdown(
+  //                           validator: (value) {
+  //                             if (value == null || value.isEmpty) {
+  //                               return 'Please select a account';
+  //                             }
+  //                             return null;
+  //                           },
+  //                           labelText: 'Select',
+  //                           items: accounttypeitems,
+  //                           selectedValue: _selectedAccounttype,
+  //                           onChanged: (String? value) {
+  //                             print(_selectedAccounttype);
+  //                             setState(() {
+  //                               _selectedAccounttype = value;
+  //
+  //                             });
+  //                           },
+  //                         ),
+  //                       ],
+  //                     ),
+  //                     SizedBox(
+  //                       height: 10,
+  //                     ),
+  //                     //fundtype
+  //                     Row(
+  //                       children: [
+  //                         Text("Fund Type",
+  //                             style: TextStyle(
+  //                                 fontWeight: FontWeight.bold,
+  //                                 color: Color.fromRGBO(
+  //                                     21, 43, 81, 1),
+  //                                 fontSize: 16)
+  //                         ),
+  //                       ],
+  //                     ),
+  //                     SizedBox(
+  //                       height: 10,
+  //                     ),
+  //                     Row(
+  //                       children: [
+  //                         CustomDropdown(
+  //                           validator: (value) {
+  //                             if (value == null || value.isEmpty) {
+  //                               return 'Please select a account';
+  //                             }
+  //                             return null;
+  //                           },
+  //                           labelText: 'Select',
+  //                           items: fundtypeitems,
+  //                           selectedValue: _selectedFundtype,
+  //                           onChanged: (String? value) {
+  //                             print(_selectedFundtype);
+  //                             setState(() {
+  //                               _selectedFundtype = value;
+  //
+  //                             });
+  //                           },
+  //                         ),
+  //                       ],
+  //                     ),
+  //                     SizedBox(
+  //                       height: 10,
+  //                     ),
+  //                     Row(
+  //                       children: [
+  //                         Text("Note",
+  //                             style: TextStyle(
+  //                                 fontWeight: FontWeight.bold,
+  //                                 color: Color.fromRGBO(
+  //                                     21, 43, 81, 1),
+  //                                 fontSize: 16)
+  //                         ),
+  //                       ],
+  //                     ),
+  //                     SizedBox(
+  //                       height: 10,
+  //                     ),
+  //                     CustomTextField(
+  //                       validator: (value) {
+  //                         if (value == null || value.isEmpty) {
+  //                           return 'Please enter notes';
+  //                         }
+  //                         return null;
+  //                       },
+  //                       keyboardType: TextInputType.text,
+  //                       hintText: 'Enter notes',
+  //                       controller: note,
+  //                     ),
+  //                     SizedBox(
+  //                       height: 20,
+  //                     ),
+  //                     Row(
+  //                       children: [
+  //                         InkWell(
+  //                           onTap: () async {
+  //                             if (_selectedAccounttype == null ||
+  //                                 accountname.text.isEmpty ||
+  //                                 _selectedFundtype == null) {
+  //                               setState(() {
+  //                                 isError = true;
+  //                               });
+  //                             } else {
+  //                               setState(() {
+  //                                 isLoading = true;
+  //                                 isError = false;
+  //                               });
+  //
+  //                               SharedPreferences prefs = await SharedPreferences.getInstance();
+  //                               String? id = prefs.getString("adminId");
+  //                               // Post the account data
+  //                               await accountRepository().addAccount(
+  //                                 adminId: id!,
+  //                                 account: accountname.text,
+  //                                 accounttype: _selectedAccounttype,
+  //                                 fundtype: _selectedFundtype,
+  //                                 chargetype: _selectedAccount,
+  //                                 notes: note.text,
+  //                               ).then((value) {
+  //                                 setState(() {
+  //                                   isLoading = false;
+  //                                 });
+  //                                 Navigator.pop(context, true);
+  //                                 _refreshAccounts();
+  //                               }).catchError((e) {
+  //                                 setState(() {
+  //                                   isLoading = false;
+  //                                 });
+  //                               });
+  //                             }
+  //                           },
+  //                           child: Container(
+  //                             height: 40,
+  //                             width: 100,
+  //                             decoration: BoxDecoration(
+  //                               color: blueColor,
+  //                               borderRadius: BorderRadius.circular(3),
+  //                             ),
+  //                             child: Center(
+  //                               child: Text('Add',style: TextStyle(
+  //                                   color: Colors.white
+  //                               ),),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         SizedBox(width: 20,),
+  //                         InkWell(
+  //                           onTap: (){
+  //                             Navigator.pop(context);
+  //                           },
+  //                           child: Container(
+  //                             height: 40,
+  //                             width: 100,
+  //                             decoration: BoxDecoration(
+  //                               color: Colors.white,
+  //                               borderRadius: BorderRadius.circular(3),
+  //                             ),
+  //                             child: Center(
+  //                               child: Text('Cancel',style: TextStyle(
+  //                                   color: blueColor
+  //                               ),),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                     if (isError)
+  //                       Padding(
+  //                         padding: const EdgeInsets.only(top: 8.0),
+  //                         child: Text(
+  //                           'Please fill all fields',
+  //                           style: TextStyle(color: Colors.red),
+  //                         ),
+  //                       ),
+  //                   ],
+  //                 ),
+  //               ),
+  //
+  //             );
+  //         });
+  //
+  //     },
+  //   );
+  // }
+
+  void _showAccount(BuildContext context, String? selectedAccountType) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return
-          StatefulBuilder(builder: (context, setState) {
-            return
-              AlertDialog(
-                title: Text('Add Account', style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromRGBO(
-                      21, 43, 81, 1),),),
-
-                content: SingleChildScrollView(
-                  child: Column(
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            title: Text(
+              'Add Account',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color.fromRGBO(21, 43, 81, 1),
+              ),
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 20),
+                  Text(
+                    "Account Name",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(21, 43, 81, 1),
+                      fontSize: 16,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  CustomTextField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter account name';
+                      }
+                      return null;
+                    },
+                    keyboardType: TextInputType.text,
+                    hintText: 'Enter account name',
+                    controller: accountname,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Account Type",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(21, 43, 81, 1),
+                      fontSize: 16,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  CustomDropdown(
+                    validator: (value) {
+                      if (_selectedAccounttype == null) {
+                        return 'Please select an account type';
+                      }
+                      return null;
+                    },
+                    labelText: 'Select',
+                    items: accounttypeitems,
+                    selectedValue: _selectedAccounttype,
+                    onChanged: (String? value) {
+                      setState(() {
+                        _selectedAccounttype = value;
+                      });
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Fund Type",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(21, 43, 81, 1),
+                      fontSize: 16,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  CustomDropdown(
+                    validator: (value) {
+                      if (_selectedFundtype == null ) {
+                        return 'Please select a fund type';
+                      }
+                      return null;
+                    },
+                    labelText: 'Select',
+                    items: fundtypeitems,
+                    selectedValue: _selectedFundtype,
+                    onChanged: (String? value) {
+                      setState(() {
+                        _selectedFundtype = value;
+                      });
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Note",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(21, 43, 81, 1),
+                      fontSize: 16,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  CustomTextField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter notes';
+                      }
+                      return null;
+                    },
+                    keyboardType: TextInputType.text,
+                    hintText: 'Enter notes',
+                    controller: note,
+                  ),
+                  SizedBox(height: 20),
+                  Row(
                     children: [
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        children: [
-                          Text("Account Name",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromRGBO(
-                                      21, 43, 81, 1),
-                                  fontSize: 16)
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter account name';
-                          }
-                          return null;
-                        },
-                        keyboardType: TextInputType.text,
-                        hintText: 'Enter account name',
-                        controller: accountname,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      //account type
-                      Row(
-                        children: [
-                          Text("Account Type",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromRGBO(
-                                      21, 43, 81, 1),
-                                  fontSize: 16)
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          CustomDropdown(
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please select a account';
-                              }
-                              return null;
-                            },
-                            labelText: 'Select',
-                            items: accounttypeitems,
-                            selectedValue: _selectedAccounttype,
-                            onChanged: (String? value) {
-                              print(_selectedAccounttype);
+                      Expanded(
+                        child: InkWell(
+                          onTap: () async {
+                            if (_selectedAccounttype == null ||
+                                accountname.text.isEmpty ||
+                                _selectedFundtype == null) {
                               setState(() {
-                                _selectedAccounttype = value;
-
+                                isError = true;
                               });
-                            },
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      //fundtype
-                      Row(
-                        children: [
-                          Text("Fund Type",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromRGBO(
-                                      21, 43, 81, 1),
-                                  fontSize: 16)
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          CustomDropdown(
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please select a account';
-                              }
-                              return null;
-                            },
-                            labelText: 'Select',
-                            items: fundtypeitems,
-                            selectedValue: _selectedFundtype,
-                            onChanged: (String? value) {
-                              print(_selectedFundtype);
+                            } else {
                               setState(() {
-                                _selectedFundtype = value;
-
+                                isLoading = true;
+                                isError = false;
                               });
-                            },
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Text("Note",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromRGBO(
-                                      21, 43, 81, 1),
-                                  fontSize: 16)
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter notes';
-                          }
-                          return null;
-                        },
-                        keyboardType: TextInputType.text,
-                        hintText: 'Enter notes',
-                        controller: note,
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        children: [
-                          InkWell(
-                            onTap: () async {
-                              if (_selectedAccounttype == null ||
-                                  accountname.text.isEmpty ||
-                                  _selectedFundtype == null) {
-                                setState(() {
-                                  isError = true;
-                                });
-                              } else {
-                                setState(() {
-                                  isLoading = true;
-                                  isError = false;
-                                });
 
-                                SharedPreferences prefs = await SharedPreferences.getInstance();
-                                String? id = prefs.getString("adminId");
-                                // Post the account data
+                              SharedPreferences prefs = await SharedPreferences.getInstance();
+                              String? id = prefs.getString("adminId");
+
+                              try {
                                 await accountRepository().addAccount(
                                   adminId: id!,
                                   account: accountname.text,
                                   accounttype: _selectedAccounttype,
                                   fundtype: _selectedFundtype,
-                                  chargetype: _selectedAccount,
+                                  chargetype: selectedAccountType,
                                   notes: note.text,
-                                ).then((value) {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                  Navigator.pop(context, true);
-                                  _refreshAccounts();
-                                }).catchError((e) {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
+                                );
+                                Navigator.pop(context, true);
+                                _refreshAccounts();
+                              } catch (e) {
+                                setState(() {
+                                  isError = true;
+                                });
+                              } finally {
+                                setState(() {
+                                  isLoading = false;
                                 });
                               }
-                            },
-                            child: Container(
-                              height: 40,
-                              width: 100,
-                              decoration: BoxDecoration(
-                                color: blueColor,
-                                borderRadius: BorderRadius.circular(3),
-                              ),
-                              child: Center(
-                                child: Text('Add',style: TextStyle(
-                                    color: Colors.white
-                                ),),
-                              ),
+                            }
+                          },
+                          child: Container(
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: blueColor,
+                              borderRadius: BorderRadius.circular(3),
                             ),
-                          ),
-                          SizedBox(width: 20,),
-                          InkWell(
-                            onTap: (){
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                              height: 40,
-                              width: 100,
-                              decoration: BoxDecoration(
+                            child: Center(
+                              child: isLoading
+                                  ? CircularProgressIndicator(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(3),
-                              ),
-                              child: Center(
-                                child: Text('Cancel',style: TextStyle(
-                                    color: blueColor
-                                ),),
+                              )
+                                  : Text(
+                                'Add',
+                                style: TextStyle(color: Colors.white),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      if (isError)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            'Please fill all fields',
-                            style: TextStyle(color: Colors.red),
                           ),
                         ),
+                      ),
+                      SizedBox(width: 20),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Cancel',
+                                style: TextStyle(color: blueColor),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                ),
-
-              );
-          });
-
+                  if (isError)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        'Please fill all fields',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          );
+        });
       },
     );
   }

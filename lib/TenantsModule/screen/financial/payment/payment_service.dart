@@ -138,7 +138,7 @@ class PaymentService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
-
+    print(entries);
     final response = await http.post(
       Uri.parse(baseUrl),
       headers: {
@@ -164,6 +164,7 @@ class PaymentService {
         'response': responseText,
       }),
     );
+
     print(response);
     if (response.statusCode == 200) {
       print(response.body);
@@ -358,6 +359,7 @@ class PaymentService {
     required bool future_Date,
     required String Check_number,
     required bool Check,
+    required String payment_method,
     required List<Map<String, dynamic>> entries,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -428,7 +430,7 @@ class PaymentService {
             adminId: adminId,
             tenantId: tenantId,
             leaseId: leaseid,
-            paymentType: Check ? "Check" : "Cash",
+            paymentType:payment_method,
             entries: entries,
             totalAmount: amount,
             isLeaseAdded: false,

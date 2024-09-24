@@ -7,10 +7,10 @@ String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
 //String image_url = "http://192.168.182.128:4000/api/images/get-file/";
 
 //String Api_url = "http://192.168.38.213:4000"
-String Api_url = "http://192.168.1.31:4000";
+//String Api_url = "http://192.168.1.38:4000";
 
 
-//String Api_url = "https://saas.cloudrentalmanager.com";
+String Api_url = "https://saas.cloudrentalmanager.com";
 
 String image_upload_url = "https://saas.cloudrentalmanager.com";
 
@@ -26,7 +26,6 @@ String formatDate(String dateTime) {
     'M/d/yyyy, h:mm:ss a',
     'M/d/yyyy, h:mm a'        // 05032024 (no separators)
   ];
-
 
   DateTime? parsedDate;
 
@@ -70,6 +69,7 @@ String formatDate3(String dateStr) {
 }
 
 String reverseFormatDate(String formattedDate) {
+  print(formattedDate);
   DateTime dateTime = DateFormat('dd-MM-yyyy').parse(formattedDate);
   return DateFormat('yyyy-MM-dd').format(dateTime);
 }

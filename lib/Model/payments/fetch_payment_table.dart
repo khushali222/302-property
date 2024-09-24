@@ -164,14 +164,14 @@ class Entrycharge {
   String? entryId;
   String? memo;
   String? account;
-  int? amount;
+  double? amount;
   String? date;
   bool? isPaid;
   bool? isLateFee;
   bool? isRepeatable;
   String? chargeType;
   String? id;
-  int? chargeAmount;
+  double? chargeAmount;
   String? chargeId;
 
   Entrycharge({
@@ -190,20 +190,24 @@ class Entrycharge {
   });
 
   factory Entrycharge.fromJson(Map<String, dynamic> json) {
-    print(json);
+
     return Entrycharge(
       entryId: json['entry_id'] as String?,
       memo: json['memo'] as String?,
       account: json['account'] as String?,
-      amount: json['amount'] as int?,
+      amount: (json['amount'] is int)
+          ? (json['amount'] as int).toDouble()
+          : json['amount'] as double?,
       date: json['date'] as String?,
       isPaid: json['is_paid'] as bool?,
       isLateFee: json['is_lateFee'] as bool?,
       isRepeatable: json['is_repeatable'] as bool?,
       chargeType: json['charge_type'] as String?,
       id: json['_id'] as String?,
-      chargeAmount: json['charge_amount'] as int?,
-      chargeId: json['charge_id'] as String?,
+      chargeAmount: (json['due_amount'] is int)
+          ? (json['due_amount'] as int).toDouble()
+          : json['due_amount'] as double?,
+      //chargeId: json['charge_id'] as String?,
     );
   }
 
@@ -219,7 +223,7 @@ class Entrycharge {
       'is_repeatable': isRepeatable,
       'charge_type': chargeType,
       '_id': id,
-      'charge_amount': chargeAmount,
+      'due_amount': chargeAmount,
       'charge_id': chargeId,
     };
   }

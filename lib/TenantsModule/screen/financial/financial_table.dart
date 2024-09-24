@@ -100,62 +100,10 @@ class _FinancialTableState extends State<FinancialTable> {
               ),
             ),*/
 
-            Expanded(
-              flex: 3,
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting1 == true) {
-                      sorting2 = false;
-                      sorting3 = false;
-                      ascending1 = sorting1 ? !ascending1 : true;
-                      ascending2 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = !sorting1;
-                      sorting2 = false;
-                      sorting3 = false;
-                      ascending1 = sorting1 ? !ascending1 : true;
-                      ascending2 = false;
-                      ascending3 = false;
-                    }
 
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    width < 400
-                        ? Text("         Account",
-                        style: TextStyle(color: Colors.white))
-                        : Text("       Account",
-                        style: TextStyle(color: Colors.white)),
-                    // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
-                    /*ascending1
-                        ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
-                        : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),*/
-                  ],
-                ),
-              ),
-            ),
             Expanded(
               flex: 2,
-              child: InkWell(
+              child: GestureDetector(
                 onTap: () {
                   setState(() {
                     if (sorting2) {
@@ -178,7 +126,7 @@ class _FinancialTableState extends State<FinancialTable> {
                 },
                 child: Row(
                   children: [
-                    Text("    Type", style: TextStyle(color: Colors.white)),
+                    Text("       Type", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     /* ascending2
                         ? Padding(
@@ -203,7 +151,55 @@ class _FinancialTableState extends State<FinancialTable> {
             ),
             Expanded(
               flex: 2,
-              child: InkWell(
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    if (sorting2) {
+                      sorting1 = false;
+                      sorting2 = sorting2;
+                      sorting3 = false;
+                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending1 = false;
+                      ascending3 = false;
+                    } else {
+                      sorting1 = false;
+                      sorting2 = !sorting2;
+                      sorting3 = false;
+                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending1 = false;
+                      ascending3 = false;
+                    }
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text("    Balance", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 5),
+                    /* ascending2
+                        ? Padding(
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
+                        : Padding(
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),*/
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: GestureDetector(
                 onTap: () {
                   setState(() {
                     if (sorting3) {
@@ -374,7 +370,7 @@ class _FinancialTableState extends State<FinancialTable> {
   //     height: 70,
   //     // color: Colors.blue,
   //     child: TableCell(
-  //       child: InkWell(
+  //       child: GestureDetector(
   //         onTap: getField != null
   //             ? () {
   //                 _sort(getField, columnIndex, !_sortAscending);
@@ -402,7 +398,7 @@ class _FinancialTableState extends State<FinancialTable> {
   Widget _buildHeader<T>(String text, int columnIndex,
       Comparable<T> Function(Data d)? getField) {
     return TableCell(
-      child: InkWell(
+      child: GestureDetector(
         onTap: getField != null
             ? () {
           _sort(getField, columnIndex, !_sortAscending);
@@ -462,7 +458,7 @@ class _FinancialTableState extends State<FinancialTable> {
   //             SizedBox(
   //               width: 20,
   //             ),
-  //             InkWell(
+  //             GestureDetector(
   //               onTap: () {
   //                 handleEdit(data);
   //               },
@@ -474,7 +470,7 @@ class _FinancialTableState extends State<FinancialTable> {
   //             SizedBox(
   //               width: 15,
   //             ),
-  //             InkWell(
+  //             GestureDetector(
   //               onTap: () {
   //                 handleDelete(data);
   //               },
@@ -501,7 +497,7 @@ class _FinancialTableState extends State<FinancialTable> {
               const SizedBox(
                 width: 20,
               ),
-              InkWell(
+              GestureDetector(
                 onTap: () {
                   handleEdit(data);
                 },
@@ -513,7 +509,7 @@ class _FinancialTableState extends State<FinancialTable> {
               const SizedBox(
                 width: 15,
               ),
-              InkWell(
+              GestureDetector(
                 onTap: () {
                   handleDelete(data);
                 },
@@ -741,9 +737,9 @@ class _FinancialTableState extends State<FinancialTable> {
               width: MediaQuery.of(context).size.width * .91,
               title: 'Ledger',
             ),
-            SizedBox(height: 10),
+           // SizedBox(height: 10),
             //search
-            Padding(
+         /*   Padding(
               padding: const EdgeInsets.only(left: 13, right: 13),
               child: Row(
                 children: [
@@ -803,7 +799,7 @@ class _FinancialTableState extends State<FinancialTable> {
                     ),
                   ),
                   SizedBox(width: 15),
-                  /*  DropdownButtonHideUnderline(
+                  *//*  DropdownButtonHideUnderline(
                     child: Material(
                       elevation: 3,
                       child: DropdownButton2<String>(
@@ -884,10 +880,10 @@ class _FinancialTableState extends State<FinancialTable> {
                         ),
                       ),
                     ),
-                  ),*/
+                  ),*//*
                 ],
               ),
-            ),
+            ),*/
             if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
             if (MediaQuery.of(context).size.width < 500)
               Container(
@@ -959,7 +955,7 @@ class _FinancialTableState extends State<FinancialTable> {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            SizedBox(height: 20),
+                            SizedBox(height: 10),
                             _buildHeaders(),
                             SizedBox(height: 20),
                             Container(
@@ -973,7 +969,16 @@ class _FinancialTableState extends State<FinancialTable> {
                                   int index = entry.key;
                                   bool isExpanded = expandedIndex == index;
                                   Data Tenant_financial = entry.value;
-                                //  print(Tenant_financial.balance);
+                                  String accounts = "";
+                                  Tenant_financial.entry!.forEach((entry){
+
+                                    accounts += entry.account! + " , ";
+                                  });
+                                  accounts = accounts.substring(0,accounts.length -2 );
+                                  print(accounts);
+
+
+
                                   //print(Tenant_financial.totalBalance);
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
@@ -993,7 +998,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                               crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                               children: <Widget>[
-                                                InkWell(
+                                                GestureDetector(
                                                   onTap: () {
                                                     // setState(() {
                                                     //    isExpanded = !isExpanded;
@@ -1019,7 +1024,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                   },
                                                   child: Container(
                                                     margin: EdgeInsets.only(
-                                                        left: 5),
+                                                        left: 5,right: 5),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
                                                         bottom: 10)
@@ -1038,23 +1043,14 @@ class _FinancialTableState extends State<FinancialTable> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  flex: 3,
-                                                  child: InkWell(
-                                                    onTap: (){
-                                                      // Navigator.of(context)
-                                                      //     .push(MaterialPageRoute(builder: (context) => summery_page(lease_id: Propertytype.leaseId,)));
-                                                    },
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.only(left: 8.0),
-                                                      child: Text(
-                                                        '${Tenant_financial.entry?.first.account}',
-                                                        style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                          FontWeight.bold,
-                                                          fontSize: 13,
-                                                        ),
-                                                      ),
+                                                  flex: 2,
+                                                  child: Text(
+                                                    '${Tenant_financial.type}',
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      fontSize: 14,
                                                     ),
                                                   ),
                                                 ),
@@ -1063,16 +1059,17 @@ class _FinancialTableState extends State<FinancialTable> {
                                                     MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                        .08),
+                                                        .03),
                                                 Expanded(
                                                   flex: 2,
                                                   child: Text(
-                                                    '${Tenant_financial.type}',
+                                                    Tenant_financial.type == 'Refund' ?  ' \$${Tenant_financial.balance!.abs().toStringAsFixed(2)}':
+                                                    '-\$${Tenant_financial.balance!.abs().toStringAsFixed(2)}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
                                                       FontWeight.bold,
-                                                      fontSize: 12,
+                                                      fontSize: 14,
                                                     ),
                                                   ),
                                                 ),
@@ -1091,7 +1088,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                       color: blueColor,
                                                       fontWeight:
                                                       FontWeight.bold,
-                                                      fontSize: 12,
+                                                      fontSize: 14,
                                                     ),
                                                   ),
                                                 ),
@@ -1161,6 +1158,34 @@ class _FinancialTableState extends State<FinancialTable> {
                                                             SizedBox(
                                                               height: 5,
                                                             ),
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                    'Account : ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                        color:
+                                                                        blueColor), // Bold and black
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text:
+                                                                    '${accounts}',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                        color: grey), // Light and grey
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 5,
+                                                            ),
                                                             Row(
                                                               children: [
                                                                 Text.rich(
@@ -1168,7 +1193,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                     children: [
                                                                       TextSpan(
                                                                         text:
-                                                                        'Increase: ',
+                                                                        'Amount : ',
                                                                         style: TextStyle(
                                                                             fontWeight:
                                                                             FontWeight
@@ -1177,7 +1202,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                             blueColor), // Bold and black
                                                                       ),
                                                                       TextSpan(
-                                                                        text:Tenant_financial.type == 'Refund' ? ' ${Tenant_financial.totalAmount}' : ' N/A',
+                                                                        text:Tenant_financial.type == 'Refund' ? ' \$${Tenant_financial.totalAmount!.toStringAsFixed(2)}' : ' -\$${Tenant_financial.totalAmount!.toStringAsFixed(2)}',
                                                                         style: TextStyle(
                                                                             fontWeight:
                                                                             FontWeight
@@ -1188,7 +1213,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                   ),
                                                                 ),
                                                                 SizedBox(width: 25,),
-                                                                Text.rich(
+                                                              /*  Text.rich(
                                                                   TextSpan(
                                                                     children: [
                                                                       TextSpan(
@@ -1211,13 +1236,13 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                       ),
                                                                     ],
                                                                   ),
-                                                                ),
+                                                                ),*/
                                                               ],
                                                             ),
                                                             SizedBox(
                                                               height: 5,
                                                             ),
-                                                            Text.rich(
+                                                           /* Text.rich(
                                                               TextSpan(
                                                                 children: [
                                                                   TextSpan(
@@ -1240,7 +1265,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                   ),
                                                                 ],
                                                               ),
-                                                            ),
+                                                            ),*/
                                                             SizedBox(
                                                               height: 5,
                                                             ),

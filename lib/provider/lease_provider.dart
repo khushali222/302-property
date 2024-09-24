@@ -45,12 +45,47 @@ class SelectedTenantsProvider extends ChangeNotifier {
     _rentShareControllers.clear();
     notifyListeners();
   }
+  // bool validateRentShares() {
+  //   double totalRentShare = 0;
+  //
+  //   for (var controller in _rentShareControllers) {
+  //     double rentShare = double.tryParse(controller.text) ?? 0;
+  //     totalRentShare += rentShare;
+  //   }
+  //
+  //   if (totalRentShare > 100) {
+  //     _validationMessage = "Total rent share cannot exceed 100%";
+  //     notifyListeners();
+  //     return false;
+  //   }
+  //
+  //   _validationMessage = null; // Reset validation message if valid
+  //   notifyListeners();
+  //   return true;
+  // }
+
+  void setValidationMessage(String message) {
+    _validationMessage = message;
+    notifyListeners();
+  }
+
+
+  void clearValidationMessage() {
+    _validationMessage = null;
+    notifyListeners(); // Update listeners to clear the error in the UI
+  }
+
   bool validateRentShares() {
     double totalRentShare = 0;
+    bool allFieldsEmpty = true;
 
     for (var controller in _rentShareControllers) {
       double rentShare = double.tryParse(controller.text) ?? 0;
       totalRentShare += rentShare;
+
+      if (rentShare > 0) {
+        allFieldsEmpty = false;
+      }
     }
 
     if (totalRentShare > 100) {
@@ -59,11 +94,24 @@ class SelectedTenantsProvider extends ChangeNotifier {
       return false;
     }
 
-    _validationMessage = null; // Reset validation message if valid
+    if (totalRentShare < 100) {
+      _validationMessage = allFieldsEmpty
+          ? "Tenants must enter rent share values."
+          : "Total rent share must equal 100%";
+      notifyListeners();
+      return false;
+    }
+
+    _validationMessage = null;
     notifyListeners();
     return true;
   }
+
+
+
 }
+
+
 
 
 class SelectedCosignersProvider extends ChangeNotifier {

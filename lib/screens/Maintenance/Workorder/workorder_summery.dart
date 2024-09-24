@@ -22,6 +22,7 @@ import '../../../model/summery_workorder.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/titleBar.dart';
 import '../../../widgets/custom_drawer.dart';
+
 class Workorder_summery extends StatefulWidget {
   String? workorder_id;
   Workorder_summery({super.key, this.workorder_id});
@@ -127,7 +128,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
       key: key,
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Work Order",dropdown: true,),
+      drawer: CustomDrawer(
+        currentpage: "Work Order",
+        dropdown: true,
+      ),
       body: Column(
         children: [
           SizedBox(
@@ -1124,45 +1128,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold)),
                                 ),
-
-                                /* Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                                '\$${totalAmount.toStringAsFixed(2)}'),
-                          ),*/
                               ]),
-                              /*TableRow(children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              height: 34,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(width: 1),
-                                  borderRadius:
-                                  BorderRadius.circular(10.0)),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                        BorderRadius.circular(
-                                            10.0)),
-                                    elevation: 0,
-                                    backgroundColor: Colors.white),
-                                onPressed: addRow,
-                                child: const Text(
-                                  'Add Row',
-                                  style: TextStyle(
-                                    color:
-                                    Color.fromRGBO(21, 43, 83, 1),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox.shrink(),
-                          const SizedBox.shrink(),
-                        ]),*/
                             ],
                           ),
                         ],
@@ -3154,59 +3120,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
     );
   }
 
-  //
-  // updatecheckBox() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //
-  //   String? id = prefs.getString("adminId");
-  //   String? token = prefs.getString('token');
-  //   var checkvalue = {"applicant_checkedChecklist": applicantChecklist};
-  //   final response = await http.put(
-  //     Uri.parse('$Api_url/api/applicant/applicant/${widget.applicant_id}'),
-  //     headers: <String, String>{
-  //       "id": "CRM $id",
-  //       "authorization": "CRM $token",
-  //       'Content-Type': 'application/json; charset=UTF-8',
-  //     },
-  //     body: jsonEncode(checkvalue),
-  //   );
-  //   if (response.statusCode == 200) {
-  //     // Fluttertoast.showToast(msg: 'Applicant Updated Successfully');
-  //
-  //     setState(() {});
-  //   } else {
-  //     // Log the response body for debugging
-  //     print('Failed to update data: ${response.body}');
-  //     throw Exception('Failed to update applicant data');
-  //   }
-  // }
-  //
-  // updatecheckBoxnew(List applicant) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //
-  //   String? id = prefs.getString("adminId");
-  //   String? token = prefs.getString('token');
-  //   var checkvalue = {"applicant_checklist": applicant};
-  //   final response = await http.put(
-  //     Uri.parse(
-  //         '$Api_url/api/applicant/applicant/${widget.applicant_id}/checklist'),
-  //     headers: <String, String>{
-  //       "id": "CRM $id",
-  //       "authorization": "CRM $token",
-  //       'Content-Type': 'application/json; charset=UTF-8',
-  //     },
-  //     body: jsonEncode(checkvalue),
-  //   );
-  //   if (response.statusCode == 200) {
-  //     // Fluttertoast.showToast(msg: 'Applicant Updated Successfully');
-  //
-  //     setState(() {});
-  //   } else {
-  //     // Log the response body for debugging
-  //     print('Failed to update data: ${response.body}');
-  //     throw Exception('Failed to update applicant data');
-  //   }
-  // }
   void showUpdateDialog(BuildContext context) {
     // Initialize variables to store user input
     String? selectedStatus;

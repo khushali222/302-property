@@ -55,6 +55,7 @@ class Rentals {
 
   // Define the fromJson method within the Rental class
   factory Rentals.fromJson(Map<String, dynamic> json) {
+    print(" staff ${json["staffmember_data"]}");
     return Rentals(
       id: json['_id'],
       rentalId: json['rental_id'] ?? "",

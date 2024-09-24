@@ -30,6 +30,7 @@ import '../../../../widgets/appbar.dart';
 
 import '../../../../widgets/drawer_tiles.dart';
 import '../../../../widgets/custom_drawer.dart';
+
 class applicant_summery extends StatefulWidget {
   String? applicant_id;
   applicant_summery({super.key, this.applicant_id});
@@ -136,7 +137,10 @@ class _applicant_summeryState extends State<applicant_summery>
       // appBar: widget302.,
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Applicants",dropdown: true,),
+      drawer: CustomDrawer(
+        currentpage: "Applicants",
+        dropdown: true,
+      ),
       body: FutureBuilder<applicant_summery_details>(
           future: futureLeaseSummary,
           builder: (context, snapshot) {

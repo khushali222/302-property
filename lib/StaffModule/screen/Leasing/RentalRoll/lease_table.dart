@@ -33,11 +33,11 @@ import '../../../repository/Staffmember.dart';
 import '../../../repository/rentalowner.dart';
 import '../../../widgets/drawer_tiles.dart';
 
-
 import 'package:http/http.dart' as http;
 
 import 'newAddLease.dart';
 import '../../../widgets/custom_drawer.dart';
+
 class Lease_table extends StatefulWidget {
   // RentalOwner? rentalownersummery;
   // Lease_table({super.key,this.rentalownersummery});
@@ -91,6 +91,7 @@ class _Lease_tableState extends State<Lease_table> {
       _showDeleteAlert(context, lease.leaseId!);
     }
   }
+
   void sortData(List<Lease1> data) {
     if (sorting1) {
       data.sort((a, b) => ascending1
@@ -212,7 +213,7 @@ class _Lease_tableState extends State<Lease_table> {
                               : 14.0,
                         )),
                     SizedBox(width: 5),
-                  /*  ascending2
+                    /*  ascending2
                         ? Padding(
                             padding: const EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
@@ -267,7 +268,7 @@ class _Lease_tableState extends State<Lease_table> {
                               : 14.0,
                         )),
                     SizedBox(width: 5),
-                  /*  ascending3
+                    /*  ascending3
                         ? Padding(
                             padding: const EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
@@ -350,16 +351,9 @@ class _Lease_tableState extends State<Lease_table> {
   void handleEdit(Lease1 lease) async {
     // Handle edit action
     print('Edit ${lease.leaseId}');
-    Provider.of<SelectedCosignersProvider>(
-        context,
-        listen:
-        false)
+    Provider.of<SelectedCosignersProvider>(context, listen: false)
         .clearCosigner();
-    Provider.of<SelectedTenantsProvider>(
-        context,
-        listen:
-        false)
-        .clearTenant();
+    Provider.of<SelectedTenantsProvider>(context, listen: false).clearTenant();
     var check = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -439,8 +433,8 @@ class _Lease_tableState extends State<Lease_table> {
   }
 
   void handleDelete(Lease1 lease) {
-    _attemptDeleteLease(context,lease);
-  //  _showDeleteAlert(context, lease.leaseId!);
+    _attemptDeleteLease(context, lease);
+    //  _showDeleteAlert(context, lease.leaseId!);
     // Handle delete action
     print('Delete ${lease.leaseId}');
   }
@@ -538,7 +532,10 @@ class _Lease_tableState extends State<Lease_table> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Rent Roll",dropdown: true,),
+      drawer: CustomDrawer(
+        currentpage: "Rent Roll",
+        dropdown: true,
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -546,7 +543,7 @@ class _Lease_tableState extends State<Lease_table> {
             Padding(
               padding: const EdgeInsets.all(0),
               child: Row(
-               // mainAxisAlignment: MainAxisAlignment.end,
+                // mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
@@ -581,7 +578,7 @@ class _Lease_tableState extends State<Lease_table> {
                       height: (MediaQuery.of(context).size.width < 500)
                           ? 50
                           : MediaQuery.of(context).size.width * 0.063,
-                      width:  (MediaQuery.of(context).size.width < 500)
+                      width: (MediaQuery.of(context).size.width < 500)
                           ? MediaQuery.of(context).size.width * 0.25
                           : MediaQuery.of(context).size.width * 0.2,
                       decoration: BoxDecoration(
@@ -727,16 +724,28 @@ class _Lease_tableState extends State<Lease_table> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                     return Container(
+                      return Container(
                         height: MediaQuery.of(context).size.height * .5,
                         child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
-                              SizedBox(height: 10,),
-                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                              Image.asset(
+                                "assets/images/no_data.jpg",
+                                height: 200,
+                                width: 200,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                "No Data Available",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                    fontSize: 16),
+                              )
                             ],
                           ),
                         ),
@@ -778,7 +787,9 @@ class _Lease_tableState extends State<Lease_table> {
                             SizedBox(height: 20),
                             Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                                  border: Border.all(
+                                      color:
+                                          Color.fromRGBO(152, 162, 179, .5))),
                               // decoration: BoxDecoration(
                               //     border: Border.all(color: blueColor)),
                               child: Column(
@@ -792,8 +803,12 @@ class _Lease_tableState extends State<Lease_table> {
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
                                     decoration: BoxDecoration(
-                                      color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                                      color: index % 2 != 0
+                                          ? Colors.white
+                                          : blueColor.withOpacity(0.09),
+                                      border: Border.all(
+                                          color: Color.fromRGBO(
+                                              152, 162, 179, .5)),
                                     ),
                                     // decoration: BoxDecoration(
                                     //   border: Border.all(color: blueColor),
@@ -823,7 +838,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                   },
                                                   child: Container(
                                                     margin: EdgeInsets.only(
-                                                        left: 5,right: 5),
+                                                        left: 5, right: 5),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
                                                             bottom: 10)
@@ -853,9 +868,11 @@ class _Lease_tableState extends State<Lease_table> {
                                                         setState(() {
                                                           if (expandedIndex ==
                                                               index) {
-                                                            expandedIndex = null;
+                                                            expandedIndex =
+                                                                null;
                                                           } else {
-                                                            expandedIndex = index;
+                                                            expandedIndex =
+                                                                index;
                                                           }
                                                         });
                                                       },
@@ -874,18 +891,23 @@ class _Lease_tableState extends State<Lease_table> {
                                                                 fontSize: 13,
                                                               ),
                                                             ),
-                                                            if (lease.tenantNames?.isNotEmpty ?? false)
-                                                            TextSpan(
-                                                              text:"\n${lease.tenantNames}",
-                                                              style: TextStyle(
-                                                                color: Colors
-                                                                    .lightBlue, // Light blue color for tenant names
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 11,
+                                                            if (lease
+                                                                    .tenantNames
+                                                                    ?.isNotEmpty ??
+                                                                false)
+                                                              TextSpan(
+                                                                text:
+                                                                    "\n${lease.tenantNames}",
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .lightBlue, // Light blue color for tenant names
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 11,
+                                                                ),
                                                               ),
-                                                            ),
                                                           ],
                                                         ),
                                                       ),
@@ -950,356 +972,17 @@ class _Lease_tableState extends State<Lease_table> {
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
-                                                  // Row(
-                                                  //   mainAxisAlignment:
-                                                  //       MainAxisAlignment.start,
-                                                  //   children: [
-                                                  //     FaIcon(
-                                                  //       isExpanded
-                                                  //           ? FontAwesomeIcons
-                                                  //               .sortUp
-                                                  //           : FontAwesomeIcons
-                                                  //               .sortDown,
-                                                  //       size: 50,
-                                                  //       color:
-                                                  //           Colors.transparent,
-                                                  //     ),
-                                                  //     Expanded(
-                                                  //       child: Column(
-                                                  //         crossAxisAlignment:
-                                                  //             CrossAxisAlignment
-                                                  //                 .start,
-                                                  //         children: <Widget>[
-                                                  //           SizedBox(
-                                                  //               width: MediaQuery.of(
-                                                  //                           context)
-                                                  //                       .size
-                                                  //                       .width *
-                                                  //                   .08),
-                                                  //           Text.rich(
-                                                  //             TextSpan(
-                                                  //               children: [
-                                                  //                 TextSpan(
-                                                  //                   text:
-                                                  //                       'Rent Cycle: ',
-                                                  //                   style: TextStyle(
-                                                  //                       fontWeight:
-                                                  //                           FontWeight
-                                                  //                               .bold,
-                                                  //                       color:
-                                                  //                           blueColor), // Bold and black
-                                                  //                 ),
-                                                  //                 TextSpan(
-                                                  //                   text:
-                                                  //                       '${lease.rentCycle ?? ''}',
-                                                  //                   style: TextStyle(
-                                                  //                       fontWeight:
-                                                  //                           FontWeight
-                                                  //                               .w700,
-                                                  //                       color: Colors
-                                                  //                           .grey), // Light and grey
-                                                  //                 ),
-                                                  //               ],
-                                                  //             ),
-                                                  //           ),
-                                                  //           SizedBox(
-                                                  //             height: MediaQuery.of(
-                                                  //                         context)
-                                                  //                     .size
-                                                  //                     .height *
-                                                  //                 .01,
-                                                  //           ),
-                                                  //           Text.rich(
-                                                  //             TextSpan(
-                                                  //               children: [
-                                                  //                 TextSpan(
-                                                  //                   text:
-                                                  //                       'Rent Start: ',
-                                                  //                   style: TextStyle(
-                                                  //                       fontWeight:
-                                                  //                           FontWeight
-                                                  //                               .bold,
-                                                  //                       color:
-                                                  //                           blueColor), // Bold and black
-                                                  //                 ),
-                                                  //                 TextSpan(
-                                                  //                   text:
-                                                  //                       '${lease.rentDueDate}',
-                                                  //                   style: TextStyle(
-                                                  //                       fontWeight:
-                                                  //                           FontWeight
-                                                  //                               .w700,
-                                                  //                       color: Colors
-                                                  //                           .grey), // Light and grey
-                                                  //                 ),
-                                                  //               ],
-                                                  //             ),
-                                                  //           ),
-                                                  //           SizedBox(
-                                                  //             height: MediaQuery.of(
-                                                  //                         context)
-                                                  //                     .size
-                                                  //                     .height *
-                                                  //                 .01,
-                                                  //           ),
-                                                  //           Text.rich(
-                                                  //             TextSpan(
-                                                  //               children: [
-                                                  //                 TextSpan(
-                                                  //                   text:
-                                                  //                       'Rent: ',
-                                                  //                   style: TextStyle(
-                                                  //                       fontWeight:
-                                                  //                           FontWeight
-                                                  //                               .bold,
-                                                  //                       color:
-                                                  //                           blueColor), // Bold and black
-                                                  //                 ),
-                                                  //                 TextSpan(
-                                                  //                   text:
-                                                  //                       '${lease.amount}',
-                                                  //                   style: TextStyle(
-                                                  //                       fontWeight:
-                                                  //                           FontWeight
-                                                  //                               .w700,
-                                                  //                       color: Colors
-                                                  //                           .grey), // Light and grey
-                                                  //                 ),
-                                                  //               ],
-                                                  //             ),
-                                                  //           ),
-                                                  //           SizedBox(
-                                                  //             height: MediaQuery.of(
-                                                  //                         context)
-                                                  //                     .size
-                                                  //                     .height *
-                                                  //                 .01,
-                                                  //           ),
-                                                  //           Text.rich(
-                                                  //             TextSpan(
-                                                  //               children: [
-                                                  //                 TextSpan(
-                                                  //                   text:
-                                                  //                       'Created At: ',
-                                                  //                   style: TextStyle(
-                                                  //                       fontWeight:
-                                                  //                           FontWeight
-                                                  //                               .bold,
-                                                  //                       color:
-                                                  //                           blueColor), // Bold and black
-                                                  //                 ),
-                                                  //                 TextSpan(
-                                                  //                   text: formatDate(
-                                                  //                       '${lease.createdAt}'),
-                                                  //                   style: TextStyle(
-                                                  //                       fontWeight:
-                                                  //                           FontWeight
-                                                  //                               .w700,
-                                                  //                       color: Colors
-                                                  //                           .grey), // Light and grey
-                                                  //                 ),
-                                                  //               ],
-                                                  //             ),
-                                                  //           ),
-                                                  //         ],
-                                                  //       ),
-                                                  //     ),
-                                                  //     SizedBox(width: 5),
-                                                  //     Expanded(
-                                                  //       child: Column(
-                                                  //         crossAxisAlignment:
-                                                  //             CrossAxisAlignment
-                                                  //                 .start,
-                                                  //         children: <Widget>[
-                                                  //           SizedBox(
-                                                  //             height: MediaQuery.of(
-                                                  //                         context)
-                                                  //                     .size
-                                                  //                     .height *
-                                                  //                 .01,
-                                                  //           ),
-                                                  //           Text.rich(
-                                                  //             TextSpan(
-                                                  //               children: [
-                                                  //                 TextSpan(
-                                                  //                   text:
-                                                  //                       'Deposit Held ',
-                                                  //                   style: TextStyle(
-                                                  //                       fontWeight:
-                                                  //                           FontWeight
-                                                  //                               .bold,
-                                                  //                       color:
-                                                  //                           blueColor), // Bold and black
-                                                  //                 ),
-                                                  //                 TextSpan(
-                                                  //                   text:
-                                                  //                       '${lease.deposit}',
-                                                  //                   style: TextStyle(
-                                                  //                       fontWeight:
-                                                  //                           FontWeight
-                                                  //                               .w700,
-                                                  //                       color: Colors
-                                                  //                           .grey), // Light and grey
-                                                  //                 ),
-                                                  //               ],
-                                                  //             ),
-                                                  //           ),
-                                                  //           SizedBox(
-                                                  //             height: MediaQuery.of(
-                                                  //                         context)
-                                                  //                     .size
-                                                  //                     .height *
-                                                  //                 .01,
-                                                  //           ),
-                                                  //           Text.rich(
-                                                  //             TextSpan(
-                                                  //               children: [
-                                                  //                 TextSpan(
-                                                  //                   text:
-                                                  //                       'Charges: ',
-                                                  //                   style: TextStyle(
-                                                  //                       fontWeight:
-                                                  //                           FontWeight
-                                                  //                               .bold,
-                                                  //                       color:
-                                                  //                           blueColor), // Bold and black
-                                                  //                 ),
-                                                  //                 TextSpan(
-                                                  //                   text:
-                                                  //                       '${lease.recurringCharge}',
-                                                  //                   style: TextStyle(
-                                                  //                       fontWeight:
-                                                  //                           FontWeight
-                                                  //                               .w700,
-                                                  //                       color: Colors
-                                                  //                           .grey), // Light and grey
-                                                  //                 ),
-                                                  //               ],
-                                                  //             ),
-                                                  //           ),
-                                                  //           SizedBox(
-                                                  //             height: MediaQuery.of(
-                                                  //                         context)
-                                                  //                     .size
-                                                  //                     .height *
-                                                  //                 .01,
-                                                  //           ),
-                                                  //           Text.rich(
-                                                  //             TextSpan(
-                                                  //               children: [
-                                                  //                 TextSpan(
-                                                  //                   text:
-                                                  //                       'Updated At: ',
-                                                  //                   style: TextStyle(
-                                                  //                       fontWeight:
-                                                  //                           FontWeight
-                                                  //                               .bold,
-                                                  //                       color:
-                                                  //                           blueColor), // Bold and black
-                                                  //                 ),
-                                                  //                 TextSpan(
-                                                  //                   text: formatDate(
-                                                  //                       '${lease.updatedAt}'),
-                                                  //                   style: TextStyle(
-                                                  //                       fontWeight:
-                                                  //                           FontWeight
-                                                  //                               .w700,
-                                                  //                       color: Colors
-                                                  //                           .grey), // Light and grey
-                                                  //                 ),
-                                                  //               ],
-                                                  //             ),
-                                                  //           ),
-                                                  //           SizedBox(
-                                                  //             height: MediaQuery.of(
-                                                  //                         context)
-                                                  //                     .size
-                                                  //                     .height *
-                                                  //                 .01,
-                                                  //           ),
-                                                  //         ],
-                                                  //       ),
-                                                  //     ),
-                                                  //     Container(
-                                                  //       width: 40,
-                                                  //       child: Column(
-                                                  //         children: [
-                                                  //           IconButton(
-                                                  //             icon: FaIcon(
-                                                  //               FontAwesomeIcons
-                                                  //                   .edit,
-                                                  //               size: 20,
-                                                  //               color: Color
-                                                  //                   .fromRGBO(
-                                                  //                       21,
-                                                  //                       43,
-                                                  //                       83,
-                                                  //                       1),
-                                                  //             ),
-                                                  //             onPressed:
-                                                  //                 () async {
-                                                  //               Provider.of<SelectedCosignersProvider>(
-                                                  //                       context,
-                                                  //                       listen:
-                                                  //                           false)
-                                                  //                   .clearCosigner();
-                                                  //               Provider.of<SelectedTenantsProvider>(
-                                                  //                       context,
-                                                  //                       listen:
-                                                  //                           false)
-                                                  //                   .clearTenant();
-                                                  //               // handleEdit(Propertytype);
-                                                  //               var check = await Navigator.push(
-                                                  //                   context,
-                                                  //                   MaterialPageRoute(
-                                                  //                       builder: (context) => Edit_lease(
-                                                  //                             lease: lease,
-                                                  //                             leaseId: lease.leaseId!,
-                                                  //                           )));
-                                                  //               if (check ==
-                                                  //                   true) {
-                                                  //                 setState(() {
-                                                  //                   futureLease = LeaseRepository().fetchLease("");
-                                                  //                   //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                                                  //                 });
-                                                  //               }
-                                                  //             },
-                                                  //           ),
-                                                  //           IconButton(
-                                                  //             icon: FaIcon(
-                                                  //               FontAwesomeIcons
-                                                  //                   .trashCan,
-                                                  //               size: 20,
-                                                  //               color: Color
-                                                  //                   .fromRGBO(
-                                                  //                       21,
-                                                  //                       43,
-                                                  //                       83,
-                                                  //                       1),
-                                                  //             ),
-                                                  //             onPressed: () {
-                                                  //
-                                                  //               _attemptDeleteLease(context,lease);
-                                                  //               //handleDelete(Propertytype);
-                                                  //
-                                                  //             },
-                                                  //           ),
-                                                  //         ],
-                                                  //       ),
-                                                  //     ),
-                                                  //   ],
-                                                  // ),
                                                   Row(
                                                     children: [
                                                       FaIcon(
                                                         isExpanded
                                                             ? FontAwesomeIcons
-                                                            .sortUp
+                                                                .sortUp
                                                             : FontAwesomeIcons
-                                                            .sortDown,
+                                                                .sortDown,
                                                         size: 40,
                                                         color:
-                                                        Colors.transparent,
+                                                            Colors.transparent,
                                                       ),
                                                       Expanded(
                                                         child: Table(
@@ -1311,25 +994,43 @@ class _Lease_tableState extends State<Lease_table> {
                                                           },
                                                           children: [
                                                             _buildTableRow(
-                                                                'Rent Cycle:', _getDisplayValue(lease.rentCycle),
-                                                                'Deposites Held:', _getDisplayValue(lease.deposit.toString())
-                                                            ),
+                                                                'Rent Cycle:',
+                                                                _getDisplayValue(
+                                                                    lease
+                                                                        .rentCycle),
+                                                                'Deposites Held:',
+                                                                _getDisplayValue(
+                                                                    lease
+                                                                        .deposit
+                                                                        .toString())),
                                                             _buildTableRow(
-                                                                'Charges:', _getDisplayValue(lease.recurringCharge.toString()),
-                                                                'Rent Start:', formatDate('${lease.rentDueDate}')
-                                                            ),
+                                                                'Charges:',
+                                                                _getDisplayValue(lease
+                                                                    .recurringCharge
+                                                                    .toString()),
+                                                                'Rent Start:',
+                                                                formatDate(
+                                                                    '${lease.rentDueDate}')),
                                                             _buildTableRow(
-                                                                'Rent :', _getDisplayValue(lease.rentalUnit),
-                                                                'Created At:', formatDate('${lease.createdAt}')
-                                                            ),
+                                                                'Rent :',
+                                                                _getDisplayValue(
+                                                                    lease
+                                                                        .rentalUnit),
+                                                                'Created At:',
+                                                                formatDate(
+                                                                    '${lease.createdAt}')),
                                                             _buildTableRow(
-                                                                'Updated At:', formatDate('${lease.updatedAt}'),
-                                                                '', ''
-                                                            ),
+                                                                'Updated At:',
+                                                                formatDate(
+                                                                    '${lease.updatedAt}'),
+                                                                '',
+                                                                ''),
                                                           ],
                                                         ),
                                                       ),
-                                                      SizedBox(width: 5,),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
                                                       // Column(
                                                       //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       //   children: [
@@ -1390,86 +1091,126 @@ class _Lease_tableState extends State<Lease_table> {
                                                     children: [
                                                       Expanded(
                                                         child: GestureDetector(
-                                                          onTap:()async{
+                                                          onTap: () async {
                                                             Provider.of<SelectedCosignersProvider>(
-                                                                context,
-                                                                listen:
-                                                                false)
+                                                                    context,
+                                                                    listen:
+                                                                        false)
                                                                 .clearCosigner();
                                                             Provider.of<SelectedTenantsProvider>(
-                                                                context,
-                                                                listen:
-                                                                false)
+                                                                    context,
+                                                                    listen:
+                                                                        false)
                                                                 .clearTenant();
                                                             // handleEdit(Propertytype);
-                                                            var check = await Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder: (context) => Edit_lease(
-                                                                      lease: lease,
-                                                                      leaseId: lease.leaseId!,
-                                                                    )));
-                                                            if (check ==
-                                                                true) {
+                                                            var check = await Navigator
+                                                                .push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) =>
+                                                                            Edit_lease(
+                                                                              lease: lease,
+                                                                              leaseId: lease.leaseId!,
+                                                                            )));
+                                                            if (check == true) {
                                                               setState(() {
-                                                                futureLease = LeaseRepository().fetchLease("");
+                                                                futureLease =
+                                                                    LeaseRepository()
+                                                                        .fetchLease(
+                                                                            "");
                                                                 //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
                                                               });
                                                             }
                                                           },
                                                           child: Container(
-                                                            height:40,
+                                                            height: 40,
                                                             decoration: BoxDecoration(
-                                                                color: Colors.grey[350]
-                                                            ),                                               // color:Colors.grey[100],
+                                                                color: Colors
+                                                                        .grey[
+                                                                    350]), // color:Colors.grey[100],
                                                             child: Row(
                                                               mainAxisAlignment:
-                                                              MainAxisAlignment.center,
+                                                                  MainAxisAlignment
+                                                                      .center,
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment.center,
+                                                                  CrossAxisAlignment
+                                                                      .center,
                                                               children: [
                                                                 FaIcon(
-                                                                  FontAwesomeIcons.edit,
+                                                                  FontAwesomeIcons
+                                                                      .edit,
                                                                   size: 15,
-                                                                  color:blueColor,
+                                                                  color:
+                                                                      blueColor,
                                                                 ),
-                                                                SizedBox(width: 10,),
-                                                                Text("Edit",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                                                                SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                Text(
+                                                                  "Edit",
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                          blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                ),
                                                               ],
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(width: 5,),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
                                                       Expanded(
                                                         child: GestureDetector(
-                                                          onTap:(){
-                                                            _attemptDeleteLease(context,lease);
+                                                          onTap: () {
+                                                            _attemptDeleteLease(
+                                                                context, lease);
                                                           },
                                                           child: Container(
-                                                            height:40,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors.grey[350]
-                                                            ),
+                                                            height: 40,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        350]),
                                                             child: Row(
                                                               mainAxisAlignment:
-                                                              MainAxisAlignment.center,
+                                                                  MainAxisAlignment
+                                                                      .center,
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment.center,
+                                                                  CrossAxisAlignment
+                                                                      .center,
                                                               children: [
                                                                 FaIcon(
-                                                                  FontAwesomeIcons.trashCan,
+                                                                  FontAwesomeIcons
+                                                                      .trashCan,
                                                                   size: 15,
-                                                                  color:blueColor,
+                                                                  color:
+                                                                      blueColor,
                                                                 ),
-                                                                SizedBox(width: 10,),
-                                                                Text("Delete",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
+                                                                SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                Text(
+                                                                  "Delete",
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                          blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                )
                                                               ],
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(width: 5,),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
                                                       Expanded(
                                                         child: GestureDetector(
                                                           onTap: () {
@@ -1479,35 +1220,52 @@ class _Lease_tableState extends State<Lease_table> {
                                                                     builder: (context) =>
                                                                         SummeryPageLease(
                                                                             leaseId:
-                                                                            lease.leaseId!)));
-
+                                                                                lease.leaseId!)));
                                                           },
                                                           child: Container(
-                                                            height:40,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors.grey[350]
-                                                            ),
+                                                            height: 40,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        350]),
                                                             child: Row(
                                                               mainAxisAlignment:
-                                                              MainAxisAlignment.center,
+                                                                  MainAxisAlignment
+                                                                      .center,
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment.center,
+                                                                  CrossAxisAlignment
+                                                                      .center,
                                                               children: [
-                                                                SizedBox(width: 5,),
-                                                                Image.asset('assets/icons/view.png'),
+                                                                SizedBox(
+                                                                  width: 5,
+                                                                ),
+                                                                Image.asset(
+                                                                    'assets/icons/view.png'),
                                                                 // FaIcon(
                                                                 //   FontAwesomeIcons.trashCan,
                                                                 //   size: 15,
                                                                 //   color:blueColor,
                                                                 // ),
-                                                                SizedBox(width: 8,),
-                                                                Text("View Summery",style: TextStyle(fontSize: 11,color: blueColor,fontWeight: FontWeight.bold),)
+                                                                SizedBox(
+                                                                  width: 8,
+                                                                ),
+                                                                Text(
+                                                                  "View Summery",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          11,
+                                                                      color:
+                                                                          blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                )
                                                               ],
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-
                                                     ],
                                                   ),
                                                 ],
@@ -1549,13 +1307,16 @@ class _Lease_tableState extends State<Lease_table> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                            onChanged: data.length >
+                                                    itemsPerPageOptions
+                                                        .first // Condition to check if dropdown should be enabled
                                                 ? (newValue) {
-                                              setState(() {
-                                                itemsPerPage = newValue!;
-                                                currentPage = 0; // Reset to first page when items per page change
-                                              });
-                                            }
+                                                    setState(() {
+                                                      itemsPerPage = newValue!;
+                                                      currentPage =
+                                                          0; // Reset to first page when items per page change
+                                                    });
+                                                  }
                                                 : null,
                                           ),
                                         ),
@@ -1637,20 +1398,32 @@ class _Lease_tableState extends State<Lease_table> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                   return Container(
-                        height: MediaQuery.of(context).size.height * .5,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
-                              SizedBox(height: 10,),
-                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
-                            ],
-                          ),
+                    return Container(
+                      height: MediaQuery.of(context).size.height * .5,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/images/no_data.jpg",
+                              height: 200,
+                              width: 200,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              "No Data Available",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                  fontSize: 16),
+                            )
+                          ],
                         ),
-                      );
+                      ),
+                    );
                   } else {
                     List<Lease1>? filteredData = [];
                     _tableData = snapshot.data!;
@@ -1753,14 +1526,15 @@ class _Lease_tableState extends State<Lease_table> {
                                         children: [
                                           //_buildDataCell(_pagedData[i].rentalOwnerFirstName!),
                                           InkWell(
-                                            onTap:(){
+                                            onTap: () {
                                               Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           SummeryPageLease(
-                                                              leaseId:
-                                                              _pagedData[i].leaseId!)));
+                                                              leaseId: _pagedData[
+                                                                      i]
+                                                                  .leaseId!)));
                                             },
                                             child: _buildDataCell(
                                                 '${_pagedData[i].rentalAddress ?? ''}${_pagedData[i].tenantNames ?? ''}'),
@@ -1811,7 +1585,9 @@ class _Lease_tableState extends State<Lease_table> {
       ),
     );
   }
-  TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel, String rightValue) {
+
+  TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel,
+      String rightValue) {
     return TableRow(
       children: [
         TableCell(
@@ -1822,7 +1598,8 @@ class _Lease_tableState extends State<Lease_table> {
               children: [
                 Text(
                   leftLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
                 SizedBox(height: 2.0), // Space between label and value
                 Text(
@@ -1841,7 +1618,8 @@ class _Lease_tableState extends State<Lease_table> {
               children: [
                 Text(
                   rightLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
                 SizedBox(height: 2.0), // Space between label and value
                 Text(
@@ -1936,98 +1714,6 @@ class _Lease_tableState extends State<Lease_table> {
       ),
     );
   }
-
-  // Widget _buildHeader<T>(String text, int columnIndex,
-  //     Comparable<T> Function(Lease1 d)? getField) {
-  //   return Container(
-  //     height: 70,
-  //     child: TableCell(
-  //       child: InkWell(
-  //         onTap: getField != null
-  //             ? () {
-  //                 _sort(getField, columnIndex, !_sortAscending);
-  //               }
-  //             : null,
-  //         child: Padding(
-  //           padding: const EdgeInsets.all(8.0),
-  //           child: Row(
-  //             children: [
-  //               Text(text,
-  //                   style:
-  //                       TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-  //               if (getField != null)
-  //                 Icon(
-  //                   _sortColumnIndex == columnIndex
-  //                       ? (_sortAscending
-  //                           ? Icons.arrow_drop_up_outlined
-  //                           : Icons.arrow_drop_down_outlined)
-  //                       : Icons
-  //                           .arrow_drop_down_outlined, // Default icon for unsorted columns
-  //                 ),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildDataCell(String text) {
-  //   return Padding(
-  //     padding: const EdgeInsets.all(5.0),
-  //     child: Container(
-  //       height: 60,
-  //       child: TableCell(
-  //         child: Padding(
-  //           padding: const EdgeInsets.all(10.0),
-  //           child: Center(child: Text(text, style: TextStyle(fontSize: 18))),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildActionsCell(Lease1 data) {
-  //   return Padding(
-  //     padding: const EdgeInsets.all(5.0),
-  //     child: Container(
-  //       height: 50,
-  //       child: TableCell(
-  //         child: Row(
-  //           children: [
-  //             InkWell(
-  //               onTap: () {
-  //                 handleEdit(data);
-  //               },
-  //               child: Container(
-  //                 margin: EdgeInsets.only(top: 8, left: 8),
-  //                 child: FaIcon(
-  //                   FontAwesomeIcons.edit,
-  //                   size: 30,
-  //                 ),
-  //               ),
-  //             ),
-  //             SizedBox(
-  //               width: 6,
-  //             ),
-  //             InkWell(
-  //               onTap: () {
-  //                 handleDelete(data);
-  //               },
-  //               child: Container(
-  //                 margin: EdgeInsets.only(top: 8, left: 8),
-  //                 child: FaIcon(
-  //                   FontAwesomeIcons.trashCan,
-  //                   size: 30,
-  //                 ),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 
   Widget _buildPaginationControls() {
     int numorpages = 1;

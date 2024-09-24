@@ -65,7 +65,7 @@ class Entry {
     return Entry(
       account: json['account'],
       amount: json['amount'],
-      dueAmount: json['due_amount'],
+      dueAmount: json['due_amount'] != null ?  json['due_amount'] : 0,
       memo: json['memo'],
       date: json['date'],
       chargeType: json['charge_type'],

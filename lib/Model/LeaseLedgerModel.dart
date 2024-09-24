@@ -1,3 +1,7 @@
+
+
+import 'dart:developer';
+
 class LeaseLedger {
   List<Data>? data;
   double? totalBalance; // Adjusted to double
@@ -6,7 +10,7 @@ class LeaseLedger {
   LeaseLedger({this.data, this.totalBalance, this.message});
 
   LeaseLedger.fromJson(Map<String, dynamic> json) {
-    print(json);
+  //  log(json.toString());
     if (json['data'] != null) {
       data = [];
       json['data'].forEach((v) {
@@ -37,6 +41,8 @@ class Data {
   String? response;
   String? paymenttype;
   String? transactionid;
+  String? customer_vault_id;
+  String? billing_id;
   List<Entry>? entry;
   double? totalAmount; // Adjusted to double
   double? surcharge; // Adjusted to double
@@ -46,6 +52,7 @@ class Data {
   String? createdAt;
   String? updatedAt;
   bool? isDelete;
+  String? paymentId;
   int? iV;
   dynamic tenantData; // tenantData is dynamic to handle any JSON structure
   double? balance; // Adjusted to double
@@ -69,7 +76,10 @@ class Data {
     this.iV,
     this.tenantData,
     this.balance,
-    this.surcharge
+    this.surcharge,
+    this.customer_vault_id,
+    this.paymentId,
+    this.billing_id
   });
 
   Data.fromJson(Map<String, dynamic> json) {
@@ -96,8 +106,11 @@ class Data {
     updatedAt = json['updatedAt'];
     isDelete = json['is_delete'];
     iV = json['__v'];
+    paymentId = json['payment_id'];
     tenantData = json['tenantData'];
     balance = (json['balance'] as num?)?.toDouble()??0.0; // Parse as double
+    customer_vault_id = json['customer_vault_id'].toString() ?? "";
+    billing_id = json['billing_id'].toString() ??"";
   }
 
   Map<String, dynamic> toJson() {

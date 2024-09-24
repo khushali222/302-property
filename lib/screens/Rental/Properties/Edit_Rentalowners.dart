@@ -21,18 +21,20 @@ import '../../../repository/rental_properties.dart';
 import '../../../widgets/drawer_tiles.dart';
 import 'package:http/http.dart' as http;
 import '../../../widgets/custom_drawer.dart';
+
 class EditRentalowners extends StatefulWidget {
   final String rentalId;
   final String pro_id;
 
-  const EditRentalowners({super.key, required this.rentalId,required this.pro_id});
+  const EditRentalowners(
+      {super.key, required this.rentalId, required this.pro_id});
 
   @override
   State<EditRentalowners> createState() => _EditRentalownersState();
 }
 
 class _EditRentalownersState extends State<EditRentalowners> {
-  String? processor_id ;
+  String? processor_id;
   @override
   void initState() {
     super.initState();
@@ -47,61 +49,63 @@ class _EditRentalownersState extends State<EditRentalowners> {
     //addPropertyGroup();
     fetchOwners();
     fetchDetails1(widget.rentalId);
-
   }
 
   Future<void> fetchDetails1(String rentalId) async {
- //   try {
-      Rentals fetchedDetails =
-          await Properies_summery_Repo().fetchrentalDetails(rentalId);
-      print(fetchedDetails);
-      print(rentalId);
-      print(fetchedDetails.rentalCountry);
-      print(fetchedDetails.rentalOwnerData?.rentalOwnerName);
-      await Future.delayed(const Duration(seconds: 1));
-      setState(() {
-        print(fetchedDetails.rentalAddress);
-        // selectedpropertytype = fetchedDetails.propertyTypeData?.propertyType;
-        Ownersdetails = RentalOwner(
-          rentalOwnerId: fetchedDetails.rentalOwnerId,
-          rentalOwnerPhoneNumber:
-              fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber,
-          rentalOwnerName: fetchedDetails.rentalOwnerData!.rentalOwnerName,
-        );
-        firstname.text = fetchedDetails.rentalOwnerData!.rentalOwnerName!;
-        comname.text = fetchedDetails.rentalOwnerData!.rentalOwnerCompanyName!;
-        primaryemail.text =
-            fetchedDetails.rentalOwnerData!.rentalOwnerPrimaryEmail!;
-        alternativeemail.text =
-            fetchedDetails.rentalOwnerData!.rentalOwnerAlternativeEmail!;
-        print(alternativeemail);
-        phonenum.text = fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber!;
-        print(phonenum);
-        homenum.text = fetchedDetails.rentalOwnerData!.rentalOwnerHomeNumber!;
-        print(homenum);
-        businessnum.text =
-            fetchedDetails.rentalOwnerData!.rentalOwnerBuisinessNumber!;
+    //   try {
+    Rentals fetchedDetails =
+        await Properies_summery_Repo().fetchrentalDetails(rentalId);
+    print(fetchedDetails);
+    print(rentalId);
+    print(fetchedDetails.rentalCountry);
+    print(fetchedDetails.rentalOwnerData?.rentalOwnerName);
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      print(fetchedDetails.rentalAddress);
+      // selectedpropertytype = fetchedDetails.propertyTypeData?.propertyType;
+      Ownersdetails = RentalOwner(
+        rentalOwnerId: fetchedDetails.rentalOwnerId,
+        rentalOwnerPhoneNumber:
+            fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber,
+        rentalOwnerName: fetchedDetails.rentalOwnerData!.rentalOwnerName,
+      );
+      firstname.text = fetchedDetails.rentalOwnerData!.rentalOwnerName!;
+      comname.text = fetchedDetails.rentalOwnerData!.rentalOwnerCompanyName!;
+      primaryemail.text =
+          fetchedDetails.rentalOwnerData!.rentalOwnerPrimaryEmail!;
+      alternativeemail.text =
+          fetchedDetails.rentalOwnerData!.rentalOwnerAlternativeEmail!;
+      print(alternativeemail);
+      phonenum.text = fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber!;
+      print(phonenum);
+      homenum.text = fetchedDetails.rentalOwnerData!.rentalOwnerHomeNumber!;
+      print(homenum);
+      businessnum.text =
+          fetchedDetails.rentalOwnerData!.rentalOwnerBuisinessNumber!;
 
-        street2.text = fetchedDetails.rentalOwnerData!.Address!;
-        city2.text = fetchedDetails.rentalOwnerData!.city!;
-        state2.text = fetchedDetails.rentalOwnerData!.state!;
-        county2.text = fetchedDetails.rentalOwnerData!.country!;
-        code2.text = fetchedDetails.rentalOwnerData!.postalCode!;
-        _processorGroups.clear();
-        var processorList = fetchedDetails.rentalOwnerData!.processorList;
-        for (var processor in processorList!) {
-          var controller = TextEditingController(text: processor["processor_id"] ?? 'N/A');
-          _processorGroups.add(ProcessorGroup(isChecked: processor["processor_id"] == widget.pro_id, controller: controller));
-        }
-        print(_processorGroups.length);
-        // _selectedProperty = fetchedDetails.rentalId; // Uncomment and update based on your use case
-      });
-   /* } catch (e) {
+      street2.text = fetchedDetails.rentalOwnerData!.Address!;
+      city2.text = fetchedDetails.rentalOwnerData!.city!;
+      state2.text = fetchedDetails.rentalOwnerData!.state!;
+      county2.text = fetchedDetails.rentalOwnerData!.country!;
+      code2.text = fetchedDetails.rentalOwnerData!.postalCode!;
+      _processorGroups.clear();
+      var processorList = fetchedDetails.rentalOwnerData!.processorList;
+      for (var processor in processorList!) {
+        var controller =
+            TextEditingController(text: processor["processor_id"] ?? 'N/A');
+        _processorGroups.add(ProcessorGroup(
+            isChecked: processor["processor_id"] == widget.pro_id,
+            controller: controller));
+      }
+      print(_processorGroups.length);
+      // _selectedProperty = fetchedDetails.rentalId; // Uncomment and update based on your use case
+    });
+    /* } catch (e) {
       print('Failed to fetch property details: $e');
     }*/
   }
 
-  Owner? selectedOwner ;
+  Owner? selectedOwner;
   Owner? rentalOwnerId;
   Owner? getSelectedOwner() {
     for (int i = 0; i < selected.length; i++) {
@@ -239,17 +243,14 @@ class _EditRentalownersState extends State<EditRentalowners> {
           focusNode: _nodeText1,
         ),
         KeyboardActionsItem(
-            focusNode: _nodeText2,
+          focusNode: _nodeText2,
         ),
         KeyboardActionsItem(
           focusNode: _nodeText3,
-
         ),
         KeyboardActionsItem(
           focusNode: _nodeText4,
-
         ),
-
       ],
     );
   }
@@ -258,7 +259,10 @@ class _EditRentalownersState extends State<EditRentalowners> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
-      drawer:CustomDrawer(currentpage: "Properties",dropdown: true,),
+      drawer: CustomDrawer(
+        currentpage: "Properties",
+        dropdown: true,
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(25.0),
@@ -329,245 +333,279 @@ class _EditRentalownersState extends State<EditRentalowners> {
                 ),
                 SizedBox(height: 25),
                 isChecked
-                    ?
-                Column(
-                  children: [
-                    SizedBox(
-                        height: 2.0),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Material(
-                            elevation: 3,
-                            borderRadius:
-                            BorderRadius
-                                .circular(
-                                5),
-                            child:
-                            Container(
-                              height: MediaQuery.of(context).size.width < 500 ?50:60,
-                              decoration:
-                              BoxDecoration(
-                                borderRadius:
-                                BorderRadius.circular(
-                                    5),
-                                // color: Colors
-                                //     .white,
-                                border: Border.all(
-                                    color:
-                                    Color(0xFF8A95A8)),
-                              ),
-                              child:
-                              Stack(
-                                children: [
-                                  Positioned
-                                      .fill(
-                                    child:
-                                    TextField(
-                                      style:  TextStyle(
-                                        color:
-                                        Colors.black,
-                                        fontSize:
-                                        13,
-                                      ),
-                                      controller:
-                                      searchController,
-                                      //keyboardType: TextInputType.emailAddress,
-                                      onChanged:
-                                          (value) {
-                                        setState(() {
-                                          if (value != "") filteredOwners = owners.where((element) => element.rentalOwnername.toLowerCase().contains(value.toLowerCase())).toList();
-                                          if (value == "") {
-                                            filteredOwners = owners;
-                                          }
-                                        });
-                                      },
-                                      cursorColor: Color.fromRGBO(
-                                          21,
-                                          43,
-                                          81,
-                                          1),
-                                      decoration:
-                                      InputDecoration(
-                                        border: InputBorder.none,
-                                        contentPadding: EdgeInsets.only(top: 13, bottom: 13, left: 14),
-                                        hintText: "Search by first and last name",
-                                        hintStyle: TextStyle(
-                                          color: Color(0xFF8A95A8),
-                                          fontSize: MediaQuery.of(context).size.width < 500 ?14:17,
-                                        ),
-                                      ),
+                    ? Column(
+                        children: [
+                          SizedBox(height: 2.0),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Material(
+                                  elevation: 3,
+                                  borderRadius: BorderRadius.circular(5),
+                                  child: Container(
+                                    height:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 50
+                                            : 60,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      // color: Colors
+                                      //     .white,
+                                      border:
+                                          Border.all(color: Color(0xFF8A95A8)),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                        height: 16.0),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            decoration:
-                            BoxDecoration(
-                              borderRadius:
-                              BorderRadius
-                                  .circular(
-                                  5),
-
-                              border: Border.all(
-                                  color: blueColor),
-                            ),
-                            child: DataTable(
-                              border: TableBorder(
-                                horizontalInside: BorderSide(
-                                  color: Color.fromRGBO(21, 43, 81, 1),
-                                  width: 1.0,
-                                ),
-
-                              ),
-                              columnSpacing: 10,
-                              headingRowHeight:
-                              MediaQuery.of(context).size.width < 500 ?55:60,
-                              dataRowHeight:  MediaQuery.of(context).size.width < 500 ?50:60,
-                              // horizontalMargin: 10,
-                              columns: [
-                                DataColumn(
-                                    label:
-                                    Expanded(
-                                      child: Text(
-                                        'Rentalowner \nName',
-                                        style: TextStyle(
-                                            fontSize:
-                                            MediaQuery.of(context).size.width < 500 ? 14 : 18,
-                                            fontWeight:
-                                            FontWeight.bold,color: blueColor
-                                        ),
-                                      ),
-                                    )),
-                                DataColumn(
-                                    label:
-                                    Expanded(
-                                      child: Text(
-                                        'Processor ID  ',
-                                        style: TextStyle(
-                                            fontSize:
-                                            MediaQuery.of(context).size.width < 500 ? 14 : 18,
-                                            fontWeight:
-                                            FontWeight.bold,
-                                            color: blueColor
-                                        ),
-                                      ),
-                                    )),
-                                DataColumn(
-                                    label:
-                                    Expanded(
-                                      child: Text(
-                                        'Select ',
-                                        style: TextStyle(
-                                            fontSize:
-                                            MediaQuery.of(context).size.width < 500 ? 14 : 18,
-                                            fontWeight:
-                                            FontWeight.bold,
-                                            color: blueColor
-                                        ),
-                                      ),
-                                    )),
-                              ],
-                              rows: List<
-                                  DataRow>.generate(
-                                filteredOwners
-                                    .length,
-                                    (index) =>
-                                    DataRow(
-                                      cells: [
-                                        DataCell(
-                                          Text(
-                                            '${filteredOwners[index].rentalOwnername} '
-                                                '(${filteredOwners[index].phoneNumber})',
+                                    child: Stack(
+                                      children: [
+                                        Positioned.fill(
+                                          child: TextField(
                                             style: TextStyle(
-                                                fontSize:
-                                                MediaQuery.of(context).size.width < 500 ? 13 : 18),
-                                          ),
-                                        ),
-                                        DataCell(
-                                          Text(
-                                            filteredOwners[index]
-                                                .processorList
-                                                .map((processor) =>
-                                            processor.processorId)
-                                                .join('\n'), // Join processor IDs with newline
-                                            style: TextStyle(
-                                                fontSize:
-                                                MediaQuery.of(context).size.width < 500 ? 13 : 18),
-                                          ),
-                                        ),
-                                        DataCell(
-
-                                          SizedBox(
-                                            height:
-                                            10,
-                                            width:
-                                            35,
-                                            child:
-                                            Checkbox(
-                                              value:
-                                              selectedIndex == index,
-                                              onChanged:
-                                                  (bool? value) {
-                                                setState(() {
-                                                  if (value != null && value) {
-                                                    selectedIndex = index;
-                                                    selectedOwner = filteredOwners[index];
-                                                    firstname.text = selectedOwner!.rentalOwnername;
-                                                    comname.text = selectedOwner!.companyName;
-                                                    primaryemail.text = selectedOwner!.primaryEmail;
-                                                    alternativeemail.text = selectedOwner!.alternateEmail;
-                                                    homenum.text = selectedOwner!.homeNumber ?? '';
-                                                    phonenum.text = selectedOwner!.phoneNumber;
-                                                    businessnum.text = selectedOwner!.businessNumber ?? '';
-                                                    street2.text = selectedOwner!.streetAddress;
-                                                    city2.text = selectedOwner!.city;
-                                                    state2.text = selectedOwner!.state;
-                                                    county2.text = selectedOwner!.country;
-                                                    code2.text = selectedOwner!.postalCode;
-                                                    proid.text = selectedOwner!.processorList.map((processor) => processor.processorId).join(', ');
-                                                  } else {
-                                                    selectedIndex = null;
-                                                  }
-                                                  isChecked2 = true;
-                                                  isChecked = false;
-                                                  _processorGroups.clear();
-                                                  for (Processor processor in selectedOwner!.processorList) {
-                                                    _processorGroups.add(ProcessorGroup(isChecked: false, controller: TextEditingController(text: processor.processorId)));
-                                                  }
-                                                });
-                                              },
-                                              activeColor: Color.fromRGBO(
-                                                  21,
-                                                  43,
-                                                  81,
-                                                  1),
+                                              color: Colors.black,
+                                              fontSize: 13,
+                                            ),
+                                            controller: searchController,
+                                            //keyboardType: TextInputType.emailAddress,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                if (value != "")
+                                                  filteredOwners = owners
+                                                      .where((element) => element
+                                                          .rentalOwnername
+                                                          .toLowerCase()
+                                                          .contains(value
+                                                              .toLowerCase()))
+                                                      .toList();
+                                                if (value == "") {
+                                                  filteredOwners = owners;
+                                                }
+                                              });
+                                            },
+                                            cursorColor:
+                                                Color.fromRGBO(21, 43, 81, 1),
+                                            decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              contentPadding: EdgeInsets.only(
+                                                  top: 13,
+                                                  bottom: 13,
+                                                  left: 14),
+                                              hintText:
+                                                  "Search by first and last name",
+                                              hintStyle: TextStyle(
+                                                color: Color(0xFF8A95A8),
+                                                fontSize: MediaQuery.of(context)
+                                                            .size
+                                                            .width <
+                                                        500
+                                                    ? 14
+                                                    : 17,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ],
                                     ),
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-
-                  ],
-                )
-                    :
-                Material(
+                          SizedBox(height: 16.0),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(color: blueColor),
+                                  ),
+                                  child: DataTable(
+                                    border: TableBorder(
+                                      horizontalInside: BorderSide(
+                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                    columnSpacing: 10,
+                                    headingRowHeight:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 55
+                                            : 60,
+                                    dataRowHeight:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 50
+                                            : 60,
+                                    // horizontalMargin: 10,
+                                    columns: [
+                                      DataColumn(
+                                          label: Expanded(
+                                        child: Text(
+                                          'Rentalowner \nName',
+                                          style: TextStyle(
+                                              fontSize: MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                      500
+                                                  ? 14
+                                                  : 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
+                                        ),
+                                      )),
+                                      DataColumn(
+                                          label: Expanded(
+                                        child: Text(
+                                          'Processor ID  ',
+                                          style: TextStyle(
+                                              fontSize: MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                      500
+                                                  ? 14
+                                                  : 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
+                                        ),
+                                      )),
+                                      DataColumn(
+                                          label: Expanded(
+                                        child: Text(
+                                          'Select ',
+                                          style: TextStyle(
+                                              fontSize: MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                      500
+                                                  ? 14
+                                                  : 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
+                                        ),
+                                      )),
+                                    ],
+                                    rows: List<DataRow>.generate(
+                                      filteredOwners.length,
+                                      (index) => DataRow(
+                                        cells: [
+                                          DataCell(
+                                            Text(
+                                              '${filteredOwners[index].rentalOwnername} '
+                                              '(${filteredOwners[index].phoneNumber})',
+                                              style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 13
+                                                          : 18),
+                                            ),
+                                          ),
+                                          DataCell(
+                                            Text(
+                                              filteredOwners[index]
+                                                  .processorList
+                                                  .map((processor) =>
+                                                      processor.processorId)
+                                                  .join(
+                                                      '\n'), // Join processor IDs with newline
+                                              style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 13
+                                                          : 18),
+                                            ),
+                                          ),
+                                          DataCell(
+                                            SizedBox(
+                                              height: 10,
+                                              width: 35,
+                                              child: Checkbox(
+                                                value: selectedIndex == index,
+                                                onChanged: (bool? value) {
+                                                  setState(() {
+                                                    if (value != null &&
+                                                        value) {
+                                                      selectedIndex = index;
+                                                      selectedOwner =
+                                                          filteredOwners[index];
+                                                      firstname.text =
+                                                          selectedOwner!
+                                                              .rentalOwnername;
+                                                      comname.text =
+                                                          selectedOwner!
+                                                              .companyName;
+                                                      primaryemail.text =
+                                                          selectedOwner!
+                                                              .primaryEmail;
+                                                      alternativeemail.text =
+                                                          selectedOwner!
+                                                              .alternateEmail;
+                                                      homenum.text =
+                                                          selectedOwner!
+                                                                  .homeNumber ??
+                                                              '';
+                                                      phonenum.text =
+                                                          selectedOwner!
+                                                              .phoneNumber;
+                                                      businessnum
+                                                          .text = selectedOwner!
+                                                              .businessNumber ??
+                                                          '';
+                                                      street2.text =
+                                                          selectedOwner!
+                                                              .streetAddress;
+                                                      city2.text =
+                                                          selectedOwner!.city;
+                                                      state2.text =
+                                                          selectedOwner!.state;
+                                                      county2.text =
+                                                          selectedOwner!
+                                                              .country;
+                                                      code2.text =
+                                                          selectedOwner!
+                                                              .postalCode;
+                                                      proid.text = selectedOwner!
+                                                          .processorList
+                                                          .map((processor) =>
+                                                              processor
+                                                                  .processorId)
+                                                          .join(', ');
+                                                    } else {
+                                                      selectedIndex = null;
+                                                    }
+                                                    isChecked2 = true;
+                                                    isChecked = false;
+                                                    _processorGroups.clear();
+                                                    for (Processor processor
+                                                        in selectedOwner!
+                                                            .processorList) {
+                                                      _processorGroups.add(ProcessorGroup(
+                                                          isChecked: false,
+                                                          controller:
+                                                              TextEditingController(
+                                                                  text: processor
+                                                                      .processorId)));
+                                                    }
+                                                  });
+                                                },
+                                                activeColor: Color.fromRGBO(
+                                                    21, 43, 81, 1),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      )
+                    : Material(
                         elevation: 6,
                         borderRadius: BorderRadius.circular(10),
                         child: Container(
@@ -1084,7 +1122,11 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                             ? 14
                                                             : 15,
                                                   ),
-                                                  keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true), // Adjust as needed
+                                                  keyboardType: TextInputType
+                                                      .numberWithOptions(
+                                                          signed: true,
+                                                          decimal:
+                                                              true), // Adjust as needed
                                                   onChanged: (value) {
                                                     setState(() {
                                                       phonenumerror = false;
@@ -1173,7 +1215,11 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                             ? 14
                                                             : 15,
                                                   ),
-                                                  keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true), // Adjust as needed
+                                                  keyboardType: TextInputType
+                                                      .numberWithOptions(
+                                                          signed: true,
+                                                          decimal:
+                                                              true), // Adjust as needed
                                                   onChanged: (value) {
                                                     setState(() {
                                                       homenumerror = false;
@@ -1262,7 +1308,11 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                             ? 14
                                                             : 15,
                                                   ),
-                                                  keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true), // Adjust as needed
+                                                  keyboardType: TextInputType
+                                                      .numberWithOptions(
+                                                          signed: true,
+                                                          decimal:
+                                                              true), // Adjust as needed
                                                   onChanged: (value) {
                                                     setState(() {
                                                       businessnumerror = false;
@@ -1800,7 +1850,10 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                       child: TextField(
                                                         focusNode: _nodeText4,
                                                         controller: code2,
-                                                        keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                                                        keyboardType: TextInputType
+                                                            .numberWithOptions(
+                                                                signed: true,
+                                                                decimal: true),
                                                         style: TextStyle(
                                                           color: Colors.black,
                                                           fontSize: MediaQuery.of(
@@ -1876,244 +1929,6 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                       height:
                                           MediaQuery.of(context).size.height *
                                               0.01),
-                                //  if (selectedOwner != null)
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 13),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  "Merchant Id",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Color(0xFF8A95A8),
-                                                      fontSize: 14),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(height: 5),
-                                            Column(
-                                              children: [
-                                                Column(
-                                                    children: _processorGroups
-                                                        .map((group) {
-                                                  return Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 8.0),
-                                                    child: Row(
-                                                      children: [
-                                                        SizedBox(
-                                                          width: 20.0,
-                                                          height: 20.0,
-                                                          child: Checkbox(
-                                                            value: group
-                                                                ?.isChecked,
-                                                            onChanged: (value) {
-                                                              setState(() {
-                                                                group?.isChecked =
-                                                                    value ??
-                                                                        false;
-                                                                processor_id = group.controller.text;
-                                                              });
-                                                            },
-                                                            activeColor:
-                                                                Color.fromRGBO(
-                                                                    21,
-                                                                    43,
-                                                                    81,
-                                                                    1),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                .02),
-                                                        Expanded(
-                                                          child: Material(
-                                                            elevation: 3,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        5),
-                                                            child: Container(
-                                                              height: 50,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                                color: Colors
-                                                                    .white,
-                                                                border: Border.all(
-                                                                    color: Color(
-                                                                        0xFF8A95A8)),
-                                                              ),
-                                                              child: Stack(
-                                                                children: [
-                                                                  Positioned
-                                                                      .fill(
-                                                                    child:
-                                                                        TextField(
-                                                                      controller:
-                                                                          group
-                                                                              .controller,
-                                                                      cursorColor:
-                                                                          Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              81,
-                                                                              1),
-                                                                      decoration:
-                                                                          InputDecoration(
-                                                                        border:
-                                                                            InputBorder.none,
-                                                                        contentPadding: EdgeInsets.only(
-                                                                            top:
-                                                                                12.5,
-                                                                            bottom:
-                                                                                12.5,
-                                                                            left:
-                                                                                15),
-                                                                        hintText:
-                                                                            "Enter processor",
-                                                                        hintStyle:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              Color(0xFF8A95A8),
-                                                                          fontSize:
-                                                                              13,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                .02),
-                                                        InkWell(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              _processorGroups
-                                                                  .remove(
-                                                                      group);
-                                                            });
-                                                          },
-                                                          child: Container(
-                                                            padding:
-                                                                EdgeInsets.zero,
-                                                            child: FaIcon(
-                                                              FontAwesomeIcons
-                                                                  .trashCan,
-                                                              size: 20,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      81,
-                                                                      1),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  );
-                                                }).toList())
-                                              ],
-                                            ),
-                                            SizedBox(
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.01),
-                                            Row(
-                                              children: [
-                                                // Handle error display here if needed
-                                              ],
-                                            ),
-
-                                        ],
-                                      ),
-                                    ),
-                                  SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.01),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        width: 13,
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            print("calling");
-                                            _processorGroups.add(ProcessorGroup(
-                                                isChecked: false,
-                                                controller:
-                                                    TextEditingController()));
-                                            print(_processorGroups.length);
-                                          });
-                                        },
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          child: Container(
-                                            height: 40.0,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .3,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                              color:
-                                                  Color.fromRGBO(21, 43, 81, 1),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.grey,
-                                                  offset:
-                                                      Offset(0.0, 1.0), //(x,y)
-                                                  blurRadius: 6.0,
-                                                ),
-                                              ],
-                                            ),
-                                            child: Center(
-                                              child: isLoading
-                                                  ? SpinKitFadingCircle(
-                                                      color: Colors.white,
-                                                      size: 25.0,
-                                                    )
-                                                  : Text(
-                                                      "Add another",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 10),
-                                                    ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
                                   SizedBox(
                                       height:
                                           MediaQuery.of(context).size.height *
@@ -2128,14 +1943,19 @@ class _EditRentalownersState extends State<EditRentalowners> {
                   children: [
                     GestureDetector(
                       onTap: () async {
+                        List<ProcessorList> selectedProcessors =
+                            _processorGroups
+                                //  .where((group) => group.isChecked)
+                                .map((group) => ProcessorList(
+                                    processorId: group.controller.text
+                                        .trim())) // Create ProcessorList objects
+                                .where((processor) => processor.processorId!
+                                    .isNotEmpty) // Filter out empty IDs
+                                .toList();
 
-
-                        List<ProcessorList> selectedProcessors = _processorGroups
-                        //  .where((group) => group.isChecked)
-                            .map((group) => ProcessorList(processorId: group.controller.text.trim())) // Create ProcessorList objects
-                            .where((processor) => processor.processorId!.isNotEmpty) // Filter out empty IDs
-                            .toList();
+                        print(selectedOwner!.rentalOwnerId);
                         Ownersdetails = RentalOwner(
+                          rentalOwnerId: selectedOwner!.rentalOwnerId ?? null,
                           rentalOwnerPhoneNumber: phonenum.text,
                           rentalOwnerName: firstname.text,
                           rentalOwnerCompanyName: comname.text,
@@ -2150,21 +1970,14 @@ class _EditRentalownersState extends State<EditRentalowners> {
                           postalCode: code2.text,
                           processorList: selectedProcessors,
                         );
+                        // context
+                        //     .read<
+                        //     OwnerDetailsProvider>()
+                        //     .selectedprocessid(
+                        //     processor_id!);
                         context
-                            .read<
-                            OwnerDetailsProvider>()
-                            .selectedprocessid(
-                            processor_id!);
-                        context.read<OwnerDetailsProvider>().setOwnerDetails(Ownersdetails!);
-                        Fluttertoast.showToast(
-                          msg: "Rental Owner Added Successfully!",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.TOP,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Colors.green,
-                          textColor: Colors.white,
-                          fontSize: 16.0,
-                        );
+                            .read<OwnerDetailsProvider>()
+                            .setOwnerDetails(Ownersdetails!);
                         setState(() {
                           hasError = false; // Set error state if needed
                         });
@@ -2173,7 +1986,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
                         child: Container(
-                         height:  40.0,
+                          height: 40.0,
                           width: 100,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
@@ -2212,8 +2025,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
                         child: Container(
-                          height:
-                          40.0,
+                          height: 40.0,
                           width: 65,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
@@ -2369,64 +2181,4 @@ class OwnersDetails {
   OwnersDetails({
     required this.Ownersdetails,
   });
-}
-
-class RentalOwnerSource extends DataTableSource {
-  final List<RentalOwner> rentalowner;
-  final Function(RentalOwner) onEdit;
-  final Function(RentalOwner) onDelete;
-
-  RentalOwnerSource(this.rentalowner,
-      {required this.onEdit, required this.onDelete});
-
-  @override
-  DataRow getRow(int index) {
-    final rental = rentalowner[index];
-    return DataRow(cells: [
-      DataCell(Text(rental.rentalOwnerName!)),
-      DataCell(Text(rental.rentalOwnerPhoneNumber!)),
-      DataCell(Row(
-        children: [
-          InkWell(
-            onTap: () {
-              onEdit(rental);
-            },
-            child: Container(
-              //  color: Colors.redAccent,
-              padding: EdgeInsets.zero,
-              child: FaIcon(
-                FontAwesomeIcons.edit,
-                size: 20,
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 4,
-          ),
-          InkWell(
-            onTap: () {
-              onDelete(rental);
-            },
-            child: Container(
-              //    color: Colors.redAccent,
-              padding: EdgeInsets.zero,
-              child: FaIcon(
-                FontAwesomeIcons.trashCan,
-                size: 20,
-              ),
-            ),
-          ),
-        ],
-      )),
-    ]);
-  }
-
-  @override
-  bool get isRowCountApproximate => false;
-
-  @override
-  int get rowCount => rentalowner.length;
-
-  @override
-  int get selectedRowCount => 0;
 }

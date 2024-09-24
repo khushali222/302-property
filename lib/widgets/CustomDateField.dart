@@ -82,7 +82,7 @@ class CustomDateFieldState extends State<CustomDateField> {
               elevation: 2,
               borderRadius: BorderRadius.circular(8.0),
               child: Container(
-                height: 50,
+                height: 55,
                 padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.5),
                 decoration: BoxDecoration(
                   color: Colors.white,

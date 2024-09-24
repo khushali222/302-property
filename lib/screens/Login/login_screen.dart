@@ -1224,9 +1224,9 @@ class _Login_ScreenState extends State<Login_Screen> {
                           ],
 
 
-                         /* SizedBox(
+                          SizedBox(
                             height: MediaQuery.of(context).size.height * 0.015,
-                          ),*/
+                          ),
                           // Forgot password
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,

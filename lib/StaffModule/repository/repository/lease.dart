@@ -9,12 +9,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../constant/constant.dart';
 import '../../model/EnterChargeModel.dart';
 import '../../model/LeaseLedgerModel.dart';
-import '../../model/LeaseSummary.dart';
+import '../../../model/LeaseSummary.dart';
 import '../../model/edit_lease.dart';
 import '../../model/get_lease.dart';
 import '../../model/lease.dart';
 
 class LeaseRepository {
+
   // Future<void> postLease(Lease lease) async {
   //
   //   final response = await http.post(
@@ -459,6 +460,7 @@ class LeaseRepository {
       return false;
     }
   }*/
+
   static Future<LeaseSummary> fetchLeaseSummary(String leaseId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');

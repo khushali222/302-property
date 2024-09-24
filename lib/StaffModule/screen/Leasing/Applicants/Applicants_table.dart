@@ -1098,67 +1098,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                           ],
                                                         ),
                                                       ),
-                                                      // SizedBox(
-                                                      //   width: 40,
-                                                      //   child: Column(
-                                                      //     children: [
-                                                      //       IconButton(
-                                                      //         icon:
-                                                      //             const FaIcon(
-                                                      //           FontAwesomeIcons
-                                                      //               .edit,
-                                                      //           size: 20,
-                                                      //           color: Color
-                                                      //               .fromRGBO(
-                                                      //                   21,
-                                                      //                   43,
-                                                      //                   83,
-                                                      //                   1),
-                                                      //         ),
-                                                      //         onPressed:
-                                                      //             () async {
-                                                      //           // handleEdit(applicant);
-                                                      //           var check = await Navigator.push(
-                                                      //               context,
-                                                      //               MaterialPageRoute(
-                                                      //                   builder: (context) => EditApplicant(
-                                                      //                         applicant: applicant,
-                                                      //                         applicantId: applicant.applicantId!,
-                                                      //                       )));
-                                                      //           if (check ==
-                                                      //               true) {
-                                                      //             setState(
-                                                      //                 () {
-                                                      //              futureApplicantdata =     ApplicantRepository().fetchApplicants();
-                                                      //                 });
-                                                      //           }
-                                                      //         },
-                                                      //       ),
-                                                      //       IconButton(
-                                                      //         icon:
-                                                      //             const FaIcon(
-                                                      //           FontAwesomeIcons
-                                                      //               .trashCan,
-                                                      //           size: 20,
-                                                      //           color: Color
-                                                      //               .fromRGBO(
-                                                      //                   21,
-                                                      //                   43,
-                                                      //                   83,
-                                                      //                   1),
-                                                      //         ),
-                                                      //         onPressed: () {
-                                                      //           // handleDelete(applicant);
-                                                      //           _showDeleteAlert(
-                                                      //               context,
-                                                      //               applicant
-                                                      //                   .applicantId
-                                                      //                   .toString());
-                                                      //         },
-                                                      //       ),
-                                                      //     ],
-                                                      //   ),
-                                                      // ),
+
                                                     ],
                                                   ),
                                                   SizedBox(
@@ -1495,19 +1435,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                 ),
                                               ),
                                               children: [
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // TableCell(child: Text('yash')),
-                                                // Text(
-                                                //     '${_pagedData[i].propertyType!}'),
-                                                // Text(
-                                                //     '${_pagedData[i].propertysubType!}'),
-                                                // Text(
-                                                //     '${formatDate(_pagedData[i].createdAt!)}'),
-                                                // Text(
-                                                //     '${formatDate(_pagedData[i].updatedAt!)}'),
+
                                                 _buildDataCell(_pagedData[i]
                                                     .applicantFirstName!,_pagedData[i]),
                                                 _buildDataCell(_pagedData[i]

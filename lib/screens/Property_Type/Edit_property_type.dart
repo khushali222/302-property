@@ -102,7 +102,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                             width: 15,
                           ),
                           Text(
-                            "Property Type*",
+                            "Property Type *",
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold,
@@ -206,7 +206,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                             width: 15,
                           ),
                           Text(
-                            "Property SubType*",
+                            "Property SubType *",
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold,

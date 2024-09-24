@@ -215,12 +215,12 @@ class Rental_PropertiesRepository{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
-    String? staffid = prefs.getString("staff_id");
+
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {
         "authorization" : "CRM $token",
-        "id":"CRM $staffid",
+        "id":"CRM $id",
         'Content-Type': 'application/json'},
       body: jsonEncode(rentalRequest.toJson()),
     );

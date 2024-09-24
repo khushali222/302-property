@@ -488,6 +488,8 @@ class LeaseRepository {
     }
   }
 
+
+
   Future<LeaseLedger?> fetchLeaseLedger(String leaseId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -526,6 +528,56 @@ class LeaseRepository {
       body: jsonEncode(charge.toJson()),
     );
      print('charge respo ${response.body}');
+    if (response.statusCode == 200) {
+      // Successfully posted
+      print('Charge posted successfully');
+    } else {
+      // Handle error
+      print('Failed to post charge: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+
+    return response.statusCode;
+  }
+  Future<int> EditCharge(Charge charge,String charge_id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString("adminId");
+    final response = await http.put(
+      Uri.parse('$Api_url/api/charge/charge/$charge_id'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'CRM $token',
+        "id": "CRM $id",
+      },
+      body: jsonEncode(charge.toJson()),
+    );
+    print('charge respo ${response.body}');
+    if (response.statusCode == 200) {
+      // Successfully posted
+      print('Charge posted successfully');
+    } else {
+      // Handle error
+      print('Failed to post charge: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+
+    return response.statusCode;
+  }
+  Future<int> DeleteCharge(String charge_id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString("adminId");
+    final response = await http.delete(
+      Uri.parse('$Api_url/api/charge/charge/$charge_id'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'CRM $token',
+        "id": "CRM $id",
+      },
+
+    );
+    print('charge respo ${response.body}');
     if (response.statusCode == 200) {
       // Successfully posted
       print('Charge posted successfully');

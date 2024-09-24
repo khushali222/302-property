@@ -1654,7 +1654,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                  ],
                                ),
                              ),
-                             Padding(
+                           /*  Padding(
                                padding: const EdgeInsets.only(left: 13),
                                child: Column(
                                  crossAxisAlignment:
@@ -1849,7 +1849,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                  ),
                                ),
                              ],
-                           ),
+                           ),*/
                            SizedBox(
                                height: MediaQuery.of(
                                    context)
@@ -2112,25 +2112,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                 OwnerDetailsProvider>()
                                 .selectedprocessid(
                                 processor_id!);
-                            /*Fluttertoast.showToast(
-                              msg: "Rental Owner Added Successfully",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.TOP,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.green,
-                              textColor: Colors.white,
-                              fontSize: 16.0,
-                            );
-                          } else {
-                            Fluttertoast.showToast(
-                              msg: "Rental Owner Already Exists!",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.TOP,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              fontSize: 16.0,
-                            );*/
+
                           }
                         }
                         setState(() {

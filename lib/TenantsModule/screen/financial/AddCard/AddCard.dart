@@ -1178,6 +1178,7 @@ class CustomTextFieldState extends State<CustomTextField> {
       children: <Widget>[
         FormField<String>(
           validator: widget.optional! ? null : (value) {
+
             if (widget.controller!.text.isEmpty) {
               setState(() {
                 _errorMessage = widget.label == null
@@ -1185,14 +1186,17 @@ class CustomTextFieldState extends State<CustomTextField> {
                     : 'Please ${widget.label}';
               });
               return '';
-            } else if (widget.amount_check != null &&
+            }
+            else if
+            (widget.amount_check != null &&
                 double.parse(widget.controller!.text) >
                     double.parse(widget.max_amount!)) {
               setState(() {
                 _errorMessage = '${widget.error_mess}';
               });
               return '';
-            } else if (widget.isEmail!) {
+            }
+            else if (widget.isEmail!) {
               if (!EmailValidator.validate(widget.controller!.text)) {
                 setState(() {
                   _errorMessage = "Email is not valid";
@@ -1264,7 +1268,15 @@ class CustomTextFieldState extends State<CustomTextField> {
                           widget.onChanged!(value);
                         }
                       },
-                      onTap: widget.onTap,
+                      onTap: (){
+                        if(widget.onTap != null){
+                          widget.onTap!();
+                          setState(() {
+                            _errorMessage = null;
+                          });
+                        }
+
+                      },
                       obscureText: widget.obscureText,
                       readOnly: widget.readOnly,
                       keyboardType: widget.keyboardType,
@@ -1305,7 +1317,7 @@ class CustomTextFieldState extends State<CustomTextField> {
     );
     return shouldUseKeyboardActions
         ? SizedBox(
-      height:  widget.amount_check != null ?widget.amount_check! ?  75 :60:60,
+      height:  widget.amount_check != null ?widget.amount_check! ?  75 :60: _errorMessage != null ? 75:60,
       width: MediaQuery.of(context).size.width * .98,
       child: KeyboardActions(
       //  autoScroll: false,

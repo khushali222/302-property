@@ -464,6 +464,7 @@ class LeaseRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
+
     print('$Api_url/api/leases/lease_summary/$leaseId');
     final response = await http.get(
       Uri.parse('$Api_url/api/leases/lease_summary/$leaseId'),
@@ -475,11 +476,41 @@ class LeaseRepository {
     log(response.body);
     if (response.statusCode == 200) {
       return LeaseSummary.fromJson(jsonDecode(response.body));
+
     } else {
       throw Exception('Failed to load lease summary');
     }
   }
+ static Future<List<LeaseTenant>> fetchLeaseTenants(String leaseId) async {
+    final url = Uri.parse('$Api_url/api/tenant/leases/$leaseId');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString("adminId");
+  //  try {
+      final response = await http.get(url,
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
 
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // Parsing the list of leases from the response
+        List<dynamic> leaseList = data['data'];
+        List<LeaseTenant> leaseTenants = leaseList.map((leaseJson) {
+          return LeaseTenant.fromJson(leaseJson);
+        }).toList();
+
+        return leaseTenants;
+      } else {
+        throw Exception('Failed to load lease data');
+      }
+  /*  } catch (e) {
+      throw Exception('Error fetching lease data: $e');
+    }*/
+  }
   Future<LeaseLedger?> fetchLeaseLedger(String leaseId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -516,6 +547,56 @@ class LeaseRepository {
       body: jsonEncode(charge.toJson()),
     );
      print('charge respo ${response.body}');
+    if (response.statusCode == 200) {
+      // Successfully posted
+      print('Charge posted successfully');
+    } else {
+      // Handle error
+      print('Failed to post charge: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+
+    return response.statusCode;
+  }
+  Future<int> EditCharge(Charge charge,String charge_id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString("adminId");
+    final response = await http.put(
+      Uri.parse('$Api_url/api/charge/charge/$charge_id'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'CRM $token',
+        "id": "CRM $id",
+      },
+      body: jsonEncode(charge.toJson()),
+    );
+    print('charge respo ${response.body}');
+    if (response.statusCode == 200) {
+      // Successfully posted
+      print('Charge posted successfully');
+    } else {
+      // Handle error
+      print('Failed to post charge: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+
+    return response.statusCode;
+  }
+  Future<int> DeleteCharge(String charge_id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString("adminId");
+    final response = await http.delete(
+      Uri.parse('$Api_url/api/charge/charge/$charge_id'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'CRM $token',
+        "id": "CRM $id",
+      },
+
+    );
+    print('charge respo ${response.body}');
     if (response.statusCode == 200) {
       // Successfully posted
       print('Charge posted successfully');

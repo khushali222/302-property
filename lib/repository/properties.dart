@@ -21,6 +21,7 @@ class PropertiesRepository {
     final response = await http.get(Uri.parse('${Api_url}/api/rentals/rentals/$id'),
       headers: {"authorization" : "CRM $token","id":"CRM $id",},);
     print('${Api_url}/api/rentals/rentals/$id');
+    print('properties ${response.body}');
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => Rentals.fromJson(data)).toList();
@@ -117,11 +118,13 @@ class PropertiesRepository {
       "rentalOwner_companyName": rentalRequest.rentalOwnerData?.rentalOwnerCompanyName,
       "rentalOwner_primaryEmail": rentalRequest.rentalOwnerData?.rentalOwnerPrimaryEmail,
       "rentalOwner_phoneNumber": rentalRequest.rentalOwnerData?.rentalOwnerPhoneNumber,
+      "rentalOwner_homeNumber":rentalRequest.rentalOwnerData?.rentalOwnerHomeNumber??"",
+      "rentalOwner_businessNumber":rentalRequest.rentalOwnerData?.rentalOwnerBuisinessNumber??"",
       "city": rentalRequest.rentalOwnerData?.city,
       "state": rentalRequest.rentalOwnerData?.state,
       "country": rentalRequest.rentalOwnerData?.country,
       "postal_code": rentalRequest.rentalOwnerData?.postalCode,
-      "processor_list":rentalRequest.rentalOwnerData!.processorList
+    //  "processor_list":rentalRequest.rentalOwnerData!.processorList
     };
 
     final body = jsonEncode({
@@ -130,13 +133,14 @@ class PropertiesRepository {
         "company_name": rentalRequest.rentalOwnerData?.rentalOwnerCompanyName,
         "rental_id": rentalRequest.rentalId,
         "property_id": rentalRequest.propertyId,
+        "rentalowner_id":rentalRequest.rentalOwnerId,
         "rental_adress": rentalRequest.rentalAddress,
         "rental_city": rentalRequest.rentalCity,
         "rental_state": rentalRequest.rentalState,
         "rental_country": rentalRequest.rentalCountry,
         "rental_postcode": rentalRequest.rentalPostcode,
         "staffmember_id": rentalRequest.staffMemberId,
-        "processor_id":rentalRequest.processor_id
+       // "processor_id":rentalRequest.processor_id
 
       },
     });
@@ -147,6 +151,7 @@ class PropertiesRepository {
 
     final rentalOwnerResponse = responseBody['data']['rentalOwner'];
     print('Rental Owner Data from Response: ${jsonEncode(rentalOwnerResponse)}');
+    print('update Rental: ${response.body}');
 
     if (response.statusCode == 200) {
       Fluttertoast.showToast(msg: "Properties updated successfully");
