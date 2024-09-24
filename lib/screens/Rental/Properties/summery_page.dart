@@ -2913,6 +2913,7 @@ class _Summery_pageState extends State<Summery_page>
           SizedBox(height: 13),
           Text(
             "Select tenants to move out. If everyone is moving, the lease will end on the last move-out date. If some tenants are staying, you’ll need to renew the lease. Note: Renters insurance policies will be permanently deleted upon move-out.",
+            textAlign: TextAlign.justify,
             style: TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
@@ -8497,7 +8498,7 @@ class _Summery_pageState extends State<Summery_page>
                           Padding(
                             padding: const EdgeInsets.only(left: 16),
                             child: Text(
-                              maxLines: 2,
+                              maxLines: 3,
                               '${widget.properties?.rentalCity} ${widget.properties?.rentalState}',
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -8512,7 +8513,7 @@ class _Summery_pageState extends State<Summery_page>
                             height: 5,
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 16),
+                            padding: const EdgeInsets.only(left: 15),
                             child: Text(
                               '${widget.properties?.rentalCountry} ${widget.properties?.rentalPostcode}',
                               style: TextStyle(

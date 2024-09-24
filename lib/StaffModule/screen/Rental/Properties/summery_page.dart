@@ -2653,35 +2653,42 @@ startdateController.text = displayDate;
                 )
                     : SingleChildScrollView(
                   scrollDirection: Axis.vertical,
-                  child: Wrap(
-                    alignment: WrapAlignment.start,
-                    spacing: MediaQuery.of(context).size.width * 0.03,
-                    runSpacing: MediaQuery.of(context).size.width * 0.02,
-                    children: List.generate(
-                      tenants.length,
-                          (index) => Padding(
-                        padding: const EdgeInsets.only(
-                          left: 20, right: 20, top: 20,),
-                        child: Material(
-                          elevation: 3,
-                          borderRadius: BorderRadius.circular(10),
-                          child: Container(
-                            height: 230,
-                            //  width: MediaQuery.of(context).size.width * .44,
-                            decoration: BoxDecoration(
-                              color:
-                              Colors.white, // Change as per your need
+                  child: Column(
+                    children: [
+                      Wrap(
+                        alignment: WrapAlignment.start,
+                        spacing: MediaQuery.of(context).size.width * 0.03,
+                        runSpacing: MediaQuery.of(context).size.width * 0.02,
+                        children: List.generate(
+                          tenants.length,
+                              (index) => Padding(
+                            padding: const EdgeInsets.only(
+                              left: 20, right: 20, top: 20,),
+                            child: Material(
+                              elevation: 3,
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: blueColor),
-                            ),
-                            child: buildTenantCard(
-                                tenants[index]
+                              child: Container(
+                                height: 230,
+                                //  width: MediaQuery.of(context).size.width * .44,
+                                decoration: BoxDecoration(
+                                  color:
+                                  Colors.white, // Change as per your need
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: blueColor),
+                                ),
+                                child: buildTenantCard(
+                                    tenants[index]
 
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                    ],
                   ),
                 );
               }
@@ -2835,20 +2842,16 @@ startdateController.text = displayDate;
           children: [
             const SizedBox(width: 65),
             Text(
-              '${tenant.startDate} to',
+              '${formatDate('${tenant.startDate}')} to',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
                 color: Color.fromRGBO(21, 43, 81, 1),
                 fontWeight: FontWeight.w500,
               ),
             ),
-          ],
-        ),
-        Row(
-          children: [
-            const SizedBox(width: 65),
+            SizedBox(width: 5,),
             Text(
-              '${tenant.endDate}',
+              '${formatDate('${tenant.endDate}')}',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
                 color: Color.fromRGBO(21, 43, 81, 1),
@@ -2857,6 +2860,7 @@ startdateController.text = displayDate;
             ),
           ],
         ),
+
         const SizedBox(height: 10),
         Row(
           children: [

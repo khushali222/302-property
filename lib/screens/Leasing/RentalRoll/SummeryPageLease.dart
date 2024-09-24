@@ -1723,9 +1723,10 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
           return Center(child: Text('No data found.'));
         } else {
           final leasesummery = snapshot.data!;
+
           // prefs.setDouble('rent', leasesummery.data!.amount.toString());
           //prefs.setString('dueDate', leasesummery.data?.date ?? '');
-          print('renewal ${leasesummery.data?.renewLeases == null}');
+          print('renewal ${leasesummery.data?.renewLeases }');
           return ListView(
             scrollDirection: Axis.vertical,
             children: [
@@ -1890,16 +1891,19 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                   future: _leaseLedgerFuture,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return SpinKitFadingCircle(
-                        color: blueColor,
-                        size: 40.0,
-                      );
+                      return
+                          Container();
+                      //   SpinKitFadingCircle(
+                      //   color: blueColor,
+                      //   size: 40.0,
+                      // );
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData) {
                       return Center(child: Text('No data found'));
                     } else {
                       final leaseLedger = snapshot.data!;
+
                       //final data = leaseLedger.data!.toList();
                       return SingleChildScrollView(
                         child: Column(
@@ -2568,7 +2572,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                             height: 10,
                           ),
                           if (MediaQuery.of(context).size.width < 500)
-                        if(leasesummery.data?.renewLeases != null)
+                          if(leasesummery.data?.renewLeases != null && leasesummery.data!.renewLeases!.length > 0)
                             Column(
                               children: [
                                 Row(
@@ -3447,7 +3451,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                             children: [
                                               const SizedBox(width: 65),
                                               Text(
-                                                '${snapshot.data![index].startDate} to',
+                                               ' ${formatDate(snapshot.data![index].startDate)} to',
                                                 style: const TextStyle(
                                                   fontSize: 15,
                                                   color: Color.fromRGBO(
@@ -3455,13 +3459,10 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                   fontWeight: FontWeight.w500,
                                                 ),
                                               ),
-                                            ],
-                                          ),
-                                          Row(
-                                            children: [
-                                              const SizedBox(width: 65),
+
                                               Text(
-                                                '${snapshot.data![index].endDate}',
+                                                ' ${formatDate(snapshot.data![index].endDate)}'
+                                                ,
                                                 style: const TextStyle(
                                                   fontSize: 15,
                                                   color: Color.fromRGBO(
@@ -3471,6 +3472,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               ),
                                             ],
                                           ),
+
                                           const SizedBox(height: 10),
                                           Row(
                                             children: [
@@ -3528,7 +3530,77 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               // ),
                                             ],
                                           ),
+                                          if (snapshot.data![index]
+                                              .moveoutDate !=
+                                              "" &&
+                                              ismove)
                                           SizedBox(height: 15),
+                                          if (snapshot.data![index]
+                                              .moveoutDate !=
+                                              "" &&
+                                              ismove)
+                                          Row(
+                                            children: [
+                                              const SizedBox(width: 65),
+                                              Text(
+                                                'Notice Date : ',
+                                                maxLines:
+                                                3, // Set maximum number of lines
+                                                overflow: TextOverflow
+                                                    .ellipsis, // Handle overflow with ellipsis
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    color: blueColor,
+                                                    fontWeight:
+                                                    FontWeight.bold),
+                                              ),
+                                              SizedBox(width: 5,),
+                                              Text(
+                                                '${snapshot.data!.first.moveoutNoticeGivenDate}',
+                                                style: const TextStyle(
+                                                  fontSize: 15,
+                                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          if (snapshot.data![index]
+                                              .moveoutDate !=
+                                              "" &&
+                                              ismove)
+                                          SizedBox(height: 15),
+                                          if (snapshot.data![index]
+                                              .moveoutDate !=
+                                              "" &&
+                                              ismove)
+                                          Row(
+                                            children: [
+                                              const SizedBox(width: 65),
+                                              Text(
+                                                'Move out : ',
+                                                maxLines:
+                                                3, // Set maximum number of lines
+                                                overflow: TextOverflow
+                                                    .ellipsis, // Handle overflow with ellipsis
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    color: blueColor,
+                                                    fontWeight:
+                                                    FontWeight.bold),
+                                              ),
+                                              SizedBox(width: 5,),
+                                              Text(
+                                                '${snapshot.data!.first.moveoutDate}',
+                                                style: const TextStyle(
+                                                  fontSize: 15,
+                                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 8),
                                         ],
                                       ),
                                     ),
@@ -3549,12 +3621,14 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                               builder: (context, summarySnapshot) {
                                 if (summarySnapshot.connectionState ==
                                     ConnectionState.waiting) {
-                                  return Center(
-                                    child: SpinKitSpinningLines(
-                                      color: blueColor,
-                                      size: 55.0,
-                                    ),
-                                  );
+                                  return
+                                      Container();
+                                  //   Center(
+                                  //   child: SpinKitSpinningLines(
+                                  //     color: blueColor,
+                                  //     size: 55.0,
+                                  //   ),
+                                  // );
                                 } else if (summarySnapshot.hasError) {
                                   return Center(
                                       child: Text(
@@ -3879,6 +3953,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
           SizedBox(height: 13),
           Text(
             "Select tenants to move out. If everyone is moving, the lease will end on the last move-out date. If some tenants are staying, you’ll need to renew the lease. Note: Renters insurance policies will be permanently deleted upon move-out.",
+            textAlign: TextAlign.justify,
             style: TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
