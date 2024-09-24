@@ -47,8 +47,7 @@ class _RejectedContentState extends State<RejectedContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: isLoading
+    return isLoading
           ? const Center(
               child: SpinKitSpinningLines(
               color: Colors.black,
@@ -298,7 +297,7 @@ class _RejectedContentState extends State<RejectedContent> {
                     ),
                   );
                 })
-              : const Center(child: Text('No details found')),
-    );
+              : const Center(child: Text('No details found'));
+
   }
 }

@@ -1785,7 +1785,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     child: Padding(
                                   padding: const EdgeInsets.only(top: 12),
                                   child: Text(
-                                    '${snapshot.data!.data!.rentalAddress}  -  ${snapshot.data!.data!.rentalUnit}',
+                                    '${snapshot.data!.data!.rentalAddress}  -  ${snapshot.data!.data!.rentalUnit ?? "N/A"}',
                                     style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
@@ -2566,7 +2566,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                             height: 10,
                           ),
                           if (MediaQuery.of(context).size.width < 500)
-                        if(leasesummery.data?.renewLeases != null)
+                        if(leasesummery.data?.renewLeases != null && leasesummery.data!.renewLeases!.length > 0)
                             Column(
                               children: [
                                 Row(
