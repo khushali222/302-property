@@ -2653,42 +2653,46 @@ startdateController.text = displayDate;
                 )
                     : SingleChildScrollView(
                   scrollDirection: Axis.vertical,
-                  child: Column(
-                    children: [
-                      Wrap(
-                        alignment: WrapAlignment.start,
-                        spacing: MediaQuery.of(context).size.width * 0.03,
-                        runSpacing: MediaQuery.of(context).size.width * 0.02,
-                        children: List.generate(
-                          tenants.length,
-                              (index) => Padding(
-                            padding: const EdgeInsets.only(
-                              left: 20, right: 20, top: 20,),
-                            child: Material(
-                              elevation: 3,
-                              borderRadius: BorderRadius.circular(10),
-                              child: Container(
-                                height: 230,
-                                //  width: MediaQuery.of(context).size.width * .44,
-                                decoration: BoxDecoration(
-                                  color:
-                                  Colors.white, // Change as per your need
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: blueColor),
-                                ),
-                                child: buildTenantCard(
-                                    tenants[index]
+                  child: Wrap(
+                    alignment: WrapAlignment.start,
+                    spacing: MediaQuery.of(context).size.width * 0.03,
+                    runSpacing: MediaQuery.of(context).size.width * 0.02,
+                    children: List.generate(
+                      tenants.length,
+                          (index) {
+                            DateTime currentDate = DateTime.now();
+                            DateTime moveoutDate;
+                            bool? ismove = false;
 
-                                ),
-                              ),
+                            if(snapshot.data![index].moveoutDate != null && snapshot.data![index].moveoutDate!!= "" ){
+                              moveoutDate = DateFormat('yyyy-MM-dd').parse(snapshot.data![index].moveoutDate!);
+                              ismove =  moveoutDate.difference(currentDate).inDays < 1;
+                            }
+                        return Padding(
+                        padding: const EdgeInsets.only(
+                          left: 20, right: 20, top: 20,),
+                        child: Material(
+                          elevation: 3,
+                          borderRadius: BorderRadius.circular(10),
+                          child: Container(
+                            height: 230,
+                            //  width: MediaQuery.of(context).size.width * .44,
+                            decoration: BoxDecoration(
+                              color:
+                              Colors.white, // Change as per your need
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: blueColor),
+                            ),
+                            child: buildTenantCard(
+                                tenants[index],
+                                isMoveouts:      (snapshot.data![index].moveoutDate == "" || ismove ==false ) ? false :   (snapshot.data![index].moveoutDate != "" && ismove) ? true : false
+
+
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                    ],
+                      ) ; }
+                    ),
                   ),
                 );
               }
@@ -2700,7 +2704,7 @@ startdateController.text = displayDate;
 
   }
 
-  Widget buildTenantCard(TenantData tenant) {
+  Widget buildTenantCard(TenantData tenant,{bool? isMoveouts }) {
     return Column(
       children: [
         const SizedBox(height: 10),
@@ -2750,7 +2754,7 @@ startdateController.text = displayDate;
                   children: [
                     const SizedBox(width: 2),
                     Text(
-                      formatDate2(tenant.endDate!),
+                      formatDate(tenant.endDate!),
                       style: TextStyle(
                         fontSize:
                         MediaQuery.of(context).size.width < 500 ? 15 : 17,
@@ -8975,14 +8979,12 @@ startdateController.text = displayDate;
                       data = data
                           .where((workorder) => workorder.status == 'Completed')
                           .toList();
-                      Provider.of<WorkOrderCountProvider>(context)
-                          .updateCount(data.length);
+
                     } else {
                       data = data
                           .where((workorder) => workorder.status != 'Completed')
                           .toList();
-                      Provider.of<WorkOrderCountProvider>(context)
-                          .updateCount(data.length);
+
                     }
                     sortData(data);
                     final totalPages = (data.length / itemsPerPage).ceil();

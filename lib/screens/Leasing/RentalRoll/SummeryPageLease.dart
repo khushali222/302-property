@@ -3520,6 +3520,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                           FontWeight.w500),
                                                 ),
                                               ),
+
                                               // Text(
                                               //   '${snapshot.data!.data!.tenantData![index].tenantEmail}',
                                               //   style: const TextStyle(

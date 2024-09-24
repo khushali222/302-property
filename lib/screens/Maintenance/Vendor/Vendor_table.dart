@@ -96,7 +96,7 @@ class _Vendor_tableState extends State<Vendor_table> {
             ),
             Expanded(
               flex: 3,
-              child: InkWell(
+              child: GestureDetector(
                 onTap: () {
                   setState(() {
                     if (sorting1 == true) {
@@ -147,7 +147,7 @@ class _Vendor_tableState extends State<Vendor_table> {
             ),
             Expanded(
               flex: 3,
-              child: InkWell(
+              child: GestureDetector(
                 onTap: () {
                   setState(() {
                     if (sorting2) {
@@ -195,7 +195,7 @@ class _Vendor_tableState extends State<Vendor_table> {
             ),
             // Expanded(
             //   flex: 2,
-            //   child: InkWell(
+            //   child: GestureDetector(
             //     onTap: () {
             //       setState(() {
             //         if (sorting3) {
@@ -377,7 +377,7 @@ class _Vendor_tableState extends State<Vendor_table> {
   Widget _buildHeader<T>(String text, int columnIndex,
       Comparable<T> Function(Vendor d)? getField) {
     return TableCell(
-      child: InkWell(
+      child: GestureDetector(
         onTap: getField != null
             ? () {
                 _sort(getField, columnIndex, !_sortAscending);
@@ -419,7 +419,7 @@ class _Vendor_tableState extends State<Vendor_table> {
               const SizedBox(
                 width: 20,
               ),
-              InkWell(
+              GestureDetector(
                 onTap: () {
                   handleEdit(data);
                 },
@@ -431,7 +431,7 @@ class _Vendor_tableState extends State<Vendor_table> {
               const SizedBox(
                 width: 15,
               ),
-              InkWell(
+              GestureDetector(
                 onTap: () {
                   handleDelete(data);
                 },
@@ -560,6 +560,47 @@ class _Vendor_tableState extends State<Vendor_table> {
     }
   }
 
+  void _showAlertforLimit(BuildContext context) {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Plan Limitation",
+      desc:
+      "The limit for adding Vendor according to the plan has been reached.",
+      style: const AlertStyle(
+          backgroundColor: Color.fromRGBO(255, 255, 255, 1),
+          descStyle: TextStyle(fontSize: 14)
+        //  overlayColor: Colors.black.withOpacity(.8)
+      ),
+      buttons: [
+        DialogButton(
+          child: const Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: const Color.fromRGBO(21, 43, 83, 1),
+        ),
+        /* DialogButton(
+          child: Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+             var data = PropertiesRepository().DeleteProperties(id: id);
+
+            setState(() {
+              futureRentalOwners = PropertiesRepository().fetchProperties();
+              //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+            });
+            Navigator.pop(context);
+          },
+          color: Colors.red,
+        )*/
+      ],
+    ).show();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -588,15 +629,19 @@ class _Vendor_tableState extends State<Vendor_table> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      final result = await Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => Add_vendor()));
-                      if (result == true) {
-                        setState(() {
-                          futurePropertyTypes =
-                              VendorRepository(baseUrl: '').getVendors();
-                        });
-                        fetchvendoradded();
+                      if (vendorCount < vendorCountLimit) {
+                        final result = await Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => Add_vendor()));
+                        if (result == true) {
+                          setState(() {
+                            futurePropertyTypes =
+                                VendorRepository(baseUrl: '').getVendors();
+                          });
+                          fetchvendoradded();
+                        }
+                      } else {
+                        _showAlertforLimit(context);
                       }
                     },
                     child: Container(
@@ -844,7 +889,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
                                               children: <Widget>[
-                                                InkWell(
+                                                GestureDetector(
                                                   onTap: () {
                                                     // setState(() {
                                                     //    isExpanded = !isExpanded;
@@ -889,8 +934,8 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  child: InkWell(
-                                                    onTap: () {
+                                                  child: GestureDetector(
+                                                    onTap:(){
                                                       setState(() {
                                                         if (expandedIndex ==
                                                             index) {
@@ -946,7 +991,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                 //         SizedBox(
                                                 //           width: 20,
                                                 //         ),
-                                                //         InkWell(
+                                                //         GestureDetector(
                                                 //           onTap: () async {
                                                 //             var check = await Navigator
                                                 //                 .push(
@@ -979,7 +1024,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                 //         SizedBox(
                                                 //           width: 10,
                                                 //         ),
-                                                //         InkWell(
+                                                //         GestureDetector(
                                                 //           onTap: () {
                                                 //             _showAlert(
                                                 //                 context,

@@ -140,9 +140,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
     } catch (e) {
       print('Error fetching data: $e');
     } finally {
-      setState(() {
-        loading = false;
-      });
+
     }
   }
   Future<void> fetchDatafinancial() async {
@@ -1460,7 +1458,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                         InkWell(
                                           onTap: () {
                                             if(permissions!.workorderView)
-                                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => WorkOrderTable()));
+                                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => WorkOrderTable(filter: "New",)));
                                           },
                                           child: Container(
                                             height: 30,
@@ -1521,7 +1519,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                         InkWell(
                                           onTap: () {
                                             if(permissions!.workorderView)
-                                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => WorkOrderTable()));
+                                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => WorkOrderTable(filter: "Over Due",)));
                                           },
                                           child: Container(
                                             height: 30,

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
@@ -421,7 +422,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       nameerror
                           ? Row(
                               children: [
-                                Spacer(),
+                                SizedBox(
+                                  width: 10,
+                                ),
                                 Text(
                                   namemessage,
                                   style: TextStyle(
@@ -432,9 +435,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                               ? 15
                                               : 19),
                                 ),
-                                SizedBox(
-                                  width: 2,
-                                ),
+                                Spacer(),
+
                               ],
                             )
                           : Container(),
@@ -532,7 +534,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       comnameerror
                           ? Row(
                               children: [
-                                Spacer(),
+                                SizedBox(
+                                  width: 10,
+                                ),
                                 Text(
                                   comnamemessage,
                                   style: TextStyle(
@@ -543,9 +547,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                               ? 15
                                               : 19),
                                 ),
-                                SizedBox(
-                                  width: 2,
-                                ),
+                                Spacer(),
+
                               ],
                             )
                           : Container(),
@@ -685,20 +688,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                   .size
                                                   .width *
                                               .02),
-                                      InkWell(
-                                        onTap: () {
-                                          _removeTextField(entry.key);
-                                        },
-                                        child: Container(
-                                          padding: EdgeInsets.zero,
-                                          child: FaIcon(
-                                            FontAwesomeIcons.trashCan,
-                                            size: 20,
-                                            color:
-                                                Color.fromRGBO(21, 43, 81, 1),
-                                          ),
-                                        ),
-                                      ),
+
                                     ],
                                   ),
                                 );
@@ -707,7 +697,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                             SizedBox(
                               height: 10,
                             ),
-                            Row(
+                          /*  Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 GestureDetector(
@@ -756,7 +746,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   ),
                                 ),
                               ],
-                            ),
+                            ),*/
                           ],
                         ),
                       ),
@@ -1438,7 +1428,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       primaryemailerror
                           ? Row(
                               children: [
-                                Spacer(),
+                                SizedBox(
+                                  width: 10,
+                                ),
                                 Text(
                                   primaryemailmessage,
                                   style: TextStyle(
@@ -1449,9 +1441,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                               ? 15
                                               : 19),
                                 ),
-                                SizedBox(
-                                  width: 2,
-                                ),
+                                Spacer(),
+
                               ],
                             )
                           : Container(),
@@ -1654,7 +1645,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       phonenumerror
                           ? Row(
                               children: [
-                                Spacer(),
+                                SizedBox(
+                                  width: 10,
+                                ),
                                 Text(
                                   phonenummessage,
                                   style: TextStyle(
@@ -1665,9 +1658,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                               ? 15
                                               : 19),
                                 ),
-                                SizedBox(
-                                  width: 2,
-                                ),
+                                Spacer(),
+
                               ],
                             )
                           : Container(),
@@ -2718,7 +2710,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                   //     birthdateerror = false;
                   //   });
                   // }
-                  if (startdateController.text.isEmpty) {
+                 /* if (startdateController.text.isEmpty) {
                     setState(() {
                       startdatederror = true;
                       startdatemessage = "required";
@@ -2737,7 +2729,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                     setState(() {
                       enddatederror = false;
                     });
-                  }
+                  }*/
                   if (primaryemail.text.isEmpty) {
                     setState(() {
                       primaryemailerror = true;
@@ -2748,7 +2740,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       primaryemailerror = false;
                     });
                   }
-                  if (alternativeemail.text.isEmpty) {
+                 /* if (alternativeemail.text.isEmpty) {
                     setState(() {
                       alternativeerror = true;
                       alternativemessage = "required";
@@ -2757,7 +2749,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                     setState(() {
                       alternativeerror = false;
                     });
-                  }
+                  }*/
                   if (phonenum.text.isEmpty) {
                     setState(() {
                       phonenumerror = true;
@@ -2768,7 +2760,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       phonenumerror = false;
                     });
                   }
-                  if (homenum.text.isEmpty) {
+                /*  if (homenum.text.isEmpty) {
                     setState(() {
                       homenumerror = true;
                       homenummessage = "required";
@@ -2867,24 +2859,25 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                     setState(() {
                       taxiderror = false;
                     });
-                  }
+                  }*/
                   if (!nameerror &&
                       !comnameerror &&
                       !primaryemailerror &&
-                      !alternativeerror &&
-                      !phonenumerror &&
-                      !homenumerror &&
-                      !officenumerror &&
-                      !street2error &&
-                      !city2error &&
-                      !state2error &&
-                      !county2error &&
-                      !code2error &&
-                      !taxtypeerror &&
-                      !taxiderror &&
+                     // !alternativeerror &&
+                      !phonenumerror //&&
+                     // !homenumerror &&
+                     // !officenumerror &&
+                     // !street2error &&
+                     // !city2error &&
+                    //  !state2error &&
+                     // !county2error &&
+                  //    !code2error &&
+                    //  !taxtypeerror &&
+                 //     !taxiderror &&
                       // !birthdateerror &&
-                      !startdatederror &&
-                      !enddatederror) {
+                 //     !startdatederror &&
+                  //    !enddatederror
+                  ) {
                     setState(() {
                       loading = true;
                     });
@@ -2977,7 +2970,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       ],
                     ),
                     child: Center(
-                      child: Text(
+                      child:loading ?SpinKitFadingCircle(
+                        color: Colors.white,
+                        size: 20.0,
+                      ):   Text(
                         "Add Rental Owner",
                         style: TextStyle(
                             color: Colors.white,
