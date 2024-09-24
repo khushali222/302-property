@@ -1000,33 +1000,20 @@ class _Lease_tableState extends State<Lease_table> {
                                                                 _getDisplayValue(
                                                                     lease
                                                                         .rentCycle),
-                                                                'Deposites Held:',
-                                                                _getDisplayValue(
-                                                                    lease
-                                                                        .deposit
-                                                                        .toString())),
+                                                              'Rent :',
+                                                              _getDisplayValue(
+                                                                  lease
+                                                                      .amount!.toStringAsFixed(2).toString()),),
                                                             _buildTableRow(
-                                                                'Charges:',
+                                                                'Remaining Days:',
                                                                 _getDisplayValue(lease
-                                                                    .recurringCharge
+                                                                    .remainingDays
                                                                     .toString()),
                                                                 'Rent Start:',
                                                                 formatDate(
                                                                     '${lease.rentDueDate}')),
-                                                            _buildTableRow(
-                                                                'Rent :',
-                                                                _getDisplayValue(
-                                                                    lease
-                                                                        .rentalUnit),
-                                                                'Created At:',
-                                                                formatDate(
-                                                                    '${lease.createdAt}')),
-                                                            _buildTableRow(
-                                                                'Updated At:',
-                                                                formatDate(
-                                                                    '${lease.updatedAt}'),
-                                                                '',
-                                                                ''),
+
+
                                                           ],
                                                         ),
                                                       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
@@ -681,7 +682,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                                   .size
                                                   .width *
                                               .02),
-                                      InkWell(
+                                   /*   InkWell(
                                         onTap: () {
                                           _removeTextField(entry.key);
                                         },
@@ -694,7 +695,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                                 Color.fromRGBO(21, 43, 81, 1),
                                           ),
                                         ),
-                                      ),
+                                      ),*/
                                     ],
                                   ),
                                 );
@@ -703,7 +704,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                             SizedBox(
                               height: 10,
                             ),
-                            Row(
+                            /*Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 GestureDetector(
@@ -752,7 +753,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                   ),
                                 ),
                               ],
-                            ),
+                            ),*/
                           ],
                         ),
                       ),
@@ -2708,7 +2709,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     });
                   }
 
-                  if (startdateController.text.isEmpty) {
+               /*   if (startdateController.text.isEmpty) {
                     setState(() {
                       startdatederror = true;
                       startdatemessage = "required";
@@ -2730,7 +2731,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     setState(() {
                       enddatederror = false;
                     });
-                  }
+                  }*/
 
                   if (primaryemail.text.isEmpty) {
                     setState(() {
@@ -2744,7 +2745,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     });
                   }
 
-                  if (alternativeemail.text.isEmpty) {
+                 /* if (alternativeemail.text.isEmpty) {
                     setState(() {
                       alternativeerror = true;
                       alternativemessage = "required";
@@ -2755,7 +2756,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       alternativeerror = false;
                     });
                   }
-
+*/
                   if (phonenum.text.isEmpty) {
                     setState(() {
                       phonenumerror = true;
@@ -2768,7 +2769,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     });
                   }
 
-                  if (homenum.text.isEmpty) {
+              /*    if (homenum.text.isEmpty) {
                     setState(() {
                       homenumerror = true;
                       homenummessage = "required";
@@ -2874,7 +2875,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     setState(() {
                       taxiderror = false;
                     });
-                  }
+                  }*/
 
                   if (!isFormValid) {
                     return; // Exit early if the form is not valid
@@ -2894,6 +2895,9 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                   });
 
                   try {
+                    setState(() {
+                      isLoading = true;
+                    });
                     await RentalOwnerService().Edit_Rentalowners(
                       adminId: adminId,
                       rentalownerId: widget.rentalOwner.rentalownerId,
@@ -2965,7 +2969,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       ],
                     ),
                     child: Center(
-                      child: Text(
+                      child: isLoading ?SpinKitFadingCircle(
+                        color: Colors.white,
+                        size: 20.0,
+                      ):  Text(
                         "Edit  Rental Owner",
                         style: TextStyle(
                             color: Colors.white,
