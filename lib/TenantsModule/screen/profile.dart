@@ -201,43 +201,21 @@ class _Profile_screenState extends State<Profile_screen> {
 
             } else {
               // Vertical layout for phone screens
-              return Column(
-                children: [
-                  SizedBox(height: 20,),
-                  titleBar(title: 'Personal Details', width: MediaQuery.of(context).size.width * 0.91,),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Card(
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: blueColor),
-                            borderRadius: BorderRadius.circular(6)
-                        ),
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            InfoRow(label: 'Name', value: "${profiledata['tenant_firstName']} ${profiledata['tenant_firstName']}"),
-                            InfoRow(label: 'Phone Number', value: profiledata['tenant_phoneNumber']),
-                            InfoRow(label: 'Email', value: profiledata['tenant_email']),
-                          ],
-                        ),
-                      ),
+              return Container(
+                child: Column(
+                  children: [
+                    SizedBox(height: 20,),
+                    titleBar(title: 'Personal Details', width: MediaQuery.of(context).size.width * 0.91,),
+
+                    const SizedBox(
+                      height: 10,
                     ),
-                  ),
-                  if(profiledata['leaseData'] != null) ...[
-                    titleBar(title: 'Lease Details', width: MediaQuery.of(context).size.width * 0.91,),
                     Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: Card(
                         elevation: 0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(6),
                         ),
                         child: Container(
                           decoration: BoxDecoration(
@@ -246,25 +224,67 @@ class _Profile_screenState extends State<Profile_screen> {
                           ),
                           padding: const EdgeInsets.all(16.0),
                           child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              InfoRow(label: 'Lease Type', value: "${profiledata['leaseData']['lease_type']}"),
-                              InfoRow(label: 'Property', value: profiledata['leaseData']['rental_adress'] ?? "N/A"),
-                              InfoRow(label: 'Start Date', value: formatDate4(profiledata['leaseData']['start_date']) ?? "N/A"),
-                              InfoRow(label: 'End Date', value: formatDate4(profiledata['leaseData']['end_date']) ?? "N/A"),
-                              InfoRow(label: 'Rent Cycle', value: profiledata['leaseData']['rent_cycle'] ?? "N/A"),
-                              InfoRow(label: 'Rent Amount', value: profiledata['leaseData']['amount'].toString()),
-                              InfoRow(label: 'Next Due Date', value: formatDate4(profiledata['leaseData']['date']) ?? "N/A"),
+                              buildWidget('Name', "${profiledata['tenant_firstName']} ${profiledata['tenant_firstName']}"),
+                              buildWidget('Phone Number', profiledata['tenant_phoneNumber']),
+                              buildWidget('Email', profiledata['tenant_email']),
+
+
                             ],
                           ),
                         ),
                       ),
                     ),
-                  ]
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    if(profiledata['leaseData'] != null) ...[
+                      titleBar(title: 'Lease Details', width: MediaQuery.of(context).size.width * 0.91,),
+
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: Card(
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(color: blueColor),
+                                borderRadius: BorderRadius.circular(6)
+                            ),
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              children: [
+                                buildWidget('Lease Type',"${profiledata['leaseData']['lease_type']}"),
+
+                                buildWidget('Property',profiledata['leaseData']['rental_adress'] ?? "N/A"),
+                                buildWidget('Start Date',formatDate4(profiledata['leaseData']['start_date']) ?? "N/A"),
+                                buildWidget('End Date',formatDate4(profiledata['leaseData']['end_date']) ?? "N/A"),
+                                buildWidget('Rent Cycle',profiledata['leaseData']['rent_cycle'] ?? "N/A"),
+                                buildWidget('Rent Amount',profiledata['leaseData']['amount'].toString()),
+                                buildWidget('Next Due Date',formatDate4(profiledata['leaseData']['date']) ?? "N/A"),
 
 
-                ],
+
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                    ],
+
+                     SizedBox(
+                      height: 30,
+                    ),
+
+
+                  ],
+                ),
               );
             }
           },
@@ -273,102 +293,77 @@ class _Profile_screenState extends State<Profile_screen> {
       ,
     );
   }
+  buildWidget(String label,String value){
 
-  Widget buildTextField(String label, TextEditingController controller,
-      String? Function(String?)? validator) {
-    return Material(
-      elevation: 3,
-      borderRadius: BorderRadius.circular(5),
-      child: Container(
-        padding: EdgeInsets.only(left: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(5),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label,
+            style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey)),
+        const SizedBox(
+          height: 5,
         ),
-        child: TextFormField(
-          controller: controller,
-          validator: validator,
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: label,
-            // hintStyle: TextStyle(color: Color(0xFF8A95A8)),
+        Material(
+          //elevation: 3,
+          borderRadius: BorderRadius.circular(6.0),
+          child: Container(
+            height: 45,
+            padding: const EdgeInsets.symmetric(
+                horizontal: 12.0, vertical: 0),
+            decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  const BoxShadow(
+                    color: Colors.black26,
+                    offset: Offset(1.0,
+                        1.0), // Shadow offset to the bottom right
+                    blurRadius:
+                    8.0, // How much to blur the shadow
+                    spreadRadius:
+                    0.0, // How much the shadow should spread
+                  ),
+                ],
+                border: Border.all(
+                    width: 0, color: Colors.white),
+                borderRadius: BorderRadius.circular(6.0)),
+            child: TextFormField(
+              style: const TextStyle(
+                color: Color(0xFF8898aa), // Text color
+                fontSize: 16.0, // Text size
+                fontWeight: FontWeight.w400, // Text weight
+              ),
+              //  controller: _dateController,
+              initialValue: value,
+              decoration: const InputDecoration(
+                hintStyle: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 13,
+                    color: Color(0xFFb0b6c3)),
+                border: InputBorder.none,
+                // labelText: 'Select Date',
+                hintText: 'dd-mm-yyyy',
+
+              ),
+              readOnly: true,
+              onTap: () {
+                //_selectDate(context);
+              },
+            ),
           ),
         ),
-      ),
+        const SizedBox(
+          height: 10,
+        ),
+      ],
     );
   }
 
-  String? _validateFirstName(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter a valid name';
-    }
-    return null;
-  }
+
+
 
 }
-class InfoRow extends StatelessWidget {
-  final String label;
-  final String value;
 
-  InfoRow({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Text(
-              '$label',
-              style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),
-            ),
-          ),
-          Text("  :     "),
-          Expanded(
-            flex: 2,
-            child: Text(
-              value,
-              style: TextStyle(color: Colors.grey[700]),
-              //overflow: TextOverflow.,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-class InfoRows extends StatelessWidget {
-  final String label;
-  final String value;
-
-  InfoRows({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Text(
-              '$label',
-              style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),
-            ),
-          ),
-          Text(":    "),
-          Expanded(
-            flex: 2,
-            child: Text(
-              value,
-              style: TextStyle(color: Colors.grey[700]),
-              //overflow: TextOverflow.,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

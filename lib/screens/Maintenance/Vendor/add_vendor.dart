@@ -704,6 +704,8 @@ class CustomTextField extends StatefulWidget {
   final void Function()? onSuffixIconPressed;
   final void Function()? onTap;
   final bool readOnnly;
+   bool? optional;
+
 
   CustomTextField({
     Key? key,
@@ -718,6 +720,7 @@ class CustomTextField extends StatefulWidget {
     this.onSuffixIconPressed,
     this.onTap,
     this.onChanged,
+    this.optional,
     this.onChanged2, // Initialize onTap
   }) : super(key: key);
 
@@ -783,7 +786,7 @@ class CustomTextFieldState extends State<CustomTextField> {
       clipBehavior: Clip.none,
       children: <Widget>[
         FormField<String>(
-          validator: (value) {
+          validator: widget.optional !=null ? null: (value) {
             if (widget.controller!.text.isEmpty) {
               setState(() {
                 _errorMessage = 'Please ${widget.hintText}';

@@ -776,8 +776,8 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                               },
                               buttonStyleData: ButtonStyleData(
                                 height: 50,
-                                width: 250,
-                                padding: const EdgeInsets.only(left: 14, right: 14),
+                              //  width: 250,
+                                padding: const EdgeInsets.only(left: 1, right: 14),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(6),
                                   color: Colors.white,
@@ -849,8 +849,8 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                               },
                               buttonStyleData: ButtonStyleData(
                                 height: 45,
-                                width: 200,
-                                padding: const EdgeInsets.only(left: 14, right: 14),
+                              //  width: 200,
+                                padding: const EdgeInsets.only(left: 1, right: 14),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(6),
                                   color: Colors.white,

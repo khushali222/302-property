@@ -861,11 +861,14 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                   future: futurePropertyTypes,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                          child: SpinKitFadingCircle(
-                            color: Colors.black,
-                            size: 40.0,
-                          ));
+                      return Container(
+                        padding: EdgeInsets.only(top: 200),
+                        child: Center(
+                            child: SpinKitFadingCircle(
+                              color: Colors.black,
+                              size: 40.0,
+                            )),
+                      );
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {

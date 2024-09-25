@@ -614,7 +614,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
     );
   }
 
-  String _selectedOption = 'button 1';
+  String _selectedOption = 'Normal';
 
   void _handleRadioValueChange(String? value) {
     setState(() {
@@ -628,6 +628,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
+      helpText: "Due Date",
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
@@ -670,96 +671,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         },
       ),
       backgroundColor: Colors.white,
-/*      drawer: Drawer(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              const SizedBox(height: 40),
-              buildListTile(
-                  context,
-                  SvgPicture.asset(
-                    "assets/images/tenants/dashboard.svg",
-                    fit: BoxFit.cover,
-                    height: 20,
-                    width: 20,
-                  ),
-                  "Dashboard",
-                  false),
-              buildListTile(
-                  context,
-                  SvgPicture.asset(
-                    "assets/images/tenants/Admin.svg",
-                    fit: BoxFit.cover,
-                    height: 20,
-                    width: 20,
-                  ),
-                  "Profile",
-                  false),
-              *//*  buildListTile(
-                  context,
-                  SvgPicture.asset(
-                    "assets/images/tenants/Property.svg",
-                    fit: BoxFit.cover,
-                    height: 20,
-                    width: 20,
-                  ),
-                  "Properties",
-                  false),
-              buildListTile(
-                  context,
-                  SvgPicture.asset(
-                    "assets/images/tenants/Financial.svg",
-                    fit: BoxFit.cover,
-                    height: 20,
-                    width: 20,
-                  ),
-                  "Financial",
-                  false),*//*
-              buildListTile(
-                  context,
-                  SvgPicture.asset(
-                    "assets/images/tenants/Work Light.svg",
-                    fit: BoxFit.cover,
-                    height: 20,
-                    width: 20,
-                  ),
-                  "Work Order",
-                  true),
-              *//* buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.key,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Rental",
-                  ["Properties", "RentalOwner", "Tenants"]),
-              buildDropdownListTile(
-                  context,
-                  const FaIcon(
-                    FontAwesomeIcons.thumbsUp,
-                    size: 20,
-                    color: Colors.black,
-                  ),
-                  "Leasing",
-                  ["Rent Roll", "Applicants"]),
-              buildDropdownListTile(
-                  context,
-                  Image.asset("assets/icons/maintence.png",
-                      height: 20, width: 20),
-                  "Maintenance",
-                  ["Vendor", "Work Order"]),*//*
-            ],
-          ),
-        ),
-      ),*/
+
       body: LayoutBuilder(builder: (context, constraints) {
         if (constraints.maxWidth > 500) {
           return Form(
@@ -823,43 +735,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                     SizedBox(
                                       height: 10,
                                     ),
-                                    /*  Text('Photo ',
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey)),
-                                    SizedBox(
-                                      height: 10,
-                                    ),*/
-                                    // Container(
-                                    //   height: 50,
-                                    //   width: 150,
-                                    //   decoration: BoxDecoration(
-                                    //     borderRadius: BorderRadius.circular(8.0),
-                                    //   ),
-                                    //   child: ElevatedButton(
-                                    //     style: ElevatedButton.styleFrom(
-                                    //       backgroundColor: Color.fromRGBO(21, 43, 83, 1),
-                                    //       shape: RoundedRectangleBorder(
-                                    //         borderRadius: BorderRadius.circular(8.0),
-                                    //       ),
-                                    //     ),
-                                    //     onPressed: () async {
-                                    //
-                                    //     },
-                                    //     child: isLoading
-                                    //         ? Center(
-                                    //       child: SpinKitFadingCircle(
-                                    //         color: Colors.white,
-                                    //         size: 55.0,
-                                    //       ),
-                                    //     )
-                                    //         : Text(
-                                    //       'Upload here',
-                                    //       style: TextStyle(color: Color(0xFFf7f8f9)),
-                                    //     ),
-                                    //   ),
-                                    // ),
+
                                     SizedBox(
                                       height: 10,
                                     ),
@@ -1321,7 +1197,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                   buttonStyleData:
                                                       ButtonStyleData(
                                                     height: 45,
-                                                    width: 200,
+
                                                     padding:
                                                         const EdgeInsets.only(
                                                             left: 14,
@@ -1968,6 +1844,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                       ],
                                     ),
                                     ElevatedButton(
+                                      style: ElevatedButton.styleFrom(backgroundColor: blueColor),
                                       onPressed: addRow,
                                       child: Text('Add Row'),
                                     ),
@@ -2473,9 +2350,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                       width: MediaQuery.of(context).size.width * .91,
                       title: 'Edit Work Order',
                     ),
-                    SizedBox(
-                      height: 15,
-                    ),
+
                     Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: Container(
@@ -2851,9 +2726,9 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                   ,
                                   buttonStyleData: ButtonStyleData(
                                     height: 45,
-                                    width: 250,
+
                                     padding: const EdgeInsets.only(
-                                        left: 14, right: 14),
+                                        left: 1, right: 14),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(6),
                                       color: Colors.white,
@@ -3051,9 +2926,9 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                   ,
                                   buttonStyleData: ButtonStyleData(
                                     height: 45,
-                                    width: 200,
+
                                     padding: const EdgeInsets.only(
-                                        left: 14, right: 14),
+                                        left: 1, right: 14),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(6),
                                       color: Colors.white,
@@ -3235,6 +3110,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               ),
                               CustomTextField(
                                 readOnnly: true,
+                                optional: true,
                                 keyboardType: TextInputType.emailAddress,
                                 hintText: 'Enter here',
                                 controller: perform,
@@ -3295,6 +3171,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               ),
                               ElevatedButton(
                                 onPressed: addRow,
+                                style: ElevatedButton.styleFrom(backgroundColor: blueColor),
                                 child: Text('Add Row'),
                               ),
                               SizedBox(
@@ -3466,165 +3343,251 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                   ),
                                 ],
                               ),
-                              Column(
+                              Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  ListTile(
-                                    title: const Text(' High'),
-                                    leading: Radio<String>(
-                                      value: 'High',
-                                      groupValue: _selectedOption,
-                                      onChanged: _handleRadioValueChange,
+                                /*  Expanded(
+                                    child: ListTile(
+                                        contentPadding: EdgeInsets.zero,
+                                      title: const Text(' High'),
+                                      leading: Radio<String>(
+                                        value: 'High',
+                                        groupValue: _selectedOption,
+                                        onChanged: _handleRadioValueChange,
+                                      ),
                                     ),
                                   ),
-                                  ListTile(
-                                    title: const Text(' Normal'),
-                                    leading: Radio<String>(
-                                      value: 'Normal',
-                                      groupValue: _selectedOption,
-                                      onChanged: _handleRadioValueChange,
+                                  Expanded(
+                                    child: ListTile(
+                                      contentPadding: EdgeInsets.zero,
+                                      title: const Text(' Normal'),
+                                      leading: Radio<String>(
+                                        value: 'Normal',
+                                        groupValue: _selectedOption,
+                                        onChanged: _handleRadioValueChange,
+                                      ),
                                     ),
+                                  ),*/
+                                  Row(
+                                    children: [
+                                      Container(
+
+                                        width: 25,
+                                        child:  Radio<String>(
+                                          value: 'High',
+                                          groupValue: _selectedOption,
+                                          onChanged: _handleRadioValueChange,
+                                        ),
+                                      ),
+                                      SizedBox(width: 5,),
+                                      Text(' High')
+                                    ],
                                   ),
-                                  ListTile(
-                                    title: const Text(' Low'),
-                                    leading: Radio<String>(
-                                      value: 'Low',
-                                      groupValue: _selectedOption,
-                                      onChanged: _handleRadioValueChange,
+                                  SizedBox(width: 20,),
+                                  Row(
+                                    children: [
+                                      Container(
+
+                                        width: 25,
+                                        child: Radio<String>(
+                                          value: 'Normal',
+                                          groupValue: _selectedOption,
+                                          onChanged: _handleRadioValueChange,
+                                        ),
+                                      ),
+                                      SizedBox(width: 5,),
+                                      Text(' Normal')
+                                    ],
+                                  ),
+                                  SizedBox(width: 20,),
+                                 Row(
+                                   children: [
+                                     Container(
+
+                                       width: 25,
+                                       child: Radio<String>(
+                                         value: 'Low',
+                                         groupValue: _selectedOption,
+                                         onChanged: _handleRadioValueChange,
+                                       ),
+                                     ),
+                                     SizedBox(width: 5,),
+                                     Text(' Low')
+                                   ],
+                                 )
+                                 /* ListTile(
+
+                                    tileColor: Colors.amber,
+                                    contentPadding: EdgeInsets.only(left:5),
+                                    title: Container(
+                                    color: Colors.cyan,
+                                      child: const Text(' Low')),
+                                    leading: Container(
+                                      color: Colors.grey,
+                                      width: 25,
+                                      child: Radio<String>(
+                                        value: 'Low',
+                                        groupValue: _selectedOption,
+                                        onChanged: _handleRadioValueChange,
+                                      ),
                                     ),
-                                  ),
+                                  ),*/
                                 ],
                               ),
                               SizedBox(
                                 height: 10,
                               ),
-                              Text('Status *',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              DropdownButtonHideUnderline(
-                                child: DropdownButton2<String>(
-                                  isExpanded: true,
-                                  hint: Text('New'),
-                                  value: _selectedStatus,
-                                  items: _status.map((method) {
-                                    return DropdownMenuItem<String>(
-                                      value: method,
-                                      child: Text(method),
-                                    );
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _selectedStatus = newValue;
-                                    });
-                                    print(
-                                        'Selected category: $_selectedStatus');
-                                  },
-                                  buttonStyleData: ButtonStyleData(
-                                    height: 45,
-                                    width: 200,
-                                    padding: const EdgeInsets.only(
-                                        left: 14, right: 14),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      color: Colors.white,
-                                    ),
-                                    elevation: 2,
+                            
+                              Row(
+                                children: [
+                                  Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Status *',
+                                          style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey)),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      DropdownButtonHideUnderline(
+                                        child: DropdownButton2<String>(
+                                          isExpanded: true,
+                                          hint: Text('New'),
+                                          value: _selectedStatus,
+                                          items: _status.map((method) {
+                                            return DropdownMenuItem<String>(
+                                              value: method,
+                                              child: Text(method),
+                                            );
+                                          }).toList(),
+                                          onChanged: (String? newValue) {
+                                            setState(() {
+                                              _selectedStatus = newValue;
+                                            });
+                                            print(
+                                                'Selected category: $_selectedStatus');
+                                          },
+                                          buttonStyleData: ButtonStyleData(
+                                            height: 45,
+                                            width: 150,
+                                            padding: const EdgeInsets.only(
+                                                left: 14, right: 14),
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(6),
+                                              color: Colors.white,
+                                            ),
+                                            elevation: 2,
+                                          ),
+                                          iconStyleData: const IconStyleData(
+                                            icon: Icon(
+                                              Icons.arrow_drop_down,
+                                            ),
+                                            iconSize: 24,
+                                            iconEnabledColor: Color(0xFFb0b6c3),
+                                            iconDisabledColor: Colors.grey,
+                                          ),
+                                          dropdownStyleData: DropdownStyleData(
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(6),
+                                              color: Colors.white,
+                                            ),
+                                            scrollbarTheme: ScrollbarThemeData(
+                                              radius: const Radius.circular(6),
+                                              thickness: MaterialStateProperty.all(6),
+                                              thumbVisibility:
+                                                  MaterialStateProperty.all(true),
+                                            ),
+                                          ),
+                                          menuItemStyleData: const MenuItemStyleData(
+                                            height: 40,
+                                            padding:
+                                                EdgeInsets.only(left: 14, right: 14),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  iconStyleData: const IconStyleData(
-                                    icon: Icon(
-                                      Icons.arrow_drop_down,
+                                  SizedBox(width: 10,),
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Text('Due Date',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey)),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Material(
+                                          elevation: 3,
+                                          borderRadius: BorderRadius.circular(6.0),
+                                          child: Container(
+                                            height: 45,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0, vertical: 0),
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                               /* boxShadow: [
+                                                  const BoxShadow(
+                                                    color: Colors.black26,
+                                                    offset: Offset(1.0,
+                                                        1.0), // Shadow offset to the bottom right
+                                                    blurRadius:
+                                                    8.0, // How much to blur the shadow
+                                                    spreadRadius:
+                                                    0.0, // How much the shadow should spread
+                                                  ),
+                                                ],*/
+                                                border: Border.all(
+                                                    width: 0, color: Colors.white),
+                                                borderRadius: BorderRadius.circular(6.0)),
+                                            child: TextFormField(
+                                              style: const TextStyle(
+                                                color: Color(0xFF8898aa), // Text color
+                                                fontSize: 16.0, // Text size
+                                                fontWeight: FontWeight.w400, // Text weight
+                                              ),
+                                              controller: _dateController,
+                                              decoration: InputDecoration(
+                                                hintStyle: const TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 13,
+                                                    color: Color(0xFFb0b6c3)),
+                                                border: InputBorder.none,
+                                                // labelText: 'Select Date',
+                                                hintText: 'dd-mm-yyyy',
+                                                suffixIcon: IconButton(
+                                                  icon: const Icon(Icons.calendar_today),
+                                                  onPressed: () {
+                                                    _selectDate(context);
+                                                  },
+                                                ),
+                                              ),
+                                              readOnly: true,
+                                              onTap: () {
+                                                _selectDate(context);
+                                              },
+                                            ),
+                                          ),
+                                        ),
+
+                                      ],
                                     ),
-                                    iconSize: 24,
-                                    iconEnabledColor: Color(0xFFb0b6c3),
-                                    iconDisabledColor: Colors.grey,
                                   ),
-                                  dropdownStyleData: DropdownStyleData(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      color: Colors.white,
-                                    ),
-                                    scrollbarTheme: ScrollbarThemeData(
-                                      radius: const Radius.circular(6),
-                                      thickness: MaterialStateProperty.all(6),
-                                      thumbVisibility:
-                                          MaterialStateProperty.all(true),
-                                    ),
-                                  ),
-                                  menuItemStyleData: const MenuItemStyleData(
-                                    height: 40,
-                                    padding:
-                                        EdgeInsets.only(left: 14, right: 14),
-                                  ),
-                                ),
+                                ],
                               ),
                               SizedBox(
                                 height: 15,
                               ),
-                              const Text('Due Date',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Container(
-                                height: 46,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12.0, vertical: 0),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    boxShadow: [
-                                      const BoxShadow(
-                                        color: Colors.black26,
-                                        offset: Offset(1.0,
-                                            1.0), // Shadow offset to the bottom right
-                                        blurRadius:
-                                            8.0, // How much to blur the shadow
-                                        spreadRadius:
-                                            0.0, // How much the shadow should spread
-                                      ),
-                                    ],
-                                    border: Border.all(
-                                        width: 0, color: Colors.white),
-                                    borderRadius: BorderRadius.circular(6.0)),
-                                child: TextFormField(
-                                  style: const TextStyle(
-                                    color: Color(0xFF8898aa), // Text color
-                                    fontSize: 16.0, // Text size
-                                    fontWeight: FontWeight.w400, // Text weight
-                                  ),
-                                  controller: _dateController,
-                                  decoration: InputDecoration(
-                                    hintStyle: const TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 13,
-                                        color: Color(0xFFb0b6c3)),
-                                    border: InputBorder.none,
-                                    // labelText: 'Select Date',
-                                    hintText: 'yyyy-mm-dd',
-                                    suffixIcon: IconButton(
-                                      icon: const Icon(Icons.calendar_today),
-                                      onPressed: () {
-                                        _selectDate(context);
-                                      },
-                                    ),
-                                  ),
-                                  readOnly: true,
-                                  onTap: () {
-                                    _selectDate(context);
-                                  },
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
+                            
+
                             ],
                           ),
                         ),

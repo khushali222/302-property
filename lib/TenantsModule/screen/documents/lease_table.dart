@@ -625,66 +625,7 @@ class _Lease_TableState extends State<Lease_Table> {
             SizedBox(
               height: 20,
             ),
-            //add propertytype
-          /*  Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  GestureDetector(
-                    onTap: () async {
-                    */
-            /*  final result = await Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => Add_property()));*/
-            /*
-                     */
-            /* if (result == true) {
-                        setState(() {
-                          futurePropertyTypes =
-                              TenantPropertyRepository().fetchTenantProperties();
-                        });
-                      }*/
-            /*
-                    },
-                    child: Container(
-                      height: (MediaQuery.of(context).size.width < 500)
-                          ? 40
-                          : MediaQuery.of(context).size.width * 0.065,
 
-                      // height:  MediaQuery.of(context).size.width * 0.07,
-                      // height:  40,
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      decoration: BoxDecoration(
-                        color: Color.fromRGBO(21, 43, 81, 1),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Add Property Type",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                MediaQuery.of(context).size.width * 0.034,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 6),
-                  if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 22),
-                ],
-              ),
-            ),
-            SizedBox(height: 10),*/
 
             titleBar(
               width: MediaQuery.of(context).size.width * .91,
@@ -845,11 +786,14 @@ class _Lease_TableState extends State<Lease_Table> {
                   future: futurePropertyTypes,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                          child: SpinKitFadingCircle(
-                            color: Colors.black,
-                            size: 40.0,
-                          ));
+                      return Container(
+                        padding: EdgeInsets.only(top: 200),
+                        child: Center(
+                            child: SpinKitFadingCircle(
+                              color: Colors.black,
+                              size: 40.0,
+                            )),
+                      );
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {

@@ -154,10 +154,13 @@ class _applicant_summeryState extends State<applicant_summery>
             future: futureLeaseSummary,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: SpinKitSpinningLines(
-                    color: Colors.black,
-                    size: 55.0,
+                return Container(
+                  padding: EdgeInsets.only(top: MediaQuery.of(context).size.height *.45),
+                  child: const Center(
+                    child: SpinKitSpinningLines(
+                      color: Colors.black,
+                      size: 55.0,
+                    ),
                   ),
                 );
               } else if (!snapshot.hasData || snapshot.data == null) {

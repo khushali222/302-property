@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -65,6 +66,9 @@ class _notificationsState extends State<notifications> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            SizedBox(height: 10,),
+           // Center(child: Text("Notification",style: TextStyle(fontSize:20,fontWeight: FontWeight.bold,),)),
+
             Padding(
               padding: const EdgeInsets.only(top: 8),
               child: titleBar(
@@ -98,7 +102,7 @@ class _notificationsState extends State<notifications> {
                   } else
                  {
                    List<Map<String, dynamic>> notifications = snapshot.data!;
-        
+
                    return SingleChildScrollView(
                      child: Padding(
                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -113,9 +117,9 @@ class _notificationsState extends State<notifications> {
                                  Text(
                                    notification['notification_title'],
                                    style: TextStyle(
-                                     fontSize: 18.0,
-                                     fontWeight: FontWeight.bold,
-                                     color: blueColor
+                                       fontSize: 18.0,
+                                       fontWeight: FontWeight.bold,
+                                       color: blueColor
                                    ),
                                  ),
                                  SizedBox(height: 4.0),
@@ -140,10 +144,12 @@ class _notificationsState extends State<notifications> {
                                      ),
                                      ElevatedButton(
                                        onPressed: () {
-                                      /*   if(notification['notification_title'] =="Workorder Created"){
+                                        /* if(notification['notification_title'] =="Workorder Created"){
                                            Navigator.of(context).push(MaterialPageRoute(
                                                builder: (context) =>  ResponsiveEditWorkOrder(workorderId: notification['notification_type']['workorder_id'],)));
-                                         }else{
+                                         }else if(notification['notification_title'] =="New Payment"){
+                                           Navigator.of(context).push(MaterialPageRoute(
+                                               builder: (context) =>  SummeryPageLease(leaseId: notification['notification_type']['lease_id'],isredirectpayment: true,)));
 
                                          }*/
 
@@ -165,6 +171,109 @@ class _notificationsState extends State<notifications> {
                 },
               ),
             ),
+          /*  Column(
+              children: [
+                ListTile(
+                  title: Text("New Payment",style: TextStyle(fontWeight: FontWeight.bold),),
+                  subtitle: Text("Today  |  05:32 PM"),
+                  leading: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.blue.shade100,
+
+                      child: FaIcon(FontAwesomeIcons.solidBell,size: 18,)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Text("Your credit card has been connected successfully. Enjoy our services",style: TextStyle(fontWeight: FontWeight.w600),),
+                )
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Divider(thickness: 2,),
+            ),
+            Column(
+              children: [
+                ListTile(
+                  title: Text("New Payment",style: TextStyle(fontWeight: FontWeight.bold),),
+                  subtitle: Text("Today  |  05:32 PM"),
+                  leading: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.blue.shade100,
+
+                      child: FaIcon(FontAwesomeIcons.solidBell,size: 18,)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Text("Your credit card has been connected successfully. Enjoy our services",style: TextStyle(fontWeight: FontWeight.w600),),
+                )
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Divider(thickness: 2,),
+            ),
+            Column(
+              children: [
+                ListTile(
+                  title: Text("New Payment",style: TextStyle(fontWeight: FontWeight.bold),),
+                  subtitle: Text("Today  |  05:32 PM"),
+                  leading: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.blue.shade100,
+
+                      child: FaIcon(FontAwesomeIcons.solidBell,size: 18,)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Text("Your credit card has been connected successfully. Enjoy our services",style: TextStyle(fontWeight: FontWeight.w600),),
+                )
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Divider(thickness: 2,),
+            ),
+            Column(
+              children: [
+                ListTile(
+                  title: Text("New Payment",style: TextStyle(fontWeight: FontWeight.bold),),
+                  subtitle: Text("Today  |  05:32 PM"),
+                  leading: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.blue.shade100,
+
+                      child: FaIcon(FontAwesomeIcons.solidBell,size: 18,)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Text("Your credit card has been connected successfully. Enjoy our services",style: TextStyle(fontWeight: FontWeight.w600),),
+                )
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Divider(thickness: 2,),
+            ),
+            Column(
+              children: [
+                ListTile(
+                  title: Text("New Payment",style: TextStyle(fontWeight: FontWeight.bold),),
+                  subtitle: Text("Today  |  05:32 PM"),
+                  leading: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.blue.shade100,
+
+                      child: FaIcon(FontAwesomeIcons.solidBell,size: 18,)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Text("Your credit card has been connected successfully. Enjoy our services",style: TextStyle(fontWeight: FontWeight.w600),),
+                )
+              ],
+            ),*/
+
+
           ],
         ),
       ),
