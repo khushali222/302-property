@@ -1634,6 +1634,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                               keyboardType: TextInputType.emailAddress,
                               hintText: 'Enter here',
                               controller: perform,
+                              optional: true,
                             ),
                             SizedBox(
                               height: 10,
@@ -1714,6 +1715,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                 }
                                 return null;
                               },
+                              optional: true,
                             ),
                             SizedBox(
                               height: 20,
@@ -4049,6 +4051,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                       .emailAddress,
                                                   hintText: 'Enter here',
                                                   controller: perform,
+                                                  optional: true,
                                                 ),
                                               ],
                                             ),
@@ -4600,6 +4603,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                       }
                                                       return null;
                                                     },
+                                                    optional: true,
                                                   ),
                                                 ],
                                               ),

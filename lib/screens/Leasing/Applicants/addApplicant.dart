@@ -288,6 +288,7 @@ class _AddApplicantState extends State<AddApplicant> {
                               signed: true, decimal: true),
                           hintText: 'Enter home number',
                           controller: homeNumber,
+                          optional: true,
                         ),
                         const SizedBox(
                           height: 8,
@@ -311,6 +312,7 @@ class _AddApplicantState extends State<AddApplicant> {
                               signed: true, decimal: true),
                           hintText: 'Enter business number',
                           controller: bussinessNumber,
+                          optional: true,
                         ),
                         const SizedBox(
                           height: 8,
@@ -334,6 +336,7 @@ class _AddApplicantState extends State<AddApplicant> {
                               signed: true, decimal: true),
                           hintText: 'Enter telephone number',
                           controller: telePhoneNumber,
+                          optional: true,
                         ),
                         const SizedBox(
                           height: 8,
