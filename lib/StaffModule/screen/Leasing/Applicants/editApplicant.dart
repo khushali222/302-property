@@ -289,6 +289,7 @@ class _EditApplicantState extends State<EditApplicant> {
                           keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                           hintText: 'Enter home number',
                           controller: homeNumber,
+                          optional: true,
                         ),
                         const SizedBox(
                           height: 8,
@@ -311,6 +312,7 @@ class _EditApplicantState extends State<EditApplicant> {
                           keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                           hintText: 'Enter business number',
                           controller: bussinessNumber,
+                          optional: true,
                         ),
                         const SizedBox(
                           height: 8,
@@ -333,6 +335,7 @@ class _EditApplicantState extends State<EditApplicant> {
                           keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                           hintText: 'Enter telephone number',
                           controller: telePhoneNumber,
+                          optional: true,
                         ),
 
                       ],

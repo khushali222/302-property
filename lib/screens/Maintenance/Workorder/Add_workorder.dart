@@ -1616,6 +1616,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                               keyboardType: TextInputType.emailAddress,
                               hintText: 'Enter here',
                               controller: perform,
+                              optional: true,
                             ),
                             SizedBox(
                               height: 10,
@@ -1696,6 +1697,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                                 }
                                 return null;
                               },
+                              optional: true,
                             ),
                             SizedBox(
                               height: 20,
@@ -4003,6 +4005,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                               TextInputType.emailAddress,
                                           hintText: 'Enter here',
                                           controller: perform,
+                                          optional: true,
                                         ),
                                         SizedBox(
                                           height: 10,
@@ -4369,6 +4372,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                 }
                                 return null;
                               },
+                              optional: true,
                             ),
                             SizedBox(
                               height: 20,

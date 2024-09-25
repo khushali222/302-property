@@ -1414,6 +1414,11 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   bool isMovedOut = false;
+  int _selectedIndex = 0;
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1487,7 +1492,8 @@ class _Summery_pageState extends State<Summery_page>
               // color: Colors.blue,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: TabBar(
+            child:
+            TabBar(
               controller: _tabController,
               dividerColor: Colors.transparent,
               indicatorWeight: 5,
@@ -1525,6 +1531,51 @@ class _Summery_pageState extends State<Summery_page>
                 // ),
               ],
             ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     SizedBox(width: 2,),
+            //     Expanded(
+            //       child: Container(
+            //         height: 43,
+            //         decoration: BoxDecoration(
+            //           color: blueColor,
+            //           borderRadius: BorderRadius.circular(5),
+            //         ),
+            //           child: Center(child: Text("Summary",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
+            //     ),
+            //     SizedBox(width: 5,),
+            //     Expanded(
+            //       child: Container( height: 43,
+            //           decoration: BoxDecoration(
+            //               color: blueColor,
+            //             borderRadius: BorderRadius.circular(5),
+            //           ),
+            //           child: Center(child: Text("Unit",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
+            //     ),
+            //     SizedBox(width: 5,),
+            //     Expanded(
+            //       child: Container(
+            //           height: 43,
+            //           decoration: BoxDecoration(
+            //               color: blueColor,
+            //             borderRadius: BorderRadius.circular(5),
+            //           ),
+            //           child: Center(child: Text("Tenats",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
+            //     ),
+            //     SizedBox(width: 5,),
+            //     Expanded(
+            //       child: Container(
+            //           height: 43,
+            //           decoration: BoxDecoration(
+            //               color: blueColor,
+            //             borderRadius: BorderRadius.circular(5),
+            //           ),
+            //           child: Center(child: Text("Workorder",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
+            //     ),
+            //     SizedBox(width: 2,),
+            //   ],
+            // ),
           ),
           Expanded(
             child: TabBarView(
@@ -1548,6 +1599,8 @@ class _Summery_pageState extends State<Summery_page>
               ],
             ),
           ),
+
+
         ],
       ),
     );
@@ -3135,7 +3188,7 @@ class _Summery_pageState extends State<Summery_page>
                                     ),
                                   ),
                                 ),
-                                SizedBox(width:2,),
+                                SizedBox(width:1,),
                               ],
                             ),
                           ],
@@ -3285,6 +3338,31 @@ class _Summery_pageState extends State<Summery_page>
                         initialDate: DateTime.now(),
                         firstDate: DateTime(2000),
                         lastDate: DateTime(2101),
+                        builder: (BuildContext context, Widget? child) {
+                          return Theme(
+                            data: ThemeData.light().copyWith(
+                              colorScheme: const ColorScheme.light(
+                                primary: Color.fromRGBO(21, 43, 83,
+                                    1), // header background color
+                                onPrimary:
+                                Colors.white, // header text color
+                                onSurface: Color.fromRGBO(
+                                    21, 43, 83, 1), // body text color
+                              ),
+                              textButtonTheme: TextButtonThemeData(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: const Color.fromRGBO(
+                                      21,
+                                      43,
+                                      83,
+                                      1), // button text color
+                                ),
+                              ),
+                            ),
+                            child: child!,
+                          );
+                        },
                       );
                       if (pickedDate != null) {
                         setState(() {

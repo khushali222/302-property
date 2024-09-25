@@ -975,7 +975,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                     ),
                                                   );
                                                 }).toList(),
-                                                value: _selectedUnit,
+                                                value: _selectedUnit!.isEmpty ? null : _selectedUnit,
                                                 onChanged: (value) {
                                                   setState(() {
                                                     _selectedUnit = value;
@@ -2979,6 +2979,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                 keyboardType: TextInputType.text,
                                 hintText: 'Enter Memo',
                                 controller: rentMemo,
+                                optional: true,
                               ),
                             ],
                           ),
@@ -3473,6 +3474,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                 keyboardType: TextInputType.text,
                                 hintText: 'Enter Amount',
                                 controller: securityDepositeAmount,
+                                optional: true,
                               ),
                               const Padding(
                                 padding: EdgeInsets.all(10.0),
@@ -4904,6 +4906,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                           keyboardType: TextInputType.text,
                           hintText: 'Enter Memo',
                           controller: _memoController,
+                          optional: true,
                         ),
                         const SizedBox(
                           height: 20,
@@ -5560,6 +5563,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                   keyboardType: TextInputType.text,
                   hintText: 'Enter Memo',
                   controller: _memoController,
+                  optional: true,
                 ),
                 const SizedBox(
                   height: 20,

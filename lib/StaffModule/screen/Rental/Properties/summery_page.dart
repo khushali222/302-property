@@ -2653,46 +2653,53 @@ startdateController.text = displayDate;
                 )
                     : SingleChildScrollView(
                   scrollDirection: Axis.vertical,
-                  child: Wrap(
-                    alignment: WrapAlignment.start,
-                    spacing: MediaQuery.of(context).size.width * 0.03,
-                    runSpacing: MediaQuery.of(context).size.width * 0.02,
-                    children: List.generate(
-                      tenants.length,
-                          (index) {
-                            DateTime currentDate = DateTime.now();
-                            DateTime moveoutDate;
-                            bool? ismove = false;
+                  child: Column(
+                    children: [
+                      Wrap(
+                        alignment: WrapAlignment.start,
+                        spacing: MediaQuery.of(context).size.width * 0.03,
+                        runSpacing: MediaQuery.of(context).size.width * 0.02,
+                        children: List.generate(
+                          tenants.length,
+                              (index) {
+                                DateTime currentDate = DateTime.now();
+                                DateTime moveoutDate;
+                                bool? ismove = false;
 
-                            if(snapshot.data![index].moveoutDate != null && snapshot.data![index].moveoutDate!!= "" ){
-                              moveoutDate = DateFormat('yyyy-MM-dd').parse(snapshot.data![index].moveoutDate!);
-                              ismove =  moveoutDate.difference(currentDate).inDays < 1;
-                            }
-                        return Padding(
-                        padding: const EdgeInsets.only(
-                          left: 20, right: 20, top: 20,),
-                        child: Material(
-                          elevation: 3,
-                          borderRadius: BorderRadius.circular(10),
-                          child: Container(
-                            height: 230,
-                            //  width: MediaQuery.of(context).size.width * .44,
-                            decoration: BoxDecoration(
-                              color:
-                              Colors.white, // Change as per your need
+                                if(snapshot.data![index].moveoutDate != null && snapshot.data![index].moveoutDate!!= "" ){
+                                  moveoutDate = DateFormat('yyyy-MM-dd').parse(snapshot.data![index].moveoutDate!);
+                                  ismove =  moveoutDate.difference(currentDate).inDays < 1;
+                                }
+                            return Padding(
+                            padding: const EdgeInsets.only(
+                              left: 20, right: 20, top: 20,),
+                            child: Material(
+                              elevation: 3,
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: blueColor),
-                            ),
-                            child: buildTenantCard(
-                                tenants[index],
-                                isMoveouts:      (snapshot.data![index].moveoutDate == "" || ismove ==false ) ? false :   (snapshot.data![index].moveoutDate != "" && ismove) ? true : false
+                              child: Container(
+                                //height: 230,
+                                //  width: MediaQuery.of(context).size.width * .44,
+                                decoration: BoxDecoration(
+                                  color:
+                                  Colors.white, // Change as per your need
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: blueColor),
+                                ),
+                                child: buildTenantCard(
+                                    tenants[index],
+                                    isMoveouts:      (snapshot.data![index].moveoutDate == "" || ismove ==false ) ? false :   (snapshot.data![index].moveoutDate != "" && ismove) ? true : false
 
 
+                                ),
+                              ),
                             ),
-                          ),
+                          ) ; }
                         ),
-                      ) ; }
-                    ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                    ],
                   ),
                 );
               }
@@ -2864,7 +2871,6 @@ startdateController.text = displayDate;
             ),
           ],
         ),
-
         const SizedBox(height: 10),
         Row(
           children: [
@@ -2910,7 +2916,7 @@ startdateController.text = displayDate;
             ),
           ],
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 20),
       ],
     );
   }
@@ -3105,7 +3111,7 @@ startdateController.text = displayDate;
                                     ),
                                   ),
                                 ),
-                                SizedBox(width:2,),
+                                SizedBox(width:1,),
                               ],
                             ),
                           ],
@@ -3248,6 +3254,31 @@ startdateController.text = displayDate;
                       initialDate: DateTime.now(),
                       firstDate: DateTime(2000),
                       lastDate: DateTime(2101),
+                      builder: (BuildContext context, Widget? child) {
+                        return Theme(
+                          data: ThemeData.light().copyWith(
+                            colorScheme: const ColorScheme.light(
+                              primary: Color.fromRGBO(21, 43, 83,
+                                  1), // header background color
+                              onPrimary:
+                              Colors.white, // header text color
+                              onSurface: Color.fromRGBO(
+                                  21, 43, 83, 1), // body text color
+                            ),
+                            textButtonTheme: TextButtonThemeData(
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: const Color.fromRGBO(
+                                    21,
+                                    43,
+                                    83,
+                                    1), // button text color
+                              ),
+                            ),
+                          ),
+                          child: child!,
+                        );
+                      },
                     );
                     if (pickedDate != null) {
                       setState(() {

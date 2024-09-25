@@ -360,6 +360,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                     decimal: true),
                                             hintText: 'Enter work number',
                                             controller: workNumber,
+                                            optional: true,
                                           ),
                                         ],
                                       ),
@@ -413,6 +414,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                 TextInputType.emailAddress,
                                             hintText: 'Enter alternative email',
                                             controller: alterEmail,
+                                            optional: true,
                                           ),
                                         ],
                                       ),
@@ -522,6 +524,7 @@ class _EditTenantsState extends State<EditTenants> {
                                               hintText:
                                                   'Enter alternative email',
                                               controller: alterEmail,
+                                              optional: true,
                                             ),
                                           ],
                                         ),
@@ -639,6 +642,7 @@ class _EditTenantsState extends State<EditTenants> {
                                           keyboardType: TextInputType.text,
                                           hintText: 'Enter taxpayer ID',
                                           controller: taxPayerId,
+                                          optional: true,
                                         ),
                                       ],
                                     ),
@@ -740,6 +744,7 @@ class _EditTenantsState extends State<EditTenants> {
                                           keyboardType: TextInputType.text,
                                           hintText: 'Enter contact name',
                                           controller: contactName,
+                                          optional: true,
                                         ),
                                       ],
                                     ),
@@ -761,6 +766,7 @@ class _EditTenantsState extends State<EditTenants> {
                                           hintText:
                                               'Enter relationship to tenant',
                                           controller: relationToTenant,
+                                          optional: true,
                                         ),
                                       ],
                                     ),
@@ -786,6 +792,7 @@ class _EditTenantsState extends State<EditTenants> {
                                               TextInputType.emailAddress,
                                           hintText: 'Enter email',
                                           controller: emergencyEmail,
+                                          optional: true,
                                         ),
                                       ],
                                     ),
@@ -808,6 +815,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                   signed: true, decimal: true),
                                           hintText: 'Enter phone number',
                                           controller: emergencyPhoneNumber,
+                                          optional: true,
                                         ),
                                       ],
                                     ),
@@ -1193,6 +1201,8 @@ class _EditTenantsState extends State<EditTenants> {
                               keyboardType: TextInputType.number,
                               hintText: 'Enter work number',
                               controller: workNumber,
+                              optional: true,
+
                             ),
                             SizedBox(
                               height: 10,
@@ -1243,6 +1253,7 @@ class _EditTenantsState extends State<EditTenants> {
                                 }
                                 return null;
                               },
+                              optional: true,
                             ),
                             SizedBox(
                               height: 10,
@@ -1406,8 +1417,9 @@ class _EditTenantsState extends State<EditTenants> {
                             SizedBox(height: 10),
                             CustomTextField(
                               keyboardType: TextInputType.text,
-                              hintText: 'Enter contact name',
+                              hintText: 'Enter tax payer id',
                               controller: taxPayerId,
+                              optional: true,
                             ),
                             SizedBox(
                               height: 10,
@@ -1494,6 +1506,7 @@ class _EditTenantsState extends State<EditTenants> {
                               keyboardType: TextInputType.text,
                               hintText: 'Enter contact name',
                               controller: contactName,
+                              optional: true,
                             ),
                             SizedBox(
                               height: 10,
@@ -1510,6 +1523,7 @@ class _EditTenantsState extends State<EditTenants> {
                               keyboardType: TextInputType.text,
                               hintText: 'Enter relationship to tenant',
                               controller: relationToTenant,
+                              optional: true,
                             ),
                             SizedBox(
                               height: 10,
@@ -1535,6 +1549,7 @@ class _EditTenantsState extends State<EditTenants> {
                                 }
                                 return null;
                               },
+                              optional: true,
                             ),
                             SizedBox(
                               height: 10,
@@ -1552,6 +1567,7 @@ class _EditTenantsState extends State<EditTenants> {
                                   signed: true, decimal: true),
                               hintText: 'Enter phone number',
                               controller: emergencyPhoneNumber,
+                              optional: true,
                             ),
                           ],
                         ),
@@ -1892,6 +1908,7 @@ class CustomTextField extends StatefulWidget {
   final bool? amount_check;
   final String? max_amount;
   final String? error_mess;
+  final bool? optional;
 
   CustomTextField({
     Key? key,
@@ -1911,7 +1928,7 @@ class CustomTextField extends StatefulWidget {
     this.amount_check,
     this.max_amount,
     this.error_mess,
-
+    this.optional = false,
     // Initialize onTap
   }) : super(key: key);
 
@@ -1976,7 +1993,8 @@ class CustomTextFieldState extends State<CustomTextField> {
       clipBehavior: Clip.none,
       children: <Widget>[
         FormField<String>(
-          validator: (value) {
+          validator: widget.optional! ? null :
+              (value) {
             if (widget.controller!.text.isEmpty) {
               setState(() {
                 if (widget.label == null)

@@ -272,6 +272,7 @@ class _AddTenantState extends State<AddTenant> {
                                                         decimal: true),
                                                 hintText: 'Enter work number',
                                                 controller: workNumber,
+                                                optional: true,
                                               ),
                                             ],
                                           ),
@@ -328,6 +329,7 @@ class _AddTenantState extends State<AddTenant> {
                                                 hintText:
                                                     'Enter alternative email',
                                                 controller: alterEmail,
+                                                optional: true,
                                               ),
                                             ],
                                           ),
@@ -442,6 +444,7 @@ class _AddTenantState extends State<AddTenant> {
                                                   hintText:
                                                       'Enter alternative email',
                                                   controller: alterEmail,
+                                                  optional: true,
                                                 ),
                                               ],
                                             ),
@@ -563,6 +566,7 @@ class _AddTenantState extends State<AddTenant> {
                                               keyboardType: TextInputType.text,
                                               hintText: 'Enter taxpayer ID',
                                               controller: taxPayerId,
+                                              optional: true,
                                             ),
                                           ],
                                         ),
@@ -667,6 +671,7 @@ class _AddTenantState extends State<AddTenant> {
                                               keyboardType: TextInputType.text,
                                               hintText: 'Enter contact name',
                                               controller: contactName,
+                                              optional: true,
                                             ),
                                           ],
                                         ),
@@ -688,6 +693,7 @@ class _AddTenantState extends State<AddTenant> {
                                               hintText:
                                                   'Enter relationship to tenant',
                                               controller: relationToTenant,
+                                              optional: true,
                                             ),
                                           ],
                                         ),
@@ -713,6 +719,7 @@ class _AddTenantState extends State<AddTenant> {
                                                   TextInputType.emailAddress,
                                               hintText: 'Enter email',
                                               controller: emergencyEmail,
+                                              optional: true,
                                             ),
                                           ],
                                         ),
@@ -736,6 +743,7 @@ class _AddTenantState extends State<AddTenant> {
                                                       decimal: true),
                                               hintText: 'Enter phone number',
                                               controller: emergencyPhoneNumber,
+                                              optional: true,
                                             ),
                                           ],
                                         ),
@@ -1057,6 +1065,7 @@ class _AddTenantState extends State<AddTenant> {
                                             signed: true, decimal: true),
                                     hintText: 'Enter work number',
                                     controller: workNumber,
+                                    optional: true,
                                   ),
                                   SizedBox(
                                     height: 10,
@@ -1095,6 +1104,7 @@ class _AddTenantState extends State<AddTenant> {
                                     keyboardType: TextInputType.emailAddress,
                                     hintText: 'Enter alternative email',
                                     controller: alterEmail,
+                                    optional: true,
                                   ),
                                   SizedBox(
                                     height: 10,
@@ -1263,8 +1273,9 @@ class _AddTenantState extends State<AddTenant> {
                                   SizedBox(height: 10),
                                   CustomTextField(
                                     keyboardType: TextInputType.text,
-                                    hintText: 'Enter contact name',
+                                    hintText: 'Enter tax payer id',
                                     controller: taxPayerId,
+                                    optional: true,
                                   ),
                                   SizedBox(
                                     height: 10,
@@ -1354,6 +1365,7 @@ class _AddTenantState extends State<AddTenant> {
                                     keyboardType: TextInputType.text,
                                     hintText: 'Enter contact name',
                                     controller: contactName,
+                                    optional: true,
                                   ),
                                   SizedBox(
                                     height: 10,
@@ -1370,6 +1382,7 @@ class _AddTenantState extends State<AddTenant> {
                                     keyboardType: TextInputType.text,
                                     hintText: 'Enter relationship to tenant',
                                     controller: relationToTenant,
+                                    optional: true,
                                   ),
                                   SizedBox(
                                     height: 10,
@@ -1386,6 +1399,7 @@ class _AddTenantState extends State<AddTenant> {
                                     keyboardType: TextInputType.emailAddress,
                                     hintText: 'Enter email',
                                     controller: emergencyEmail,
+                                    optional: true,
                                   ),
                                   SizedBox(
                                     height: 10,
@@ -1404,6 +1418,7 @@ class _AddTenantState extends State<AddTenant> {
                                             signed: true, decimal: true),
                                     hintText: 'Enter phone number',
                                     controller: emergencyPhoneNumber,
+                                    optional: true,
                                   ),
                                 ],
                               ),
@@ -1602,6 +1617,7 @@ class _AddTenantState extends State<AddTenant> {
                                   signed: true, decimal: true),
                               hintText: 'Enter work number',
                               controller: workNumber,
+                              optional: true,
                             ),
                             SizedBox(
                               height: 10,
@@ -1640,6 +1656,7 @@ class _AddTenantState extends State<AddTenant> {
                               keyboardType: TextInputType.emailAddress,
                               hintText: 'Enter alternative email',
                               controller: alterEmail,
+                              optional: true,
                             ),
                             SizedBox(
                               height: 10,
@@ -1803,8 +1820,9 @@ class _AddTenantState extends State<AddTenant> {
                             SizedBox(height: 10),
                             CustomTextField(
                               keyboardType: TextInputType.text,
-                              hintText: 'Enter contact name',
+                              hintText: 'Enter tax payer id',
                               controller: taxPayerId,
+                              optional: true,
                             ),
                             SizedBox(
                               height: 10,
@@ -1891,6 +1909,7 @@ class _AddTenantState extends State<AddTenant> {
                               keyboardType: TextInputType.text,
                               hintText: 'Enter contact name',
                               controller: contactName,
+                              optional: true,
                             ),
                             SizedBox(
                               height: 10,
@@ -1907,6 +1926,7 @@ class _AddTenantState extends State<AddTenant> {
                               keyboardType: TextInputType.text,
                               hintText: 'Enter relationship to tenant',
                               controller: relationToTenant,
+                              optional: true,
                             ),
                             SizedBox(
                               height: 10,
@@ -1923,6 +1943,7 @@ class _AddTenantState extends State<AddTenant> {
                               keyboardType: TextInputType.emailAddress,
                               hintText: 'Enter email',
                               controller: emergencyEmail,
+                              optional: true,
                             ),
                             SizedBox(
                               height: 10,
@@ -1940,6 +1961,7 @@ class _AddTenantState extends State<AddTenant> {
                                   signed: true, decimal: true),
                               hintText: 'Enter phone number',
                               controller: emergencyPhoneNumber,
+                              optional: true,
                             ),
                           ],
                         ),
@@ -2364,7 +2386,7 @@ class CustomTextFieldState extends State<CustomTextField> {
   late FocusNode _focusNode;
   @override
   void dispose() {
-    _textController.dispose(); // Dispose the controller when not needed anymore
+   // _textController.dispose(); // Dispose the controller when not needed anymore
     super.dispose();
     _focusNode.dispose();
   }

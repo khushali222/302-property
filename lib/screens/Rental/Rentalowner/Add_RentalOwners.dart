@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -2735,7 +2736,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       primaryemailerror = true;
                       primaryemailmessage = "required";
                     });
-                  } else {
+                  } else if (!EmailValidator.validate(primaryemail.text)) {
+                    setState(() {
+                      primaryemailerror = true;
+                      primaryemailmessage = "Email is not valid";
+                    });
+                  }else {
                     setState(() {
                       primaryemailerror = false;
                     });
