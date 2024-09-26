@@ -71,7 +71,7 @@ class DailyTrasactionReport{
     String? token = prefs.getString('token');
     print("${Api_url}/api/payment/todayspayment/$id?selectedDate=$date");
     final response = await http.get(
-      Uri.parse('${Api_url}/api/payment/todayspayment/$id?selectedDate=$date'),
+      Uri.parse('${Api_url}/api/payment/dailyreport/$id?selectedDate=$date'),
       headers: {
         'Content-Type': 'application/json',
         "authorization": "CRM $token",

@@ -1,5 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 
 import '../../../constant/constant.dart';
@@ -12,9 +13,13 @@ import '../../../widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 
 class Renewlease extends StatefulWidget {
-  LeaseSummary lease;
+  LeaseSummary? lease;
   String leaseId;
-  Renewlease({super.key, required this.leaseId, required this.lease});
+  String? startdate;
+  String? enddate;
+  String? leasetype;
+  String? rentamount;
+  Renewlease({super.key, required this.leaseId,  this.lease,this.rentamount,this.startdate,this.enddate,this.leasetype});
 
   @override
   State<Renewlease> createState() => _RenewleaseState();
@@ -30,10 +35,15 @@ class _RenewleaseState extends State<Renewlease> {
     // TODO: implement initState
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
     // _tabController = TabController(length: 3, vsync: this);
-    _selectedLeaseType = widget.lease.data?.leaseType;
-    startDateController.text = widget.lease.data!.startDate ?? "";
-    endDateController.text = widget.lease.data!.endDate ?? "";
-    rent.text = widget.lease.data!.amount.toString();
+    _selectedLeaseType = widget.leasetype;
+    startDateController.text = widget.enddate ?? "";
+    DateTime endDate = DateTime.parse(widget.enddate!);
+    DateTime startDate = endDate;
+    DateTime newEndDate = DateTime(endDate.year, endDate.month + 1, endDate.day);
+
+    startDateController.text = DateFormat('yyyy-MM-dd').format(startDate);
+    endDateController.text = DateFormat('yyyy-MM-dd').format(newEndDate);
+    rent.text = widget.rentamount ??"";
     super.initState();
   }
 
@@ -103,7 +113,14 @@ class _RenewleaseState extends State<Renewlease> {
               future: futureLeaseSummary,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return  Container(
+                    padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * .35),
+                    child: Center(
+                        child: SpinKitFadingCircle(
+                          color: blueColor,
+                          size: 40.0,
+                        )),
+                  );
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData) {

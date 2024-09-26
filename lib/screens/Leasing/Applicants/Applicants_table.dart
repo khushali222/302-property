@@ -594,7 +594,7 @@ class _Applicants_tableState extends State<Applicants_table> {
     });
     final jsonData = json.decode(response.body);
     print(jsonData);
-    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 200) {
+    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
       print("error ${applicantCount}");
       print("error ${applicantCountLimit}");
       setState(() {

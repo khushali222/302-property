@@ -11,6 +11,8 @@ import 'package:three_zero_two_property/screens/Plans/plan_screen.dart';
 import 'package:three_zero_two_property/screens/Profile/Settings_screen.dart';
 import 'package:three_zero_two_property/widgets/test.dart';
 
+import '../screen/notifications/notifications.dart';
+
 class widget_302 {
   static App_Bar({
     var suffixIcon,
@@ -77,12 +79,18 @@ class widget_302 {
         SizedBox(
           width: 10,
         ),
-        Padding(
-          padding: const EdgeInsets.only(top: 15.0),
-          child: FaIcon(
-            FontAwesomeIcons.solidBell,
-            size: 25,
-            color: blueColor,
+        GestureDetector(
+          onTap: (){
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const notifications()));
+          },
+          child:  Padding(
+            padding: const EdgeInsets.only(top: 15.0),
+            child: FaIcon(
+              FontAwesomeIcons.solidBell,
+              size: 25,
+              color: blueColor,
+            ),
           ),
         ),
         //   FaIcon(

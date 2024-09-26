@@ -860,7 +860,7 @@ class _addLease3State extends State<addLease3>
                                                   ),
                                                 );
                                               }).toList(),
-                                              value: _selectedUnit,
+                                              value: _selectedUnit != null&&  _selectedUnit!.isNotEmpty ? _selectedUnit : null,
                                               onChanged: (value) {
                                                 setState(() {
                                                   _selectedUnit = value;

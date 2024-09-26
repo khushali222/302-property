@@ -23,7 +23,7 @@ class notifications extends StatefulWidget {
 
 class _notificationsState extends State<notifications> {
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
-
+  late Future<List<Map<String,dynamic>>> fetchnoti;
 
   Future<List<Map<String,dynamic>>>? fetchNotifications() async {
     print("calling");
@@ -45,6 +45,34 @@ class _notificationsState extends State<notifications> {
     } else {
 
       throw Exception('Failed to load data');
+    }
+  }
+  void initState() {
+    super.initState();
+    fetchnoti = fetchNotifications()!;
+  }
+
+  String formatNotificationDateTime(DateTime dateTime) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(Duration(days: 1));
+    final difference = now.difference(dateTime);
+
+    if (dateTime.isAfter(today)) {
+      // For today
+      return 'Today | ${DateFormat('hh:mm a').format(dateTime)}';
+    } else if (dateTime.isAfter(yesterday)) {
+      // For yesterday
+      return 'Yesterday | ${DateFormat('hh:mm a').format(dateTime)}';
+    } else if (difference.inDays < 31) {
+      // For days ago (less than a month)
+      return '${difference.inDays} days ago | ${DateFormat('hh:mm a').format(dateTime)}';
+    } else if (difference.inDays < 365) {
+      // For more than a month ago
+      return '${(difference.inDays / 30).floor()} months ago';
+    } else {
+      // For more than a year ago
+      return DateFormat('dd-MM-yyyy').format(dateTime);
     }
   }
 
@@ -79,7 +107,7 @@ class _notificationsState extends State<notifications> {
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: FutureBuilder<List<Map<String,dynamic>>>(
-                future: fetchNotifications(),
+                future: fetchnoti,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return CircularProgressIndicator();
@@ -114,28 +142,62 @@ class _notificationsState extends State<notifications> {
                              child: Column(
                                crossAxisAlignment: CrossAxisAlignment.start,
                                children: [
-                                 Text(
-                                   notification['notification_title'],
-                                   style: TextStyle(
-                                       fontSize: 18.0,
-                                       fontWeight: FontWeight.bold,
-                                       color: blueColor
-                                   ),
+                                 Row(
+                                   children: [
+                             CircleAvatar(
+                             radius: 20,
+                                 backgroundColor: Colors.blue.shade100,
+
+                                 child: FaIcon(FontAwesomeIcons.solidBell,size: 18,)),
+                                     SizedBox(width: 14.0),
+
+                                     Column(
+                                       mainAxisAlignment: MainAxisAlignment.start,
+                                       crossAxisAlignment: CrossAxisAlignment.start,
+                                       children: [
+                                         Text(
+                                           notification['notification_title'],
+                                           style: TextStyle(
+                                               fontSize: 18.0,
+                                               fontWeight: FontWeight.bold,
+                                               color: blueColor
+                                           ),
+                                         ),
+                                         Text( formatNotificationDateTime(DateTime.parse(notification['createdAt'])), style: TextStyle(
+                                             color: Colors.black.withOpacity(.7),
+                                           fontSize: 14
+
+                                         ),)
+                                       ],
+                                     ),
+                                     Spacer(),
+                                     Container(
+                                         height: 40,
+                                         width: 40,
+                                         decoration: BoxDecoration(
+                                           color: Colors.grey.shade200,
+                                           borderRadius: BorderRadius.circular(6)
+                                         ),
+                                         child: Center(child: FaIcon(FontAwesomeIcons.solidEye,size: 22,)))
+                                   ],
                                  ),
-                                 SizedBox(height: 4.0),
-                                 Text(
-                                   notification['notification_detail'],
-                                   style: TextStyle(
-                                     fontSize: 16.0,
-                                     color: Colors.grey[700],
+                                 SizedBox(height: 14.0),
+                                 Padding(
+                                   padding: const EdgeInsets.only(left: 8.0),
+                                   child: Text(
+                                     notification['notification_detail'],
+                                     style: TextStyle(
+                                       fontSize: 14.0,
+                                       color: Colors.black,
+                                     ),
                                    ),
                                  ),
                                  SizedBox(height: 8.0),
-                                 Row(
+                                /* Row(
                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                    children: [
                                      Text(
-                                       formatDateTime(notification['createdAt']),
+                                       formatNotificationDateTime(notification['createdAt']),
                                        style: TextStyle(
                                          fontSize: 14.0,
                                          color:blueColor,
@@ -144,21 +206,21 @@ class _notificationsState extends State<notifications> {
                                      ),
                                      ElevatedButton(
                                        onPressed: () {
-                                        /* if(notification['notification_title'] =="Workorder Created"){
+                                        *//* if(notification['notification_title'] =="Workorder Created"){
                                            Navigator.of(context).push(MaterialPageRoute(
                                                builder: (context) =>  ResponsiveEditWorkOrder(workorderId: notification['notification_type']['workorder_id'],)));
                                          }else if(notification['notification_title'] =="New Payment"){
                                            Navigator.of(context).push(MaterialPageRoute(
                                                builder: (context) =>  SummeryPageLease(leaseId: notification['notification_type']['lease_id'],isredirectpayment: true,)));
 
-                                         }*/
+                                         }*//*
 
                                          // Handle view button press
                                        },
                                        child: Text('View'),
                                      ),
                                    ],
-                                 ),
+                                 ),*/
                                  Divider(thickness: 1.0),
                                ],
                              ),

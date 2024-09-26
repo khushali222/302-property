@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.dart';
+import 'package:three_zero_two_property/screens/Leasing/upcoming_renewal/upcoming_renewal.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportsMainScreen.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportsMainScreen.dart';
 
@@ -78,6 +79,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Rent Roll": (context) => Lease_table(),
     "Applicants": (context) => Applicants_table(),
     "Vendor": (context) => Vendor_table(),
+    "Upcoming renewal":(context)=> Upcomingrenewal()
   // "Work Order": (context) => Cardpayment(leaseId: '',),
 
   };

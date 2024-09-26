@@ -365,7 +365,7 @@ class _applicant_summeryState extends State<applicant_summery>
                         const SizedBox(
                           width: 20,
                         ),
-                        _selectedValue == 'Rejected'
+                        _selectedValue == 'Rejected' || _selectedValue == "Select"
                             ? Container()
                             : ElevatedButton(
                                 style: ButtonStyle(
