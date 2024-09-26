@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -207,6 +208,7 @@ class _edit_vendorState extends State<edit_vendor> {
                                   }
                                   return null;
                                 },
+                                email: true,
                               ),
                               /* SizedBox(
                           height: 10,
@@ -502,6 +504,7 @@ class _edit_vendorState extends State<edit_vendor> {
                                 }
                                 return null;
                               },
+                              email: true,
                             ),
                             /* SizedBox(
                         height: 10,
@@ -593,7 +596,7 @@ class _edit_vendorState extends State<edit_vendor> {
                               children: [
                                 Container(
                                   height: 50,
-                                  width: 150,
+                                  width: 120,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
@@ -628,6 +631,7 @@ class _edit_vendorState extends State<edit_vendor> {
                                         : Text(
                                             'Edit Vendor',
                                             style: TextStyle(
+                                                fontWeight: FontWeight.bold,
                                                 color: Color(0xFFf7f8f9)),
                                           ),
                                   ),
@@ -845,6 +849,7 @@ class CustomTextField extends StatefulWidget {
   final void Function()? onSuffixIconPressed;
   final void Function()? onTap;
   final bool readOnnly;
+  final bool? email;
 
   CustomTextField({
     Key? key,
@@ -859,7 +864,9 @@ class CustomTextField extends StatefulWidget {
     this.onSuffixIconPressed,
     this.onTap,
     this.onChanged,
-    this.onChanged2, // Initialize onTap
+    this.onChanged2,
+    this.email,
+    // Initialize onTap
   }) : super(key: key);
 
   @override
@@ -931,9 +938,18 @@ class CustomTextFieldState extends State<CustomTextField> {
               });
               return '';
             }
+            else if (widget.email != null) {
+              if (!EmailValidator.validate(widget.controller!.text)) {
+                setState(() {
+                  _errorMessage = "Email is not valid";
+                });
+                return '';
+              }
+            }
             setState(() {
               _errorMessage = null;
             });
+
             return null;
           },
           builder: (FormFieldState<String> state) {

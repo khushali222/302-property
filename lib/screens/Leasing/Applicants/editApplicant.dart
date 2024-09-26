@@ -171,6 +171,7 @@ class _EditApplicantState extends State<EditApplicant> {
                             }
                             return null;
                           },
+                          email: true,
                           keyboardType: TextInputType.text,
                           hintText: 'Enter email',
                           controller: email,

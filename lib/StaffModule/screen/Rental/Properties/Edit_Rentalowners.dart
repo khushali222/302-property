@@ -2192,6 +2192,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                     .isNotEmpty) // Filter out empty IDs
                                 .toList();
                         Ownersdetails = RentalOwner(
+                          rentalOwnerId: selectedOwner?.rentalOwnerId,
                           rentalOwnerPhoneNumber: phonenum.text,
                           rentalOwnerName: firstname.text,
                           rentalOwnerCompanyName: comname.text,
@@ -2206,12 +2207,13 @@ class _EditRentalownersState extends State<EditRentalowners> {
                           postalCode: code2.text,
                           processorList: selectedProcessors,
                         );
-                        context
-                            .read<OwnerDetailsProvider>()
-                            .selectedprocessid(processor_id!);
+                        // context
+                        //     .read<OwnerDetailsProvider>()
+                        //     .selectedprocessid(processor_id!);
                         context
                             .read<OwnerDetailsProvider>()
                             .setOwnerDetails(Ownersdetails!);
+
                         Fluttertoast.showToast(
                           msg: "Rental Owner Added Successfully!",
                           toastLength: Toast.LENGTH_SHORT,

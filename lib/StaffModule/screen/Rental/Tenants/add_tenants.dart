@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -306,6 +307,7 @@ class _AddTenantState extends State<AddTenant> {
                                                   }
                                                   return null;
                                                 },
+                                                email: true,
                                               ),
                                             ],
                                           ),
@@ -330,6 +332,7 @@ class _AddTenantState extends State<AddTenant> {
                                                     'Enter alternative email',
                                                 controller: alterEmail,
                                                 optional: true,
+                                                email: true,
                                               ),
                                             ],
                                           ),
@@ -373,6 +376,7 @@ class _AddTenantState extends State<AddTenant> {
                                                         }
                                                         return null;
                                                       },
+                                                      email: true,
                                                     ),
                                                   ),
                                                   SizedBox(width: 10),
@@ -445,6 +449,7 @@ class _AddTenantState extends State<AddTenant> {
                                                       'Enter alternative email',
                                                   controller: alterEmail,
                                                   optional: true,
+                                                  email: true,
                                                 ),
                                               ],
                                             ),
@@ -720,6 +725,7 @@ class _AddTenantState extends State<AddTenant> {
                                               hintText: 'Enter email',
                                               controller: emergencyEmail,
                                               optional: true,
+                                              email: true,
                                             ),
                                           ],
                                         ),
@@ -1088,6 +1094,7 @@ class _AddTenantState extends State<AddTenant> {
                                       }
                                       return null;
                                     },
+                                    email: true,
                                   ),
                                   SizedBox(
                                     height: 10,
@@ -1105,6 +1112,7 @@ class _AddTenantState extends State<AddTenant> {
                                     hintText: 'Enter alternative email',
                                     controller: alterEmail,
                                     optional: true,
+                                    email: true,
                                   ),
                                   SizedBox(
                                     height: 10,
@@ -1400,6 +1408,7 @@ class _AddTenantState extends State<AddTenant> {
                                     hintText: 'Enter email',
                                     controller: emergencyEmail,
                                     optional: true,
+                                    email: true,
                                   ),
                                   SizedBox(
                                     height: 10,
@@ -1640,6 +1649,7 @@ class _AddTenantState extends State<AddTenant> {
                                 }
                                 return null;
                               },
+                              email: true,
                             ),
                             SizedBox(
                               height: 10,
@@ -1657,6 +1667,7 @@ class _AddTenantState extends State<AddTenant> {
                               hintText: 'Enter alternative email',
                               controller: alterEmail,
                               optional: true,
+                              email: true,
                             ),
                             SizedBox(
                               height: 10,
@@ -1944,6 +1955,7 @@ class _AddTenantState extends State<AddTenant> {
                               hintText: 'Enter email',
                               controller: emergencyEmail,
                               optional: true,
+                              email: true,
                             ),
                             SizedBox(
                               height: 10,
@@ -2351,6 +2363,7 @@ class CustomTextField extends StatefulWidget {
   final String? max_amount;
   final String? error_mess;
   final bool? optional;
+  final bool? email;
 
   CustomTextField({
     Key? key,
@@ -2371,6 +2384,7 @@ class CustomTextField extends StatefulWidget {
     this.max_amount,
     this.error_mess,
     this.optional = false,
+    this.email,
 
     // Initialize onTap
   }) : super(key: key);
@@ -2438,7 +2452,7 @@ class CustomTextFieldState extends State<CustomTextField> {
         FormField<String>(
           validator: widget.optional!
               ? null
-              : (value) {
+          : (value) {
                   if (widget.controller!.text.isEmpty) {
                     setState(() {
                       if (widget.label == null)
@@ -2447,7 +2461,16 @@ class CustomTextFieldState extends State<CustomTextField> {
                         _errorMessage = 'Please ${widget.label}';
                     });
                     return '';
-                  } else if (widget.amount_check != null &&
+                  }
+                  else if (widget.email != null) {
+                    if (!EmailValidator.validate(widget.controller!.text)) {
+                      setState(() {
+                        _errorMessage = "Email is not valid";
+                      });
+                      return '';
+                    }
+                  }
+                  else if (widget.amount_check != null &&
                       double.parse(widget.controller!.text) >
                           double.parse(widget.max_amount!))
                     setState(() {

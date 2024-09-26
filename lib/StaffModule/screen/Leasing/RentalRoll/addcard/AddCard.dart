@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -640,6 +641,7 @@ class _AddCardState extends State<AddCard> {
                                       keyboardType: TextInputType.text,
                                       hintText: 'Enter Email',
                                       controller: email,
+                                      email: true,
                                     ),
                                     const SizedBox(
                                       height: 8,
@@ -1201,6 +1203,7 @@ class _AddCardState extends State<AddCard> {
                             keyboardType: TextInputType.text,
                             hintText: 'Enter Email',
                             controller: email,
+                            email: true,
                           ),
                           const SizedBox(
                             height: 8,
@@ -1767,6 +1770,7 @@ class CustomTextField extends StatefulWidget {
   final String? max_amount;
   final String? error_mess;
   final bool? optional;
+  final bool? email;
   final List<TextInputFormatter>? formatter;
 
   CustomTextField({
@@ -1788,6 +1792,7 @@ class CustomTextField extends StatefulWidget {
     this.error_mess,
     this.formatter,
     this.optional = false,
+    this.email,
 
     // Initialize onTap
   }) : super(key: key);
@@ -1861,6 +1866,14 @@ class CustomTextFieldState extends State<CustomTextField> {
                   _errorMessage = 'Please ${widget.label}';
               });
               return '';
+            }
+            else if (widget.email!) {
+              if (!EmailValidator.validate(widget.controller!.text)) {
+                setState(() {
+                  _errorMessage = "Email is not valid";
+                });
+                return '';
+              }
             }
             else if(widget.amount_check != null && double.parse(widget.controller!.text) > double.parse(widget.max_amount!))
               setState(() {

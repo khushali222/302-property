@@ -1054,7 +1054,7 @@ class _enterChargeState extends State<enterCharge> {
                   const SizedBox(
                     height: 10,
                   ),
-                  const Text('Apply Payment to Balances',
+                  const Text('Apply Payment to Balances abc',
                       style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,

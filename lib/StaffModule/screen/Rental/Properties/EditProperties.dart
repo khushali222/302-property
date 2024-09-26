@@ -2174,21 +2174,16 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                           SizedBox(width: 4),
                                                           InkWell(
                                                             onTap: () {
-                                                              // Ownersdetails!.rentalOwnerFirstName;
-                                                              //  OwnersdetailsGroups.removeAt(index);
-                                                              //   Ownersdetails = RentalOwner(
-                                                              //     // rentalOwnerFirstName: firstname.text,
-                                                              //     rentalOwnerLastName: lastname.text,
-                                                              //     rentalOwnerPhoneNumber: phonenum.text,
-                                                              //     rentalOwnerFirstName: firstname.text,
-                                                              //   );
-                                                              print("hello");
-                                                              setState(() {
-                                                                RentalOwner?
-                                                                owner;
-                                                                Ownersdetails =
+                                                              provider
+                                                                  .clearOwners();
+
+                                                              setState(
+                                                                      () {
+                                                                    RentalOwner?
                                                                     owner;
-                                                              });
+                                                                    Ownersdetails =
+                                                                        owner;
+                                                                  });
                                                             },
                                                             child: Container(
                                                               padding:

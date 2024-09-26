@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -1538,7 +1539,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       alternativeerror
                           ? Row(
                               children: [
-                                Spacer(),
+                                SizedBox(width: 20,),
                                 Text(
                                   alternativemessage,
                                   style: TextStyle(
@@ -2738,21 +2739,38 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       primaryemailmessage = "required";
                       isFormValid = false;
                     });
-                  } else {
+                  } else if (!EmailValidator.validate(primaryemail.text)) {
+                    setState(() {
+                      primaryemailerror = true;
+                      primaryemailmessage = "Email is not valid";
+                    });
+                  }else {
                     setState(() {
                       primaryemailerror = false;
                     });
                   }
 
-                  if (alternativeemail.text.isEmpty) {
+                  // if (alternativeemail.text.isEmpty) {
+                  //   setState(() {
+                  //     alternativeerror = true;
+                  //     alternativemessage = "required";
+                  //     isFormValid = false;
+                  //   });
+                  // } else {
+                  //   setState(() {
+                  //     alternativeerror = false;
+                  //   });
+                  // }
+                  if (alternativeemail.text.isNotEmpty && !EmailValidator.validate(alternativeemail.text)) {
                     setState(() {
                       alternativeerror = true;
-                      alternativemessage = "required";
-                      isFormValid = false;
+                      alternativemessage = "Email is not valid";
                     });
-                  } else {
+                  }
+                  else {
                     setState(() {
                       alternativeerror = false;
+                      alternativemessage = "";
                     });
                   }
 

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -596,7 +597,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                 right: 10,
                                 top: 10,
                               ),
-                              child: Column(
+                              child:
+                              Column(
                                 children: [
                                   Row(
                                     children: [
@@ -604,7 +606,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                         width: 15,
                                       ),
                                       Text(
-                                        "Contact Name",
+                                        "Contact Name *",
                                         style: TextStyle(
                                             color: Color(0xFF8A95A8),
                                             fontWeight: FontWeight.bold,
@@ -699,11 +701,18 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                     ],
                                   ),
                                   firstnameerror
-                                      ? Center(
-                                          child: Text(
-                                          firstnamemessage,
-                                          style: TextStyle(color: Colors.red),
-                                        ))
+                                      ? Row(
+                                          children: [
+                                            SizedBox(
+                                              width: 20,
+                                            ),
+                                            Text(
+                                              firstnamemessage,
+                                              style:
+                                                  TextStyle(color: Colors.red),
+                                            ),
+                                          ],
+                                        )
                                       : Container(),
                                   SizedBox(
                                     height: 15,
@@ -714,7 +723,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                         width: 15,
                                       ),
                                       Text(
-                                        "Company Name",
+                                        "Company Name *",
                                         style: TextStyle(
                                             color: Color(0xFF8A95A8),
                                             fontWeight: FontWeight.bold,
@@ -810,11 +819,18 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                     ],
                                   ),
                                   comnameerror
-                                      ? Center(
-                                          child: Text(
-                                          comnamemessage,
-                                          style: TextStyle(color: Colors.red),
-                                        ))
+                                      ? Row(
+                                          children: [
+                                            SizedBox(
+                                              width: 20,
+                                            ),
+                                            Text(
+                                              comnamemessage,
+                                              style:
+                                                  TextStyle(color: Colors.red),
+                                            ),
+                                          ],
+                                        )
                                       : Container(),
                                   SizedBox(
                                     height: 15,
@@ -825,7 +841,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                         width: 15,
                                       ),
                                       Text(
-                                        "Primary Email",
+                                        "Primary Email *",
                                         style: TextStyle(
                                             color: Color(0xFF8A95A8),
                                             fontWeight: FontWeight.bold,
@@ -923,11 +939,18 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                     ],
                                   ),
                                   primaryemailerror
-                                      ? Center(
-                                          child: Text(
-                                          primaryemailmessage,
-                                          style: TextStyle(color: Colors.red),
-                                        ))
+                                      ? Row(
+                                          children: [
+                                            SizedBox(
+                                              width: 20,
+                                            ),
+                                            Text(
+                                              primaryemailmessage,
+                                              style:
+                                                  TextStyle(color: Colors.red),
+                                            ),
+                                          ],
+                                        )
                                       : Container(),
                                   SizedBox(
                                     height: 15,
@@ -1050,7 +1073,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                         width: 15,
                                       ),
                                       Text(
-                                        "Phone Numbers",
+                                        "Phone Numbers *",
                                         style: TextStyle(
                                             color: Color(0xFF8A95A8),
                                             fontWeight: FontWeight.bold,
@@ -1150,11 +1173,18 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                     ],
                                   ),
                                   phonenumerror
-                                      ? Center(
-                                          child: Text(
-                                          phonenummessage,
-                                          style: TextStyle(color: Colors.red),
-                                        ))
+                                      ? Row(
+                                          children: [
+                                            SizedBox(
+                                              width: 20,
+                                            ),
+                                            Text(
+                                              phonenummessage,
+                                              style:
+                                                  TextStyle(color: Colors.red),
+                                            ),
+                                          ],
+                                        )
                                       : Container(),
                                   SizedBox(
                                     height: 15,
@@ -1918,9 +1948,58 @@ class _AddRentalownersState extends State<AddRentalowners> {
                   children: [
                     GestureDetector(
                       onTap: () async {
-                        //  print(processor_id);
-                        if (widget.isEdit == true || isChecked2) {
-                          /* Fluttertoast.showToast(
+                        if (firstname.text.isEmpty) {
+                          setState(() {
+                            firstnameerror = true;
+                            firstnamemessage = "required";
+                          });
+                        } else {
+                          setState(() {
+                            firstnameerror = false;
+                          });
+                        }
+                        if (comname.text.isEmpty) {
+                          setState(() {
+                            comnameerror = true;
+                            comnamemessage = "required";
+                          });
+                        } else {
+                          setState(() {
+                            comnameerror = false;
+                          });
+                        }
+                        if (primaryemail.text.isEmpty) {
+                          setState(() {
+                            primaryemailerror = true;
+                            primaryemailmessage = "required";
+                          });
+                        }else if (!EmailValidator.validate(primaryemail.text)) {
+                          setState(() {
+                            primaryemailerror = true;
+                            primaryemailmessage = "Email is not valid";
+                          });
+                        } else {
+                          setState(() {
+                            primaryemailerror = false;
+                          });
+                        }
+                        if (phonenum.text.isEmpty) {
+                          setState(() {
+                            phonenumerror = true;
+                            phonenummessage = "required";
+                          });
+                        } else {
+                          setState(() {
+                            phonenumerror = false;
+                          });
+                        }
+                        if (!firstnameerror &&
+                            !comnameerror &&
+                            !primaryemailerror &&
+                            !phonenumerror) {
+                          print('hello');
+                          if (widget.isEdit == true || isChecked2) {
+                            /* Fluttertoast.showToast(
                             msg:
                             "Rental Owner added Successfully!",
                             toastLength:
@@ -1940,78 +2019,21 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             fontSize:
                             16.0,
                           );*/
-                          print("callllllllling");
-                          List<ProcessorList> selectedProcessors =
-                              _processorGroups
-                                  .map((group) => ProcessorList(
-                                      processorId: group.controller.text
-                                          .trim())) // Create ProcessorList objects
-                                  .where((processor) => processor.processorId!
-                                      .isNotEmpty) // Filter out empty IDs
-                                  .toList();
-                          print(selectedProcessors.length);
-                          SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-                          var adminId = prefs.getString("adminId");
-                          Ownersdetails = RentalOwner(
-                            rentalOwnerId: selectedOwner!.rentalOwnerId,
-                            rentalOwnerPhoneNumber: phonenum.text,
-                            rentalOwnerName: firstname.text,
-                            rentalOwnerCompanyName: comname.text,
-                            rentalOwnerPrimaryEmail: primaryemail.text,
-                            rentalOwnerAlternateEmail: alternativeemail.text,
-                            rentalOwnerHomeNumber: homenum.text,
-                            rentalOwnerBusinessNumber: businessnum.text,
-                            streetAddress: street2.text,
-                            city: city2.text,
-                            country: county2.text,
-                            state: state2.text,
-                            postalCode: code2.text,
-                            processorList: selectedProcessors,
-                          );
-                          print(Ownersdetails!.toJson());
-                          context
-                              .read<OwnerDetailsProvider>()
-                              .setOwnerDetails(Ownersdetails!);
-                          // context
-                          //     .read<
-                          //     OwnerDetailsProvider>()
-                          //     .selectedprocessid(
-                          //     processor_id!);
-                          /* context
-                              .read<
-                              OwnerDetailsProvider>()
-                              .selectedprocessid(
-                              processor_id!);*/
-                          // Navigator.pop(
-                          //     context);
-                        } else {
-                          var response = await Rental_PropertiesRepository()
-                              .checkIfRentalOwnerExists(
-                            rentalOwner_name: firstname.text,
-                            rentalOwner_companyName: comname.text,
-                            rentalOwner_primaryEmail: primaryemail.text,
-                            rentalOwner_alternativeEmail: alternativeemail.text,
-                            rentalOwner_phoneNumber: phonenum.text,
-                            rentalOwner_homeNumber: homenum.text,
-                            rentalOwner_businessNumber: businessnum.text,
-                          );
-                          if (response == true) {
+                            print("callllllllling");
                             List<ProcessorList> selectedProcessors =
                                 _processorGroups
-                                    //  .where((group) => group.isChecked)
                                     .map((group) => ProcessorList(
                                         processorId: group.controller.text
                                             .trim())) // Create ProcessorList objects
                                     .where((processor) => processor.processorId!
                                         .isNotEmpty) // Filter out empty IDs
                                     .toList();
+                            print(selectedProcessors.length);
                             SharedPreferences prefs =
                                 await SharedPreferences.getInstance();
                             var adminId = prefs.getString("adminId");
                             Ownersdetails = RentalOwner(
-                              adminId: adminId,
-                              //  rentalOwnerId: selectedOwner!.rentalOwnerId,
+                              rentalOwnerId: selectedOwner?.rentalOwnerId,
                               rentalOwnerPhoneNumber: phonenum.text,
                               rentalOwnerName: firstname.text,
                               rentalOwnerCompanyName: comname.text,
@@ -2026,14 +2048,74 @@ class _AddRentalownersState extends State<AddRentalowners> {
                               postalCode: code2.text,
                               processorList: selectedProcessors,
                             );
-                            print(selectedProcessors.length);
+                            print(Ownersdetails!.toJson());
                             context
                                 .read<OwnerDetailsProvider>()
                                 .setOwnerDetails(Ownersdetails!);
-                            context
-                                .read<OwnerDetailsProvider>()
-                                .selectedprocessid(processor_id!);
-                            /*Fluttertoast.showToast(
+                            // context
+                            //     .read<
+                            //     OwnerDetailsProvider>()
+                            //     .selectedprocessid(
+                            //     processor_id!);
+                            /* context
+                              .read<
+                              OwnerDetailsProvider>()
+                              .selectedprocessid(
+                              processor_id!);*/
+                            // Navigator.pop(
+                            //     context);
+                          } else {
+                            var response = await Rental_PropertiesRepository()
+                                .checkIfRentalOwnerExists(
+                              rentalOwner_name: firstname.text,
+                              rentalOwner_companyName: comname.text,
+                              rentalOwner_primaryEmail: primaryemail.text,
+                              rentalOwner_alternativeEmail:
+                                  alternativeemail.text,
+                              rentalOwner_phoneNumber: phonenum.text,
+                              rentalOwner_homeNumber: homenum.text,
+                              rentalOwner_businessNumber: businessnum.text,
+                            );
+                            if (response == true) {
+                              List<ProcessorList> selectedProcessors =
+                                  _processorGroups
+                                      //  .where((group) => group.isChecked)
+                                      .map((group) => ProcessorList(
+                                          processorId: group.controller.text
+                                              .trim())) // Create ProcessorList objects
+                                      .where((processor) => processor
+                                          .processorId!
+                                          .isNotEmpty) // Filter out empty IDs
+                                      .toList();
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              var adminId = prefs.getString("adminId");
+                              Ownersdetails = RentalOwner(
+                                adminId: adminId,
+                                //  rentalOwnerId: selectedOwner!.rentalOwnerId,
+                                rentalOwnerPhoneNumber: phonenum.text,
+                                rentalOwnerName: firstname.text,
+                                rentalOwnerCompanyName: comname.text,
+                                rentalOwnerPrimaryEmail: primaryemail.text,
+                                rentalOwnerAlternateEmail:
+                                    alternativeemail.text,
+                                rentalOwnerHomeNumber: homenum.text,
+                                rentalOwnerBusinessNumber: businessnum.text,
+                                streetAddress: street2.text,
+                                city: city2.text,
+                                country: county2.text,
+                                state: state2.text,
+                                postalCode: code2.text,
+                                processorList: selectedProcessors,
+                              );
+                              print(selectedProcessors.length);
+                              context
+                                  .read<OwnerDetailsProvider>()
+                                  .setOwnerDetails(Ownersdetails!);
+                              // context
+                              //     .read<OwnerDetailsProvider>()
+                              //     .selectedprocessid(processor_id!);
+                              /*Fluttertoast.showToast(
                               msg: "Rental Owner Added Successfully",
                               toastLength: Toast.LENGTH_SHORT,
                               gravity: ToastGravity.TOP,
@@ -2052,12 +2134,14 @@ class _AddRentalownersState extends State<AddRentalowners> {
                               textColor: Colors.white,
                               fontSize: 16.0,
                             );*/
+                            }
                           }
+                          setState(() {
+                            hasError = false; // Set error state if needed
+                          });
+                          Navigator.pop(context);
                         }
-                        setState(() {
-                          hasError = false; // Set error state if needed
-                        });
-                        Navigator.pop(context);
+                        print("form is invalid");
                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),

@@ -242,6 +242,7 @@ class _AddApplicantState extends State<AddApplicant> {
 
                             return null;
                           },
+                          email: true,
                           keyboardType: TextInputType.emailAddress,
                           hintText: 'Enter email',
                           controller: email,
