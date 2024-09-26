@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
-
+import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/enterCharge.dart';
 import '../../../constant/constant.dart';
 import '../../../model/LeaseSummary.dart';
 import '../../../model/get_lease.dart';
@@ -14,6 +20,7 @@ import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart'
 class Renewlease extends StatefulWidget {
   LeaseSummary lease;
   String leaseId;
+
   Renewlease({super.key, required this.leaseId, required this.lease});
 
   @override
@@ -34,6 +41,7 @@ class _RenewleaseState extends State<Renewlease> {
     startDateController.text = widget.lease.data!.startDate ?? "";
     endDateController.text = widget.lease.data!.endDate ?? "";
     rent.text = widget.lease.data!.amount.toString();
+    fetchDropdownData();
     super.initState();
   }
 
@@ -50,6 +58,127 @@ class _RenewleaseState extends State<Renewlease> {
     'Fixed w/rollover',
     'At-will(month to month)',
   ];
+
+  bool hasError = false;
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+      keyboardBarColor: Colors.grey[200],
+      nextFocus: true,
+      actions: [
+        KeyboardActionsItem(
+          focusNode: _nodeText1,
+        ),
+      ],
+    );
+  }
+  List<FocusNode> focusNodes = [];
+  Map<String, List<String>> categorizedData = {};
+  final FocusNode _nodeText1 = FocusNode();
+  List<Map<String, dynamic>> rows = [];
+  double totalAmount = 0.0;
+  void addRow() {
+    setState(() {
+      rows.add({
+        'account': null,
+        'charge_type': null,
+        'amount': 0.0,
+
+      });
+      focusNodes.add(FocusNode());
+    });
+  }
+
+  void deleteRow(int index) {
+    setState(() {
+      totalAmount -= rows[index]['amount'];
+      rows.removeAt(index);
+      focusNodes.removeAt(index);
+    });
+
+    validateAmounts();
+  }
+
+  void updateAmount(int index, String value) {
+    setState(() {
+      double amount = double.tryParse(value) ?? 0.0;
+      totalAmount -= rows[index]['amount'];
+      rows[index]['amount'] = amount;
+      totalAmount += amount;
+    });
+    validateAmounts();
+  }
+  final TextEditingController Amount = TextEditingController();
+  String? validationMessage;
+  void validateAmounts() {
+    double enteredAmount = double.tryParse(Amount.text) ?? 0.0;
+    print(enteredAmount);
+    print(totalAmount);
+    if (enteredAmount != totalAmount) {
+      setState(() {
+        validationMessage =
+        "The charge's amount must match the total applied to balance. The difference is ${(enteredAmount - totalAmount).abs().toStringAsFixed(2)}";
+      });
+    } else {
+      setState(() {
+        validationMessage = null;
+      });
+    }
+  }
+  Future<void> fetchDropdownData() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String adminId = prefs.getString('adminId') ?? '';
+      String? token = prefs.getString('token');
+      print(token);
+      print('lease ${widget.leaseId}');
+      String? id = prefs.getString("adminId");
+      final response = await http.get(
+        Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> jsonResponse = json.decode(response.body)['data'];
+        Map<String, List<String>> fetchedData = {};
+        // Adding static items to the "LIABILITY ACCOUNT" category
+        fetchedData["Liability Account"] = [
+          "Late Fee Income",
+          "Pre-payments",
+          "Security Deposit",
+          'Rent Income'
+        ];
+
+        for (var item in jsonResponse) {
+          String chargeType = item['charge_type'];
+          String account = item['account'];
+
+          if (!fetchedData.containsKey(chargeType)) {
+            fetchedData[chargeType] = [];
+          }
+          fetchedData[chargeType]!.add(account);
+        }
+
+        setState(() {
+          categorizedData = fetchedData;
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          hasError = true;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        hasError = true;
+        isLoading = false;
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -706,6 +835,272 @@ class _RenewleaseState extends State<Renewlease> {
                                       hintText: 'Enter rent',
                                       controller: rent,
                                     ),
+
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    isLoading
+                                        ? const Center(
+                                      child: SpinKitFadingCircle(
+                                        color: Colors.black,
+                                        size: 50.0,
+                                      ),
+                                    )
+                                        : hasError
+                                        ? const Center(child: Text('Failed to load data'))
+                                        : Table(
+                                      border: TableBorder.all(width: 1),
+                                      columnWidths: const {
+                                        0: FlexColumnWidth(2),
+                                        1: FlexColumnWidth(2),
+                                        2: FlexColumnWidth(1),
+                                      },
+                                      children: [
+                                        const TableRow(children: [
+                                          Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: Center(
+                                              child: Text('Account',
+                                                  style: TextStyle(
+                                                      color:
+                                                      Color.fromRGBO(21, 43, 83, 1),
+                                                      fontWeight: FontWeight.bold)),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: Center(
+                                              child: Text('Amount',
+                                                  style: TextStyle(
+                                                      color:
+                                                      Color.fromRGBO(21, 43, 83, 1),
+                                                      fontWeight: FontWeight.bold)),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.all(5.0),
+                                            child: Center(
+                                              child: Text('Actions',
+                                                  style: TextStyle(
+                                                      color:
+                                                      Color.fromRGBO(21, 43, 83, 1),
+                                                      fontWeight: FontWeight.bold)),
+                                            ),
+                                          ),
+                                        ]),
+                                        ...rows.asMap().entries.map((entry) {
+                                          int index = entry.key;
+                                          Map<String, dynamic> row = entry.value;
+                                          return TableRow(children: [
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: DropdownButtonHideUnderline(
+                                                child: DropdownButton2<String>(
+                                                  isExpanded: true,
+                                                  style: TextStyle(fontSize: 14),
+                                                  value: row['account'],
+                                                  items: [
+                                                    ...categorizedData.entries
+                                                        .expand((entry) {
+                                                      return [
+                                                        DropdownMenuItem<String>(
+                                                          enabled: false,
+                                                          child: Text(
+                                                            entry.key,
+                                                            style: const TextStyle(
+                                                              fontWeight:
+                                                              FontWeight.bold,
+                                                              color: Color.fromRGBO(
+                                                                  21, 43, 81, 1),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        ...entry.value.map((item) {
+                                                          return DropdownMenuItem<
+                                                              String>(
+                                                            value: item,
+                                                            child: Padding(
+                                                              padding:
+                                                              const EdgeInsets.only(
+                                                                  left: 0.0),
+                                                              child: Text(
+                                                                item,
+                                                                style: const TextStyle(
+                                                                  color: Colors.black,
+                                                                  fontWeight:
+                                                                  FontWeight.w400,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }).toList(),
+                                                      ];
+                                                    }).toList(),
+                                                  ],
+                                                  onChanged: (value) {
+                                                    String? chargeType;
+                                                    for (var entry
+                                                    in categorizedData.entries) {
+                                                      if (entry.value.contains(value)) {
+                                                        chargeType = entry.key;
+                                                        break;
+                                                      }
+                                                    }
+
+                                                    setState(() {
+                                                      rows[index]['account'] = value;
+                                                      rows[index]['charge_type'] =
+                                                          chargeType;
+                                                    });
+                                                  },
+                                                  buttonStyleData: ButtonStyleData(
+                                                    height: 50,
+                                                    width: 220,
+                                                    padding: const EdgeInsets.only(
+                                                        left: 8, right: 5),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                      BorderRadius.circular(6),
+                                                      color: Colors.white,
+                                                    ),
+                                                    elevation: 2,
+                                                  ),
+                                                  iconStyleData: const IconStyleData(
+                                                    icon: Icon(Icons.arrow_drop_down),
+                                                    iconSize: 24,
+                                                    iconEnabledColor: Color(0xFFb0b6c3),
+                                                    iconDisabledColor: Colors.grey,
+                                                  ),
+                                                  dropdownStyleData: DropdownStyleData(
+                                                    width: 250,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                      BorderRadius.circular(6),
+                                                      color: Colors.white,
+                                                    ),
+                                                    scrollbarTheme: ScrollbarThemeData(
+                                                      radius: const Radius.circular(6),
+                                                      thickness:
+                                                      MaterialStateProperty.all(6),
+                                                      thumbVisibility:
+                                                      MaterialStateProperty.all(
+                                                          true),
+                                                    ),
+                                                  ),
+                                                  hint: const Text('Select an account'),
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              margin: EdgeInsets.only(top: 5),
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: SizedBox(
+                                                  height: 50,
+                                                  child: KeyboardActions(
+                                                    config: _buildConfig(context),
+                                                    child: TextFormField(
+                                                      initialValue: widget.leaseId !=
+                                                          null
+                                                          ? rows[index]["amount"]
+                                                          .toString()
+                                                          : "0", // Make sure 0 is a string,
+                                                      focusNode: focusNodes[index],
+                                                      keyboardType:
+                                                      TextInputType.number,
+                                                      onChanged: (value) =>
+                                                          updateAmount(index, value),
+                                                      decoration: const InputDecoration(
+                                                          border: OutlineInputBorder(),
+                                                          hintText: 'Enter amount',
+                                                          hintStyle:
+                                                          TextStyle(fontSize: 14),
+                                                          contentPadding:
+                                                          EdgeInsets.only(
+                                                              top: 7, left: 7)),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: IconButton(
+                                                icon: const Icon(Icons.delete,
+                                                    color: Colors.red),
+                                                onPressed: () => deleteRow(index),
+                                              ),
+                                            ),
+                                          ]);
+                                        }).toList(),
+                                        TableRow(children: [
+                                          const Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: Text('Total',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold)),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                                '\$${totalAmount.toStringAsFixed(2)}'),
+                                          ),
+                                          const SizedBox.shrink(),
+                                        ]),
+                                        TableRow(children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                left:
+                                                MediaQuery.of(context).size.width <
+                                                    500
+                                                    ? 16
+                                                    : 70,
+                                                right:
+                                                MediaQuery.of(context).size.width <
+                                                    500
+                                                    ? 16
+                                                    : 70,
+                                                top: 10,
+                                                bottom: 10),
+                                            child: Container(
+                                              height: 40,
+                                              width: 100,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  border: Border.all(width: 1),
+                                                  borderRadius:
+                                                  BorderRadius.circular(5.0)),
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                    shape: RoundedRectangleBorder(
+                                                        borderRadius:
+                                                        BorderRadius.circular(
+                                                            5.0)),
+                                                    elevation: 0,
+                                                    backgroundColor: Colors.white),
+                                                onPressed: addRow,
+                                                child: Text(
+                                                  'Add Row',
+                                                  style: TextStyle(
+                                                    fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                        500
+                                                        ? 14
+                                                        : 18,
+                                                    color:
+                                                    Color.fromRGBO(21, 43, 83, 1),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox.shrink(),
+                                          const SizedBox.shrink(),
+                                        ]),
+                                      ],
+                                    ),
+
                                   ],
                                 ),
                               ),

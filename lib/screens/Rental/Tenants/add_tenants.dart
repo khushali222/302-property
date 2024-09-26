@@ -1646,7 +1646,7 @@ class _AddTenantState extends State<AddTenant> {
                               SizedBox(
                                 height: 10,
                               ),
-                              Text('Email *',
+                              Text('Email abc*',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
@@ -1662,8 +1662,12 @@ class _AddTenantState extends State<AddTenant> {
                                   if (value == null || value.isEmpty) {
                                     return 'please enter email';
                                   }
+                                  // else if(!EmailValidator.validate(email.text)){
+                                  //   return 'please enter valid email';
+                                  // }
                                   return null;
                                 },
+                                email: true,
                               ),
                               SizedBox(
                                 height: 10,
@@ -1681,6 +1685,7 @@ class _AddTenantState extends State<AddTenant> {
                                 hintText: 'Enter alternative email',
                                 controller: alterEmail,
                                 optional: true,
+                                email: true,
                               ),
                               SizedBox(
                                 height: 10,
@@ -1971,6 +1976,7 @@ class _AddTenantState extends State<AddTenant> {
                                 hintText: 'Enter email',
                                 controller: emergencyEmail,
                                 optional: true,
+                                email: true,
                               ),
                               SizedBox(
                                 height: 10,
@@ -2133,7 +2139,6 @@ class _AddTenantState extends State<AddTenant> {
                                   setState(() {
                                     formValid = false;
                                   });
-
                                   await addTenant();
                                 } else {
                                   print('Form is invalid');
@@ -2480,6 +2485,14 @@ class CustomTextFieldState extends State<CustomTextField> {
                     });
                     return '';
                   }
+                  else if (widget.email!) {
+                    if (!EmailValidator.validate(widget.controller!.text)) {
+                      setState(() {
+                        _errorMessage = "Email is not valid";
+                      });
+                      return '';
+                    }
+                  }
                   else if (widget.amount_check != null &&
                       double.parse(widget.controller!.text) >
                           double.parse(widget.max_amount!))
@@ -2488,6 +2501,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                     });
                   return null;
                 },
+
           builder: (FormFieldState<String> state) {
             return Column(
               children: <Widget>[
@@ -2605,3 +2619,4 @@ class CustomTextFieldState extends State<CustomTextField> {
         : textfield;
   }
 }
+

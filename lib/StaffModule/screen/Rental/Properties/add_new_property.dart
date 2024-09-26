@@ -32,14 +32,14 @@ import '../../../widgets/drawer_tiles.dart';
 import '../../../../widgets/rental_widget.dart';
 import 'package:http/http.dart' as http;
 
-
 import '../../../widgets/custom_drawer.dart';
+
 class Add_new_property extends StatefulWidget {
   propertytype? property;
   Staffmembers? staff;
   bool? isEdit;
 
-  Add_new_property({super.key, this.property, this.staff,this.isEdit});
+  Add_new_property({super.key, this.property, this.staff, this.isEdit});
 
   @override
   State<Add_new_property> createState() => _Add_new_propertyState();
@@ -166,11 +166,13 @@ class _Add_new_propertyState extends State<Add_new_property> {
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     String? staffid = prefs.getString("staff_id");
-    final response =
-        await http.get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'),headers: {
-          "id":"CRM $staffid",
-          "authorization": "CRM $token",
-        },);
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/rentals/rental-owners/$id'),
+      headers: {
+        "id": "CRM $staffid",
+        "authorization": "CRM $token",
+      },
+    );
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
@@ -279,7 +281,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
       propertyGroups.removeAt(index);
     });
   }
-
 
   Future<void> getImage(int index) async {
     final pickedFile =
@@ -444,7 +445,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                   Row(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: 8,bottom: 8),
+                        padding: const EdgeInsets.only(top: 8, bottom: 8),
                         child: Image.file(
                           propertyGroupImages[index]!,
                           height: 100,
@@ -607,29 +608,38 @@ class _Add_new_propertyState extends State<Add_new_property> {
         KeyboardActionsItem(
           focusNode: _nodeText1,
         ),
-       
       ],
     );
   }
+
   bool showError = false;
   @override
   Widget build(BuildContext context) {
     // print(selectedIsMultiUnit);
     // print(selectedProperty);
-    final ownerDetails = Provider.of<OwnerDetailsProvider>(context).OwnerDetails;
+    final ownerDetails =
+        Provider.of<OwnerDetailsProvider>(context).OwnerDetails;
 
-    final firstnameController = TextEditingController(text: ownerDetails?.rentalOwnerName);
-    final comnameController = TextEditingController(text: ownerDetails?.rentalOwnerCompanyName);
-    final primaryemailController = TextEditingController(text: ownerDetails?.rentalOwnerPrimaryEmail);
-    final phonenumController = TextEditingController(text: ownerDetails?.rentalOwnerPhoneNumber);
+    final firstnameController =
+        TextEditingController(text: ownerDetails?.rentalOwnerName);
+    final comnameController =
+        TextEditingController(text: ownerDetails?.rentalOwnerCompanyName);
+    final primaryemailController =
+        TextEditingController(text: ownerDetails?.rentalOwnerPrimaryEmail);
+    final phonenumController =
+        TextEditingController(text: ownerDetails?.rentalOwnerPhoneNumber);
     final cityController = TextEditingController(text: ownerDetails?.city);
     final stateController = TextEditingController(text: ownerDetails?.state);
     final countyController = TextEditingController(text: ownerDetails?.country);
-    final codeController = TextEditingController(text: ownerDetails?.postalCode);
+    final codeController =
+        TextEditingController(text: ownerDetails?.postalCode);
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Properties",dropdown: true,),
+      drawer: CustomDrawer(
+        currentpage: "Properties",
+        dropdown: true,
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(25.0),
@@ -690,7 +700,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Color.fromRGBO(21, 43, 81, 1),
-                                    fontSize:  MediaQuery.of(context).size.width < 500 ? 17 : 18),
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 17
+                                            : 18),
                               ),
                             ],
                           ),
@@ -707,7 +720,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 style: TextStyle(
                                     color: Color(0xFF8A95A8),
                                     fontWeight: FontWeight.bold,
-                                    fontSize:  MediaQuery.of(context).size.width < 500 ? 16 : 18),
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 16
+                                            : 18),
                               ),
                             ],
                           ),
@@ -724,7 +740,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 style: TextStyle(
                                     color: Color.fromRGBO(21, 43, 81, 1),
                                     fontWeight: FontWeight.bold,
-                                    fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 18),
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 15
+                                            : 18),
                               ),
                             ],
                           ),
@@ -743,9 +762,9 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                       ConnectionState.waiting) {
                                     return Center(
                                         child: SpinKitFadingCircle(
-                                          color: Colors.black,
-                                          size: 40.0,
-                                        ));
+                                      color: Colors.black,
+                                      size: 40.0,
+                                    ));
                                   } else if (snapshot.hasError) {
                                     return Text('Error: ${snapshot.error}');
                                   } else if (!snapshot.hasData ||
@@ -753,18 +772,20 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     return Text('No properties found');
                                   } else {
                                     Map<String, List<propertytype>>
-                                    groupedProperties =
-                                    groupPropertiesByType(snapshot.data!);
+                                        groupedProperties =
+                                        groupPropertiesByType(snapshot.data!);
                                     return Column(
                                       children: [
                                         Padding(
                                           padding: const EdgeInsets.all(10.0),
                                           child: Container(
-                                            height:
-                                            MediaQuery.of(context).size.height *
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
                                                 .05,
-                                            width:
-                                            MediaQuery.of(context).size.width *
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
                                                 .6,
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 8, vertical: 4),
@@ -773,16 +794,21 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                 color: Color(0xFF8A95A8),
                                               ),
                                               borderRadius:
-                                              BorderRadius.circular(5),
+                                                  BorderRadius.circular(5),
                                             ),
-                                            child:
-                                            DropdownButtonHideUnderline(
+                                            child: DropdownButtonHideUnderline(
                                               child: DropdownButton<String>(
                                                 value: selectedProperty,
                                                 hint: Text(
                                                   'Add Property Type',
                                                   style: TextStyle(
-                                                    fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 18,
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 15
+                                                            : 18,
                                                     color: Color(0xFF8A95A8),
                                                   ),
                                                 ),
@@ -796,20 +822,20 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                     // Show the dialog
                                                     showDialog(
                                                       context: context,
-                                                      builder:
-                                                          (BuildContext context) {
+                                                      builder: (BuildContext
+                                                          context) {
                                                         bool isChecked =
-                                                        false; // Moved isChecked inside the StatefulBuilder
+                                                            false; // Moved isChecked inside the StatefulBuilder
                                                         return StatefulBuilder(
-                                                          builder:
-                                                              (BuildContext context,
+                                                          builder: (BuildContext
+                                                                  context,
                                                               StateSetter
-                                                              setState) {
+                                                                  setState) {
                                                             return AlertDialog(
                                                               backgroundColor:
-                                                              Colors.white,
+                                                                  Colors.white,
                                                               surfaceTintColor:
-                                                              Colors.white,
+                                                                  Colors.white,
                                                               // title: Text(
                                                               //   "Add Rental Owner",
                                                               //   style: TextStyle(
@@ -825,22 +851,31 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                               //       fontSize: 15),
                                                               // ),
                                                               content:
-                                                              SingleChildScrollView(
+                                                                  SingleChildScrollView(
                                                                 child: Column(
                                                                   children: [
                                                                     Container(
                                                                       // height: MediaQuery.of(context).size.height * .43,
-                                                                      width: MediaQuery.of(context).size.width * .99,
+                                                                      width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                          .99,
                                                                       decoration: BoxDecoration(
                                                                           color: Colors.white,
                                                                           borderRadius: BorderRadius.circular(10),
                                                                           border: Border.all(
-                                                                            color: Color.fromRGBO(21, 43, 81, 1),
+                                                                            color: Color.fromRGBO(
+                                                                                21,
+                                                                                43,
+                                                                                81,
+                                                                                1),
                                                                           )),
-                                                                      child: Column(
+                                                                      child:
+                                                                          Column(
                                                                         children: [
                                                                           SizedBox(
-                                                                            height: 20,
+                                                                            height:
+                                                                                20,
                                                                           ),
                                                                           Row(
                                                                             children: [
@@ -849,15 +884,13 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                               ),
                                                                               Text(
                                                                                 "New Property Type",
-                                                                                style: TextStyle(
-                                                                                    fontWeight: FontWeight.bold,
-                                                                                    color: Color.fromRGBO(21, 43, 81, 1),
-                                                                                    fontSize:  MediaQuery.of(context).size.width < 500 ? 17 : 22),
+                                                                                style: TextStyle(fontWeight: FontWeight.bold, color: Color.fromRGBO(21, 43, 81, 1), fontSize: MediaQuery.of(context).size.width < 500 ? 17 : 22),
                                                                               ),
                                                                             ],
                                                                           ),
                                                                           SizedBox(
-                                                                            height: 10,
+                                                                            height:
+                                                                                10,
                                                                           ),
                                                                           Row(
                                                                             children: [
@@ -866,15 +899,13 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                               ),
                                                                               Text(
                                                                                 "Property Type*",
-                                                                                style: TextStyle(
-                                                                                    color: Colors.grey,
-                                                                                    fontWeight: FontWeight.bold,
-                                                                                    fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :18),
+                                                                                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 18),
                                                                               ),
                                                                             ],
                                                                           ),
                                                                           SizedBox(
-                                                                            height: 10,
+                                                                            height:
+                                                                                10,
                                                                           ),
                                                                           Row(
                                                                             children: [
@@ -903,19 +934,18 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                     ],
                                                                                   ),
                                                                                   items: items
-                                                                                      .map(
-                                                                                          (String item) => DropdownMenuItem<String>(
-                                                                                        value: item,
-                                                                                        child: Text(
-                                                                                          item,
-                                                                                          style: const TextStyle(
-                                                                                            fontSize: 14,
-                                                                                            fontWeight: FontWeight.bold,
-                                                                                            color: Colors.black,
-                                                                                          ),
-                                                                                          overflow: TextOverflow.ellipsis,
-                                                                                        ),
-                                                                                      ))
+                                                                                      .map((String item) => DropdownMenuItem<String>(
+                                                                                            value: item,
+                                                                                            child: Text(
+                                                                                              item,
+                                                                                              style: const TextStyle(
+                                                                                                fontSize: 14,
+                                                                                                fontWeight: FontWeight.bold,
+                                                                                                color: Colors.black,
+                                                                                              ),
+                                                                                              overflow: TextOverflow.ellipsis,
+                                                                                            ),
+                                                                                          ))
                                                                                       .toList(),
                                                                                   value: selectedValue,
                                                                                   onChanged: (value) {
@@ -926,8 +956,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                   buttonStyleData: ButtonStyleData(
                                                                                     height: 50,
                                                                                     width: 160,
-                                                                                    padding:
-                                                                                    const EdgeInsets.only(left: 14, right: 14),
+                                                                                    padding: const EdgeInsets.only(left: 14, right: 14),
                                                                                     decoration: BoxDecoration(
                                                                                       borderRadius: BorderRadius.circular(10),
                                                                                       border: Border.all(
@@ -948,8 +977,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                     scrollbarTheme: ScrollbarThemeData(
                                                                                       radius: const Radius.circular(40),
                                                                                       thickness: MaterialStateProperty.all(6),
-                                                                                      thumbVisibility:
-                                                                                      MaterialStateProperty.all(true),
+                                                                                      thumbVisibility: MaterialStateProperty.all(true),
                                                                                     ),
                                                                                   ),
                                                                                   menuItemStyleData: const MenuItemStyleData(
@@ -961,7 +989,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                             ],
                                                                           ),
                                                                           SizedBox(
-                                                                            height: 20,
+                                                                            height:
+                                                                                20,
                                                                           ),
                                                                           Row(
                                                                             children: [
@@ -970,15 +999,13 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                               ),
                                                                               Text(
                                                                                 "Property SubType*",
-                                                                                style: TextStyle(
-                                                                                    color: Colors.grey,
-                                                                                    fontWeight: FontWeight.bold,
-                                                                                    fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :18),
+                                                                                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 18),
                                                                               ),
                                                                             ],
                                                                           ),
                                                                           SizedBox(
-                                                                            height: 10,
+                                                                            height:
+                                                                                10,
                                                                           ),
                                                                           Row(
                                                                             children: [
@@ -989,7 +1016,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 elevation: 2,
                                                                                 borderRadius: BorderRadius.circular(10),
                                                                                 child: Container(
-                                                                                  width:  MediaQuery.of(context).size.width < 500 ? 160 : 160,
+                                                                                  width: MediaQuery.of(context).size.width < 500 ? 160 : 160,
                                                                                   padding: EdgeInsets.only(left: 10),
                                                                                   decoration: BoxDecoration(
                                                                                     color: Colors.white,
@@ -997,25 +1024,22 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                   ),
                                                                                   child: TextFormField(
                                                                                     controller: subtype,
-                                                                                    decoration: InputDecoration(
-                                                                                        border: InputBorder.none,
-                                                                                        hintText: "Townhome"),
+                                                                                    decoration: InputDecoration(border: InputBorder.none, hintText: "Townhome"),
                                                                                   ),
                                                                                 ),
                                                                               ),
                                                                             ],
                                                                           ),
                                                                           SizedBox(
-                                                                            height: 20,
+                                                                            height:
+                                                                                20,
                                                                           ),
                                                                           Row(
                                                                             children: [
                                                                               if (MediaQuery.of(context).size.width < 500)
-                                                                                SizedBox(
-                                                                                    width: MediaQuery.of(context).size.width * 0.05),
+                                                                                SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                                                                               if (MediaQuery.of(context).size.width > 500)
-                                                                                SizedBox(
-                                                                                    width: MediaQuery.of(context).size.width * 0.02),
+                                                                                SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                                                                               Container(
                                                                                 height: MediaQuery.of(context).size.height * 0.02,
                                                                                 width: MediaQuery.of(context).size.height * 0.02,
@@ -1024,49 +1048,40 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                   borderRadius: BorderRadius.circular(5),
                                                                                 ),
                                                                                 child: Checkbox(
-                                                                                  activeColor: isChecked
-                                                                                      ? Color.fromRGBO(21, 43, 81, 1)
-                                                                                      : Colors.white,
+                                                                                  activeColor: isChecked ? Color.fromRGBO(21, 43, 81, 1) : Colors.white,
                                                                                   checkColor: Colors.white,
-                                                                                  value:
-                                                                                  isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
+                                                                                  value: isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
                                                                                   onChanged: (value) {
                                                                                     setState(() {
-                                                                                      isChecked = value ??
-                                                                                          false; // ensure value is not null
+                                                                                      isChecked = value ?? false; // ensure value is not null
                                                                                     });
                                                                                   },
                                                                                 ),
                                                                               ),
-                                                                              SizedBox(
-                                                                                  width: MediaQuery.of(context).size.width * 0.02),
+                                                                              SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                                                                               Text(
                                                                                 "Multi unit",
                                                                                 style: TextStyle(
-                                                                                  fontSize:
-                                                                                  MediaQuery.of(context).size.width < 500 ? 15 :18,
+                                                                                  fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 18,
                                                                                   color: Colors.grey,
                                                                                 ),
                                                                               ),
-                                                                              SizedBox(
-                                                                                  width: MediaQuery.of(context).size.width * 0.05),
+                                                                              SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                                                                             ],
                                                                           ),
                                                                           SizedBox(
-                                                                            height: 20,
+                                                                            height:
+                                                                                20,
                                                                           ),
                                                                           Row(
                                                                             children: [
                                                                               if (MediaQuery.of(context).size.width < 500)
-                                                                                SizedBox(
-                                                                                    width: MediaQuery.of(context).size.width * 0.05),
+                                                                                SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                                                                               if (MediaQuery.of(context).size.width > 500)
-                                                                                SizedBox(
-                                                                                    width: MediaQuery.of(context).size.width * 0.02),
+                                                                                SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                                                                               GestureDetector(
                                                                                 onTap: () async {
-                                                                                  if (selectedValue == null ||
-                                                                                      subtype.text.isEmpty) {
+                                                                                  if (selectedValue == null || subtype.text.isEmpty) {
                                                                                     setState(() {
                                                                                       iserror = true;
                                                                                     });
@@ -1075,8 +1090,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                       isLoading = true;
                                                                                       iserror = false;
                                                                                     });
-                                                                                    SharedPreferences prefs =
-                                                                                    await SharedPreferences.getInstance();
+                                                                                    SharedPreferences prefs = await SharedPreferences.getInstance();
                                                                                     String? id = prefs.getString("adminId");
                                                                                     PropertyTypeRepository()
                                                                                         .addPropertyType(
@@ -1101,7 +1115,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 child: ClipRRect(
                                                                                   borderRadius: BorderRadius.circular(5.0),
                                                                                   child: Container(
-                                                                                    height:  MediaQuery.of(context).size.width < 500 ? 40 :45,
+                                                                                    height: MediaQuery.of(context).size.width < 500 ? 40 : 45,
                                                                                     width: MediaQuery.of(context).size.width < 500 ? 130 : 165,
                                                                                     decoration: BoxDecoration(
                                                                                       borderRadius: BorderRadius.circular(5.0),
@@ -1117,16 +1131,13 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                     child: Center(
                                                                                       child: isLoading
                                                                                           ? SpinKitFadingCircle(
-                                                                                        color: Colors.white,
-                                                                                        size: 25.0,
-                                                                                      )
+                                                                                              color: Colors.white,
+                                                                                              size: 25.0,
+                                                                                            )
                                                                                           : Text(
-                                                                                        "Add Property Type",
-                                                                                        style: TextStyle(
-                                                                                            color: Colors.white,
-                                                                                            fontWeight: FontWeight.bold,
-                                                                                            fontSize:  MediaQuery.of(context).size.width < 500 ? 13 :15.5),
-                                                                                      ),
+                                                                                              "Add Property Type",
+                                                                                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 15.5),
+                                                                                            ),
                                                                                     ),
                                                                                   ),
                                                                                 ),
@@ -1140,17 +1151,14 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 },
                                                                                 child: Material(
                                                                                   elevation: 2,
-                                                                                  child: Container(
-                                                                                      width:  MediaQuery.of(context).size.width < 500 ? 90 : 90,
-                                                                                      height:  MediaQuery.of(context).size.width < 500 ? 40 :40,
-                                                                                      color: Colors.white,
-                                                                                      child: Center(child: Text("Cancel"))),
+                                                                                  child: Container(width: MediaQuery.of(context).size.width < 500 ? 90 : 90, height: MediaQuery.of(context).size.width < 500 ? 40 : 40, color: Colors.white, child: Center(child: Text("Cancel"))),
                                                                                 ),
                                                                               ),
                                                                             ],
                                                                           ),
                                                                           SizedBox(
-                                                                            height: 10,
+                                                                            height:
+                                                                                10,
                                                                           ),
                                                                           if (iserror)
                                                                             Text(
@@ -1158,7 +1166,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                               style: TextStyle(color: Colors.redAccent),
                                                                             ),
                                                                           SizedBox(
-                                                                            height: 10,
+                                                                            height:
+                                                                                10,
                                                                           ),
                                                                         ],
                                                                       ),
@@ -1173,33 +1182,32 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                     );
                                                   } else {
                                                     setState(() {
-
-
                                                       print(snapshot.data!
                                                           .where((element) =>
-                                                      element
-                                                          .propertysubType ==
-                                                          newValue)
+                                                              element
+                                                                  .propertysubType ==
+                                                              newValue)
                                                           .first
                                                           .isMultiunit);
                                                       // selectedIsMultiUnit = snapshot.data!.where((element) => element.isMultiunit == newValue ).first;
                                                       selectedpropertytypedata =
                                                           snapshot.data!
                                                               .where((element) =>
-                                                          element
-                                                              .propertysubType ==
-                                                              newValue)
+                                                                  element
+                                                                      .propertysubType ==
+                                                                  newValue)
                                                               .first;
                                                       print(selectedProperty);
-                                                      selectedProperty = newValue;
+                                                      selectedProperty =
+                                                          newValue;
                                                       propertyGroups = [];
                                                       // Call the method here
                                                       selectedpropertytype =
                                                           selectedpropertytypedata!
                                                               .propertyType;
                                                       selectedIsMultiUnit =
-                                                      selectedpropertytypedata!
-                                                          .isMultiunit!;
+                                                          selectedpropertytypedata!
+                                                              .isMultiunit!;
                                                     });
                                                     propertyGroups.clear();
                                                     addPropertyGroup();
@@ -1219,28 +1227,36 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                           entry.key,
                                                           style: TextStyle(
                                                               fontWeight:
-                                                              FontWeight.bold,
-                                                              color: Color.fromRGBO(
-                                                                  21, 43, 81, 1)),
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                      21,
+                                                                      43,
+                                                                      81,
+                                                                      1)),
                                                         ),
                                                       ),
-                                                      ...entry.value.map((item) {
+                                                      ...entry.value
+                                                          .map((item) {
                                                         return DropdownMenuItem<
                                                             String>(
-                                                          value:
-                                                          item.propertysubType,
+                                                          value: item
+                                                              .propertysubType,
                                                           child: Padding(
                                                             padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                left: 16.0),
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    left: 16.0),
                                                             child: Text(
                                                               item.propertysubType ??
                                                                   '',
                                                               style: TextStyle(
-                                                                color: Colors.black,
+                                                                color: Colors
+                                                                    .black,
                                                                 fontWeight:
-                                                                FontWeight.w400,
+                                                                    FontWeight
+                                                                        .w400,
                                                               ),
                                                             ),
                                                           ),
@@ -1254,13 +1270,14 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                       children: [
                                                         Icon(Icons.add,
                                                             size:
-                                                            15), // Adjusted icon size
+                                                                15), // Adjusted icon size
                                                         SizedBox(width: 6),
-                                                        Text('Add New properties',
+                                                        Text(
+                                                            'Add New properties',
                                                             style: TextStyle(
                                                                 fontSize:
-                                                                16 //MediaQuery.of(context).size.width * .03
-                                                            )), // Adjusted text size
+                                                                    16 //MediaQuery.of(context).size.width * .03
+                                                                )), // Adjusted text size
                                                       ],
                                                     ),
                                                   ),
@@ -1296,22 +1313,22 @@ class _Add_new_propertyState extends State<Add_new_property> {
                           ),
                           propertyTypeError
                               ? Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                width: 15,
-                              ),
-                              Text(
-                                propertyTypeErrorMessage,
-                                style: TextStyle(
-                                    color: Colors.red,
-                                    fontSize: MediaQuery.of(context)
-                                        .size
-                                        .width *
-                                        .03),
-                              ),
-                            ],
-                          )
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    Text(
+                                      propertyTypeErrorMessage,
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .03),
+                                    ),
+                                  ],
+                                )
                               : Container(),
                           SizedBox(
                             height: 10,
@@ -1326,7 +1343,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 style: TextStyle(
                                     color: Color.fromRGBO(21, 43, 81, 1),
                                     fontWeight: FontWeight.bold,
-                                    fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 18),
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 15
+                                            : 18),
                               ),
                             ],
                           ),
@@ -1343,7 +1363,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 style: TextStyle(
                                     color: Color(0xFF8A95A8),
                                     fontWeight: FontWeight.bold,
-                                    fontSize:  MediaQuery.of(context).size.width < 500 ? 14 : 18),
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 14
+                                            : 18),
                               ),
                             ],
                           ),
@@ -1355,7 +1378,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               SizedBox(
                                 width: 15,
                               ),
-
                               Expanded(
                                 child: Container(
                                   height: 50,
@@ -1363,31 +1385,41 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                       borderRadius: BorderRadius.circular(10),
                                       color: Colors.white,
                                       border: Border.all(color: greyColor)
-                                    // color: Color.fromRGBO(196, 196, 196, .3),
-                                  ),
+                                      // color: Color.fromRGBO(196, 196, 196, .3),
+                                      ),
                                   child: Stack(
                                     children: [
                                       Positioned.fill(
                                         child: TextField(
                                           style: TextStyle(
                                             color: Colors.black,
-                                            fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 14
+                                                : 15,
                                           ),
-                                          keyboardType: TextInputType.text, // Adjust as needed
+                                          keyboardType: TextInputType
+                                              .text, // Adjust as needed
                                           onChanged: (value) {
                                             setState(() {
                                               addresserror = false;
                                             });
                                           },
                                           controller: address,
-                                          cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                          cursorColor:
+                                              Color.fromRGBO(21, 43, 81, 1),
                                           decoration: InputDecoration(
                                             enabledBorder: addresserror
                                                 ? OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(10),
-                                              borderSide: BorderSide(
-                                                  color: Colors.red), // Set border color here
-                                            )
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    borderSide: BorderSide(
+                                                        color: Colors
+                                                            .red), // Set border color here
+                                                  )
                                                 : InputBorder.none,
                                             border: InputBorder.none,
                                             contentPadding: EdgeInsets.all(14),
@@ -1404,7 +1436,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                             hintText: "Enter address",
                                             hintStyle: TextStyle(
                                               color: Colors.grey[600],
-                                              fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                                              fontSize: MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                      500
+                                                  ? 14
+                                                  : 18,
                                             ),
                                           ),
                                         ),
@@ -1413,7 +1450,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   ),
                                 ),
                               ),
-
                               SizedBox(
                                 width: 15,
                               ),
@@ -1421,42 +1457,49 @@ class _Add_new_propertyState extends State<Add_new_property> {
                           ),
                           addresserror
                               ? Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                width: 15,
-                              ),
-                              Text(
-                                addressmessage,
-                                style: TextStyle(
-                                    color: Colors.red,
-                                    fontSize: MediaQuery.of(context)
-                                        .size
-                                        .width *
-                                        .04),
-                              ),
-                            ],
-                          )
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    Text(
+                                      addressmessage,
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .04),
+                                    ),
+                                  ],
+                                )
                               : Container(),
                           SizedBox(
                             height: 10,
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 15.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 // First Column
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "City",
                                         style: TextStyle(
                                           color: Color(0xFF8A95A8),
                                           fontWeight: FontWeight.bold,
-                                          fontSize: MediaQuery.of(context).size.width < 500 ? 14.5 : 18,
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 14.5
+                                              : 18,
                                         ),
                                       ),
                                       SizedBox(height: 5),
@@ -1464,8 +1507,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                         height: 50,
                                         decoration: BoxDecoration(
                                           color: Colors.white,
-                                          borderRadius: BorderRadius.circular(10),
-                                          border: Border.all(color: Color(0xFF8A95A8)),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                              color: Color(0xFF8A95A8)),
                                         ),
                                         child: Stack(
                                           children: [
@@ -1474,27 +1519,45 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                 controller: city,
                                                 style: TextStyle(
                                                   color: Colors.black,
-                                                  fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 14
+                                                          : 15,
                                                 ),
                                                 onChanged: (value) {
                                                   setState(() {
                                                     cityerror = false;
                                                   });
                                                 },
-                                                cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                cursorColor: Color.fromRGBO(
+                                                    21, 43, 81, 1),
                                                 decoration: InputDecoration(
                                                   enabledBorder: cityerror
                                                       ? OutlineInputBorder(
-                                                    borderRadius: BorderRadius.circular(10),
-                                                    borderSide: BorderSide(color: Colors.red), // Error border color
-                                                  )
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                          borderSide: BorderSide(
+                                                              color: Colors
+                                                                  .red), // Error border color
+                                                        )
                                                       : InputBorder.none,
                                                   border: InputBorder.none,
-                                                  contentPadding: EdgeInsets.all(14),
+                                                  contentPadding:
+                                                      EdgeInsets.all(14),
                                                   hintText: "Enter city",
                                                   hintStyle: TextStyle(
                                                     color: Color(0xFF8A95A8),
-                                                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 14
+                                                            : 18,
                                                   ),
                                                 ),
                                               ),
@@ -1505,20 +1568,27 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                       SizedBox(height: 5),
                                       cityerror
                                           ? Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(left: 5),
-                                            child: Text(
-                                              citymessage,
-                                              style: TextStyle(
-                                                color: Colors.red,
-                                                fontSize: MediaQuery.of(context).size.width * .04,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      )
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 5),
+                                                  child: Text(
+                                                    citymessage,
+                                                    style: TextStyle(
+                                                      color: Colors.red,
+                                                      fontSize:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .04,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
                                           : Container(),
                                     ],
                                   ),
@@ -1527,14 +1597,20 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 // Second Column
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "State",
                                         style: TextStyle(
                                           color: Color(0xFF8A95A8),
                                           fontWeight: FontWeight.bold,
-                                          fontSize:  MediaQuery.of(context).size.width < 500 ? 14.5 : 18,
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 14.5
+                                              : 18,
                                         ),
                                       ),
                                       SizedBox(height: 5),
@@ -1542,8 +1618,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                         height: 50,
                                         decoration: BoxDecoration(
                                           color: Colors.white,
-                                          borderRadius: BorderRadius.circular(10),
-                                          border: Border.all(color: Color(0xFF8A95A8)),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                              color: Color(0xFF8A95A8)),
                                         ),
                                         child: Stack(
                                           children: [
@@ -1552,27 +1630,45 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                 controller: state,
                                                 style: TextStyle(
                                                   color: Colors.black,
-                                                  fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 14
+                                                          : 15,
                                                 ),
                                                 onChanged: (value) {
                                                   setState(() {
                                                     stateerror = false;
                                                   });
                                                 },
-                                                cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                cursorColor: Color.fromRGBO(
+                                                    21, 43, 81, 1),
                                                 decoration: InputDecoration(
                                                   enabledBorder: stateerror
                                                       ? OutlineInputBorder(
-                                                    borderRadius: BorderRadius.circular(10),
-                                                    borderSide: BorderSide(color: Colors.red), // Error border color
-                                                  )
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                          borderSide: BorderSide(
+                                                              color: Colors
+                                                                  .red), // Error border color
+                                                        )
                                                       : InputBorder.none,
                                                   border: InputBorder.none,
-                                                  contentPadding: EdgeInsets.all(14),
+                                                  contentPadding:
+                                                      EdgeInsets.all(14),
                                                   hintText: "Enter state",
                                                   hintStyle: TextStyle(
                                                     color: Color(0xFF8A95A8),
-                                                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 14
+                                                            : 18,
                                                   ),
                                                 ),
                                               ),
@@ -1583,20 +1679,27 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                       SizedBox(height: 5),
                                       stateerror
                                           ? Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(left: 5),
-                                            child: Text(
-                                              statemessage,
-                                              style: TextStyle(
-                                                color: Colors.red,
-                                                fontSize: MediaQuery.of(context).size.width * .04,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      )
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 5),
+                                                  child: Text(
+                                                    statemessage,
+                                                    style: TextStyle(
+                                                      color: Colors.red,
+                                                      fontSize:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .04,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
                                           : Container(),
                                     ],
                                   ),
@@ -1608,21 +1711,28 @@ class _Add_new_propertyState extends State<Add_new_property> {
                             height: 10,
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 15.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 // First Column
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "Country",
                                         style: TextStyle(
                                           color: Color(0xFF8A95A8),
                                           fontWeight: FontWeight.bold,
-                                          fontSize: MediaQuery.of(context).size.width < 500 ? 14.5 : 18,
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 14.5
+                                              : 18,
                                         ),
                                       ),
                                       SizedBox(height: 5),
@@ -1630,8 +1740,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                         height: 50,
                                         decoration: BoxDecoration(
                                           color: Colors.white,
-                                          borderRadius: BorderRadius.circular(10),
-                                          border: Border.all(color: Color(0xFF8A95A8)),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                              color: Color(0xFF8A95A8)),
                                         ),
                                         child: Stack(
                                           children: [
@@ -1640,27 +1752,45 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                 controller: country,
                                                 style: TextStyle(
                                                   color: Colors.black,
-                                                  fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 14
+                                                          : 15,
                                                 ),
                                                 onChanged: (value) {
                                                   setState(() {
                                                     countryerror = false;
                                                   });
                                                 },
-                                                cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                cursorColor: Color.fromRGBO(
+                                                    21, 43, 81, 1),
                                                 decoration: InputDecoration(
                                                   enabledBorder: countryerror
                                                       ? OutlineInputBorder(
-                                                    borderRadius: BorderRadius.circular(10),
-                                                    borderSide: BorderSide(color: Colors.red), // Error border color
-                                                  )
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                          borderSide: BorderSide(
+                                                              color: Colors
+                                                                  .red), // Error border color
+                                                        )
                                                       : InputBorder.none,
                                                   border: InputBorder.none,
-                                                  contentPadding: EdgeInsets.all(14),
+                                                  contentPadding:
+                                                      EdgeInsets.all(14),
                                                   hintText: "Enter country",
                                                   hintStyle: TextStyle(
                                                     color: Color(0xFF8A95A8),
-                                                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 14
+                                                            : 18,
                                                   ),
                                                 ),
                                               ),
@@ -1671,20 +1801,27 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                       SizedBox(height: 5),
                                       countryerror
                                           ? Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(left: 5),
-                                            child: Text(
-                                              countrymessage,
-                                              style: TextStyle(
-                                                color: Colors.red,
-                                                fontSize: MediaQuery.of(context).size.width * .04,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      )
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 5),
+                                                  child: Text(
+                                                    countrymessage,
+                                                    style: TextStyle(
+                                                      color: Colors.red,
+                                                      fontSize:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .04,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
                                           : Container(),
                                     ],
                                   ),
@@ -1693,14 +1830,20 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 // Second Column
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "Postal Code",
                                         style: TextStyle(
                                           color: Color(0xFF8A95A8),
                                           fontWeight: FontWeight.bold,
-                                          fontSize: MediaQuery.of(context).size.width < 500 ? 14.5 : 18,
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 14.5
+                                              : 18,
                                         ),
                                       ),
                                       SizedBox(height: 5),
@@ -1708,8 +1851,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                         height: 50,
                                         decoration: BoxDecoration(
                                           color: Colors.white,
-                                          borderRadius: BorderRadius.circular(10),
-                                          border: Border.all(color: Color(0xFF8A95A8)),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                              color: Color(0xFF8A95A8)),
                                         ),
                                         child: Stack(
                                           children: [
@@ -1719,28 +1864,49 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                 controller: postalcode,
                                                 style: TextStyle(
                                                   color: Colors.black,
-                                                  fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 15,
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 14
+                                                          : 15,
                                                 ),
                                                 onChanged: (value) {
                                                   setState(() {
                                                     postalcodeerror = false;
                                                   });
                                                 },
-                                                keyboardType:TextInputType.numberWithOptions(signed: true,decimal: true),
-                                                cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                keyboardType: TextInputType
+                                                    .numberWithOptions(
+                                                        signed: true,
+                                                        decimal: true),
+                                                cursorColor: Color.fromRGBO(
+                                                    21, 43, 81, 1),
                                                 decoration: InputDecoration(
                                                   enabledBorder: postalcodeerror
                                                       ? OutlineInputBorder(
-                                                    borderRadius: BorderRadius.circular(10),
-                                                    borderSide: BorderSide(color: Colors.red), // Error border color
-                                                  )
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                          borderSide: BorderSide(
+                                                              color: Colors
+                                                                  .red), // Error border color
+                                                        )
                                                       : InputBorder.none,
                                                   border: InputBorder.none,
-                                                  contentPadding: EdgeInsets.all(14),
+                                                  contentPadding:
+                                                      EdgeInsets.all(14),
                                                   hintText: "Enter postal code",
                                                   hintStyle: TextStyle(
                                                     color: Color(0xFF8A95A8),
-                                                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 14
+                                                            : 18,
                                                   ),
                                                 ),
                                               ),
@@ -1751,20 +1917,27 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                       SizedBox(height: 5),
                                       postalcodeerror
                                           ? Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(left: 5),
-                                            child: Text(
-                                              postalcodemessage,
-                                              style: TextStyle(
-                                                color: Colors.red,
-                                                fontSize: MediaQuery.of(context).size.width * .04,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      )
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 5),
+                                                  child: Text(
+                                                    postalcodemessage,
+                                                    style: TextStyle(
+                                                      color: Colors.red,
+                                                      fontSize:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .04,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
                                           : Container(),
                                     ],
                                   ),
@@ -1772,7 +1945,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               ],
                             ),
                           ),
-
                           SizedBox(
                             height: 10,
                           ),
@@ -1807,7 +1979,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Color.fromRGBO(21, 43, 81, 1),
-                                      fontSize:  MediaQuery.of(context).size.width < 500 ? 16.5 : 20),
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 16.5
+                                              : 20),
                                 ),
                               ],
                             ),
@@ -1824,7 +2000,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   style: TextStyle(
                                       color: Color(0xFF8A95A8),
                                       //  fontWeight: FontWeight.bold,
-                                      fontSize:  MediaQuery.of(context).size.width < 500 ? 14.5 : 18),
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 14.5
+                                              : 18),
                                 ),
                               ],
                             ),
@@ -1842,7 +2022,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     style: TextStyle(
                                         color: Color(0xFF8A95A8),
                                         //  fontWeight: FontWeight.bold,
-                                        fontSize:  MediaQuery.of(context).size.width < 500 ? 14.5 : 18),
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 14.5
+                                                : 18),
                                   ),
                                 ),
                               ],
@@ -1851,12 +2035,14 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               height: 10,
                             ),
                             GestureDetector(
-
-                           onTap: (){
-                             Navigator.push(context, MaterialPageRoute(builder: (context)=>AddRentalowners()));
-                           },
-                              child:
-                              Row(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            AddRentalowners()));
+                              },
+                              child: Row(
                                 children: [
                                   SizedBox(width: 10),
                                   Icon(Icons.add,
@@ -1867,7 +2053,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.green[500],
-                                      fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 18,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 18,
                                     ),
                                   ),
                                 ],
@@ -1884,7 +2074,9 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(width: 15,),
+                                  SizedBox(
+                                    width: 15,
+                                  ),
                                   Text(
                                     'required',
                                     style: TextStyle(
@@ -1899,7 +2091,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                             ),
                             Consumer<OwnerDetailsProvider>(
                               builder: (context, provider, child) {
-                                   Ownersdetails = provider.OwnerDetails;
+                                Ownersdetails = provider.OwnerDetails;
                                 return Ownersdetails != null
                                     ? Column(
                                         children: [
@@ -1910,7 +2102,13 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                               Text(
                                                 "Owners Information",
                                                 style: TextStyle(
-                                                    fontSize:  MediaQuery.of(context).size.width < 500 ?15:17,
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 15
+                                                            : 17,
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
@@ -1924,42 +2122,67 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                 child: Container(
                                                   decoration: BoxDecoration(
                                                     borderRadius:
-                                                        BorderRadius.circular(5),
+                                                        BorderRadius.circular(
+                                                            5),
                                                     border: Border.all(
                                                         color: blueColor),
                                                   ),
                                                   child: DataTable(
                                                     border: TableBorder(
-                                                      horizontalInside: BorderSide(
-                                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                                      horizontalInside:
+                                                          BorderSide(
+                                                        color: Color.fromRGBO(
+                                                            21, 43, 81, 1),
                                                         width: 1.0,
                                                       ),
-
                                                     ),
                                                     columnSpacing: 10,
-                                                    headingRowHeight: MediaQuery.of(context).size.width < 500 ?40:40,
-                                                    dataRowHeight: MediaQuery.of(context).size.width < 500 ?40:40,
+                                                    headingRowHeight:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 40
+                                                            : 40,
+                                                    dataRowHeight:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 40
+                                                            : 40,
                                                     columns: [
                                                       DataColumn(
                                                         label: Expanded(
                                                           child: Text(
                                                             'Name',
                                                             style: TextStyle(
-                                                                fontSize:  MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                                                                fontSize: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width <
+                                                                        500
+                                                                    ? 14
+                                                                    : 18,
                                                                 fontWeight:
-                                                                    FontWeight.bold),
+                                                                    FontWeight
+                                                                        .bold),
                                                           ),
                                                         ),
                                                       ),
-
                                                       DataColumn(
                                                         label: Expanded(
                                                           child: Text(
                                                             'PhoneNumber',
                                                             style: TextStyle(
-                                                                fontSize:  MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                                                                fontSize: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width <
+                                                                        500
+                                                                    ? 14
+                                                                    : 18,
                                                                 fontWeight:
-                                                                    FontWeight.bold),
+                                                                    FontWeight
+                                                                        .bold),
                                                           ),
                                                         ),
                                                       ),
@@ -1968,9 +2191,15 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                           child: Text(
                                                             'Action',
                                                             style: TextStyle(
-                                                                fontSize:  MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                                                                fontSize: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width <
+                                                                        500
+                                                                    ? 14
+                                                                    : 18,
                                                                 fontWeight:
-                                                                    FontWeight.bold),
+                                                                    FontWeight
+                                                                        .bold),
                                                           ),
                                                         ),
                                                       ),
@@ -1983,10 +2212,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                               Ownersdetails!
                                                                       .rentalOwnerName ??
                                                                   'N/A',
-                                                
-                                                
                                                               style: TextStyle(
-                                                                  fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18),
+                                                                  fontSize:
+                                                                      MediaQuery.of(context).size.width <
+                                                                              500
+                                                                          ? 14
+                                                                          : 18),
                                                             ),
                                                           ),
                                                           DataCell(
@@ -1995,7 +2226,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                       .rentalOwnerPhoneNumber ??
                                                                   'N/A',
                                                               style: TextStyle(
-                                                                  fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18),
+                                                                  fontSize:
+                                                                      MediaQuery.of(context).size.width <
+                                                                              500
+                                                                          ? 14
+                                                                          : 18),
                                                             ),
                                                           ),
                                                           DataCell(
@@ -2003,55 +2238,66 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                               children: [
                                                                 InkWell(
                                                                   onTap: () {
-                                                                    Navigator.push(
+                                                                    Navigator
+                                                                        .push(
                                                                       context,
                                                                       MaterialPageRoute(
-                                                                        builder: (context) => AddRentalowners(
-                                                                          OwnersDetails: Ownersdetails,
-                                                                          isEdit: true,
+                                                                        builder:
+                                                                            (context) =>
+                                                                                AddRentalowners(
+                                                                          OwnersDetails:
+                                                                              Ownersdetails,
+                                                                          isEdit:
+                                                                              true,
                                                                         ),
                                                                       ),
                                                                     );
                                                                   },
-                                                                  child: Container(
+                                                                  child:
+                                                                      Container(
                                                                     padding:
                                                                         EdgeInsets
                                                                             .zero,
-                                                                    child: FaIcon(
+                                                                    child:
+                                                                        FaIcon(
                                                                       FontAwesomeIcons
                                                                           .edit,
-                                                                      size:  MediaQuery.of(context).size.width < 500 ? 17 : 20,
+                                                                      size: MediaQuery.of(context).size.width <
+                                                                              500
+                                                                          ? 17
+                                                                          : 20,
                                                                     ),
                                                                   ),
                                                                 ),
-                                                                SizedBox(width: 4),
+                                                                SizedBox(
+                                                                    width: 4),
                                                                 InkWell(
                                                                   onTap: () {
-                                                                    // Ownersdetails!.rentalOwnerFirstName;
-                                                                    //  OwnersdetailsGroups.removeAt(index);
-                                                                    //   Ownersdetails = RentalOwner(
-                                                                    //     // rentalOwnerFirstName: firstname.text,
-                                                                    //     rentalOwnerLastName: lastname.text,
-                                                                    //     rentalOwnerPhoneNumber: phonenum.text,
-                                                                    //     rentalOwnerFirstName: firstname.text,
-                                                                    //   );
-                                                
-                                                                    print("hello");
-                                                                    setState(() {
+                                                                    provider
+                                                                        .clearOwners();
+                                                                    print(
+                                                                        "hello");
+                                                                    setState(
+                                                                        () {
                                                                       RentalOwner?
                                                                           owner;
                                                                       Ownersdetails =
                                                                           owner;
                                                                     });
                                                                   },
-                                                                  child: Container(
+                                                                  child:
+                                                                      Container(
                                                                     padding:
                                                                         EdgeInsets
                                                                             .zero,
-                                                                    child: FaIcon(
+                                                                    child:
+                                                                        FaIcon(
                                                                       FontAwesomeIcons
                                                                           .trashCan,
-                                                                      size:  MediaQuery.of(context).size.width < 500 ? 17 : 20,
+                                                                      size: MediaQuery.of(context).size.width <
+                                                                              500
+                                                                          ? 17
+                                                                          : 20,
                                                                     ),
                                                                   ),
                                                                 ),
@@ -2102,7 +2348,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     style: TextStyle(
                                         color: Color(0xFF8A95A8),
                                         //  fontWeight: FontWeight.bold,
-                                        fontSize:  MediaQuery.of(context).size.width < 500 ? 14.5 : 18),
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 14.5
+                                                : 18),
                                   ),
                                 ),
                               ],
@@ -2118,11 +2368,15 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 Expanded(
                                   child: Text(
                                     "If staff member has not yet been added as user in your account ,they can be added to the account"
-                                        ",than as the manager later through the property's summary details.",
+                                    ",than as the manager later through the property's summary details.",
                                     style: TextStyle(
                                         color: Color(0xFF8A95A8),
                                         //  fontWeight: FontWeight.bold,
-                                        fontSize:  MediaQuery.of(context).size.width < 500 ? 14 : 18),
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 14
+                                                : 18),
                                   ),
                                 ),
                               ],
@@ -2156,9 +2410,9 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                         ConnectionState.waiting) {
                                       return Center(
                                           child: SpinKitFadingCircle(
-                                            color: Colors.black,
-                                            size: 40.0,
-                                          ));
+                                        color: Colors.black,
+                                        size: 40.0,
+                                      ));
                                     } else if (snapshot.hasError) {
                                       return Text('Error: ${snapshot.error}');
                                     } else if (!snapshot.hasData ||
@@ -2166,24 +2420,24 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                       return Text('No staff members found');
                                     } else {
                                       List<Staffmembers> staffMembers =
-                                      snapshot.data!;
+                                          snapshot.data!;
                                       List<DropdownMenuItem<String>>
-                                      dropdownItems = staffMembers
-                                          .map<DropdownMenuItem<String>>(
-                                              (Staffmembers staffMember) {
-                                            return DropdownMenuItem<String>(
-                                              value: staffMember.sId,
-                                              onTap: () {
-                                                setState(() {
-                                                  sid = staffMember.staffmemberId;
-                                                });
-                                              },
-                                              child: Text(
-                                                staffMember.staffmemberName ?? '',
-                                                style: TextStyle(fontSize: 14),
-                                              ),
-                                            );
-                                          }).toList();
+                                          dropdownItems = staffMembers
+                                              .map<DropdownMenuItem<String>>(
+                                                  (Staffmembers staffMember) {
+                                        return DropdownMenuItem<String>(
+                                          value: staffMember.sId,
+                                          onTap: () {
+                                            setState(() {
+                                              sid = staffMember.staffmemberId;
+                                            });
+                                          },
+                                          child: Text(
+                                            staffMember.staffmemberName ?? '',
+                                            style: TextStyle(fontSize: 14),
+                                          ),
+                                        );
+                                      }).toList();
 
                                       // Add the special "Add new property" item
                                       dropdownItems.add(
@@ -2196,18 +2450,18 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                 builder:
                                                     (BuildContext context) {
                                                   bool isChecked =
-                                                  false; // Moved isChecked inside the StatefulBuilder
+                                                      false; // Moved isChecked inside the StatefulBuilder
                                                   return StatefulBuilder(
                                                     builder: (BuildContext
-                                                    context,
+                                                            context,
                                                         StateSetter setState) {
                                                       return AlertDialog(
                                                         backgroundColor:
-                                                        Colors.white,
+                                                            Colors.white,
                                                         surfaceTintColor:
-                                                        Colors.white,
+                                                            Colors.white,
                                                         content:
-                                                        SingleChildScrollView(
+                                                            SingleChildScrollView(
                                                           child: Column(
                                                             children: [
                                                               SizedBox(
@@ -2226,10 +2480,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                             81,
                                                                             1),
                                                                         fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
+                                                                            FontWeight
+                                                                                .bold,
                                                                         fontSize:
-                                                                        18),
+                                                                            18),
                                                                   ),
                                                                   Spacer(),
                                                                   InkWell(
@@ -2238,17 +2492,17 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                           context);
                                                                     },
                                                                     child:
-                                                                    Container(
+                                                                        Container(
                                                                       //    color: Colors.redAccent,
                                                                       padding:
-                                                                      EdgeInsets
-                                                                          .zero,
+                                                                          EdgeInsets
+                                                                              .zero,
                                                                       child:
-                                                                      FaIcon(
+                                                                          FaIcon(
                                                                         FontAwesomeIcons
                                                                             .xmark,
                                                                         size:
-                                                                        15,
+                                                                            15,
                                                                         color: Color(
                                                                             0xFF8A95A8),
                                                                       ),
@@ -2273,10 +2527,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         color: Color(
                                                                             0xFF8A95A8),
                                                                         fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
+                                                                            FontWeight
+                                                                                .bold,
                                                                         fontSize:
-                                                                        13),
+                                                                            13),
                                                                   ),
                                                                 ],
                                                               ),
@@ -2287,35 +2541,35 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                 children: [
                                                                   SizedBox(
                                                                       width:
-                                                                      15),
+                                                                          15),
                                                                   Material(
                                                                     elevation:
-                                                                    4,
+                                                                        4,
                                                                     child:
-                                                                    Container(
+                                                                        Container(
                                                                       height:
-                                                                      50,
+                                                                          50,
                                                                       width: MediaQuery.of(context)
-                                                                          .size
-                                                                          .width *
+                                                                              .size
+                                                                              .width *
                                                                           .54,
                                                                       decoration:
-                                                                      BoxDecoration(
+                                                                          BoxDecoration(
                                                                         borderRadius:
-                                                                        BorderRadius.circular(2),
+                                                                            BorderRadius.circular(2),
                                                                         border:
-                                                                        Border.all(
+                                                                            Border.all(
                                                                           color:
-                                                                          Color(0xFF8A95A8),
+                                                                              Color(0xFF8A95A8),
                                                                         ),
                                                                       ),
                                                                       child:
-                                                                      Stack(
+                                                                          Stack(
                                                                         children: [
                                                                           Positioned
                                                                               .fill(
                                                                             child:
-                                                                            TextField(
+                                                                                TextField(
                                                                               onChanged: (value) {
                                                                                 setState(() {
                                                                                   nameerror = false;
@@ -2331,11 +2585,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 ),
                                                                                 enabledBorder: nameerror
                                                                                     ? OutlineInputBorder(
-                                                                                  borderRadius: BorderRadius.circular(2),
-                                                                                  borderSide: BorderSide(
-                                                                                    color: Colors.red,
-                                                                                  ),
-                                                                                )
+                                                                                        borderRadius: BorderRadius.circular(2),
+                                                                                        borderSide: BorderSide(
+                                                                                          color: Colors.red,
+                                                                                        ),
+                                                                                      )
                                                                                     : InputBorder.none,
                                                                                 border: InputBorder.none,
                                                                                 contentPadding: EdgeInsets.all(12),
@@ -2348,23 +2602,23 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                   ),
                                                                   SizedBox(
                                                                       width:
-                                                                      20),
+                                                                          20),
                                                                 ],
                                                               ),
                                                               nameerror
                                                                   ? Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width:
-                                                                    117,
-                                                                  ),
-                                                                  Text(
-                                                                    namemessage,
-                                                                    style:
-                                                                    TextStyle(color: Colors.red),
-                                                                  ),
-                                                                ],
-                                                              )
+                                                                      children: [
+                                                                        SizedBox(
+                                                                          width:
+                                                                              117,
+                                                                        ),
+                                                                        Text(
+                                                                          namemessage,
+                                                                          style:
+                                                                              TextStyle(color: Colors.red),
+                                                                        ),
+                                                                      ],
+                                                                    )
                                                                   : Container(),
                                                               SizedBox(
                                                                 height: 10,
@@ -2377,7 +2631,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                   Text(
                                                                     "Designation...*",
                                                                     style: TextStyle(
-                                                                      // color: Colors.grey,
+                                                                        // color: Colors.grey,
                                                                         color: Color(0xFF8A95A8),
                                                                         fontWeight: FontWeight.bold,
                                                                         fontSize: 13),
@@ -2391,35 +2645,35 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                 children: [
                                                                   SizedBox(
                                                                       width:
-                                                                      15),
+                                                                          15),
                                                                   Material(
                                                                     elevation:
-                                                                    4,
+                                                                        4,
                                                                     child:
-                                                                    Container(
+                                                                        Container(
                                                                       height:
-                                                                      50,
+                                                                          50,
                                                                       width: MediaQuery.of(context)
-                                                                          .size
-                                                                          .width *
+                                                                              .size
+                                                                              .width *
                                                                           .54,
                                                                       decoration:
-                                                                      BoxDecoration(
+                                                                          BoxDecoration(
                                                                         borderRadius:
-                                                                        BorderRadius.circular(2),
+                                                                            BorderRadius.circular(2),
                                                                         border:
-                                                                        Border.all(
+                                                                            Border.all(
                                                                           color:
-                                                                          Color(0xFF8A95A8),
+                                                                              Color(0xFF8A95A8),
                                                                         ),
                                                                       ),
                                                                       child:
-                                                                      Stack(
+                                                                          Stack(
                                                                         children: [
                                                                           Positioned
                                                                               .fill(
                                                                             child:
-                                                                            TextField(
+                                                                                TextField(
                                                                               onChanged: (value) {
                                                                                 setState(() {
                                                                                   designationerror = false;
@@ -2435,11 +2689,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 ),
                                                                                 enabledBorder: designationerror
                                                                                     ? OutlineInputBorder(
-                                                                                  borderRadius: BorderRadius.circular(2),
-                                                                                  borderSide: BorderSide(
-                                                                                    color: Colors.red,
-                                                                                  ),
-                                                                                )
+                                                                                        borderRadius: BorderRadius.circular(2),
+                                                                                        borderSide: BorderSide(
+                                                                                          color: Colors.red,
+                                                                                        ),
+                                                                                      )
                                                                                     : InputBorder.none,
                                                                                 border: InputBorder.none,
                                                                                 contentPadding: EdgeInsets.all(12),
@@ -2452,23 +2706,23 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                   ),
                                                                   SizedBox(
                                                                       width:
-                                                                      20),
+                                                                          20),
                                                                 ],
                                                               ),
                                                               designationerror
                                                                   ? Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width:
-                                                                    117,
-                                                                  ),
-                                                                  Text(
-                                                                    designationmessage,
-                                                                    style:
-                                                                    TextStyle(color: Colors.red),
-                                                                  ),
-                                                                ],
-                                                              )
+                                                                      children: [
+                                                                        SizedBox(
+                                                                          width:
+                                                                              117,
+                                                                        ),
+                                                                        Text(
+                                                                          designationmessage,
+                                                                          style:
+                                                                              TextStyle(color: Colors.red),
+                                                                        ),
+                                                                      ],
+                                                                    )
                                                                   : Container(),
                                                               SizedBox(
                                                                 height: 10,
@@ -2481,7 +2735,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                   Text(
                                                                     "Phone Number...",
                                                                     style: TextStyle(
-                                                                      // color: Colors.grey,
+                                                                        // color: Colors.grey,
                                                                         color: Color(0xFF8A95A8),
                                                                         fontWeight: FontWeight.bold,
                                                                         fontSize: 13),
@@ -2495,35 +2749,35 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                 children: [
                                                                   SizedBox(
                                                                       width:
-                                                                      15),
+                                                                          15),
                                                                   Material(
                                                                     elevation:
-                                                                    4,
+                                                                        4,
                                                                     child:
-                                                                    Container(
+                                                                        Container(
                                                                       height:
-                                                                      50,
+                                                                          50,
                                                                       width: MediaQuery.of(context)
-                                                                          .size
-                                                                          .width *
+                                                                              .size
+                                                                              .width *
                                                                           .54,
                                                                       decoration:
-                                                                      BoxDecoration(
+                                                                          BoxDecoration(
                                                                         borderRadius:
-                                                                        BorderRadius.circular(2),
+                                                                            BorderRadius.circular(2),
                                                                         border:
-                                                                        Border.all(
+                                                                            Border.all(
                                                                           color:
-                                                                          Color(0xFF8A95A8),
+                                                                              Color(0xFF8A95A8),
                                                                         ),
                                                                       ),
                                                                       child:
-                                                                      Stack(
+                                                                          Stack(
                                                                         children: [
                                                                           Positioned
                                                                               .fill(
                                                                             child:
-                                                                            TextField(
+                                                                                TextField(
                                                                               onChanged: (value) {
                                                                                 setState(() {
                                                                                   phonenumbererror = false;
@@ -2539,11 +2793,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 ),
                                                                                 enabledBorder: phonenumbererror
                                                                                     ? OutlineInputBorder(
-                                                                                  borderRadius: BorderRadius.circular(2),
-                                                                                  borderSide: BorderSide(
-                                                                                    color: Colors.red,
-                                                                                  ),
-                                                                                )
+                                                                                        borderRadius: BorderRadius.circular(2),
+                                                                                        borderSide: BorderSide(
+                                                                                          color: Colors.red,
+                                                                                        ),
+                                                                                      )
                                                                                     : InputBorder.none,
                                                                                 border: InputBorder.none,
                                                                                 contentPadding: EdgeInsets.all(12),
@@ -2556,23 +2810,23 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                   ),
                                                                   SizedBox(
                                                                       width:
-                                                                      20),
+                                                                          20),
                                                                 ],
                                                               ),
                                                               phonenumbererror
                                                                   ? Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width:
-                                                                    117,
-                                                                  ),
-                                                                  Text(
-                                                                    phonenumbermessage,
-                                                                    style:
-                                                                    TextStyle(color: Colors.red),
-                                                                  ),
-                                                                ],
-                                                              )
+                                                                      children: [
+                                                                        SizedBox(
+                                                                          width:
+                                                                              117,
+                                                                        ),
+                                                                        Text(
+                                                                          phonenumbermessage,
+                                                                          style:
+                                                                              TextStyle(color: Colors.red),
+                                                                        ),
+                                                                      ],
+                                                                    )
                                                                   : Container(),
                                                               SizedBox(
                                                                 height: 10,
@@ -2585,7 +2839,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                   Text(
                                                                     "Email...*",
                                                                     style: TextStyle(
-                                                                      // color: Colors.grey,
+                                                                        // color: Colors.grey,
                                                                         color: Color(0xFF8A95A8),
                                                                         fontWeight: FontWeight.bold,
                                                                         fontSize: 13),
@@ -2599,35 +2853,35 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                 children: [
                                                                   SizedBox(
                                                                       width:
-                                                                      15),
+                                                                          15),
                                                                   Material(
                                                                     elevation:
-                                                                    4,
+                                                                        4,
                                                                     child:
-                                                                    Container(
+                                                                        Container(
                                                                       height:
-                                                                      50,
+                                                                          50,
                                                                       width: MediaQuery.of(context)
-                                                                          .size
-                                                                          .width *
+                                                                              .size
+                                                                              .width *
                                                                           .54,
                                                                       decoration:
-                                                                      BoxDecoration(
+                                                                          BoxDecoration(
                                                                         borderRadius:
-                                                                        BorderRadius.circular(2),
+                                                                            BorderRadius.circular(2),
                                                                         border:
-                                                                        Border.all(
+                                                                            Border.all(
                                                                           color:
-                                                                          Color(0xFF8A95A8),
+                                                                              Color(0xFF8A95A8),
                                                                         ),
                                                                       ),
                                                                       child:
-                                                                      Stack(
+                                                                          Stack(
                                                                         children: [
                                                                           Positioned
                                                                               .fill(
                                                                             child:
-                                                                            TextField(
+                                                                                TextField(
                                                                               onChanged: (value) {
                                                                                 setState(() {
                                                                                   emailerror = false;
@@ -2643,11 +2897,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 ),
                                                                                 enabledBorder: emailerror
                                                                                     ? OutlineInputBorder(
-                                                                                  borderRadius: BorderRadius.circular(2),
-                                                                                  borderSide: BorderSide(
-                                                                                    color: Colors.red,
-                                                                                  ),
-                                                                                )
+                                                                                        borderRadius: BorderRadius.circular(2),
+                                                                                        borderSide: BorderSide(
+                                                                                          color: Colors.red,
+                                                                                        ),
+                                                                                      )
                                                                                     : InputBorder.none,
                                                                                 border: InputBorder.none,
                                                                                 contentPadding: EdgeInsets.all(12),
@@ -2660,23 +2914,23 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                   ),
                                                                   SizedBox(
                                                                       width:
-                                                                      20),
+                                                                          20),
                                                                 ],
                                                               ),
                                                               emailerror
                                                                   ? Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width:
-                                                                    117,
-                                                                  ),
-                                                                  Text(
-                                                                    emailmessage,
-                                                                    style:
-                                                                    TextStyle(color: Colors.red),
-                                                                  ),
-                                                                ],
-                                                              )
+                                                                      children: [
+                                                                        SizedBox(
+                                                                          width:
+                                                                              117,
+                                                                        ),
+                                                                        Text(
+                                                                          emailmessage,
+                                                                          style:
+                                                                              TextStyle(color: Colors.red),
+                                                                        ),
+                                                                      ],
+                                                                    )
                                                                   : Container(),
                                                               SizedBox(
                                                                 height: 10,
@@ -2689,7 +2943,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                   Text(
                                                                     "Password...*",
                                                                     style: TextStyle(
-                                                                      // color: Colors.grey,
+                                                                        // color: Colors.grey,
                                                                         color: Color(0xFF8A95A8),
                                                                         fontWeight: FontWeight.bold,
                                                                         fontSize: 13),
@@ -2703,35 +2957,35 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                 children: [
                                                                   SizedBox(
                                                                       width:
-                                                                      15),
+                                                                          15),
                                                                   Material(
                                                                     elevation:
-                                                                    4,
+                                                                        4,
                                                                     child:
-                                                                    Container(
+                                                                        Container(
                                                                       height:
-                                                                      50,
+                                                                          50,
                                                                       width: MediaQuery.of(context)
-                                                                          .size
-                                                                          .width *
+                                                                              .size
+                                                                              .width *
                                                                           .54,
                                                                       decoration:
-                                                                      BoxDecoration(
+                                                                          BoxDecoration(
                                                                         borderRadius:
-                                                                        BorderRadius.circular(2),
+                                                                            BorderRadius.circular(2),
                                                                         border:
-                                                                        Border.all(
+                                                                            Border.all(
                                                                           color:
-                                                                          Color(0xFF8A95A8),
+                                                                              Color(0xFF8A95A8),
                                                                         ),
                                                                       ),
                                                                       child:
-                                                                      Stack(
+                                                                          Stack(
                                                                         children: [
                                                                           Positioned
                                                                               .fill(
                                                                             child:
-                                                                            TextField(
+                                                                                TextField(
                                                                               onChanged: (value) {
                                                                                 setState(() {
                                                                                   passworderror = false;
@@ -2747,11 +3001,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 ),
                                                                                 enabledBorder: passworderror
                                                                                     ? OutlineInputBorder(
-                                                                                  borderRadius: BorderRadius.circular(2),
-                                                                                  borderSide: BorderSide(
-                                                                                    color: Colors.red,
-                                                                                  ),
-                                                                                )
+                                                                                        borderRadius: BorderRadius.circular(2),
+                                                                                        borderSide: BorderSide(
+                                                                                          color: Colors.red,
+                                                                                        ),
+                                                                                      )
                                                                                     : InputBorder.none,
                                                                                 border: InputBorder.none,
                                                                                 contentPadding: EdgeInsets.all(12),
@@ -2764,124 +3018,138 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                   ),
                                                                   SizedBox(
                                                                       width:
-                                                                      20),
+                                                                          20),
                                                                 ],
                                                               ),
                                                               passworderror
                                                                   ? Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width:
-                                                                    117,
-                                                                  ),
-                                                                  Text(
-                                                                    passwordmessage,
-                                                                    style:
-                                                                    TextStyle(color: Colors.red),
-                                                                  ),
-                                                                ],
-                                                              )
+                                                                      children: [
+                                                                        SizedBox(
+                                                                          width:
+                                                                              117,
+                                                                        ),
+                                                                        Text(
+                                                                          passwordmessage,
+                                                                          style:
+                                                                              TextStyle(color: Colors.red),
+                                                                        ),
+                                                                      ],
+                                                                    )
                                                                   : Container(),
                                                               SizedBox(
                                                                 height: 20,
                                                               ),
                                                               Row(
                                                                 children: [
-                                                                  if(MediaQuery.of(context).size.width > 500)
+                                                                  if (MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width >
+                                                                      500)
                                                                     SizedBox(
-                                                                      width: MediaQuery.of(context).size.width *
+                                                                      width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
                                                                           0.013,
                                                                     ),
-                                                                  if(MediaQuery.of(context).size.width < 500)
+                                                                  if (MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width <
+                                                                      500)
                                                                     SizedBox(
-                                                                      width: MediaQuery.of(context).size.width *
+                                                                      width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
                                                                           0.035,
                                                                     ),
                                                                   GestureDetector(
                                                                     onTap:
                                                                         () async {
-                                                                      if (name.text
+                                                                      if (name
+                                                                          .text
                                                                           .isEmpty) {
                                                                         setState(
-                                                                                () {
-                                                                              nameerror =
+                                                                            () {
+                                                                          nameerror =
                                                                               true;
-                                                                              namemessage =
+                                                                          namemessage =
                                                                               "name is required";
-                                                                            });
+                                                                        });
                                                                       } else {
                                                                         setState(
-                                                                                () {
-                                                                              nameerror =
+                                                                            () {
+                                                                          nameerror =
                                                                               false;
-                                                                            });
+                                                                        });
                                                                       }
                                                                       if (designation
                                                                           .text
                                                                           .isEmpty) {
                                                                         setState(
-                                                                                () {
-                                                                              designationerror =
+                                                                            () {
+                                                                          designationerror =
                                                                               true;
-                                                                              designationmessage =
+                                                                          designationmessage =
                                                                               "designation is required";
-                                                                            });
+                                                                        });
                                                                       } else {
                                                                         setState(
-                                                                                () {
-                                                                              designationerror =
+                                                                            () {
+                                                                          designationerror =
                                                                               false;
-                                                                            });
+                                                                        });
                                                                       }
                                                                       if (phonenumber
                                                                           .text
                                                                           .isEmpty) {
                                                                         setState(
-                                                                                () {
-                                                                              phonenumbererror =
+                                                                            () {
+                                                                          phonenumbererror =
                                                                               true;
-                                                                              phonenumbermessage =
+                                                                          phonenumbermessage =
                                                                               "number is required";
-                                                                            });
+                                                                        });
                                                                       } else {
                                                                         setState(
-                                                                                () {
-                                                                              phonenumbererror =
+                                                                            () {
+                                                                          phonenumbererror =
                                                                               false;
-                                                                            });
+                                                                        });
                                                                       }
-                                                                      if (email.text
+                                                                      if (email
+                                                                          .text
                                                                           .isEmpty) {
                                                                         setState(
-                                                                                () {
-                                                                              emailerror =
+                                                                            () {
+                                                                          emailerror =
                                                                               true;
-                                                                              emailmessage =
+                                                                          emailmessage =
                                                                               "email is required";
-                                                                            });
+                                                                        });
                                                                       } else {
                                                                         setState(
-                                                                                () {
-                                                                              emailerror =
+                                                                            () {
+                                                                          emailerror =
                                                                               false;
-                                                                            });
+                                                                        });
                                                                       }
                                                                       if (password
                                                                           .text
                                                                           .isEmpty) {
                                                                         setState(
-                                                                                () {
-                                                                              passworderror =
+                                                                            () {
+                                                                          passworderror =
                                                                               true;
-                                                                              passwordmessage =
+                                                                          passwordmessage =
                                                                               "password is required";
-                                                                            });
+                                                                        });
                                                                       } else {
                                                                         setState(
-                                                                                () {
-                                                                              passworderror =
+                                                                            () {
+                                                                          passworderror =
                                                                               false;
-                                                                            });
+                                                                        });
                                                                       }
                                                                       if (!nameerror &&
                                                                           !designationerror &&
@@ -2889,70 +3157,69 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                           !emailerror &&
                                                                           !phonenumbererror) {
                                                                         setState(
-                                                                                () {
-                                                                              loading =
+                                                                            () {
+                                                                          loading =
                                                                               true;
-                                                                            });
+                                                                        });
                                                                       }
                                                                       SharedPreferences
-                                                                      prefs =
-                                                                      await SharedPreferences
-                                                                          .getInstance();
+                                                                          prefs =
+                                                                          await SharedPreferences
+                                                                              .getInstance();
                                                                       String?
-                                                                      adminId =
-                                                                      prefs.getString(
-                                                                          "adminId");
+                                                                          adminId =
+                                                                          prefs.getString(
+                                                                              "adminId");
                                                                       if (adminId !=
                                                                           null) {
                                                                         try {
                                                                           await StaffMemberRepository()
                                                                               .addStaffMember(
                                                                             adminId:
-                                                                            adminId,
+                                                                                adminId,
                                                                             staffmemberName:
-                                                                            name.text,
+                                                                                name.text,
                                                                             staffmemberDesignation:
-                                                                            designation.text,
+                                                                                designation.text,
                                                                             staffmemberPhoneNumber:
-                                                                            phonenumber.text,
+                                                                                phonenumber.text,
                                                                             staffmemberEmail:
-                                                                            email.text,
+                                                                                email.text,
                                                                             staffmemberPassword:
-                                                                            password.text,
+                                                                                password.text,
                                                                           );
                                                                           setState(
-                                                                                  () {
-                                                                                loading =
+                                                                              () {
+                                                                            loading =
                                                                                 false;
-                                                                              });
-                                                                          Navigator.of(
-                                                                              context)
-                                                                              .pop(
-                                                                              true);
+                                                                          });
+                                                                          Navigator.of(context)
+                                                                              .pop(true);
                                                                         } catch (e) {
                                                                           setState(
-                                                                                  () {
-                                                                                loading =
+                                                                              () {
+                                                                            loading =
                                                                                 false;
-                                                                              });
+                                                                          });
                                                                           // Handle error
                                                                         }
                                                                       }
                                                                     },
-                                                                    child: ClipRRect(
+                                                                    child:
+                                                                        ClipRRect(
                                                                       borderRadius:
-                                                                      BorderRadius.circular(
-                                                                          5.0),
+                                                                          BorderRadius.circular(
+                                                                              5.0),
                                                                       child:
-                                                                      Container(
+                                                                          Container(
                                                                         height:
-                                                                        30.0,
+                                                                            30.0,
                                                                         width: MediaQuery.of(context).size.width *
                                                                             .36,
                                                                         decoration:
-                                                                        BoxDecoration(
+                                                                            BoxDecoration(
                                                                           borderRadius:
-                                                                          BorderRadius.circular(5.0),
+                                                                              BorderRadius.circular(5.0),
                                                                           color: Color.fromRGBO(
                                                                               21,
                                                                               43,
@@ -2967,14 +3234,14 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                           ],
                                                                         ),
                                                                         child:
-                                                                        Center(
+                                                                            Center(
                                                                           child:
-                                                                          Text(
+                                                                              Text(
                                                                             "Add staff Member",
                                                                             style: TextStyle(
                                                                                 color: Colors.white,
                                                                                 fontWeight: FontWeight.bold,
-                                                                                fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 18),
+                                                                                fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 18),
                                                                           ),
                                                                         ),
                                                                       ),
@@ -2984,8 +3251,9 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                     width: 15,
                                                                   ),
                                                                   InkWell(
-                                                                    onTap: (){
-                                                                      Navigator.pop(context);
+                                                                    onTap: () {
+                                                                      Navigator.pop(
+                                                                          context);
                                                                     },
                                                                     child: Text(
                                                                         "Cancel"),
@@ -3012,7 +3280,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                   'Add New Staffmember',
                                                   style: TextStyle(
                                                       fontSize:
-                                                      MediaQuery.of(context).size.width < 500 ? 14 : 15),
+                                                          MediaQuery.of(context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 14
+                                                              : 15),
                                                 ),
                                               ],
                                             ),
@@ -3024,12 +3297,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                         padding: const EdgeInsets.all(10.0),
                                         child: Container(
                                           height: MediaQuery.of(context)
-                                              .size
-                                              .height *
+                                                  .size
+                                                  .height *
                                               .05,
                                           width: MediaQuery.of(context)
-                                              .size
-                                              .width *
+                                                  .size
+                                                  .width *
                                               .5,
                                           padding: EdgeInsets.symmetric(
                                               horizontal: 8, vertical: 4),
@@ -3038,7 +3311,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                               color: Color(0xFF8A95A8),
                                             ),
                                             borderRadius:
-                                            BorderRadius.circular(5),
+                                                BorderRadius.circular(5),
                                           ),
                                           child: DropdownButtonHideUnderline(
                                             child: DropdownButton<String>(
@@ -3047,7 +3320,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                 'Select',
                                                 style: TextStyle(
                                                   fontSize:
-                                                  MediaQuery.of(context).size.width < 500 ? 15 : 18,
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 15
+                                                          : 18,
                                                   color: Color(0xFF8A95A8),
                                                 ),
                                               ),
@@ -3066,34 +3344,34 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                       //  bool isChecked = false; // Moved isChecked inside the StatefulBuilder
                                                       return StatefulBuilder(
                                                         builder: (BuildContext
-                                                        context,
+                                                                context,
                                                             StateSetter
-                                                            setState) {
+                                                                setState) {
                                                           return AlertDialog(
                                                             backgroundColor:
-                                                            Colors.white,
+                                                                Colors.white,
                                                             surfaceTintColor:
-                                                            Colors.white,
+                                                                Colors.white,
                                                             title: Text(
                                                               "Add Rental Owner",
                                                               style: TextStyle(
                                                                   fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                                                      FontWeight
+                                                                          .bold,
                                                                   color: Color
                                                                       .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      81,
-                                                                      1),
+                                                                          21,
+                                                                          43,
+                                                                          81,
+                                                                          1),
                                                                   fontSize: 15),
                                                             ),
                                                             content:
-                                                            SingleChildScrollView(
-                                                                child:
-                                                                Column(
-                                                                  children: [],
-                                                                )),
+                                                                SingleChildScrollView(
+                                                                    child:
+                                                                        Column(
+                                                              children: [],
+                                                            )),
                                                           );
                                                         },
                                                       );
@@ -3584,31 +3862,39 @@ class _Add_new_propertyState extends State<Add_new_property> {
                             loading = true;
                           });
                           print(selectedpropertytypedata!.propertyId);
-                          RentalOwner? ownerDetails = context.read<OwnerDetailsProvider>().ownerDetails;
-                          String processorId = context.read<OwnerDetailsProvider>().selectedprocessorlist ?? "";
-                          List<Map<String, String>> processorIds = ownerDetails!.processorList!.map((processor) {
+                          RentalOwner? ownerDetails =
+                              context.read<OwnerDetailsProvider>().ownerDetails;
+                          String processorId = context
+                                  .read<OwnerDetailsProvider>()
+                                  .selectedprocessorlist ??
+                              "";
+                          List<Map<String, String>> processorIds =
+                              ownerDetails!.processorList!.map((processor) {
                             return {
                               'processor_id': processor.processorId ?? "",
                             };
                           }).toList();
                           SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
+                              await SharedPreferences.getInstance();
                           String? adminId = prefs.getString("adminId");
                           final updatedOwner = RentalOwner(
                             rentalOwnerName: firstnameController.text,
                             rentalOwnerCompanyName: comnameController.text,
-                            rentalOwnerPrimaryEmail: primaryemailController.text,
+                            rentalOwnerPrimaryEmail:
+                                primaryemailController.text,
                             rentalOwnerPhoneNumber: phonenumController.text,
                             city: cityController.text,
                             state: stateController.text,
                             country: countyController.text,
                             postalCode: codeController.text,
                           );
-                          Provider.of<OwnerDetailsProvider>(context, listen: false).setOwnerDetails(updatedOwner);
+                          Provider.of<OwnerDetailsProvider>(context,
+                                  listen: false)
+                              .setOwnerDetails(updatedOwner);
                           RentalOwners owners = RentalOwners(
                             adminId: adminId,
                             firstName: updatedOwner.rentalOwnerName,
-                            companyName:updatedOwner.rentalOwnerCompanyName,
+                            companyName: updatedOwner.rentalOwnerCompanyName,
                             primaryEmail: updatedOwner.rentalOwnerPrimaryEmail,
                             phoneNumber: updatedOwner.rentalOwnerPhoneNumber,
                             city: updatedOwner.city,
@@ -3620,16 +3906,16 @@ class _Add_new_propertyState extends State<Add_new_property> {
                           if (adminId != null) {
                             //  try {
                             Rental rentals = Rental(
-                              adminId: adminId,
-                              propertyId: selectedpropertytypedata!.propertyId,
-                              address: address.text,
-                              city: city.text,
-                              state: state.text,
-                              country: country.text,
-                              postcode: postalcode.text,
-                              staffMemberId: sid,
-                                processor_id:processorId
-                            );
+                                adminId: adminId,
+                                propertyId:
+                                    selectedpropertytypedata!.propertyId,
+                                address: address.text,
+                                city: city.text,
+                                state: state.text,
+                                country: country.text,
+                                postcode: postalcode.text,
+                                staffMemberId: sid,
+                                processor_id: processorId);
                             List<Unit> units = [];
                             if (propertyGroupControllers.isNotEmpty) {
                               List<TextEditingController> firstControllers =
@@ -3796,7 +4082,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
 
   Widget _buildProcessorGroup(int index) {
     ProcessorGroup group = _processorGroups[index];
-
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -4046,7 +4331,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
       Uri.parse('${Api_url}/api/rentals/rentals'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id":"CRM $id",
+        "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -4204,12 +4489,9 @@ class ProcessorGroup {
   ProcessorGroup({required this.isChecked, required this.controller});
 }
 
-
 class OwnersDetails {
   RentalOwner? Ownersdetails;
   OwnersDetails({
     required this.Ownersdetails,
   });
 }
-
-

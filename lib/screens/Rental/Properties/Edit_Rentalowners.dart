@@ -1953,9 +1953,9 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                     .isNotEmpty) // Filter out empty IDs
                                 .toList();
 
-                        print(selectedOwner!.rentalOwnerId);
+                        print(selectedOwner?.rentalOwnerId);
                         Ownersdetails = RentalOwner(
-                          rentalOwnerId: selectedOwner!.rentalOwnerId ?? null,
+                          rentalOwnerId: selectedOwner?.rentalOwnerId,
                           rentalOwnerPhoneNumber: phonenum.text,
                           rentalOwnerName: firstname.text,
                           rentalOwnerCompanyName: comname.text,

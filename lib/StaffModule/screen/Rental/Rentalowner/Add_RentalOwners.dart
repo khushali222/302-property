@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -1536,7 +1537,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       alternativeerror
                           ? Row(
                         children: [
-                          Spacer(),
+                          SizedBox(width: 8,),
                           Text(
                             alternativemessage,
                             style: TextStyle(
@@ -2735,7 +2736,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       primaryemailerror = true;
                       primaryemailmessage = "required";
                     });
-                  } else {
+                  } else if (!EmailValidator.validate(primaryemail.text)) {
+                    setState(() {
+                      primaryemailerror = true;
+                      primaryemailmessage = "Email is not valid";
+                    });
+                  }else {
                     setState(() {
                       primaryemailerror = false;
                     });
@@ -2750,6 +2756,18 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       alternativeerror = false;
                     });
                   }*/
+                  if (alternativeemail.text.isNotEmpty && !EmailValidator.validate(alternativeemail.text)) {
+                    setState(() {
+                      alternativeerror = true;
+                      alternativemessage = "Email is not valid";
+                    });
+                  }
+                  else {
+                    setState(() {
+                      alternativeerror = false;
+                      alternativemessage = "";
+                    });
+                  }
                   if (phonenum.text.isEmpty) {
                     setState(() {
                       phonenumerror = true;

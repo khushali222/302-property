@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:email_validator/email_validator.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
@@ -393,6 +394,7 @@ class _EditTenantsState extends State<EditTenants> {
                                               }
                                               return null;
                                             },
+                                            email: true,
                                           ),
                                         ],
                                       ),
@@ -415,6 +417,7 @@ class _EditTenantsState extends State<EditTenants> {
                                             hintText: 'Enter alternative email',
                                             controller: alterEmail,
                                             optional: true,
+                                            email: true,
                                           ),
                                         ],
                                       ),
@@ -525,6 +528,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                   'Enter alternative email',
                                               controller: alterEmail,
                                               optional: true,
+                                              email: true,
                                             ),
                                           ],
                                         ),
@@ -793,6 +797,7 @@ class _EditTenantsState extends State<EditTenants> {
                                           hintText: 'Enter email',
                                           controller: emergencyEmail,
                                           optional: true,
+                                          email: true,
                                         ),
                                       ],
                                     ),
@@ -1228,6 +1233,7 @@ class _EditTenantsState extends State<EditTenants> {
                                 }
                                 return null;
                               },
+                              email: true,
                             ),
                             SizedBox(
                               height: 10,
@@ -1253,6 +1259,7 @@ class _EditTenantsState extends State<EditTenants> {
                                 }
                                 return null;
                               },
+                              email: true,
                               optional: true,
                             ),
                             SizedBox(
@@ -1549,6 +1556,7 @@ class _EditTenantsState extends State<EditTenants> {
                                 }
                                 return null;
                               },
+                              email: true,
                               optional: true,
                             ),
                             SizedBox(
@@ -1909,6 +1917,7 @@ class CustomTextField extends StatefulWidget {
   final String? max_amount;
   final String? error_mess;
   final bool? optional;
+  final bool? email;
 
   CustomTextField({
     Key? key,
@@ -1929,6 +1938,7 @@ class CustomTextField extends StatefulWidget {
     this.max_amount,
     this.error_mess,
     this.optional = false,
+    this.email,
     // Initialize onTap
   }) : super(key: key);
 
@@ -2003,7 +2013,15 @@ class CustomTextFieldState extends State<CustomTextField> {
                   _errorMessage = 'Please ${widget.label}';
               });
               return '';
-            } else if (widget.amount_check != null &&
+            }else if (widget.email != null) {
+              if (!EmailValidator.validate(widget.controller!.text)) {
+                setState(() {
+                  _errorMessage = "Email is not valid";
+                });
+                return '';
+              }
+            }
+            else if (widget.amount_check != null &&
                 double.parse(widget.controller!.text) >
                     double.parse(widget.max_amount!))
               setState(() {
