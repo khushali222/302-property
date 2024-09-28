@@ -1044,8 +1044,11 @@ class _PropertyTableState extends State<PropertyTable> {
                                                 Expanded(
                                                   child: Text(
                                                     // '${widget.data.createdAt}',
-                                                    formatDate(
-                                                        '${Propertytype.createdAt}'),
+                                                    // formatDate(
+                                                    //     '${Propertytype.createdAt}'),
+                                                    Propertytype.createdAt?.isNotEmpty == true
+                                                        ? formatDate('${Propertytype.createdAt}')
+                                                        : 'N/A',
 
                                                     style: TextStyle(
                                                       color: blueColor,
@@ -1107,8 +1110,11 @@ class _PropertyTableState extends State<PropertyTable> {
                                                                             blueColor), // Bold and black
                                                                   ),
                                                                   TextSpan(
-                                                                    text: formatDate(
-                                                                        '${Propertytype.updatedAt}'),
+                                                                    // text: formatDate(
+                                                                    //     '${Propertytype.updatedAt}'),
+                                                                    text: Propertytype.updatedAt?.isNotEmpty == true
+                                                                        ? formatDate('${Propertytype.updatedAt}')
+                                                                        : 'N/A',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight

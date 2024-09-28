@@ -744,6 +744,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                       });
                                                     },
                                                     child: Text(
+                                                      rentals.rentalOwnername!.isEmpty ? 'N/A' :
                                                       '${rentals.rentalOwnername}',
                                                       style: TextStyle(
                                                         color: blueColor,
@@ -763,6 +764,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                 Expanded(
                                                   flex: 3,
                                                   child: Text(
+                                                    rentals.rentalOwnerPhoneNumber!.isEmpty ? 'N/A' :
                                                     '${rentals.rentalOwnerPhoneNumber}',
                                                     style: TextStyle(
                                                       color: blueColor,
@@ -819,6 +821,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                                   ),
                                                                   TextSpan(
                                                                     text:
+                                                                    rentals.rentalOwnerPrimaryEmail!.isEmpty ? 'N/A' :
                                                                         '${rentals.rentalOwnerPrimaryEmail}',
                                                                     style: TextStyle(
                                                                         fontWeight:
