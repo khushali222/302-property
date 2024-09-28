@@ -305,10 +305,7 @@ class Data {
   Data({this.workOrderData, this.rentalAddress, this.rentalUnit, this.staffMember});
 
   Data.fromJson(Map<String, dynamic> json) {
-    print(json['workOrderData']);
-    print(json['rentalAddress']);
-    print(json['rentalUnit']);
-    print(json['staffMember']);
+
     workOrderData = json['workOrderData'] != null
         ? WorkOrderData.fromJson(json['workOrderData'])
         : null;

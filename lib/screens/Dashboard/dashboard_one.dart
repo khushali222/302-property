@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/services.dart';
@@ -26,6 +27,7 @@ import 'package:http/http.dart' as http;
 import '../../constant/constant.dart';
 import '../../widgets/custom_drawer.dart';
 import '../../widgets/drawer_tiles.dart';
+import '../../widgets/fl_chart.dart';
 import '../Rental/Properties/add_new_property.dart';
 import '../../widgets/barchart.dart';
 
@@ -186,10 +188,13 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
+    fetchchartdata();
     dashboardData =
         DashboardData(countList: [0, 0, 0, 0, 0], amountList: [0, 0, 0, 0, 0]);
+
     fetchDatacount();
     fetchData();
+
     _loadName();
   }
 
@@ -200,7 +205,56 @@ class _DashboardState extends State<Dashboard> {
       lastname = prefs.getString('last_name') ?? '';
     });
   }
+  Future<void> fetchchartdata() async {
+    print("calling");
+    setState(() {
+      loading = true;
 
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    final response = await http
+        .get(Uri.parse('${Api_url}/api/rentals/occupied_properties/$id'), headers: {
+      "authorization": "CRM $token",
+      "id": "CRM $id",
+      "Content-Type": "application/json"
+    });
+    print('${Api_url}/api/payment/admin_balance/$id');
+    print(response.body);
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      if (jsonData["statusCode"] == 200) {
+        final dataaa= jsonData["data"];
+        print("dataaaaa ${dataaa.length}");
+        setState(() {
+          data = [];
+          dataaa.forEach((element) {
+            data.add(Map<String, dynamic>.from(element));
+          });
+
+        });
+      } else {
+        throw Exception('Failed to load dataaaaaaaa');
+      }
+    } else {
+      throw Exception('Failed to load datawwwwww');
+    }
+  }
+  List<Map<String, dynamic>> data = [
+    {"month": "Oct", "rentals": 0, "leases": 0, "occupiedPercentage": 0},
+    {"month": "Nov", "rentals": 0, "leases": 0, "occupiedPercentage": 0},
+    {"month": "Dec", "rentals": 0, "leases": 0, "occupiedPercentage": 0},
+    {"month": "Jan", "rentals": 0, "leases": 0, "occupiedPercentage": 0},
+    {"month": "Feb", "rentals": 3, "leases": 0, "occupiedPercentage": 0},
+    {"month": "Mar", "rentals": 6, "leases": 0, "occupiedPercentage": 0},
+    {"month": "Apr", "rentals": 6, "leases": 0, "occupiedPercentage": 0},
+    {"month": "May", "rentals": 6, "leases": 0, "occupiedPercentage": 0},
+    {"month": "Jun", "rentals": 7, "leases": 0, "occupiedPercentage": 0},
+    {"month": "Jul", "rentals": 7, "leases": 0, "occupiedPercentage": 0},
+    {"month": "Aug", "rentals": 8, "leases": 1, "occupiedPercentage": 12.5},
+    {"month": "Sep", "rentals": 8, "leases": 9, "occupiedPercentage": 102.5},
+  ];
   var appBarHeight = AppBar().preferredSize.height;
   @override
   Widget build(BuildContext context) {
@@ -1618,7 +1672,7 @@ class _DashboardState extends State<Dashboard> {
                       // Phone layout
                       return Column(
                         children: [
-                          Padding(
+                         /* Padding(
                             padding: const EdgeInsets.only(
                                 left: 10, right: 10),
                             child: PieCharts(dataMap: {
@@ -1633,7 +1687,11 @@ class _DashboardState extends State<Dashboard> {
                               "Work Orders": countList[4].toDouble(),
                               "Gap5": 0.2,
                             }),
-                          ), // Vertical layout for phone
+                          ),*/
+                          FlChartApp(
+                            data: data,
+                          ),
+                          // Vertical layout for phone
                           SizedBox(
                               height: MediaQuery.of(context).size.height *
                                   0.015),

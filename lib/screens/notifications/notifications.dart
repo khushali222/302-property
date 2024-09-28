@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -102,7 +103,15 @@ class _notificationsState extends State<notifications> {
                 future: fetchnoti,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return Container(
+                      height: MediaQuery.of(context).size.height *.7,
+                      child: Center(
+                        child: SpinKitFadingCircle(
+                          color: blueColor,
+                          size: 50.0,
+                        ),
+                      ),
+                    );
                     // return ColabShimmerLoadingWidget();
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Container(

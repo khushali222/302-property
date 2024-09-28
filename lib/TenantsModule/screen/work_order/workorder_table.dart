@@ -978,7 +978,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                       } else if (selectedValue == "All") {
                         data = snapshot.data!;
                       } else if (searchvalue!.isNotEmpty) {
-                        print(snapshot.data!.length);
+                    //    print(snapshot.data!.length);
                         data = snapshot.data!
                             .where((property) =>
                                 property.workSubject!
@@ -991,7 +991,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                       } else {
                         if (selectedValue == "Over Due") {
                           data = snapshot.data!.where((element) {
-                            print(element.date);
+                         //   print(element.date);
                             DateTime dueDate = DateTime.parse(element.date!);
                             bool isOverDue = dueDate.isBefore(DateTime.now());
                             bool isNotCompleted = element.status != "Completed";
@@ -1020,7 +1020,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                         );
                       }
                       //sortData(data);
-                      print(data);
+                   //   print(data);
                       //   print(snapshot.data!.first.totalBalance);
                       final totalPages = (data.length / itemsPerPage).ceil();
                       final currentPageData = data

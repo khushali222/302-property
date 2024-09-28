@@ -34,7 +34,7 @@ class WorkOrder {
   });
 
   WorkOrder.fromJson(Map<String, dynamic> json) {
-    print(json);
+   // print(json);
     workOrderId = json['workOrder_id']??"";
     workSubject = json['work_subject']??"";
     workCategory = json['work_category']??"";

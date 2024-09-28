@@ -1108,7 +1108,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                     ),
                                                   );
                                                 }).toList(),
-                                                value: _selectedUnitId,
+                                                value: _selectedUnitId!.isNotEmpty? _selectedUnitId : null,
                                                 onChanged: (value) {
                                                   setState(() {
                                                     unitId = value.toString();

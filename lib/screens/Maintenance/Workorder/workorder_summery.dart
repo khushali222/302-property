@@ -1259,6 +1259,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
+                                  width: MediaQuery.of(context).size.width * .6,
                                   child: Text(
                                 '${summery.workSubject}',
                                 style: TextStyle(
@@ -1290,6 +1291,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
+
                                   child: Text(
                                 'Description',
                                 style: TextStyle(
@@ -1300,6 +1302,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 height: 8,
                               ),
                               Container(
+                                  width: 180,
                                   child: Text(
                                 '${summery.workPerformed}',
                                 style: TextStyle(color: blueColor),
@@ -2046,7 +2049,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               height: 10,
                             ),
                             Text(
-                              "${summery.propertyData!.rentaladress} (${summery.unitData!.unitName})",
+                              "${summery.propertyData!.rentaladress} ",
                               textAlign: TextAlign.center,
                               style: TextStyle(color: blueColor),
                             ),
@@ -2753,6 +2756,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 height: 8,
                               ),
                               Container(
+                                  width: 180,
                                   child: Text(
                                 '${summery.workPerformed}',
                                 style: TextStyle(color: blueColor),
@@ -3050,7 +3054,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 height: 10,
                               ),
                               Text(
-                                "${summery.propertyData!.rentaladress} (${summery.unitData!.unitName})",
+                                "${summery.propertyData!.rentaladress} ",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(color: blueColor),
                               ),
