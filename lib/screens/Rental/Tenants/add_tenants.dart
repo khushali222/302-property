@@ -2485,7 +2485,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                     });
                     return '';
                   }
-                  else if (widget.email!) {
+                  else if (widget.email != null) {
                     if (!EmailValidator.validate(widget.controller!.text)) {
                       setState(() {
                         _errorMessage = "Email is not valid";

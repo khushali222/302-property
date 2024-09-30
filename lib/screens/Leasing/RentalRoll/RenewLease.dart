@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,6 +17,8 @@ import '../../../widgets/CustomTableShimmer.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
+
+import 'SummeryPageLease.dart';
 
 class Renewlease extends StatefulWidget {
   LeaseSummary? lease;
@@ -42,7 +45,7 @@ class _RenewleaseState extends State<Renewlease> {
     // _tabController = TabController(length: 3, vsync: this);
     _selectedLeaseType = widget.leasetype;
     startDateController.text = widget.enddate ?? "";
-    DateTime endDate = DateTime.parse(widget.enddate!);
+    DateTime endDate = formatDates(widget.enddate!);
     DateTime startDate = endDate;
     DateTime newEndDate = DateTime(endDate.year, endDate.month + 1, endDate.day);
 
@@ -52,7 +55,31 @@ class _RenewleaseState extends State<Renewlease> {
     fetchDropdownData();
     super.initState();
   }
+  DateTime formatDates(String dateTime) {
+    List<String> dateFormats = [
+      'yyyy-MM-dd',
+      'yyyy-M-d',
+      'dd-MM-yyyy',
+      'd-M-yyyy',
+      'M/d/yyyy',
+      'MM/dd/yyyy',
+      'M/d/yyyy, h:mm:ss a',
+      'M/d/yyyy, h:mm a'
+    ];
 
+    DateTime? parsedDate;
+
+    for (String format in dateFormats) {
+      try {
+        parsedDate = DateFormat(format).parse(dateTime);
+        break;
+      } catch (e) {
+        continue;
+      }
+    }
+
+    return parsedDate!;
+  }
   TextEditingController rent = TextEditingController();
   final TextEditingController startDateController = TextEditingController();
   DateTime? _startDate;
@@ -90,7 +117,7 @@ class _RenewleaseState extends State<Renewlease> {
       rows.add({
         'account': null,
         'charge_type': null,
-        'amount': 0.0,
+        'amount': "",
 
       });
       focusNodes.add(FocusNode());
@@ -99,7 +126,15 @@ class _RenewleaseState extends State<Renewlease> {
 
   void deleteRow(int index) {
     setState(() {
-      totalAmount -= rows[index]['amount'];
+
+      if(rows[index]['amount'].runtimeType == String)
+      {
+        totalAmount -= double.tryParse(rows[index]['amount']) ??0.0;
+      }
+      else{
+        totalAmount -= rows[index]['amount'];
+      }
+
       rows.removeAt(index);
       focusNodes.removeAt(index);
     });
@@ -110,7 +145,15 @@ class _RenewleaseState extends State<Renewlease> {
   void updateAmount(int index, String value) {
     setState(() {
       double amount = double.tryParse(value) ?? 0.0;
-      totalAmount -= rows[index]['amount'];
+
+      if(rows[index]['amount'].runtimeType == String)
+        {
+          totalAmount -= double.tryParse(rows[index]['amount']) ??0.0;
+        }
+      else{
+        totalAmount -= rows[index]['amount'];
+      }
+
       rows[index]['amount'] = amount;
       totalAmount += amount;
     });
@@ -187,6 +230,40 @@ class _RenewleaseState extends State<Renewlease> {
       });
     }
   }
+  Future<void> updatenewrenewallease(Map<String,dynamic> renewlease) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String adminId = prefs.getString('adminId') ?? '';
+      String? token = prefs.getString('token');
+      print(token);
+      print('lease ${widget.leaseId}');
+      String? id = prefs.getString("adminId");
+      final response = await http.post(
+        Uri.parse('$Api_url/api/leases/renew_lease'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(renewlease)
+      );
+      print(response.body);
+      if(response.statusCode == 200){
+        Fluttertoast.showToast(msg: "Lease Renewal Successfully");
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>SummeryPageLease(leaseId: widget.leaseId,)));
+
+      }
+      else{
+        Fluttertoast.showToast(msg: "Renewal Lease not success");
+      }
+
+
+    } catch (e) {
+      print(e);
+
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1127,7 +1204,43 @@ class _RenewleaseState extends State<Renewlease> {
                           Row(
                             children: [
                               GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+
+                                  List<Map<String,dynamic>> entries = rows.map((element){
+                                    return {
+                                      "account":element["account"],
+                                      "amount":element["amount"],
+                                      "charge_type":element["charge_type"],
+                                      "memo":element["memo"]
+                                    };
+                                  }).toList();
+
+                                  Map<String,dynamic> charge = {
+                                    "lease_id":widget.leaseId,
+                                    "admin_id":leasesummery.data!.adminId,
+                                    "is_leaseAdded": true,
+                                    "type": "Charge",
+                                    "total_amount": totalAmount,
+                                    "entry" : entries
+                                  };
+
+
+                                  Map<String,dynamic> leasedata = {
+                                    "lease_id":widget.leaseId,
+                                    "admin_id":leasesummery.data!.adminId,
+                                    "lease_type":leasesummery.data!.leaseType,
+                                    "start_date": startDateController.text,
+                                    "end_date":endDateController.text,
+                                    "amount":rent.text,    // new amount
+                                    "lease_amount" :widget.rentamount,
+                                    "charge":charge
+
+                                  };
+                                  updatenewrenewallease(leasedata);
+
+
+
+                                },
                                 child: Container(
                                     height:
                                         MediaQuery.of(context).size.width < 500
@@ -1202,4 +1315,6 @@ class _RenewleaseState extends State<Renewlease> {
       ),
     );
   }
+
+
 }

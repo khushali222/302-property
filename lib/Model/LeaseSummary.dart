@@ -205,7 +205,7 @@ class LeaseTenant {
       endDate: json['end_date'],
       tenantFirstName: json['tenant_firstName'],
       tenantLastName: json['tenant_lastName'],
-      tenantPhoneNumber: json['tenant_phoneNumber'],
+      tenantPhoneNumber: json['tenant_phoneNumber']??"",
       tenantEmail: json['tenant_email'],
       rentalAddress: json['rental_adress'],
       rentalUnit: json['rental_unit'] ??"",

@@ -65,28 +65,27 @@ class _Edit_leaseState extends State<Edit_lease>
 
   Future<void> fetchDetails(String leaseId) async {
     //try {
-
     LeaseDetails fetchedDetails =
         await LeaseRepository().fetchLeaseDetails(leaseId);
-
+   print('lease type ${fetchedDetails.lease.leaseType}');
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
       // print(fetchedDetails.rental.rentalAddress);
-      _selectedProperty = fetchedDetails.rental.rentalId;
-      renderId = fetchedDetails.rental.rentalId!;
+      _selectedProperty = fetchedDetails.rental.rentalId ?? "";
+      renderId = fetchedDetails.rental.rentalId ?? "";
 
-      _selectedLeaseType = fetchedDetails.lease.leaseType;
+      _selectedLeaseType = fetchedDetails.lease.leaseType ?? "";
       startDateController.text = formatDate(fetchedDetails.lease.startDate);
       endDateController.text = formatDate(fetchedDetails.lease.endDate);
 
-      _selectedRent = fetchedDetails.rentCharges!.first!.rentCycle;
-      rentMemo.text = fetchedDetails.rentCharges!.first!.memo;
+      _selectedRent = fetchedDetails.rentCharges!.first.rentCycle ?? "";
+      rentMemo.text = fetchedDetails.rentCharges?.first.memo ?? "";
 
-      print(fetchedDetails.rentCharges!.first!.memo);
-      rent_entry_id = fetchedDetails.rentCharges!.first.entry_id;
+      print(fetchedDetails.rentCharges!.first.memo);
+      rent_entry_id = fetchedDetails.rentCharges!.first.entry_id ?? "";
       rentNextDueDate.text =
-          formatDate(fetchedDetails.rentCharges!.first!.date);
-      rentAmount.text = fetchedDetails.rentCharges!.first!.amount.toString();
+          formatDate(fetchedDetails.rentCharges!.first.date);
+      rentAmount.text = fetchedDetails.rentCharges!.first.amount.toString();
 
       // if(fetchedDetails.lease.uploadedFile != "")
       //   _uploadedFileNames.add(fetchedDetails.lease.uploadedFile.first);
@@ -354,6 +353,7 @@ class _Edit_leaseState extends State<Edit_lease>
     'Fixed',
     'Fixed w/rollover',
     'At-will(month to month)',
+     //'AtWill',
   ];
   final List<String> rentCycleitems = [
     'Daily',
@@ -677,10 +677,10 @@ class _Edit_leaseState extends State<Edit_lease>
         'dob': tenant.tenantBirthDate ?? '',
         'taxPayerId': tenant.taxPayerId ?? '',
         'createdAt': tenant.createdAt ?? '',
-        'emergencyContactName': tenant.emergencyContact!.name ?? '',
-        'emergencyRelation': tenant.emergencyContact!.relation ?? '',
-        'emergencyEmail': tenant.emergencyContact!.email ?? '',
-        'emergencyPhoneNumber': tenant.emergencyContact!.phoneNumber ?? '',
+        'emergencyContactName': tenant.emergencyContact?.name ?? '',
+        'emergencyRelation': tenant.emergencyContact?.relation ?? '',
+        'emergencyEmail': tenant.emergencyContact?.email ?? '',
+        'emergencyPhoneNumber': tenant.emergencyContact?.phoneNumber ?? '',
         'city': '', // Add city if available
         'country': '', // Add country if available
         'postalCode': '', // Add postal code if available
@@ -4301,27 +4301,31 @@ class _Edit_leaseState extends State<Edit_lease>
                 ),
               ),
               actions: [
-                Container(
-                    height: 50,
-                    width: 90,
-                    decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF152b51),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0))),
-                        onPressed: () {
-                          if (_addRecurringFormKey.currentState!.validate()) {
-                            print('object valid');
-                          } else {
-                            print('object invalid');
-                          }
-                        },
-                        child: const Text(
-                          'Add',
-                          style: TextStyle(color: Color(0xFFf7f8f9)),
-                        ))),
+                Row(
+                  children: [
+                    Container(
+                        height: 50,
+                        width: 90,
+                        decoration:
+                            BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: blueColor,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0))),
+                            onPressed: () {
+                              if (_addRecurringFormKey.currentState!.validate()) {
+                                print('object valid');
+                              } else {
+                                print('object invalid');
+                              }
+                            },
+                            child: const Text(
+                              'Add',
+                              style: TextStyle(color: Color(0xFFf7f8f9)),
+                            ))),
+                  ],
+                ),
                 Container(
                     height: 50,
                     width: 94,
@@ -6234,6 +6238,7 @@ class _AddTenantState extends State<AddTenant> {
                                     obscureText: !_obscureText,
                                     hintText: 'Enter password',
                                     controller: passWord,
+                                    optional: true,
                                     validator: (value) {
                                       if (value == null) {
                                         return 'please enter password';
@@ -6387,6 +6392,7 @@ class _AddTenantState extends State<AddTenant> {
                                     keyboardType: TextInputType.text,
                                     hintText: 'Enter contact name',
                                     controller: taxPayerId,
+                                    optional: true,
                                   ),
                                   const SizedBox(
                                     height: 10,
@@ -6486,6 +6492,7 @@ class _AddTenantState extends State<AddTenant> {
                                     keyboardType: TextInputType.text,
                                     hintText: 'Enter contact name',
                                     controller: contactName,
+                                    optional: true,
                                   ),
                                   const SizedBox(
                                     height: 10,
@@ -6502,6 +6509,7 @@ class _AddTenantState extends State<AddTenant> {
                                     keyboardType: TextInputType.text,
                                     hintText: 'Enter relationship to tenant',
                                     controller: relationToTenant,
+                                    optional: true,
                                   ),
                                   const SizedBox(
                                     height: 10,
@@ -6518,6 +6526,7 @@ class _AddTenantState extends State<AddTenant> {
                                     keyboardType: TextInputType.emailAddress,
                                     hintText: 'Enter email',
                                     controller: emergencyEmail,
+                                    optional: true,
                                   ),
                                   const SizedBox(
                                     height: 10,
@@ -6534,6 +6543,7 @@ class _AddTenantState extends State<AddTenant> {
                                     keyboardType: TextInputType.number,
                                     hintText: 'Enter phone number',
                                     controller: emergencyPhoneNumber,
+                                    optional: true,
                                   ),
                                 ],
                               ),
@@ -6548,34 +6558,66 @@ class _AddTenantState extends State<AddTenant> {
               height: 10,
             ),
             if (isChecked == false)
-              ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      final tenant = Tenant(
-                        tenantFirstName: firstName.text,
-                        tenantLastName: lastName.text,
-                        tenantPhoneNumber: phoneNumber.text,
-                        tenantAlternativeNumber: workNumber.text,
-                        tenantEmail: email.text,
-                        tenantAlternativeEmail: alterEmail.text,
-                        tenantPassword: passWord.text,
-                        tenantBirthDate: _dateController.text,
-                        taxPayerId: taxPayerId.text,
-                        comments: comments.text,
-                        rentshare: "",
-                        emergencyContact: EmergencyContact(
-                          name: contactName.text,
-                          relation: relationToTenant.text,
-                          email: emergencyEmail.text,
-                          phoneNumber: emergencyPhoneNumber.text,
-                        ),
-                      );
-                      Provider.of<SelectedTenantsProvider>(context,
-                              listen: false)
-                          .addTenant(tenant);
-                    }
+              Row(
+                children: [
+                  SizedBox(width: 2,),
+                  GestureDetector(
+                    onTap: (){
+                  if (_formKey.currentState!.validate()) {
+                  final tenant = Tenant(
+                  tenantFirstName: firstName.text,
+                  tenantLastName: lastName.text,
+                  tenantPhoneNumber: phoneNumber.text,
+                  tenantAlternativeNumber: workNumber.text,
+                  tenantEmail: email.text,
+                  tenantAlternativeEmail: alterEmail.text,
+                  tenantPassword: passWord.text,
+                  tenantBirthDate: _dateController.text,
+                  taxPayerId: taxPayerId.text,
+                  comments: comments.text,
+                  rentshare: "",
+                  emergencyContact: EmergencyContact(
+                  name: contactName.text,
+                  relation: relationToTenant.text,
+                  email: emergencyEmail.text,
+                  phoneNumber: emergencyPhoneNumber.text,
+                  ),
+                  );
+                  Provider.of<SelectedTenantsProvider>(context,
+                  listen: false)
+                      .addTenant(tenant);
+                  }
                   },
-                  child: const Text("Add")),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(5.0),
+                      child: Container(
+                        height: 40.0,
+                         width: 90,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5.0),
+                          color: const Color.fromRGBO(21, 43, 81, 1),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.grey,
+                              offset: Offset(0.0, 1.0), //(x,y)
+                              blurRadius: 6.0,
+                            ),
+                          ],
+                        ),
+                        child:  Center(
+                          child: Text(
+                            "Add",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
           ],
         ),
       ),
@@ -6759,6 +6801,7 @@ class _AddCosignerState extends State<AddCosigner> {
                                 keyboardType: TextInputType.number,
                                 hintText: 'Enter work number',
                                 controller: workNumber,
+                                optional: true,
                               ),
                             ],
                           ),
@@ -6821,6 +6864,7 @@ class _AddCosignerState extends State<AddCosigner> {
                                 keyboardType: TextInputType.emailAddress,
                                 hintText: 'Enter alternative email',
                                 controller: alterEmail,
+                                optional: true,
                               ),
                             ],
                           ),
@@ -6913,8 +6957,8 @@ class _AddCosignerState extends State<AddCosigner> {
                 const SizedBox(
                   height: 10,
                 ),
-                ElevatedButton(
-                  onPressed: () {
+                GestureDetector(
+                  onTap: () {
                     if (_formKey.currentState!.validate()) {
                       if (widget.cosigner == null) {
                         final cosigner = Cosigner(
@@ -6931,7 +6975,7 @@ class _AddCosignerState extends State<AddCosigner> {
                           postalCode: postalCode.text,
                         );
                         Provider.of<SelectedCosignersProvider>(context,
-                                listen: false)
+                            listen: false)
                             .addCosigner(cosigner);
                       } else {
                         final cosigner = Cosigner(
@@ -6948,7 +6992,7 @@ class _AddCosignerState extends State<AddCosigner> {
                           postalCode: postalCode.text,
                         );
                         Provider.of<SelectedCosignersProvider>(context,
-                                listen: false)
+                            listen: false)
                             .updateCosigner(cosigner, widget.index!);
                         // Navigator.push(
                         //   context,
@@ -6959,8 +7003,34 @@ class _AddCosignerState extends State<AddCosigner> {
                       }
                     }
                   },
-                  child: const Text("add"),
-                )
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5.0),
+                    child: Container(
+                      height: 40.0,
+                      width: 90,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5.0),
+                        color: const Color.fromRGBO(21, 43, 81, 1),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.grey,
+                            offset: Offset(0.0, 1.0), //(x,y)
+                            blurRadius: 6.0,
+                          ),
+                        ],
+                      ),
+                      child:  Center(
+                        child: Text(
+                          "Add",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

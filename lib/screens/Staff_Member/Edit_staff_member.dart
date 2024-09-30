@@ -628,12 +628,11 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                 }
                               }
                             },
-
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),
                               child: Container(
                                 height:
-                                MediaQuery.of(context).size.height * .04,
+                                MediaQuery.of(context).size.height * .05,
                                 width: MediaQuery.of(context).size.width < 500 ? 150 : 180,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
@@ -680,6 +679,9 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                 ),
               ),
             ),
+          ),
+          SizedBox(
+            height: 10,
           ),
         ],
       ),

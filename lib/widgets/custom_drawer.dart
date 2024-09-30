@@ -140,6 +140,19 @@ class _CustomDrawerState extends State<CustomDrawer> {
                  FaIcon(FontAwesomeIcons.addressCard, size: 20,  color: widget.currentpage == "Applicants"
                      ? Colors.white
                      : blueColor,),
+
+                 widget.currentpage == "Upcoming renewal" ? SvgPicture.asset(
+                   "assets/images/upcoming white.svg",
+                   fit: BoxFit.cover,
+                   height: 27,
+                   width: 27,
+                 ) : SvgPicture.asset(
+                   "assets/images/upcoming renewal.svg",
+                   fit: BoxFit.cover,
+                   height: 27,
+                   width: 27,
+                   color: blueColor,
+                 ),
                  FaIcon(FontAwesomeIcons.wallet, size: 20,  color: widget.currentpage == "Upcoming renewal"
                      ? Colors.white
                      : blueColor,), // Icon for RentalOwner

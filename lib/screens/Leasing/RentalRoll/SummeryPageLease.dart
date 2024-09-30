@@ -1682,8 +1682,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   String determineStatus(String? startDate, String? endDate) {
     if (startDate == null || endDate == null) return 'Unknown';
 
-    DateTime start = DateFormat('yyyy-MM-dd').parse(startDate);
-    DateTime end = DateFormat('yyyy-MM-dd').parse(endDate);
+    DateTime start =formatDates(startDate);
+    DateTime end = formatDates(endDate);
     DateTime today = DateTime.now();
     print(start);
     print(end);
@@ -1695,7 +1695,31 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       return 'Active';
     }
   }
+  DateTime formatDates(String dateTime) {
+    List<String> dateFormats = [
+      'yyyy-MM-dd',
+      'yyyy-M-d',
+      'dd-MM-yyyy',
+      'd-M-yyyy',
+      'M/d/yyyy',
+      'MM/dd/yyyy',
+      'M/d/yyyy, h:mm:ss a',
+      'M/d/yyyy, h:mm a'
+    ];
 
+    DateTime? parsedDate;
+
+    for (String format in dateFormats) {
+      try {
+        parsedDate = DateFormat(format).parse(dateTime);
+        break;
+      } catch (e) {
+        continue;
+      }
+    }
+
+    return parsedDate!;
+  }
   Color _getStatusColor(String status) {
     if (status == 'Active') {
       return Colors.green; // Green color for 'Active'
@@ -2161,6 +2185,10 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                             builder: (context) => Renewlease(
                                                   leaseId: widget.leaseId,
                                                   lease: leasesummery,
+                                                  startdate: leasesummery.data!.startDate,
+                                                  enddate: leasesummery.data!.endDate,
+                                                  leasetype: leasesummery.data!.leaseType,
+                                              rentamount: leasesummery.data!.amount.toString(),
                                                 )));
                                   },
                                   child: Container(

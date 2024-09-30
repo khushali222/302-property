@@ -411,8 +411,8 @@ class LeaseRepository {
     final response = await http.get(Uri.parse('${Api_url}/api/leases/get_lease/$leaseId'),
       headers: {"authorization" : "CRM $token",
         "id":"CRM $id",},); // Update with your actual API URL
-    print(response.body);
-    print(leaseId);
+    print('update fetch ${response.body}');
+    print('${Api_url}/api/leases/get_lease/$leaseId');
     print(leaseId);
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
@@ -481,7 +481,7 @@ class LeaseRepository {
       throw Exception('Failed to load lease summary');
     }
   }
- static Future<List<LeaseTenant>> fetchLeaseTenants(String leaseId) async {
+  static Future<List<LeaseTenant>> fetchLeaseTenants(String leaseId) async {
     final url = Uri.parse('$Api_url/api/tenant/leases/$leaseId');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -532,7 +532,6 @@ class LeaseRepository {
       throw Exception('Failed to load lease ledger');
     }
   }
-
   Future<int> postCharge(Charge charge) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');

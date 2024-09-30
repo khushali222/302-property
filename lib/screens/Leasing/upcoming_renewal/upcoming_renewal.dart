@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import '../../../Model/upcoming_renewal.dart';
 import '../../../constant/constant.dart';
 import '../../../repository/upcoming_renewal_repo.dart';
@@ -108,28 +113,28 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                   children: [
                     width < 400
                         ? Text("Property ",
-                        style: TextStyle(color: Colors.white))
+                            style: TextStyle(color: Colors.white))
                         : Text("Property",
-                        style: TextStyle(color: Colors.white)),
+                            style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
                         ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
                         : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -161,7 +166,6 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                   children: [
                     Text("    Tenant", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
-
                   ],
                 ),
               ),
@@ -196,21 +200,21 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                     SizedBox(width: 5),
                     ascending3
                         ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
                         : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -230,14 +234,12 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
     futureLeaseRenewal = Upcoming_renewal_repo().fetchupcomingrenewal();
   }
 
-
-
-  /*void _showAlert(BuildContext context, String id) {
+  void _showAlert(BuildContext context, String id) {
     Alert(
       context: context,
       type: AlertType.warning,
       title: "Are you sure?",
-      desc: "Once deleted, you will not be able to recover this property!",
+      desc: "You will not be able to renew this lease!",
       style: AlertStyle(
         backgroundColor: Colors.white,
       ),
@@ -252,23 +254,18 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
         ),
         DialogButton(
           child: Text(
-            "Delete",
+            "Confirm",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data = PropertyTypeRepository().DeletePropertyType(pro_id: id);
-            // Add your delete logic here
-            setState(() {
-              futurePropertyTypes =
-                  PropertyTypeRepository().fetchPropertyTypes();
-            });
+            updatenotrenewallease(id);
             Navigator.pop(context);
           },
           color: Colors.red,
         )
       ],
     ).show();
-  }*/
+  }
 
   List<upcoming_renewal> _tableData = [];
   int _rowsPerPage = 10;
@@ -303,8 +300,6 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
       });
     });
   }
-
-
 
   // Widget _buildHeader<T>(String text, int columnIndex,
   //     Comparable<T> Function(propertytype d)? getField) {
@@ -343,8 +338,8 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
       child: InkWell(
         onTap: getField != null
             ? () {
-          _sort(getField, columnIndex, !_sortAscending);
-        }
+                _sort(getField, columnIndex, !_sortAscending);
+              }
             : null,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -440,9 +435,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                 width: 20,
               ),
               InkWell(
-                onTap: () {
-
-                },
+                onTap: () {},
                 child: const FaIcon(
                   FontAwesomeIcons.edit,
                   size: 30,
@@ -452,9 +445,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                 width: 15,
               ),
               InkWell(
-                onTap: () {
-
-                },
+                onTap: () {},
                 child: const FaIcon(
                   FontAwesomeIcons.trashCan,
                   size: 30,
@@ -516,15 +507,15 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
             FontAwesomeIcons.circleChevronLeft,
             size: 30,
             color:
-            _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+                _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
           ),
           onPressed: _currentPage == 0
               ? null
               : () {
-            setState(() {
-              _currentPage--;
-            });
-          },
+                  setState(() {
+                    _currentPage--;
+                  });
+                },
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
@@ -537,15 +528,15 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
                 : Color.fromRGBO(
-                21, 43, 83, 1), // Change color based on availability
+                    21, 43, 83, 1), // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
               : () {
-            setState(() {
-              _currentPage++;
-            });
-          },
+                  setState(() {
+                    _currentPage++;
+                  });
+                },
         ),
       ],
     );
@@ -559,7 +550,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
         currentpage: "Upcoming renewal",
-        dropdown: false,
+        dropdown: true,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -580,7 +571,6 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                       title: 'Upcoming Renewal',
                     ),
                   ),
-
                 ],
               ),
             ),
@@ -615,9 +605,9 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                             child: TextField(
                               style: TextStyle(
                                   fontSize:
-                                  MediaQuery.of(context).size.width < 500
-                                      ? 15
-                                      : 14),
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 15
+                                          : 14),
                               // onChanged: (value) {
                               //   setState(() {
                               //     cvverror = false;
@@ -635,9 +625,9 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                   hintText: "Search here...",
                                   hintStyle: TextStyle(
                                     fontSize:
-                                    MediaQuery.of(context).size.width < 500
-                                        ? 14
-                                        : 18,
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 14
+                                            : 18,
                                     // fontWeight: FontWeight.bold,
                                     color: Color(0xFF8A95A8),
                                   ),
@@ -649,7 +639,6 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                       ),
                     ),
                   ),
-
                 ],
               ),
             ),
@@ -693,7 +682,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                       );
                     } else {
                       var data = snapshot.data!;
-                     /* if (selectedValue == null && searchvalue!.isEmpty) {
+                      /* if (selectedValue == null && searchvalue!.isEmpty) {
                         data = snapshot.data!;
                       } else if (selectedValue == "All") {
                         data = snapshot.data!;
@@ -729,7 +718,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color:
-                                      Color.fromRGBO(152, 162, 179, .5))),
+                                          Color.fromRGBO(152, 162, 179, .5))),
                               // decoration: BoxDecoration(
                               //     border: Border.all(color: blueColor)),
                               child: Column(
@@ -741,7 +730,8 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                   bool isExpanded = expandedIndex == index;
                                   upcoming_renewal Propertytype = entry.value;
 
-                                  String tenants = Propertytype.tenantNames!.join(" , ");
+                                  String tenants =
+                                      Propertytype.tenantNames!.join(" , ");
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
                                     decoration: BoxDecoration(
@@ -763,9 +753,9 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                             padding: const EdgeInsets.all(2.0),
                                             child: Row(
                                               mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                                  MainAxisAlignment.start,
                                               crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                                  CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 InkWell(
                                                   onTap: () {
@@ -796,15 +786,15 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                         left: 5, right: 5),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
-                                                        bottom: 10)
+                                                            bottom: 10)
                                                         : EdgeInsets.only(
-                                                        top: 10),
+                                                            top: 10),
                                                     child: FaIcon(
                                                       isExpanded
                                                           ? FontAwesomeIcons
-                                                          .sortUp
+                                                              .sortUp
                                                           : FontAwesomeIcons
-                                                          .sortDown,
+                                                              .sortDown,
                                                       size: 20,
                                                       color: Color.fromRGBO(
                                                           21, 43, 83, 1),
@@ -812,7 +802,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  flex:4,
+                                                  flex: 4,
                                                   child: InkWell(
                                                     onTap: () {
                                                       setState(() {
@@ -829,7 +819,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
-                                                        FontWeight.bold,
+                                                            FontWeight.bold,
                                                         fontSize: 13,
                                                       ),
                                                     ),
@@ -837,32 +827,34 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                 ),
                                                 SizedBox(
                                                     width:
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        .03),
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .03),
                                                 Expanded(
-                                                  flex:4,
+                                                  flex: 4,
                                                   child: Text(
                                                     '${tenants}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
-                                                      FontWeight.bold,
+                                                          FontWeight.bold,
                                                       fontSize: 13,
                                                     ),
                                                   ),
                                                 ),
                                                 SizedBox(
                                                     width:
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        .03),
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .03),
                                                 Expanded(
-                                                  flex:3,
+                                                  flex: 3,
                                                   child: Padding(
-                                                    padding: const EdgeInsets.only(left: 10.0),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 10.0),
                                                     child: Text(
                                                       // '${widget.data.createdAt}',
                                                       formatDate(
@@ -871,7 +863,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
-                                                        FontWeight.bold,
+                                                            FontWeight.bold,
                                                         fontSize: 13,
                                                       ),
                                                     ),
@@ -879,10 +871,10 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                 ),
                                                 SizedBox(
                                                     width:
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        .02),
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .02),
                                               ],
                                             ),
                                           ),
@@ -895,7 +887,6 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
-
                                                   Row(
                                                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
@@ -904,16 +895,16 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                           onTap: () async {
                                                             var check = await Navigator
                                                                 .push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder: (context) =>
-                                                                        Renewlease(
-                                                                          leaseId: Propertytype.leaseId!,
-                                                                          leasetype: Propertytype.leaseType,
-                                                                          rentamount: Propertytype.leaseAmount.toString(),
-                                                                          enddate: Propertytype.endDate,
-                                                                          startdate: Propertytype.startDate,
-                                                                        )));
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) =>
+                                                                            Renewlease(
+                                                                              leaseId: Propertytype.leaseId!,
+                                                                              leasetype: Propertytype.leaseType,
+                                                                              rentamount: Propertytype.leaseAmount.toString(),
+                                                                              enddate: Propertytype.endDate,
+                                                                              startdate: Propertytype.startDate,
+                                                                            )));
                                                             if (check == true) {
                                                               setState(() {});
                                                             }
@@ -922,22 +913,22 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                             height: 40,
                                                             decoration: BoxDecoration(
                                                                 color: Colors
-                                                                    .grey[
-                                                                350]), // color:Colors.grey[100],
+                                                                        .grey[
+                                                                    350]), // color:Colors.grey[100],
                                                             child: Row(
                                                               mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
+                                                                  MainAxisAlignment
+                                                                      .center,
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
+                                                                  CrossAxisAlignment
+                                                                      .center,
                                                               children: [
                                                                 FaIcon(
                                                                   FontAwesomeIcons
                                                                       .edit,
                                                                   size: 15,
                                                                   color:
-                                                                  blueColor,
+                                                                      blueColor,
                                                                 ),
                                                                 SizedBox(
                                                                   width: 10,
@@ -946,10 +937,10 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                                   "Renew lease",
                                                                   style: TextStyle(
                                                                       color:
-                                                                      blueColor,
+                                                                          blueColor,
                                                                       fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
+                                                                          FontWeight
+                                                                              .bold),
                                                                 ),
                                                               ],
                                                             ),
@@ -962,32 +953,34 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                       Expanded(
                                                         child: GestureDetector(
                                                           onTap: () {
-                                                          /*  _showAlert(
+                                                            print("calling");
+
+                                                              _showAlert(
                                                                 context,
                                                                 Propertytype
-                                                                    .propertyId!);*/
+                                                                    .leaseId!);
                                                           },
                                                           child: Container(
                                                             height: 40,
                                                             decoration:
-                                                            BoxDecoration(
-                                                                color: Colors
-                                                                    .grey[
-                                                                350]),
+                                                                BoxDecoration(
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        350]),
                                                             child: Row(
                                                               mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
+                                                                  MainAxisAlignment
+                                                                      .center,
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
+                                                                  CrossAxisAlignment
+                                                                      .center,
                                                               children: [
                                                                 FaIcon(
                                                                   FontAwesomeIcons
                                                                       .trashCan,
                                                                   size: 15,
                                                                   color:
-                                                                  blueColor,
+                                                                      blueColor,
                                                                 ),
                                                                 SizedBox(
                                                                   width: 10,
@@ -996,10 +989,10 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                                   "Not Renewing",
                                                                   style: TextStyle(
                                                                       color:
-                                                                      blueColor,
+                                                                          blueColor,
                                                                       fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
+                                                                          FontWeight
+                                                                              .bold),
                                                                 )
                                                               ],
                                                             ),
@@ -1035,7 +1028,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                             horizontal: 12.0),
                                         decoration: BoxDecoration(
                                           border:
-                                          Border.all(color: Colors.grey),
+                                              Border.all(color: Colors.grey),
                                         ),
                                         child: DropdownButtonHideUnderline(
                                           child: DropdownButton<int>(
@@ -1048,15 +1041,15 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                               );
                                             }).toList(),
                                             onChanged: data.length >
-                                                itemsPerPageOptions
-                                                    .first // Condition to check if dropdown should be enabled
+                                                    itemsPerPageOptions
+                                                        .first // Condition to check if dropdown should be enabled
                                                 ? (newValue) {
-                                              setState(() {
-                                                itemsPerPage = newValue!;
-                                                currentPage =
-                                                0; // Reset to first page when items per page change
-                                              });
-                                            }
+                                                    setState(() {
+                                                      itemsPerPage = newValue!;
+                                                      currentPage =
+                                                          0; // Reset to first page when items per page change
+                                                    });
+                                                  }
                                                 : null,
                                           ),
                                         ),
@@ -1076,10 +1069,10 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                       onPressed: currentPage == 0
                                           ? null
                                           : () {
-                                        setState(() {
-                                          currentPage--;
-                                        });
-                                      },
+                                              setState(() {
+                                                currentPage--;
+                                              });
+                                            },
                                     ),
                                     // IconButton(
                                     //   icon: Icon(Icons.arrow_back),
@@ -1112,10 +1105,10 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                       ),
                                       onPressed: currentPage < totalPages - 1
                                           ? () {
-                                        setState(() {
-                                          currentPage++;
-                                        });
-                                      }
+                                              setState(() {
+                                                currentPage++;
+                                              });
+                                            }
                                           : null,
                                     ),
                                   ],
@@ -1129,7 +1122,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                   },
                 ),
               ),
-           /* if (MediaQuery.of(context).size.width > 500)
+            /* if (MediaQuery.of(context).size.width > 500)
               FutureBuilder<List<propertytype>>(
                 future: futurePropertyTypes,
                 builder: (context, snapshot) {
@@ -1322,5 +1315,38 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
         ),
       ),
     );
+  }
+
+  Future<void> updatenotrenewallease(String leaseid) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String adminId = prefs.getString('adminId') ?? '';
+      String? token = prefs.getString('token');
+      print(token);
+      // print('lease ${widget.leaseId}');
+      String? id = prefs.getString("adminId");
+      final response = await http.put(
+        Uri.parse('$Api_url/api/leases/update_not_renewing/$leaseid'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          'Content-Type': 'application/json',
+        },
+      );
+      print(response.body);
+      if (response.statusCode == 200) {
+        /*   Fluttertoast.showToast(msg: "Lease Renewal Successfully");
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>SummeryPageLease(leaseId: widget.leaseId,)));
+          */
+        Fluttertoast.showToast(msg: "Lease will not renew");
+        setState(() {
+          futureLeaseRenewal = Upcoming_renewal_repo().fetchupcomingrenewal();
+        });
+      } else {
+        Fluttertoast.showToast(msg: "Renewal Lease not success");
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }
