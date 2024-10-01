@@ -32,19 +32,19 @@ import 'addcard/AddCard.dart';
 import 'addcard/CardModel.dart';
 import '../../../widgets/custom_drawer.dart';
 import '../../../model/LeaseLedgerModel.dart';
-class MakePayment extends StatefulWidget {
+class EditMakePayment extends StatefulWidget {
   final String leaseId;
   final String tenantId;
   bool? isEdit;
   Data? data;
 
-   MakePayment({required this.leaseId, required this.tenantId,this.isEdit,this.data});
+   EditMakePayment({required this.leaseId, required this.tenantId,this.isEdit,this.data});
 
   @override
-  State<MakePayment> createState() => _MakePaymentState();
+  State<EditMakePayment> createState() => _EditMakePaymentState();
 }
 
-class _MakePaymentState extends State<MakePayment> {
+class _EditMakePaymentState extends State<EditMakePayment> {
   late Future<List<ChargeResponses>> futurectablecharge;
   bool _isLoading = false;
   final TextEditingController _startDate = TextEditingController();
@@ -129,6 +129,9 @@ class _MakePaymentState extends State<MakePayment> {
       _startDate.text = c_data.entry!.first.date!;
       amountController.text = c_data.totalAmount.toString();
       _selectedPaymentMethod = c_data.paymenttype;
+      if(_selectedPaymentMethod != "Cash")
+        checknumber.text = c_data!.check_number!;
+      reference.text = c_data!.reference ?? "";
 
       print('charge details ${charges!.length}');
         rows = c_data.entry?.map((entry) {
