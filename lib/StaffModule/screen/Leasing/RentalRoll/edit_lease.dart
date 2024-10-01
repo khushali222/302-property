@@ -5967,89 +5967,48 @@ class _AddTenantState extends State<AddTenant> {
                         ),
                       ),
                       SizedBox(height: 16.0),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          GestureDetector(
-                            onTap: () {},
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(5.0),
-                              child: Container(
-                                height: 30.0,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  color: Color.fromRGBO(21, 43, 81, 1),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      offset: Offset(0.0, 1.0), //(x,y)
-                                      blurRadius: 6.0,
-                                    ),
-                                  ],
-                                ),
-                                child: Center(
-                                  child: isLoading
-                                      ? SpinKitFadingCircle(
+
+                        Row(
+                          children: [
+                            SizedBox(width: 2,),
+                            GestureDetector(
+                              onTap: (){
+                                Navigator.pop(context);
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(5.0),
+                                child: Container(
+                                  height: 40.0,
+                                  width: 90,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    color: const Color.fromRGBO(21, 43, 81, 1),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Colors.grey,
+                                        offset: Offset(0.0, 1.0), //(x,y)
+                                        blurRadius: 6.0,
+                                      ),
+                                    ],
+                                  ),
+                                  child:  Center(
+                                    child: Text(
+                                      "Add",
+                                      style: TextStyle(
                                           color: Colors.white,
-                                          size: 25.0,
-                                        )
-                                      : Text(
-                                          "Add",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 10),
-                                        ),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.03),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(5.0),
-                              child: Container(
-                                height: 30.0,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  color: Colors.white,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      offset: Offset(0.0, 1.0), //(x,y)
-                                      blurRadius: 6.0,
-                                    ),
-                                  ],
-                                ),
-                                child: Center(
-                                  child: isLoading
-                                      ? SpinKitFadingCircle(
-                                          color: Colors.white,
-                                          size: 25.0,
-                                        )
-                                      : Text(
-                                          "Cancel",
-                                          style: TextStyle(
-                                              color:
-                                                  Color.fromRGBO(21, 43, 81, 1),
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 10),
-                                        ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                          ],
+                        ),
                     ],
                   )
-                : Column(
+                :
+            Column(
                     children: [
                       //contact information
                       Container(
@@ -6163,6 +6122,10 @@ class _AddTenantState extends State<AddTenant> {
                                           keyboardType: TextInputType.number,
                                           hintText: 'Enter work number',
                                           controller: workNumber,
+                                          optional: true,
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
                                         ),
                                       ],
                                     ),
@@ -6230,6 +6193,10 @@ class _AddTenantState extends State<AddTenant> {
                                               TextInputType.emailAddress,
                                           hintText: 'Enter alternative email',
                                           controller: alterEmail,
+                                          optional: true,
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
                                         ),
                                       ],
                                     ),
@@ -6266,6 +6233,7 @@ class _AddTenantState extends State<AddTenant> {
                                     obscureText: !_obscureText,
                                     hintText: 'Enter password',
                                     controller: passWord,
+                                    optional: true,
                                     validator: (value) {
                                       if (value == null) {
                                         return 'please enter password';
@@ -6419,6 +6387,7 @@ class _AddTenantState extends State<AddTenant> {
                                     keyboardType: TextInputType.text,
                                     hintText: 'Enter contact name',
                                     controller: taxPayerId,
+                                    optional: true,
                                   ),
                                   const SizedBox(
                                     height: 10,
@@ -6518,6 +6487,7 @@ class _AddTenantState extends State<AddTenant> {
                                     keyboardType: TextInputType.text,
                                     hintText: 'Enter contact name',
                                     controller: contactName,
+                                    optional: true,
                                   ),
                                   const SizedBox(
                                     height: 10,
@@ -6534,6 +6504,7 @@ class _AddTenantState extends State<AddTenant> {
                                     keyboardType: TextInputType.text,
                                     hintText: 'Enter relationship to tenant',
                                     controller: relationToTenant,
+                                    optional: true,
                                   ),
                                   const SizedBox(
                                     height: 10,
@@ -6550,6 +6521,7 @@ class _AddTenantState extends State<AddTenant> {
                                     keyboardType: TextInputType.emailAddress,
                                     hintText: 'Enter email',
                                     controller: emergencyEmail,
+                                    optional: true,
                                   ),
                                   const SizedBox(
                                     height: 10,
@@ -6566,46 +6538,82 @@ class _AddTenantState extends State<AddTenant> {
                                     keyboardType: TextInputType.number,
                                     hintText: 'Enter phone number',
                                     controller: emergencyPhoneNumber,
+                                    optional: true,
                                   ),
                                 ],
                               ),
                             )
                           : Container(),
                       const SizedBox(
-                        height: 10,
+                        height: 30,
                       ),
+                      if (isChecked == false)
+                        Row(
+                          children: [
+                            SizedBox(width: 2,),
+                            GestureDetector(
+                              onTap: (){
+                                if (_formKey.currentState!.validate()) {
+                                  final tenant = Tenant(
+                                    tenantFirstName: firstName.text,
+                                    tenantLastName: lastName.text,
+                                    tenantPhoneNumber: phoneNumber.text,
+                                    tenantAlternativeNumber: workNumber.text,
+                                    tenantEmail: email.text,
+                                    tenantAlternativeEmail: alterEmail.text,
+                                    tenantPassword: passWord.text,
+                                    tenantBirthDate: _dateController.text,
+                                    taxPayerId: taxPayerId.text,
+                                    comments: comments.text,
+                                    rentshare: "",
+                                    emergencyContact: EmergencyContact(
+                                      name: contactName.text,
+                                      relation: relationToTenant.text,
+                                      email: emergencyEmail.text,
+                                      phoneNumber: emergencyPhoneNumber.text,
+                                    ),
+                                  );
+                                  Provider.of<SelectedTenantsProvider>(context,
+                                      listen: false)
+                                      .addTenant(tenant);
+                                }
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(5.0),
+                                child: Container(
+                                  height: 40.0,
+                                  width: 90,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    color: const Color.fromRGBO(21, 43, 81, 1),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Colors.grey,
+                                        offset: Offset(0.0, 1.0), //(x,y)
+                                        blurRadius: 6.0,
+                                      ),
+                                    ],
+                                  ),
+                                  child:  Center(
+                                    child: Text(
+                                      "Add",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                     ],
                   ),
             const SizedBox(
               height: 10,
             ),
-            ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    final tenant = Tenant(
-                      tenantFirstName: firstName.text,
-                      tenantLastName: lastName.text,
-                      tenantPhoneNumber: phoneNumber.text,
-                      tenantAlternativeNumber: workNumber.text,
-                      tenantEmail: email.text,
-                      tenantAlternativeEmail: alterEmail.text,
-                      tenantPassword: passWord.text,
-                      tenantBirthDate: _dateController.text,
-                      taxPayerId: taxPayerId.text,
-                      comments: comments.text,
-                      rentshare: "",
-                      emergencyContact: EmergencyContact(
-                        name: contactName.text,
-                        relation: relationToTenant.text,
-                        email: emergencyEmail.text,
-                        phoneNumber: emergencyPhoneNumber.text,
-                      ),
-                    );
-                    Provider.of<SelectedTenantsProvider>(context, listen: false)
-                        .addTenant(tenant);
-                  }
-                },
-                child: const Text("Add")),
+
           ],
         ),
       ),
@@ -6789,6 +6797,10 @@ class _AddCosignerState extends State<AddCosigner> {
                                 keyboardType: TextInputType.number,
                                 hintText: 'Enter work number',
                                 controller: workNumber,
+                                optional: true,
+                              ),
+                              const SizedBox(
+                                height: 10,
                               ),
                             ],
                           ),
@@ -6851,6 +6863,10 @@ class _AddCosignerState extends State<AddCosigner> {
                                 keyboardType: TextInputType.emailAddress,
                                 hintText: 'Enter alternative email',
                                 controller: alterEmail,
+                                optional: true,
+                              ),
+                              const SizedBox(
+                                height: 10,
                               ),
                             ],
                           ),
@@ -6943,54 +6959,87 @@ class _AddCosignerState extends State<AddCosigner> {
                 const SizedBox(
                   height: 10,
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      if (widget.cosigner == null) {
-                        final cosigner = Cosigner(
-                          c_id: firstName.text,
-                          firstName: firstName.text,
-                          lastName: lastName.text,
-                          phoneNumber: phoneNumber.text,
-                          workNumber: workNumber.text,
-                          email: email.text,
-                          alterEmail: alterEmail.text,
-                          streetAddress: streetAddrees.text,
-                          city: city.text,
-                          country: country.text,
-                          postalCode: postalCode.text,
-                        );
-                        Provider.of<SelectedCosignersProvider>(context,
+                Row(
+                  children: [
+                    SizedBox(width: 2,),
+                    GestureDetector(
+                      onTap: ()
+                      {
+                        if (_formKey.currentState!.validate()) {
+                          if (widget.cosigner == null) {
+                            final cosigner = Cosigner(
+                              c_id: firstName.text,
+                              firstName: firstName.text,
+                              lastName: lastName.text,
+                              phoneNumber: phoneNumber.text,
+                              workNumber: workNumber.text,
+                              email: email.text,
+                              alterEmail: alterEmail.text,
+                              streetAddress: streetAddrees.text,
+                              city: city.text,
+                              country: country.text,
+                              postalCode: postalCode.text,
+                            );
+                            Provider.of<SelectedCosignersProvider>(context,
                                 listen: false)
-                            .addCosigner(cosigner);
-                      } else {
-                        final cosigner = Cosigner(
-                          //c_id : firstName.text,
-                          firstName: firstName.text,
-                          lastName: lastName.text,
-                          phoneNumber: phoneNumber.text,
-                          workNumber: workNumber.text,
-                          email: email.text,
-                          alterEmail: alterEmail.text,
-                          streetAddress: streetAddrees.text,
-                          city: city.text,
-                          country: country.text,
-                          postalCode: postalCode.text,
-                        );
-                        Provider.of<SelectedCosignersProvider>(context,
+                                .addCosigner(cosigner);
+                          } else {
+                            final cosigner = Cosigner(
+                              //c_id : firstName.text,
+                              firstName: firstName.text,
+                              lastName: lastName.text,
+                              phoneNumber: phoneNumber.text,
+                              workNumber: workNumber.text,
+                              email: email.text,
+                              alterEmail: alterEmail.text,
+                              streetAddress: streetAddrees.text,
+                              city: city.text,
+                              country: country.text,
+                              postalCode: postalCode.text,
+                            );
+                            Provider.of<SelectedCosignersProvider>(context,
                                 listen: false)
-                            .updateCosigner(cosigner, widget.index!);
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => Edit_lease(cosigner: cosigner),
-                        //   ),
-                        // );
-                      }
-                    }
-                  },
-                  child: const Text("add"),
-                )
+                                .updateCosigner(cosigner, widget.index!);
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => Edit_lease(cosigner: cosigner),
+                            //   ),
+                            // );
+                          }
+                        }
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5.0),
+                        child: Container(
+                          height: 40.0,
+                          width: 90,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5.0),
+                            color: const Color.fromRGBO(21, 43, 81, 1),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.grey,
+                                offset: Offset(0.0, 1.0), //(x,y)
+                                blurRadius: 6.0,
+                              ),
+                            ],
+                          ),
+                          child:  Center(
+                            child: Text(
+                              "Add",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
               ],
             ),
           ),

@@ -18,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:three_zero_two_property/StaffModule/repository/lease_provider.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/Applicants/Applicants_table.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Workorder/workorder_summery.dart';
 import 'package:three_zero_two_property/provider/property_summery.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/unit.dart';
 import '../../../widgets/appbar.dart';
@@ -9169,8 +9170,8 @@ startdateController.text = displayDate;
                                       if (isExpanded)
                                         Container(
                                           padding: EdgeInsets.symmetric(
-                                              horizontal: 8.0),
-                                          margin: EdgeInsets.only(bottom: 20),
+                                              horizontal: 2),
+                                          margin: EdgeInsets.only(bottom: 1),
                                           child: SingleChildScrollView(
                                             child: Column(
                                               children: [
@@ -9253,6 +9254,51 @@ startdateController.text = displayDate;
                                                     //     ),
                                                     //   ],
                                                     // ),
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Row(
+                                                  //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Expanded(
+                                                      child: GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder: (context) =>
+                                                                      Workorder_summery(workorder_id: workOrder.workOrderId,)
+                                                              ));
+
+                                                        },
+                                                        child: Container(
+                                                          height:40,
+                                                          decoration: BoxDecoration(
+                                                              color: Colors.grey[350]
+                                                          ),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment.center,
+                                                            crossAxisAlignment:
+                                                            CrossAxisAlignment.center,
+                                                            children: [
+                                                              SizedBox(width: 5,),
+                                                              Image.asset('assets/icons/view.png'),
+                                                              // FaIcon(
+                                                              //   FontAwesomeIcons.trashCan,
+                                                              //   size: 15,
+                                                              //   color:blueColor,
+                                                              // ),
+                                                              SizedBox(width: 8,),
+                                                              Text("View Summery",style: TextStyle(fontSize: 11,color: blueColor,fontWeight: FontWeight.bold),)
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+
                                                   ],
                                                 ),
                                               ],

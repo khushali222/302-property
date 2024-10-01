@@ -367,15 +367,15 @@ class _PropertiesTableState extends State<PropertiesTable> {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             print(id);
 
-            var data = PropertiesRepository().DeleteProperties(
+            var data =  await PropertiesRepository().DeleteProperties(
               property_id: id,
             );
-            fetchRentaladded();
+
             setState(() {
               futureRentalOwners = PropertiesRepository().fetchProperties();
               //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
             });
-
+            fetchRentaladded();
             Navigator.pop(context);
           },
           color: Colors.red,
@@ -487,7 +487,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
   Widget build(BuildContext context) {
     final permissionProvider = Provider.of<StaffPermissionProvider>(context);
     StaffPermission? permissions = permissionProvider.permissions;
-
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -530,6 +529,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                   PropertiesRepository().fetchProperties();
                               //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
                             });
+                            fetchRentaladded();
                           }
                         } else {
                           _showAlertforLimit(context);
@@ -1500,10 +1500,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                       Expanded(
                                                         child: GestureDetector(
                                                           onTap: () {
-                                                            _showAlert(
-                                                                context,
-                                                                rentals
-                                                                    .rentalId!);
+                                                            setState(() {
+                                                              _showAlert(context, rentals.rentalId!);
+                                                            });
+
                                                           },
                                                           child: Container(
                                                             height: 40,
