@@ -104,22 +104,22 @@ class _EditTenantsState extends State<EditTenants> {
   void initState() {
     overrideFee.addListener(_validateInput);
     // TODO: implement initState
-    firstName.text = widget.tenants.tenantFirstName!;
-    lastName.text = widget.tenants.tenantLastName!;
-    phoneNumber.text = widget.tenants.tenantPhoneNumber!;
-    workNumber.text = widget.tenants.tenantAlternativeNumber!;
-    email.text = widget.tenants.tenantEmail!;
-    alterEmail.text = widget.tenants.tenantAlternativeEmail!;
-    passWord.text = widget.tenants.tenantPassword!;
-    dob.text = widget.tenants.tenantBirthDate!;
-    taxPayerId.text = widget.tenants.taxPayerId!;
-    comments.text = widget.tenants.comments!;
+    firstName.text = widget.tenants.tenantFirstName??"";
+    lastName.text = widget.tenants.tenantLastName??"";
+    phoneNumber.text = widget.tenants.tenantPhoneNumber??"";
+    workNumber.text = widget.tenants.tenantAlternativeNumber??"";
+    email.text = widget.tenants.tenantEmail??"";
+    alterEmail.text = widget.tenants.tenantAlternativeEmail??"N/A";
+    passWord.text = widget.tenants.tenantPassword??"";
+    dob.text = widget.tenants.tenantBirthDate ??"";
+    taxPayerId.text = widget.tenants.taxPayerId ??"";
+    comments.text = widget.tenants.comments??"";
     contactName.text = widget.tenants.emergencyContact?.name ?? "";
-    relationToTenant.text = widget.tenants.emergencyContact!.relation ?? "";
+    relationToTenant.text = widget.tenants.emergencyContact?.relation ?? "";
     emergencyPhoneNumber.text =
-        widget.tenants.emergencyContact!.phoneNumber ?? "";
-    emergencyEmail.text = widget.tenants.emergencyContact!.email ?? "";
-    _dateController.text = widget.tenants.tenantBirthDate!;
+        widget.tenants.emergencyContact?.phoneNumber ?? "";
+    emergencyEmail.text = widget.tenants.emergencyContact?.email ?? "";
+    _dateController.text = widget.tenants.tenantBirthDate??"";
 
     // enableOverrideFee = widget.tenants.enableoverrideFee!;
     // overrideFee.text = widget.tenants.overRideFee?.toString() ?? '';

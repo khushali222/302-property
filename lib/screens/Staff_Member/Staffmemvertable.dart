@@ -898,7 +898,9 @@ class _StaffTableState extends State<StaffTable> {
                                                                     ),
                                                                   ),
                                                                   TextSpan(
-                                                                    text: formatDate('${staffmembers.createdAt}'),
+                                                                    text: staffmembers.createdAt?.isNotEmpty == true
+                                                                        ? formatDate('${staffmembers.createdAt}')
+                                                                        : 'N/A',
                                                                     style: TextStyle(
                                                                       fontWeight: FontWeight.w700,
                                                                       color: grey, // Light and grey
@@ -921,7 +923,9 @@ class _StaffTableState extends State<StaffTable> {
                                                                     ),
                                                                   ),
                                                                   TextSpan(
-                                                                    text: formatDate('${staffmembers.updatedAt}'),
+                                                                    text: staffmembers.updatedAt?.isNotEmpty == true
+                                                                        ? formatDate('${staffmembers.updatedAt}')
+                                                                        : 'N/A',
                                                                     style: TextStyle(
                                                                       fontWeight: FontWeight.w700,
                                                                       color: grey, // Light and grey

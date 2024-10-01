@@ -259,7 +259,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
         city.text = fetchedDetails.rentalCity!;
         state.text = fetchedDetails.rentalState!;
         postalcode.text = fetchedDetails.rentalPostcode!;
-        country.text = fetchedDetails.rentalCountry!;
+        // country.text = fetchedDetails.rentalCountry!;
+        country.text = fetchedDetails.rentalCountry ?? 'N/A';
         selectedProperty = fetchedDetails.propertyTypeData!.propertySubType;
         Ownersdetails = RentalOwner(
             rentalOwnerId: fetchedDetails.rentalOwnerId,
@@ -1844,6 +1845,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                 onChanged: (value) {
                                                   setState(() {
                                                     countryerror = false;
+
                                                   });
                                                 },
                                                 cursorColor: Color.fromRGBO(
