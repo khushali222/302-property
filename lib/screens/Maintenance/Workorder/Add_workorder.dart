@@ -1891,34 +1891,126 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                               ),
                             ],
                           ),
-                          Column(
+                          // Column(
+                          //   mainAxisAlignment: MainAxisAlignment.start,
+                          //   crossAxisAlignment: CrossAxisAlignment.start,
+                          //   children: [
+                          //     ListTile(
+                          //       title: const Text(' High'),
+                          //       leading: Radio<String>(
+                          //         value: 'High ',
+                          //         groupValue: _selectedOption,
+                          //         onChanged: _handleRadioValueChange,
+                          //       ),
+                          //     ),
+                          //     ListTile(
+                          //       title: const Text(' Normal'),
+                          //       leading: Radio<String>(
+                          //         value: 'Normal',
+                          //         groupValue: _selectedOption,
+                          //         onChanged: _handleRadioValueChange,
+                          //       ),
+                          //     ),
+                          //     ListTile(
+                          //       title: const Text(' Low'),
+                          //       leading: Radio<String>(
+                          //         value: 'Low ',
+                          //         groupValue: _selectedOption,
+                          //         onChanged: _handleRadioValueChange,
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ),
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              ListTile(
-                                title: const Text(' High'),
-                                leading: Radio<String>(
-                                  value: 'High ',
-                                  groupValue: _selectedOption,
-                                  onChanged: _handleRadioValueChange,
-                                ),
+                              /*  Expanded(
+                                    child: ListTile(
+                                        contentPadding: EdgeInsets.zero,
+                                      title: const Text(' High'),
+                                      leading: Radio<String>(
+                                        value: 'High',
+                                        groupValue: _selectedOption,
+                                        onChanged: _handleRadioValueChange,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: ListTile(
+                                      contentPadding: EdgeInsets.zero,
+                                      title: const Text(' Normal'),
+                                      leading: Radio<String>(
+                                        value: 'Normal',
+                                        groupValue: _selectedOption,
+                                        onChanged: _handleRadioValueChange,
+                                      ),
+                                    ),
+                                  ),*/
+                              Row(
+                                children: [
+                                  Container(
+
+                                    width: 25,
+                                    child:  Radio<String>(
+                                      value: 'High',
+                                      groupValue: _selectedOption,
+                                      onChanged: _handleRadioValueChange,
+                                    ),
+                                  ),
+                                  SizedBox(width: 5,),
+                                  Text(' High')
+                                ],
                               ),
-                              ListTile(
-                                title: const Text(' Normal'),
-                                leading: Radio<String>(
-                                  value: 'Normal',
-                                  groupValue: _selectedOption,
-                                  onChanged: _handleRadioValueChange,
-                                ),
+                              SizedBox(width: 20,),
+                              Row(
+                                children: [
+                                  Container(
+
+                                    width: 25,
+                                    child: Radio<String>(
+                                      value: 'Normal',
+                                      groupValue: _selectedOption,
+                                      onChanged: _handleRadioValueChange,
+                                    ),
+                                  ),
+                                  SizedBox(width: 5,),
+                                  Text(' Normal')
+                                ],
                               ),
-                              ListTile(
-                                title: const Text(' Low'),
-                                leading: Radio<String>(
-                                  value: 'Low ',
-                                  groupValue: _selectedOption,
-                                  onChanged: _handleRadioValueChange,
-                                ),
-                              ),
+                              SizedBox(width: 20,),
+                              Row(
+                                children: [
+                                  Container(
+
+                                    width: 25,
+                                    child: Radio<String>(
+                                      value: 'Low',
+                                      groupValue: _selectedOption,
+                                      onChanged: _handleRadioValueChange,
+                                    ),
+                                  ),
+                                  SizedBox(width: 5,),
+                                  Text(' Low')
+                                ],
+                              )
+                              /* ListTile(
+
+                                    tileColor: Colors.amber,
+                                    contentPadding: EdgeInsets.only(left:5),
+                                    title: Container(
+                                    color: Colors.cyan,
+                                      child: const Text(' Low')),
+                                    leading: Container(
+                                      color: Colors.grey,
+                                      width: 25,
+                                      child: Radio<String>(
+                                        value: 'Low',
+                                        groupValue: _selectedOption,
+                                        onChanged: _handleRadioValueChange,
+                                      ),
+                                    ),
+                                  ),*/
                             ],
                           ),
                           SizedBox(
