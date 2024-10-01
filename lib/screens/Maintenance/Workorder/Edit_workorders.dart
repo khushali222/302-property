@@ -131,7 +131,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     // print('Fetched parts and charge data: ${fetchedDetails.partsandchargeData?.first.account}');
     String? entryAllowedString;
     if (fetchedDetails.entryAllowed != null) {
-      entryAllowedString = fetchedDetails.entryAllowed! ? 'true' : 'false';
+      entryAllowedString = fetchedDetails.entryAllowed! ? 'Yes' : 'No';
     }
 
     await Future.delayed(const Duration(seconds: 1));
@@ -156,7 +156,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       renderId = fetchedDetails.rentalId!;
       _selectedUnitId = fetchedDetails.unitId;
       isChecked = fetchedDetails.isBillable!;
-      _selectedvendorsId = fetchedDetails.vendorId!.isEmpty
+      _selectedvendorsId = fetchedDetails.vendorId.toString().isEmpty
           ? null
           : fetchedDetails.vendorId ?? null;
       _selectedstaffId = fetchedDetails.staffmemberId ?? null;
@@ -423,8 +423,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   ];
   String? _selectedEntry;
   final List<String> _entry = [
-    'true',
-    'false',
+    'Yes',
+    'No',
   ];
   String? _selectedStatus;
   final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed','Pending'];
@@ -1108,7 +1108,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                     ),
                                                   );
                                                 }).toList(),
-                                                value: _selectedUnitId!.isNotEmpty? _selectedUnitId : null,
+                                                value: _selectedUnitId.toString().isNotEmpty? _selectedUnitId : null,
                                                 onChanged: (value) {
                                                   setState(() {
                                                     unitId = value.toString();

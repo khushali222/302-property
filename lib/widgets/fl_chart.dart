@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -120,10 +121,14 @@ class _FlChartAppState extends State<FlChartApp> {
             margin: EdgeInsets.only(top: 20),
             child: Card(
 
-              child: loading ? Center(child: CircularProgressIndicator()) :Column(
+              child: loading ? Center(
+                child: SpinKitSpinningLines(
+                  color: blueColor,
+                  size: 55.0,
+                ),
+              ) :Column(
                 children: [
                   SizedBox(
-
                     height: 180,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),

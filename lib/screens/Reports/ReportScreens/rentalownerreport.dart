@@ -2492,6 +2492,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                         setState(() {
                           daterange = value;
                           if (value == "Today") {
+                            customdate = false;
                             fromDate.text = formatDate(
                                 DateTime.now().toString());
                             toDate.text = formatDate(
@@ -2499,7 +2500,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                           } else if (value == "This Week") {
                             DateTime now = DateTime.now();
                             //  fromDate.text = formatDate(now.toString());
-
+                            customdate = false;
                             fromDate.text = formatDate(now
                                 .subtract(Duration(
                                 days: now.weekday - 1))
@@ -2510,6 +2511,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                     now.weekday))
                                 .toString());
                           } else if (value == "This Month") {
+                            customdate = false;
                             DateTime now = DateTime.now();
                             fromDate.text = formatDate(
                                 DateTime(now.year, now.month, 1)
@@ -2518,6 +2520,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                 now.year, now.month + 1, 0)
                                 .toString());
                           } else if (value == "This Year") {
+                            customdate = false;
                             DateTime now = DateTime.now();
                             fromDate.text = formatDate(
                                 DateTime(now.year, 1, 1)
@@ -2560,10 +2563,10 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                   // width: 110,
                   child: TextFormField(
                     controller: fromDate,
-                    enabled: customdate,
-                    onTap: () {
+                   // enabled: customdate,
+                    onTap: customdate ?() {
                       _pickDate(context);
-                    },
+                    } : null,
                     readOnly: true,
                     style: TextStyle(fontSize: 14,color: Colors.black),
                     textInputAction: TextInputAction.next,
@@ -2581,7 +2584,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                           borderRadius:
                           BorderRadius.circular(5),
                           borderSide: const BorderSide(
-                            width: 0.5,
+                            width: 1,
                           )),
                     ),
                   ),
@@ -2593,11 +2596,11 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                   // width: 110,
                   child: TextFormField(
                     controller: toDate,
-                    enabled: customdate,
+                   // enabled: customdate,
                     style: TextStyle(fontSize: 14,color: Colors.black),
-                    onTap: () {
+                    onTap: customdate ?  () {
                       _endDate(context);
-                    },
+                    }: null,
                     readOnly: true,
                     textInputAction: TextInputAction.next,
                     textAlignVertical: TextAlignVertical.center,

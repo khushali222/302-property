@@ -26,6 +26,7 @@ import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../Model/Preminum Plans/checkPlanPurchaseModel.dart';
 import '../../../Model/Preminum Plans/checkPlanPurchaseModel.dart';
 import '../../../provider/Plan Purchase/plancheckProvider.dart';
+import 'Edit_make_payment.dart';
 import 'make_payment.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:printing/printing.dart';
@@ -2074,7 +2075,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                         ),
                                                       ),*/
                                                     if (data.type != "Refund" &&
-                                                        data.type != "Charge")
+                                                        data.type != "Charge"  &&  (data.paymenttype =="Card" || data.paymenttype =="ACH"))
                                                       Row(
                                                         //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                         children: [
@@ -2264,6 +2265,137 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                               blueColor,
                                                                           fontWeight:
                                                                               FontWeight.bold),
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    if (data.type == "Payment" &&  (data.paymenttype !="Card" && data.paymenttype !="ACH"))
+                                                      Row(
+                                                        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                          Expanded(
+                                                            child:
+                                                            GestureDetector(
+                                                              onTap: () async {
+                                                                final value = await Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) => EditMakePayment(
+                                                                          leaseId: widget.leaseId,
+                                                                          tenantId: data.tenantData["tenant_id"],
+                                                                          isEdit: true,
+                                                                          data: data,
+
+                                                                        )));
+                                                                if (value ==
+                                                                    true) {
+                                                                  setState(() {
+                                                                    _leaseLedgerFuture =
+                                                                        LeaseRepository()
+                                                                            .fetchLeaseLedger(widget.leaseId);
+                                                                  });
+                                                                }
+                                                                // var check = await Navigator.push(
+                                                                //   context,
+                                                                //   MaterialPageRoute(
+                                                                //     builder: (context) => Edit_properties(
+                                                                //       properties: rentals,
+                                                                //       rentalId: rentals.rentalId!,
+                                                                //     ),
+                                                                //   ),
+                                                                // );
+                                                                // if (check == true) {
+                                                                //   setState(() {
+                                                                //     futureRentalOwners = PropertiesRepository().fetchProperties();
+                                                                //
+                                                                //   });
+                                                                //   // Update State
+                                                                // }
+                                                              },
+                                                              child: Container(
+                                                                height: 40,
+                                                                decoration: BoxDecoration(
+                                                                    color: Colors
+                                                                        .grey[
+                                                                    350]), // color:Colors.grey[100],
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                                  crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .edit,
+                                                                      size: 15,
+                                                                      color:
+                                                                      blueColor,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: 10,
+                                                                    ),
+                                                                    Text(
+                                                                      "Edit",
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                          blueColor,
+                                                                          fontWeight:
+                                                                          FontWeight.bold),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          Expanded(
+                                                            child:
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                _showAlert(
+                                                                    context,
+                                                                    data.chargeId!);
+                                                                //   _showAlert(context, rentals.rentalId!);
+                                                              },
+                                                              child: Container(
+                                                                height: 40,
+                                                                decoration: BoxDecoration(
+                                                                    color: Colors
+                                                                        .grey[
+                                                                    350]),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                                  crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .trashCan,
+                                                                      size: 15,
+                                                                      color:
+                                                                      blueColor,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: 10,
+                                                                    ),
+                                                                    Text(
+                                                                      "Delete",
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                          blueColor,
+                                                                          fontWeight:
+                                                                          FontWeight.bold),
                                                                     )
                                                                   ],
                                                                 ),

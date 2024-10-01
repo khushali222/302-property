@@ -151,6 +151,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                    fit: BoxFit.cover,
                    height: 27,
                    width: 27,
+                   color: blueColor,
                  ),
                  FaIcon(FontAwesomeIcons.wallet, size: 20,  color: widget.currentpage == "Upcoming renewal"
                      ? Colors.white

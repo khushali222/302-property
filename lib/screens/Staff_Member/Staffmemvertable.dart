@@ -390,7 +390,7 @@ class _StaffTableState extends State<StaffTable> {
   int staffCountLimit = 0;
   int rentalCount = 0;
   Future<void> fetchstaffadded() async {
-   // print("calling");
+    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -400,15 +400,15 @@ class _StaffTableState extends State<StaffTable> {
       "id": "CRM $id",
     });
     final jsonData = json.decode(response.body);
-   // print(jsonData);
+    print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
- //     print(rentalCount);
-   //   print(staffCountLimit);
+      print(rentalCount);
+      print(staffCountLimit);
       setState(() {
         rentalCount = jsonData['rentalCount'];
-     //   print(rentalCount);
+        print(rentalCount);
         staffCountLimit = jsonData['staffCountLimit'];
-  //      print(staffCountLimit);
+        print(staffCountLimit);
       });
     } else {
       throw Exception('Failed to load data');
@@ -481,8 +481,8 @@ class _StaffTableState extends State<StaffTable> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                   //   print(rentalCount);
-                   //   print(staffCountLimit);
+                      print(rentalCount);
+                      print(staffCountLimit);
                       // final result = await Navigator.of(context).push(MaterialPageRoute(
                       //     builder: (context) => Add_staffmember()));
                       // if (result == true) {

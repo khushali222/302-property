@@ -773,7 +773,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                               borderRadius: BorderRadius.circular(5.0),
                               child: Container(
                                 height:
-                                    MediaQuery.of(context).size.height * .04,
+                                    MediaQuery.of(context).size.height * .05,
                                 width: MediaQuery.of(context).size.width < 500
                                     ? 150
                                     : 180,
@@ -833,6 +833,9 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                 ),
               ),
             ),
+          ),
+          SizedBox(
+            height: 10,
           ),
         ],
       ),

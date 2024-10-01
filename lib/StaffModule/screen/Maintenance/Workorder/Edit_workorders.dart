@@ -132,7 +132,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     // print('Fetched parts and charge data: ${fetchedDetails.partsandchargeData?.first.account}');
     String? entryAllowedString;
     if (fetchedDetails.entryAllowed != null) {
-      entryAllowedString = fetchedDetails.entryAllowed! ? 'true' : 'false';
+      entryAllowedString = fetchedDetails.entryAllowed! ? 'Yes' : 'No';
     }
 
     await Future.delayed(const Duration(seconds: 1));
@@ -433,8 +433,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   ];
   String? _selectedEntry;
   final List<String> _entry = [
-    'true',
-    'false',
+    'Yes',
+    'No',
   ];
   String? _selectedStatus;
   final List<String> _status = [
@@ -486,6 +486,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         calculateTotal(qtyController, priceController, totalController,
             subtotalcontroller);
       });
+
       priceController.addListener(() {
         calculateTotal(qtyController, priceController, totalController,
             subtotalcontroller);

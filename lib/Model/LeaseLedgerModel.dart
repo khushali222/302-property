@@ -54,6 +54,8 @@ class Data {
   bool? isDelete;
   String? paymentId;
   int? iV;
+  String? check_number;
+  String? reference;
   dynamic tenantData; // tenantData is dynamic to handle any JSON structure
   double? balance; // Adjusted to double
 
@@ -79,7 +81,9 @@ class Data {
     this.surcharge,
     this.customer_vault_id,
     this.paymentId,
-    this.billing_id
+    this.billing_id,
+    this.check_number,
+    this.reference
   });
 
   Data.fromJson(Map<String, dynamic> json) {
@@ -108,6 +112,8 @@ class Data {
     iV = json['__v'];
     paymentId = json['payment_id'];
     tenantData = json['tenantData'];
+    check_number = json["check_number"];
+    reference = json["reference"];
     balance = (json['balance'] as num?)?.toDouble()??0.0; // Parse as double
     customer_vault_id = json['customer_vault_id'].toString() ?? "";
     billing_id = json['billing_id'].toString() ??"";
