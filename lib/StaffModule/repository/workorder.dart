@@ -264,10 +264,13 @@ class WorkOrderRepository {
     final url =
         Uri.parse('$Api_url/api/work-order/workorder_details/$workorderId');
     print('$Api_url/api/work-order/workorder_details/$workorderId');
+
     final response = await http.get(url, headers: {
       "authorization": "CRM $token",
       "id": "CRM $id",
     });
+
+    print(' abc workorder summery ${response.body}');
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body)["data"];

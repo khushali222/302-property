@@ -324,7 +324,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
     'No',
   ];
   String? _selectedStatus = "New";
-  final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed'];
+  final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed','Closed'];
   final List<String> _account = [
     'Advertizing',
     'Association fees',
@@ -2541,7 +2541,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
     'No',
   ];
   String? _selectedStatus = "New";
-  final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed'];
+  final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed' ,'Closed'];
   final List<String> _account = [
     'Advertizing',
     'Association fees',

@@ -88,21 +88,20 @@ class SelectedTenantsProvider extends ChangeNotifier {
       }
     }
 
-    if (totalRentShare > 100) {
-      _validationMessage = "Total rent share cannot exceed 100%";
-      notifyListeners();
-      return false;
-    }
+   //  if (totalRentShare > 100) {
+   //    _validationMessage = "Total rent share cannot exceed 100%";
+   //    notifyListeners();
+   //    return false;
+   //  }
+   // else if (totalRentShare < 100) {
+   //    _validationMessage = allFieldsEmpty
+   //        ? "Tenants must enter rent share values."
+   //        : "Total rent share must equal 100%";
+   //    notifyListeners();
+   //    return false;
+   //  }
 
-    if (totalRentShare < 100) {
-      _validationMessage = allFieldsEmpty
-          ? "Tenants must enter rent share values."
-          : "Total rent share must equal 100%";
-      notifyListeners();
-      return false;
-    }
-
-    _validationMessage = null;
+   _validationMessage = null;
     notifyListeners();
     return true;
   }

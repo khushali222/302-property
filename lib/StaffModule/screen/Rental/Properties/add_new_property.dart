@@ -15,10 +15,11 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/StaffModule/repository/Property_type.dart';
 import 'package:three_zero_two_property/StaffModule/repository/Staffmember.dart';
+import 'package:three_zero_two_property/StaffModule/repository/rental_properties.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/add_rentalowners.dart';
 import 'package:three_zero_two_property/model/staffmember.dart';
 
-import 'package:three_zero_two_property/repository/rental_properties.dart';
+
 
 import '../../../widgets/appbar.dart';
 
@@ -3878,6 +3879,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               await SharedPreferences.getInstance();
                           String? adminId = prefs.getString("adminId");
                           final updatedOwner = RentalOwner(
+                            rentalOwnerId: ownerDetails!.rentalOwnerId ?? null,
                             rentalOwnerName: firstnameController.text,
                             rentalOwnerCompanyName: comnameController.text,
                             rentalOwnerPrimaryEmail:
@@ -3892,6 +3894,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   listen: false)
                               .setOwnerDetails(updatedOwner);
                           RentalOwners owners = RentalOwners(
+                            rentalownersid: updatedOwner.rentalOwnerId,
                             adminId: adminId,
                             firstName: updatedOwner.rentalOwnerName,
                             companyName: updatedOwner.rentalOwnerCompanyName,

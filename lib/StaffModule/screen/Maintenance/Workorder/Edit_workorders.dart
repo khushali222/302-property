@@ -442,7 +442,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     'In Progress',
     'On Hold',
     'Completed',
-    'Pending'
+    'Pending',
+        'Closed'
   ];
   final List<String> _account = [
     'Advertising',
@@ -2776,7 +2777,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
     'false',
   ];
   String? _selectedStatus;
-  final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed'];
+  final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed','Closed'];
   final List<String> _account = [
     'Advertising',
     'Association Fees',

@@ -1006,7 +1006,7 @@ class _addLease3State extends State<addLease3>
                                       //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
 
                                       String formattedEndDate = "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
-
+                                      print(formattedStartDate);
                                       setState(() {
 
                                         startDateController.text = formattedStartDate;
@@ -3137,7 +3137,7 @@ class _addLease3State extends State<addLease3>
                                               leaseData: LeaseData(
                                                 adminId: adminId ?? "",
                                                 companyName: companyName,
-                                                endDate: leaseEndDate,
+                                                endDate:reverseFormatDate(leaseEndDate),
                                                 entry: chargeEntries,
                                                 leaseAmount: rentAmount.text,
                                                 leaseType: _selectedLeaseType ?? "",
@@ -3149,7 +3149,7 @@ class _addLease3State extends State<addLease3>
                                                     .toList(),
                                                 tenantResidentStatus:
                                                 _selectedResidentsEmail,
-                                                unitId: unitId,
+                                                unitId: _selectedUnit,
                                                 uploadedFile: _uploadedFileNames,
                                               ),
                                               tenantData: tenantDataList,
@@ -5146,7 +5146,8 @@ class _AddTenantState extends State<AddTenant> {
               height: 10,
             ),
             isChecked
-                ? Column(
+                ?
+            Column(
                     children: [
                       SizedBox(height: 16.0),
 
@@ -5214,58 +5215,21 @@ class _AddTenantState extends State<AddTenant> {
                       ),
                       SizedBox(height: 16.0),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
+                          SizedBox(width: 2,),
                           GestureDetector(
-                            onTap: () {},
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(5.0),
-                              child: Container(
-                                height: 30.0,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  color: Color.fromRGBO(21, 43, 81, 1),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      offset: Offset(0.0, 1.0), //(x,y)
-                                      blurRadius: 6.0,
-                                    ),
-                                  ],
-                                ),
-                                child: Center(
-                                  child: isLoading
-                                      ? SpinKitFadingCircle(
-                                          color: Colors.white,
-                                          size: 25.0,
-                                        )
-                                      : Text(
-                                          "Add",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 10),
-                                        ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.03),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
+                            onTap: (){
+                             Navigator.pop(context);
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),
                               child: Container(
-                                height: 30.0,
-                                width: 50,
+                                height: 40.0,
+                                width: 90,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
-                                  color: Colors.white,
-                                  boxShadow: [
+                                  color: const Color.fromRGBO(21, 43, 81, 1),
+                                  boxShadow: const [
                                     BoxShadow(
                                       color: Colors.grey,
                                       offset: Offset(0.0, 1.0), //(x,y)
@@ -5273,29 +5237,25 @@ class _AddTenantState extends State<AddTenant> {
                                     ),
                                   ],
                                 ),
-                                child: Center(
-                                  child: isLoading
-                                      ? SpinKitFadingCircle(
-                                          color: Colors.white,
-                                          size: 25.0,
-                                        )
-                                      : Text(
-                                          "Cancel",
-                                          style: TextStyle(
-                                              color:
-                                                  Color.fromRGBO(21, 43, 81, 1),
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 10),
-                                        ),
+                                child:  Center(
+                                  child: Text(
+                                    "Add",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ],
                       ),
+
                     ],
                   )
-                : Column(
+                :
+            Column(
               children: [
                 //contact information
                 Container(
@@ -5476,6 +5436,9 @@ class _AddTenantState extends State<AddTenant> {
                               TextInputType.emailAddress,
                               hintText: 'Enter alternative email',
                               controller: alterEmail,
+                            ),
+                            const SizedBox(
+                              height: 10,
                             ),
                           ],
                         ),
@@ -5824,72 +5787,74 @@ class _AddTenantState extends State<AddTenant> {
                 )
                     : Container(),
                 const SizedBox(
-                  height: 10,
+                  height: 30,
+                ),
+
+                Row(
+                  children: [
+                    SizedBox(width: 2,),
+                    GestureDetector(
+                      onTap: (){
+                        if (_formKey.currentState!.validate()) {
+                          final tenant = Tenant(
+                            tenantFirstName: firstName.text,
+                            tenantLastName: lastName.text,
+                            tenantPhoneNumber: phoneNumber.text,
+                            tenantAlternativeNumber: workNumber.text,
+                            tenantEmail: email.text,
+                            tenantAlternativeEmail: alterEmail.text,
+                            tenantPassword: passWord.text,
+                            tenantBirthDate: _dateController.text,
+                            taxPayerId: taxPayerId.text,
+                            comments: comments.text,
+                            rentshare: rentShareControllers.text,
+                            emergencyContact: EmergencyContact(
+                              name: contactName.text,
+                              relation: relationToTenant.text,
+                              email: emergencyEmail.text,
+                              phoneNumber: emergencyPhoneNumber.text,
+                            ),
+                          );
+                          Provider.of<SelectedTenantsProvider>(context, listen: false)
+                              .addTenant(tenant);
+                        }
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5.0),
+                        child: Container(
+                          height: 40.0,
+                          width: 90,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5.0),
+                            color: const Color.fromRGBO(21, 43, 81, 1),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.grey,
+                                offset: Offset(0.0, 1.0), //(x,y)
+                                blurRadius: 6.0,
+                              ),
+                            ],
+                          ),
+                          child:  Center(
+                            child: Text(
+                              "Add",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
             const SizedBox(
               height: 10,
             ),
-            Row(
-              children: [
-                SizedBox(width: 2,),
-                GestureDetector(
-                  onTap: (){
-                    if (_formKey.currentState!.validate()) {
-                      final tenant = Tenant(
-                        tenantFirstName: firstName.text,
-                        tenantLastName: lastName.text,
-                        tenantPhoneNumber: phoneNumber.text,
-                        tenantAlternativeNumber: workNumber.text,
-                        tenantEmail: email.text,
-                        tenantAlternativeEmail: alterEmail.text,
-                        tenantPassword: passWord.text,
-                        tenantBirthDate: _dateController.text,
-                        taxPayerId: taxPayerId.text,
-                        comments: comments.text,
-                        rentshare: rentShareControllers.text,
-                        emergencyContact: EmergencyContact(
-                          name: contactName.text,
-                          relation: relationToTenant.text,
-                          email: emergencyEmail.text,
-                          phoneNumber: emergencyPhoneNumber.text,
-                        ),
-                      );
-                      Provider.of<SelectedTenantsProvider>(context, listen: false)
-                          .addTenant(tenant);
-                    }
-                  },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(5.0),
-                    child: Container(
-                      height: 40.0,
-                      width: 90,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5.0),
-                        color: const Color.fromRGBO(21, 43, 81, 1),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.grey,
-                            offset: Offset(0.0, 1.0), //(x,y)
-                            blurRadius: 6.0,
-                          ),
-                        ],
-                      ),
-                      child:  Center(
-                        child: Text(
-                          "Add",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+
 
           ],
         ),

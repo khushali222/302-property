@@ -405,6 +405,7 @@ class _Lease_tableState extends State<Lease_table> {
             setState(() {
               futureLease = LeaseRepository().fetchLease("");
             });
+            fetchLeaseadded();
             Navigator.pop(context);
           },
           color: Colors.red,
@@ -569,6 +570,7 @@ class _Lease_tableState extends State<Lease_table> {
                             futureLease = LeaseRepository().fetchLease("");
                             //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
                           });
+                          fetchLeaseadded();
                         }
                       } else {
                         _showAlertforLimit(context);

@@ -33,7 +33,8 @@ class Workorder_summery extends StatefulWidget {
 
 class _Workorder_summeryState extends State<Workorder_summery>
     with SingleTickerProviderStateMixin {
-  List<String> applicantCheckedChecklist = [
+  List<String> applicantCheckedChecklist =
+  [
     "CreditCheck",
     "EmploymentVerification",
     "ApplicationFee",
