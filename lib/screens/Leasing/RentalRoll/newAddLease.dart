@@ -5099,7 +5099,7 @@ class _AddTenantState extends State<AddTenant> {
       });
     }
   }
-
+  List<Tenant> selectedTenantsTemp = [];
   //
   // void filterOwners(String query) {
   //   setState(() {
@@ -5120,7 +5120,7 @@ class _AddTenantState extends State<AddTenant> {
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              height: 10,
+              height: 20,
             ),
             //checked
             Row(
@@ -5140,6 +5140,8 @@ class _AddTenantState extends State<AddTenant> {
                         : Colors.black,
                   ),
                 ),
+                SizedBox(width: 5,),
+                Text("Choose an existing Tenant")
               ],
             ),
             SizedBox(
@@ -5148,112 +5150,101 @@ class _AddTenantState extends State<AddTenant> {
             isChecked
                 ?
             Column(
-                    children: [
-                      SizedBox(height: 16.0),
+              children: [
+                SizedBox(height: 10.0),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: Colors.grey),
+                  ),
+                  child: DataTable(
+                    columns: [
+                      DataColumn(label: Text('Tenant Name')),
+                      DataColumn(label: Text('Select')),
+                    ],
+                    rows: filteredTenants.map((tenant) {
+                      // Check if the tenant is temporarily selected
+                      final isSelected = selectedTenantsTemp.contains(tenant);
 
-                      SizedBox(height: 16.0),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          border: Border.all(color: Colors.grey),
-                        ),
-                        child: DataTable(
-                          columns: [
-                            DataColumn(label: Text('Tenant Name')),
-                            DataColumn(label: Text('Select')),
-                          ],
-                          rows: filteredTenants.map((tenant) {
-                            /* final isSelected = Provider.of<SelectedTenantsProvider>(context)
-                                .selectedTenants
-                                .contains(tenant);*/
-                            final matchingTenants =
-                                Provider.of<SelectedTenantsProvider>(context)
-                                    .selectedTenants
-                                    .where((test) =>
-                                        test.tenantFirstName ==
-                                        tenant.tenantFirstName)
-                                    .toList();
-                            print(matchingTenants);
-                            final isSelected =
-                                matchingTenants.length > 0 ? true : false;
-                            return DataRow(
-                              cells: [
-                                DataCell(
-                                  Text(
-                                      '${tenant.tenantFirstName} ${tenant.tenantLastName}'),
-                                ),
-                                DataCell(
-                                  SizedBox(
-                                    height: 24,
-                                    width: 24,
-                                    child: Checkbox(
-                                      value: isSelected,
-                                      onChanged: (bool? value) {
-                                        if (value!) {
-                                          selectedTenantsProvider
-                                              .addTenant(tenant);
-                                        } else {
-                                          selectedTenantsProvider
-                                              .removeTenant(tenant);
-                                        }
-                                        setState(() {});
-                                        /* if (value) {
-                                      selectedTenantsProvider.addTenant(tenant);
+                      return DataRow(
+                        cells: [
+                          DataCell(
+                            Text('${tenant.tenantFirstName} ${tenant.tenantLastName}'),
+                          ),
+                          DataCell(
+                            SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: Checkbox(
+                                value: isSelected,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    if (value!) {
+                                      // Add tenant to temporary list
+                                      selectedTenantsTemp.add(tenant);
                                     } else {
-                                      selectedTenantsProvider.removeTenant(tenant);
-                                    }*/
-                                      },
-                                      activeColor:
-                                          Color.fromRGBO(21, 43, 81, 1),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                      SizedBox(height: 16.0),
-                      Row(
-                        children: [
-                          SizedBox(width: 2,),
-                          GestureDetector(
-                            onTap: (){
-                             Navigator.pop(context);
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(5.0),
-                              child: Container(
-                                height: 40.0,
-                                width: 90,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  color: const Color.fromRGBO(21, 43, 81, 1),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      offset: Offset(0.0, 1.0), //(x,y)
-                                      blurRadius: 6.0,
-                                    ),
-                                  ],
-                                ),
-                                child:  Center(
-                                  child: Text(
-                                    "Add",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                ),
+                                      // Remove tenant from temporary list
+                                      selectedTenantsTemp.remove(tenant);
+                                    }
+                                  });
+                                },
+                                activeColor: Color.fromRGBO(21, 43, 81, 1),
                               ),
                             ),
                           ),
                         ],
+                      );
+                    }).toList(),
+                  ),
+                ),
+                SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    SizedBox(width: 2,),
+                    GestureDetector(
+                      onTap: () {
+                        // When the Add button is clicked, update the provider with selected tenants
+                        setState(() {
+                          for (var tenant in selectedTenantsTemp) {
+                            selectedTenantsProvider.addTenant(tenant);
+                          }
+                          // Clear the temporary list after adding
+                          selectedTenantsTemp.clear();
+                        });
+                        Navigator.pop(context); // Close the dialog or screen after adding
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5.0),
+                        child: Container(
+                          height: 40.0,
+                          width: 90,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5.0),
+                            color: const Color.fromRGBO(21, 43, 81, 1),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.grey,
+                                offset: Offset(0.0, 1.0), //(x,y)
+                                blurRadius: 6.0,
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Add",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16),
+                            ),
+                          ),
+                        ),
                       ),
-
-                    ],
-                  )
+                    ),
+                  ],
+                ),
+              ],
+            )
                 :
             Column(
               children: [

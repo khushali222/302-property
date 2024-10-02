@@ -1123,35 +1123,28 @@ class _enterChargeState extends State<enterCharge> {
                                           style: TextStyle(fontSize: 14),
                                           value: row['account'],
                                           items: [
-                                            ...categorizedData.entries
-                                                .expand((entry) {
+                                            ...categorizedData.entries.expand((entry) {
                                               return [
                                                 DropdownMenuItem<String>(
                                                   enabled: false,
                                                   child: Text(
                                                     entry.key,
                                                     style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1),
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Color.fromRGBO(21, 43, 81, 1),
                                                     ),
                                                   ),
                                                 ),
                                                 ...entry.value.map((item) {
-                                                  return DropdownMenuItem<
-                                                      String>(
+                                                  return DropdownMenuItem<String>(
                                                     value: item,
                                                     child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 0.0),
+                                                      padding: const EdgeInsets.only(left: 0.0),
                                                       child: Text(
                                                         item,
                                                         style: const TextStyle(
                                                           color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.w400,
+                                                          fontWeight: FontWeight.w400,
                                                         ),
                                                       ),
                                                     ),
@@ -1159,31 +1152,49 @@ class _enterChargeState extends State<enterCharge> {
                                                 }).toList(),
                                               ];
                                             }).toList(),
+                                            // Add an "Other" category if the selected account is not in the list
+                                            if (row['account'] != null && !categorizedData.values.expand((v) => v).contains(row['account']))
+                                              DropdownMenuItem<String>(
+                                                value: row['account'],
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(left: 0.0),
+                                                  child: Text(
+                                                    row['account']!,
+                                                    style: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight: FontWeight.w400,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
                                           ],
                                           onChanged: (value) {
                                             String? chargeType;
-                                            for (var entry
-                                                in categorizedData.entries) {
+                                            // Find the charge type for the selected account
+                                            for (var entry in categorizedData.entries) {
                                               if (entry.value.contains(value)) {
                                                 chargeType = entry.key;
                                                 break;
                                               }
                                             }
 
+                                            // If the value is not in the list, assign it to "Uncategorized" or any custom group
+                                            if (chargeType == null && value != null) {
+                                              chargeType = 'Uncategorized';
+                                              categorizedData.putIfAbsent(chargeType, () => []).add(value);
+                                            }
+
                                             setState(() {
                                               rows[index]['account'] = value;
-                                              rows[index]['charge_type'] =
-                                                  chargeType;
+                                              rows[index]['charge_type'] = chargeType;
                                             });
                                           },
                                           buttonStyleData: ButtonStyleData(
                                             height: 50,
                                             width: 220,
-                                            padding: const EdgeInsets.only(
-                                                left: 8, right: 5),
+                                            padding: const EdgeInsets.only(left: 8, right: 5),
                                             decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
+                                              borderRadius: BorderRadius.circular(6),
                                               color: Colors.white,
                                             ),
                                             elevation: 2,
@@ -1197,23 +1208,20 @@ class _enterChargeState extends State<enterCharge> {
                                           dropdownStyleData: DropdownStyleData(
                                             width: 250,
                                             decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
+                                              borderRadius: BorderRadius.circular(6),
                                               color: Colors.white,
                                             ),
                                             scrollbarTheme: ScrollbarThemeData(
                                               radius: const Radius.circular(6),
-                                              thickness:
-                                                  MaterialStateProperty.all(6),
-                                              thumbVisibility:
-                                                  MaterialStateProperty.all(
-                                                      true),
+                                              thickness: MaterialStateProperty.all(6),
+                                              thumbVisibility: MaterialStateProperty.all(true),
                                             ),
                                           ),
                                           hint: const Text('Select an account'),
                                         ),
                                       ),
                                     ),
+
                                     Container(
                                       margin: EdgeInsets.only(top: 5),
                                       child: Padding(

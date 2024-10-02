@@ -1308,13 +1308,13 @@ class _FinancialTableState extends State<FinancialTable> {
               const SizedBox(
                 height: 10,
               ),
-              widget.status == 'Active'
-                  ? Padding(
+
+                   Padding(
                       padding: const EdgeInsets.only(right: 16.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          if (!isFreePlan)
+                          if (!isFreePlan && widget.status == 'Active')
                             Container(
                                 height: MediaQuery.of(context).size.width < 500
                                     ? 36
@@ -1395,6 +1395,7 @@ class _FinancialTableState extends State<FinancialTable> {
                           SizedBox(
                             width: 5,
                           ),
+                          if (widget.status == 'Active')
                           Container(
                               height: MediaQuery.of(context).size.width < 500
                                   ? 34
@@ -1436,8 +1437,8 @@ class _FinancialTableState extends State<FinancialTable> {
                                   ))),
                         ],
                       ),
-                    )
-                  : Container(),
+                    ),
+
               const SizedBox(
                 height: 6,
               ),
@@ -1466,6 +1467,7 @@ class _FinancialTableState extends State<FinancialTable> {
                               const SizedBox(
                                 height: 6,
                               ),
+
                               Expanded(
                                 flex: 0,
                                 child: Padding(
