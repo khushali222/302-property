@@ -595,7 +595,7 @@ class _Applicants_tableState extends State<Applicants_table> {
     });
     final jsonData = json.decode(response.body);
     print(jsonData);
-    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 200) {
+    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
       print("error ${applicantCount}");
       print("error ${applicantCountLimit}");
       setState(() {
@@ -650,7 +650,6 @@ class _Applicants_tableState extends State<Applicants_table> {
       ],
     ).show();
   }
-
   final _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
@@ -785,7 +784,9 @@ class _Applicants_tableState extends State<Applicants_table> {
                     ),
                   ),
                   const Spacer(),
-                  Row(
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
                         'Added : ${applicantCount.toString()}',
@@ -794,7 +795,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF8A95A8),
                           fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
                         ),
                       ),
                       const SizedBox(
@@ -808,13 +809,13 @@ class _Applicants_tableState extends State<Applicants_table> {
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF8A95A8),
                           fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
                         ),
                       ),
                     ],
                   ),
                   if (MediaQuery.of(context).size.width < 500)
-                    const SizedBox(width: 5),
+                    const SizedBox(width: 8),
                   if (MediaQuery.of(context).size.width > 500)
                     const SizedBox(width: 25),
                 ],

@@ -707,7 +707,9 @@ class _Vendor_tableState extends State<Vendor_table> {
                     ),
                   ),
                   Spacer(),
-                  Row(
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
                         'Added : ${vendorCount.toString()}',
@@ -716,7 +718,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF8A95A8),
                           fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
                         ),
                       ),
                       const SizedBox(
@@ -730,7 +732,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF8A95A8),
                           fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
                         ),
                       ),
                     ],

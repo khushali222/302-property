@@ -681,7 +681,9 @@ class _Lease_tableState extends State<Lease_table> {
                     ),
                   ),
                   Spacer(),
-                  Row(
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
                         'Added : ${leaseCount.toString()}',
@@ -689,7 +691,7 @@ class _Lease_tableState extends State<Lease_table> {
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF8A95A8),
                           fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
                         ),
                       ),
                       SizedBox(
@@ -697,18 +699,18 @@ class _Lease_tableState extends State<Lease_table> {
                       ),
                       //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
                       Text(
-                        'Total: ${leaseCountLimit.toString()}',
+                        'Total : ${leaseCountLimit.toString()}',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF8A95A8),
                           fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
                         ),
                       ),
                     ],
                   ),
                   if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 5),
+                    SizedBox(width: 8),
                   if (MediaQuery.of(context).size.width > 500)
                     SizedBox(width: 25),
                 ],

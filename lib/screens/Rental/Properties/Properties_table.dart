@@ -773,7 +773,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return ColabShimmerLoadingWidget();
-
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                      return Container(
                         height: MediaQuery.of(context).size.height * .5,

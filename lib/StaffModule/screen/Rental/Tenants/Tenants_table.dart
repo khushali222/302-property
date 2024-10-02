@@ -743,7 +743,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                     SizedBox(width: 2),
                   if (MediaQuery.of(context).size.width > 500)
                     SizedBox(width: 24),
-                  Material(
+                   Material(
                     elevation: 3,
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
@@ -797,7 +797,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                       ),
                     ),
                   ),
-                  Spacer(),
+                   Spacer(),
                   // Row(
                   //   children: [
                   //     Text(
@@ -824,18 +824,36 @@ class _Tenants_tableState extends State<Tenants_table> {
                   //     ),
                   //   ],
                   // ),
-                  Expanded(
-                    child: Container(
-                      child: Text(
-                        'Added : ${rentalCount.toString()} Total: ${propertyCountLimit.toString()}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF8A95A8),
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        child: Text(
+                          'Added : ${rentalCount.toString()}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF8A95A8),
+                            fontSize:
+                            MediaQuery.of(context).size.width < 500 ? 14 : 21,
+                          ),
                         ),
                       ),
-                    ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Container(
+                        child: Text(
+                          'Total : ${propertyCountLimit.toString()}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF8A95A8),
+                            fontSize:
+                            MediaQuery.of(context).size.width < 500 ? 14 : 21,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   if (MediaQuery.of(context).size.width < 500)
                     SizedBox(width: 5),
