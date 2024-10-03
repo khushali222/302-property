@@ -164,7 +164,7 @@ class _PropertyTableState extends State<PropertyTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Subtypes", style: TextStyle(color: Colors.white)),
+                    Text("  Subtypes", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
@@ -212,7 +212,7 @@ class _PropertyTableState extends State<PropertyTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Created At", style: TextStyle(color: Colors.white)),
+                    Text("  Created At", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     ascending3
                         ? Padding(

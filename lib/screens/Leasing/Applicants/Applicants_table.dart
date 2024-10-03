@@ -788,7 +788,9 @@ class _Applicants_tableState extends State<Applicants_table> {
                     ),
                   ),
                   const Spacer(),
-                  Row(
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
                         'Added : ${applicantCount.toString()}',
@@ -797,7 +799,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF8A95A8),
                           fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
                         ),
                       ),
                       const SizedBox(
@@ -811,13 +813,13 @@ class _Applicants_tableState extends State<Applicants_table> {
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF8A95A8),
                           fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
                         ),
                       ),
                     ],
                   ),
                   if (MediaQuery.of(context).size.width < 500)
-                    const SizedBox(width: 5),
+                    const SizedBox(width: 8),
                   if (MediaQuery.of(context).size.width > 500)
                     const SizedBox(width: 25),
                 ],

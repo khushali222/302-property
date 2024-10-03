@@ -2636,7 +2636,20 @@ class _Summery_pageState extends State<Summery_page>
             } else {
               List<TenantData> tenants = snapshot.data ?? [];
               if (snapshot.data!.length == 0) {
-                return Center(child: Text("No Data Availabel"));
+                return Container(
+                  height: MediaQuery.of(context).size.height * .5,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
+                        SizedBox(height: 10,),
+                        Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                      ],
+                    ),
+                  ),
+                );
               }
               return isTablet
                   ? SingleChildScrollView(
@@ -8443,7 +8456,7 @@ class _Summery_pageState extends State<Summery_page>
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12.0))),
                             onPressed: () async {
-                              var data = Properies_summery_Repo()
+                              var data = await Properies_summery_Repo()
                                   .Deleteunit(unitId: unit?.unitId!);
                               // Add your delete logic here
                               setState(() {

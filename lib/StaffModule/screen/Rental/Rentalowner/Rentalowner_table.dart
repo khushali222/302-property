@@ -518,7 +518,9 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                     ),
                   ),
                   Spacer(),
-                  Row(
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
                         'Added : ${rentalownerCount.toString()}',
@@ -526,7 +528,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF8A95A8),
                           fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
                         ),
                       ),
                       SizedBox(
@@ -539,7 +541,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF8A95A8),
                           fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
                         ),
                       ),
                     ],

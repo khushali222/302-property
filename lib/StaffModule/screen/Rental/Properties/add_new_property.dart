@@ -360,33 +360,59 @@ class _Add_new_propertyState extends State<Add_new_property> {
   }
 
   Widget customTextField(String label, TextEditingController Controller) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 1),
-      child: TextFormField(
-        controller: Controller,
-        cursorColor: Colors.black,
-        decoration: InputDecoration(
-          hintText: label,
-          // labelText: label,
-          // labelStyle: TextStyle(color: Colors.grey[700]),
-          filled: true,
-          fillColor: Colors.white,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(3),
-            borderSide: BorderSide.none,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(3),
-            borderSide: BorderSide(color: Color(0xFF8A95A8)),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(3),
-            borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
-          ),
-          contentPadding:
-              EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-        ),
-      ),
+    return FormField<String>(
+      validator: (value) {
+        if (Controller.text.isEmpty) {
+          return 'required';
+        }
+        return null;
+      },
+      builder: (FormFieldState<String> state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: TextFormField(
+                controller: Controller,
+                cursorColor: Colors.black,
+                decoration: InputDecoration(
+                  hintText: label,
+                  // labelText: label,
+                  // labelStyle: TextStyle(color: Colors.grey[700]),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Color(0xFF8A95A8)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
+                  ),
+                  contentPadding:
+                  EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                ),
+              ),
+            ),
+            if (state.hasError)
+              Padding(
+                padding: const EdgeInsets.only(left: 5, top: 4),
+                child: Text(
+                  state.errorText!,
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 
@@ -397,9 +423,15 @@ class _Add_new_propertyState extends State<Add_new_property> {
           children: [
             Row(
               children: [
+                SizedBox(
+                  width: 5,
+                ),
                 Text(
                   'Photo',
-                  style: TextStyle(color: Colors.black),
+                  style: TextStyle(
+                      color: blueColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18),
                 ),
               ],
             ),
@@ -410,12 +442,13 @@ class _Add_new_propertyState extends State<Add_new_property> {
                   onTap: () {
                     getImage(index).then((_) {
                       setState(
-                          () {}); // Rebuild the widget after selecting the image
+                              () {}); // Rebuild the widget after selecting the image
                     });
                   },
-                  child: Text(
-                    '+ Add',
-                    style: TextStyle(color: Colors.green),
+                  child: Image.asset(
+                    'assets/images/addimage.png',
+                    height: 50,
+                    width: 50,
                   ),
                 ),
               ],
@@ -424,6 +457,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
             if (propertyGroupImages[index] != null)
               Column(
                 children: [
+                  // Text(
+                  //   '+ Add',
+                  //   style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 18),
+                  // ),
                   Row(
                     children: [
                       SizedBox(
@@ -433,7 +470,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                         onTap: () {
                           setState(() {
                             propertyGroupImages[index] =
-                                null; // Clear the selected image
+                            null; // Clear the selected image
                           });
                         },
                         child: Icon(
@@ -3412,7 +3449,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
                         border:
-                            Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                        Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.only(
@@ -3427,7 +3464,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 Text(
                                   'RECIDENTIAL UNIT',
                                   style: TextStyle(
-                                    color: Colors.grey,
+                                    color: blueColor,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -3445,7 +3483,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 Text(
                                   'Enter Recidential Units',
                                   style: TextStyle(
-                                    color: Colors.black,
+                                    color: blueColor,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -3459,17 +3497,17 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     child: Column(
                                       children: propertyGroups.map((group) {
                                         int index =
-                                            propertyGroups.indexOf(group);
+                                        propertyGroups.indexOf(group);
                                         return Padding(
                                           padding: const EdgeInsets.only(
                                               left: 16, right: 16),
                                           child: Column(
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                             children: [
                                               Align(
                                                 alignment:
-                                                    Alignment.centerRight,
+                                                Alignment.centerRight,
                                                 child: InkWell(
                                                   onTap: () =>
                                                       removePropertyGroup(
@@ -3488,6 +3526,9 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   ),
                                 ],
                               ),
+                            SizedBox(
+                              height: 15,
+                            ),
                             GestureDetector(
                               onTap: () {
                                 // if (selectedProperty != null) {
@@ -3500,38 +3541,31 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   SizedBox(
                                       width: MediaQuery.of(context).size.width *
                                           0.02),
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                    //  border: Border.all(color:  Color.fromRGBO(21, 43, 81, 1)),
-                                    child: Container(
-                                      height: 30,
-                                      width: MediaQuery.of(context).size.width *
-                                          .3,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        // borderRadius: BorderRadius.circular(3),
-                                        borderRadius:
-                                            BorderRadius.circular(5.0),
-                                        border: Border.all(
+                                  Container(
+                                    height: 40,
+                                    width:
+                                    MediaQuery.of(context).size.width * .35,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      // borderRadius: BorderRadius.circular(3),
+                                      borderRadius: BorderRadius.circular(5.0),
+                                      border: Border.all(color: blueColor),
+                                      // boxShadow: [
+                                      //   BoxShadow(
+                                      //     color: Colors.grey,
+                                      //     offset: Offset(0.0, 1.0), //(x,y)
+                                      //     blurRadius: 6.0,
+                                      //   ),
+                                      // ],
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Add another unit",
+                                        style: TextStyle(
                                             color:
-                                                Color.fromRGBO(21, 43, 81, 1)),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey,
-                                            offset: Offset(0.0, 1.0), //(x,y)
-                                            blurRadius: 6.0,
-                                          ),
-                                        ],
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Add another unit",
-                                          style: TextStyle(
-                                              color:
-                                                  Color.fromRGBO(21, 43, 81, 1),
-                                              // fontWeight: FontWeight.bold,
-                                              fontSize: 13),
-                                        ),
+                                            Color.fromRGBO(21, 43, 81, 1),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15),
                                       ),
                                     ),
                                   ),
@@ -3553,7 +3587,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
                         border:
-                            Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                        Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
                       ),
                       child: Padding(
                           padding: const EdgeInsets.only(
@@ -3568,8 +3602,9 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   Text(
                                     'COMMERCIAL UNIT',
                                     style: TextStyle(
-                                      color: Colors.grey,
+                                      color: blueColor,
                                       fontWeight: FontWeight.bold,
+                                      fontSize: 16,
                                     ),
                                   ),
                                   SizedBox(
@@ -3586,96 +3621,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   Text(
                                     'Enter Commercial Units',
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: blueColor,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ],
                               ),
-                              //SizedBox(height: 16.0),
-                              // Column(
-                              //   children: [
-                              //     Row(
-                              //       children: [
-                              //         Spacer(),
-                              //         IconButton(
-                              //           icon: Icon(Icons.close),
-                              //           onPressed: () {
-                              //             // setState(() {
-                              //             //   units.removeAt(index);
-                              //             // });
-                              //           },
-                              //         ),
-                              //         SizedBox(
-                              //           width: 10,
-                              //         ),
-                              //       ],
-                              //     ),
-                              //     Row(
-                              //       children: [
-                              //         SizedBox(
-                              //           width: 10,
-                              //         ),
-                              //         Expanded(
-                              //           child: TextFormField(
-                              //             decoration: InputDecoration(
-                              //               labelText: 'SQft *',
-                              //               border: OutlineInputBorder(),
-                              //             ),
-                              //             validator: (value) {
-                              //               if (value == null ||
-                              //                   value.isEmpty) {
-                              //                 return 'Please enter the unit';
-                              //               }
-                              //               return null;
-                              //             },
-                              //           ),
-                              //         ),
-                              //         SizedBox(
-                              //           width: 10,
-                              //         ),
-                              //       ],
-                              //     ),
-                              //   ],
-                              // ),
-                              //SizedBox(height: 16.0),
-                              //  if (selectedIsMultiUnit?.isMultiunit == true)
-                              //   Visibility(
-                              //     visible: selectedIsMultiUnit == true,
-                              //     child: Row(
-                              //       children: [
-                              //         Expanded(
-                              //           child: TextFormField(
-                              //             decoration: InputDecoration(
-                              //               labelText: 'Unit Address',
-                              //               border: OutlineInputBorder(),
-                              //             ),
-                              //             validator: (value) {
-                              //               if (value == null || value.isEmpty) {
-                              //                 return 'Please enter the unit address';
-                              //               }
-                              //               return null;
-                              //             },
-                              //           ),
-                              //         ),
-                              //         SizedBox(width: 16.0),
-                              //         Expanded(
-                              //           child: TextFormField(
-                              //             decoration: InputDecoration(
-                              //               labelText: 'SQFT *',
-                              //               border: OutlineInputBorder(),
-                              //             ),
-                              //             validator: (value) {
-                              //               if (value == null || value.isEmpty) {
-                              //                 return 'Please enter the square footage';
-                              //               }
-                              //               return null;
-                              //             },
-                              //           ),
-                              //         ),
-                              //       ],
-                              //     ),
-                              //   ),
                               if (propertyGroups.isNotEmpty)
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -3684,17 +3635,17 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                       child: Column(
                                         children: propertyGroups.map((group) {
                                           int index =
-                                              propertyGroups.indexOf(group);
+                                          propertyGroups.indexOf(group);
                                           return Padding(
                                             padding: const EdgeInsets.only(
                                                 left: 16, right: 16),
                                             child: Column(
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                               children: [
                                                 Align(
                                                   alignment:
-                                                      Alignment.centerRight,
+                                                  Alignment.centerRight,
                                                   child: InkWell(
                                                     onTap: () =>
                                                         removePropertyGroup(
@@ -3713,6 +3664,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     ),
                                   ],
                                 ),
+                              SizedBox(height: 15),
                               GestureDetector(
                                 onTap: () {
                                   addPropertyGroup();
@@ -3721,41 +3673,34 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   children: [
                                     SizedBox(
                                         width:
-                                            MediaQuery.of(context).size.width *
-                                                0.01),
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(5.0),
-                                      //  border: Border.all(color:  Color.fromRGBO(21, 43, 81, 1)),
-                                      child: Container(
-                                        height: 30,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .3,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          // borderRadius: BorderRadius.circular(3),
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          border: Border.all(
-                                              color: Color.fromRGBO(
-                                                  21, 43, 81, 1)),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.grey,
-                                              offset: Offset(0.0, 1.0), //(x,y)
-                                              blurRadius: 6.0,
-                                            ),
-                                          ],
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            "Add another unit",
-                                            style: TextStyle(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1),
-                                                // fontWeight: FontWeight.bold,
-                                                fontSize: 13),
-                                          ),
+                                        MediaQuery.of(context).size.width *
+                                            0.02),
+                                    Container(
+                                      height: 40,
+                                      width: MediaQuery.of(context).size.width *
+                                          .35,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        // borderRadius: BorderRadius.circular(3),
+                                        borderRadius:
+                                        BorderRadius.circular(5.0),
+                                        border: Border.all(color: blueColor),
+                                        // boxShadow: [
+                                        //   BoxShadow(
+                                        //     color: Colors.grey,
+                                        //     offset: Offset(0.0, 1.0), //(x,y)
+                                        //     blurRadius: 6.0,
+                                        //   ),
+                                        // ],
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "Add another unit",
+                                          style: TextStyle(
+                                              color:
+                                              Color.fromRGBO(21, 43, 81, 1),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15),
                                         ),
                                       ),
                                     ),
@@ -3777,258 +3722,268 @@ class _Add_new_propertyState extends State<Add_new_property> {
                   children: [
                     SizedBox(width: MediaQuery.of(context).size.width * 0.01),
                     GestureDetector(
-                      onTap: () async {
-                        //  final ownerDetails = Provider.of<OwnerDetailsProvider>(context).OwnerDetails;
-                        /*  List<ProcessorLists> selectedProcessors = _processorGroups
+                      onTap: () async
+                      {
+                        if (_formKey.currentState!.validate()) {
+
+                            //  final ownerDetails = Provider.of<OwnerDetailsProvider>(context).OwnerDetails;
+                            /*  List<ProcessorLists> selectedProcessors = _processorGroups
                             .where((group) => group.isChecked)
                             .map((group) => ProcessorLists(processorId: group.controller.text.trim())) // Create ProcessorList objects
                             .where((processor) => processor.processorId!.isNotEmpty) // Filter out empty IDs
                             .toList();*/
-                        if (selectedProperty == null) {
-                          setState(() {
-                            showError = true;
-                          });
-                        } else {
-                          setState(() {
-                            showError = false;
-                          });
-                        }
-                        if (address.text.isEmpty) {
-                          setState(() {
-                            addresserror = true;
-                            addressmessage = "required";
-                          });
-                        } else {
-                          setState(() {
-                            addresserror = false;
-                          });
-                        }
-                        if (city.text.isEmpty) {
-                          setState(() {
-                            cityerror = true;
-                            citymessage = "required";
-                          });
-                        } else {
-                          setState(() {
-                            cityerror = false;
-                          });
-                        }
-                        if (state.text.isEmpty) {
-                          setState(() {
-                            stateerror = true;
-                            statemessage = "required";
-                          });
-                        } else {
-                          setState(() {
-                            stateerror = false;
-                          });
-                        }
-                        if (country.text.isEmpty) {
-                          setState(() {
-                            countryerror = true;
-                            countrymessage = "required";
-                          });
-                        } else {
-                          setState(() {
-                            countryerror = false;
-                          });
-                        }
-                        if (postalcode.text.isEmpty) {
-                          setState(() {
-                            postalcodeerror = true;
-                            postalcodemessage = "required";
-                          });
-                        } else {
-                          setState(() {
-                            postalcodeerror = false;
-                          });
-                        }
-                        if (Ownersdetails == null) {
-                          setState(() {
-                            hasError = true;
-                            postalcodemessage = "required";
-                          });
-                        } else {
-                          setState(() {
-                            hasError = false;
-                          });
-                        }
-                        if (!addresserror &&
-                            !cityerror &&
-                            !stateerror &&
-                            !countryerror &&
-                            !postalcodeerror &&
-                            !hasError) {
-                          setState(() {
-                            loading = true;
-                          });
-                          print(selectedpropertytypedata!.propertyId);
-                          RentalOwner? ownerDetails =
-                              context.read<OwnerDetailsProvider>().ownerDetails;
-                          String processorId = context
+                            if (selectedProperty == null) {
+                              setState(() {
+                                showError = true;
+                              });
+                            } else {
+                              setState(() {
+                                showError = false;
+                              });
+                            }
+                            if (address.text.isEmpty) {
+                              setState(() {
+                                addresserror = true;
+                                addressmessage = "required";
+                              });
+                            } else {
+                              setState(() {
+                                addresserror = false;
+                              });
+                            }
+                            if (city.text.isEmpty) {
+                              setState(() {
+                                cityerror = true;
+                                citymessage = "required";
+                              });
+                            } else {
+                              setState(() {
+                                cityerror = false;
+                              });
+                            }
+                            if (state.text.isEmpty) {
+                              setState(() {
+                                stateerror = true;
+                                statemessage = "required";
+                              });
+                            } else {
+                              setState(() {
+                                stateerror = false;
+                              });
+                            }
+                            if (country.text.isEmpty) {
+                              setState(() {
+                                countryerror = true;
+                                countrymessage = "required";
+                              });
+                            } else {
+                              setState(() {
+                                countryerror = false;
+                              });
+                            }
+                            if (postalcode.text.isEmpty) {
+                              setState(() {
+                                postalcodeerror = true;
+                                postalcodemessage = "required";
+                              });
+                            } else {
+                              setState(() {
+                                postalcodeerror = false;
+                              });
+                            }
+                            if (Ownersdetails == null) {
+                              setState(() {
+                                hasError = true;
+                                postalcodemessage = "required";
+                              });
+                            } else {
+                              setState(() {
+                                hasError = false;
+                              });
+                            }
+                            if (!addresserror &&
+                                !cityerror &&
+                                !stateerror &&
+                                !countryerror &&
+                                !postalcodeerror &&
+                                !hasError) {
+                              setState(() {
+                                loading = true;
+                              });
+                              print(selectedpropertytypedata!.propertyId);
+                              RentalOwner? ownerDetails =
+                                  context.read<OwnerDetailsProvider>().ownerDetails;
+                              String processorId = context
                                   .read<OwnerDetailsProvider>()
                                   .selectedprocessorlist ??
-                              "";
-                          List<Map<String, String>> processorIds =
+                                  "";
+                              List<Map<String, String>> processorIds =
                               ownerDetails!.processorList!.map((processor) {
-                            return {
-                              'processor_id': processor.processorId ?? "",
-                            };
-                          }).toList();
-                          SharedPreferences prefs =
+                                return {
+                                  'processor_id': processor.processorId ?? "",
+                                };
+                              }).toList();
+                              SharedPreferences prefs =
                               await SharedPreferences.getInstance();
-                          String? adminId = prefs.getString("adminId");
-                          final updatedOwner = RentalOwner(
-                            rentalOwnerId: ownerDetails!.rentalOwnerId ?? null,
-                            rentalOwnerName: firstnameController.text,
-                            rentalOwnerCompanyName: comnameController.text,
-                            rentalOwnerPrimaryEmail:
+                              String? adminId = prefs.getString("adminId");
+                              final updatedOwner = RentalOwner(
+                                rentalOwnerId: ownerDetails!.rentalOwnerId ?? null,
+                                rentalOwnerName: firstnameController.text,
+                                rentalOwnerCompanyName: comnameController.text,
+                                rentalOwnerPrimaryEmail:
                                 primaryemailController.text,
-                            rentalOwnerPhoneNumber: phonenumController.text,
-                            city: cityController.text,
-                            state: stateController.text,
-                            country: countyController.text,
-                            postalCode: codeController.text,
-                          );
-                          Provider.of<OwnerDetailsProvider>(context,
+                                rentalOwnerPhoneNumber: phonenumController.text,
+                                city: cityController.text,
+                                state: stateController.text,
+                                country: countyController.text,
+                                postalCode: codeController.text,
+                              );
+                              Provider.of<OwnerDetailsProvider>(context,
                                   listen: false)
-                              .setOwnerDetails(updatedOwner);
-                          RentalOwners owners = RentalOwners(
-                            rentalownersid: updatedOwner.rentalOwnerId,
-                            adminId: adminId,
-                            firstName: updatedOwner.rentalOwnerName,
-                            companyName: updatedOwner.rentalOwnerCompanyName,
-                            primaryEmail: updatedOwner.rentalOwnerPrimaryEmail,
-                            phoneNumber: updatedOwner.rentalOwnerPhoneNumber,
-                            city: updatedOwner.city,
-                            state: updatedOwner.state,
-                            country: updatedOwner.country,
-                            postalCode: updatedOwner.postalCode,
-                            processorid: processorIds!,
-                          );
-                          if (adminId != null) {
-                            //  try {
-                            Rental rentals = Rental(
+                                  .setOwnerDetails(updatedOwner);
+                              RentalOwners owners = RentalOwners(
+                                rentalownersid: updatedOwner.rentalOwnerId,
                                 adminId: adminId,
-                                propertyId:
+                                firstName: updatedOwner.rentalOwnerName,
+                                companyName: updatedOwner.rentalOwnerCompanyName,
+                                primaryEmail: updatedOwner.rentalOwnerPrimaryEmail,
+                                phoneNumber: updatedOwner.rentalOwnerPhoneNumber,
+                                city: updatedOwner.city,
+                                state: updatedOwner.state,
+                                country: updatedOwner.country,
+                                postalCode: updatedOwner.postalCode,
+                                processorid: processorIds!,
+                              );
+                              if (adminId != null) {
+                                //  try {
+                                Rental rentals = Rental(
+                                    adminId: adminId,
+                                    propertyId:
                                     selectedpropertytypedata!.propertyId,
-                                address: address.text,
-                                city: city.text,
-                                state: state.text,
-                                country: country.text,
-                                postcode: postalcode.text,
-                                staffMemberId: sid,
-                                processor_id: processorId);
-                            List<Unit> units = [];
-                            if (propertyGroupControllers.isNotEmpty) {
-                              List<TextEditingController> firstControllers =
+                                    address: address.text,
+                                    city: city.text,
+                                    state: state.text,
+                                    country: country.text,
+                                    postcode: postalcode.text,
+                                    staffMemberId: sid,
+                                    processor_id: processorId);
+                                List<Unit> units = [];
+                                if (propertyGroupControllers.isNotEmpty) {
+                                  List<TextEditingController> firstControllers =
                                   propertyGroupControllers[0];
-                              bool isFirstBlank = firstControllers.every(
-                                  (controller) => controller.text.isEmpty);
+                                  bool isFirstBlank = firstControllers.every(
+                                          (controller) => controller.text.isEmpty);
 
-                              if (isFirstBlank) {
-                                propertyGroupControllers.removeAt(0);
+                                  if (isFirstBlank) {
+                                    propertyGroupControllers.removeAt(0);
+                                  }
+                                }
+                                if (selectedpropertytype == 'Commercial' &&
+                                    selectedIsMultiUnit == true) {
+                                  for (int i = 0;
+                                  i < propertyGroupControllers.length;
+                                  i++) {
+                                    if (units.length <= i) {
+                                      units.add(Unit());
+                                    }
+                                    List<TextEditingController> controllers =
+                                    propertyGroupControllers[i];
+                                    units[i].unit = controllers[0].text;
+                                    units[i].address = controllers[1].text;
+                                    units[i].sqft = controllers[2].text;
+                                    units[i].Image = propertyGroupImagenames[i];
+                                    //      units[i].bath = controllers[3].text;
+                                    //     units[i].bed = controllers[4].text;
+
+//                                  units[i].unit = controllers[0].text;
+                                  }
+                                } else if (selectedpropertytype == 'Residential' &&
+                                    selectedIsMultiUnit == true) {
+                                  for (int i = 0;
+                                  i < propertyGroupControllers.length;
+                                  i++) {
+                                    if (units.length <= i) {
+                                      units.add(Unit());
+                                    }
+                                    List<TextEditingController> controllers =
+                                    propertyGroupControllers[i];
+                                    units[i].unit = controllers[0].text;
+                                    units[i].address = controllers[1].text;
+                                    units[i].sqft = controllers[2].text;
+                                    units[i].bath = controllers[3].text;
+                                    units[i].bed = controllers[4].text;
+                                    units[i].Image = propertyGroupImagenames[i];
+//                                  units[i].unit = controllers[0].text;
+                                  }
+                                } else if (selectedpropertytype == 'Residential') {
+                                  for (int i = 0;
+                                  i < propertyGroupControllers.length;
+                                  i++) {
+                                    if (units.length <= i) {
+                                      units.add(Unit());
+                                    }
+                                    List<TextEditingController> controllers =
+                                    propertyGroupControllers[i];
+                                    print(controllers.length);
+                                    units[i].sqft = controllers[0].text;
+                                    units[i].bath = controllers[1].text;
+                                    units[i].bed = controllers[2].text;
+                                    units[i].Image = propertyGroupImagenames[i];
+//                                  units[i].unit = controllers[0].text;
+                                  }
+                                } else if (selectedpropertytype == 'Commercial') {
+                                  for (int i = 0;
+                                  i < propertyGroupControllers.length;
+                                  i++) {
+                                    if (units.length <= i) {
+                                      units.add(Unit());
+                                    }
+                                    List<TextEditingController> controllers =
+                                    propertyGroupControllers[i];
+                                    units[i].sqft = controllers[0].text;
+                                    units[i].Image = propertyGroupImagenames[i];
+                                    //units[i].address = controllers[1].text;
+                                    //units[i].sqft = controllers[2].text;
+//                                  units[i].unit = controllers[0].text;
+                                  }
+                                }
+                                RentalRequest rentalrequest = RentalRequest(
+                                    rentalOwner: owners,
+                                    rental: rentals,
+                                    units: units);
+                                await Rental_PropertiesRepository()
+                                    .createRental(rentalrequest)
+                                    .then((value) {
+                                  setState(() {
+                                    loading = false;
+                                  });
+                                  Navigator.of(context).pop(true);
+                                });
+
+                                // await  Rental_PropertiesRepository().addProperties(
+                                //   adminId: adminId!,
+                                //   property_id: widget.property?.propertyId,
+                                //   rental_adress: address.text,
+                                //   rental_city: city.text,
+                                //   rental_state: state.text,
+                                //   rental_country: country.text,
+                                //   rental_postcode: postalcode.text,
+                                //   staffmember_id: widget.staff!.staffmemberId,
+                                //   processor_id: proid.text,
+                                // );
+
+                                //  } catch (e) {
+                                //   print(e);
                               }
                             }
-                            if (selectedpropertytype == 'Commercial' &&
-                                selectedIsMultiUnit == true) {
-                              for (int i = 0;
-                                  i < propertyGroupControllers.length;
-                                  i++) {
-                                if (units.length <= i) {
-                                  units.add(Unit());
-                                }
-                                List<TextEditingController> controllers =
-                                    propertyGroupControllers[i];
-                                units[i].unit = controllers[0].text;
-                                units[i].address = controllers[1].text;
-                                units[i].sqft = controllers[2].text;
-                                units[i].Image = propertyGroupImagenames[i];
-                                //      units[i].bath = controllers[3].text;
-                                //     units[i].bed = controllers[4].text;
 
-//                                  units[i].unit = controllers[0].text;
-                              }
-                            } else if (selectedpropertytype == 'Residential' &&
-                                selectedIsMultiUnit == true) {
-                              for (int i = 0;
-                                  i < propertyGroupControllers.length;
-                                  i++) {
-                                if (units.length <= i) {
-                                  units.add(Unit());
-                                }
-                                List<TextEditingController> controllers =
-                                    propertyGroupControllers[i];
-                                units[i].unit = controllers[0].text;
-                                units[i].address = controllers[1].text;
-                                units[i].sqft = controllers[2].text;
-                                units[i].bath = controllers[3].text;
-                                units[i].bed = controllers[4].text;
-                                units[i].Image = propertyGroupImagenames[i];
-//                                  units[i].unit = controllers[0].text;
-                              }
-                            } else if (selectedpropertytype == 'Residential') {
-                              for (int i = 0;
-                                  i < propertyGroupControllers.length;
-                                  i++) {
-                                if (units.length <= i) {
-                                  units.add(Unit());
-                                }
-                                List<TextEditingController> controllers =
-                                    propertyGroupControllers[i];
-                                print(controllers.length);
-                                units[i].sqft = controllers[0].text;
-                                units[i].bath = controllers[1].text;
-                                units[i].bed = controllers[2].text;
-                                units[i].Image = propertyGroupImagenames[i];
-//                                  units[i].unit = controllers[0].text;
-                              }
-                            } else if (selectedpropertytype == 'Commercial') {
-                              for (int i = 0;
-                                  i < propertyGroupControllers.length;
-                                  i++) {
-                                if (units.length <= i) {
-                                  units.add(Unit());
-                                }
-                                List<TextEditingController> controllers =
-                                    propertyGroupControllers[i];
-                                units[i].sqft = controllers[0].text;
-                                units[i].Image = propertyGroupImagenames[i];
-                                //units[i].address = controllers[1].text;
-                                //units[i].sqft = controllers[2].text;
-//                                  units[i].unit = controllers[0].text;
-                              }
-                            }
-                            RentalRequest rentalrequest = RentalRequest(
-                                rentalOwner: owners,
-                                rental: rentals,
-                                units: units);
-                            await Rental_PropertiesRepository()
-                                .createRental(rentalrequest)
-                                .then((value) {
-                              setState(() {
-                                loading = false;
-                              });
-                              Navigator.of(context).pop(true);
-                            });
 
-                            // await  Rental_PropertiesRepository().addProperties(
-                            //   adminId: adminId!,
-                            //   property_id: widget.property?.propertyId,
-                            //   rental_adress: address.text,
-                            //   rental_city: city.text,
-                            //   rental_state: state.text,
-                            //   rental_country: country.text,
-                            //   rental_postcode: postalcode.text,
-                            //   staffmember_id: widget.staff!.staffmemberId,
-                            //   processor_id: proid.text,
-                            // );
 
-                            //  } catch (e) {
-                            //   print(e);
-                          }
-                        }
+                      } else {
+                      print('Form is invalid');
+                      }
                       },
+
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
                         child: Container(

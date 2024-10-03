@@ -151,6 +151,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.1,
             ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.1,
+            ),
             Image(
               image: AssetImage('assets/images/logo.png'),
               height: MediaQuery.of(context).size.height * 0.05,

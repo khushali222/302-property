@@ -545,15 +545,17 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                     ),
                   ),
                   Spacer(),
-                  Row(
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        'Added : ${rentalownerCount.toString()}',
+                        'Added : ${rentalownerCount.toString()} ',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF8A95A8),
                           fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
                         ),
                       ),
                       SizedBox(
@@ -561,12 +563,12 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                       ),
                       //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
                       Text(
-                        'Total: ${rentalOwnerCountLimit.toString()}',
+                        'Total : ${rentalOwnerCountLimit.toString()} ',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF8A95A8),
                           fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 13 : 21,
+                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
                         ),
                       ),
                     ],
