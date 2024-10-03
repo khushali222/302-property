@@ -1400,7 +1400,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   height: 4,
                                 ),
                                 Text(
-                                    '${summery.workorderUpdates?.last.date ?? "N/A"} ',
+                                    summery.workorderUpdates!.last.date != null  ?
+                                    '${summery.workorderUpdates?.last.date ?? "N/A"}' : 'N/A',
                                     style: TextStyle(
                                         color: blueColor,
                                         fontWeight: FontWeight.bold)),

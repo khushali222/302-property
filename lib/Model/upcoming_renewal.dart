@@ -78,7 +78,8 @@ class upcoming_renewal {
     remainingDays = json['remainingDays'];
     rentalAddress = json['rental_address'];
     unit = json['unit'];
-    tenantNames = json['tenantNames'].cast<String>();
+    tenantNames = json['tenantNames'].map((tenant) => tenant['name'] ).cast<String>().toList();
+
   }
 
   Map<String, dynamic> toJson() {
