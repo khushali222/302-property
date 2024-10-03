@@ -2064,38 +2064,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                               borderRadius:
                                                               BorderRadius.circular(
                                                                   8.0))),
-                                                      // onPressed: () async {
-                                                      //   if (_formKey.currentState?.validate() ?? false) {
-                                                      //     setState(() {
-                                                      //       isLoading = true;
-                                                      //       iserror = false;
-                                                      //     });
-                                                      //     SharedPreferences prefs = await SharedPreferences.getInstance();
-                                                      //     String? id = prefs.getString("adminId");
-                                                      //
-                                                      //     Properies_summery_Repo()
-                                                      //         .addappliances(
-                                                      //       appliancename: _name.text,
-                                                      //       appliancedescription: _description.text,
-                                                      //       installeddate: _installedDate.text,
-                                                      //     )
-                                                      //         .then((value) {
-                                                      //       setState(() {
-                                                      //         isLoading = false;
-                                                      //       });
-                                                      //       Navigator.pop(context, true);
-                                                      //     })
-                                                      //         .catchError((e) {
-                                                      //       setState(() {
-                                                      //         isLoading = false;
-                                                      //       });
-                                                      //     });
-                                                      //   } else {
-                                                      //     setState(() {
-                                                      //       iserror = true;
-                                                      //     });
-                                                      //   }
-                                                      // },
+
                                                       onPressed: () async {
                                                         if (_name.text.isEmpty || _description.text.isEmpty || _installedDate.text.isEmpty ) {
                                                           setState(() {
@@ -2116,7 +2085,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                             unitId: widget.unit?.unitId,
                                                             appliancename: _name.text,
                                                             appliancedescription: _description.text,
-                                                            installeddate: _installedDate.text,
+                                                            installeddate:reverseFormatDate( _installedDate.text),
                                                           ).then((value) {
                                                             print(widget.properties?.adminId);
                                                             print(widget.unit?.unitId);

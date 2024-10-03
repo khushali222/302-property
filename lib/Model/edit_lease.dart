@@ -202,7 +202,7 @@ class EditLease {
       tenantId: List<String>.from(json['tenant_id']),
       adminId: json['admin_id'],
       rentalId: json['rental_id'],
-      unitId: json['unit_id'],
+      unitId: json['unit_id']??"",
       leaseType: json['lease_type'],
       startDate: json['start_date'],
       endDate: json['end_date'],

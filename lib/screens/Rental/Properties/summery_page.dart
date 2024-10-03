@@ -413,6 +413,7 @@ class _Summery_pageState extends State<Summery_page>
               ),
             ),
             Expanded(
+              flex:4,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -465,6 +466,7 @@ class _Summery_pageState extends State<Summery_page>
               ),
             ),
             Expanded(
+                flex:3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -512,6 +514,7 @@ class _Summery_pageState extends State<Summery_page>
               ),
             ),
             Expanded(
+              flex:3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -536,25 +539,9 @@ class _Summery_pageState extends State<Summery_page>
                 },
                 child: Row(
                   children: [
-                    Text("   Billable ", style: TextStyle(color: Colors.white)),
+                    Text("       Billable ", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
-                    ascending3
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+
                   ],
                 ),
               ),
@@ -1164,11 +1151,13 @@ class _Summery_pageState extends State<Summery_page>
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.white,
+                                fontSize: 14
                             ))
                         : Text(" Contact\nName",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.white,
+                                fontSize: 14
                             )),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
@@ -1200,9 +1189,9 @@ class _Summery_pageState extends State<Summery_page>
                 },
                 child: Row(
                   children: [
-                    Text("  Company \nName",
+                    Text("Company \nName",
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle(color: Colors.white,fontSize: 14)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -1233,9 +1222,12 @@ class _Summery_pageState extends State<Summery_page>
                 },
                 child: Row(
                   children: [
-                    Text("   Phone\n   Number",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white)),
+                    Padding(
+                      padding: const EdgeInsets.only(left:8.0),
+                      child: Text("   Phone\n   Number",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white,fontSize: 14)),
+                    ),
                   ],
                 ),
               ),
@@ -9401,6 +9393,7 @@ class _Summery_pageState extends State<Summery_page>
                                                 ),
                                               ),
                                               Expanded(
+                                                flex:4,
                                                 child: Text(
                                                   '${workOrder.workSubject}',
                                                   style: TextStyle(
@@ -9414,8 +9407,9 @@ class _Summery_pageState extends State<Summery_page>
                                                   width: MediaQuery.of(context)
                                                           .size
                                                           .width *
-                                                      .099),
+                                                      .05),
                                               Expanded(
+                                                flex:3,
                                                 child: Text(
                                                   '${workOrder.status}',
                                                   style: TextStyle(
@@ -9429,8 +9423,9 @@ class _Summery_pageState extends State<Summery_page>
                                                   width: MediaQuery.of(context)
                                                           .size
                                                           .width *
-                                                      .08),
+                                                      .05),
                                               Expanded(
+                                                flex:2,
                                                 child: Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.center,
@@ -11985,7 +11980,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                         appliancedescription:
                                                             _description.text,
                                                         installeddate:
-                                                            _installedDate.text,
+                                                         reverseFormatDate(  _installedDate.text),
                                                       )
                                                           .then((value) {
                                                         print(widget.properties
@@ -12440,7 +12435,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                                             unitId: widget.unit?.unitId,
                                                                                             appliancename: _name.text,
                                                                                             appliancedescription: _description.text,
-                                                                                            installeddate: _installedDate.text,
+                                                                                            installeddate: reverseFormatDate( _installedDate.text),
                                                                                           )
                                                                                               .then((value) {
                                                                                             print(widget.properties?.adminId);
@@ -13026,7 +13021,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                                       unitId: widget.unit?.unitId,
                                                                                       appliancename: _name.text,
                                                                                       appliancedescription: _description.text,
-                                                                                      installeddate: _installedDate.text,
+                                                                                      installeddate: reverseFormatDate(_installedDate.text),
                                                                                     )
                                                                                         .then((value) {
                                                                                       print(widget.properties?.adminId);
