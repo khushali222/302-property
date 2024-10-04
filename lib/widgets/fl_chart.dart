@@ -77,9 +77,15 @@ class _FlChartAppState extends State<FlChartApp> {
           dataaa.forEach((element) {
             data.add(Map<String, dynamic>.from(element));
           });
+          maxoccupancy = 0;
           for (int i = 0; i < data.length; i++) {
             spots.add(FlSpot(i.toDouble(), data[i]["occupiedPercentage"].toDouble()));
             monthMap[i] = data[i]["month"];
+            if(maxoccupancy < double.parse(data[i]["occupiedPercentage"].toString()))
+              {
+                 maxoccupancy = double.parse(data[i]["occupiedPercentage"].toString());
+              }
+
             if(i == data.length - 1){
               leases = data[i]["leases"].toString();
               rentals = data[i]["rentals"].toString();
@@ -100,7 +106,8 @@ class _FlChartAppState extends State<FlChartApp> {
   List<FlSpot> spots = [];
   String leases = "";
   String rentals = "";
-  String occupancy = "";
+  String occupancy = "0";
+  double maxoccupancy = 0;
   Map<int, String> monthMap = {};
 
   @override
@@ -135,7 +142,7 @@ class _FlChartAppState extends State<FlChartApp> {
                       child: LineChart(
                         LineChartData(
                           minY: 0,
-                          maxY: double.tryParse(occupancy)! > 100 ?  double.tryParse(occupancy)!: 100.0,
+                          maxY: maxoccupancy > 100 ?  maxoccupancy: 100.0,
                           titlesData: FlTitlesData(
                             show: true,
 

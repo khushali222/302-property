@@ -288,7 +288,7 @@ class Properies_summery_Repo{
     required String? unitId
   }) async {
     // print('$apiUrl/$id');
-    print('hello 123 ${unitId}');
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');

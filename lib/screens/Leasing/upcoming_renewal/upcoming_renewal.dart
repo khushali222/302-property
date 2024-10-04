@@ -729,7 +729,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                   int index = entry.key;
                                   bool isExpanded = expandedIndex == index;
                                   upcoming_renewal Propertytype = entry.value;
-
+                                  print(Propertytype.tenantNames);
                                   String tenants =
                                       Propertytype.tenantNames!.join(" , ");
                                   //return CustomExpansionTile(data: Propertytype, index: index);

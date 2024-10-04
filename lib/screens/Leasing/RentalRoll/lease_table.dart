@@ -206,7 +206,7 @@ class _Lease_tableState extends State<Lease_table> {
                 },
                 child: Row(
                   children: [
-                    Text("  Lease Start",
+                    Text("   Lease Start",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: MediaQuery.of(context).size.width < 350
@@ -261,7 +261,7 @@ class _Lease_tableState extends State<Lease_table> {
                 },
                 child: Row(
                   children: [
-                    Text(" Lease End",
+                    Text("   Lease End",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: MediaQuery.of(context).size.width < 350

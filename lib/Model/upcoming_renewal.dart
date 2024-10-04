@@ -47,6 +47,7 @@ class upcoming_renewal {
         this.tenantNames});
 
   upcoming_renewal.fromJson(Map<String, dynamic> json) {
+    print(json['tenantNames']);
     sId = json['_id'];
     leaseId = json['lease_id'];
     tenantId = json['tenant_id'].cast<String>();
@@ -79,7 +80,6 @@ class upcoming_renewal {
     rentalAddress = json['rental_address'];
     unit = json['unit'];
     tenantNames = json['tenantNames'].map((tenant) => tenant['name'] ).cast<String>().toList();
-
   }
 
   Map<String, dynamic> toJson() {

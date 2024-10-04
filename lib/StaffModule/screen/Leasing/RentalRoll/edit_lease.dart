@@ -935,7 +935,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                   ),
                                   if (units.isNotEmpty)
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 16.0),
+                                      padding: const EdgeInsets.only(top: 5.0),
                                       child: Text(
                                         'Unit',
                                         style: TextStyle(
@@ -4466,10 +4466,20 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
             child: Material(
               child: Container(
                   color: Colors.white,
-                  height: _isInvalid ? 326 : 350,
+                  height: _isInvalid ? 377 : 380,
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const SizedBox(height: 2),
+                        Text(
+                          'Add One Time Charge Content',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromRGBO(21, 43, 83, 1),
+                          ),
+                        ),
+                        const SizedBox(height: 15),
                         const Text(
                           'Account *',
                           style: TextStyle(
@@ -5125,7 +5135,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       "id": "CRM $staffid",
     });
     print(response.body);
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       final data = json.decode(response.body);
       setState(() {
         items = (data['data'] as List)
@@ -5155,10 +5165,20 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         child: Material(
           child: Container(
             color: Colors.white,
-            height: _isInvalid ? 326 : 350,
+            height: _isInvalid ? 377 : 380,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                SizedBox(height: 2),
+                Text(
+                  'Add Recurring content',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(21, 43, 83, 1),
+                  ),
+                ),
+                SizedBox(height: 10),
                 const Text(
                   'Account *',
                   style: TextStyle(
