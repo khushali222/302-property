@@ -730,7 +730,7 @@ class _MakePaymentState extends State<MakePayment> {
     }
     return binResults;
   }
-
+  String? selected_account ="Full";
   Map<int, bool> selectedRows = {};
   int? surCharge;
 
@@ -805,7 +805,7 @@ class _MakePaymentState extends State<MakePayment> {
         },),
         backgroundColor: Colors.white,
         drawer:  CustomDrawer(currentpage: 'Financial',),
-        body:  LayoutBuilder(
+        body: /* LayoutBuilder(
             builder: (context, constraints) {
               if (constraints.maxWidth > 600) {
                 return SingleChildScrollView(
@@ -1295,8 +1295,10 @@ class _MakePaymentState extends State<MakePayment> {
                                                         String currentMonthYear =
                                                             currentMonth +
                                                                 currentYear;
-                                                        /* print(
+                                                        */
+        /* print(
                                                                   'Current: $currentMonthYear');*/
+        /*
 
                                                         String expMonthYear =
                                                         item.ccExp!;
@@ -1315,9 +1317,11 @@ class _MakePaymentState extends State<MakePayment> {
                                                                     int.parse(
                                                                         currentMonth));
 
-                                                        /* print(
+                                                        */
+        /* print(
                                                                   'Expiration date passed: $isExpired');
                                                                     */
+        /*
                                                         return DataRow(cells: [
                                                           DataCell(
                                                             isExpired == true
@@ -1782,7 +1786,8 @@ class _MakePaymentState extends State<MakePayment> {
                                                   fontWeight: FontWeight.bold)),
                                         ),
                                       ]),
-                                      /* ...summery.partsandchargeData!.asMap().entries.map((entry) {
+                                      */
+        /* ...summery.partsandchargeData!.asMap().entries.map((entry) {
                                             int index = entry.key;
                                             PartsandchargeData row = entry.value;
                                             grandTotal += (row.partsQuantity! * row.partsPrice!);
@@ -1809,6 +1814,7 @@ class _MakePaymentState extends State<MakePayment> {
                                               ),
                                             ]);
                                           }).toList(),*/
+        /*
                                       ...rows.asMap().entries.map((entry) {
                                         int index = entry.key;
                                         Map<String, dynamic> row = entry.value;
@@ -2015,12 +2021,14 @@ class _MakePaymentState extends State<MakePayment> {
                                                   fontWeight: FontWeight.bold)),
                                         ),
 
-                                        /* const Padding(
+                                        */
+        /* const Padding(
                                               padding: EdgeInsets.all(8.0),
                                               child: Text('',
                                                   style: TextStyle(
                                                       fontWeight: FontWeight.bold)),
                                             ),*/
+        /*
                                         Padding(
                                           padding: EdgeInsets.all(8.0),
                                           child:Text('\$${totalAmount.toStringAsFixed(2)}'),
@@ -2030,18 +2038,19 @@ class _MakePaymentState extends State<MakePayment> {
                                           child:Text(''),
                                         ),
 
-                                        /* Padding(
+                                    Padding(
                                                                 padding: const EdgeInsets.all(8.0),
                                                                 child: Text(
                                     '\$${totalAmount.toStringAsFixed(2)}'),
                                                               ),*/
+        /*
 
                                       ]),
 
                                     ],
                                   ),
                                 ),
-                                /*  ...rows.asMap().entries.map((entry) {
+                                 ...rows.asMap().entries.map((entry) {
                                   int index = entry.key;
                                   Map<String, dynamic> row = entry.value;
                                   return Padding(
@@ -2267,9 +2276,9 @@ class _MakePaymentState extends State<MakePayment> {
                                       ),
                                     ),
                                   );
-                                }).toList(),*/
+                                }).toList(),
                                 const SizedBox(height: 5),
-                                /*   Row(
+                                 Row(
                                   children: [
                                     SizedBox(width: 10),
                                     Padding(
@@ -2286,6 +2295,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   ],
                                 ),
                                 const SizedBox(height: 5),*/
+        /*
                                 const SizedBox(height: 5),
                                 Row(
                                   children: [
@@ -2684,13 +2694,14 @@ class _MakePaymentState extends State<MakePayment> {
                                         //print(_selectedPaymentMethod);
                                       }
 
-                                      /* print(cardDetails[selectedcardindex!].ccNumber);
+                                   print(cardDetails[selectedcardindex!].ccNumber);
                                   print(cardDetails[selectedcardindex!].firstName);
                                   print(cardDetails[selectedcardindex!].lastName);
                                  // print(cardDetails[selectedcardindex!].b);
                                   print(cardDetails[selectedcardindex!].company);
                                   print(cardDetails[selectedcardindex!].address_1);
                                   print(cardDetails[selectedcardindex!].email);*/
+        /*
                                     },
                                     child: _isLoading
                                         ? Center(
@@ -2794,21 +2805,21 @@ class _MakePaymentState extends State<MakePayment> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    /*  const SizedBox(
+                                     const SizedBox(
                                     height: 10,
                                   ),
                                   const SizedBox(
                                     height: 8,
-                                  ),*/
-                                    /*   const Text('Received From *',
+                                  ),
+                                     const Text('Received From *',
                                       style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.grey)),
                                   const SizedBox(
                                     height: 8,
-                                  ),*/
-                                    /*  tenants.isEmpty
+                                  ),
+                                  tenants.isEmpty
                                       ? const Center(
                                           child: SpinKitFadingCircle(
                                             color: Colors.black,
@@ -2886,7 +2897,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                   left: 14, right: 14),
                                             ),
                                           ),
-                                        ),*/
+                                        )
                                     const SizedBox(
                                       height: 10,
                                     ),
@@ -2963,9 +2974,9 @@ class _MakePaymentState extends State<MakePayment> {
                                     SizedBox(
                                       height: 8,
                                     ),
-                                    /* const SizedBox(
+                                  const SizedBox(
                                     height: 20,
-                                  ),*/
+                                  ),
                                     const Text('Leases*',
                                         style: TextStyle(
                                             fontSize: 13,
@@ -3352,8 +3363,9 @@ class _MakePaymentState extends State<MakePayment> {
                                                         String currentMonthYear =
                                                             currentMonth +
                                                                 currentYear;
-                                                        /* print(
+                                                 print(
                                                           'Current: $currentMonthYear');*/
+        /*
 
                                                         String expMonthYear =
                                                         item.ccExp!;
@@ -3372,9 +3384,9 @@ class _MakePaymentState extends State<MakePayment> {
                                                                     int.parse(
                                                                         currentMonth));
 
-                                                        /* print(
+                                                      print(
                                                           'Expiration date passed: $isExpired');
-                                      */
+
                                                         return DataRow(cells: [
                                                           DataCell(
                                                             isExpired == true
@@ -4414,8 +4426,8 @@ class _MakePaymentState extends State<MakePayment> {
                                           ),
                                         ),
                                       ),
-                                      /*  SizedBox(height: 20),
-                                    const SizedBox(height: 10),*/
+                                    SizedBox(height: 20),
+                                    const SizedBox(height: 10),
                                       Flexible(
                                         fit: FlexFit.loose,
                                         child: ListView.builder(
@@ -4577,8 +4589,8 @@ class _MakePaymentState extends State<MakePayment> {
                                               ],
                                             ).show();
 
-                                           /* Fluttertoast.showToast(
-                                                msg: "Payment failed $e");*/
+                                          Fluttertoast.showToast(
+                                                msg: "Payment failed $e")
                                           });
                                         }
 
@@ -4750,13 +4762,13 @@ class _MakePaymentState extends State<MakePayment> {
                                       //print(_selectedPaymentMethod);
                                     }
 
-                                    /* print(cardDetails[selectedcardindex!].ccNumber);
+                                    print(cardDetails[selectedcardindex!].ccNumber);
                                   print(cardDetails[selectedcardindex!].firstName);
                                   print(cardDetails[selectedcardindex!].lastName);
                                  // print(cardDetails[selectedcardindex!].b);
                                   print(cardDetails[selectedcardindex!].company);
                                   print(cardDetails[selectedcardindex!].address_1);
-                                  print(cardDetails[selectedcardindex!].email);*/
+                                  print(cardDetails[selectedcardindex!].email);
                                   },
                                   child: _isLoading
                                       ? Center(
@@ -4805,7 +4817,397 @@ class _MakePaymentState extends State<MakePayment> {
                 ),
               );
             }
-        ));
+        ));*/
+    Container(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: 40,
+          decoration: BoxDecoration(
+            color: blueColor,
+            borderRadius: BorderRadius.circular(3)
+          ),
+            child: Center(
+              child: Text("Payment Card Details",style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white
+              ),),
+            ),
+          ),
+          SizedBox(height: 20,),
+          cardDetails.isEmpty
+              ? Container(
+            child: Center(
+                child: Text('No Cards Available')),
+          )
+              : Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Color.fromRGBO(115,119,145,1),
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(6)
+                ),
+                padding: EdgeInsets.all(8),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Table(
+                                columnWidths: {
+                    0: FlexColumnWidth(.5), // Date
+                    1: FlexColumnWidth(1.3), // Address
+                    2: FlexColumnWidth(1), // Work
+                    3: FlexColumnWidth(.5), // Performed
+                    // Performed
+                                },
+                                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+
+                                children: [
+
+                    ...cardDetails.asMap().entries.map((entry) {
+                      int index = entry.key;
+                      BillingData item = entry.value;
+                      String month = item.ccExp!.substring(0, 2);
+                      String year = item.ccExp!.substring(2, 4);
+                      String currentMonth = DateTime.now().month.toString().padLeft(2, '0');
+                      String currentYear = DateTime.now().year.toString().substring(2);
+                      String currentMonthYear = currentMonth + currentYear;
+                      String expMonthYear = item.ccExp!;
+                      String expMonth = expMonthYear.substring(0, 2);
+                      String expYear = expMonthYear.substring(2, 4);
+                      bool isExpired = int.parse(expYear) < int.parse(currentYear) ||
+                          (int.parse(expYear) == int.parse(currentYear) &&
+                              int.parse(expMonth) < int.parse(currentMonth));
+
+                      return TableRow(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                isExpired == true
+                                    ? Text(
+                                  'Expired',
+                                  style: TextStyle(color: Colors.red),
+                                )
+                                    : Checkbox(
+                                  activeColor: blueColor,
+                                  // Color of your check mark
+                                  checkColor: Colors.white,
+                                  shape:RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(2),
+                                  ),
+                                  side: BorderSide(
+                                    // ======> CHANGE THE BORDER COLOR HERE <======
+                                    color: blueColor,
+                                    // Give your checkbox border a custom width
+                                    width: 1.5,
+                                  ),
+                                  value: selectedcardindex == index ? true : false,
+                                  onChanged: (bool? value) async {
+                                    setState(() {
+                                      selectedcardindex = index;
+                                    });
+                                    await fetchSurcharge();
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                               "Card Number",
+                                style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                item.ccNumber!,
+                                style: TextStyle(fontSize: 14),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Card Type",
+                                style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                '${item.binResult}',
+                                style: TextStyle(fontSize: 14),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              _buildLogosBlocktablet(item.ccType!),
+                            ],
+                          ),
+                        ],
+                      );
+                    }).toList(),
+                                ],
+                              ),
+                    SizedBox(height: 10,),
+                    Container(height: 30,width: 130,
+                    margin: EdgeInsets.only(left: 15,bottom: 10),
+                    decoration:BoxDecoration(borderRadius: BorderRadius.circular(5),color: blueColor) ,
+                    child: Center(child: Text("Add New Card",style: TextStyle(fontSize: 12,color: Colors.white),)),
+                    )
+                    
+                  ],
+                ),
+              ),
+
+        Container(
+          decoration: BoxDecoration(
+              border: Border.all(
+                color: Color.fromRGBO(115,119,145,1),
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(6)
+          ),
+          padding: EdgeInsets.all(18),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text("Lease* : ",   style: TextStyle(color: blueColor, fontSize: 16,fontWeight: FontWeight.bold),),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(0),
+                      child: FormField<String>(
+                        validator: (value) {
+                          if (selectedTenantId == null ) {
+                            return 'Please select a lease';
+                          }
+                          return null;
+                        },
+                        builder: (FormFieldState<String> state) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              DropdownButtonHideUnderline(
+                                child: DropdownButton2<String>(
+                                  isExpanded: true,
+                                  hint: const Text('Select Lease'),
+                                  value: selectedTenantId,
+                                  items: tenants.map((tenant) {
+                                    return DropdownMenuItem<String>(
+                                      value: tenant['tenant_id'],
+                                      child: Text(
+                                          "${tenant['tenant_name']!} (${tenant['status']})"),
+                                    );
+                                  }).toList(),
+                                  style: TextStyle(color: blueColor.withOpacity(.8)),
+                                  onChanged: (value) async {
+                                    setState(() {
+                                      selectedTenantId = value;
+                                      fetchChargesForSelectedTenant(value!);
+                                      state.didChange(value); // Notify FormField of change
+                                    });
+                                    state.reset();
+                                    //   print('Selected tenant_id: $selectedTenantId');
+                                  },
+                                  buttonStyleData: ButtonStyleData(
+                                    height: 40,
+                                     width: 250,
+                                    padding: const EdgeInsets.only(left: 10, right: 14),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      border: Border.all(color: blueColor.withOpacity(.6)),
+                                      color: Colors.white,
+                                    ),
+
+                                    elevation: 0,
+                                  ),
+                                  iconStyleData: const IconStyleData(
+                                    icon: Icon(
+                                      Icons.arrow_drop_down,
+                                    ),
+                                    iconSize: 24,
+                                    iconEnabledColor: Color(0xFFb0b6c3),
+                                    iconDisabledColor: Colors.grey,
+                                  ),
+                                  dropdownStyleData: DropdownStyleData(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: Colors.white,
+                                    ),
+                                    scrollbarTheme: ScrollbarThemeData(
+                                      radius: const Radius.circular(6),
+                                      thickness: MaterialStateProperty.all(6),
+                                      thumbVisibility: MaterialStateProperty.all(true),
+                                    ),
+                                  ),
+                                  menuItemStyleData: const MenuItemStyleData(
+                                    height: 45,
+                                    padding: EdgeInsets.only(left: 14, right: 14),
+                                  ),
+                                ),
+                              ),
+                              if (state.hasError)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 5),
+                                  child: Text(
+                                    state.errorText ?? '',
+                                    style: const TextStyle(color: Colors.red, fontSize: 12),
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+
+                ],
+              ),
+              SizedBox(height: 15,),
+              Row(
+                children: [
+                  Text(
+                    'Current Balance : ',
+                    style:  TextStyle(color: blueColor, fontSize: 16,fontWeight: FontWeight.bold),
+                  ),Text(
+                   '\$100.00',
+                    style: TextStyle(color: Color.fromRGBO(115,119,145,1), fontSize: 16),
+                  ),
+                ],
+              ),
+              SizedBox(height: 15,),
+              Row(
+                children: [
+                  Text(
+                    'Choose Payment Amount : ',
+                    style:  TextStyle(color: blueColor, fontSize: 16,fontWeight: FontWeight.bold),
+                  )
+                ],
+              ),
+              SizedBox(height: 8,),
+              Row(
+                children: [
+                  Container(
+                    height: 30,
+            //  color: blueColor.withOpacity(.6),
+                    child: Radio(
+                      value: "Full",
+                      activeColor: blueColor,
+                      groupValue: selected_account,
+                      fillColor: MaterialStateProperty.resolveWith(
+                            (states) {
+                          if (states.contains(MaterialState.selected)) {
+                            return blueColor;
+                          }
+                          return blueColor;
+                        },
+                      ),
+                      onChanged: ( value) {
+                        setState(() {
+                          selected_account = "Full";
+                          //_site = value;
+                        });
+                      },
+                    ),
+                  ),
+                  Text(
+                    'Pay Full Amount',
+                    style:  TextStyle(color: blueColor, fontSize: 16),
+                  )
+                ],
+              ),
+
+              Row(
+                children: [
+                  Container(
+                    height: 30,
+                   //   color: blueColor.withOpacity(.6),
+                    child: Radio(
+                      value: "Partial",
+                      activeColor: blueColor,
+                      fillColor: MaterialStateProperty.resolveWith(
+                            (states) {
+                          if (states.contains(MaterialState.selected)) {
+                            return blueColor;
+                          }
+                          return blueColor;
+                        },
+                      ),
+                      groupValue: selected_account,
+                      onChanged: ( value) {
+                        setState(() {
+                          selected_account = "Partial";
+                          //_site = value;
+                        });
+                      },
+                    ),
+                  ),
+                  Text(
+                    'Pay Partial Amount ',
+                    style:  TextStyle(color: blueColor, fontSize: 16),
+                  )
+                ],
+              ),
+              SizedBox(height: 15,),
+              Row(
+                children: [
+                  Text(
+                    'Payment  : ',
+                    style:  TextStyle(color: blueColor, fontSize: 16,fontWeight: FontWeight.bold),
+                  ),Text(
+                    '\$100.00',
+                    style: TextStyle(color: Color.fromRGBO(115,119,145,1), fontSize: 16),
+                  ),
+                ],
+              ),
+              SizedBox(height: 15,),
+              Row(
+                children: [
+                  Text(
+                    'Surcharge : ',
+                    style:  TextStyle(color: blueColor, fontSize: 16,fontWeight: FontWeight.bold),
+                  ),Text(
+                    '\$100.00',
+                    style: TextStyle(color: Color.fromRGBO(115,119,145,1), fontSize: 16),
+                  ),
+                ],
+              ),
+              SizedBox(height: 15,),
+              Row(
+                children: [
+                  Text(
+                    'Amount to Pay : ',
+                    style:  TextStyle(color: blueColor, fontSize: 16,fontWeight: FontWeight.bold),
+                  ),Text(
+                    '\$100.00',
+                    style: TextStyle(color: Color.fromRGBO(115,119,145,1), fontSize: 16),
+                  ),
+                ],
+              ),
+              SizedBox(height: 15,),
+              Container(height: 35,width: 130,
+                margin: EdgeInsets.only(left: 0,bottom: 0),
+                decoration:BoxDecoration(borderRadius: BorderRadius.circular(5),color: blueColor) ,
+                child: Center(child: Text("Make Payment",style: TextStyle(fontSize: 14,color: Colors.white),)),
+              )
+            ],
+          ),
+        )
+          
+          
+        ],
+      ),
+    ));
+    
   }
 
   Widget buildAmountContainer(String label, double amount) {
@@ -4937,8 +5339,8 @@ class _MakePaymentState extends State<MakePayment> {
         'https://logo.clearbit.com/${ccType.replaceAll(RegExp(r'[-\s]'), "").toLowerCase()}.com';
     return Image.network(
       logoUrl,
-      height: 50,
-      width: 50,
+      height: 30,
+      width: 30,
       errorBuilder: (context, error, stackTrace) {
         return const Icon(
           Icons.credit_card,

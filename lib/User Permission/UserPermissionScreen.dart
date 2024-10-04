@@ -361,7 +361,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                         'Financial',
                         [
                           _buildCheckboxRow(
-                            'VIEW',
+                            'View Ledger',
 
                             tenantFinancialView,
                             (value) {
@@ -375,7 +375,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                             },
                           ),
                           _buildCheckboxRow(
-                            'ADD',
+                            'Make Payment',
                             isDisabled: tenantFinancialView ,
                             tenantFinancialAdd,
                             (value) {
@@ -385,16 +385,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                             },
 
                           ),
-                          _buildCheckboxRow(
-                            'EDIT',
-                            isDisabled: tenantFinancialView ,
-                            tenantFinancialEdit,
-                            (value) {
-                              setState(() {
-                                tenantFinancialEdit = value!;
-                              });
-                            },
-                          ),
+
                         ],
                       ),
                       Divider(color: blueColor),

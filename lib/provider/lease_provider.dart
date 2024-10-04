@@ -17,8 +17,13 @@ class SelectedTenantsProvider extends ChangeNotifier {
   List<TextEditingController> get rentShareControllers => _rentShareControllers;
   String? get validationMessage => _validationMessage;
   void addTenant(Tenant tenant) {
+    if (_selectedTenants.isEmpty) {
+      // Set rent share to 100 for the first tenant
+      _rentShareControllers.add(TextEditingController(text: '100'));
+    } else {
+      _rentShareControllers.add(TextEditingController());
+    }
     _selectedTenants.add(tenant);
-    _rentShareControllers.add(TextEditingController()); // Add corresponding TextEditingController
     notifyListeners();
   }
 
