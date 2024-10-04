@@ -1400,8 +1400,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   height: 4,
                                 ),
                                 Text(
-                                    summery.workorderUpdates!.last.date != null  ?
-                                    '${summery.workorderUpdates?.last.date ?? "N/A"}' : 'N/A',
+                                    '${summery.workorderUpdates?.isEmpty == true ?
+                                    "N/A" : summery.workorderUpdates?.last.date?.toString()
+                                    }',
                                     style: TextStyle(
                                         color: blueColor,
                                         fontWeight: FontWeight.bold)),
@@ -2854,8 +2855,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 SizedBox(
                                   height: 4,
                                 ),
-                                Text(
-                                    '${summery.workorderUpdates?.last.date ?? "N/A"}',
+                                Text( '${summery.workorderUpdates?.isEmpty == true ?
+                                "N/A" : summery.workorderUpdates?.last.date?.toString()
+                                }',
                                     style: TextStyle(
                                         color: blueColor,
                                         fontWeight: FontWeight.bold)),
