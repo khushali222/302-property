@@ -445,10 +445,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               () {}); // Rebuild the widget after selecting the image
                     });
                   },
-                  child: Image.asset(
+                  child:
+                  Image.asset(
                     'assets/images/addimage.png',
-                    height: 50,
-                    width: 50,
+                    height: 40,
+                    width: 40,
                   ),
                 ),
               ],
@@ -817,10 +818,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                         Padding(
                                           padding: const EdgeInsets.all(10.0),
                                           child: Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                .05,
+                                            // height: MediaQuery.of(context)
+                                            //         .size
+                                            //         .height *
+                                            //     .05,
+                                            height:50,
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
@@ -832,7 +834,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                 color: Color(0xFF8A95A8),
                                               ),
                                               borderRadius:
-                                                  BorderRadius.circular(5),
+                                                  BorderRadius.circular(10),
                                             ),
                                             child: DropdownButtonHideUnderline(
                                               child: DropdownButton<String>(
@@ -3322,7 +3324,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                       .size
                                                                       .width <
                                                                   500
-                                                              ? 14
+                                                              ? 13.5
                                                               : 15),
                                                 ),
                                               ],
@@ -3334,10 +3336,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                       return Padding(
                                         padding: const EdgeInsets.all(10.0),
                                         child: Container(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              .05,
+                                          // height: MediaQuery.of(context)
+                                          //         .size
+                                          //         .height *
+                                          //     .05,
+                                          height: 50,
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
@@ -3349,7 +3352,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                               color: Color(0xFF8A95A8),
                                             ),
                                             borderRadius:
-                                                BorderRadius.circular(5),
+                                                BorderRadius.circular(10),
                                           ),
                                           child: DropdownButtonHideUnderline(
                                             child: DropdownButton<String>(
@@ -3717,10 +3720,9 @@ class _Add_new_propertyState extends State<Add_new_property> {
                     style: TextStyle(color: Colors.redAccent),
                   ),
                 SizedBox(height: 10),
-
                 Row(
                   children: [
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+                    //SizedBox(width: MediaQuery.of(context).size.width * 0.01),
                     GestureDetector(
                       onTap: () async
                       {
@@ -3983,12 +3985,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                       print('Form is invalid');
                       }
                       },
-
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
                         child: Container(
                           height: 45,
-                          width: MediaQuery.of(context).size.width * .3,
+                          width: MediaQuery.of(context).size.width * .35,
                           decoration: BoxDecoration(
                             color: Color.fromRGBO(21, 43, 81, 1),
                             boxShadow: [
@@ -4009,7 +4010,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     "Create Property",
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 13,
+                                      fontSize: 15,
                                     ),
                                   ),
                           ),
@@ -4022,7 +4023,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                           // displayPropertyData();
                           Navigator.pop(context);
                         },
-                        child: Text("Cancel")),
+                        child: Text("Cancel",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: blueColor),)),
                   ],
                 ),
                 Column(

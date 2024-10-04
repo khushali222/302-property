@@ -454,33 +454,59 @@ class _Edit_propertiesState extends State<Edit_properties> {
   }
 
   Widget customTextField(String label, TextEditingController Controller) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 1),
-      child: TextFormField(
-        controller: Controller,
-        cursorColor: Colors.black,
-        decoration: InputDecoration(
-          hintText: label,
-          // labelText: label,
-          // labelStyle: TextStyle(color: Colors.grey[700]),
-          filled: true,
-          fillColor: Colors.white,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(3),
-            borderSide: BorderSide.none,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(3),
-            borderSide: BorderSide(color: Color(0xFF8A95A8)),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(3),
-            borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
-          ),
-          contentPadding:
-              EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-        ),
-      ),
+    return FormField<String>(
+      validator: (value) {
+        if (Controller.text.isEmpty) {
+          return 'required';
+        }
+        return null;
+      },
+      builder: (FormFieldState<String> state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: TextFormField(
+                controller: Controller,
+                cursorColor: Colors.black,
+                decoration: InputDecoration(
+                  hintText: label,
+                  // labelText: label,
+                  // labelStyle: TextStyle(color: Colors.grey[700]),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Color(0xFF8A95A8)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
+                  ),
+                  contentPadding:
+                  EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                ),
+              ),
+            ),
+            if (state.hasError)
+              Padding(
+                padding: const EdgeInsets.only(left: 5, top: 4),
+                child: Text(
+                  state.errorText!,
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 
@@ -493,7 +519,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
               children: [
                 Text(
                   'Photo',
-                  style: TextStyle(color: Colors.black),
+                  style: TextStyle(
+                      color: blueColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18),
                 ),
               ],
             ),
@@ -507,9 +536,11 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           () {}); // Rebuild the widget after selecting the image
                     });
                   },
-                  child: Text(
-                    '+ Add',
-                    style: TextStyle(color: Colors.green),
+                  child:
+                  Image.asset(
+                    'assets/images/addimage.png',
+                    height: 40,
+                    width: 40,
                   ),
                 ),
               ],
@@ -864,10 +895,11 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                         Padding(
                                           padding: const EdgeInsets.all(10.0),
                                           child: Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                .05,
+                                            // height: MediaQuery.of(context)
+                                            //         .size
+                                            //         .height *
+                                            //     .05,
+                                            height:50,
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
@@ -879,7 +911,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                 color: Color(0xFF8A95A8),
                                               ),
                                               borderRadius:
-                                                  BorderRadius.circular(5),
+                                                  BorderRadius.circular(10),
                                             ),
                                             child: DropdownButtonHideUnderline(
                                               child: DropdownButton<String>(
@@ -3377,10 +3409,11 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                       return Padding(
                                         padding: const EdgeInsets.all(10.0),
                                         child: Container(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              .05,
+                                          // height: MediaQuery.of(context)
+                                          //         .size
+                                          //         .height *
+                                          //     .05,
+                                          height:50,
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
@@ -3392,7 +3425,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                               color: Color(0xFF8A95A8),
                                             ),
                                             borderRadius:
-                                                BorderRadius.circular(5),
+                                                BorderRadius.circular(10),
                                           ),
                                           child: DropdownButtonHideUnderline(
                                             child: DropdownButton<String>(
@@ -3508,7 +3541,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                 Text(
                                   'RECIDENTIAL UNIT',
                                   style: TextStyle(
-                                    color: Colors.grey,
+                                    color: blueColor,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -3526,7 +3560,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                 Text(
                                   'Enter Recidential Units',
                                   style: TextStyle(
-                                    color: Colors.black,
+                                    color: blueColor,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -3585,14 +3619,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                     borderRadius: BorderRadius.circular(5.0),
                                     //  border: Border.all(color:  Color.fromRGBO(21, 43, 81, 1)),
                                     child: Container(
-                                      height: 30,
+                                      height: 40,
                                       width: MediaQuery.of(context).size.width *
-                                          .3,
+                                          .38,
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         // borderRadius: BorderRadius.circular(3),
                                         borderRadius:
-                                            BorderRadius.circular(5.0),
+                                            BorderRadius.circular(8),
                                         border: Border.all(
                                             color:
                                                 Color.fromRGBO(21, 43, 81, 1)),
@@ -3611,7 +3645,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                               color:
                                                   Color.fromRGBO(21, 43, 81, 1),
                                               // fontWeight: FontWeight.bold,
-                                              fontSize: 13),
+                                              fontSize: 14),
                                         ),
                                       ),
                                     ),
@@ -3649,8 +3683,9 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                   Text(
                                     'COMMERCIAL UNIT',
                                     style: TextStyle(
-                                      color: Colors.grey,
+                                      color: blueColor,
                                       fontWeight: FontWeight.bold,
+                                      fontSize: 16,
                                     ),
                                   ),
                                   SizedBox(
@@ -3667,7 +3702,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                   Text(
                                     'Enter Commercial Units',
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: blueColor,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -3808,15 +3843,15 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                       borderRadius: BorderRadius.circular(5.0),
                                       //  border: Border.all(color:  Color.fromRGBO(21, 43, 81, 1)),
                                       child: Container(
-                                        height: 30,
+                                        height: 40,
                                         width:
                                             MediaQuery.of(context).size.width *
-                                                .3,
+                                                .38,
                                         decoration: BoxDecoration(
                                           color: Colors.white,
                                           // borderRadius: BorderRadius.circular(3),
                                           borderRadius:
-                                              BorderRadius.circular(5.0),
+                                              BorderRadius.circular(8.0),
                                           border: Border.all(
                                               color: Color.fromRGBO(
                                                   21, 43, 81, 1)),
@@ -3835,7 +3870,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                 color: Color.fromRGBO(
                                                     21, 43, 81, 1),
                                                 // fontWeight: FontWeight.bold,
-                                                fontSize: 13),
+                                                fontSize: 14),
                                           ),
                                         ),
                                       ),
@@ -3855,7 +3890,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                 SizedBox(height: 5),
                 Row(
                   children: [
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+                   // SizedBox(width: MediaQuery.of(context).size.width * 0.01),
                     GestureDetector(
                       onTap: () async {
                         print("calling");
@@ -4137,6 +4172,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                 widget.properties.propertyTypeData
                                     ?.propertySubType = selectedpropertytype;
                                 isLoading = false;
+                                widget.properties.staffMemberId;
                               });
                             }).catchError((e) {
                               setState(() {
@@ -4152,7 +4188,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                         borderRadius: BorderRadius.circular(5.0),
                         child: Container(
                           height: 45,
-                          width: MediaQuery.of(context).size.width * .3,
+                          width: MediaQuery.of(context).size.width * .33,
                           decoration: BoxDecoration(
                             color: Color.fromRGBO(21, 43, 81, 1),
                             boxShadow: [
@@ -4173,7 +4209,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                     "Edit Property",
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 14,
+                                      fontSize: 15,
                                     ),
                                   ),
                           ),
@@ -4186,7 +4222,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           // displayPropertyData();
                           Navigator.pop(context);
                         },
-                        child: Text("Cancel")),
+                        child: Text("Cancel",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: blueColor),)),
                   ],
                 ),
                 Column(

@@ -1175,7 +1175,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                     ),
                                                   );
                                                 }).toList(),
-                                                value: _selectedUnitId,
+                                                value: _selectedUnitId.toString().isNotEmpty? _selectedUnitId : null,
                                                 onChanged: (value) {
                                                   setState(() {
                                                     unitId = value.toString();
@@ -3592,7 +3592,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                           ),
                                                         );
                                                       }).toList(),
-                                                      value: _selectedUnitId,
+                                                      value: _selectedUnitId.toString().isNotEmpty? _selectedUnitId : null,
                                                       onChanged: (value) {
                                                         setState(() {
                                                           unitId = value

@@ -8456,13 +8456,14 @@ class _Summery_pageState extends State<Summery_page>
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12.0))),
                             onPressed: () async {
-                              var data = await Properies_summery_Repo()
+                              var data =  await Properies_summery_Repo()
                                   .Deleteunit(unitId: unit?.unitId!);
                               // Add your delete logic here
                               setState(() {
                                 futureUnitsummery = Properies_summery_Repo()
                                     .fetchunit(widget.properties.rentalId!);
                                 showdetails = false;
+
                               });
                               //Navigator.pop(context);
                             },
@@ -8528,9 +8529,9 @@ class _Summery_pageState extends State<Summery_page>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(left: 16),
+                            padding: const EdgeInsets.only(left: 12),
                             child: Text(
-                              '${unit!.rentalunit}',
+                              '${unit?.rentalunit}',
                               style: TextStyle(
                                   fontSize:
                                       MediaQuery.of(context).size.width < 500
@@ -8541,7 +8542,7 @@ class _Summery_pageState extends State<Summery_page>
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 16),
+                            padding: const EdgeInsets.only(left: 12),
                             child: Text(
                               'ADDRESS',
                               style: TextStyle(
@@ -8561,10 +8562,10 @@ class _Summery_pageState extends State<Summery_page>
                                 ? 200
                                 : 150,
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 16),
+                              padding: const EdgeInsets.only(left: 12),
                               child: Text(
                                 '${widget.properties?.rentalAddress}',
-                                maxLines: 2, // Set maximum number of lines
+                                maxLines: 3, // Set maximum number of lines
                                 overflow: TextOverflow
                                     .ellipsis, // Handle overflow with ellipsis
                                 style: TextStyle(
@@ -8581,9 +8582,9 @@ class _Summery_pageState extends State<Summery_page>
                             height: 5,
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 16),
+                            padding: const EdgeInsets.only(left: 12),
                             child: Text(
-                              maxLines: 3,
+                              maxLines: 4,
                               '${widget.properties?.rentalCity} ${widget.properties?.rentalState}',
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -8598,7 +8599,7 @@ class _Summery_pageState extends State<Summery_page>
                             height: 5,
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 15),
+                            padding: const EdgeInsets.only(left: 12),
                             child: Text(
                               '${widget.properties?.rentalCountry} ${widget.properties?.rentalPostcode}',
                               style: TextStyle(

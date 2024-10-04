@@ -597,7 +597,9 @@ class _StaffTableState extends State<StaffTable> {
                     ),
                   ),
                   Spacer(),
-                  Row(
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
                         'Added : ${rentalCount.toString()}',
@@ -609,7 +611,7 @@ class _StaffTableState extends State<StaffTable> {
                         ),
                       ),
                       SizedBox(
-                        width: 5,
+                        height: 5,
                       ),
                       //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
                       Text(
