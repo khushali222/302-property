@@ -457,7 +457,6 @@ class _addLease3State extends State<addLease3>
         );
       },
     );
-
     if (result != null) {
       setState(() {
         result['rent_cycle'] = Rent; // Add Rent value to the result map
@@ -4529,7 +4528,8 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                   value: _selectedProperty,
                                   onChanged: (value) {
                                     setState(() {
-                                      _selectedProperty = value;
+                                    //  _selectedProperty = value;
+                                      _selectedProperty =  value;
                                     });
                                     // widget.onChanged(value);
                                     // state.didChange(value);
@@ -4718,7 +4718,18 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
       );
 
       if (response.statusCode == 200) {
-        widget.onSave(formData);
+       // widget.onSave(formData);
+        final newAccountName = _accountNameController.text;
+
+        setState(() {
+          items.insert(0, newAccountName);
+          _selectedProperty = newAccountName;
+        });
+        _accountNameController.clear();
+        _selectedAccountType = null;
+        _selectedFundType = null;
+        _notesController.clear();
+
         Navigator.of(context).pop();
         print(response.body);
         Fluttertoast.showToast(msg: 'Account Added Successfully');
@@ -4821,6 +4832,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
     }
   }
 
+  List<Map<String, String>> formDataOneTimeList = [];
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -4892,12 +4904,10 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                                       ),
                                     )),
                             //updated
-
                             DropdownMenuItem<String>(
                               value: 'button_item',
                               child: GestureDetector(
                                 onTap: (){
-
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
@@ -5138,7 +5148,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                                                                                     8.0))),
                                                                         onPressed:
                                                                             () {
-                                                                          _submitSubForm();
+                                                                          _submitSubForm(context);
                                                                         },
                                                                         child:
                                                                         const Text(
@@ -5220,6 +5230,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                             setState(() {
                               _selectedProperty = value;
                             });
+
                             // widget.onChanged(value);
                             // state.didChange(value);
                           },
@@ -5318,7 +5329,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0))),
                             onPressed: () {
-                              _submitForm();
+                              _submitForm(context);
                             },
                             child: const Text(
                               'Add',
@@ -5354,7 +5365,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
     );
   }
 
-  void _submitForm() {
+  void _submitForm(BuildContext context) {
     if (_formKey.currentState?.validate() ?? false) {
       setState(() {
         _isInvalid = true;
@@ -5376,7 +5387,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
     }
   }
 
-  Future _submitSubForm() async {
+  Future _submitSubForm(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String adminId = prefs.getString('adminId').toString();
     print(adminId);
@@ -5400,9 +5411,18 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         },
         body: json.encode(formData),
       );
-
       if (response.statusCode == 200) {
-        widget.onSave(formData);
+       //widget.onSave(formData);
+        final newAccountName = _accountNameController.text;
+        setState(() {
+          items.insert(0, newAccountName);
+          _selectedProperty = newAccountName;
+
+        });
+        _accountNameController.clear();
+        _selectedAccountType = null;
+        _selectedFundType = null;
+        _notesController.clear();
         Navigator.of(context).pop();
         print(response.body);
         Fluttertoast.showToast(msg: 'Account Added Successfully');
@@ -5419,6 +5439,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       });
     }
   }
+
 }
 
 class AddTenant extends StatefulWidget {
