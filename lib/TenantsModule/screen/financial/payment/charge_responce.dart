@@ -27,7 +27,39 @@ class ChargeRepositorys {
   //     throw Exception('Failed to load rental owners');
   //   }
   // }
+  Future<Map<String,dynamic>?> fetchtenant_due_amount(String leaseId, String tenantId) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("tenant_id");
+      String? token = prefs.getString('token');
+      print(tenantId);
 
+      final response = await http.get(
+        Uri.parse('$Api_url/api/charge/tenant_due_amount/$tenantId/$leaseId'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
+
+      print('charge ${response.body}');
+      print('$Api_url/api/charge/tenant_due_amount/$leaseId/$tenantId');
+
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> jsonResponse = json.decode(response.body);
+        // log(jsonResponse.toString());
+        return jsonResponse;
+        // Check if 'totalCharges' exists in the response
+
+      } else {
+        throw Exception('Failed to load');
+      }
+    } catch (e) {
+      print('Error fetching charges: $e');
+      throw Exception('Failed to load charges');
+    }
+  }
   Future<List<Entrycharge>?> fetchChargesTable(String leaseId, String tenantId) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();

@@ -22,7 +22,7 @@ class PaymentService {
     required String leaseid,
     required String company_name,
     required bool future_Date,
-    required List<Map<String, dynamic>> entries,
+
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
@@ -59,6 +59,7 @@ class PaymentService {
         body: jsonEncode({"paymentDetails": paymentDetails}),
       );
 
+      print(response.statusCode);
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
         if (jsonData["statusCode"] == 100) {
@@ -75,7 +76,7 @@ class PaymentService {
               paymentType: "Card",
               customerVaultId: customerVaultId,
               billingId: billingId,
-              entries: entries,
+
               totalAmount: amount,
               isLeaseAdded: false,
               uploadedFile: "",
@@ -102,7 +103,7 @@ class PaymentService {
           paymentType: "Card",
           customerVaultId: customerVaultId,
           billingId: billingId,
-          entries: entries,
+
           totalAmount: amount,
           isLeaseAdded: false,
           uploadedFile: "",
@@ -126,7 +127,7 @@ class PaymentService {
     required String paymentType,
     required String customerVaultId,
     required String billingId,
-    required List<Map<String, dynamic>> entries,
+
     required String totalAmount,
     required bool isLeaseAdded,
     required String uploadedFile,
@@ -134,11 +135,12 @@ class PaymentService {
     required String responseText,
     required String surcharge,
   }) async {
-    final String baseUrl = '$Api_url/api/payment/payment';
+    final String baseUrl = '$Api_url/api/payment/tenant-payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
-    print(entries);
+    print(totalAmount);
+    print((double.parse(totalAmount) - double.parse(surcharge)).toString());
     final response = await http.post(
       Uri.parse(baseUrl),
       headers: {
@@ -154,10 +156,10 @@ class PaymentService {
         'payment_type': paymentType,
         'customer_vault_id': customerVaultId,
         'billing_id': billingId,
-        'entry': entries,
+
         'total_amount':
-            (double.parse(totalAmount) - double.parse(surcharge)).toString(),
-        'surcharge': surcharge,
+            double.parse(totalAmount) ,
+        'surcharge': double.parse(surcharge),
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,
