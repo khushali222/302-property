@@ -518,13 +518,21 @@ class _MakePaymentState extends State<MakePayment> {
           .fetchtenant_due_amount(leaseid, widget.tenantId);
       setState(() {
         lease_data = charges;
-        totalamount = double.parse(lease_data!["total_due_amount"].toString());
-        totalpayamount =
-            double.parse(lease_data!["total_due_amount"].toString());
-        if (surCharge != null) {
-          surchargeamount = totalamount * surCharge! / 100;
-          totalpayamount = totalamount + surchargeamount;
+        if(selected_account == "Full"){
+          totalamount = double.parse(lease_data!["total_due_amount"].toString());
+          totalpayamount =
+              double.parse(lease_data!["total_due_amount"].toString());
+          if (surCharge != null) {
+            surchargeamount = totalamount * surCharge! / 100;
+            totalpayamount = totalamount + surchargeamount;
+          }
         }
+        else{
+          totalamount = 0.0;
+          totalpayamount = 0.0;
+          surchargeamount = 0.0;
+        }
+
         isLoadingamount = false;
       });
     } catch (e) {
@@ -5246,6 +5254,9 @@ class _MakePaymentState extends State<MakePayment> {
                                   setState(() {
                                     selected_account = "Full";
                                     partialamount = false;
+                                    totalamount = lease_data!["total_due_amount"];
+                                    totalpayamount = lease_data!["total_due_amount"];
+                                    surchargeamount = 0.0;
                                     //_site = value;
                                   });
                                 },
