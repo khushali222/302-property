@@ -734,7 +734,7 @@ class _FinancialTableState extends State<FinancialTable> {
             SizedBox(height: 10),
 
             titleBar(
-              width: MediaQuery.of(context).size.width * .91,
+              width: MediaQuery.of(context).size.width * .99,
               title: 'Ledger',
             ),
            // SizedBox(height: 10),

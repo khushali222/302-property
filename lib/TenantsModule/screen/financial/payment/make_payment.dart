@@ -53,6 +53,8 @@ class _MakePaymentState extends State<MakePayment> {
   Map<String, List<String>> categorizedData = {};
   String? selectedAccount;
   bool isLoading = true;
+  bool IsLoading = false;
+  bool isloading = false;
   bool isLoadingamount = false;
   bool hasError = false;
   double chargeAmount = 0.0;
@@ -518,16 +520,16 @@ class _MakePaymentState extends State<MakePayment> {
           .fetchtenant_due_amount(leaseid, widget.tenantId);
       setState(() {
         lease_data = charges;
-        if(selected_account == "Full"){
-          totalamount = double.parse(lease_data!["total_due_amount"].toString());
+        if (selected_account == "Full") {
+          totalamount =
+              double.parse(lease_data!["total_due_amount"].toString());
           totalpayamount =
               double.parse(lease_data!["total_due_amount"].toString());
           if (surCharge != null) {
             surchargeamount = totalamount * surCharge! / 100;
             totalpayamount = totalamount + surchargeamount;
           }
-        }
-        else{
+        } else {
           totalamount = 0.0;
           totalpayamount = 0.0;
           surchargeamount = 0.0;
@@ -641,6 +643,7 @@ class _MakePaymentState extends State<MakePayment> {
 
     setState(() {
       isLoading = true;
+      isloading = true;
       cardDetails = []; // Clear previous card details
     });
 
@@ -684,6 +687,7 @@ class _MakePaymentState extends State<MakePayment> {
 
     setState(() {
       isLoading = false;
+      isloading = false;
     });
   }
 
@@ -852,6 +856,7 @@ class _MakePaymentState extends State<MakePayment> {
 
   String? _errorText;
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
+  bool iserror = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -4881,164 +4886,238 @@ class _MakePaymentState extends State<MakePayment> {
             }
         ));*/
             SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 40,
-                  decoration: BoxDecoration(
-                      color: blueColor, borderRadius: BorderRadius.circular(3)),
-                  child: Center(
-                    child: Text(
-                      "Payment Card Details",
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
+          child: Form(
+            key: _formKey,
+            child: Container(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 40,
+                    decoration: BoxDecoration(
+                        color: blueColor,
+                        borderRadius: BorderRadius.circular(3)),
+                    child: Center(
+                      child: Text(
+                        "Payment Card Details",
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                cardDetails.isEmpty
-                    ? Container(
-                        child: Center(child: Text('No Cards Available')),
-                      )
-                    : Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Color.fromRGBO(115, 119, 145, 1),
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(6)),
-                        padding: EdgeInsets.all(8),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Color.fromRGBO(115, 119, 145, 1),
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(6)),
+                    padding: EdgeInsets.all(8),
+                    child:
+                    FormField<String>(validator: (value) {
+                      if (selectedcardindex == null) {
+                        return 'Please select a card';
+                      }
+                      return null;
+                    }, builder: (FormFieldState<String> state) {
+                      return  Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          cardDetails == null
+                              ? Container()
+                              :
+                          Padding(
+                            padding: EdgeInsets.only(left: 10, right: 10),
+                            child: isloading
+                                ? Container(
+                              height:
+                              MediaQuery.of(context).size.width *
+                                  .2,
+                              child:
+                              Center(
+                                child:
+                                SpinKitFadingCircle(
+                                  color: Colors.black,
+                                  size: 45.0,
+                                ),
+                              ),
+                            )
+                                : cardDetails.isEmpty
+                                ? Container(
+                              height: MediaQuery.of(context)
+                                  .size
+                                  .width *
+                                  .2,
+                              child: Center(
+                                  child: Text(
+                                    'No Cards Available',
+                                    style: TextStyle(fontSize: 15),
+                                  )),
+                            )
+                                :
                             Table(
                               columnWidths: {
                                 0: FlexColumnWidth(.5), // Date
-                                1: FlexColumnWidth(1.3), // Address
+                                1: FlexColumnWidth(
+                                    1.3), // Address
                                 2: FlexColumnWidth(1), // Work
-                                3: FlexColumnWidth(.5), // Performed
+                                3: FlexColumnWidth(
+                                    .5), // Performed
                                 // Performed
                               },
                               defaultVerticalAlignment:
-                                  TableCellVerticalAlignment.middle,
+                              TableCellVerticalAlignment
+                                  .middle,
                               children: [
-                                ...cardDetails.asMap().entries.map((entry) {
+                                ...cardDetails
+                                    .asMap()
+                                    .entries
+                                    .map((entry) {
                                   int index = entry.key;
                                   BillingData item = entry.value;
-                                  String month = item.ccExp!.substring(0, 2);
-                                  String year = item.ccExp!.substring(2, 4);
-                                  String currentMonth = DateTime.now()
+                                  String month =
+                                  item.ccExp!.substring(0, 2);
+                                  String year =
+                                  item.ccExp!.substring(2, 4);
+                                  String currentMonth =
+                                  DateTime.now()
                                       .month
                                       .toString()
                                       .padLeft(2, '0');
-                                  String currentYear = DateTime.now()
+                                  String currentYear =
+                                  DateTime.now()
                                       .year
                                       .toString()
                                       .substring(2);
                                   String currentMonthYear =
                                       currentMonth + currentYear;
-                                  String expMonthYear = item.ccExp!;
-                                  String expMonth =
-                                      expMonthYear.substring(0, 2);
-                                  String expYear = expMonthYear.substring(2, 4);
-                                  bool isExpired = int.parse(expYear) <
-                                          int.parse(currentYear) ||
+                                  String expMonthYear =
+                                  item.ccExp!;
+                                  String expMonth = expMonthYear
+                                      .substring(0, 2);
+                                  String expYear = expMonthYear
+                                      .substring(2, 4);
+                                  bool isExpired = int.parse(
+                                      expYear) <
+                                      int.parse(
+                                          currentYear) ||
                                       (int.parse(expYear) ==
-                                              int.parse(currentYear) &&
+                                          int.parse(
+                                              currentYear) &&
                                           int.parse(expMonth) <
-                                              int.parse(currentMonth));
+                                              int.parse(
+                                                  currentMonth));
 
                                   return TableRow(
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.all(8.0),
+                                        padding:
+                                        const EdgeInsets.all(
+                                            8.0),
                                         child: Column(
                                           children: [
                                             isExpired == true
                                                 ? Text(
-                                                    'Expired',
-                                                    style: TextStyle(
-                                                        color: Colors.red),
-                                                  )
+                                              'Expired',
+                                              style: TextStyle(
+                                                  color: Colors
+                                                      .red),
+                                            )
                                                 : Checkbox(
-                                                    activeColor: blueColor,
-                                                    // Color of your check mark
-                                                    checkColor: Colors.white,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              2),
-                                                    ),
-                                                    side: BorderSide(
-                                                      // ======> CHANGE THE BORDER COLOR HERE <======
-                                                      color: blueColor,
-                                                      // Give your checkbox border a custom width
-                                                      width: 1.5,
-                                                    ),
-                                                    value: selectedcardindex ==
-                                                            index
-                                                        ? true
-                                                        : false,
-                                                    onChanged:
-                                                        (bool? value) async {
-                                                      setState(() {
-                                                        selectedcardindex =
-                                                            index;
-                                                      });
-                                                      await fetchSurcharge();
-                                                    },
-                                                  ),
+                                              activeColor:
+                                              blueColor,
+                                              // Color of your check mark
+                                              checkColor:
+                                              Colors
+                                                  .white,
+                                              shape:
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(2),
+                                              ),
+                                              side:
+                                              BorderSide(
+                                                // ======> CHANGE THE BORDER COLOR HERE <======
+                                                color:
+                                                blueColor,
+                                                // Give your checkbox border a custom width
+                                                width: 1.5,
+                                              ),
+                                              value: selectedcardindex ==
+                                                  index
+                                                  ? true
+                                                  : false,
+                                              onChanged: (bool?
+                                              value) async {
+                                                setState(
+                                                        () {
+                                                      selectedcardindex =
+                                                          index;
+                                                    });
+                                                await fetchSurcharge();
+                                              },
+                                            ),
                                           ],
                                         ),
                                       ),
                                       Column(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.start,
+                                        MainAxisAlignment
+                                            .start,
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        CrossAxisAlignment
+                                            .start,
                                         children: [
                                           Text(
                                             "Card Number",
                                             style: TextStyle(
                                                 fontSize: 16,
-                                                fontWeight: FontWeight.bold),
+                                                fontWeight:
+                                                FontWeight
+                                                    .bold),
                                           ),
                                           Text(
                                             item.ccNumber!,
-                                            style: TextStyle(fontSize: 14),
+                                            style: TextStyle(
+                                                fontSize: 14),
                                           ),
                                         ],
                                       ),
                                       Column(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.start,
+                                        MainAxisAlignment
+                                            .start,
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        CrossAxisAlignment
+                                            .start,
                                         children: [
                                           Text(
                                             "Card Type",
                                             style: TextStyle(
                                                 fontSize: 16,
-                                                fontWeight: FontWeight.bold),
+                                                fontWeight:
+                                                FontWeight
+                                                    .bold),
                                           ),
                                           Text(
                                             '${item.binResult}',
-                                            style: TextStyle(fontSize: 14),
+                                            style: TextStyle(
+                                                fontSize: 14),
                                           ),
                                         ],
                                       ),
                                       Column(
                                         children: [
-                                          _buildLogosBlocktablet(item.ccType!),
+                                          _buildLogosBlocktablet(
+                                              item.ccType!),
                                         ],
                                       ),
                                     ],
@@ -5046,10 +5125,36 @@ class _MakePaymentState extends State<MakePayment> {
                                 }).toList(),
                               ],
                             ),
-                            SizedBox(
-                              height: 10,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5,left: 16,right: 16,bottom: 10),
+                            child: Row(
+                              children: [
+                                if (state.hasError)
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 5),
+                                    child: Text(
+                                      state.errorText ?? '',
+                                      style: const TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 12),
+                                    ),
+                                  ),
+                              ],
                             ),
-                            Container(
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => AddCard()));
+                            },
+                            child: Container(
                               height: 30,
                               width: 130,
                               margin: EdgeInsets.only(left: 15, bottom: 10),
@@ -5058,472 +5163,538 @@ class _MakePaymentState extends State<MakePayment> {
                                   color: blueColor),
                               child: Center(
                                   child: Text(
-                                "Add New Card",
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.white),
-                              )),
-                            )
-                          ],
-                        ),
-                      ),
-                Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Color.fromRGBO(115, 119, 145, 1),
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(6)),
-                  padding: EdgeInsets.all(18),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            "Lease* : ",
-                            style: TextStyle(
-                                color: blueColor,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(0),
-                              child: FormField<String>(
-                                validator: (value) {
-                                  if (selectedTenantId == null) {
-                                    return 'Please select a lease';
-                                  }
-                                  return null;
-                                },
-                                builder: (FormFieldState<String> state) {
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      DropdownButtonHideUnderline(
-                                        child: DropdownButton2<String>(
-                                          isExpanded: true,
-                                          hint: const Text('Select Lease'),
-                                          value: selectedTenantId,
-                                          items: tenants.map((tenant) {
-                                            return DropdownMenuItem<String>(
-                                              value: tenant['tenant_id'],
-                                              child: Text(
-                                                  "${tenant['tenant_name']!} (${tenant['status']})"),
-                                            );
-                                          }).toList(),
-                                          style: TextStyle(
-                                              color: blueColor.withOpacity(.8)),
-                                          onChanged: (value) async {
-                                            setState(() {
-                                              selectedTenantId = value;
-                                              fetchTotal_due_amountTenant(
-                                                  value!);
-                                              fetchChargesForSelectedTenant(
-                                                  value!);
-                                              state.didChange(
-                                                  value); // Notify FormField of change
-                                            });
-                                            state.reset();
-                                            //   print('Selected tenant_id: $selectedTenantId');
-                                          },
-                                          buttonStyleData: ButtonStyleData(
-                                            height: 40,
-                                            width: 250,
-                                            padding: const EdgeInsets.only(
-                                                left: 10, right: 14),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
-                                              border: Border.all(
-                                                  color: blueColor
-                                                      .withOpacity(.6)),
-                                              color: Colors.white,
-                                            ),
-                                            elevation: 0,
-                                          ),
-                                          iconStyleData: const IconStyleData(
-                                            icon: Icon(
-                                              Icons.arrow_drop_down,
-                                            ),
-                                            iconSize: 24,
-                                            iconEnabledColor: Color(0xFFb0b6c3),
-                                            iconDisabledColor: Colors.grey,
-                                          ),
-                                          dropdownStyleData: DropdownStyleData(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
-                                              color: Colors.white,
-                                            ),
-                                            scrollbarTheme: ScrollbarThemeData(
-                                              radius: const Radius.circular(6),
-                                              thickness:
-                                                  MaterialStateProperty.all(6),
-                                              thumbVisibility:
-                                                  MaterialStateProperty.all(
-                                                      true),
-                                            ),
-                                          ),
-                                          menuItemStyleData:
-                                              const MenuItemStyleData(
-                                            height: 45,
-                                            padding: EdgeInsets.only(
-                                                left: 14, right: 14),
-                                          ),
-                                        ),
-                                      ),
-                                      if (state.hasError)
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 5),
-                                          child: Text(
-                                            state.errorText ?? '',
-                                            style: const TextStyle(
-                                                color: Colors.red,
-                                                fontSize: 12),
-                                          ),
-                                        ),
-                                    ],
-                                  );
-                                },
-                              ),
+                                    "Add New Card",
+                                    style:
+                                    TextStyle(fontSize: 12, color: Colors.white),
+                                  )),
                             ),
-                          ),
+                          )
                         ],
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      if (isLoadingamount == false) ...[
+                      );
+                    }),
+
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Color.fromRGBO(115, 119, 145, 1),
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(6)),
+                    padding: EdgeInsets.all(18),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Row(
                           children: [
-                            Text(
-                              'Current Balance : ',
-                              style: TextStyle(
-                                  color: blueColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
+                            Column(
+                              children: [
+                                Text(
+                                  "Lease* : ",
+                                  style: TextStyle(
+                                      color: blueColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                if(iserror && selectedTenantId == null)
+                                Text("")
+
+                              ],
                             ),
-                            Text(
-                              '\$${lease_data != null ? lease_data!["total_due_amount"] : 0.0}',
-                              style: TextStyle(
-                                  color: Color.fromRGBO(115, 119, 145, 1),
-                                  fontSize: 16),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(0),
+                                child: FormField<String>(
+                                  validator: (value) {
+                                    if (selectedTenantId == null) {
+                                      return 'Please select a lease';
+                                    }
+                                    return null;
+                                  },
+                                  builder: (FormFieldState<String> state) {
+                                    return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        DropdownButtonHideUnderline(
+                                          child: DropdownButton2<String>(
+                                            isExpanded: true,
+                                            hint: const Text('Select Lease'),
+                                            value: selectedTenantId,
+                                            items: tenants.map((tenant) {
+                                              return DropdownMenuItem<String>(
+                                                value: tenant['tenant_id'],
+                                                child: Text(
+                                                    "${tenant['tenant_name']!} (${tenant['status']})"),
+                                              );
+                                            }).toList(),
+                                            style: TextStyle(
+                                                color:
+                                                    blueColor.withOpacity(.8)),
+                                            onChanged: (value) async {
+                                              setState(() {
+                                                selectedTenantId = value;
+                                                fetchTotal_due_amountTenant(
+                                                    value!);
+                                                fetchChargesForSelectedTenant(
+                                                    value!);
+                                                state.didChange(
+                                                    value); // Notify FormField of change
+                                              });
+                                              state.reset();
+                                              //   print('Selected tenant_id: $selectedTenantId');
+                                            },
+                                            buttonStyleData: ButtonStyleData(
+                                              height: 40,
+                                              width: 250,
+                                              padding: const EdgeInsets.only(
+                                                  left: 10, right: 14),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                border: Border.all(
+                                                    color: blueColor
+                                                        .withOpacity(.6)),
+                                                color: Colors.white,
+                                              ),
+                                              elevation: 0,
+                                            ),
+                                            iconStyleData: const IconStyleData(
+                                              icon: Icon(
+                                                Icons.arrow_drop_down,
+                                              ),
+                                              iconSize: 24,
+                                              iconEnabledColor:
+                                                  Color(0xFFb0b6c3),
+                                              iconDisabledColor: Colors.grey,
+                                            ),
+                                            dropdownStyleData:
+                                                DropdownStyleData(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                color: Colors.white,
+                                              ),
+                                              scrollbarTheme:
+                                                  ScrollbarThemeData(
+                                                radius:
+                                                    const Radius.circular(6),
+                                                thickness:
+                                                    MaterialStateProperty.all(
+                                                        6),
+                                                thumbVisibility:
+                                                    MaterialStateProperty.all(
+                                                        true),
+                                              ),
+                                            ),
+                                            menuItemStyleData:
+                                                const MenuItemStyleData(
+                                              height: 45,
+                                              padding: EdgeInsets.only(
+                                                  left: 14, right: 14),
+                                            ),
+                                          ),
+                                        ),
+                                        if (state.hasError)
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 5, left: 5),
+                                            child: Container(
+                                              height: 15,
+                                              child: Text(
+                                                state.errorText ?? '',
+                                                style: const TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize: 12),
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ),
                             ),
                           ],
                         ),
                         SizedBox(
                           height: 15,
                         ),
-                        Row(
-                          children: [
-                            Text(
-                              'Choose Payment Amount : ',
-                              style: TextStyle(
-                                  color: blueColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              height: 30,
-                              //  color: blueColor.withOpacity(.6),
-                              child: Radio(
-                                value: "Full",
-                                activeColor: blueColor,
-                                groupValue: selected_account,
-                                fillColor: MaterialStateProperty.resolveWith(
-                                  (states) {
-                                    if (states
-                                        .contains(MaterialState.selected)) {
-                                      return blueColor;
-                                    }
-                                    return blueColor;
-                                  },
-                                ),
-                                onChanged: (value) {
-                                  setState(() {
-                                    selected_account = "Full";
-                                    partialamount = false;
-                                    totalamount = lease_data!["total_due_amount"];
-                                    totalpayamount = lease_data!["total_due_amount"];
-                                    surchargeamount = 0.0;
-                                    //_site = value;
-                                  });
-                                },
+                        if (isLoadingamount == false) ...[
+                          Row(
+                            children: [
+                              Text(
+                                'Current Balance : ',
+                                style: TextStyle(
+                                    color: blueColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
                               ),
-                            ),
-                            Text(
-                              'Pay Full Amount',
-                              style: TextStyle(color: blueColor, fontSize: 16),
-                            )
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              height: 30,
-                              //   color: blueColor.withOpacity(.6),
-                              child: Radio(
-                                value: "Partial",
-                                activeColor: blueColor,
-                                fillColor: MaterialStateProperty.resolveWith(
-                                  (states) {
-                                    if (states
-                                        .contains(MaterialState.selected)) {
-                                      return blueColor;
-                                    }
-                                    return blueColor;
-                                  },
-                                ),
-                                groupValue: selected_account,
-                                onChanged: (value) {
-                                  setState(() {
-                                    selected_account = "Partial";
-                                    totalamount = 0.0;
-                                    totalpayamount = 0.0;
-                                    surchargeamount = 0.0;
-                                    partialamount = true;
-                                    //_site = value;
-                                  });
-                                },
+                              Text(
+                                '\$${lease_data != null ? lease_data!["total_due_amount"] : 0.0}',
+                                style: TextStyle(
+                                    color: Color.fromRGBO(115, 119, 145, 1),
+                                    fontSize: 16),
                               ),
-                            ),
-                            Text(
-                              'Pay Partial Amount ',
-                              style: TextStyle(color: blueColor, fontSize: 16),
-                            )
-                          ],
-                        ),
-                        if (partialamount) ...[
+                            ],
+                          ),
                           SizedBox(
                             height: 15,
                           ),
-                          CustomTextField(
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter amount';
-                              }
-                              return null;
-                            },
-                            keyboardType: TextInputType.number,
-                            hintText: 'Enter Amount',
-                            controller: amountController,
-                            onChanged: (value) {
-                              setState(() {
-                                // Check if the value is not empty before processing
-                                if (value.isNotEmpty && lease_data != null) {
-                                  double inputAmount =
-                                      double.tryParse(value) ?? 0.0;
-
-                                  // Validate if the input amount exceeds the total amount
-                                  if (inputAmount >
-                                      lease_data!["total_due_amount"]) {
-                                    amountController.text =
-                                        lease_data!["total_due_amount"]
-                                            .toString();
-                                    inputAmount =
-                                        double.parse(amountController.text);
-                                    /* amountController.selection = TextSelection.fromPosition(
-                                TextPosition(offset: amountController.text.length), // Move cursor to the end
-                              );*/
-                                    // Optionally show an error message or handle accordingly
-                                    // return;
-                                  }
-
-                                  // Update amounts and calculate surcharge
-                                  totalamount = inputAmount;
-                                  totalpayamount = inputAmount;
-
-                                  if (surCharge != null) {
-                                    surchargeamount =
-                                        totalamount * surCharge! / 100;
-                                    totalpayamount += surchargeamount;
-                                  }
-                                } else {
-                                  if (lease_data == null)
-                                    amountController.text = "0";
-                                  // Reset amounts when the input is empty
-                                  totalamount = 0.0;
-                                  totalpayamount = 0.0;
-                                  surchargeamount = 0.0;
-                                }
-                              });
-                            },
-                          ),
-                        ],
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              'Payment  : ',
-                              style: TextStyle(
-                                  color: blueColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              '\$${totalamount}',
-                              style: TextStyle(
-                                  color: Color.fromRGBO(115, 119, 145, 1),
-                                  fontSize: 16),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              'Surcharge : ',
-                              style: TextStyle(
-                                  color: blueColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              '\$${surchargeamount}',
-                              style: TextStyle(
-                                  color: Color.fromRGBO(115, 119, 145, 1),
-                                  fontSize: 16),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              'Amount to Pay : ',
-                              style: TextStyle(
-                                  color: blueColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              '\$${totalpayamount}',
-                              style: TextStyle(
-                                  color: Color.fromRGBO(115, 119, 145, 1),
-                                  fontSize: 16),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        GestureDetector(
-                          onTap: () async{
-                            SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                            String? id = prefs.getString('adminId');
-                            String? first_name = prefs.getString("first_name");
-                            String? last_name = prefs.getString("last_name");
-                            String? email = prefs.getString("email");
-                            List<Map<String, String>> filteredTenants =
-                                tenants.where((tenant) {
-                              return tenant['tenant_id'] == selectedTenantId;
-                            }).toList();
-                            Map<String, String> selectedTenant =
-                                filteredTenants.first;
-                            await PaymentService()
-                                .makePaymentforcard(
-                                    adminId: id ?? "",
-                                    firstName: first_name!,
-                                    lastName: last_name!,
-                                    emailName: email!,
-                                    customerVaultId:
-                                        cardDetails[selectedcardindex!]
-                                            .customerVaultId!,
-                                    billingId: cardDetails[selectedcardindex!]
-                                        .billingId!,
-                                    surcharge:
-                                        "${surchargeamount}",
-                                    amount:
-                                        "${totalamount}",
-                                    tenantId: widget.tenantId,
-                                    date: _startDate.text,
-                                    address1: cardDetails[selectedcardindex!]
-                                        .address_1!,
-                                    processorId: "",
-                                    leaseid: selectedTenantId!,
-                                    company_name: companyName,
-
-                                    future_Date: false)
-                                .then((value) {
-                              Fluttertoast.showToast(msg: "$value");
-                              setState(() {
-                                _isLoading = false;
-                              });
-                              Navigator.pop(context, true);
-                            }).catchError((e) {
-                              setState(() {
-                                _isLoading = false;
-                              });
-                              //  print(e.toString().split("Exception")[1].toString().trimLeft());
-                              setState(() {
-                                _isLoading = false;
-                              });
-                              Alert(
-                                context: context,
-                                type: AlertType.warning,
-                                title: "Payment Failed!",
-                                desc:
-                                    "${e.toString().split('Exception:')[1].toString().trimLeft()}",
-                                style: AlertStyle(
-                                  backgroundColor: Colors.white,
-                                  //  overlayColor: Colors.black.withOpacity(.8)
-                                ),
-                                buttons: [
-                                  DialogButton(
-                                    child: Text(
-                                      "Ok",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 18),
-                                    ),
-                                    onPressed: () => Navigator.pop(context),
+                          Row(
+                            children: [
+                              Text(
+                                'Choose Payment Amount : ',
+                                style: TextStyle(
                                     color: blueColor,
-                                  ),
-                                ],
-                              ).show();
-
-                              Fluttertoast.showToast(msg: "Payment failed $e");
-                            });
-                          },
-                          child: Container(
-                            height: 35,
-                            width: 130,
-                            margin: EdgeInsets.only(left: 0, bottom: 0),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: blueColor),
-                            child: Center(
-                                child: Text(
-                              "Make Payment",
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.white),
-                            )),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ],
                           ),
-                        )
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                height: 30,
+                                //  color: blueColor.withOpacity(.6),
+                                child: Radio(
+                                  value: "Full",
+                                  activeColor: blueColor,
+                                  groupValue: selected_account,
+                                  fillColor: MaterialStateProperty.resolveWith(
+                                    (states) {
+                                      if (states
+                                          .contains(MaterialState.selected)) {
+                                        return blueColor;
+                                      }
+                                      return blueColor;
+                                    },
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selected_account = "Full";
+                                      partialamount = false;
+                                      if(lease_data != null){
+                                        totalamount =
+                                        lease_data!["total_due_amount"];
+                                        // totalAmount = double.tryParse(lease_data?["total_due_amount"]) ?? 0.0;
+                                        totalpayamount =
+                                        lease_data!["total_due_amount"];
+                                        if(surCharge != null){
+                                          surchargeamount = totalamount * surCharge!/100;
+                                        }
+
+                                      }
+
+                                      //_site = value;
+                                    });
+                                  },
+                                ),
+                              ),
+                              Text(
+                                'Pay Full Amount',
+                                style:
+                                    TextStyle(color: blueColor, fontSize: 16),
+                              )
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                height: 30,
+                                //   color: blueColor.withOpacity(.6),
+                                child: Radio(
+                                  value: "Partial",
+                                  activeColor: blueColor,
+                                  fillColor: MaterialStateProperty.resolveWith(
+                                    (states) {
+                                      if (states
+                                          .contains(MaterialState.selected)) {
+                                        return blueColor;
+                                      }
+                                      return blueColor;
+                                    },
+                                  ),
+                                  groupValue: selected_account,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selected_account = "Partial";
+                                      totalamount = 0.0;
+                                      totalpayamount = 0.0;
+                                      surchargeamount = 0.0;
+                                      partialamount = true;
+                                      //_site = value;
+                                    });
+                                  },
+                                ),
+                              ),
+                              Text(
+                                'Pay Partial Amount ',
+                                style:
+                                    TextStyle(color: blueColor, fontSize: 16),
+                              )
+                            ],
+                          ),
+                          if (partialamount) ...[
+                            SizedBox(
+                              height: 15,
+                            ),
+                            CustomTextField(
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter amount';
+                                }
+                                return null;
+                              },
+                              keyboardType: TextInputType.number,
+                              hintText: 'Enter Amount',
+                              controller: amountController,
+                              onChanged: (value) {
+                                setState(() {
+                                  // Check if the value is not empty before processing
+                                  if (value.isNotEmpty && lease_data != null) {
+                                    double inputAmount =
+                                        double.tryParse(value) ?? 0.0;
+
+                                    // Validate if the input amount exceeds the total amount
+                                    if (inputAmount >
+                                        lease_data!["total_due_amount"]) {
+                                      amountController.text =
+                                          lease_data!["total_due_amount"]
+                                              .toString();
+                                      inputAmount =
+                                          double.parse(amountController.text);
+                                      /* amountController.selection = TextSelection.fromPosition(
+                                  TextPosition(offset: amountController.text.length), // Move cursor to the end
+                                );*/
+                                      // Optionally show an error message or handle accordingly
+                                      // return;
+                                    }
+
+                                    // Update amounts and calculate surcharge
+                                    totalamount = inputAmount;
+                                    totalpayamount = inputAmount;
+
+                                    if (surCharge != null) {
+                                      surchargeamount =
+                                          totalamount * surCharge! / 100;
+                                      totalpayamount += surchargeamount;
+                                    }
+                                  } else {
+                                    if (lease_data == null)
+                                      amountController.text = "0";
+                                    // Reset amounts when the input is empty
+                                    totalamount = 0.0;
+                                    totalpayamount = 0.0;
+                                    surchargeamount = 0.0;
+                                  }
+                                });
+                              },
+                            ),
+                          ],
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                'Payment  : ',
+                                style: TextStyle(
+                                    color: blueColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                '\$${totalamount}',
+                                style: TextStyle(
+                                    color: Color.fromRGBO(115, 119, 145, 1),
+                                    fontSize: 16),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                'Surcharge : ',
+                                style: TextStyle(
+                                    color: blueColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                '\$${surchargeamount}',
+                                style: TextStyle(
+                                    color: Color.fromRGBO(115, 119, 145, 1),
+                                    fontSize: 16),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                'Amount to Pay : ',
+                                style: TextStyle(
+                                    color: blueColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                '\$${totalpayamount}',
+                                style: TextStyle(
+                                    color: Color.fromRGBO(115, 119, 145, 1),
+                                    fontSize: 16),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              if ((_formKey.currentState?.validate() ??
+                                  false)) {
+                                print("valid");
+                                setState(() {
+                                  iserror = false;
+                                  IsLoading = true;
+                                });
+
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                String? id = prefs.getString('adminId');
+                                String? first_name =
+                                    prefs.getString("first_name");
+                                String? last_name =
+                                    prefs.getString("last_name");
+                                String? email = prefs.getString("email");
+                                List<Map<String, String>> filteredTenants =
+                                    tenants.where((tenant) {
+                                  return tenant['tenant_id'] ==
+                                      selectedTenantId;
+                                }).toList();
+                                Map<String, String> selectedTenant =
+                                    filteredTenants.first;
+                                await PaymentService()
+                                    .makePaymentforcard(
+                                        adminId: id ?? "",
+                                        firstName: first_name!,
+                                        lastName: last_name!,
+                                        emailName: email!,
+                                        customerVaultId:
+                                            cardDetails[selectedcardindex!]
+                                                .customerVaultId!,
+                                        billingId:
+                                            cardDetails[selectedcardindex!]
+                                                .billingId!,
+                                        surcharge: "${surchargeamount}",
+                                        amount: "${totalamount}",
+                                        tenantId: widget.tenantId,
+                                        date: _startDate.text,
+                                        address1:
+                                            cardDetails[selectedcardindex!]
+                                                .address_1!,
+                                        processorId: "",
+                                        leaseid: selectedTenantId!,
+                                        company_name: companyName,
+                                        future_Date: false)
+                                    .then((value) {
+                                  Fluttertoast.showToast(msg: "$value");
+                                  setState(() {
+                                    IsLoading = false;
+                                  });
+                                  Navigator.pop(context, true);
+                                }).catchError((e) {
+                                  setState(() {
+                                    IsLoading = false;
+                                  });
+                                  //  print(e.toString().split("Exception")[1].toString().trimLeft());
+                                  setState(() {
+                                    IsLoading = false;
+                                  });
+                                  Alert(
+                                    context: context,
+                                    type: AlertType.warning,
+                                    title: "Payment Failed!",
+                                    desc:
+                                        "${e.toString().split('Exception:')[1].toString().trimLeft()}",
+                                    style: AlertStyle(
+                                      backgroundColor: Colors.white,
+                                      //  overlayColor: Colors.black.withOpacity(.8)
+                                    ),
+                                    buttons: [
+                                      DialogButton(
+                                        child: Text(
+                                          "Ok",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18),
+                                        ),
+                                        onPressed: () => Navigator.pop(context),
+                                        color: blueColor,
+                                      ),
+                                    ],
+                                  ).show();
+
+                                  Fluttertoast.showToast(
+                                      msg: "Payment failed $e");
+                                });
+                              }else{
+                                setState(() {
+                                  iserror = true;
+                                   isLoading = false;
+                                });
+                              }
+                            },
+                            child: Container(
+                              height: 45,
+                              width: 130,
+                              margin: EdgeInsets.only(left: 0, bottom: 0),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: blueColor),
+                              child:
+                              IsLoading
+                                  ? Center(
+                                child: SpinKitFadingCircle(
+                                  color: Colors.white,
+                                  size: 42.0,
+                                ),
+                              )
+                                  : Center(
+                                  child: Text(
+                                "Make Payment",
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.white),
+                              )),
+                            ),
+                          )
+                        ],
+                        if (isLoadingamount)
+                          Center(
+                            child:
+                            SpinKitFadingCircle(
+                              color: Colors.black,
+                              size: 45.0,
+                            ),
+                          ),
                       ],
-                      if (isLoadingamount)
-                        Center(child: CircularProgressIndicator())
-                    ],
-                  ),
-                )
-              ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ));

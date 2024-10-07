@@ -3765,7 +3765,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               !stateerror &&
                               !countryerror &&
                               !postalcodeerror &&
-                              !hasError) {
+                              !hasError)
+                          {
                             setState(() {
                               loading = true;
                             });
