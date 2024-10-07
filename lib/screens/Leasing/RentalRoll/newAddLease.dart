@@ -5411,13 +5411,13 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         },
         body: json.encode(formData),
       );
+
       if (response.statusCode == 200) {
        //widget.onSave(formData);
         final newAccountName = _accountNameController.text;
         setState(() {
           items.insert(0, newAccountName);
           _selectedProperty = newAccountName;
-
         });
         _accountNameController.clear();
         _selectedAccountType = null;
