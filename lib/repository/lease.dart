@@ -219,6 +219,7 @@ class LeaseRepository {
   Future<Map<String, dynamic>> deleteLease({
     required String leaseId,
     required String companyName,
+    String? reason
   }) async {
     try {
       final Uri uri = Uri.parse('$Api_url/api/leases/leases/$leaseId')
@@ -235,6 +236,7 @@ class LeaseRepository {
           "id": "CRM $id",
           'Content-Type': 'application/json; charset=UTF-8',
         },
+          body: jsonEncode({"reason":reason})
       );
 
       var responseData = json.decode(response.body);
@@ -582,7 +584,7 @@ class LeaseRepository {
 
     return response.statusCode;
   }
-  Future<int> DeleteCharge(String charge_id) async {
+  Future<int> DeleteCharge(String charge_id,String? reason) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
@@ -593,6 +595,7 @@ class LeaseRepository {
         'Authorization': 'CRM $token',
         "id": "CRM $id",
       },
+        body: jsonEncode({"reason":reason})
 
     );
     print('charge respo ${response.body}');

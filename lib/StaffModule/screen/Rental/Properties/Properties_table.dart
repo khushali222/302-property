@@ -340,6 +340,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
   }
 
   void _showAlert(BuildContext context, String id) {
+    TextEditingController reason = TextEditingController();
     Alert(
       context: context,
       type: AlertType.warning,
@@ -348,6 +349,22 @@ class _PropertiesTableState extends State<PropertiesTable> {
       style: AlertStyle(
         backgroundColor: Colors.white,
         //  overlayColor: Colors.black.withOpacity(.8)
+      ),
+      content: Column(
+        children: <Widget>[
+          SizedBox(height: 10,),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter reason for deletion',
+                  contentPadding: EdgeInsets.only(top: 8,left: 15)
+              ),
+            ),
+          ),
+        ],
       ),
       buttons: [
         DialogButton(
@@ -368,7 +385,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
             print(id);
 
             var data =  await PropertiesRepository().DeleteProperties(
-              property_id: id,
+              property_id: id
+                ,reason: reason.text
             );
 
             setState(() {

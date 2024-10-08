@@ -91,7 +91,8 @@ class VendorRepository {
     }
   }
   Future<bool> DeleteVender({
-    required String? vender_id
+    required String? vender_id,
+    String? reason
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
@@ -100,7 +101,8 @@ class VendorRepository {
 
     final http.Response response = await http.delete(
       Uri.parse('$Api_url/api/vendor/delete_vendor/${vender_id}'),
-        headers: {"authorization" : "CRM $token","id":"CRM $id",}
+        headers: {"authorization" : "CRM $token","id":"CRM $id",},
+        body: jsonEncode({"reason":reason})
     );
     var responseData = json.decode(response.body);
     print(response.body);

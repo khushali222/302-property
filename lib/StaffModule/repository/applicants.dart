@@ -95,7 +95,7 @@ class ApplicantRepository {
   }
 
   Future<Map<String, dynamic>> DeleteApplicant(
-      {required String? Applicantid}) async {
+      {required String? Applicantid, String? reason}) async {
     print('id is $Applicantid');
     // print('$apiUrl/$id');
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -108,6 +108,9 @@ class ApplicantRepository {
         "authorization": "CRM $token",
         "id": "CRM $id",
       },
+        body: jsonEncode({
+          "reason":reason
+        })
     );
     var responseData = json.decode(response.body);
     print(response.body);

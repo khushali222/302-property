@@ -378,11 +378,28 @@ class _Lease_tableState extends State<Lease_table> {
   }
 
   void _showDeleteAlert(BuildContext context, String id) {
+    TextEditingController reason = TextEditingController();
     Alert(
       context: context,
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this lease!",
+      content: Column(
+        children: <Widget>[
+          SizedBox(height: 10,),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter reason for deletion',
+                  contentPadding: EdgeInsets.only(top: 8,left: 15)
+              ),
+            ),
+          ),
+        ],
+      ),
       style: AlertStyle(
         backgroundColor: Colors.white,
       ),
@@ -402,7 +419,7 @@ class _Lease_tableState extends State<Lease_table> {
           ),
           onPressed: () async {
             await LeaseRepository()
-                .deleteLease(leaseId: id, companyName: companyName);
+                .deleteLease(leaseId: id, companyName: companyName,reason: reason.text);
             setState(() {
               futureLease = LeaseRepository().fetchLease("");
             });

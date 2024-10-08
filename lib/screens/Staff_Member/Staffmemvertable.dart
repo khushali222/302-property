@@ -326,11 +326,28 @@ class _StaffTableState extends State<StaffTable> {
   }
 
   void _showDeleteAlert(BuildContext context, String id) {
+    TextEditingController reason = TextEditingController();
     Alert(
       context: context,
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this staff member!",
+      content: Column(
+        children: <Widget>[
+          SizedBox(height: 10,),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter reason for deletion',
+                  contentPadding: EdgeInsets.only(top: 8,left: 15)
+              ),
+            ),
+          ),
+        ],
+      ),
       style: AlertStyle(
         backgroundColor: Colors.white,
       ),
@@ -349,7 +366,7 @@ class _StaffTableState extends State<StaffTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            await StaffMemberRepository().DeleteStaffMember(id: id);
+            await StaffMemberRepository().DeleteStaffMember(id: id,reason: reason.text);
             setState(() {
               futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
             });

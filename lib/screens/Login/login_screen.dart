@@ -1,4 +1,4 @@
-/*
+
 import 'dart:convert';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -60,14 +60,13 @@ class _Login_ScreenState extends State<Login_Screen> {
   String companymessage = "";
   String emailmessage = "";
   String rolemessage = "";
-  String adminId = '';
   // String get email => _email;
   bool get isEmailSubmitted => _isEmailSubmitted;
   bool get hasMultipleCompanies => _hasMultipleCompanies;
   List<Map<String, String>> get companies => _companies;
   String get selectedCompany => _selectedCompany;
   // String get password => _password;
-
+  String? adminId ;
   void setEmail(String email) {
     print(email);
     setState(() {
@@ -105,7 +104,7 @@ class _Login_ScreenState extends State<Login_Screen> {
     // Make API call to check email
     final response = await http.post(
       Uri.parse('$Api_url/api/admin/check_role'),
-     // Uri.parse('$Api_url/api/admin/check_role'),
+      // Uri.parse('$Api_url/api/admin/check_role'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email.text}),
     );
@@ -122,7 +121,7 @@ class _Login_ScreenState extends State<Login_Screen> {
             _hasMultipleCompanies = true;
             _companies = roles
                 .map<Map<String, String>>((role) =>
-                    {'company': role['company_name'], 'role': role['role']})
+            {'company': role['company_name'], 'role': role['role']})
                 .toList();
             _isEmailSubmitted = true;
           });
@@ -130,14 +129,14 @@ class _Login_ScreenState extends State<Login_Screen> {
           setState(() {
             if (roles[0]['role'] == "admin") {
               _hasMultipleCompanies = false;
-              adminId = roles[0]['admin_id'];
+              adminId = roles[0]["admin_id"];
               //_selectedCompany = roles[0]['company_name'];
               selectedrole = roles[0]['role']; // Set role directly
               _isEmailSubmitted = true;
             } else {
               print(roles[0]['role']);
               _hasMultipleCompanies = false;
-              adminId = roles[0]['admin_id'];
+              adminId = roles[0]["admin_id"];
               _selectedCompany = roles[0]['company_name'];
               selectedrole = roles[0]['role']; // Set role directly
               _isEmailSubmitted = true;
@@ -158,1162 +157,177 @@ class _Login_ScreenState extends State<Login_Screen> {
       body: Padding(
           padding: const EdgeInsets.all(0.0),
           child: LayoutBuilder(
-            builder: (context,contraints) {
-              if(contraints.maxWidth > 500){
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+              builder: (context,contraints) {
+                if(contraints.maxWidth > 500){
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
 
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.1,
-                    ),
-                    Image(
-                      image: AssetImage('assets/images/logo.png'),
-                      height: MediaQuery.of(context).size.height * 0.07,
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      fit: BoxFit.fill,
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.025,
-                    ),
-                    // Welcome
-                    Center(
-                      child: Text(
-                        "Welcome to 302 Rentals",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: MediaQuery.of(context).size.width * 0.04,
-                        ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.1,
                       ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.02,
-                    ),
-                    // Login text
-                    Center(
-                      child: Text(
-                        "Please login here...",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: MediaQuery.of(context).size.width * 0.03),
+                      Image(
+                        image: AssetImage('assets/images/logo.png'),
+                        height: MediaQuery.of(context).size.height * 0.07,
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        fit: BoxFit.fill,
                       ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.05,
-                    ),
-                    */
-/*     Row(
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.099,
-                        ),
-                        Expanded(
-
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton2<String>(
-                              isExpanded: true,
-                              hint: const Text('Select Role'),
-                              value: selectedRole,
-                              items: roles.map((role) {
-                                return DropdownMenuItem<String>(
-                                  value: role['role_id'],
-                                  child: Text(role['role_name']!),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedRole = value;
-                                  roleerror = false;
-                                });
-                                print('Selected role_id: $selectedRole');
-                              },
-                              buttonStyleData: ButtonStyleData(
-                                height: 45,
-                                width: 170,
-                                padding: const EdgeInsets.only(left: 14, right: 14),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Colors.white,
-                                ),
-                                elevation: 2,
-                              ),
-                              iconStyleData: const IconStyleData(
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                ),
-                                iconSize: 24,
-                                iconEnabledColor: Color(0xFFb0b6c3),
-                                iconDisabledColor: Colors.grey,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Colors.white,
-                                ),
-                                scrollbarTheme: ScrollbarThemeData(
-                                  radius: const Radius.circular(6),
-                                  thickness: MaterialStateProperty.all(6),
-                                  thumbVisibility: MaterialStateProperty.all(true),
-                                ),
-                              ),
-                              menuItemStyleData: const MenuItemStyleData(
-                                height: 40,
-                                padding: EdgeInsets.only(left: 14, right: 14),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.099,
-                        ),
-                      ],
-                    ),*//*
-
-
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.01,
-                    ),
-                    // Email
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.099,
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Container(
-                            height: 60,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Color.fromRGBO(196, 196, 196, .3),
-                            ),
-                            child: Stack(
-                              children: [
-                                Positioned.fill(
-                                  child: TextField(
-                                    keyboardType: TextInputType.emailAddress,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        emailerror = false;
-                                        _isEmailSubmitted = false;
-                                        _hasMultipleCompanies = false;
-                                      });
-                                    },
-                                    style: TextStyle(
-                                      fontSize: 20
-                                    ),
-                                    controller: email,
-                                    cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                    decoration: InputDecoration(
-                                      enabledBorder: emailerror
-                                          ? OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: BorderSide(
-                                            color: Colors
-                                                .red), // Set border color here
-                                      )
-                                          : InputBorder.none,
-                                      border: InputBorder.none,
-                                      contentPadding: EdgeInsets.all(14),
-
-                                      prefixIcon: Container(
-                                        height: 25,
-                                        width: 25,
-                                        padding: EdgeInsets.all(13),
-                                        child: FaIcon(
-                                          FontAwesomeIcons.envelope,
-                                          size: 25,
-                                          color: Colors.grey[600],
-                                        ),
-                                      ),
-                                      hintText: "Business Email",
-                                      hintStyle: TextStyle(
-                                          color: Colors.grey[600], fontSize: 20),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.095,
-                        ),
-                      ],
-                    ),
-                    emailerror
-                        ? Center(
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.025,
+                      ),
+                      // Welcome
+                      Center(
                         child: Text(
-                          emailmessage,
+                          "Welcome to 302 Rentals",
                           style: TextStyle(
-                            color: Colors.red,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: MediaQuery.of(context).size.width * 0.04,
                           ),
-                        ))
-                        : Container(),
-
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.025,
-                    ),
-                    if(!isEmailSubmitted)
-                      Column(
-                        children: [
-                          Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                */
-/*  SizedBox(
-                                    width: MediaQuery.of(context).size.width * 0.099,
-                                  ),
-                                  Container(
-                                    height: 30,
-                                    width: 30,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width * 0.02,
-                                  ),
-                                  Text(
-                                    "Remember me ",
-                                    style: TextStyle(
-                                        fontSize: MediaQuery.of(context).size.width * 0.02,
-                                        color: Colors.black),
-                                  ),*//*
-
-
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => ForgotPassword()));
-                                    },
-                                    child: Text(
-                                      "Forgot password?",
-                                      style: TextStyle(
-                                          fontSize: MediaQuery.of(context).size.width * 0.02,
-                                          color: Colors.blue),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width * 0.099,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.025,
-                              ),
-
-                            ],
-                          ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.035,
-                          ),
-                          InkWell(
-                            onTap: (){
-                              if (email.text.isEmpty) {
-                                setState(() {
-                                  emailerror = true;
-                                  emailmessage = "Email is required";
-                                });
-                              } else if (!EmailValidator.validate(email.text)) {
-                                setState(() {
-                                  emailerror = true;
-                                  emailmessage = "Email is not valid";
-                                });
-                              } else {
-                                setState(() {
-                                  emailerror = false;
-                                  //firstnamemessage = "Firstname is required";
-                                });
-                                submitEmail();
-                              }
-
-
-                            },
-                            child: Center(
-                              child: Container(
-                                height: MediaQuery.of(context).size.height * 0.05,
-                                width: MediaQuery.of(context).size.width * 0.8,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Center(
-                                  child: loading
-                                      ? SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 40.0,
-                                  )
-                                      : Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Submit",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.03),
-                                      ),
-
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                    if(isEmailSubmitted)
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          */
-/*  SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.025,
-                        ),*//*
-
-
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.099,
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Container(
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Color.fromRGBO(196, 196, 196, .3),
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      Positioned.fill(
-                                        child: TextField(
-                                          keyboardType: TextInputType.text,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              passworderror = false;
-                                            });
-                                          },
-                                          style: TextStyle(
-                                              fontSize: 20
-                                          ),
-                                          controller: password,
-                                          obscureText: visiable_password,
-                                          cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                          decoration: InputDecoration(
-                                            enabledBorder: passworderror
-                                                ? OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(10),
-                                              borderSide: BorderSide(
-                                                  color: Colors
-                                                      .red), // Set border color here
-                                            )
-                                                : InputBorder.none,
-                                            border: InputBorder.none,
-                                            contentPadding: EdgeInsets.all(14),
-                                            prefixIcon: Container(
-                                              height: 25,
-                                              width: 25,
-                                              // color: Colors.blue,
-                                              padding: EdgeInsets.all(13),
-                                              child: FaIcon(
-                                                FontAwesomeIcons.lock,
-                                                size: 25,
-                                                color: Colors.grey[600],
-                                              ),
-                                            ),
-                                            hintText: "Password",
-                                            hintStyle: TextStyle(
-                                                color: Colors.grey[600], fontSize: 20),
-                                            suffixIcon: InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  visiable_password = !visiable_password;
-                                                });
-                                              },
-                                              child: Icon(
-                                                visiable_password
-                                                    ? Icons.remove_red_eye_outlined
-                                                    : Icons.visibility_off_outlined,
-                                                color: Colors.grey[600],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.099,
-                              ),
-                            ],
-                          ),
-                          passworderror
-                              ? Center(
-                              child: Text(
-                                passwordmessage,
-                                style: TextStyle(color: Colors.red),
-                              ))
-                              : Container(),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.025,
-                          ),
-                          if (hasMultipleCompanies) ...[
-
-                            SingleSelectionButtons(
-                              buttonOptions: companies,
-                              onSelected: (index) {
-                                selectCompany(companies[index]["company"]!,companies[index]["role"]!);
-                              },
-                            ),
-                          ],
-
-
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.015,
-                          ),
-                          // Forgot password
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                            */
-/*  SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.11,
-                              ),
-                              Container(
-                                height:30,
-                                width: 30,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(5),
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.02,
-                              ),
-                              Text(
-                                "Remember me ",
-                                style: TextStyle(
-                                    fontSize: MediaQuery.of(context).size.width * 0.02,
-                                    color: Colors.black),
-                              ),*//*
-
-
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => ForgotPassword()));
-                                },
-                                child: Text(
-                                  "Forgot password?",
-                                  style: TextStyle(
-                                      fontSize: MediaQuery.of(context).size.width * 0.02,
-                                      color: Colors.blue),
-                                ),
-                              ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.099,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.025,
-                          ),
-                          // Login button
-                          */
-/*SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.16,
-                    ),*//*
-
-                          GestureDetector(
-                            onTap: () async {
-                              setState(() {
-                                if (email.text.isEmpty) {
-                                  setState(() {
-                                    emailerror = true;
-                                    emailmessage = "Email is required";
-                                  });
-                                } else if (!EmailValidator.validate(email.text)) {
-                                  setState(() {
-                                    emailerror = true;
-                                    emailmessage = "Email is not valid";
-                                  });
-                                } else {
-                                  setState(() {
-                                    emailerror = false;
-                                    //firstnamemessage = "Firstname is required";
-                                  });
-                                }
-                                if (password.text.isEmpty) {
-                                  setState(() {
-                                    passworderror = true;
-                                    passwordmessage = "Password is required";
-                                  });
-                                } else {
-                                  setState(() {
-                                    passworderror = false;
-                                    //firstnamemessage = "Firstname is required";
-                                  });
-                                }
-                                if(selectedrole == null){
-                                  setState(() {
-                                    roleerror = true;
-                                    rolemessage = "Please select the role";
-                                  });
-                                }
-                                else{
-                                  setState(() {
-                                    roleerror = false;
-                                    //firstnamemessage = "Firstname is required";
-                                  });
-                                }
-                                if(selectedrole != "1" && selectedrole != null && company.text.isEmpty){
-                                  setState(() {
-                                    companyerror = true;
-                                    companymessage = "Company Name is required";
-                                  });
-                                }
-                                else{
-                                  setState(() {
-                                    companyerror = false;
-                                    //firstnamemessage = "Firstname is required";
-                                  });
-                                }
-
-
-                              });
-                              if(selectedrole == ""){
-                                Fluttertoast.showToast(msg: "Please select the company");
-                              }
-                              else if (emailerror == false && passworderror == false ) {
-
-                                if(selectedrole == "admin")
-                                  await loginsubmit();
-                                if(selectedrole != "admin")
-                                  await checkCompany(selectedCompany);
-                                // Save authentication status to SharedPreferences
-                                */
-/* // Navigate to the appropriate screen based on authentication status
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Dashboard(),
-                            ),
-                          );*//*
-
-                              }
-                            },
-                            child: Center(
-                              child: Container(
-                                height: MediaQuery.of(context).size.height * 0.045,
-                                width: MediaQuery.of(context).size.width * 0.8,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Center(
-                                  child: loading
-                                      ? SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 40.0,
-                                  )
-                                      : Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Login",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.03),
-                                      ),
-                                      SizedBox(
-                                        height:
-                                        MediaQuery.of(context).size.width * 0.015,
-                                      ),
-                                      Icon(
-                                        Icons.arrow_forward_ios_sharp,
-                                        color: Colors.white,
-                                        size:
-                                        MediaQuery.of(context).size.width * 0.03,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.02,
                       ),
-
-
-
-
-                    // Register now
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.04,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Don't have an account ? ",
+                      // Login text
+                      Center(
+                        child: Text(
+                          "Please login here...",
                           style: TextStyle(
                               color: Colors.black,
                               fontSize: MediaQuery.of(context).size.width * 0.03),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => Signup()));
-                          },
-                          child: Container(
-                            child: Text(
-                              "Register now",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blue,
-                                  fontSize:
-                                  MediaQuery.of(context).size.width * 0.03),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.04,
-                    ),
-                    // SizedBox(
-                    //   height: MediaQuery.of(context).size.height * 0.1,
-                    // ),
-                  ],
-                );
-              }
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.05,
+                      ),
 
-              return SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if(!isEmailSubmitted &&  MediaQuery.of(context).size.height > 700 && hasMultipleCompanies)
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.25,
-                    ),
-                    if(isEmailSubmitted &&  MediaQuery.of(context).size.height > 700 && !hasMultipleCompanies)
+
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.15,
+                        height: MediaQuery.of(context).size.height * 0.01,
                       ),
-                    if(!isEmailSubmitted &&  MediaQuery.of(context).size.height > 700)
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.15,
-                      ),
-                    if(MediaQuery.of(context).size.height < 670)
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.1,
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.1,
-                    ),
-                    Image(
-                      image: AssetImage('assets/images/logo.png'),
-                      height: MediaQuery.of(context).size.height * 0.05,
-                      width: MediaQuery.of(context).size.width * 0.9,
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.025,
-                    ),
-                    // Welcome
-                    Center(
-                      child: Text(
-                        "Welcome to 302 Rentals",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: MediaQuery.of(context).size.width * 0.05,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.02,
-                    ),
-                    // Login text
-                    Center(
-                      child: Text(
-                        "Please login here...",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: MediaQuery.of(context).size.width * 0.036),
-                      ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.05,
-                    ),
-                    */
-/*     Row(
+                      // Email
+                      Row(
                         children: [
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.099,
                           ),
                           Expanded(
-
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton2<String>(
-                                isExpanded: true,
-                                hint: const Text('Select Role'),
-                                value: selectedRole,
-                                items: roles.map((role) {
-                                  return DropdownMenuItem<String>(
-                                    value: role['role_id'],
-                                    child: Text(role['role_name']!),
-                                  );
-                                }).toList(),
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedRole = value;
-                                    roleerror = false;
-                                  });
-                                  print('Selected role_id: $selectedRole');
-                                },
-                                buttonStyleData: ButtonStyleData(
-                                  height: 45,
-                                  width: 170,
-                                  padding: const EdgeInsets.only(left: 14, right: 14),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(6),
-                                    color: Colors.white,
-                                  ),
-                                  elevation: 2,
-                                ),
-                                iconStyleData: const IconStyleData(
-                                  icon: Icon(
-                                    Icons.arrow_drop_down,
-                                  ),
-                                  iconSize: 24,
-                                  iconEnabledColor: Color(0xFFb0b6c3),
-                                  iconDisabledColor: Colors.grey,
-                                ),
-                                dropdownStyleData: DropdownStyleData(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(6),
-                                    color: Colors.white,
-                                  ),
-                                  scrollbarTheme: ScrollbarThemeData(
-                                    radius: const Radius.circular(6),
-                                    thickness: MaterialStateProperty.all(6),
-                                    thumbVisibility: MaterialStateProperty.all(true),
-                                  ),
-                                ),
-                                menuItemStyleData: const MenuItemStyleData(
-                                  height: 40,
-                                  padding: EdgeInsets.only(left: 14, right: 14),
-                                ),
+                            flex: 1,
+                            child: Container(
+                              height: 60,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Color.fromRGBO(196, 196, 196, .3),
                               ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.099,
-                          ),
-                        ],
-                      ),*//*
-
-
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.025,
-                    ),
-                    // Email
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.099,
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Container(
-                            height: 50,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Color.fromRGBO(196, 196, 196, .3),
-                            ),
-                            child: Stack(
-                              children: [
-                                Positioned.fill(
-                                  child: TextField(
-                                    keyboardType: TextInputType.emailAddress,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        emailerror = false;
-                                        _isEmailSubmitted = false;
-                                        _hasMultipleCompanies = false;
-                                      });
-                                    },
-                                    controller: email,
-                                    cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                    decoration: InputDecoration(
-                                      enabledBorder: emailerror
-                                          ? OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: BorderSide(
-                                            color: Colors
-                                                .red), // Set border color here
-                                      )
-                                          : InputBorder.none,
-                                      border: InputBorder.none,
-                                      contentPadding: EdgeInsets.all(14),
-                                      prefixIcon: Container(
-                                        height: 20,
-                                        width: 20,
-                                        padding: EdgeInsets.all(13),
-                                        child: FaIcon(
-                                          FontAwesomeIcons.envelope,
-                                          size: 20,
-                                          color: Colors.grey[600],
-                                        ),
-                                      ),
-                                      hintText: "Business Email",
-                                      hintStyle: TextStyle(
-                                          color: Colors.grey[600], fontSize: 15),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.095,
-                        ),
-                      ],
-                    ),
-                    emailerror
-                        ? Center(
-                        child: Text(
-                          emailmessage,
-                          style: TextStyle(
-                            color: Colors.red,
-                          ),
-                        ))
-                        : Container(),
-
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.025,
-                    ),
-                    if(!isEmailSubmitted)
-                      Column(
-                        children: [
-                          Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                              child: Stack(
                                 children: [
-                                  */
-/*SizedBox(
-                                    width: MediaQuery.of(context).size.width * 0.099,
-                                  ),
-                                  Container(
-                                    height: MediaQuery.of(context).size.height * 0.03,
-                                    width: MediaQuery.of(context).size.width * 0.05,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(
-                                        color: Colors.grey,
+                                  Positioned.fill(
+                                    child: TextField(
+                                      keyboardType: TextInputType.emailAddress,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          emailerror = false;
+                                          _isEmailSubmitted = false;
+                                          _hasMultipleCompanies = false;
+                                        });
+                                      },
+                                      style: TextStyle(
+                                          fontSize: 20
+                                      ),
+                                      controller: email,
+                                      cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                      decoration: InputDecoration(
+                                        enabledBorder: emailerror
+                                            ? OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(10),
+                                          borderSide: BorderSide(
+                                              color: Colors
+                                                  .red), // Set border color here
+                                        )
+                                            : InputBorder.none,
+                                        border: InputBorder.none,
+                                        contentPadding: EdgeInsets.all(14),
+
+                                        prefixIcon: Container(
+                                          height: 25,
+                                          width: 25,
+                                          padding: EdgeInsets.all(13),
+                                          child: FaIcon(
+                                            FontAwesomeIcons.envelope,
+                                            size: 25,
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                        hintText: "Business Email",
+                                        hintStyle: TextStyle(
+                                            color: Colors.grey[600], fontSize: 20),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width * 0.02,
-                                  ),
-                                  Text(
-                                    "Remember me ",
-                                    style: TextStyle(
-                                        fontSize: MediaQuery.of(context).size.width * 0.03,
-                                        color: Colors.black),
-                                  ),*//*
-
-
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => ForgotPassword()));
-                                    },
-                                    child: Text(
-                                      "Forgot password?",
-                                      style: TextStyle(
-                                          fontSize: MediaQuery.of(context).size.width * 0.035,
-                                          color: Colors.blue),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width * 0.099,
                                   ),
                                 ],
                               ),
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.025,
-                              ),
-
-                            ],
+                            ),
                           ),
                           SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.035,
-                          ),
-                          InkWell(
-                            onTap: (){
-                              if (email.text.isEmpty) {
-                                setState(() {
-                                  emailerror = true;
-                                  emailmessage = "Email is required";
-                                });
-                              } else if (!EmailValidator.validate(email.text)) {
-                                setState(() {
-                                  emailerror = true;
-                                  emailmessage = "Email is not valid";
-                                });
-                              } else {
-                                setState(() {
-                                  emailerror = false;
-                                  //firstnamemessage = "Firstname is required";
-                                });
-                                submitEmail();
-                              }
-
-
-                            },
-                            child: Center(
-                              child: Container(
-                                height: MediaQuery.of(context).size.height * 0.06,
-                                width: MediaQuery.of(context).size.width * 0.8,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Center(
-                                  child: loading
-                                      ? SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 40.0,
-                                  )
-                                      : Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Submit",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.045),
-                                      ),
-
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
+                            width: MediaQuery.of(context).size.width * 0.095,
                           ),
                         ],
                       ),
-                    if(isEmailSubmitted)
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          */
-/*  SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.025,
-                          ),*//*
-
-
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.099,
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Container(
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Color.fromRGBO(196, 196, 196, .3),
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      Positioned.fill(
-                                        child: TextField(
-                                          keyboardType: TextInputType.text,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              passworderror = false;
-                                            });
-                                          },
-                                          controller: password,
-                                          obscureText: visiable_password,
-                                          cursorColor: Color.fromRGBO(21, 43, 81, 1),
-                                          decoration: InputDecoration(
-                                            enabledBorder: passworderror
-                                                ? OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(10),
-                                              borderSide: BorderSide(
-                                                  color: Colors
-                                                      .red), // Set border color here
-                                            )
-                                                : InputBorder.none,
-                                            border: InputBorder.none,
-                                            contentPadding: EdgeInsets.all(14),
-                                            prefixIcon: Container(
-                                              height: 20,
-                                              width: 20,
-                                              // color: Colors.blue,
-                                              padding: EdgeInsets.all(13),
-                                              child: FaIcon(
-                                                FontAwesomeIcons.lock,
-                                                size: 20,
-                                                color: Colors.grey[600],
-                                              ),
-                                            ),
-                                            hintText: "Password",
-                                            hintStyle: TextStyle(
-                                                color: Colors.grey[600], fontSize: 15),
-                                            suffixIcon: InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  visiable_password = !visiable_password;
-                                                });
-                                              },
-                                              child: Icon(
-                                                visiable_password
-                                                    ? Icons.remove_red_eye_outlined
-                                                    : Icons.visibility_off_outlined,
-                                                color: Colors.grey[600],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.099,
-                              ),
-                            ],
-                          ),
-                          passworderror
-                              ? Center(
-                              child: Text(
-                                passwordmessage,
-                                style: TextStyle(color: Colors.red),
-                              ))
-                              : Container(),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.025,
-                          ),
-                          if (hasMultipleCompanies) ...[
-
-                            SingleSelectionButtons(
-                              buttonOptions: companies,
-                              onSelected: (index) {
-                                selectCompany(companies[index]["company"]!,companies[index]["role"]!);
-                              },
+                      emailerror
+                          ? Center(
+                          child: Text(
+                            emailmessage,
+                            style: TextStyle(
+                              color: Colors.red,
                             ),
-                          ],
+                          ))
+                          : Container(),
+
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.025,
+                      ),
+                      if(!isEmailSubmitted)
+                        Column(
+                          children: [
+                            Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
 
 
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.015,
-                          ),
-                          // Forgot password
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.11,
-                              ),
-                            */
-/*  Container(
-                                height: MediaQuery.of(context).size.height * 0.03,
-                                width: MediaQuery.of(context).size.width * 0.05,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(5),
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                  ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => ForgotPassword()));
+                                      },
+                                      child: Text(
+                                        "Forgot password?",
+                                        style: TextStyle(
+                                            fontSize: MediaQuery.of(context).size.width * 0.02,
+                                            color: Colors.blue),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width * 0.099,
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.02,
-                              ),
-                              Text(
-                                "Remember me ",
-                                style: TextStyle(
-                                    fontSize: MediaQuery.of(context).size.width * 0.03,
-                                    color: Colors.black),
-                              ),*//*
-
-
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => ForgotPassword()));
-                                },
-                                child: Text(
-                                  "Forgot password?",
-                                  style: TextStyle(
-                                      fontSize: MediaQuery.of(context).size.width * 0.035,
-                                      color: Colors.blue),
+                                SizedBox(
+                                  height: MediaQuery.of(context).size.height * 0.025,
                                 ),
-                              ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.099,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.025,
-                          ),
-                          // Login button
-                          */
-/*SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.16,
-                      ),*//*
 
-                          GestureDetector(
-                            onTap: () async {
-                              setState(() {
+                              ],
+                            ),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.035,
+                            ),
+                            InkWell(
+                              onTap: (){
                                 if (email.text.isEmpty) {
                                   setState(() {
                                     emailerror = true;
@@ -1329,155 +343,880 @@ class _Login_ScreenState extends State<Login_Screen> {
                                     emailerror = false;
                                     //firstnamemessage = "Firstname is required";
                                   });
-                                }
-                                if (password.text.isEmpty) {
-                                  setState(() {
-                                    passworderror = true;
-                                    passwordmessage = "Password is required";
-                                  });
-                                } else {
-                                  setState(() {
-                                    passworderror = false;
-                                    //firstnamemessage = "Firstname is required";
-                                  });
-                                }
-                                if(selectedrole == null){
-                                  setState(() {
-                                    roleerror = true;
-                                    rolemessage = "Please select the role";
-                                  });
-                                }
-                                else{
-                                  setState(() {
-                                    roleerror = false;
-                                    //firstnamemessage = "Firstname is required";
-                                  });
-                                }
-                                if(selectedrole != "1" && selectedrole != null && company.text.isEmpty){
-                                  setState(() {
-                                    companyerror = true;
-                                    companymessage = "Company Name is required";
-                                  });
-                                }
-                                else{
-                                  setState(() {
-                                    companyerror = false;
-                                    //firstnamemessage = "Firstname is required";
-                                  });
+                                  submitEmail();
                                 }
 
 
-                              });
-                              if(selectedrole == ""){
-                                Fluttertoast.showToast(msg: "Please select the company");
-                              }
-                              else if (emailerror == false && passworderror == false ) {
+                              },
+                              child: Center(
+                                child: Container(
+                                  height: MediaQuery.of(context).size.height * 0.05,
+                                  width: MediaQuery.of(context).size.width * 0.8,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Center(
+                                    child: loading
+                                        ? SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 40.0,
+                                    )
+                                        : Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "Submit",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize:
+                                              MediaQuery.of(context).size.width *
+                                                  0.03),
+                                        ),
 
-                                if(selectedrole == "admin")
-                                  await loginsubmit();
-                                if(selectedrole != "admin")
-                                  await checkCompany(selectedCompany);
-                                // Save authentication status to SharedPreferences
-                                */
-/* // Navigate to the appropriate screen based on authentication status
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Dashboard(),
-                              ),
-                            );*//*
-
-                              }
-                            },
-                            child: Center(
-                              child: Container(
-                                height: MediaQuery.of(context).size.height * 0.06,
-                                width: MediaQuery.of(context).size.width * 0.8,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Center(
-                                  child: loading
-                                      ? SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 40.0,
-                                  )
-                                      : Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Login",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.045),
-                                      ),
-                                      SizedBox(
-                                        height:
-                                        MediaQuery.of(context).size.width * 0.015,
-                                      ),
-                                      Icon(
-                                        Icons.arrow_forward_ios_sharp,
-                                        color: Colors.white,
-                                        size:
-                                        MediaQuery.of(context).size.width * 0.045,
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      if(isEmailSubmitted)
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+
+
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width * 0.099,
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Container(
+                                    height: 60,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Color.fromRGBO(196, 196, 196, .3),
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Positioned.fill(
+                                          child: TextField(
+                                            keyboardType: TextInputType.text,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                passworderror = false;
+                                              });
+                                            },
+                                            style: TextStyle(
+                                                fontSize: 20
+                                            ),
+                                            controller: password,
+                                            obscureText: visiable_password,
+                                            cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                            decoration: InputDecoration(
+                                              enabledBorder: passworderror
+                                                  ? OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(10),
+                                                borderSide: BorderSide(
+                                                    color: Colors
+                                                        .red), // Set border color here
+                                              )
+                                                  : InputBorder.none,
+                                              border: InputBorder.none,
+                                              contentPadding: EdgeInsets.all(14),
+                                              prefixIcon: Container(
+                                                height: 25,
+                                                width: 25,
+                                                // color: Colors.blue,
+                                                padding: EdgeInsets.all(13),
+                                                child: FaIcon(
+                                                  FontAwesomeIcons.lock,
+                                                  size: 25,
+                                                  color: Colors.grey[600],
+                                                ),
+                                              ),
+                                              hintText: "Password",
+                                              hintStyle: TextStyle(
+                                                  color: Colors.grey[600], fontSize: 20),
+                                              suffixIcon: InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    visiable_password = !visiable_password;
+                                                  });
+                                                },
+                                                child: Icon(
+                                                  visiable_password
+                                                      ? Icons.remove_red_eye_outlined
+                                                      : Icons.visibility_off_outlined,
+                                                  color: Colors.grey[600],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width * 0.099,
+                                ),
+                              ],
+                            ),
+                            passworderror
+                                ? Center(
+                                child: Text(
+                                  passwordmessage,
+                                  style: TextStyle(color: Colors.red),
+                                ))
+                                : Container(),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.025,
+                            ),
+                            if (hasMultipleCompanies) ...[
+
+                              SingleSelectionButtons(
+                                buttonOptions: companies,
+                                onSelected: (index) {
+                                  selectCompany(companies[index]["company"]!,companies[index]["role"]!);
+                                },
+                              ),
+                            ],
+
+
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.015,
+                            ),
+                            // Forgot password
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+
+
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => ForgotPassword()));
+                                  },
+                                  child: Text(
+                                    "Forgot password?",
+                                    style: TextStyle(
+                                        fontSize: MediaQuery.of(context).size.width * 0.02,
+                                        color: Colors.blue),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width * 0.099,
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.025,
+                            ),
+                            // Login button
+
+                            GestureDetector(
+                              onTap: () async {
+                                setState(() {
+                                  if (email.text.isEmpty) {
+                                    setState(() {
+                                      emailerror = true;
+                                      emailmessage = "Email is required";
+                                    });
+                                  } else if (!EmailValidator.validate(email.text)) {
+                                    setState(() {
+                                      emailerror = true;
+                                      emailmessage = "Email is not valid";
+                                    });
+                                  } else {
+                                    setState(() {
+                                      emailerror = false;
+                                      //firstnamemessage = "Firstname is required";
+                                    });
+                                  }
+                                  if (password.text.isEmpty) {
+                                    setState(() {
+                                      passworderror = true;
+                                      passwordmessage = "Password is required";
+                                    });
+                                  } else {
+                                    setState(() {
+                                      passworderror = false;
+                                      //firstnamemessage = "Firstname is required";
+                                    });
+                                  }
+                                  if(selectedrole == null){
+                                    setState(() {
+                                      roleerror = true;
+                                      rolemessage = "Please select the role";
+                                    });
+                                  }
+                                  else{
+                                    setState(() {
+                                      roleerror = false;
+                                      //firstnamemessage = "Firstname is required";
+                                    });
+                                  }
+                                  if(selectedrole != "1" && selectedrole != null && company.text.isEmpty){
+                                    setState(() {
+                                      companyerror = true;
+                                      companymessage = "Company Name is required";
+                                    });
+                                  }
+                                  else{
+                                    setState(() {
+                                      companyerror = false;
+                                      //firstnamemessage = "Firstname is required";
+                                    });
+                                  }
+
+
+                                });
+                                if(selectedrole == ""){
+                                  Fluttertoast.showToast(msg: "Please select the company");
+                                }
+                                else if (emailerror == false && passworderror == false ) {
+
+                                  if(selectedrole == "admin")
+                                    await loginsubmit();
+                                  if(selectedrole != "admin")
+                                    await checkCompany(selectedCompany);
+
+                                }
+                              },
+                              child: Center(
+                                child: Container(
+                                  height: MediaQuery.of(context).size.height * 0.045,
+                                  width: MediaQuery.of(context).size.width * 0.8,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Center(
+                                    child: loading
+                                        ? SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 40.0,
+                                    )
+                                        : Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "Login",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize:
+                                              MediaQuery.of(context).size.width *
+                                                  0.03),
+                                        ),
+                                        SizedBox(
+                                          height:
+                                          MediaQuery.of(context).size.width * 0.015,
+                                        ),
+                                        Icon(
+                                          Icons.arrow_forward_ios_sharp,
+                                          color: Colors.white,
+                                          size:
+                                          MediaQuery.of(context).size.width * 0.03,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+
+
+
+                      // Register now
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.04,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Don't have an account ? ",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: MediaQuery.of(context).size.width * 0.03),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) => Signup()));
+                            },
+                            child: Container(
+                              child: Text(
+                                "Register now",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue,
+                                    fontSize:
+                                    MediaQuery.of(context).size.width * 0.03),
                               ),
                             ),
                           ),
                         ],
                       ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.04,
+                      ),
+                      // SizedBox(
+                      //   height: MediaQuery.of(context).size.height * 0.1,
+                      // ),
+                    ],
+                  );
+                }
 
-
-
-
-                    // Register now
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.04,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Don't have an account ? ",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: MediaQuery.of(context).size.width * 0.04),
+                return SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if(!isEmailSubmitted &&  MediaQuery.of(context).size.height > 700 && hasMultipleCompanies)
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.25,
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => Signup()));
-                          },
-                          child: Container(
-                            child: Text(
-                              "Register now",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blue,
-                                  fontSize:
-                                  MediaQuery.of(context).size.width * 0.037),
-                            ),
+                      if(isEmailSubmitted &&  MediaQuery.of(context).size.height > 700 && !hasMultipleCompanies)
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.15,
+                        ),
+                      if(!isEmailSubmitted &&  MediaQuery.of(context).size.height > 700)
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.15,
+                        ),
+                      if(MediaQuery.of(context).size.height < 670)
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.1,
+                        ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.1,
+                      ),
+                      Image(
+                        image: AssetImage('assets/images/logo.png'),
+                        height: MediaQuery.of(context).size.height * 0.05,
+                        width: MediaQuery.of(context).size.width * 0.9,
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.025,
+                      ),
+                      // Welcome
+                      Center(
+                        child: Text(
+                          "Welcome to 302 Rentals",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: MediaQuery.of(context).size.width * 0.05,
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.04,
-                    ),
-                    // SizedBox(
-                    //   height: MediaQuery.of(context).size.height * 0.1,
-                    // ),
-                  ],
-                ),
-              );
-            }
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.02,
+                      ),
+                      // Login text
+                      Center(
+                        child: Text(
+                          "Please login here...",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: MediaQuery.of(context).size.width * 0.036),
+                        ),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.05,
+                      ),
+
+
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.025,
+                      ),
+                      // Email
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.099,
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Color.fromRGBO(196, 196, 196, .3),
+                              ),
+                              child: Stack(
+                                children: [
+                                  Positioned.fill(
+                                    child: TextField(
+                                      keyboardType: TextInputType.emailAddress,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          emailerror = false;
+                                          _isEmailSubmitted = false;
+                                          _hasMultipleCompanies = false;
+                                        });
+                                      },
+                                      controller: email,
+                                      cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                      decoration: InputDecoration(
+                                        enabledBorder: emailerror
+                                            ? OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(10),
+                                          borderSide: BorderSide(
+                                              color: Colors
+                                                  .red), // Set border color here
+                                        )
+                                            : InputBorder.none,
+                                        border: InputBorder.none,
+                                        contentPadding: EdgeInsets.all(14),
+                                        prefixIcon: Container(
+                                          height: 20,
+                                          width: 20,
+                                          padding: EdgeInsets.all(13),
+                                          child: FaIcon(
+                                            FontAwesomeIcons.envelope,
+                                            size: 20,
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                        hintText: "Business Email",
+                                        hintStyle: TextStyle(
+                                            color: Colors.grey[600], fontSize: 15),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.095,
+                          ),
+                        ],
+                      ),
+                      emailerror
+                          ? Center(
+                          child: Text(
+                            emailmessage,
+                            style: TextStyle(
+                              color: Colors.red,
+                            ),
+                          ))
+                          : Container(),
+
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.025,
+                      ),
+                      if(!isEmailSubmitted)
+                        Column(
+                          children: [
+                            Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+
+
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => ForgotPassword()));
+                                      },
+                                      child: Text(
+                                        "Forgot password?",
+                                        style: TextStyle(
+                                            fontSize: MediaQuery.of(context).size.width * 0.035,
+                                            color: Colors.blue),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width * 0.099,
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: MediaQuery.of(context).size.height * 0.025,
+                                ),
+
+                              ],
+                            ),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.035,
+                            ),
+                            InkWell(
+                              onTap: (){
+                                if (email.text.isEmpty) {
+                                  setState(() {
+                                    emailerror = true;
+                                    emailmessage = "Email is required";
+                                  });
+                                } else if (!EmailValidator.validate(email.text)) {
+                                  setState(() {
+                                    emailerror = true;
+                                    emailmessage = "Email is not valid";
+                                  });
+                                } else {
+                                  setState(() {
+                                    emailerror = false;
+                                    //firstnamemessage = "Firstname is required";
+                                  });
+                                  submitEmail();
+                                }
+
+
+                              },
+                              child: Center(
+                                child: Container(
+                                  height: MediaQuery.of(context).size.height * 0.06,
+                                  width: MediaQuery.of(context).size.width * 0.8,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Center(
+                                    child: loading
+                                        ? SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 40.0,
+                                    )
+                                        : Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "Submit",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize:
+                                              MediaQuery.of(context).size.width *
+                                                  0.045),
+                                        ),
+
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      if(isEmailSubmitted)
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+
+
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width * 0.099,
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Container(
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Color.fromRGBO(196, 196, 196, .3),
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Positioned.fill(
+                                          child: TextField(
+                                            keyboardType: TextInputType.text,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                passworderror = false;
+                                              });
+                                            },
+                                            controller: password,
+                                            obscureText: visiable_password,
+                                            cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                            decoration: InputDecoration(
+                                              enabledBorder: passworderror
+                                                  ? OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(10),
+                                                borderSide: BorderSide(
+                                                    color: Colors
+                                                        .red), // Set border color here
+                                              )
+                                                  : InputBorder.none,
+                                              border: InputBorder.none,
+                                              contentPadding: EdgeInsets.all(14),
+                                              prefixIcon: Container(
+                                                height: 20,
+                                                width: 20,
+                                                // color: Colors.blue,
+                                                padding: EdgeInsets.all(13),
+                                                child: FaIcon(
+                                                  FontAwesomeIcons.lock,
+                                                  size: 20,
+                                                  color: Colors.grey[600],
+                                                ),
+                                              ),
+                                              hintText: "Password",
+                                              hintStyle: TextStyle(
+                                                  color: Colors.grey[600], fontSize: 15),
+                                              suffixIcon: InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    visiable_password = !visiable_password;
+                                                  });
+                                                },
+                                                child: Icon(
+                                                  visiable_password
+                                                      ? Icons.remove_red_eye_outlined
+                                                      : Icons.visibility_off_outlined,
+                                                  color: Colors.grey[600],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width * 0.099,
+                                ),
+                              ],
+                            ),
+                            passworderror
+                                ? Center(
+                                child: Text(
+                                  passwordmessage,
+                                  style: TextStyle(color: Colors.red),
+                                ))
+                                : Container(),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.025,
+                            ),
+                            if (hasMultipleCompanies) ...[
+
+                              SingleSelectionButtons(
+                                buttonOptions: companies,
+                                onSelected: (index) {
+                                  selectCompany(companies[index]["company"]!,companies[index]["role"]!);
+                                },
+                              ),
+                            ],
+
+
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.015,
+                            ),
+                            // Forgot password
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width * 0.11,
+                                ),
+
+
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => ForgotPassword()));
+                                  },
+                                  child: Text(
+                                    "Forgot password?",
+                                    style: TextStyle(
+                                        fontSize: MediaQuery.of(context).size.width * 0.035,
+                                        color: Colors.blue),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width * 0.099,
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.025,
+                            ),
+                            // Login button
+
+                            GestureDetector(
+                              onTap: () async {
+                                setState(() {
+                                  if (email.text.isEmpty) {
+                                    setState(() {
+                                      emailerror = true;
+                                      emailmessage = "Email is required";
+                                    });
+                                  } else if (!EmailValidator.validate(email.text)) {
+                                    setState(() {
+                                      emailerror = true;
+                                      emailmessage = "Email is not valid";
+                                    });
+                                  } else {
+                                    setState(() {
+                                      emailerror = false;
+                                      //firstnamemessage = "Firstname is required";
+                                    });
+                                  }
+                                  if (password.text.isEmpty) {
+                                    setState(() {
+                                      passworderror = true;
+                                      passwordmessage = "Password is required";
+                                    });
+                                  } else {
+                                    setState(() {
+                                      passworderror = false;
+                                      //firstnamemessage = "Firstname is required";
+                                    });
+                                  }
+                                  if(selectedrole == null){
+                                    setState(() {
+                                      roleerror = true;
+                                      rolemessage = "Please select the role";
+                                    });
+                                  }
+                                  else{
+                                    setState(() {
+                                      roleerror = false;
+                                      //firstnamemessage = "Firstname is required";
+                                    });
+                                  }
+                                  if(selectedrole != "1" && selectedrole != null && company.text.isEmpty){
+                                    setState(() {
+                                      companyerror = true;
+                                      companymessage = "Company Name is required";
+                                    });
+                                  }
+                                  else{
+                                    setState(() {
+                                      companyerror = false;
+                                      //firstnamemessage = "Firstname is required";
+                                    });
+                                  }
+
+
+                                });
+                                if(selectedrole == ""){
+                                  Fluttertoast.showToast(msg: "Please select the company");
+                                }
+                                else if (emailerror == false && passworderror == false ) {
+
+                                  if(selectedrole == "admin")
+                                    await loginsubmit();
+                                  if(selectedrole != "admin")
+                                    await checkCompany(selectedCompany);
+                                  // Save authentication status to SharedPreferences
+
+                                }
+                              },
+                              child: Center(
+                                child: Container(
+                                  height: MediaQuery.of(context).size.height * 0.06,
+                                  width: MediaQuery.of(context).size.width * 0.8,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Center(
+                                    child: loading
+                                        ? SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 40.0,
+                                    )
+                                        : Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "Login",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize:
+                                              MediaQuery.of(context).size.width *
+                                                  0.045),
+                                        ),
+                                        SizedBox(
+                                          height:
+                                          MediaQuery.of(context).size.width * 0.015,
+                                        ),
+                                        Icon(
+                                          Icons.arrow_forward_ios_sharp,
+                                          color: Colors.white,
+                                          size:
+                                          MediaQuery.of(context).size.width * 0.045,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+
+
+
+                      // Register now
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.04,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Don't have an account ? ",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: MediaQuery.of(context).size.width * 0.04),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) => Signup()));
+                            },
+                            child: Container(
+                              child: Text(
+                                "Register now",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue,
+                                    fontSize:
+                                    MediaQuery.of(context).size.width * 0.037),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.04,
+                      ),
+                      // SizedBox(
+                      //   height: MediaQuery.of(context).size.height * 0.1,
+                      // ),
+                    ],
+                  ),
+                );
+              }
           )
 
 
@@ -1492,13 +1231,13 @@ class _Login_ScreenState extends State<Login_Screen> {
     final response = await http.post(
       Uri.parse('${Api_url}/api/auth'),
       headers: {
-         "authorization": "CRM $token",
+        "authorization": "CRM $token",
         "id":"CRM $adminId",
         "Content-Type": "application/json"
       },
       body: json.encode({"token": token}),
     );
-
+    print(response.body);
     final jsonData = json.decode(response.body);
 
     if (jsonData['id'] != "") {
@@ -1529,7 +1268,7 @@ class _Login_ScreenState extends State<Login_Screen> {
 
       // Access the expiration date
       var provider =
-          Provider.of<checkPlanPurchaseProiver>(context, listen: false);
+      Provider.of<checkPlanPurchaseProiver>(context, listen: false);
       var expirationDateString =
           provider.checkplanpurchaseModel?.data?.expirationDate;
 
@@ -1555,7 +1294,7 @@ class _Login_ScreenState extends State<Login_Screen> {
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  isPlanActive ? Dashboard() : PlanPurchaseCard()));
+              isPlanActive ? Dashboard() : PlanPurchaseCard()));
     } else {
       print('Failed to check token');
     }
@@ -1611,7 +1350,7 @@ class _Login_ScreenState extends State<Login_Screen> {
     final response = await http.post(
       Uri.parse('${Api_url}/api/auth'),
       headers: {
-         "authorization": "CRM $token",
+        "authorization": "CRM $token",
         "id":"CRM $adminId",
         "Content-Type": "application/json"
       },
@@ -1682,10 +1421,6 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setString('email', jsonData['vendor_email']);
       // prefs.setString('checkedToken', token);
       //  prefs.setString('adminId', adminId!);
-      */
-/* prefs.setString('first_name', jsonData['${rolename.toLowerCase()}_firstName']);
-      prefs.setString('last_name', jsonData['${rolename.toLowerCase()}_lastname']);
-*//*
 
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => MainScreen()));
@@ -1720,15 +1455,6 @@ class _Login_ScreenState extends State<Login_Screen> {
       print('Admin ID: $adminId');
       prefs.setString('checkedToken', token);
       prefs.setString('adminId', adminId!);
-      */
-/*prefs.setString('first_name', jsonData['data']['first_name']);
-      prefs.setString('last_name', jsonData['data']['last_name']);
-      prefs.setString('first_name', jsonData['data']['first_name']);
-      prefs.setString('last_name', jsonData['data']['last_name']);*//*
-
-      */
-/* Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Dashboard()));*//*
 
       loginsubmit_usingrole(adminId);
     } else {
@@ -1769,32 +1495,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       if (rolename == "tenant") await checkTokenTenant(jsonData["token"]);
       if (rolename == "vendor") await checkTokenVendor(jsonData["token"]);
 
-      //  await checkToken("token", "id");
-      // Navigator.push(
-      //     context, MaterialPageRoute(builder: (context) => Dashboard()));
-      */
-/*final List<dynamic> data = jsonData['data'];
-      List<String> urls = [];
-      List<String> banners = [];
-      List<bool> banner_status = [];
-      for (var item in data) {
-        urls.add(item['url']);
-        banners.add(item['id']);
-        banner_status.add(item['status']);
-      }
-      for (var i = 0 ; i < banner_status.length;i++){
-        setState(() {
-          if(banner_status[i])
-            selectedIndex = i;
-        });
-      }
-      setState(() {
-        imageUrls = urls;
-        bannerid = banners;
-        bannerstatus = banner_status;
-        isLoading = false;
-      });
-      print(imageUrls);*//*
+
 
       setState(() {
         loading = false;
@@ -1806,6 +1507,8 @@ class _Login_ScreenState extends State<Login_Screen> {
       });
     }
   }
+
+
 
   Future<void> loginsubmit() async {
     setState(() {
@@ -1824,32 +1527,10 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setString('token', jsonData["token"]);
 
       await checkToken(jsonData["token"]);
-      //  await checkToken("token", "id");
-      // Navigator.push(
-      //     context, MaterialPageRoute(builder: (context) => Dashboard()));
-      */
-/*final List<dynamic> data = jsonData['data'];
-      List<String> urls = [];
-      List<String> banners = [];
-      List<bool> banner_status = [];
-      for (var item in data) {
-        urls.add(item['url']);
-        banners.add(item['id']);
-        banner_status.add(item['status']);
-      }
-      for (var i = 0 ; i < banner_status.length;i++){
-        setState(() {
-          if(banner_status[i])
-            selectedIndex = i;
-        });
-      }
-      setState(() {
-        imageUrls = urls;
-        bannerid = banners;
-        bannerstatus = banner_status;
-        isLoading = false;
-      });
-      print(imageUrls);*//*
+    //  await checkToken("token", "id");
+    // Navigator.push(
+    //     context, MaterialPageRoute(builder: (context) => Dashboard()));
+
 
       setState(() {
         loading = false;
@@ -1883,15 +1564,86 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder: (context,contraints) {
+        builder: (context,contraints) {
 
-        if(contraints.maxWidth > 500){
+          if(contraints.maxWidth > 500){
+            return Container(
+              width: MediaQuery.of(context).size.width * .8,
+              child: Wrap(
+                spacing: 8.0,
+                runSpacing: 8.0,
+                alignment: WrapAlignment.start,
+                children: widget.buttonOptions.map((option) {
+                  final index = widget.buttonOptions.indexOf(option);
+                  return SizedBox(
+                    width: 320, // Adjusted width to make the button smaller
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedIndex = index;
+                          print(index);
+                        });
+                        widget.onSelected(index);
+                      },
+                      child: Row(
+                        children: [
+                          Icon(
+                            _selectedIndex == index
+                                ? Icons.check_circle
+                                : Icons.radio_button_unchecked,
+                            color: _selectedIndex == index ? Colors.white : Colors.grey,
+                          ),
+                          SizedBox(width: 5.0),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                option["company"]!,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: _selectedIndex == index ? Colors.white : Colors.black,fontSize: 18
+                                ),
+                              ),
+                              Text(
+                                capitalizeFirstLetter( option["role"]!),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: _selectedIndex == index ? Colors.white : Colors.black,fontSize: 16
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 10,horizontal: 5),
+                        foregroundColor: _selectedIndex == index
+                            ? Colors.white
+                            : blueColor,
+                        backgroundColor: _selectedIndex == index
+                            ? blueColor
+                            : Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        side: BorderSide(
+                          color: _selectedIndex == index
+                              ? blueColor
+                              : Colors.grey,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            );
+          }
           return Container(
-            width: MediaQuery.of(context).size.width * .8,
+            width: 350,
             child: Wrap(
               spacing: 8.0,
               runSpacing: 8.0,
-              alignment: WrapAlignment.start,
+              alignment: WrapAlignment.center,
               children: widget.buttonOptions.map((option) {
                 final index = widget.buttonOptions.indexOf(option);
                 return SizedBox(
@@ -1920,14 +1672,14 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                               option["company"]!,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: _selectedIndex == index ? Colors.white : Colors.black,fontSize: 18
+                                  color: _selectedIndex == index ? Colors.white : Colors.black,fontSize: 16
                               ),
                             ),
                             Text(
                               capitalizeFirstLetter( option["role"]!),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: _selectedIndex == index ? Colors.white : Colors.black,fontSize: 16
+                                  color: _selectedIndex == index ? Colors.white : Colors.black,fontSize: 12
                               ),
                             ),
                           ],
@@ -1957,77 +1709,6 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
             ),
           );
         }
-        return Container(
-          width: 350,
-          child: Wrap(
-            spacing: 8.0,
-            runSpacing: 8.0,
-            alignment: WrapAlignment.center,
-            children: widget.buttonOptions.map((option) {
-              final index = widget.buttonOptions.indexOf(option);
-              return SizedBox(
-                width: 320, // Adjusted width to make the button smaller
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _selectedIndex = index;
-                      print(index);
-                    });
-                    widget.onSelected(index);
-                  },
-                  child: Row(
-                    children: [
-                      Icon(
-                        _selectedIndex == index
-                            ? Icons.check_circle
-                            : Icons.radio_button_unchecked,
-                        color: _selectedIndex == index ? Colors.white : Colors.grey,
-                      ),
-                      SizedBox(width: 5.0),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            option["company"]!,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: _selectedIndex == index ? Colors.white : Colors.black,fontSize: 16
-                            ),
-                          ),
-                          Text(
-                            capitalizeFirstLetter( option["role"]!),
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: _selectedIndex == index ? Colors.white : Colors.black,fontSize: 12
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 10,horizontal: 5),
-                    foregroundColor: _selectedIndex == index
-                        ? Colors.white
-                        : blueColor,
-                    backgroundColor: _selectedIndex == index
-                        ? blueColor
-                        : Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    side: BorderSide(
-                      color: _selectedIndex == index
-                          ? blueColor
-                          : Colors.grey,
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        );
-      }
     );
   }
 
@@ -2036,7 +1717,7 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
     return input[0].toUpperCase() + input.substring(1);
   }
 }
-*/
+/*
 import 'dart:convert';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -2238,72 +1919,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.05,
                       ),
-                      /*     Row(
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.099,
-                        ),
-                        Expanded(
 
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton2<String>(
-                              isExpanded: true,
-                              hint: const Text('Select Role'),
-                              value: selectedRole,
-                              items: roles.map((role) {
-                                return DropdownMenuItem<String>(
-                                  value: role['role_id'],
-                                  child: Text(role['role_name']!),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedRole = value;
-                                  roleerror = false;
-                                });
-                                print('Selected role_id: $selectedRole');
-                              },
-                              buttonStyleData: ButtonStyleData(
-                                height: 45,
-                                width: 170,
-                                padding: const EdgeInsets.only(left: 14, right: 14),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Colors.white,
-                                ),
-                                elevation: 2,
-                              ),
-                              iconStyleData: const IconStyleData(
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                ),
-                                iconSize: 24,
-                                iconEnabledColor: Color(0xFFb0b6c3),
-                                iconDisabledColor: Colors.grey,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Colors.white,
-                                ),
-                                scrollbarTheme: ScrollbarThemeData(
-                                  radius: const Radius.circular(6),
-                                  thickness: MaterialStateProperty.all(6),
-                                  thumbVisibility: MaterialStateProperty.all(true),
-                                ),
-                              ),
-                              menuItemStyleData: const MenuItemStyleData(
-                                height: 40,
-                                padding: EdgeInsets.only(left: 14, right: 14),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.099,
-                        ),
-                      ],
-                    ),*/
 
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.01,
@@ -2397,29 +2013,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    /*  SizedBox(
-                                    width: MediaQuery.of(context).size.width * 0.099,
-                                  ),
-                                  Container(
-                                    height: 30,
-                                    width: 30,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width * 0.02,
-                                  ),
-                                  Text(
-                                    "Remember me ",
-                                    style: TextStyle(
-                                        fontSize: MediaQuery.of(context).size.width * 0.02,
-                                        color: Colors.black),
-                                  ),*/
+
 
                                     GestureDetector(
                                       onTap: () {
@@ -2511,10 +2105,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            /*  SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.025,
-                        ),*/
-
+                        
                             Row(
                               children: [
                                 SizedBox(
@@ -2623,29 +2214,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                /*  SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.11,
-                              ),
-                              Container(
-                                height:30,
-                                width: 30,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(5),
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.02,
-                              ),
-                              Text(
-                                "Remember me ",
-                                style: TextStyle(
-                                    fontSize: MediaQuery.of(context).size.width * 0.02,
-                                    color: Colors.black),
-                              ),*/
+
 
                                 GestureDetector(
                                   onTap: () {
@@ -2669,10 +2238,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                             SizedBox(
                               height: MediaQuery.of(context).size.height * 0.025,
                             ),
-                            // Login button
-                            /*SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.16,
-                    ),*/
+
                             GestureDetector(
                               onTap: () async {
                                 setState(() {
@@ -2740,13 +2306,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                   if(selectedrole != "admin")
                                     await checkCompany(selectedCompany);
                                   // Save authentication status to SharedPreferences
-                                  /* // Navigate to the appropriate screen based on authentication status
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Dashboard(),
-                            ),
-                          );*/
+
                                 }
                               },
                               child: Center(
@@ -2896,72 +2456,6 @@ class _Login_ScreenState extends State<Login_Screen> {
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.05,
                       ),
-                      /*     Row(
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.099,
-                          ),
-                          Expanded(
-
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton2<String>(
-                                isExpanded: true,
-                                hint: const Text('Select Role'),
-                                value: selectedRole,
-                                items: roles.map((role) {
-                                  return DropdownMenuItem<String>(
-                                    value: role['role_id'],
-                                    child: Text(role['role_name']!),
-                                  );
-                                }).toList(),
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedRole = value;
-                                    roleerror = false;
-                                  });
-                                  print('Selected role_id: $selectedRole');
-                                },
-                                buttonStyleData: ButtonStyleData(
-                                  height: 45,
-                                  width: 170,
-                                  padding: const EdgeInsets.only(left: 14, right: 14),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(6),
-                                    color: Colors.white,
-                                  ),
-                                  elevation: 2,
-                                ),
-                                iconStyleData: const IconStyleData(
-                                  icon: Icon(
-                                    Icons.arrow_drop_down,
-                                  ),
-                                  iconSize: 24,
-                                  iconEnabledColor: Color(0xFFb0b6c3),
-                                  iconDisabledColor: Colors.grey,
-                                ),
-                                dropdownStyleData: DropdownStyleData(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(6),
-                                    color: Colors.white,
-                                  ),
-                                  scrollbarTheme: ScrollbarThemeData(
-                                    radius: const Radius.circular(6),
-                                    thickness: MaterialStateProperty.all(6),
-                                    thumbVisibility: MaterialStateProperty.all(true),
-                                  ),
-                                ),
-                                menuItemStyleData: const MenuItemStyleData(
-                                  height: 40,
-                                  padding: EdgeInsets.only(left: 14, right: 14),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.099,
-                          ),
-                        ],
-                      ),*/
 
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.025,
@@ -3051,29 +2545,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    /*SizedBox(
-                                    width: MediaQuery.of(context).size.width * 0.099,
-                                  ),
-                                  Container(
-                                    height: MediaQuery.of(context).size.height * 0.03,
-                                    width: MediaQuery.of(context).size.width * 0.05,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width * 0.02,
-                                  ),
-                                  Text(
-                                    "Remember me ",
-                                    style: TextStyle(
-                                        fontSize: MediaQuery.of(context).size.width * 0.03,
-                                        color: Colors.black),
-                                  ),*/
+
 
                                     GestureDetector(
                                       onTap: () {
@@ -3165,9 +2637,6 @@ class _Login_ScreenState extends State<Login_Screen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            /*  SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.025,
-                          ),*/
 
                             Row(
                               children: [
@@ -3277,26 +2746,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 SizedBox(
                                   width: MediaQuery.of(context).size.width * 0.11,
                                 ),
-                                /*  Container(
-                                height: MediaQuery.of(context).size.height * 0.03,
-                                width: MediaQuery.of(context).size.width * 0.05,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(5),
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.02,
-                              ),
-                              Text(
-                                "Remember me ",
-                                style: TextStyle(
-                                    fontSize: MediaQuery.of(context).size.width * 0.03,
-                                    color: Colors.black),
-                              ),*/
+
 
                                 GestureDetector(
                                   onTap: () {
@@ -3321,9 +2771,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                               height: MediaQuery.of(context).size.height * 0.025,
                             ),
                             // Login button
-                            /*SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.16,
-                      ),*/
+
                             GestureDetector(
                               onTap: () async {
                                 setState(() {
@@ -3391,13 +2839,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                   if(selectedrole != "admin")
                                     await checkCompany(selectedCompany);
                                   // Save authentication status to SharedPreferences
-                                  /* // Navigate to the appropriate screen based on authentication status
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Dashboard(),
-                              ),
-                            );*/
+
                                 }
                               },
                               child: Center(
@@ -3693,9 +3135,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setString('email', jsonData['vendor_email']);
       // prefs.setString('checkedToken', token);
       //  prefs.setString('adminId', adminId!);
-      /* prefs.setString('first_name', jsonData['${rolename.toLowerCase()}_firstName']);
-      prefs.setString('last_name', jsonData['${rolename.toLowerCase()}_lastname']);
-*/
+
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => MainScreen()));
     } else {
@@ -3729,12 +3169,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       print('Admin ID: $adminId');
       prefs.setString('checkedToken', token);
       prefs.setString('adminId', adminId!);
-      /*prefs.setString('first_name', jsonData['data']['first_name']);
-      prefs.setString('last_name', jsonData['data']['last_name']);
-      prefs.setString('first_name', jsonData['data']['first_name']);
-      prefs.setString('last_name', jsonData['data']['last_name']);*/
-      /* Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Dashboard()));*/
+
       loginsubmit_usingrole(adminId);
     } else {
       setState(() {
@@ -3776,28 +3211,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       //  await checkToken("token", "id");
       // Navigator.push(
       //     context, MaterialPageRoute(builder: (context) => Dashboard()));
-      /*final List<dynamic> data = jsonData['data'];
-      List<String> urls = [];
-      List<String> banners = [];
-      List<bool> banner_status = [];
-      for (var item in data) {
-        urls.add(item['url']);
-        banners.add(item['id']);
-        banner_status.add(item['status']);
-      }
-      for (var i = 0 ; i < banner_status.length;i++){
-        setState(() {
-          if(banner_status[i])
-            selectedIndex = i;
-        });
-      }
-      setState(() {
-        imageUrls = urls;
-        bannerid = banners;
-        bannerstatus = banner_status;
-        isLoading = false;
-      });
-      print(imageUrls);*/
+
       setState(() {
         loading = false;
       });
@@ -3827,28 +3241,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       //  await checkToken("token", "id");
       // Navigator.push(
       //     context, MaterialPageRoute(builder: (context) => Dashboard()));
-      /*final List<dynamic> data = jsonData['data'];
-      List<String> urls = [];
-      List<String> banners = [];
-      List<bool> banner_status = [];
-      for (var item in data) {
-        urls.add(item['url']);
-        banners.add(item['id']);
-        banner_status.add(item['status']);
-      }
-      for (var i = 0 ; i < banner_status.length;i++){
-        setState(() {
-          if(banner_status[i])
-            selectedIndex = i;
-        });
-      }
-      setState(() {
-        imageUrls = urls;
-        bannerid = banners;
-        bannerstatus = banner_status;
-        isLoading = false;
-      });
-      print(imageUrls);*/
+
       setState(() {
         loading = false;
       });
@@ -4034,3 +3427,4 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
     return input[0].toUpperCase() + input.substring(1);
   }
 }
+*/

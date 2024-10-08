@@ -278,11 +278,28 @@ class _PropertyTableState extends State<PropertyTable> {
   }
 
   void _showAlert(BuildContext context, String id) {
+    TextEditingController reason = TextEditingController();
     Alert(
       context: context,
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this property!",
+      content: Column(
+        children: <Widget>[
+          SizedBox(height: 10,),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter reason for deletion',
+                  contentPadding: EdgeInsets.only(top: 8,left: 15)
+              ),
+            ),
+          ),
+        ],
+      ),
       style: AlertStyle(
         backgroundColor: Colors.white,
       ),
@@ -301,7 +318,7 @@ class _PropertyTableState extends State<PropertyTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data = PropertyTypeRepository().DeletePropertyType(pro_id: id);
+            var data = PropertyTypeRepository().DeletePropertyType(pro_id: id,reason: reason.text);
             // Add your delete logic here
             setState(() {
               futurePropertyTypes =

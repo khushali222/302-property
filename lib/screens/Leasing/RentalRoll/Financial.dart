@@ -614,6 +614,7 @@ class _FinancialTableState extends State<FinancialTable> {
   void handleEdit(Data? ledge) async {}
 
   void _showAlert(BuildContext context, String id) {
+    TextEditingController reason = TextEditingController();
     Alert(
       context: context,
       type: AlertType.warning,
@@ -621,6 +622,22 @@ class _FinancialTableState extends State<FinancialTable> {
       desc: "Once deleted, you will not be able to recover this Charge!",
       style: const AlertStyle(
         backgroundColor: Colors.white,
+      ),
+      content: Column(
+        children: <Widget>[
+          SizedBox(height: 10,),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter reason for deletion',
+                  contentPadding: EdgeInsets.only(top: 8,left: 15)
+              ),
+            ),
+          ),
+        ],
       ),
       buttons: [
         DialogButton(
@@ -637,7 +654,7 @@ class _FinancialTableState extends State<FinancialTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data = await LeaseRepository().DeleteCharge(id);
+            var data = await LeaseRepository().DeleteCharge(id, reason.text);
             // Add your delete logic here
             if (data == 200)
               setState(() {
@@ -651,7 +668,61 @@ class _FinancialTableState extends State<FinancialTable> {
       ],
     ).show();
   }
-
+  void _showAlertpayment(BuildContext context, String id) {
+    TextEditingController reason = TextEditingController();
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Are you sure?",
+      desc: "Once deleted, you will not be able to recover this payment!",
+      style: const AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      content: Column(
+        children: <Widget>[
+          SizedBox(height: 10,),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter reason for deletion',
+                  contentPadding: EdgeInsets.only(top: 8,left: 15)
+              ),
+            ),
+          ),
+        ],
+      ),
+      buttons: [
+        DialogButton(
+          child: const Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: grey,
+        ),
+        DialogButton(
+          child: const Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            var data = await LeaseRepository().DeleteCharge(id, reason.text);
+            // Add your delete logic here
+            if (data == 200)
+              setState(() {
+                _leaseLedgerFuture =
+                    LeaseRepository().fetchLeaseLedger(widget.leaseId);
+              });
+            Navigator.pop(context);
+          },
+          color: Colors.red,
+        )
+      ],
+    ).show();
+  }
   List<Data?> _tableData = [];
   int _rowsPerPage = 10;
   int _currentPage = 0;
@@ -2362,9 +2433,9 @@ class _FinancialTableState extends State<FinancialTable> {
                                                             child:
                                                             GestureDetector(
                                                               onTap: () {
-                                                                _showAlert(
+                                                                _showAlertpayment(
                                                                     context,
-                                                                    data.chargeId!);
+                                                                    data.paymentId!);
                                                                 //   _showAlert(context, rentals.rentalId!);
                                                               },
                                                               child: Container(

@@ -163,6 +163,7 @@ class PropertiesRepository {
 
   Future<Map<String, dynamic>> DeleteProperties({
     required String? property_id,
+    String? reason
    // required String? companyName,
   }) async {
 
@@ -183,6 +184,9 @@ class PropertiesRepository {
         "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
+        body: jsonEncode({
+          "reason":reason
+        })
       // body: jsonEncode(<String, String>{
       //   'company_name': companyName??"",
       // }),

@@ -107,7 +107,8 @@ class PropertyTypeRepository {
   }
 
   Future<Map<String, dynamic>> DeletePropertyType({
-    required String? pro_id
+    required String? pro_id,
+    String? reason
   }) async {
 
     //print('$apiUrl/$id');
@@ -123,6 +124,9 @@ class PropertyTypeRepository {
         "id":"CRM $adminid",
         'Content-Type': 'application/json; charset=UTF-8',
       },
+      body: jsonEncode({
+        "reason":reason
+      })
     );
     var responseData = json.decode(response.body);
     print(response.body);

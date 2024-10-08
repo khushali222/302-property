@@ -295,11 +295,28 @@ class _Applicants_tableState extends State<Applicants_table> {
   }
 
   void _showDeleteAlert(BuildContext context, String id) {
+    TextEditingController reason = TextEditingController();
     Alert(
       context: context,
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this applicant!",
+      content: Column(
+        children: <Widget>[
+          SizedBox(height: 10,),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter reason for deletion',
+                  contentPadding: EdgeInsets.only(top: 8,left: 15)
+              ),
+            ),
+          ),
+        ],
+      ),
       style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
@@ -318,7 +335,7 @@ class _Applicants_tableState extends State<Applicants_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            await ApplicantRepository().DeleteApplicant(Applicantid: id);
+            await ApplicantRepository().DeleteApplicant(Applicantid: id,reason: reason.text);
             setState(() {
               futureApplicantdata = ApplicantRepository().fetchApplicants();
             });

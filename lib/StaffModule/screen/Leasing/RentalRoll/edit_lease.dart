@@ -5106,11 +5106,54 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
   bool _isLoading = true;
   List<String> accounts = [];
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   if (widget.initialData != null) {
+  //     _selectedProperty = widget.initialData!['property'] ?? '';
+  //     _amountController.text = widget.initialData!['amount'] ?? '';
+  //     _memoController.text = widget.initialData!['memo'] ?? '';
+  //   }
+  //   fetchData();
+  // }
+
+  // @override
+  // void dispose() {
+  //   _amountController.dispose();
+  //   _memoController.dispose();
+  //   super.dispose();
+  // }
+
+  // Future<void> fetchData() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String adminId = prefs.getString('adminId').toString();
+  //   final response =
+  //       await http.get(Uri.parse('$Api_url/api/accounts/accounts/$adminId'));
+  //   print(response.body);
+  //   if (response.statusCode == 200) {
+  //     final data = json.decode(response.body);
+  //     setState(() {
+  //       items = (data['data'] as List)
+  //           .where((item) => item['charge_type'] == "One Time Charge")
+  //           .map((item) => item['account'] as String)
+  //           .toList();
+  //       _isLoading = false;
+  //       print(items.length);
+  //     });
+  //   } else {
+  //     // Handle error
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Failed to fetch data')),
+  //     );
+  //   }
+  // }
+
+// updated
   @override
   void initState() {
     super.initState();
     if (widget.initialData != null) {
-      _selectedProperty = widget.initialData!['account'] ?? '';
+      _selectedProperty = widget.initialData!['property'] ?? '';
       _amountController.text = widget.initialData!['amount'] ?? '';
       _memoController.text = widget.initialData!['memo'] ?? '';
     }
@@ -5126,16 +5169,17 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
 
   Future<void> fetchData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString('adminId');
-    String? staffid = prefs.getString("staff_id");
+
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     final response = await http
-        .get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {
+        .get(Uri.parse('$Api_url/api/accounts/accounts/$adminid'), headers: {
       "authorization": "CRM $token",
-      "id": "CRM $staffid",
+      "id": "CRM $id",
     });
     print(response.body);
-    if (response.statusCode == 200 || response.statusCode == 201) {
+    if (response.statusCode == 200) {
       final data = json.decode(response.body);
       setState(() {
         items = (data['data'] as List)
@@ -5143,9 +5187,6 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
             .map((item) => item['account'] as String)
             .toList();
         _isLoading = false;
-        // print( widget.initialData!['account']??null);
-        if (widget.initialData != null)
-          _selectedAccountType = widget.initialData!['account'] ?? null;
         print(items.length);
       });
     } else {
@@ -5179,405 +5220,419 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                   ),
                 ),
                 SizedBox(height: 10),
-                const Text(
+                Text(
                   'Account *',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey,
+                    color: blueColor,
                   ),
                 ),
                 const SizedBox(height: 8),
                 _isLoading
                     ? const Center(
-                        child: SpinKitFadingCircle(
-                        color: Colors.black,
-                        size: 50.0,
-                      ))
+                    child: SpinKitFadingCircle(
+                      color: Colors.black,
+                      size: 50.0,
+                    ))
                     : DropdownButtonHideUnderline(
-                        child: DropdownButton2<String>(
-                          isExpanded: true,
-                          hint: const Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  'Select',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color(0xFFb0b6c3),
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
+                  child: DropdownButton2<String>(
+                    isExpanded: true,
+                    hint: const Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Select',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFFb0b6c3),
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          items: [
-                            ...items
-                                .map((String item) => DropdownMenuItem<String>(
-                                      value: item,
-                                      child: Text(
-                                        item,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.black87,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    )),
-                            //updated
-
-                            DropdownMenuItem<String>(
-                              value: 'button_item',
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(0)),
-                                    elevation: 0,
-                                    backgroundColor: Colors.white),
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return StatefulBuilder(
-                                          builder: (context, setState) {
-                                        return AlertDialog(
-                                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ],
+                    ),
+                    items: [
+                      ...items
+                          .map((String item) => DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(
+                          item,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black87,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      )),
+                      //updated
+                      DropdownMenuItem<String>(
+                        value: 'button_item',
+                        child: GestureDetector(
+                          onTap: (){
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return StatefulBuilder(
+                                    builder: (context, setState) {
+                                      return
+                                        Dialog(
                                           backgroundColor: Colors.white,
-                                          title: const Text(
-                                            'Add Account',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color:
-                                                  Color.fromRGBO(21, 43, 83, 1),
-                                            ),
-                                          ),
-                                          content: Container(
-                                            height: 450,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(16.0),
-                                              child: Form(
-                                                key: _subFormKey,
-                                                child: ListView(
-                                                  children: [
-                                                    const Text(
-                                                      'Account Name *',
-                                                      style: TextStyle(
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.grey,
+                                          surfaceTintColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                              BorderRadius.circular(10.0)),
+                                          child:
+                                          SingleChildScrollView(
+                                            child: Container(
+                                              // height: 450,
+                                              child:
+                                              Padding(
+                                                padding:
+                                                const EdgeInsets.all(16.0),
+                                                child: Form(
+                                                  key: _subFormKey,
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        'Add account',
+                                                        style: TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          color: blueColor,
+                                                        ),
                                                       ),
-                                                    ),
-                                                    const SizedBox(height: 5),
-                                                    CustomTextField(
-                                                      validator: (value) {
-                                                        if (value == null ||
-                                                            value.isEmpty) {
-                                                          return 'Please enter Account Name';
-                                                        }
-                                                        return null;
-                                                      },
-                                                      keyboardType:
-                                                          TextInputType.text,
-                                                      hintText:
-                                                          'Enter Account Name',
-                                                      controller:
-                                                          _accountNameController,
-                                                    ),
-                                                    const SizedBox(height: 8),
-                                                    const Text(
-                                                      'Account Type',
-                                                      style: TextStyle(
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.grey,
+                                                      SizedBox(
+                                                        height: 20,
                                                       ),
-                                                    ),
-                                                    const SizedBox(height: 5),
-                                                    CustomDropdown(
-                                                      validator: (value) {
-                                                        if (value == null ||
-                                                            value.isEmpty) {
-                                                          return 'Please select a Account Type';
-                                                        }
-                                                        return null;
-                                                      },
-                                                      labelText:
-                                                          'Select Account Type',
-                                                      items: accountTypeItems,
-                                                      selectedValue:
-                                                          _selectedAccountType,
-                                                      onChanged:
-                                                          (String? value) {
-                                                        setState(() {
-                                                          _selectedAccountType =
-                                                              value;
-                                                        });
-                                                      },
-                                                    ),
-                                                    const SizedBox(height: 8),
-                                                    const Text(
-                                                      'Fund Type',
-                                                      style: TextStyle(
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.grey,
+                                                      Text(
+                                                        'Account Name *',
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          color: blueColor,
+                                                        ),
                                                       ),
-                                                    ),
-                                                    const SizedBox(height: 5),
-                                                    CustomDropdown(
-                                                      validator: (value) {
-                                                        if (value == null ||
-                                                            value.isEmpty) {
-                                                          return 'Please select a Fund Type';
-                                                        }
-                                                        return null;
-                                                      },
-                                                      labelText:
-                                                          'Select Fund Type',
-                                                      items: fundTypeItems,
-                                                      selectedValue:
-                                                          _selectedFundType,
-                                                      onChanged:
-                                                          (String? value) {
-                                                        setState(() {
-                                                          _selectedFundType =
-                                                              value;
-                                                        });
-                                                      },
-                                                    ),
-                                                    const SizedBox(height: 8),
-                                                    const Text(
-                                                      'Notes',
-                                                      style: TextStyle(
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.grey,
+                                                      const SizedBox(height: 5),
+                                                      CustomTextField(
+                                                        validator: (value) {
+                                                          if (value == null ||
+                                                              value.isEmpty) {
+                                                            return 'Please enter Account Name';
+                                                          }
+                                                          return null;
+                                                        },
+                                                        keyboardType:
+                                                        TextInputType.text,
+                                                        hintText:
+                                                        'Enter Account Name',
+                                                        controller:
+                                                        _accountNameController,
                                                       ),
-                                                    ),
-                                                    const SizedBox(height: 5),
-                                                    CustomTextField(
-                                                      validator: (value) {
-                                                        if (value == null ||
-                                                            value.isEmpty) {
-                                                          return 'Please enter Notes';
-                                                        }
-                                                        return null;
-                                                      },
-                                                      keyboardType:
-                                                          TextInputType.text,
-                                                      hintText: 'Enter Notes',
-                                                      controller:
-                                                          _notesController,
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 20,
-                                                    ),
-                                                    RichText(
-                                                      text: const TextSpan(
-                                                        children: <TextSpan>[
-                                                          TextSpan(
-                                                            text:
-                                                                'We stores this information ',
-                                                            style: TextStyle(
-                                                              fontSize: 11,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color:
-                                                                  Colors.grey,
+                                                      const SizedBox(height: 10),
+                                                      Text(
+                                                        'Account Type',
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          color: blueColor,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 5),
+                                                      CustomDropdown(
+                                                        validator: (value) {
+                                                          if (value == null ||
+                                                              value.isEmpty) {
+                                                            return 'Please select a Account Type';
+                                                          }
+                                                          return null;
+                                                        },
+                                                        labelText:
+                                                        'Select Account Type',
+                                                        items: accountTypeItems,
+                                                        selectedValue:
+                                                        _selectedAccountType,
+                                                        onChanged:
+                                                            (String? value) {
+                                                          setState(() {
+                                                            _selectedAccountType =
+                                                                value;
+                                                          });
+                                                        },
+                                                      ),
+                                                      const SizedBox(height: 10),
+                                                      Text(
+                                                        'Fund Type',
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          color: blueColor,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 5),
+                                                      CustomDropdown(
+                                                        validator: (value) {
+                                                          if (value == null ||
+                                                              value.isEmpty) {
+                                                            return 'Please select a Fund Type';
+                                                          }
+                                                          return null;
+                                                        },
+                                                        labelText:
+                                                        'Select Fund Type',
+                                                        items: fundTypeItems,
+                                                        selectedValue:
+                                                        _selectedFundType,
+                                                        onChanged:
+                                                            (String? value) {
+                                                          setState(() {
+                                                            _selectedFundType =
+                                                                value;
+                                                          });
+                                                        },
+                                                      ),
+                                                      const SizedBox(height: 10),
+                                                      Text(
+                                                        'Notes',
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          color: blueColor,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 5),
+                                                      CustomTextField(
+                                                        validator: (value) {
+                                                          if (value == null ||
+                                                              value.isEmpty) {
+                                                            return 'Please enter Notes';
+                                                          }
+                                                          return null;
+                                                        },
+                                                        keyboardType:
+                                                        TextInputType.text,
+                                                        hintText: 'Enter Notes',
+                                                        controller:
+                                                        _notesController,
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      RichText(
+                                                        text: const TextSpan(
+                                                          children: <TextSpan>[
+                                                            TextSpan(
+                                                              text:
+                                                              'We stores this information ',
+                                                              style: TextStyle(
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold,
+                                                                color:
+                                                                Colors.grey,
+                                                              ),
                                                             ),
-                                                          ),
-                                                          TextSpan(
-                                                            text: 'Privately',
-                                                            style: TextStyle(
-                                                              fontSize: 11,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
+                                                            TextSpan(
+                                                              text: ' Privately ',
+                                                              style: TextStyle(
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold,
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                    21,
+                                                                    43,
+                                                                    83,
+                                                                    1),
+                                                              ),
                                                             ),
-                                                          ),
-                                                          TextSpan(
-                                                            text: ' and ',
-                                                            style: TextStyle(
-                                                              fontSize: 11,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal,
-                                                              color:
-                                                                  Colors.grey,
+                                                            TextSpan(
+                                                              text: ' and ',
+                                                              style: TextStyle(
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .normal,
+                                                                color:
+                                                                Colors.grey,
+                                                              ),
                                                             ),
-                                                          ),
-                                                          TextSpan(
-                                                            text: 'Securely',
-                                                            style: TextStyle(
-                                                              fontSize: 11,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
+                                                            TextSpan(
+                                                              text: ' Securely ',
+                                                              style: TextStyle(
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold,
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                    21,
+                                                                    43,
+                                                                    83,
+                                                                    1),
+                                                              ),
                                                             ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                        children: [
+                                                          Container(
+                                                              height: 50,
+                                                              width: 90,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      8.0)),
+                                                              child:
+                                                              ElevatedButton(
+                                                                  style: ElevatedButton.styleFrom(
+                                                                      backgroundColor:
+                                                                      const Color(
+                                                                          0xFF152b51),
+                                                                      shape: RoundedRectangleBorder(
+                                                                          borderRadius: BorderRadius.circular(
+                                                                              8.0))),
+                                                                  onPressed:
+                                                                      () {
+                                                                    _submitSubForm();
+                                                                  },
+                                                                  child:
+                                                                  const Text(
+                                                                    'Add',
+                                                                    style: TextStyle(
+                                                                        color:
+                                                                        Color(0xFFf7f8f9)),
+                                                                  ))),
+                                                          const SizedBox(
+                                                            width: 10,
                                                           ),
+                                                          Container(
+                                                              height: 50,
+                                                              width: 94,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      8.0)),
+                                                              child:
+                                                              ElevatedButton(
+                                                                  style: ElevatedButton.styleFrom(
+                                                                      backgroundColor:
+                                                                      const Color(
+                                                                          0xFFffffff),
+                                                                      shape: RoundedRectangleBorder(
+                                                                          borderRadius: BorderRadius.circular(
+                                                                              8.0))),
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  },
+                                                                  child:
+                                                                  const Text(
+                                                                    'Cancel',
+                                                                    style: TextStyle(
+                                                                        color:
+                                                                        Color(0xFF748097)),
+                                                                  )))
                                                         ],
                                                       ),
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 20,
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
-                                                      children: [
-                                                        Container(
-                                                            height: 50,
-                                                            width: 90,
-                                                            decoration: BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8.0)),
-                                                            child:
-                                                                ElevatedButton(
-                                                                    style: ElevatedButton.styleFrom(
-                                                                        backgroundColor:
-                                                                            const Color(
-                                                                                0xFF152b51),
-                                                                        shape: RoundedRectangleBorder(
-                                                                            borderRadius: BorderRadius.circular(
-                                                                                8.0))),
-                                                                    onPressed:
-                                                                        () {
-                                                                      _submitSubForm();
-                                                                    },
-                                                                    child:
-                                                                        const Text(
-                                                                      'Add',
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Color(0xFFf7f8f9)),
-                                                                    ))),
-                                                        const SizedBox(
-                                                          width: 10,
-                                                        ),
-                                                        Container(
-                                                            height: 50,
-                                                            width: 94,
-                                                            decoration: BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8.0)),
-                                                            child:
-                                                                ElevatedButton(
-                                                                    style: ElevatedButton.styleFrom(
-                                                                        backgroundColor:
-                                                                            const Color(
-                                                                                0xFFffffff),
-                                                                        shape: RoundedRectangleBorder(
-                                                                            borderRadius: BorderRadius.circular(
-                                                                                8.0))),
-                                                                    onPressed:
-                                                                        () {
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                    },
-                                                                    child:
-                                                                        const Text(
-                                                                      'Cancel',
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Color(0xFF748097)),
-                                                                    )))
-                                                      ],
-                                                    ),
-                                                  ],
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
                                         );
-                                      });
-                                    },
-                                  );
-                                },
-                                child: const Text(
-                                  'Add New Account',
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ),
-                            ),
-                          ],
-                          value: _selectedProperty,
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedProperty = value;
-                            });
-                            // widget.onChanged(value);
-                            // state.didChange(value);
+
+                                    });
+                              },
+                            );
                           },
-                          buttonStyleData: ButtonStyleData(
-                            height: 45,
-                            width: 160,
-                            padding: const EdgeInsets.only(left: 14, right: 14),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              color: Colors.white,
-                            ),
-                            elevation: 2,
-                          ),
-                          iconStyleData: const IconStyleData(
-                            icon: Icon(
-                              Icons.arrow_drop_down,
-                            ),
-                            iconSize: 24,
-                            iconEnabledColor: Color(0xFFb0b6c3),
-                            iconDisabledColor: Colors.grey,
-                          ),
-                          dropdownStyleData: DropdownStyleData(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              color: Colors.white,
-                            ),
-                            scrollbarTheme: ScrollbarThemeData(
-                              radius: const Radius.circular(6),
-                              thickness: MaterialStateProperty.all(6),
-                              thumbVisibility: MaterialStateProperty.all(true),
-                            ),
-                          ),
-                          menuItemStyleData: const MenuItemStyleData(
-                            height: 40,
-                            padding: EdgeInsets.only(left: 14, right: 14),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Add New Account',
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ],
                           ),
                         ),
                       ),
+                    ],
+                    value: _selectedProperty,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedProperty = value;
+                      });
+                      // widget.onChanged(value);
+                      // state.didChange(value);
+                    },
+                    buttonStyleData: ButtonStyleData(
+                      height: 45,
+                      width: 160,
+                      padding: const EdgeInsets.only(left: 14, right: 14),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        color: Colors.white,
+                      ),
+                      elevation: 2,
+                    ),
+                    iconStyleData: const IconStyleData(
+                      icon: Icon(
+                        Icons.arrow_drop_down,
+                      ),
+                      iconSize: 24,
+                      iconEnabledColor: Color(0xFFb0b6c3),
+                      iconDisabledColor: Colors.grey,
+                    ),
+                    dropdownStyleData: DropdownStyleData(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        color: Colors.white,
+                      ),
+                      scrollbarTheme: ScrollbarThemeData(
+                        radius: const Radius.circular(6),
+                        thickness: MaterialStateProperty.all(6),
+                        thumbVisibility: MaterialStateProperty.all(true),
+                      ),
+                    ),
+                    menuItemStyleData: const MenuItemStyleData(
+                      height: 40,
+                      padding: EdgeInsets.only(left: 14, right: 14),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'Amount *',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey,
+                    color: blueColor,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -5593,12 +5648,12 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                   controller: _amountController,
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'Memo',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey,
+                    color: blueColor,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -5677,7 +5732,6 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         'amount': _amountController.text,
         'memo': _memoController.text,
         'charge_type': 'Recurring Charge',
-        'date': DateTime.now().toString()
       };
       widget.onSave(formData);
       setState(() {
@@ -5704,21 +5758,19 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       };
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString('adminId');
-      String? staffid = prefs.getString("staff_id");
       String? token = prefs.getString('token');
       final response = await http.post(
         Uri.parse('$Api_url/api/accounts/accounts'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $staffid",
+          "id": "CRM $id",
           'Content-Type': 'application/json'
         },
         body: json.encode(formData),
       );
-
       if (response.statusCode == 200) {
         widget.onSave(formData);
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(true);
         print(response.body);
         Fluttertoast.showToast(msg: 'Account Added Successfully');
       } else {

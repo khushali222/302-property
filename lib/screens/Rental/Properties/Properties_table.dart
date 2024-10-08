@@ -340,11 +340,28 @@ class _PropertiesTableState extends State<PropertiesTable> {
   }
 
   void _showAlert(BuildContext context, String id) {
+    TextEditingController reason = TextEditingController();
     Alert(
       context: context,
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this property!",
+      content: Column(
+        children: <Widget>[
+          SizedBox(height: 10,),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter reason for deletion',
+                  contentPadding: EdgeInsets.only(top: 8,left: 15)
+              ),
+            ),
+          ),
+        ],
+      ),
       style: AlertStyle(
         backgroundColor: Colors.white,
         //  overlayColor: Colors.black.withOpacity(.8)
@@ -366,7 +383,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
           onPressed: () async {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             print(id);
-            var data = await PropertiesRepository().DeleteProperties(id: id,);
+            var data = await PropertiesRepository().DeleteProperties(id: id,reason: reason.text);
             setState(() {
               futureRentalOwners = PropertiesRepository().fetchProperties();
               //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();

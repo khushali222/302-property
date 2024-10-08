@@ -225,7 +225,8 @@ class RentalOwnerService {
   }
 
   Future<Map<String, dynamic>> DeleteRentalOwners({
-    required String? rentalownerId
+    required String? rentalownerId,
+    String? reason
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -238,6 +239,9 @@ class RentalOwnerService {
         "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
+        body: jsonEncode({
+          "reason":reason
+        })
     );
     var responseData = json.decode(response.body);
     print(response.body);

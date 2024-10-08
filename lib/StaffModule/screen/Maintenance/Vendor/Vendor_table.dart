@@ -289,6 +289,7 @@ class _Vendor_tableState extends State<Vendor_table> {
   }
 
   void _showAlert(BuildContext context, String id) {
+    TextEditingController reason = TextEditingController();
     Alert(
       context: context,
       type: AlertType.warning,
@@ -296,6 +297,22 @@ class _Vendor_tableState extends State<Vendor_table> {
       desc: "Once deleted, you will not be able to recover this vendor!",
       style: AlertStyle(
         backgroundColor: Colors.white,
+      ),
+      content: Column(
+        children: <Widget>[
+          SizedBox(height: 10,),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter reason for deletion',
+                  contentPadding: EdgeInsets.only(top: 8,left: 15)
+              ),
+            ),
+          ),
+        ],
       ),
       buttons: [
         DialogButton(

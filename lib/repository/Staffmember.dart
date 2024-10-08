@@ -110,7 +110,8 @@ class StaffMemberRepository {
     }
   }
   Future<Map<String, dynamic>> DeleteStaffMember({
-    required String? id
+    required String? id,
+    String? reason
   }) async {
 
    // print('$apiUrl/$id');
@@ -124,6 +125,7 @@ class StaffMemberRepository {
         "id":"CRM $adminid",
         'Content-Type': 'application/json; charset=UTF-8',
       },
+      body: jsonEncode({"reason":reason})
     );
     var responseData = json.decode(response.body);
     print(response.body);

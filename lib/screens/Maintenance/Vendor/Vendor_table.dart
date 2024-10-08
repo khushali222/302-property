@@ -289,11 +289,28 @@ class _Vendor_tableState extends State<Vendor_table> {
   }
 
   void _showAlert(BuildContext context, String id) {
+    TextEditingController reason = TextEditingController();
     Alert(
       context: context,
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this vendor!",
+      content: Column(
+        children: <Widget>[
+          SizedBox(height: 10,),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter reason for deletion',
+                  contentPadding: EdgeInsets.only(top: 8,left: 15)
+              ),
+            ),
+          ),
+        ],
+      ),
       style: AlertStyle(
         backgroundColor: Colors.white,
       ),
@@ -313,7 +330,7 @@ class _Vendor_tableState extends State<Vendor_table> {
           ),
           onPressed: () async {
             var data = await VendorRepository(baseUrl: '')
-                .DeleteVender(vender_id: id)
+                .DeleteVender(vender_id: id,reason: reason.text)
                 .then((value) {
               setState(() {
                 futurePropertyTypes =

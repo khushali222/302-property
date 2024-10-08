@@ -253,6 +253,7 @@ class LeaseRepository {
   Future<Map<String, dynamic>> deleteLease({
     required String leaseId,
     required String companyName,
+    String? reason
   }) async {
     try {
       final Uri uri = Uri.parse('$Api_url/api/leases/leases/$leaseId')
@@ -270,6 +271,9 @@ class LeaseRepository {
           "id": "CRM $id",
           'Content-Type': 'application/json; charset=UTF-8',
         },
+          body: jsonEncode({
+            "reason":reason
+          })
       );
 
       var responseData = json.decode(response.body);

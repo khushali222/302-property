@@ -223,7 +223,7 @@ class WorkOrderRepository {
   }
 
   Future<Map<String, dynamic>> DeleteWorkOrder(
-      {required String? workOrderid}) async {
+      {required String? workOrderid,String? reason}) async {
     //print('$apiUrl/$id');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -236,6 +236,7 @@ class WorkOrderRepository {
         "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
+        body: jsonEncode({"reason":reason})
     );
     var responseData = json.decode(response.body);
     print('$Api_url/work-order/delete_workorder/$workOrderid');

@@ -321,6 +321,7 @@ class TenantsRepository {
     required String tenantId,
     required String companyName,
     required String tenantEmail,
+    String? reason
   }) async {
     try {
       final Uri uri = Uri.parse('$Api_url/api/tenant/tenant/$tenantId')
@@ -339,6 +340,9 @@ class TenantsRepository {
           "id": "CRM $id",
           'Content-Type': 'application/json; charset=UTF-8',
         },
+          body: jsonEncode({
+            "reason":reason
+          })
       );
 
       var responseData = json.decode(response.body);
