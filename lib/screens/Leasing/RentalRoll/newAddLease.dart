@@ -276,7 +276,7 @@ class _addLease3State extends State<addLease3>
     'Fixed w/rollover',
     'At-will(month to month)',
   ];
-  final List<String> rentCycleitems = [
+   List<String> rentCycleitems = [
     'Daily',
     'Weekly',
     'Every two weeks',
@@ -285,6 +285,69 @@ class _addLease3State extends State<addLease3>
     'Quarterly',
     'Yearly',
   ];
+
+   rentCycleItemsDynamic(int days){
+     print("days = $days");
+    if(days == 1){
+      rentCycleitems = [
+        'Daily'
+      ];
+    }
+    else if(days >= 365){
+      rentCycleitems = [
+        'Daily',
+        'Weekly',
+        'Every two weeks',
+        'Monthly',
+        'Every two months',
+        'Quarterly',
+        'Yearly',
+      ];
+    }
+    else if(days >= 93){
+      rentCycleitems = [
+        'Daily',
+        'Weekly',
+        'Every two weeks',
+        'Monthly',
+        'Every two months',
+        'Quarterly',
+      ];
+    }
+    else if(days >= 62){
+      rentCycleitems = [
+        'Daily',
+        'Weekly',
+        'Every two weeks',
+        'Monthly',
+        'Every two months',
+      ];
+    }
+    else if(days >= 32){
+      rentCycleitems = [
+        'Daily',
+        'Weekly',
+        'Every two weeks',
+        'Monthly',
+      ];
+    }
+    else if(days >= 15){
+      rentCycleitems = [
+        'Daily',
+        'Weekly',
+        'Every two weeks',
+      ];
+    }
+    else if(days >= 7){
+      rentCycleitems = [
+        'Daily',
+        'Weekly',
+      ];
+    }
+    setState(() {
+
+    });
+   }
   DateTime calculateNextDueDate(DateTime startDate, String rentCycle) {
     switch (rentCycle) {
       case 'Daily':
@@ -391,7 +454,7 @@ class _addLease3State extends State<addLease3>
                   } else {
                     // Add new item
                     formDataOneTimeList.add(data);
-                    print("hello yash :${data}");
+
                     Fluttertoast.showToast(
                         msg: 'Recurring Charge Added Sucessfully');
                     Navigator.pop(context);
@@ -412,7 +475,7 @@ class _addLease3State extends State<addLease3>
           Fluttertoast.showToast(msg: 'Recurring Charge Updated Suessfully');
         } else {
           formDataOneTimeList.add(result);
-          print("hello yash :${result}");
+
           Fluttertoast.showToast(msg: 'Recurring Charge Added Sucessfully');
         }
       });
@@ -465,7 +528,7 @@ class _addLease3State extends State<addLease3>
           Fluttertoast.showToast(msg: 'Recurring Charge Updated Sucessfully');
         } else {
           formDataRecurringList.add(result);
-          print("hello yash :${result}");
+
           Fluttertoast.showToast(msg: 'Recurring Charge Added Sucessfully');
         }
       });
@@ -1054,8 +1117,8 @@ class _addLease3State extends State<addLease3>
                                       String formattedStartDate =
                                           "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                                       DateTime endDate = DateTime(
-                                          pickedDate.year,
-                                          pickedDate.month + 1,
+                                          pickedDate.year +1,
+                                          pickedDate.month ,
                                           pickedDate.day);
                                       // String formattedEndDate =
                                       //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
@@ -1069,6 +1132,7 @@ class _addLease3State extends State<addLease3>
                                         _startDate = pickedDate;
                                         endDateController.text =
                                             formattedEndDate;
+                                         rentCycleItemsDynamic(endDate.difference(_startDate!).inDays);
                                       });
                                     }
                                   },
@@ -1107,7 +1171,7 @@ class _addLease3State extends State<addLease3>
                                     DateTime? pickedDate = await showDatePicker(
                                       context: context,
                                       initialDate: DateTime.now(),
-                                      firstDate: DateTime(2000),
+                                      firstDate: _startDate != null ? _startDate!: DateTime(1900) ,
                                       lastDate: DateTime(2101),
                                       locale: const Locale('en', 'US'),
                                       builder: (BuildContext context,
@@ -1150,6 +1214,7 @@ class _addLease3State extends State<addLease3>
                                           "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                                       setState(() {
                                         endDateController.text = formattedDate;
+                                        rentCycleItemsDynamic(pickedDate.difference(_startDate!).inDays);
                                       });
                                     }
                                   },
@@ -1249,10 +1314,12 @@ class _addLease3State extends State<addLease3>
                                                       "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                                                   DateTime endDate = DateTime(
                                                       pickedDate.year,
-                                                      pickedDate.month + 1,
+                                                      pickedDate.month+2,
                                                       pickedDate.day);
+                                                  print(endDate);
                                                   String formattedEndDate =
                                                       "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+                                                  print(formattedEndDate);
 
                                                   // String formattedEndDate =
                                                   //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
@@ -2757,6 +2824,7 @@ class _addLease3State extends State<addLease3>
                                     const SizedBox(
                                       height: 5,
                                     ),
+                                  if (formDataRecurringList.isNotEmpty)
                                   Table(
                                     border: TableBorder.all(
                                       width: 1,
@@ -2898,6 +2966,7 @@ class _addLease3State extends State<addLease3>
                                     const SizedBox(
                                       height: 5,
                                     ),
+                                  if (formDataOneTimeList.isNotEmpty)
                                   Table(
                                     border: TableBorder.all(
                                       width: 1,
@@ -4514,9 +4583,9 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                         child: Row(
                                           children: [
                                             Text(
-                                              'Add New Account',
+                                              '+ Add New Account',
                                               style: TextStyle(
-                                                  fontSize: 12,
+                                                  fontSize: 14,
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.w500),
                                             ),
@@ -4536,9 +4605,9 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                   },
                                   buttonStyleData: ButtonStyleData(
                                     height: 45,
-                                    width: 160,
+
                                     padding: const EdgeInsets.only(
-                                        left: 14, right: 14),
+                                        left: 0, right: 14),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(6),
                                       color: Colors.white,
@@ -4700,9 +4769,11 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
       final formData = {
         'admin_id': adminId,
         'account': _accountNameController.text,
+
         'account_type': _selectedAccountType ?? '',
         'fund_type': _selectedFundType ?? '',
         'notes': _notesController.text,
+        'charge_type': 'One Time Charge',
       };
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString('adminId');
@@ -4722,7 +4793,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
         final newAccountName = _accountNameController.text;
 
         setState(() {
-          items.insert(0, newAccountName);
+          items.insert(items.length, newAccountName);
           _selectedProperty = newAccountName;
         });
         _accountNameController.clear();
@@ -4984,8 +5055,8 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                                                             const SizedBox(height: 5),
                                                             CustomDropdown(
                                                               validator: (value) {
-                                                                if (value == null ||
-                                                                    value.isEmpty) {
+                                                                if (_selectedAccountType == null ||
+                                                                    _selectedAccountType!.isEmpty) {
                                                                   return 'Please select a Account Type';
                                                                 }
                                                                 return null;
@@ -5016,8 +5087,8 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                                                             const SizedBox(height: 5),
                                                             CustomDropdown(
                                                               validator: (value) {
-                                                                if (value == null ||
-                                                                    value.isEmpty) {
+                                                                if (_selectedFundType == null ||
+                                                                    _selectedFundType!.isEmpty) {
                                                                   return 'Please select a Fund Type';
                                                                 }
                                                                 return null;
@@ -5214,9 +5285,9 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const Text(
-                                      'Add New Account',
+                                      '+ Add New Account',
                                       style: TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 14,
                                           color: Colors.black,
                                           fontWeight: FontWeight.w500),
                                     ),
@@ -5236,8 +5307,8 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                           },
                           buttonStyleData: ButtonStyleData(
                             height: 45,
-                            width: 160,
-                            padding: const EdgeInsets.only(left: 14, right: 14),
+                           // width: 160,
+                            padding: const EdgeInsets.only(left: 0, right: 14),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(6),
                               color: Colors.white,
@@ -5398,7 +5469,10 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         'account_type': _selectedAccountType ?? '',
         'fund_type': _selectedFundType ?? '',
         'notes': _notesController.text,
+        'charge_type': 'Recurring Charge',
       };
+
+      print(formData);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString('adminId');
       String? token = prefs.getString('token');
@@ -5416,7 +5490,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
        //widget.onSave(formData);
         final newAccountName = _accountNameController.text;
         setState(() {
-          items.insert(0, newAccountName);
+          items.insert(items.length, newAccountName);
           _selectedProperty = newAccountName;
         });
         _accountNameController.clear();

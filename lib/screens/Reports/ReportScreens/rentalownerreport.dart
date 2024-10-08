@@ -705,25 +705,25 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
           ]);
         }
 
-        if (property.surcharge != 0.0) {
-          tableData.add([
-            pw.Padding(
-                child: pw.Text(
-                  'Surcharge',
-                  style: pw.TextStyle(fontSize: 10),
-                ),
-                padding: pw.EdgeInsets.only(left: 15)),
-            '', // Account Amount
-            '', '', '', '', '', '',
-            pw.Align(
-                alignment: pw.Alignment.centerRight,
-                child: pw.Text(
-                    '\$${(property.surcharge ?? 0.0).toStringAsFixed(2)}', // Surcharge formatted to 2 decimal places
-                    style: pw.TextStyle(fontSize: 10),
-                    textAlign: pw.TextAlign.right // Align text to the right
-                    ))
-          ]);
-        }
+        // if (property.surcharge != 0.0) {
+        //   tableData.add([
+        //     pw.Padding(
+        //         child: pw.Text(
+        //           'Surcharge',
+        //           style: pw.TextStyle(fontSize: 10),
+        //         ),
+        //         padding: pw.EdgeInsets.only(left: 15)),
+        //     '', // Account Amount
+        //     '', '', '', '', '', '',
+        //     pw.Align(
+        //         alignment: pw.Alignment.centerRight,
+        //         child: pw.Text(
+        //             '\$${(property.surcharge ?? 0.0).toStringAsFixed(2)}', // Surcharge formatted to 2 decimal places
+        //             style: pw.TextStyle(fontSize: 10),
+        //             textAlign: pw.TextAlign.right // Align text to the right
+        //             ))
+        //   ]);
+        // }
       }
 
       // Subtotal row for the rental owner
@@ -839,12 +839,12 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
           rowIndex++;
         }
 
-        if (property.surcharge != 0.0) {
-          sheet.getRangeByIndex(rowIndex, 1).setText('Surcharge');
-          sheet.getRangeByIndex(rowIndex, 9).setNumber(property.surcharge);
-          sheet.getRangeByIndex(rowIndex, 9).cellStyle = currencyCellStyle;
-          rowIndex++;
-        }
+        // if (property.surcharge != 0.0) {
+        //   sheet.getRangeByIndex(rowIndex, 1).setText('Surcharge');
+        //   sheet.getRangeByIndex(rowIndex, 9).setNumber(property.surcharge);
+        //   sheet.getRangeByIndex(rowIndex, 9).cellStyle = currencyCellStyle;
+        //   rowIndex++;
+        // }
       }
 
       sheet
@@ -954,19 +954,19 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
         }
 
         // Add surcharge row if applicable
-        if (property.surcharge != 0.0) {
-          csvBuffer.writeln([
-            'Surcharge',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '\$${property.surcharge.toStringAsFixed(2)}'
-          ].join(','));
-        }
+        // if (property.surcharge != 0.0) {
+        //   csvBuffer.writeln([
+        //     'Surcharge',
+        //     '',
+        //     '',
+        //     '',
+        //     '',
+        //     '',
+        //     '',
+        //     '',
+        //     '\$${property.surcharge.toStringAsFixed(2)}'
+        //   ].join(','));
+        // }
       }
 
       // Add subtotal row for the current rental owner
@@ -1388,12 +1388,25 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                 ),
                                               ),
                                               Expanded(
-                                                child: Text(
-                                                  '${item.rentalOwnerName ?? '-'}',
-                                                  style: TextStyle(
-                                                    color: blueColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 14,
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      if (expandedRowIndex ==
+                                                          rowIndex) {
+                                                        expandedRowIndex = null;
+                                                      } else {
+                                                        expandedRowIndex =
+                                                            rowIndex;
+                                                      }
+                                                    });
+                                                  },
+                                                  child: Text(
+                                                    '${item.rentalOwnerName ?? '-'}',
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 14,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -1473,13 +1486,30 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                       ),
                                                     ),
                                                     Expanded(
-                                                        child: Text(
-                                                      "${tenant.rentalData.rentalAddress}",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: blueColor),
-                                                    )),
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            setState(() {
+                                                              if (expandedTenantIndex[
+                                                              rowIndex] ==
+                                                                  tenantIndex) {
+                                                                expandedTenantIndex[
+                                                                rowIndex] =
+                                                                null;
+                                                              } else {
+                                                                expandedTenantIndex[
+                                                                rowIndex] =
+                                                                    tenantIndex;
+                                                              }
+                                                            });
+                                                          },
+                                                          child: Text(
+                                                                                                                "${tenant.rentalData.rentalAddress}",
+                                                                                                                style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: blueColor),
+                                                                                                              ),
+                                                        )),
                                                     Expanded(
                                                         child: Text(
                                                       "${formatDate(tenant.createdAt.toString())}",

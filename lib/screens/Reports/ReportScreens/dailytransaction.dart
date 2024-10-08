@@ -624,12 +624,12 @@ class _DailyTransactionsState extends State<DailyTransactions> {
         subrowAmounts +=
             '\$${tenant.amount?.toString() ?? '0'}\n'; // Concatenate amounts
       }
-      if (item.surcharge!.isNotEmpty &&
-          item.surcharge != null &&
-          item.surcharge != "0") {
-        subrowDescriptions += "Surcharge \n";
-        subrowAmounts += '\$${item.surcharge}\n';
-      }
+      // if (item.surcharge!.isNotEmpty &&
+      //     item.surcharge != null &&
+      //     item.surcharge != "0") {
+      //   subrowDescriptions += "Surcharge \n";
+      //   subrowAmounts += '\$${item.surcharge}\n';
+      // }
 
       // Remove trailing commas and spaces
       subrowDescriptions =
@@ -696,6 +696,10 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     // TODO: implement initState
     super.initState();
     _fetchTrasactionsReport();
+    DateTime today = DateTime.now();
+    selectdate.text = DateFormat('yyyy-MM-dd').format(today);
+    _futureReport =
+        DailyTrasactionReport().fetchTransactions(selectdate.text!);
   }
 
   void _fetchTrasactionsReport() {
@@ -1259,7 +1263,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
       'Card Type',
       "Card No",
       ...uniqueList,
-      "Surcharge",
+      // "Surcharge",
       "Total"
     ];
     print(headers);
@@ -1300,15 +1304,15 @@ class _DailyTransactionsState extends State<DailyTransactions> {
           .getRangeByIndex(2 + i, 6)
           .setText(workOrder.cctype != "" ? workOrder.cctype ?? '' : "N/A");
       sheet.getRangeByIndex(2 + i, 7).setText(workOrder.ccNumber ?? '');
+      // sheet
+      //     .getRangeByIndex(2 + i, 8 + uniqueList.length)
+      //     .setText(workOrder.surcharge.toString() ?? '');
+      // sheet.getRangeByIndex(2 + i, 8 + uniqueList.length).cellStyle.hAlign =
+      //     syncXlsx.HAlignType.right;
       sheet
           .getRangeByIndex(2 + i, 8 + uniqueList.length)
-          .setText(workOrder.surcharge.toString() ?? '');
-      sheet.getRangeByIndex(2 + i, 8 + uniqueList.length).cellStyle.hAlign =
-          syncXlsx.HAlignType.right;
-      sheet
-          .getRangeByIndex(2 + i, 9 + uniqueList.length)
           .setText(workOrder.totalAmount.toString() ?? '');
-      sheet.getRangeByIndex(2 + i, 9 + uniqueList.length).cellStyle.hAlign =
+      sheet.getRangeByIndex(2 + i, 8 + uniqueList.length).cellStyle.hAlign =
           syncXlsx.HAlignType.right;
 
       //  sheet.getRangeByIndex(2 + i, 8).setText(workOrder.ccNumber ?? '');
@@ -1320,10 +1324,10 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                     entry.description != null && entry.description == header)
                 .toList()
             : [];
-        sheet.getRangeByIndex(2 + i, 8 + j).setText(value.length > 0
+        sheet.getRangeByIndex(2 + i, 9 + j).setText(value.length > 0
             ? value[0].amount.toString() ?? '0'
             : "0"); // Handle null values gracefully
-        sheet.getRangeByIndex(2 + i, 8 + j).cellStyle.hAlign =
+        sheet.getRangeByIndex(2 + i, 9 + j).cellStyle.hAlign =
             syncXlsx.HAlignType.right;
       }
     }
@@ -1381,7 +1385,6 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     if (picked != null) {
       setState(() {
         _selectedDate = picked;
-
         selectdate.text = DateFormat('yyyy-MM-dd')
             .parse(picked.toString())
             .toString()
@@ -1414,7 +1417,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
             transaction.entries.map((entry) => entry.description).toList());
         return existingHeaders;
       }).toList(),
-      'Surcharge',
+      // 'Surcharge',
       'Total',
     ];
     rows.add(headers);
@@ -1460,7 +1463,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
             : '0'); // Handle null values
       }
 
-      row.add(workOrder.surcharge.toString() ?? '');
+      // row.add(workOrder.surcharge.toString() ?? '');
       row.add(workOrder.totalAmount.toString() ?? '');
 
       rows.add(row);
@@ -1524,7 +1527,6 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Column(
-
                         children: [
                           Expanded(
                             flex: 0,
@@ -1538,7 +1540,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                 MainAxisAlignment.spaceBetween,
                                 children: [
                                   Container(
-                                    width: 120,
+                                   width: MediaQuery.of(context).size.width * .3,
                                     child: TextFormField(
                                       controller: selectdate,
                                       onTap: () {
@@ -1565,7 +1567,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                     ),
                                   ),
                                   Container(
-                                    height: 42,
+                                    height: 43,
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(5),
                                         border: Border.all(color: Colors.grey)),
@@ -1606,9 +1608,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(
-                                    width: 100,
-                                    height: 45,
+                                  Container(
+                                    height: 43,
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: blueColor,
@@ -1683,7 +1684,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                 MainAxisAlignment.spaceBetween,
                                 children: [
                                   Container(
-                                    width: 120,
+                                   width: MediaQuery.of(context).size.width * .3,
                                     child: TextFormField(
                                       controller: selectdate,
                                       onTap: () {
@@ -1699,7 +1700,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                             vertical: 10,
                                             horizontal: 10), //Imp Line
                                         isDense: true,
-                                        hintText: "Select Date",
+                                        hintText: "Select Datee",
                                         border: OutlineInputBorder(
                                             borderRadius:
                                             BorderRadius.circular(5),
@@ -1710,7 +1711,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                     ),
                                   ),
                                   Container(
-                                    height: 42,
+                                    height: 43,
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(5),
                                         border: Border.all(color: Colors.grey)),
@@ -1752,8 +1753,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                     ),
                                   ),
                                   SizedBox(
-                                    width: 100,
-                                    height: 45,
+                                   // width: 100,
+                                    height: 43,
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: blueColor,
@@ -1880,7 +1881,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Container(
-                                    width: 120,
+                                    width: MediaQuery.of(context).size.width * .3,
                                     child: TextFormField(
                                       controller: selectdate,
                                       onTap: () {
@@ -1948,8 +1949,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                     ),
                                   ),
                                   SizedBox(
-                                    width: 100,
-                                    height: 45,
+                                    //width: 100,
+                                    height: 43,
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: blueColor,
@@ -2082,13 +2083,27 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                       ),
                                                     ),
                                                     Expanded(
-                                                      child: Text(
-                                                        '${workOrder.tenantFirstName} ${workOrder.tenantLastName}',
-                                                        style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 13,
+                                                      child: GestureDetector(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            if (expandedIndex ==
+                                                                index) {
+                                                              expandedIndex =
+                                                              null;
+                                                            } else {
+                                                              expandedIndex =
+                                                                  index;
+                                                            }
+                                                          });
+                                                        },
+                                                        child: Text(
+                                                          '${workOrder.tenantFirstName} ${workOrder.tenantLastName}',
+                                                          style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13,
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
@@ -2442,84 +2457,84 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                 SizedBox(
                                                                   height: 5,
                                                                 ),
-                                                                if (workOrder
-                                                                        .paymentType ==
-                                                                    "Card")
-                                                                  Padding(
-                                                                    padding: const EdgeInsets
-                                                                        .only(
-                                                                        left:
-                                                                            0.0),
-                                                                    child: Row(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .start,
-                                                                      children: [
-                                                                        FaIcon(
-                                                                          isExpanded
-                                                                              ? FontAwesomeIcons.sortUp
-                                                                              : FontAwesomeIcons.sortDown,
-                                                                          size:
-                                                                              20,
-                                                                          color:
-                                                                              Colors.transparent,
-                                                                        ),
-                                                                        Expanded(
-                                                                          flex:
-                                                                              4,
-                                                                          child:
-                                                                              Column(
-                                                                            crossAxisAlignment:
-                                                                                CrossAxisAlignment.start,
-                                                                            children: <Widget>[
-                                                                              Text.rich(
-                                                                                TextSpan(
-                                                                                  children: [
-                                                                                    TextSpan(
-                                                                                      text: 'Surcharge',
-                                                                                      style: TextStyle(
-                                                                                        fontWeight: FontWeight.w700,
-                                                                                        color: grey,
-                                                                                      ),
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                        SizedBox(
-                                                                          width:
-                                                                              15,
-                                                                        ),
-                                                                        Expanded(
-                                                                          flex:
-                                                                              2,
-                                                                          child:
-                                                                              Column(
-                                                                            crossAxisAlignment:
-                                                                                CrossAxisAlignment.start,
-                                                                            children: <Widget>[
-                                                                              Text.rich(
-                                                                                TextSpan(
-                                                                                  children: [
-                                                                                    TextSpan(
-                                                                                      text: ' \$ ${workOrder.surcharge ?? "0"}',
-                                                                                      style: TextStyle(
-                                                                                        fontWeight: FontWeight.w700,
-                                                                                        color: grey,
-                                                                                      ),
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              ),
-                                                                              // Add additional fields if needed
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
+                                                                // if (workOrder
+                                                                //         .paymentType ==
+                                                                //     "Card")
+                                                                //   Padding(
+                                                                //     padding: const EdgeInsets
+                                                                //         .only(
+                                                                //         left:
+                                                                //             0.0),
+                                                                //     child: Row(
+                                                                //       mainAxisAlignment:
+                                                                //           MainAxisAlignment
+                                                                //               .start,
+                                                                //       children: [
+                                                                //         FaIcon(
+                                                                //           isExpanded
+                                                                //               ? FontAwesomeIcons.sortUp
+                                                                //               : FontAwesomeIcons.sortDown,
+                                                                //           size:
+                                                                //               20,
+                                                                //           color:
+                                                                //               Colors.transparent,
+                                                                //         ),
+                                                                //         Expanded(
+                                                                //           flex:
+                                                                //               4,
+                                                                //           child:
+                                                                //               Column(
+                                                                //             crossAxisAlignment:
+                                                                //                 CrossAxisAlignment.start,
+                                                                //             children: <Widget>[
+                                                                //               Text.rich(
+                                                                //                 TextSpan(
+                                                                //                   children: [
+                                                                //                     TextSpan(
+                                                                //                       text: 'Surcharge',
+                                                                //                       style: TextStyle(
+                                                                //                         fontWeight: FontWeight.w700,
+                                                                //                         color: grey,
+                                                                //                       ),
+                                                                //                     ),
+                                                                //                   ],
+                                                                //                 ),
+                                                                //               ),
+                                                                //             ],
+                                                                //           ),
+                                                                //         ),
+                                                                //         SizedBox(
+                                                                //           width:
+                                                                //               15,
+                                                                //         ),
+                                                                //         Expanded(
+                                                                //           flex:
+                                                                //               2,
+                                                                //           child:
+                                                                //               Column(
+                                                                //             crossAxisAlignment:
+                                                                //                 CrossAxisAlignment.start,
+                                                                //             children: <Widget>[
+                                                                //               Text.rich(
+                                                                //                 TextSpan(
+                                                                //                   children: [
+                                                                //                     TextSpan(
+                                                                //                       text: ' \$ ${workOrder.surcharge ?? "0"}',
+                                                                //                       style: TextStyle(
+                                                                //                         fontWeight: FontWeight.w700,
+                                                                //                         color: grey,
+                                                                //                       ),
+                                                                //                     ),
+                                                                //                   ],
+                                                                //                 ),
+                                                                //               ),
+                                                                //               // Add additional fields if needed
+                                                                //             ],
+                                                                //           ),
+                                                                //         ),
+                                                                //       ],
+                                                                //     ),
+                                                                //   ),
                                                               ],
                                                             ),
                                                           ),

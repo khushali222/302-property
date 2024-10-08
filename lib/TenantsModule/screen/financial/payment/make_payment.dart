@@ -5381,12 +5381,18 @@ class _MakePaymentState extends State<MakePayment> {
                                     setState(() {
                                       selected_account = "Full";
                                       partialamount = false;
-                                      totalamount =
-                                          lease_data!["total_due_amount"];
-                                     // totalAmount = double.tryParse(lease_data?["total_due_amount"]) ?? 0.0;
-                                      totalpayamount =
-                                          lease_data!["total_due_amount"];
-                                      surchargeamount = 0.0;
+                                      if(lease_data != null){
+                                        totalamount =
+                                       double.parse( lease_data!["total_due_amount"].toString());
+                                        // totalAmount = double.tryParse(lease_data?["total_due_amount"]) ?? 0.0;
+
+                                        if(surCharge != null){
+                                          surchargeamount = totalamount * surCharge!/100;
+                                        }
+                                        totalpayamount = totalamount + surchargeamount;
+
+                                      }
+
                                       //_site = value;
                                     });
                                   },
@@ -5420,10 +5426,24 @@ class _MakePaymentState extends State<MakePayment> {
                                   onChanged: (value) {
                                     setState(() {
                                       selected_account = "Partial";
-                                      totalamount = 0.0;
-                                      totalpayamount = 0.0;
-                                      surchargeamount = 0.0;
-                                      partialamount = true;
+                                      if(amountController.text.isNotEmpty){
+                                        totalamount =double.parse(amountController.text);
+
+                                        if(surCharge != null){
+                                          surchargeamount = totalamount * surCharge!/100;
+                                        }else{
+                                          surchargeamount = 0.0;
+                                        }
+                                        totalpayamount = totalamount + surchargeamount;
+                                        partialamount = true;
+                                      }
+                                      else {
+                                        totalamount = 0.0;
+                                        totalpayamount = 0.0;
+                                        surchargeamount = 0.0;
+                                        partialamount = true;
+                                      }
+
                                       //_site = value;
                                     });
                                   },
