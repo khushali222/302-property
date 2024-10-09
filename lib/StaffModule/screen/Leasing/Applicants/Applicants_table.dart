@@ -906,7 +906,10 @@ class _Applicants_tableState extends State<Applicants_table> {
                               //             blueColor)
                               // ),
                               decoration: BoxDecoration(
-                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                                  border: Border.all(color: blueColor
+
+
+)),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -923,7 +926,10 @@ class _Applicants_tableState extends State<Applicants_table> {
                                     // ),
                                     decoration: BoxDecoration(
                                       color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                                      border: Border.all(color: blueColor
+
+
+),
                                     ),
                                     child: Column(
                                       children: <Widget>[
@@ -1011,9 +1017,9 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                   flex: 3,
                                                   child: Text(
                                                     '${applicant.applicantPhoneNumber}',
-                                                    style: const TextStyle(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                    style:  TextStyle(
+                                                      color: blueColor
+,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       fontSize: 13,

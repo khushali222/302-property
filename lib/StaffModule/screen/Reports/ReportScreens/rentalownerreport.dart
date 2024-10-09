@@ -1324,7 +1324,10 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                           const SizedBox(height: 20),
                           Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                                  border: Border.all(color: blueColor
+
+
+)),
                             child: Column(
                               children:
                                   currentPageData.asMap().entries.map((entry) {
@@ -1339,7 +1342,10 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                   // ),
                                   decoration: BoxDecoration(
                                     color: rowIndex %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                    border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                                    border: Border.all(color: blueColor
+
+
+),
                                   ),
                                   child: Column(
                                     children: <Widget>[
@@ -1775,7 +1781,10 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                           const SizedBox(height: 20),
                           Container(
                             decoration: BoxDecoration(
-                                border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                                border: Border.all(color: blueColor
+
+
+)),
                             // decoration: BoxDecoration(
                             //     border: Border.all(color: blueColor)),
                             child: Column(
@@ -1789,7 +1798,10 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                 return Container(
                                   decoration: BoxDecoration(
                                     color: rowIndex %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                    border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                                    border: Border.all(color: blueColor
+
+
+),
                                   ),
                                   // decoration: BoxDecoration(
                                   //   border: Border.all(color: blueColor),
@@ -1836,8 +1848,10 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                     color: isRowExpanded
                                                         ? Color.fromARGB(
                                                         255, 35, 67, 126)
-                                                        : Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                        : blueColor
+
+
+,
                                                   ),
                                                 ),
                                               ),

@@ -2621,8 +2621,10 @@ class _addLease4State extends State<addLease4>
                                             border: isEnjoyNowSelected
                                                 ? null
                                                 : Border.all(
-                                                color: const Color.fromRGBO(
-                                                    21, 43, 83, 1),
+                                                color: blueColor
+
+
+,
                                                 width: 1),
                                             gradient: isEnjoyNowSelected
                                                 ? const LinearGradient(
@@ -2658,12 +2660,16 @@ class _addLease4State extends State<addLease4>
                                           )
                                               : ShaderMask(
                                             shaderCallback: (bounds) {
-                                              return const LinearGradient(
+                                              return  LinearGradient(
                                                 colors: [
-                                                  Color.fromRGBO(
-                                                      21, 43, 83, 1),
-                                                  Color.fromRGBO(
-                                                      21, 43, 83, 1),
+
+
+
+
+                                                  blueColor
+
+
+,
                                                 ],
                                               ).createShader(bounds);
                                             },
@@ -2693,8 +2699,10 @@ class _addLease4State extends State<addLease4>
                                             border: isEnjoyNowSelected == false
                                                 ? null
                                                 : Border.all(
-                                                color: const Color.fromRGBO(
-                                                    21, 43, 83, 1),
+                                                color: blueColor
+
+
+,
                                                 width: 1),
                                             gradient:
                                             isEnjoyNowSelected == false
@@ -2731,12 +2739,16 @@ class _addLease4State extends State<addLease4>
                                           )
                                               : ShaderMask(
                                             shaderCallback: (bounds) {
-                                              return const LinearGradient(
+                                              return  LinearGradient(
                                                 colors: [
-                                                  Color.fromRGBO(
-                                                      21, 43, 83, 1),
-                                                  Color.fromRGBO(
-                                                      21, 43, 83, 1),
+
+
+
+
+                                                  blueColor
+
+
+,
                                                 ],
                                               ).createShader(bounds);
                                             },
@@ -3547,14 +3559,16 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                                 contentPadding:
                                                 EdgeInsets.zero,
                                                 backgroundColor: Colors.white,
-                                                title: const Text(
+                                                title:  Text(
                                                   'Add Account',
                                                   style: TextStyle(
                                                     fontSize: 15,
                                                     fontWeight:
                                                     FontWeight.w500,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor
+
+
+,
                                                   ),
                                                 ),
                                                 content: Container(

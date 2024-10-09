@@ -1955,7 +1955,10 @@ class _Summery_pageState extends State<Summery_page>
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color:
-                                          Color.fromRGBO(152, 162, 179, .5))),
+                                          blueColor
+
+
+)),
                               // decoration: BoxDecoration(
                               //     border: Border.all(color: blueColor)),
                               child: Column(
@@ -2030,8 +2033,8 @@ class _Summery_pageState extends State<Summery_page>
                                                           : FontAwesomeIcons
                                                               .sortDown,
                                                       size: 20,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: blueColor
+,
                                                     ),
                                                   ),
                                                 ),
@@ -4365,9 +4368,10 @@ class _Summery_pageState extends State<Summery_page>
                                           ),
                                           style: ElevatedButton.styleFrom(
                                               backgroundColor:
-                                                  const Color.fromRGBO(
-                                                      21, 43, 83, 1),
-                                              shape: RoundedRectangleBorder(
+                                                   blueColor
+
+
+, shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           12.0))),
@@ -4540,8 +4544,10 @@ class _Summery_pageState extends State<Summery_page>
                                                   BorderRadius.circular(12.0),
                                               color: Colors.white,
                                               border: Border.all(
-                                                color: const Color.fromRGBO(
-                                                    21, 43, 83, 1),
+                                                color: blueColor
+
+
+,
                                                 width: 1,
                                               ),
                                             ),
@@ -4569,8 +4575,8 @@ class _Summery_pageState extends State<Summery_page>
                                                               : 18,
                                                       fontWeight:
                                                           FontWeight.bold,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: blueColor
+,
                                                     ),
                                                   ),
                                                 ),
@@ -4605,9 +4611,10 @@ class _Summery_pageState extends State<Summery_page>
                                                       ),
                                                       style: ElevatedButton.styleFrom(
                                                           backgroundColor:
-                                                              const Color
-                                                                  .fromRGBO(21,
-                                                                  43, 83, 1),
+                                                               blueColor
+
+
+,
                                                           shape: RoundedRectangleBorder(
                                                               borderRadius:
                                                                   BorderRadius
@@ -4680,9 +4687,10 @@ class _Summery_pageState extends State<Summery_page>
                                                       ),
                                                       style: ElevatedButton.styleFrom(
                                                           backgroundColor:
-                                                              const Color
-                                                                  .fromRGBO(21,
-                                                                  43, 83, 1),
+                                                               blueColor
+
+
+,
                                                           shape: RoundedRectangleBorder(
                                                               borderRadius:
                                                                   BorderRadius
@@ -4737,8 +4745,10 @@ class _Summery_pageState extends State<Summery_page>
                                                           ? 14
                                                           : 18,
                                                   fontWeight: FontWeight.bold,
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  color: blueColor
+
+
+,
                                                 ),
                                               ),
                                             ),
@@ -4788,8 +4798,10 @@ class _Summery_pageState extends State<Summery_page>
                                                 ),
                                                 style: ElevatedButton.styleFrom(
                                                     backgroundColor:
-                                                        const Color.fromRGBO(
-                                                            21, 43, 83, 1),
+                                                        blueColor
+
+
+,
                                                     shape:
                                                         RoundedRectangleBorder(
                                                             borderRadius:
@@ -4814,8 +4826,10 @@ class _Summery_pageState extends State<Summery_page>
                                                           ? 14
                                                           : 18,
                                                   fontWeight: FontWeight.bold,
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  color: blueColor
+
+
+,
                                                 ),
                                               ),
                                             ),
@@ -4854,8 +4868,10 @@ class _Summery_pageState extends State<Summery_page>
                                                 ),
                                                 style: ElevatedButton.styleFrom(
                                                     backgroundColor:
-                                                        const Color.fromRGBO(
-                                                            21, 43, 83, 1),
+                                                        blueColor
+
+
+,
                                                     shape:
                                                         RoundedRectangleBorder(
                                                             borderRadius:
@@ -6089,7 +6105,10 @@ class _Summery_pageState extends State<Summery_page>
                                 decoration: BoxDecoration(
                                     border: Border.all(
                                         color:
-                                            Color.fromRGBO(152, 162, 179, .5))),
+                                            blueColor
+
+
+)),
                                 // decoration: BoxDecoration(
                                 //     border: Border.all(color: blueColor)),
                                 child: Column(
@@ -8687,8 +8706,10 @@ class _Summery_pageState extends State<Summery_page>
                                         ),
                                         style: ElevatedButton.styleFrom(
                                             backgroundColor:
-                                                const Color.fromRGBO(
-                                                    21, 43, 83, 1),
+                                                blueColor
+
+
+,
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(
@@ -8749,8 +8770,10 @@ class _Summery_pageState extends State<Summery_page>
                                         ),
                                         style: ElevatedButton.styleFrom(
                                             backgroundColor:
-                                                const Color.fromRGBO(
-                                                    21, 43, 83, 1),
+                                                blueColor
+
+
+,
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(
@@ -9328,7 +9351,10 @@ class _Summery_pageState extends State<Summery_page>
                           Container(
                             decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: Color.fromRGBO(152, 162, 179, .5))),
+                                    color: blueColor
+
+
+)),
                             // decoration: BoxDecoration(
                             //     border: Border.all(color: blueColor)),
                             child: Column(
@@ -9345,7 +9371,10 @@ class _Summery_pageState extends State<Summery_page>
                                         : blueColor.withOpacity(0.09),
                                     border: Border.all(
                                         color:
-                                            Color.fromRGBO(152, 162, 179, .5)),
+                                            blueColor
+
+
+),
                                   ),
                                   // decoration: BoxDecoration(
                                   //   border: Border.all(color: blueColor),
@@ -9401,8 +9430,10 @@ class _Summery_pageState extends State<Summery_page>
                                                         : FontAwesomeIcons
                                                             .sortDown,
                                                     size: 20,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor
+
+
+,
                                                   ),
                                                 ),
                                               ),
@@ -10764,7 +10795,10 @@ class _LeasesTableState extends State<LeasesTable> {
                           Container(
                             decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: Color.fromRGBO(152, 162, 179, .5))),
+                                    color: blueColor
+
+
+)),
                             // decoration: BoxDecoration(
                             //     border: Border.all(color: blueColor)),
                             child: Column(
@@ -10781,7 +10815,10 @@ class _LeasesTableState extends State<LeasesTable> {
                                         : blueColor.withOpacity(0.09),
                                     border: Border.all(
                                         color:
-                                            Color.fromRGBO(152, 162, 179, .5)),
+                                            blueColor
+
+
+),
                                   ),
                                   // decoration: BoxDecoration(
                                   //   border: Border.all(color: blueColor),
@@ -10837,8 +10874,10 @@ class _LeasesTableState extends State<LeasesTable> {
                                                         : FontAwesomeIcons
                                                             .sortDown,
                                                     size: 20,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor
+
+
+,
                                                   ),
                                                 ),
                                               ),
@@ -11900,8 +11939,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                     //  hintColor: blueColor,
                                                     colorScheme:
                                                         ColorScheme.light(
-                                                      primary: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      primary: blueColor
+,
                                                       // onPrimary:blueColor,
                                                       //  surface: blueColor,
                                                       onSurface: Colors.black,
@@ -12175,7 +12214,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color:
-                                          Color.fromRGBO(152, 162, 179, .5))),
+                                          blueColor
+
+
+)),
                               // decoration: BoxDecoration(
                               //     border: Border.all(color: blueColor)),
                               child: Column(
@@ -12250,8 +12292,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                           : FontAwesomeIcons
                                                               .sortDown,
                                                       size: 20,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: blueColor
+,
                                                     ),
                                                   ),
                                                 ),
@@ -12522,12 +12564,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                               FontAwesomeIcons
                                                                   .edit,
                                                               size: 20,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
+                                                              color:blueColor
+
+
+,
                                                             ),
                                                           ),
                                                         ),
@@ -12546,12 +12586,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                               FontAwesomeIcons
                                                                   .trashCan,
                                                               size: 20,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
+                                                              color:blueColor
+
+
+,
                                                             ),
                                                           ),
                                                         ),

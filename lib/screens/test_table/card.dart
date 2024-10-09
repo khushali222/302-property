@@ -1324,11 +1324,11 @@ class _CardpaymentState extends State<Cardpayment> {
                                                       backgroundColor:
                                                           Colors.white),
                                                   onPressed: addRow,
-                                                  child: const Text(
+                                                  child:  Text(
                                                     'Add Row',
                                                     style: TextStyle(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: blueColor
+,
                                                     ),
                                                   ),
                                                 ),

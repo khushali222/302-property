@@ -2433,8 +2433,10 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                   .circleChevronLeft,
                                               color: currentPage == 0
                                                   ? Colors.grey
-                                                  : const Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  :  blueColor
+
+
+,
                                             ),
                                             onPressed: currentPage == 0
                                                 ? null
@@ -2452,8 +2454,8 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                   .circleChevronRight,
                                               color:
                                                   currentPage < totalPages - 1
-                                                      ? const Color.fromRGBO(
-                                                          21, 43, 83, 1)
+                                                      ?  blueColor
+
                                                       : Colors.grey,
                                             ),
                                             onPressed:

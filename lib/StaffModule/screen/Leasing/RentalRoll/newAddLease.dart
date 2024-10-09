@@ -2475,10 +2475,12 @@ class _addLease3State extends State<addLease3>
                                                         initialData: item,
                                                         index: index);
                                                   },
-                                                  child: const Icon(
+                                                  child:  Icon(
                                                     Icons.edit,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor
+
+
+,
                                                     size: 18,
                                                   ),
                                                 ),
@@ -2490,10 +2492,12 @@ class _addLease3State extends State<addLease3>
                                                           .removeAt(index);
                                                     });
                                                   },
-                                                  child: const Icon(
+                                                  child:  Icon(
                                                     Icons.delete,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor
+
+
+,
                                                     size: 18,
                                                   ),
                                                 )
@@ -2615,10 +2619,12 @@ class _addLease3State extends State<addLease3>
 
                                                     // Implement edit functionality here
                                                   },
-                                                  child: const Icon(
+                                                  child:  Icon(
                                                     Icons.edit,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor
+
+
+,
                                                     size: 18,
                                                   ),
                                                 ),
@@ -2630,10 +2636,12 @@ class _addLease3State extends State<addLease3>
                                                           .removeAt(index);
                                                     });
                                                   },
-                                                  child: const Icon(
+                                                  child:  Icon(
                                                     Icons.delete,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor
+
+
+,
                                                     size: 18,
                                                   ),
                                                 )
@@ -3489,8 +3497,10 @@ class _addLease3State extends State<addLease3>
                                         border: isTenantSelected
                                             ? null
                                             : Border.all(
-                                                color: const Color.fromRGBO(
-                                                    21, 43, 83, 1),
+                                                color: blueColor
+
+
+,
                                                 width: 1),
                                         gradient: isTenantSelected
                                             ?  LinearGradient(
@@ -3523,12 +3533,13 @@ class _addLease3State extends State<addLease3>
                                             )
                                           : ShaderMask(
                                               shaderCallback: (bounds) {
-                                                return const LinearGradient(
+                                                return  LinearGradient(
                                                   colors: [
-                                                    Color.fromRGBO(
-                                                        21, 43, 83, 1),
-                                                    Color.fromRGBO(
-                                                        21, 43, 83, 1),
+
+                                                    blueColor
+
+
+,
                                                   ],
                                                 ).createShader(bounds);
                                               },
@@ -3557,8 +3568,10 @@ class _addLease3State extends State<addLease3>
                                         border: isTenantSelected == false
                                             ? null
                                             : Border.all(
-                                                color: const Color.fromRGBO(
-                                                    21, 43, 83, 1),
+                                                color: blueColor
+
+
+,
                                                 width: 1),
                                         gradient: isTenantSelected == false
                                             ?  LinearGradient(
@@ -3591,12 +3604,16 @@ class _addLease3State extends State<addLease3>
                                             )
                                           : ShaderMask(
                                               shaderCallback: (bounds) {
-                                                return const LinearGradient(
+                                                return  LinearGradient(
                                                   colors: [
-                                                    Color.fromRGBO(
-                                                        21, 43, 83, 1),
-                                                    Color.fromRGBO(
-                                                        21, 43, 83, 1),
+
+
+
+
+                                                    blueColor
+
+
+,
                                                   ],
                                                 ).createShader(bounds);
                                               },

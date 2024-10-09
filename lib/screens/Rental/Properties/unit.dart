@@ -925,8 +925,10 @@ class _LeasesTableState extends State<LeasesTable> {
                                                         : FontAwesomeIcons
                                                         .sortDown,
                                                     size: 20,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor
+
+
+,
                                                   ),
                                                 ),
                                               ),

@@ -644,7 +644,10 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color:
-                                          Color.fromRGBO(152, 162, 179, .5))),
+                                          blueColor
+
+
+)),
                               // decoration: BoxDecoration(
                               //     border: Border.all(color: blueColor)),
                               child: Column(
@@ -719,8 +722,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                           : FontAwesomeIcons
                                                               .sortDown,
                                                       size: 20,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: blueColor
+,
                                                     ),
                                                   ),
                                                 ),

@@ -659,8 +659,10 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                         : FontAwesomeIcons
                                                             .sortDown,
                                                     size: 20,
-                                                    color: const Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color:  blueColor
+
+
+,
                                                   ),
                                                 ),
                                               ),
@@ -845,16 +847,14 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                       child: Column(
                                                         children: [
                                                           IconButton(
-                                                            icon: const FaIcon(
+                                                            icon:  FaIcon(
                                                               FontAwesomeIcons
                                                                   .edit,
                                                               size: 20,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
+                                                              color:blueColor
+
+
+,
                                                             ),
                                                             onPressed:
                                                                 () async {
@@ -879,16 +879,14 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                             },
                                                           ),
                                                           IconButton(
-                                                            icon: const FaIcon(
+                                                            icon:  FaIcon(
                                                               FontAwesomeIcons
                                                                   .trashCan,
                                                               size: 20,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
+                                                              color:blueColor
+
+
+,
                                                             ),
                                                             onPressed: () {
                                                               //handleDelete(Propertytype);

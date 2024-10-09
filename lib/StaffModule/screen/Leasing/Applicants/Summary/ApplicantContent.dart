@@ -1981,8 +1981,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                   border: Border.all(
-                                                    color: const Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color:  blueColor
+
+
+,
                                                   ),
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -2115,8 +2117,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                 border: Border.all(
-                                                  color: const Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  color:  blueColor
+
+
+,
                                                 ),
                                                 borderRadius:
                                                     BorderRadius.circular(10.0),
@@ -2249,8 +2253,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                 border: Border.all(
-                                                  color: const Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  color:  blueColor
+
+
+,
                                                 ),
                                                 borderRadius:
                                                     BorderRadius.circular(10.0),
@@ -2383,8 +2389,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                 border: Border.all(
-                                                  color: const Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  color:  blueColor
+
+
+,
                                                 ),
                                                 borderRadius:
                                                     BorderRadius.circular(10.0),
@@ -2598,8 +2606,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                 border: Border.all(
-                                                  color: const Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  color:  blueColor
+
+
+,
                                                 ),
                                                 borderRadius:
                                                     BorderRadius.circular(10.0),
@@ -2711,8 +2721,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                 border: Border.all(
-                                                  color: const Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  color:  blueColor
+
+
+,
                                                 ),
                                                 borderRadius:
                                                     BorderRadius.circular(10.0),

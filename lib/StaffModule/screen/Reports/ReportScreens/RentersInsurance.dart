@@ -1109,7 +1109,10 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                           const SizedBox(height: 20),
                           Container(
                             decoration: BoxDecoration(
-                                border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                                border: Border.all(color: blueColor
+
+
+)),
                             // decoration: BoxDecoration(
                             //     border: Border.all(color: blueColor)),
                             child: Column(
@@ -1123,7 +1126,10 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                 return Container(
                                   decoration: BoxDecoration(
                                     color: rowIndex %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                    border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                                    border: Border.all(color: blueColor
+
+
+),
                                   ),
                                   // decoration: BoxDecoration(
                                   //   border: Border.all(color: blueColor),
@@ -1167,8 +1173,10 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                                         : FontAwesomeIcons
                                                             .sortDown,
                                                     size: 20,
-                                                    color: const Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color:  blueColor
+
+
+,
                                                   ),
                                                 ),
                                               ),
@@ -1833,8 +1841,10 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                                         : FontAwesomeIcons
                                                             .sortDown,
                                                     size: 20,
-                                                    color: const Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color:  blueColor
+
+
+,
                                                   ),
                                                 ),
                                               ),

@@ -914,7 +914,10 @@ class _Workorder_tableState extends State<Workorder_table> {
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color:
-                                          Color.fromRGBO(152, 162, 179, .5))),
+                                          blueColor
+
+
+)),
                               // decoration: BoxDecoration(
                               //     border: Border.all(color: blueColor)),
                               child: Column(

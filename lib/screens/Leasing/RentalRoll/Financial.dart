@@ -1606,7 +1606,10 @@ class _FinancialTableState extends State<FinancialTable> {
                                 decoration: BoxDecoration(
                                     border: Border.all(
                                         color:
-                                            Color.fromRGBO(152, 162, 179, .5))),
+                                            blueColor
+
+
+)),
                                 // decoration: BoxDecoration(
                                 //   border: Border.all(color: blueColor),
                                 // ),

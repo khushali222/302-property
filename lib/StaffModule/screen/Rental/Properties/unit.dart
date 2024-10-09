@@ -934,8 +934,10 @@ class _LeasesTableState extends State<LeasesTable> {
                                                         : FontAwesomeIcons
                                                             .sortDown,
                                                     size: 20,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor
+
+
+,
                                                   ),
                                                 ),
                                               ),
@@ -1998,8 +2000,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                     //  hintColor: blueColor,
                                                     colorScheme:
                                                         ColorScheme.light(
-                                                      primary: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      primary: blueColor
+,
                                                       // onPrimary:blueColor,
                                                       //  surface: blueColor,
                                                       onSurface: Colors.black,

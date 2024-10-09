@@ -2262,8 +2262,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                             children: [
                                               TableRow(
                                                 decoration: BoxDecoration(
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  color: blueColor
+
+
+,
                                                 ),
                                                 children: [
                                                   Padding(
@@ -3269,11 +3271,13 @@ class _Edit_leaseState extends State<Edit_lease>
                                                   const EdgeInsets.all(8.0),
                                               child: Text(
                                                 '${item['account']}',
-                                                style: const TextStyle(
+                                                style:  TextStyle(
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.w700,
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  color: blueColor
+
+
+,
                                                 ),
                                               ),
                                             ),
@@ -3302,10 +3306,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                                           initialData: item,
                                                           index: index);
                                                     },
-                                                    child: const Icon(
+                                                    child:  Icon(
                                                       Icons.edit,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: blueColor
+,
                                                       size: 18,
                                                     ),
                                                   ),
@@ -3317,10 +3321,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                                             .removeAt(index);
                                                       });
                                                     },
-                                                    child: const Icon(
+                                                    child:  Icon(
                                                       Icons.delete,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: blueColor
+,
                                                       size: 18,
                                                     ),
                                                   )
@@ -3416,11 +3420,13 @@ class _Edit_leaseState extends State<Edit_lease>
                                                   const EdgeInsets.all(8.0),
                                               child: Text(
                                                 '${item['account']}',
-                                                style: const TextStyle(
+                                                style:  TextStyle(
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.w700,
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  color: blueColor
+
+
+,
                                                 ),
                                               ),
                                             ),
@@ -3451,10 +3457,10 @@ class _Edit_leaseState extends State<Edit_lease>
 
                                                       // Implement edit functionality here
                                                     },
-                                                    child: const Icon(
+                                                    child:  Icon(
                                                       Icons.edit,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: blueColor
+,
                                                       size: 18,
                                                     ),
                                                   ),
@@ -3466,10 +3472,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                                             .removeAt(index);
                                                       });
                                                     },
-                                                    child: const Icon(
+                                                    child:  Icon(
                                                       Icons.delete,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: blueColor
+,
                                                       size: 18,
                                                     ),
                                                   )
@@ -4214,8 +4220,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                         border: isTenantSelected
                                             ? null
                                             : Border.all(
-                                                color: const Color.fromRGBO(
-                                                    21, 43, 83, 1),
+                                                color: blueColor
+
+
+,
                                                 width: 1),
                                         gradient: isTenantSelected
                                             ?  LinearGradient(
@@ -4248,12 +4256,16 @@ class _Edit_leaseState extends State<Edit_lease>
                                             )
                                           : ShaderMask(
                                               shaderCallback: (bounds) {
-                                                return const LinearGradient(
+                                                return  LinearGradient(
                                                   colors: [
-                                                    Color.fromRGBO(
-                                                        21, 43, 83, 1),
-                                                    Color.fromRGBO(
-                                                        21, 43, 83, 1),
+
+
+
+
+                                                    blueColor
+
+
+,
                                                   ],
                                                 ).createShader(bounds);
                                               },
@@ -4282,8 +4294,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                         border: isTenantSelected == false
                                             ? null
                                             : Border.all(
-                                                color: const Color.fromRGBO(
-                                                    21, 43, 83, 1),
+                                                color: blueColor
+
+
+,
                                                 width: 1),
                                         gradient: isTenantSelected == false
                                             ?  LinearGradient(
@@ -4316,12 +4330,16 @@ class _Edit_leaseState extends State<Edit_lease>
                                             )
                                           : ShaderMask(
                                               shaderCallback: (bounds) {
-                                                return const LinearGradient(
+                                                return  LinearGradient(
                                                   colors: [
-                                                    Color.fromRGBO(
-                                                        21, 43, 83, 1),
-                                                    Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    blueColor
+
+
+,
+                                                    blueColor
+
+
+,
                                                   ],
                                                 ).createShader(bounds);
                                               },

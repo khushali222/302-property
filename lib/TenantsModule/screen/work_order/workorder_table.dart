@@ -1037,7 +1037,10 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color:
-                                          Color.fromRGBO(152, 162, 179, .5))),
+                                          blueColor
+
+
+)),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -1108,8 +1111,8 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                           : FontAwesomeIcons
                                                               .sortDown,
                                                       size: 20,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: blueColor
+,
                                                     ),
                                                   ),
                                                 ),

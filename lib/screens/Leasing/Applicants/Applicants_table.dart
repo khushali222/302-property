@@ -923,7 +923,10 @@ class _Applicants_tableState extends State<Applicants_table> {
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color:
-                                          Color.fromRGBO(152, 162, 179, .5))),
+                                          blueColor
+
+
+)),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -1031,9 +1034,9 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                   flex: 3,
                                                   child: Text(
                                                     '${applicant.applicantPhoneNumber}',
-                                                    style: const TextStyle(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                    style:  TextStyle(
+                                                      color: blueColor
+,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       fontSize: 13,

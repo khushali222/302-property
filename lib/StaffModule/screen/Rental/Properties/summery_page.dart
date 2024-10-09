@@ -1948,7 +1948,10 @@ startdateController.text = displayDate;
                             SizedBox(height: 20),
                             Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                                  border: Border.all(color: blueColor
+
+
+)),
                               // decoration: BoxDecoration(
                               //     border: Border.all(color: blueColor)),
                               child: Column(
@@ -1963,7 +1966,10 @@ startdateController.text = displayDate;
                                   return Container(
                                     decoration: BoxDecoration(
                                       color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                                      border: Border.all(color: blueColor
+
+
+),
                                     ),
                                     // decoration: BoxDecoration(
                                     //   border: Border.all(color: blueColor),
@@ -2019,8 +2025,8 @@ startdateController.text = displayDate;
                                                           : FontAwesomeIcons
                                                           .sortDown,
                                                       size: 20,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: blueColor
+,
                                                     ),
                                                   ),
                                                 ),
@@ -4423,8 +4429,10 @@ startdateController.text = displayDate;
                                               BorderRadius.circular(12.0),
                                               color: Colors.white,
                                               border: Border.all(
-                                                color: const Color.fromRGBO(
-                                                    21, 43, 83, 1),
+                                                color: blueColor
+
+
+,
                                                 width: 1,
                                               ),
                                             ),
@@ -4453,8 +4461,8 @@ startdateController.text = displayDate;
                                                           : 18,
                                                       fontWeight:
                                                       FontWeight.bold,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: blueColor
+,
                                                     ),
                                                   ),
                                                 ),
@@ -4683,8 +4691,10 @@ startdateController.text = displayDate;
                                                       ? 14
                                                       : 18,
                                                   fontWeight: FontWeight.bold,
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  color: blueColor
+
+
+,
                                                 ),
                                               ),
                                             ),
@@ -4726,8 +4736,10 @@ startdateController.text = displayDate;
                                                 ),
                                                 style: ElevatedButton.styleFrom(
                                                     backgroundColor:
-                                                    const Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                     blueColor
+
+
+,
                                                     shape:
                                                     RoundedRectangleBorder(
                                                         borderRadius:
@@ -4752,8 +4764,10 @@ startdateController.text = displayDate;
                                                       ? 14
                                                       : 18,
                                                   fontWeight: FontWeight.bold,
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  color: blueColor
+
+
+,
                                                 ),
                                               ),
                                             ),
@@ -4789,8 +4803,10 @@ startdateController.text = displayDate;
                                                 ),
                                                 style: ElevatedButton.styleFrom(
                                                     backgroundColor:
-                                                    const Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                     blueColor
+
+
+,
                                                     shape:
                                                     RoundedRectangleBorder(
                                                         borderRadius:
@@ -5980,7 +5996,10 @@ startdateController.text = displayDate;
                               SizedBox(height: 20),
                               Container(
                                 decoration: BoxDecoration(
-                                    border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                                    border: Border.all(color: blueColor
+
+
+)),
                                 // decoration: BoxDecoration(
                                 //     border: Border.all(color: blueColor)),
                                 child: Column(
@@ -5995,7 +6014,10 @@ startdateController.text = displayDate;
                                     return Container(
                                       decoration: BoxDecoration(
                                         color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                        border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                                        border: Border.all(color: blueColor
+
+
+),
                                       ),
                                       // decoration: BoxDecoration(
                                       //   border: Border.all(color: blueColor),
@@ -9051,7 +9073,10 @@ startdateController.text = displayDate;
                           SizedBox(height: 20),
                           Container(
                             decoration: BoxDecoration(
-                                border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                                border: Border.all(color: blueColor
+
+
+)),
                             // decoration: BoxDecoration(
                             //     border: Border.all(color: blueColor)),
                             child: Column(
@@ -9064,7 +9089,10 @@ startdateController.text = displayDate;
                                 return Container(
                                   decoration: BoxDecoration(
                                     color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                    border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                                    border: Border.all(color: blueColor
+
+
+),
                                   ),
                                   // decoration: BoxDecoration(
                                   //   border: Border.all(color: blueColor),
@@ -9120,8 +9148,10 @@ startdateController.text = displayDate;
                                                         : FontAwesomeIcons
                                                         .sortDown,
                                                     size: 20,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor
+
+
+,
                                                   ),
                                                 ),
                                               ),
@@ -10310,7 +10340,10 @@ class _LeasesTableState extends State<LeasesTable> {
                           SizedBox(height: 20),
                           Container(
                             decoration: BoxDecoration(
-                                border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                                border: Border.all(color: blueColor
+
+
+)),
                             // decoration: BoxDecoration(
                             //     border: Border.all(color: blueColor)),
                             child: Column(
@@ -10323,7 +10356,10 @@ class _LeasesTableState extends State<LeasesTable> {
                                 return Container(
                                   decoration: BoxDecoration(
                                     color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                    border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                                    border: Border.all(color: blueColor
+
+
+),
                                   ),
                                   // decoration: BoxDecoration(
                                   //   border: Border.all(color: blueColor),
@@ -10379,8 +10415,10 @@ class _LeasesTableState extends State<LeasesTable> {
                                                         : FontAwesomeIcons
                                                         .sortDown,
                                                     size: 20,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor
+
+
+,
                                                   ),
                                                 ),
                                               ),
@@ -11444,8 +11482,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                     //  hintColor: blueColor,
                                                     colorScheme:
                                                     ColorScheme.light(
-                                                      primary: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      primary: blueColor
+,
                                                       // onPrimary:blueColor,
                                                       //  surface: blueColor,
                                                       onSurface: Colors.black,
@@ -11500,8 +11538,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                 child: ElevatedButton(
                                                   style: ElevatedButton.styleFrom(
                                                       backgroundColor:
-                                                      const Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                       blueColor
+,
                                                       shape:
                                                       RoundedRectangleBorder(
                                                           borderRadius:
@@ -11749,7 +11787,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                             SizedBox(height: 20),
                             Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                                  border: Border.all(color: blueColor
+
+
+)),
                               // decoration: BoxDecoration(
                               //     border: Border.all(color: blueColor)),
                               child: Column(
@@ -11764,7 +11805,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                   return Container(
                                     decoration: BoxDecoration(
                                       color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                                      border: Border.all(color: blueColor
+
+
+),
                                     ),
                                     // decoration: BoxDecoration(
                                     //   border: Border.all(color: blueColor),
@@ -11821,8 +11865,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                           : FontAwesomeIcons
                                                           .sortDown,
                                                       size: 20,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: blueColor
+,
                                                     ),
                                                   ),
                                                 ),
