@@ -76,7 +76,7 @@ String reverseFormatDate(String formattedDate) {
 }
 
 // Color blueColor = Color.fromRGBO(21, 43, 81, 1);
-Color blueColor = Color.fromRGBO(21, 80, 70, .5);
+Color blueColor = Color.fromRGBO(21, 43, 81, 1);
 
 Color greyColor = Color.fromRGBO(73, 81, 96, 1);
 Color grey = Color.fromRGBO(21, 43, 83, .5);

@@ -1028,10 +1028,8 @@ class _Lease_tableState extends State<Lease_table> {
                                                                 _getDisplayValue(lease
                                                                     .remainingDays
                                                                     .toString()),
-                                                                'Balance Due :',
-                                                                lease.totalBalance! < 0 ?
-                                                                ' - \$${lease.totalBalance!.abs().toStringAsFixed(2)}' :' \$${lease.totalBalance!.abs().toStringAsFixed(2)}'),
-
+                                                                'Rent Start :',
+                                                               '${formatDate(lease.rentDueDate!)}')
 
                                                           ],
                                                         ),

@@ -5580,91 +5580,94 @@ class _MakePaymentState extends State<MakePayment> {
                             onTap: () async {
                               if ((_formKey.currentState?.validate() ??
                                   false)) {
-                                print("valid");
-                                setState(() {
-                                  iserror = false;
-                                  IsLoading = true;
-                                });
+                                if(totalpayamount > 0.0){
+                                  print("valid");
+                                  setState(() {
+                                    iserror = false;
+                                    IsLoading = true;
+                                  });
 
-                                SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
-                                String? id = prefs.getString('adminId');
-                                String? first_name =
-                                    prefs.getString("first_name");
-                                String? last_name =
-                                    prefs.getString("last_name");
-                                String? email = prefs.getString("email");
-                                List<Map<String, String>> filteredTenants =
-                                    tenants.where((tenant) {
-                                  return tenant['tenant_id'] ==
-                                      selectedTenantId;
-                                }).toList();
-                                Map<String, String> selectedTenant =
-                                    filteredTenants.first;
-                                await PaymentService()
-                                    .makePaymentforcard(
-                                        adminId: id ?? "",
-                                        firstName: first_name!,
-                                        lastName: last_name!,
-                                        emailName: email!,
-                                        customerVaultId:
-                                            cardDetails[selectedcardindex!]
-                                                .customerVaultId!,
-                                        billingId:
-                                            cardDetails[selectedcardindex!]
-                                                .billingId!,
-                                        surcharge: "${surchargeamount}",
-                                        amount: "${totalamount}",
-                                        tenantId: widget.tenantId,
-                                        date: _startDate.text,
-                                        address1:
-                                            cardDetails[selectedcardindex!]
-                                                .address_1!,
-                                        processorId: "",
-                                        leaseid: selectedTenantId!,
-                                        company_name: companyName,
-                                        future_Date: false)
-                                    .then((value) {
-                                  Fluttertoast.showToast(msg: "$value");
-                                  setState(() {
-                                    IsLoading = false;
-                                  });
-                                  Navigator.pop(context, true);
-                                }).catchError((e) {
-                                  setState(() {
-                                    IsLoading = false;
-                                  });
-                                  //  print(e.toString().split("Exception")[1].toString().trimLeft());
-                                  setState(() {
-                                    IsLoading = false;
-                                  });
-                                  Alert(
-                                    context: context,
-                                    type: AlertType.warning,
-                                    title: "Payment Failed!",
-                                    desc:
-                                        "${e.toString().split('Exception:')[1].toString().trimLeft()}",
-                                    style: AlertStyle(
-                                      backgroundColor: Colors.white,
-                                      //  overlayColor: Colors.black.withOpacity(.8)
-                                    ),
-                                    buttons: [
-                                      DialogButton(
-                                        child: Text(
-                                          "Ok",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18),
-                                        ),
-                                        onPressed: () => Navigator.pop(context),
-                                        color: blueColor,
+                                  SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                                  String? id = prefs.getString('adminId');
+                                  String? first_name =
+                                  prefs.getString("first_name");
+                                  String? last_name =
+                                  prefs.getString("last_name");
+                                  String? email = prefs.getString("email");
+                                  List<Map<String, String>> filteredTenants =
+                                  tenants.where((tenant) {
+                                    return tenant['tenant_id'] ==
+                                        selectedTenantId;
+                                  }).toList();
+                                  Map<String, String> selectedTenant =
+                                      filteredTenants.first;
+                                  await PaymentService()
+                                      .makePaymentforcard(
+                                      adminId: id ?? "",
+                                      firstName: first_name!,
+                                      lastName: last_name!,
+                                      emailName: email!,
+                                      customerVaultId:
+                                      cardDetails[selectedcardindex!]
+                                          .customerVaultId!,
+                                      billingId:
+                                      cardDetails[selectedcardindex!]
+                                          .billingId!,
+                                      surcharge: "${surchargeamount}",
+                                      amount: "${totalamount}",
+                                      tenantId: widget.tenantId,
+                                      date: _startDate.text,
+                                      address1:
+                                      cardDetails[selectedcardindex!]
+                                          .address_1!,
+                                      processorId: "",
+                                      leaseid: selectedTenantId!,
+                                      company_name: companyName,
+                                      future_Date: false)
+                                      .then((value) {
+                                    Fluttertoast.showToast(msg: "$value");
+                                    setState(() {
+                                      IsLoading = false;
+                                    });
+                                    Navigator.pop(context, true);
+                                  }).catchError((e) {
+                                    setState(() {
+                                      IsLoading = false;
+                                    });
+                                    //  print(e.toString().split("Exception")[1].toString().trimLeft());
+                                    setState(() {
+                                      IsLoading = false;
+                                    });
+                                    Alert(
+                                      context: context,
+                                      type: AlertType.warning,
+                                      title: "Payment Failed!",
+                                      desc:
+                                      "${e.toString().split('Exception:')[1].toString().trimLeft()}",
+                                      style: AlertStyle(
+                                        backgroundColor: Colors.white,
+                                        //  overlayColor: Colors.black.withOpacity(.8)
                                       ),
-                                    ],
-                                  ).show();
+                                      buttons: [
+                                        DialogButton(
+                                          child: Text(
+                                            "Ok",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18),
+                                          ),
+                                          onPressed: () => Navigator.pop(context),
+                                          color: blueColor,
+                                        ),
+                                      ],
+                                    ).show();
 
-                                  Fluttertoast.showToast(
-                                      msg: "Payment failed $e");
-                                });
+                                    Fluttertoast.showToast(
+                                        msg: "Payment failed $e");
+                                  });
+                                }
+
                               }else{
                                 setState(() {
                                   iserror = true;
