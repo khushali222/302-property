@@ -110,13 +110,25 @@ class _AddCardState extends State<AddCard> {
       final data = jsonDecode(response.body);
       print(data);
       final List<Map<String, String>> fetchedTenants = [];
-
+      print(firstName.text = data['tenant_firstName'] ??"");
       for (var tenant in data['data']['tenants']) {
         fetchedTenants.add({
           'tenant_id': tenant['tenant_id'],
           'tenant_name':
               '${tenant['tenant_firstName']} ${tenant['tenant_lastName']}',
+          'tenant_firstName': '${tenant['tenant_firstName']}',
+          'tenant_lastName': '${tenant['tenant_lastName']}',
+          '': '${tenant['tenant_lastName']}',
+          'tenant_email':'${tenant['tenant_email']}',
+          'tenant_phoneNumber':'${tenant['tenant_phoneNumber']}',
+          'rental_adress':"${data['data']['rental_adress']}",
+          'rental_city':"${data['data']['rental_city']}",
+          'rental_state':"${data['data']['rental_state']}",
+          'rental_country':"${data['data']['rental_country']}",
+          'rental_zip':"${data['data']['rental_zip']}",
+
         });
+
       }
 
       setState(() {
@@ -513,7 +525,21 @@ class _AddCardState extends State<AddCard> {
                                           setState(() {
                                             selectedTenantId = value;
                                             showmessage = false;
+                                            final selectedTenant = tenants.firstWhere((tenant) => tenant['tenant_id'] == value);
+                                            firstName.text = selectedTenant['tenant_firstName']!;
+                                            lastName.text = selectedTenant['tenant_lastName']!;
+                                            firstName.text = selectedTenant['tenant_firstname']!;
+                                            lastName.text = selectedTenant['tenant_lastName']!;
+                                            email.text = selectedTenant['tenant_email']!;
+                                            phoneNumber.text = selectedTenant['tenant_phoneNumber']!;
+                                            address.text = selectedTenant['rental_adress']!;
+                                            city.text = selectedTenant['rental_city']!;
+                                            state.text = selectedTenant['rental_state']!;
+                                            country.text = selectedTenant['rental_country']!;
+                                            zip.text = selectedTenant['rental_zip']!;
+
                                           });
+
                                           fetchcreditcard(value!);
                                           print('Selected tenant_id: $selectedTenantId');
                                         },
@@ -1067,6 +1093,16 @@ class _AddCardState extends State<AddCard> {
                                       setState(() {
                                         selectedTenantId = value;
                                         showmessage = false;
+                                        final selectedTenant = tenants.firstWhere((tenant) => tenant['tenant_id'] == value);
+                                        firstName.text = selectedTenant['tenant_firstName']!;
+                                        lastName.text = selectedTenant['tenant_lastName']!;
+                                        email.text = selectedTenant['tenant_email']!;
+                                        phoneNumber.text = selectedTenant['tenant_phoneNumber']!;
+                                        address.text = selectedTenant['rental_adress']!;
+                                        city.text = selectedTenant['rental_city']!;
+                                        state.text = selectedTenant['rental_state']!;
+                                        country.text = selectedTenant['rental_country']!;
+                                        zip.text = selectedTenant['rental_zip']!;
                                       });
                                       fetchcreditcard(value!);
                                       print('Selected tenant_id: $selectedTenantId');
