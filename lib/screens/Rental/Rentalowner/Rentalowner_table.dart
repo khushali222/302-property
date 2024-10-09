@@ -465,7 +465,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      if (rentalownerCount < rentalOwnerCountLimit) {
+                      if (rentalownerCount >= rentalOwnerCountLimit) {
                         final result = await Navigator.of(context).push(
                             MaterialPageRoute(
                                 builder: (context) => Add_rentalowners()));

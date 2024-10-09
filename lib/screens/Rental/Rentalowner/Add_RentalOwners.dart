@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:keyboard_actions/keyboard_actions_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
 import '../../../Model/RentalOwnersData.dart';
@@ -227,7 +228,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
   final FocusNode _nodeText2 = FocusNode();
   final FocusNode _nodeText3 = FocusNode();
   final FocusNode _nodeText4 = FocusNode();
-
+  bool creditcard = false;
+  bool debitcard = false;
   KeyboardActionsConfig _buildConfig(BuildContext context) {
     return KeyboardActionsConfig(
       keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
@@ -2661,6 +2663,121 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                               ],
                             )
                           : Container(),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          SizedBox(
+            height: 10,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 25, right: 25),
+            child: Material(
+              elevation: 6,
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25, right: 25, top: 20, bottom: 30),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 2,
+                          ),
+                          Text(
+                            "Card Transaction Type \nManagement ",
+                            style: TextStyle(
+                                color: Color.fromRGBO(21, 43, 81, 1),
+                                fontWeight: FontWeight.bold,
+                                // fontSize: 18
+                                fontSize:
+                                MediaQuery.of(context).size.width < 500
+                                    ? 20
+                                    : 25),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 2,
+                          ),
+                          Text(
+                            "Select the type of card you wish to \naccept",
+                            style: TextStyle(
+                                color: Color(0xFF8A95A8),
+                                fontWeight: FontWeight.bold,
+                                fontSize:
+                                MediaQuery.of(context).size.width < 500
+                                    ? 15
+                                    : 20),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Container(
+
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Transform.scale(
+                              scale: 1.2,
+                              child: Checkbox(value: creditcard, onChanged: (value) {
+                                setState(() {
+
+                                  creditcard = value!;
+                                });
+                              },activeColor: blueColor,),
+                            ),
+                            SizedBox(width: 10),
+                            Text("Credit Card",style: TextStyle(
+                              fontSize: 16
+                            ),)
+
+                          ],
+                        ),
+                      ),
+                      Container(
+
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Transform.scale(
+                              scale: 1.2,
+                              child: Checkbox(value: debitcard, onChanged: (value) {
+                                setState(() {
+                                  debitcard = value!;
+                                });
+                              },activeColor: blueColor),
+                            ),
+                            SizedBox(width: 10),
+                            Text("Debit Card",style: TextStyle(
+                                fontSize: 16
+                            ),)
+
+                          ],
+                        ),
+                      ),
+
+
+
+
+
                     ],
                   ),
                 ),

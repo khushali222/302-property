@@ -96,7 +96,7 @@ class _AddCardState extends State<AddCard> {
 
   Future<void> fetchTenants() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     print("token $token");
     print("Admin $id");
@@ -104,7 +104,7 @@ class _AddCardState extends State<AddCard> {
       Uri.parse('$Api_url/api/leases/lease_tenant/${widget.leaseId}'),
       headers: {"id": "CRM $id", "authorization": "CRM $token"},
     );
-
+    print(response.body);
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       print(data);
@@ -115,6 +115,15 @@ class _AddCardState extends State<AddCard> {
           'tenant_id': tenant['tenant_id'],
           'tenant_name':
               '${tenant['tenant_firstName']} ${tenant['tenant_lastName']}',
+          'tenant_firstname':'${tenant['tenant_firstName']}',
+          'tenant_lastName':'${tenant['tenant_lastName']}',
+          'tenant_email':'${tenant['tenant_email']}',
+          'tenant_phoneNumber':'${tenant['tenant_phoneNumber']}',
+          'rental_adress':"${data['data']['rental_adress']}",
+          'rental_city':"${data['data']['rental_city']}",
+          'rental_state':"${data['data']['rental_state']}",
+          'rental_country':"${data['data']['rental_country']}",
+          'rental_zip':"${data['data']['rental_zip']}",
         });
       }
 
@@ -162,7 +171,7 @@ class _AddCardState extends State<AddCard> {
 
   Future<void> fetchcreditcard(String tenantId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     setState(() {
@@ -242,6 +251,7 @@ class _AddCardState extends State<AddCard> {
   Future<CustomerData?> postBillingCustomerVault(String customerVaultId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
+    String? staffId = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     Map<String, String> requestBody = {
@@ -253,7 +263,7 @@ class _AddCardState extends State<AddCard> {
       Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
       headers: {
         'Content-Type': 'application/json',
-        "id": "CRM $adminId",
+        "id": "CRM $staffId",
         "authorization": "CRM $token",
       },
       body: json.encode(requestBody),
@@ -713,22 +723,6 @@ class _AddCardState extends State<AddCard> {
                                     const SizedBox(
                                       height: 8,
                                     ),
-                                    const Text('Country',
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey)),
-                                    CustomTextField(
-                                      keyboardType: TextInputType.text,
-                                      hintText: 'Enter Country',
-                                      controller: country,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
                                     const Text('Zip',
                                         style: TextStyle(
                                             fontSize: 13,
@@ -738,6 +732,22 @@ class _AddCardState extends State<AddCard> {
                                       keyboardType: TextInputType.number,
                                       hintText: 'Enter Zip',
                                       controller: zip,
+                                    ),
+                                    const SizedBox(
+                                      height: 8,
+                                    ),
+                                    const SizedBox(
+                                      height: 8,
+                                    ),
+                                    const Text('Country',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey)),
+                                    CustomTextField(
+                                      keyboardType: TextInputType.text,
+                                      hintText: 'Enter Country',
+                                      controller: country,
                                     ),
                                     const SizedBox(
                                       height: 8,
@@ -1067,6 +1077,19 @@ class _AddCardState extends State<AddCard> {
                                         selectedTenantId = value;
                                         showmessage = false;
                                       });
+                                      final selectedTenant = tenants.firstWhere((tenant) => tenant['tenant_id'] == value);
+                                      print(selectedTenant);
+                                      // Update the text controllers with the selected tenant's values
+                                      firstName.text = selectedTenant['tenant_firstname']!;
+                                      lastName.text = selectedTenant['tenant_lastName']!;
+                                      email.text = selectedTenant['tenant_email']!;
+                                      phoneNumber.text = selectedTenant['tenant_phoneNumber']!;
+                                      address.text = selectedTenant['rental_adress']!;
+                                      city.text = selectedTenant['rental_city']!;
+                                      state.text = selectedTenant['rental_state']!;
+                                      country.text = selectedTenant['rental_country']!;
+                                      zip.text = selectedTenant['rental_zip']!;
+
                                       fetchcreditcard(value!);
                                       print('Selected tenant_id: $selectedTenantId');
                                     },
@@ -1268,6 +1291,21 @@ class _AddCardState extends State<AddCard> {
                             keyboardType: TextInputType.text,
                             hintText: 'Enter State',
                             controller: state,
+                          ), const SizedBox(
+                            height: 8,
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          const Text('Zip',
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey)),
+                          CustomTextField(
+                            keyboardType: TextInputType.number,
+                            hintText: 'Enter Zip',
+                            controller: zip,
                           ),
                           const SizedBox(
                             height: 8,
@@ -1284,22 +1322,6 @@ class _AddCardState extends State<AddCard> {
                             keyboardType: TextInputType.text,
                             hintText: 'Enter Country',
                             controller: country,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const Text('Zip',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                          CustomTextField(
-                            keyboardType: TextInputType.number,
-                            hintText: 'Enter Zip',
-                            controller: zip,
                           ),
                           const SizedBox(
                             height: 8,
@@ -1807,13 +1829,13 @@ class CustomTextFieldState extends State<CustomTextField> {
   TextEditingController(); // Add this line
 
   late FocusNode _focusNode;
-  @override
-  void dispose() {
-    _textController.dispose(); // Dispose the controller when not needed anymore
-    super.dispose();
-    _focusNode.dispose();
-
-  }
+  // @override
+  // void dispose() {
+  //   _textController.dispose(); // Dispose the controller when not needed anymore
+  //   super.dispose();
+  //   _focusNode.dispose();
+  //
+  // }
   @override
   void initState() {
     super.initState();
