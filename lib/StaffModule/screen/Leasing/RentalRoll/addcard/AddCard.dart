@@ -723,22 +723,6 @@ class _AddCardState extends State<AddCard> {
                                     const SizedBox(
                                       height: 8,
                                     ),
-                                    const Text('Country',
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey)),
-                                    CustomTextField(
-                                      keyboardType: TextInputType.text,
-                                      hintText: 'Enter Country',
-                                      controller: country,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
                                     const Text('Zip',
                                         style: TextStyle(
                                             fontSize: 13,
@@ -748,6 +732,22 @@ class _AddCardState extends State<AddCard> {
                                       keyboardType: TextInputType.number,
                                       hintText: 'Enter Zip',
                                       controller: zip,
+                                    ),
+                                    const SizedBox(
+                                      height: 8,
+                                    ),
+                                    const SizedBox(
+                                      height: 8,
+                                    ),
+                                    const Text('Country',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey)),
+                                    CustomTextField(
+                                      keyboardType: TextInputType.text,
+                                      hintText: 'Enter Country',
+                                      controller: country,
                                     ),
                                     const SizedBox(
                                       height: 8,
@@ -1291,6 +1291,21 @@ class _AddCardState extends State<AddCard> {
                             keyboardType: TextInputType.text,
                             hintText: 'Enter State',
                             controller: state,
+                          ), const SizedBox(
+                            height: 8,
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          const Text('Zip',
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey)),
+                          CustomTextField(
+                            keyboardType: TextInputType.number,
+                            hintText: 'Enter Zip',
+                            controller: zip,
                           ),
                           const SizedBox(
                             height: 8,
@@ -1307,22 +1322,6 @@ class _AddCardState extends State<AddCard> {
                             keyboardType: TextInputType.text,
                             hintText: 'Enter Country',
                             controller: country,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const Text('Zip',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                          CustomTextField(
-                            keyboardType: TextInputType.number,
-                            hintText: 'Enter Zip',
-                            controller: zip,
                           ),
                           const SizedBox(
                             height: 8,
@@ -1830,13 +1829,13 @@ class CustomTextFieldState extends State<CustomTextField> {
   TextEditingController(); // Add this line
 
   late FocusNode _focusNode;
-  @override
-  void dispose() {
-    _textController.dispose(); // Dispose the controller when not needed anymore
-    super.dispose();
-    _focusNode.dispose();
-
-  }
+  // @override
+  // void dispose() {
+  //   _textController.dispose(); // Dispose the controller when not needed anymore
+  //   super.dispose();
+  //   _focusNode.dispose();
+  //
+  // }
   @override
   void initState() {
     super.initState();

@@ -1028,9 +1028,9 @@ class _Lease_tableState extends State<Lease_table> {
                                                                 _getDisplayValue(lease
                                                                     .remainingDays
                                                                     .toString()),
-                                                                'Rent Start:',
-                                                                formatDate(
-                                                                    '${lease.rentDueDate}')),
+                                                                'Balance Due :',
+                                                                lease.totalBalance! < 0 ?
+                                                                ' - \$${lease.totalBalance!.abs().toStringAsFixed(2)}' :' \$${lease.totalBalance!.abs().toStringAsFixed(2)}'),
 
 
                                                           ],
@@ -1486,7 +1486,7 @@ class _Lease_tableState extends State<Lease_table> {
                                             (lease) => lease.endDate!),
                                         _buildHeader('Rent Cycle', 3,
                                             (lease) => lease.rentCycle!),
-                                        _buildHeader('Rent Start', 4,
+                                        _buildHeader('Balance Due', 4,
                                             (lease) => lease.rentDueDate!),
                                         _buildHeader('Rent', 5,
                                             (lease) => lease.amount!),
@@ -1555,7 +1555,8 @@ class _Lease_tableState extends State<Lease_table> {
                                           _buildDataCell(
                                               _pagedData[i].rentCycle!),
                                           _buildDataCell(
-                                              _pagedData[i].rentDueDate!),
+
+                                              _pagedData[i].totalBalance! < 0 ?  ' - \$${_pagedData[i].totalBalance!.abs().toStringAsFixed(2)}' : ' \$ ${ _pagedData[i].totalBalance!.abs().toStringAsFixed(2)}'),
                                           _buildDataCell(
                                               _pagedData[i].amount.toString()),
                                           _buildDataCell((_pagedData[i]

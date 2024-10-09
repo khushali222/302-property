@@ -203,7 +203,7 @@ class LeaseRepository {
     );
     print('$Api_url/api/leases/leases/$adminId');
     print(adminId);
-    print(response.body);
+    print('fetch lease ${response.body}');
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
