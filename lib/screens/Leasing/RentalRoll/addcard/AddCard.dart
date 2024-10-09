@@ -116,6 +116,16 @@ class _AddCardState extends State<AddCard> {
           'tenant_id': tenant['tenant_id'],
           'tenant_name':
               '${tenant['tenant_firstName']} ${tenant['tenant_lastName']}',
+          'tenant_firstname':'${tenant['tenant_firstName']}',
+          'tenant_lastName':'${tenant['tenant_lastName']}',
+          'tenant_email':'${tenant['tenant_email']}',
+          'tenant_phoneNumber':'${tenant['tenant_phoneNumber']}',
+          'rental_adress':"${data['data']['rental_adress']}",
+          'rental_city':"${data['data']['rental_city']}",
+          'rental_state':"${data['data']['rental_state']}",
+          'rental_country':"${data['data']['rental_country']}",
+          'rental_zip':"${data['data']['rental_zip']}",
+
         });
       }
 
@@ -1068,6 +1078,21 @@ class _AddCardState extends State<AddCard> {
                                         selectedTenantId = value;
                                         showmessage = false;
                                       });
+                                      // Get the selected tenant
+                                      final selectedTenant = tenants.firstWhere((tenant) => tenant['tenant_id'] == value);
+                                      print(selectedTenant);
+                                      // Update the text controllers with the selected tenant's values
+                                      firstName.text = selectedTenant['tenant_firstname']!;
+                                      lastName.text = selectedTenant['tenant_lastName']!;
+                                      email.text = selectedTenant['tenant_email']!;
+                                      phoneNumber.text = selectedTenant['tenant_phoneNumber']!;
+                                      address.text = selectedTenant['rental_adress']!;
+                                      city.text = selectedTenant['rental_city']!;
+                                      state.text = selectedTenant['rental_state']!;
+                                      country.text = selectedTenant['rental_country']!;
+                                      zip.text = selectedTenant['rental_zip']!;
+
+
                                       fetchcreditcard(value!);
                                       print('Selected tenant_id: $selectedTenantId');
                                     },
