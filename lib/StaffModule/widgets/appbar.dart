@@ -66,7 +66,7 @@ class widget_302 {
             margin: EdgeInsets.symmetric(vertical: 12),
             width: 50,
             decoration: BoxDecoration(
-              color: Color.fromRGBO(21, 43, 81, 1),
+              color: blueColor,
               borderRadius: BorderRadius.circular(5),
             ),
             child: Center(
@@ -96,7 +96,7 @@ class widget_302 {
         //   FaIcon(
         //     FontAwesomeIcons.bell,
         //     size: 20,
-        //     color: Color.fromRGBO(21, 43, 81, 1),
+        //     color: blueColor,
         //   ),
         SizedBox(
           width: 10,
@@ -109,7 +109,7 @@ class widget_302 {
                   margin: EdgeInsets.symmetric(vertical: 12),
                   width: 30,
                   decoration: BoxDecoration(
-                    color: Color.fromRGBO(21, 43, 81, 1),
+                    color: blueColor,
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: PopupMenuButton(

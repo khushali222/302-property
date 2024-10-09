@@ -698,7 +698,7 @@ class _Summery_pageState extends State<Summery_page>
             FontAwesomeIcons.circleChevronLeft,
             size: 30,
             color:
-                _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+                _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -1037,7 +1037,7 @@ class _Summery_pageState extends State<Summery_page>
             size: 30,
             color: _currentPagemulti == 0
                 ? Colors.grey
-                : Color.fromRGBO(21, 43, 83, 1),
+                : blueColor,
           ),
           onPressed: _currentPagemulti == 0
               ? null
@@ -1370,7 +1370,7 @@ class _Summery_pageState extends State<Summery_page>
             FontAwesomeIcons.circleChevronLeft,
             color: _currentPagerent == 0
                 ? Colors.grey
-                : Color.fromRGBO(21, 43, 83, 1),
+                : blueColor,
           ),
           onPressed: _currentPagerent == 0
               ? null
@@ -1452,7 +1452,7 @@ class _Summery_pageState extends State<Summery_page>
               ),
               // Text('${widget.properties.rentalAddress}',
               //     style: TextStyle(
-              //       color: Color.fromRGBO(21, 43, 81, 1),
+              //       color: blueColor,
               //       fontWeight: FontWeight.bold,
               //       fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 20,
               //     )),
@@ -1482,7 +1482,7 @@ class _Summery_pageState extends State<Summery_page>
             height: 60,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              border: Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
+              border: Border.all(color:blueColor),
               // color: Colors.blue,
               borderRadius: BorderRadius.circular(10),
             ),
@@ -1496,9 +1496,9 @@ class _Summery_pageState extends State<Summery_page>
                 // fontWeight: FontWeight.bold,
               ),
               //indicatorPadding: EdgeInsets.symmetric(horizontal: 1),
-              indicatorColor: const Color.fromRGBO(21, 43, 81, 1),
-              labelColor: const Color.fromRGBO(21, 43, 81, 1),
-              unselectedLabelColor: const Color.fromRGBO(21, 43, 81, 1),
+              indicatorColor:blueColor,
+              labelColor:blueColor,
+              unselectedLabelColor:blueColor,
               tabs: [
                 Tab(
                   text: 'Summary',
@@ -1616,7 +1616,7 @@ class _Summery_pageState extends State<Summery_page>
               // height: 150,
               // width: MediaQuery.of(context).size.width * .94,
               decoration: BoxDecoration(
-                border: Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
+                border: Border.all(color:blueColor),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Padding(
@@ -1720,7 +1720,7 @@ class _Summery_pageState extends State<Summery_page>
                                         MediaQuery.of(context).size.width < 500
                                             ? 14
                                             : 22,
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                   ),
                                 ),
                               ],
@@ -1751,7 +1751,7 @@ class _Summery_pageState extends State<Summery_page>
                                 Text(
                                     '${widget.properties.propertyTypeData?.propertyType}',
                                     style: TextStyle(
-                                      color: Color.fromRGBO(21, 43, 81, 1),
+                                      color: blueColor,
                                       fontSize:
                                           MediaQuery.of(context).size.width <
                                                   500
@@ -1791,7 +1791,7 @@ class _Summery_pageState extends State<Summery_page>
                                 Text(
                                   '${widget.properties.rentalCity},',
                                   style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                     fontSize:
                                         MediaQuery.of(context).size.width < 500
                                             ? 13
@@ -1802,7 +1802,7 @@ class _Summery_pageState extends State<Summery_page>
                                 Text(
                                   '${widget.properties.rentalState},',
                                   style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                     fontSize:
                                         MediaQuery.of(context).size.width < 500
                                             ? 13
@@ -1820,7 +1820,7 @@ class _Summery_pageState extends State<Summery_page>
                                 Text(
                                   '${widget.properties.rentalCountry},',
                                   style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                     fontSize:
                                         MediaQuery.of(context).size.width < 500
                                             ? 13
@@ -1831,7 +1831,7 @@ class _Summery_pageState extends State<Summery_page>
                                 Text(
                                   '${widget.properties.rentalPostcode}',
                                   style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                     fontSize:
                                         MediaQuery.of(context).size.width < 500
                                             ? 13
@@ -1864,7 +1864,7 @@ class _Summery_pageState extends State<Summery_page>
                 Text(
                   "Rental Owners",
                   style: TextStyle(
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       fontSize:
                           MediaQuery.of(context).size.width < 500 ? 16 : 20,
                       fontWeight: FontWeight.bold),
@@ -2293,7 +2293,7 @@ class _Summery_pageState extends State<Summery_page>
                                         FontAwesomeIcons.circleChevronLeft,
                                         color: currentPage == 0
                                             ? Colors.grey
-                                            : Color.fromRGBO(21, 43, 83, 1),
+                                            : blueColor,
                                       ),
                                       onPressed: currentPage == 0
                                           ? null
@@ -2329,7 +2329,7 @@ class _Summery_pageState extends State<Summery_page>
                                       icon: FaIcon(
                                         FontAwesomeIcons.circleChevronRight,
                                         color: currentPage < totalPages - 1
-                                            ? Color.fromRGBO(21, 43, 83, 1)
+                                            ? blueColor
                                             : Colors.grey,
                                       ),
                                       onPressed: currentPage < totalPages - 1
@@ -2547,7 +2547,7 @@ class _Summery_pageState extends State<Summery_page>
                 Text(
                   "Staff Details",
                   style: TextStyle(
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       fontSize:
                           MediaQuery.of(context).size.width < 500 ? 17 : 20,
                       fontWeight: FontWeight.bold),
@@ -2760,7 +2760,7 @@ class _Summery_pageState extends State<Summery_page>
               height: 30,
               width: 30,
               decoration: BoxDecoration(
-                color: const Color.fromRGBO(21, 43, 81, 1),
+                color:blueColor,
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Center(
@@ -2787,7 +2787,7 @@ class _Summery_pageState extends State<Summery_page>
                           fontSize:
                               MediaQuery.of(context).size.width < 500 ? 16 : 19,
                           fontWeight: FontWeight.bold,
-                          color: Color.fromRGBO(21, 43, 81, 1),
+                          color: blueColor,
                         ),
                       ),
                     ),
@@ -2847,7 +2847,7 @@ class _Summery_pageState extends State<Summery_page>
                   FaIcon(
                     FontAwesomeIcons.rightFromBracket,
                     size: 17,
-                    color: Color.fromRGBO(21, 43, 81, 1),
+                    color: blueColor,
                   ),
                   SizedBox(width: 5),
                   Text(
@@ -2856,7 +2856,7 @@ class _Summery_pageState extends State<Summery_page>
                       fontSize:
                           MediaQuery.of(context).size.width < 500 ? 15 : 15,
                       fontWeight: FontWeight.w500,
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                     ),
                   ),
                 ],
@@ -2868,7 +2868,7 @@ class _Summery_pageState extends State<Summery_page>
                   FaIcon(
                     FontAwesomeIcons.check,
                     size: 17,
-                    color: Color.fromRGBO(21, 43, 81, 1),
+                    color: blueColor,
                   ),
                   SizedBox(width: 5),
                   Text(
@@ -2876,7 +2876,7 @@ class _Summery_pageState extends State<Summery_page>
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                     ),
                   ),
                 ],
@@ -2892,7 +2892,7 @@ class _Summery_pageState extends State<Summery_page>
               '${formatDate('${tenant.startDate}')}  to',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
-                color: Color.fromRGBO(21, 43, 81, 1),
+                color: blueColor,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -2901,7 +2901,7 @@ class _Summery_pageState extends State<Summery_page>
               '${formatDate('${tenant.endDate}')}',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
-                color: Color.fromRGBO(21, 43, 81, 1),
+                color: blueColor,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -2911,17 +2911,17 @@ class _Summery_pageState extends State<Summery_page>
         Row(
           children: [
             const SizedBox(width: 65),
-            const FaIcon(
+             FaIcon(
               FontAwesomeIcons.phone,
               size: 15,
-              color: Color.fromRGBO(21, 43, 81, 1),
+              color: blueColor,
             ),
             const SizedBox(width: 5),
             Text(
               '${tenant.phoneNumber}',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
-                color: Color.fromRGBO(21, 43, 81, 1),
+                color: blueColor,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -2931,10 +2931,10 @@ class _Summery_pageState extends State<Summery_page>
         Row(
           children: [
             const SizedBox(width: 65),
-            const FaIcon(
+             FaIcon(
               FontAwesomeIcons.solidEnvelope,
               size: 15,
-              color: Color.fromRGBO(21, 43, 81, 1),
+              color: blueColor,
             ),
             const SizedBox(width: 5),
             SizedBox(
@@ -2944,7 +2944,7 @@ class _Summery_pageState extends State<Summery_page>
                 maxLines: 2,
                 style: TextStyle(
                   fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
-                  color: Color.fromRGBO(21, 43, 81, 1),
+                  color: blueColor,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -2967,7 +2967,7 @@ class _Summery_pageState extends State<Summery_page>
             "Move out Tenants",
             style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Color.fromRGBO(21, 43, 81, 1),
+                color: blueColor,
                 fontSize: MediaQuery.of(context).size.width < 500 ? 18 : 22),
           ),
           SizedBox(height: 13),
@@ -3007,7 +3007,7 @@ class _Summery_pageState extends State<Summery_page>
                   //border: TableBorder.all(color:blueColor),
                   border: TableBorder(
                     horizontalInside: BorderSide(
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       width: 1.0,
                     ),
                   ),
@@ -3066,7 +3066,7 @@ class _Summery_pageState extends State<Summery_page>
                         fontWeight: FontWeight.bold,
                         fontSize:
                             MediaQuery.of(context).size.width < 500 ? 16 : 20,
-                        color: Color.fromRGBO(21, 43, 81, 1)),
+                        color: blueColor),
                   ),
                 ],
               ),
@@ -3232,7 +3232,7 @@ class _Summery_pageState extends State<Summery_page>
                           fontWeight: FontWeight.w500,
                           fontSize:
                               MediaQuery.of(context).size.width < 500 ? 15 : 18,
-                          color: Color.fromRGBO(21, 43, 81, 1)),
+                          color: blueColor),
                     )),
                   ),
                 ),
@@ -3285,7 +3285,7 @@ class _Summery_pageState extends State<Summery_page>
                     height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
                     width: MediaQuery.of(context).size.width < 500 ? 100 : 130,
                     decoration: BoxDecoration(
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       borderRadius: BorderRadius.all(Radius.circular(5)),
                     ),
                     child: Center(
@@ -3431,7 +3431,7 @@ class _Summery_pageState extends State<Summery_page>
                               borderRadius: BorderRadius.circular(12.0),
                               color: Colors.white,
                               border: Border.all(
-                                color: const Color.fromRGBO(21, 43, 83, 1),
+                                color: blueColor,
                                 width: 1,
                               ),
                             ),
@@ -3962,12 +3962,12 @@ class _Summery_pageState extends State<Summery_page>
                                                                             Radius.circular(5),
                                                                           ),
                                                                         ),
-                                                                        child: const Center(
+                                                                        child:  Center(
                                                                             child: Text(
                                                                           "Cancel",
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.w500,
-                                                                              color: Color.fromRGBO(21, 43, 81, 1)),
+                                                                              color: blueColor),
                                                                         )),
                                                                       ),
                                                                     ),
@@ -4321,12 +4321,12 @@ class _Summery_pageState extends State<Summery_page>
                                                                             Radius.circular(5),
                                                                           ),
                                                                         ),
-                                                                        child: const Center(
+                                                                        child:  Center(
                                                                             child: Text(
                                                                           "Cancel",
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.w500,
-                                                                              color: Color.fromRGBO(21, 43, 81, 1)),
+                                                                              color: blueColor),
                                                                         )),
                                                                       ),
                                                                     ),
@@ -5998,7 +5998,7 @@ class _Summery_pageState extends State<Summery_page>
                             Radius.circular(5),
                           ),
                           border: Border.all(
-                            color: Color.fromRGBO(21, 43, 81, 1),
+                            color: blueColor,
                           ),
                         ),
                         child: Center(
@@ -6006,7 +6006,7 @@ class _Summery_pageState extends State<Summery_page>
                           "Add Unit",
                           style: TextStyle(
                               fontWeight: FontWeight.w500,
-                              color: Color.fromRGBO(21, 43, 81, 1)),
+                              color: blueColor),
                         )),
                       ),
                     ),
@@ -6333,10 +6333,10 @@ class _Summery_pageState extends State<Summery_page>
                                                                               children: [
                                                                                 Row(
                                                                                   children: [
-                                                                                    const Text(
+                                                                                     Text(
                                                                                       "Edit Unit Details",
                                                                                       style: TextStyle(
-                                                                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                        color: blueColor,
                                                                                         fontWeight: FontWeight.bold,
                                                                                       ),
                                                                                     ),
@@ -6724,8 +6724,8 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         child: Container(
                                                                                           height: 30,
                                                                                           width: 80,
-                                                                                          decoration: const BoxDecoration(
-                                                                                            color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                          decoration:  BoxDecoration(
+                                                                                            color: blueColor,
                                                                                             borderRadius: BorderRadius.all(
                                                                                               Radius.circular(5),
                                                                                             ),
@@ -6757,10 +6757,10 @@ class _Summery_pageState extends State<Summery_page>
                                                                                               Radius.circular(5),
                                                                                             ),
                                                                                           ),
-                                                                                          child: const Center(
+                                                                                          child:  Center(
                                                                                               child: Text(
                                                                                             "Cancel",
-                                                                                            style: TextStyle(fontWeight: FontWeight.w500, color: Color.fromRGBO(21, 43, 81, 1)),
+                                                                                            style: TextStyle(fontWeight: FontWeight.w500, color: blueColor),
                                                                                           )),
                                                                                         ),
                                                                                       ),
@@ -6817,10 +6817,10 @@ class _Summery_pageState extends State<Summery_page>
                                                                               children: [
                                                                                 Row(
                                                                                   children: [
-                                                                                    const Text(
+                                                                                     Text(
                                                                                       "Edit Unit Details",
                                                                                       style: TextStyle(
-                                                                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                        color: blueColor,
                                                                                         fontWeight: FontWeight.bold,
                                                                                       ),
                                                                                     ),
@@ -7116,8 +7116,8 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         child: Container(
                                                                                           height: 30,
                                                                                           width: 80,
-                                                                                          decoration: const BoxDecoration(
-                                                                                            color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                          decoration:  BoxDecoration(
+                                                                                            color: blueColor,
                                                                                             borderRadius: BorderRadius.all(
                                                                                               Radius.circular(5),
                                                                                             ),
@@ -7149,10 +7149,10 @@ class _Summery_pageState extends State<Summery_page>
                                                                                               Radius.circular(5),
                                                                                             ),
                                                                                           ),
-                                                                                          child: const Center(
+                                                                                          child:  Center(
                                                                                               child: Text(
                                                                                             "Cancel",
-                                                                                            style: TextStyle(fontWeight: FontWeight.w500, color: Color.fromRGBO(21, 43, 81, 1)),
+                                                                                            style: TextStyle(fontWeight: FontWeight.w500, color: blueColor),
                                                                                           )),
                                                                                         ),
                                                                                       ),
@@ -7330,7 +7330,7 @@ class _Summery_pageState extends State<Summery_page>
                                           FontAwesomeIcons.circleChevronLeft,
                                           color: currentPagemulti == 0
                                               ? Colors.grey
-                                              : Color.fromRGBO(21, 43, 83, 1),
+                                              : blueColor,
                                         ),
                                         onPressed: currentPagemulti == 0
                                             ? null
@@ -7367,7 +7367,7 @@ class _Summery_pageState extends State<Summery_page>
                                           FontAwesomeIcons.circleChevronRight,
                                           color: currentPagemulti <
                                                   totalPages - 1
-                                              ? Color.fromRGBO(21, 43, 83, 1)
+                                              ? blueColor
                                               : Colors.grey,
                                         ),
                                         onPressed:
@@ -7630,10 +7630,10 @@ class _Summery_pageState extends State<Summery_page>
                                                                               children: [
                                                                                 Row(
                                                                                   children: [
-                                                                                    const Text(
+                                                                                     Text(
                                                                                       "Edit Unit Details",
                                                                                       style: TextStyle(
-                                                                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                        color: blueColor,
                                                                                         fontWeight: FontWeight.bold,
                                                                                       ),
                                                                                     ),
@@ -7947,8 +7947,8 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         child: Container(
                                                                                           height: 30,
                                                                                           width: 80,
-                                                                                          decoration: const BoxDecoration(
-                                                                                            color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                          decoration:  BoxDecoration(
+                                                                                            color: blueColor,
                                                                                             borderRadius: BorderRadius.all(
                                                                                               Radius.circular(5),
                                                                                             ),
@@ -7980,10 +7980,10 @@ class _Summery_pageState extends State<Summery_page>
                                                                                               Radius.circular(5),
                                                                                             ),
                                                                                           ),
-                                                                                          child: const Center(
+                                                                                          child:  Center(
                                                                                               child: Text(
                                                                                             "Cancel",
-                                                                                            style: TextStyle(fontWeight: FontWeight.w500, color: Color.fromRGBO(21, 43, 81, 1)),
+                                                                                            style: TextStyle(fontWeight: FontWeight.w500, color: blueColor),
                                                                                           )),
                                                                                         ),
                                                                                       ),
@@ -8040,10 +8040,10 @@ class _Summery_pageState extends State<Summery_page>
                                                                               children: [
                                                                                 Row(
                                                                                   children: [
-                                                                                    const Text(
+                                                                                     Text(
                                                                                       "Edit Unit Details",
                                                                                       style: TextStyle(
-                                                                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                        color: blueColor,
                                                                                         fontWeight: FontWeight.bold,
                                                                                       ),
                                                                                     ),
@@ -8275,8 +8275,8 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         child: Container(
                                                                                           height: 30,
                                                                                           width: 80,
-                                                                                          decoration: const BoxDecoration(
-                                                                                            color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                          decoration:  BoxDecoration(
+                                                                                            color: blueColor,
                                                                                             borderRadius: BorderRadius.all(
                                                                                               Radius.circular(5),
                                                                                             ),
@@ -8308,10 +8308,10 @@ class _Summery_pageState extends State<Summery_page>
                                                                                               Radius.circular(5),
                                                                                             ),
                                                                                           ),
-                                                                                          child: const Center(
+                                                                                          child:  Center(
                                                                                               child: Text(
                                                                                             "Cancel",
-                                                                                            style: TextStyle(fontWeight: FontWeight.w500, color: Color.fromRGBO(21, 43, 81, 1)),
+                                                                                            style: TextStyle(fontWeight: FontWeight.w500, color: blueColor),
                                                                                           )),
                                                                                         ),
                                                                                       ),
@@ -8394,7 +8394,7 @@ class _Summery_pageState extends State<Summery_page>
                 borderRadius: BorderRadius.circular(12.0),
                 color: Colors.white,
                 border: Border.all(
-                  color: const Color.fromRGBO(21, 43, 83, 1),
+                  color: blueColor,
                   width: 1,
                 ),
               ),
@@ -8435,7 +8435,7 @@ class _Summery_pageState extends State<Summery_page>
                             ),
                             style: ElevatedButton.styleFrom(
                                 backgroundColor:
-                                    const Color.fromRGBO(21, 43, 83, 1),
+                                    blueColor,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12.0))),
                           ),
@@ -8452,7 +8452,7 @@ class _Summery_pageState extends State<Summery_page>
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 backgroundColor:
-                                    const Color.fromRGBO(21, 43, 83, 1),
+                                    blueColor,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12.0))),
                             onPressed: () async {
@@ -8625,7 +8625,7 @@ class _Summery_pageState extends State<Summery_page>
                                 borderRadius: BorderRadius.circular(12.0),
                                 color: Colors.white,
                                 border: Border.all(
-                                  color: const Color.fromRGBO(21, 43, 83, 1),
+                                  color: blueColor,
                                   width: 1,
                                 ),
                               ),
@@ -8648,7 +8648,7 @@ class _Summery_pageState extends State<Summery_page>
                                                 ? 14
                                                 : 18,
                                         fontWeight: FontWeight.bold,
-                                        color: Color.fromRGBO(21, 43, 83, 1),
+                                        color: blueColor,
                                       ),
                                     ),
                                   ),
@@ -8713,7 +8713,7 @@ class _Summery_pageState extends State<Summery_page>
                                               ? 14
                                               : 18,
                                           fontWeight: FontWeight.bold,
-                                          color: Color.fromRGBO(21, 43, 83, 1),
+                                          color: blueColor,
                                         ),
                                       ),
                                     ),
@@ -8838,7 +8838,7 @@ class _Summery_pageState extends State<Summery_page>
                           borderRadius: BorderRadius.circular(12.0),
                           color: Colors.white,
                           border: Border.all(
-                            color: const Color.fromRGBO(21, 43, 83, 1),
+                            color: blueColor,
                             width: 1,
                           ),
                         ),
@@ -8856,7 +8856,7 @@ class _Summery_pageState extends State<Summery_page>
                                             ? 14
                                             : 18,
                                     fontWeight: FontWeight.bold,
-                                    color: Color.fromRGBO(21, 43, 83, 1),
+                                    color: blueColor,
                                   ),
                                 ),
                               ),
@@ -8891,7 +8891,7 @@ class _Summery_pageState extends State<Summery_page>
                                   ),
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor:
-                                          const Color.fromRGBO(21, 43, 83, 1),
+                                          blueColor,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10.0))),
@@ -8910,7 +8910,7 @@ class _Summery_pageState extends State<Summery_page>
                                             ? 14
                                             : 18,
                                     fontWeight: FontWeight.bold,
-                                    color: Color.fromRGBO(21, 43, 83, 1),
+                                    color: blueColor,
                                   ),
                                 ),
                               ),
@@ -8943,7 +8943,7 @@ class _Summery_pageState extends State<Summery_page>
                                   ),
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor:
-                                          const Color.fromRGBO(21, 43, 83, 1),
+                                          blueColor,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10.0))),
@@ -9021,7 +9021,7 @@ class _Summery_pageState extends State<Summery_page>
                           });
                         },
                         activeColor: isChecked
-                            ? Color.fromRGBO(21, 43, 81, 1)
+                            ? blueColor
                             : Colors.black,
                       ),
                     ),
@@ -9051,7 +9051,7 @@ class _Summery_pageState extends State<Summery_page>
                     // height:  40,
                     width: MediaQuery.of(context).size.width * 0.29,
                     decoration: BoxDecoration(
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: Center(
@@ -9123,7 +9123,7 @@ class _Summery_pageState extends State<Summery_page>
                                 searchvalue = value;
                               });
                             },
-                            cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                            cursorColor: blueColor,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Search here...",
@@ -9814,7 +9814,7 @@ class _Summery_pageState extends State<Summery_page>
                                       FontAwesomeIcons.circleChevronLeft,
                                       color: currentPage == 0
                                           ? Colors.grey
-                                          : Color.fromRGBO(21, 43, 83, 1),
+                                          : blueColor,
                                     ),
                                     onPressed: currentPage == 0
                                         ? null
@@ -9850,7 +9850,7 @@ class _Summery_pageState extends State<Summery_page>
                                     icon: FaIcon(
                                       FontAwesomeIcons.circleChevronRight,
                                       color: currentPage < totalPages - 1
-                                          ? Color.fromRGBO(21, 43, 83, 1)
+                                          ? blueColor
                                           : Colors.grey,
                                     ),
                                     onPressed: currentPage < totalPages - 1
@@ -10335,7 +10335,7 @@ class _LeasesTableState extends State<LeasesTable> {
             size: 30,
             FontAwesomeIcons.circleChevronLeft,
             color:
-                _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+                _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -10707,7 +10707,7 @@ class _LeasesTableState extends State<LeasesTable> {
                   style: TextStyle(
                       fontSize:
                           MediaQuery.of(context).size.width < 500 ? 17 : 20,
-                      color: Color.fromRGBO(21, 43, 83, 1),
+                      color: blueColor,
                       fontWeight: FontWeight.bold),
                 ),
               ],
@@ -11056,7 +11056,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                       FontAwesomeIcons.circleChevronLeft,
                                       color: currentPage == 0
                                           ? Colors.grey
-                                          : Color.fromRGBO(21, 43, 83, 1),
+                                          : blueColor,
                                     ),
                                     onPressed: currentPage == 0
                                         ? null
@@ -11092,7 +11092,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                     icon: FaIcon(
                                       FontAwesomeIcons.circleChevronRight,
                                       color: currentPage < totalPages - 1
-                                          ? Color.fromRGBO(21, 43, 83, 1)
+                                          ? blueColor
                                           : Colors.grey,
                                     ),
                                     onPressed: currentPage < totalPages - 1
@@ -11199,13 +11199,13 @@ class _LeasesTableState extends State<LeasesTable> {
                                       border: Border(
                                         left: BorderSide(
                                             color:
-                                                Color.fromRGBO(21, 43, 81, 1)),
+                                                blueColor),
                                         right: BorderSide(
                                             color:
-                                                Color.fromRGBO(21, 43, 81, 1)),
+                                                blueColor),
                                         top: BorderSide(
                                             color:
-                                                Color.fromRGBO(21, 43, 81, 1)),
+                                                blueColor),
                                         bottom: i == _pagedData.length - 1
                                             ? BorderSide(
                                                 color: Color.fromRGBO(
@@ -11467,7 +11467,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
             size: 30,
             FontAwesomeIcons.circleChevronLeft,
             color:
-                _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+                _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -11832,7 +11832,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                       fontSize:
                           MediaQuery.of(context).size.width < 500 ? 17 : 20,
                       fontWeight: FontWeight.bold,
-                      color: Color.fromRGBO(21, 43, 83, 1),
+                      color: blueColor,
                     ),
                   ),
                   SizedBox(
@@ -11896,14 +11896,14 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                 return Theme(
                                                   data: ThemeData.light()
                                                       .copyWith(
-                                                    // primaryColor: Color.fromRGBO(21, 43, 83, 1),
-                                                    //  hintColor: Color.fromRGBO(21, 43, 83, 1),
+                                                    // primaryColor: blueColor,
+                                                    //  hintColor: blueColor,
                                                     colorScheme:
                                                         ColorScheme.light(
                                                       primary: Color.fromRGBO(
                                                           21, 43, 83, 1),
-                                                      // onPrimary:Color.fromRGBO(21, 43, 83, 1),
-                                                      //  surface: Color.fromRGBO(21, 43, 83, 1),
+                                                      // onPrimary:blueColor,
+                                                      //  surface: blueColor,
                                                       onSurface: Colors.black,
                                                     ),
                                                     buttonTheme:
@@ -12092,7 +12092,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                            color: Color.fromRGBO(21, 43, 83, 1),
+                            color: blueColor,
                             width: 1,
                           ),
                         ),
@@ -12379,12 +12379,12 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                                   builder: (BuildContext context, Widget? child) {
                                                                                     return Theme(
                                                                                       data: ThemeData.light().copyWith(
-                                                                                        // primaryColor: Color.fromRGBO(21, 43, 83, 1),
-                                                                                        //  hintColor: Color.fromRGBO(21, 43, 83, 1),
+                                                                                        // primaryColor: blueColor,
+                                                                                        //  hintColor: blueColor,
                                                                                         colorScheme: ColorScheme.light(
-                                                                                          primary: Color.fromRGBO(21, 43, 83, 1),
-                                                                                          // onPrimary:Color.fromRGBO(21, 43, 83, 1),
-                                                                                          //  surface: Color.fromRGBO(21, 43, 83, 1),
+                                                                                          primary: blueColor,
+                                                                                          // onPrimary:blueColor,
+                                                                                          //  surface: blueColor,
                                                                                           onSurface: Colors.black,
                                                                                         ),
                                                                                         buttonTheme: ButtonThemeData(
@@ -12428,7 +12428,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                                     height: 42,
                                                                                     width: 80,
                                                                                     child: ElevatedButton(
-                                                                                      style: ElevatedButton.styleFrom(backgroundColor: const Color.fromRGBO(21, 43, 83, 1), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
+                                                                                      style: ElevatedButton.styleFrom(backgroundColor: blueColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
                                                                                       onPressed: () async {
                                                                                         if (_name.text.isEmpty || _description.text.isEmpty || _installedDate.text.isEmpty) {
                                                                                           setState(() {
@@ -12694,7 +12694,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                         FontAwesomeIcons.circleChevronLeft,
                                         color: currentPage == 0
                                             ? Colors.grey
-                                            : Color.fromRGBO(21, 43, 83, 1),
+                                            : blueColor,
                                       ),
                                       onPressed: currentPage == 0
                                           ? null
@@ -12730,7 +12730,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                       icon: FaIcon(
                                         FontAwesomeIcons.circleChevronRight,
                                         color: currentPage < totalPages - 1
-                                            ? Color.fromRGBO(21, 43, 83, 1)
+                                            ? blueColor
                                             : Colors.grey,
                                       ),
                                       onPressed: currentPage < totalPages - 1
@@ -12954,12 +12954,12 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                                 (BuildContext context, Widget? child) {
                                                                               return Theme(
                                                                                 data: ThemeData.light().copyWith(
-                                                                                  // primaryColor: Color.fromRGBO(21, 43, 83, 1),
-                                                                                  //  hintColor: Color.fromRGBO(21, 43, 83, 1),
+                                                                                  // primaryColor: blueColor,
+                                                                                  //  hintColor: blueColor,
                                                                                   colorScheme: ColorScheme.light(
-                                                                                    primary: Color.fromRGBO(21, 43, 83, 1),
-                                                                                    // onPrimary:Color.fromRGBO(21, 43, 83, 1),
-                                                                                    //  surface: Color.fromRGBO(21, 43, 83, 1),
+                                                                                    primary: blueColor,
+                                                                                    // onPrimary:blueColor,
+                                                                                    //  surface: blueColor,
                                                                                     onSurface: Colors.black,
                                                                                   ),
                                                                                   buttonTheme: ButtonThemeData(
@@ -13014,7 +13014,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                               height: 42,
                                                                               width: 80,
                                                                               child: ElevatedButton(
-                                                                                style: ElevatedButton.styleFrom(backgroundColor: const Color.fromRGBO(21, 43, 83, 1), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
+                                                                                style: ElevatedButton.styleFrom(backgroundColor: blueColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
                                                                                 onPressed: () async {
                                                                                   if (_name.text.isEmpty || _description.text.isEmpty || _installedDate.text.isEmpty) {
                                                                                     setState(() {

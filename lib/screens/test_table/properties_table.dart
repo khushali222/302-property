@@ -206,7 +206,7 @@ class _Properties_tableState extends State<Properties_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () => Navigator.pop(context),
-          color: Color.fromRGBO(21, 43, 83, 1),
+          color: blueColor,
         ),
         /* DialogButton(
           child: Text(
@@ -317,7 +317,7 @@ class _Properties_tableState extends State<Properties_table> {
                         height: 40,
                         width: MediaQuery.of(context).size.width * 0.4,
                         decoration: BoxDecoration(
-                          color: Color.fromRGBO(21, 43, 81, 1),
+                          color: blueColor,
                           borderRadius: BorderRadius.circular(5),
                         ),
                         child: Center(
@@ -356,7 +356,7 @@ class _Properties_tableState extends State<Properties_table> {
                         bottom: 6.0), //Same as `blurRadius` i guess
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey,
@@ -408,7 +408,7 @@ class _Properties_tableState extends State<Properties_table> {
                                   });
                                 },
                                 cursorColor:
-                                Color.fromRGBO(21, 43, 81, 1),
+                                blueColor,
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
                                   hintText: "Search here...",
@@ -565,7 +565,7 @@ class _Properties_tableState extends State<Properties_table> {
                                                     ? FontAwesomeIcons.sortUp
                                                     : FontAwesomeIcons.sortDown,
                                                 size: 20,
-                                                color: Color.fromRGBO(21, 43, 83, 1),
+                                                color: blueColor,
                                               ),
                                             ),
                                           ),
@@ -943,7 +943,7 @@ class _Properties_tableState extends State<Properties_table> {
                                         FontAwesomeIcons.circleChevronLeft,
                                         color: currentPage == 0
                                             ? Colors.grey
-                                            : Color.fromRGBO(21, 43, 83, 1),
+                                            : blueColor,
                                       ),
                                       onPressed: currentPage == 0
                                           ? null
@@ -978,7 +978,7 @@ class _Properties_tableState extends State<Properties_table> {
                                       icon: FaIcon(
                                         FontAwesomeIcons.circleChevronRight,
                                         color: currentPage < totalPages - 1
-                                            ? Color.fromRGBO(21, 43, 83, 1)
+                                            ? blueColor
                                             : Colors.grey,
                                       ),
                                       onPressed: currentPage < totalPages - 1

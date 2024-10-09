@@ -11,6 +11,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 
 import '../../../Model/vendor.dart';
+import '../../../constant/constant.dart';
 import '../../../repository/vendor_repository.dart';
 import '../../../widgets/titleBar.dart';
 import '../../../widgets/custom_drawer.dart';
@@ -284,7 +285,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor:
-                                              Color.fromRGBO(21, 43, 83, 1),
+                                              blueColor,
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(8.0),
@@ -583,7 +584,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor:
-                                            Color.fromRGBO(21, 43, 83, 1),
+                                            blueColor,
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(8.0),

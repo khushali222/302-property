@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:three_zero_two_property/Model/applicant_summery_model.dart';
+import '../../../../../constant/constant.dart';
 import '../../../../repository/applicant_summery_repo.dart';
 
 class RejectedContent extends StatefulWidget {
@@ -66,7 +67,7 @@ class _RejectedContentState extends State<RejectedContent> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
                           border: Border.all(
-                            color: const Color.fromRGBO(21, 43, 81, 1),
+                            color:blueColor,
                           ),
                         ),
                         child: Column(
@@ -79,7 +80,7 @@ class _RejectedContentState extends State<RejectedContent> {
                                   height: 40,
                                   width: 40,
                                   decoration: BoxDecoration(
-                                    color: const Color.fromRGBO(21, 43, 81, 1),
+                                    color:blueColor,
                                     border: Border.all(
                                         color: const Color.fromRGBO(
                                             21, 43, 81, 1)),
@@ -103,11 +104,11 @@ class _RejectedContentState extends State<RejectedContent> {
                                         const SizedBox(width: 2),
                                         Text(
                                           '${widget.applicantDetail.applicantFirstName ?? 'N/A'} ${widget.applicantDetail.applicantLastName ?? 'N/A'}',
-                                          style: const TextStyle(
+                                          style:  TextStyle(
                                             fontSize: 20,
                                             fontWeight: FontWeight.bold,
                                             color:
-                                                Color.fromRGBO(21, 43, 81, 1),
+                                                blueColor,
                                           ),
                                         ),
                                       ],
@@ -123,17 +124,17 @@ class _RejectedContentState extends State<RejectedContent> {
                             Row(
                               children: [
                                 const SizedBox(width: 75),
-                                const FaIcon(
+                                 FaIcon(
                                   FontAwesomeIcons.phone,
                                   size: 25,
-                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                  color: blueColor,
                                 ),
                                 const SizedBox(width: 5),
                                 Text(
                                   '${widget.applicantDetail.applicantPhoneNumber ?? 'N/A'}',
-                                  style: const TextStyle(
+                                  style:  TextStyle(
                                     fontSize: 18,
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -143,17 +144,17 @@ class _RejectedContentState extends State<RejectedContent> {
                             Row(
                               children: [
                                 const SizedBox(width: 75),
-                                const FaIcon(
+                                 FaIcon(
                                   FontAwesomeIcons.home,
                                   size: 25,
-                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                  color: blueColor,
                                 ),
                                 const SizedBox(width: 5),
                                 Text(
                                   '${widget.applicantDetail.leaseData!.rentalAdress ?? 'N/A'}',
-                                  style: const TextStyle(
+                                  style:  TextStyle(
                                     fontSize: 18,
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -187,7 +188,7 @@ class _RejectedContentState extends State<RejectedContent> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         border: Border.all(
-                          color: const Color.fromRGBO(21, 43, 81, 1),
+                          color:blueColor,
                         ),
                       ),
                       child: Column(
@@ -200,10 +201,10 @@ class _RejectedContentState extends State<RejectedContent> {
                                 height: 30,
                                 width: 30,
                                 decoration: BoxDecoration(
-                                  color: const Color.fromRGBO(21, 43, 81, 1),
+                                  color:blueColor,
                                   border: Border.all(
                                       color:
-                                          const Color.fromRGBO(21, 43, 81, 1)),
+                                         blueColor),
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: const Center(
@@ -224,10 +225,10 @@ class _RejectedContentState extends State<RejectedContent> {
                                       const SizedBox(width: 2),
                                       Text(
                                         '${widget.applicantDetail.applicantFirstName ?? 'N/A'} ${widget.applicantDetail.applicantLastName ?? 'N/A'}',
-                                        style: const TextStyle(
+                                        style:  TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
-                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          color: blueColor,
                                         ),
                                       ),
                                     ],
@@ -243,17 +244,17 @@ class _RejectedContentState extends State<RejectedContent> {
                           Row(
                             children: [
                               const SizedBox(width: 65),
-                              const FaIcon(
+                               FaIcon(
                                 FontAwesomeIcons.phone,
                                 size: 15,
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: blueColor,
                               ),
                               const SizedBox(width: 5),
                               Text(
                                 '${widget.applicantDetail.applicantPhoneNumber ?? 'N/A'}',
-                                style: const TextStyle(
+                                style:  TextStyle(
                                   fontSize: 12,
-                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                  color: blueColor,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -263,17 +264,17 @@ class _RejectedContentState extends State<RejectedContent> {
                           Row(
                             children: [
                               const SizedBox(width: 65),
-                              const FaIcon(
+                               FaIcon(
                                 FontAwesomeIcons.home,
                                 size: 15,
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: blueColor,
                               ),
                               const SizedBox(width: 5),
                               Text(
                                 '${widget.applicantDetail.leaseData!.rentalAdress ?? 'N/A'}',
-                                style: const TextStyle(
+                                style:  TextStyle(
                                   fontSize: 12,
-                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                  color: blueColor,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),

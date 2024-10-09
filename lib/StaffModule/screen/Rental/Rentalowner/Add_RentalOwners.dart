@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:keyboard_actions/keyboard_actions_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../constant/constant.dart';
 import '../../../widgets/appbar.dart';
 
 import '../../../../Model/RentalOwnersData.dart';
@@ -128,10 +129,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
         return Theme(
           data: ThemeData.light().copyWith(
             primaryColor:
-                Color.fromRGBO(21, 43, 83, 1), // Header background color
+                blueColor, // Header background color
             // accentColor: Colors.white, // Button text color
             colorScheme: ColorScheme.light(
-              primary: Color.fromRGBO(21, 43, 83, 1), // Selection color
+              primary: blueColor, // Selection color
               onPrimary: Colors.white, // Text color
               surface: Colors.white, // Calendar background color
               onSurface: Colors.black, // Calendar text color
@@ -162,10 +163,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
         return Theme(
           data: ThemeData.light().copyWith(
             primaryColor:
-                Color.fromRGBO(21, 43, 83, 1), // Header background color
+                blueColor, // Header background color
             // accentColor: Colors.white, // Button text color
             colorScheme: ColorScheme.light(
-              primary: Color.fromRGBO(21, 43, 83, 1), // Selection color
+              primary: blueColor, // Selection color
               onPrimary: Colors.white, // Text color
               surface: Colors.white, // Calendar background color
               onSurface: Colors.black, // Calendar text color
@@ -198,10 +199,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
         return Theme(
           data: ThemeData.light().copyWith(
             primaryColor:
-                Color.fromRGBO(21, 43, 83, 1), // Header background color
+                blueColor, // Header background color
             // accentColor: Colors.white, // Button text color
             colorScheme: ColorScheme.light(
-              primary: Color.fromRGBO(21, 43, 83, 1), // Selection color
+              primary: blueColor, // Selection color
               onPrimary: Colors.white, // Text color
               surface: Colors.white, // Calendar background color
               onSurface: Colors.black, // Calendar text color
@@ -276,7 +277,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                 //Same as `blurRadius` i guess
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
-                  color: Color.fromRGBO(21, 43, 81, 1),
+                  color: blueColor,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey,
@@ -305,7 +306,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                  border: Border.all(color: blueColor),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -320,7 +321,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           Text(
                             "Personal information",
                             style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -380,7 +381,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         },
                                         controller: name,
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter first name",
                                           hintStyle: TextStyle(
@@ -492,7 +493,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         },
                                         controller: comname,
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter company name",
                                           hintStyle: TextStyle(
@@ -576,7 +577,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                  border: Border.all(color: blueColor),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -591,7 +592,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           Text(
                             "Merchant Id",
                             style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -720,7 +721,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                       decoration: BoxDecoration(
                                         borderRadius:
                                             BorderRadius.circular(5.0),
-                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                        color: blueColor,
                                         boxShadow: [
                                           BoxShadow(
                                             color: Colors.grey,
@@ -770,7 +771,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                  border: Border.all(color: blueColor),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -785,7 +786,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           Text(
                             "Management Agreement ",
                             style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -850,7 +851,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           },
                                           controller: startdateController,
                                           cursorColor:
-                                          Color.fromRGBO(21, 43, 81, 1),
+                                          blueColor,
                                           decoration: InputDecoration(
                                             hintText: "dd - mm - yyyy",
                                             hintStyle: TextStyle(
@@ -978,7 +979,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           },
                                           controller: enddateController,
                                           cursorColor:
-                                          Color.fromRGBO(21, 43, 81, 1),
+                                          blueColor,
                                           decoration: InputDecoration(
                                             hintText: "dd - mm - yyyy",
                                             hintStyle: TextStyle(
@@ -1315,7 +1316,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                  border: Border.all(color: blueColor),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -1330,7 +1331,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           Text(
                             "Contact information",
                             style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -1392,7 +1393,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         TextInputType.emailAddress,
                                         controller: primaryemail,
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter primary e-mail",
                                           hintStyle: TextStyle(
@@ -1500,7 +1501,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         keyboardType:
                                         TextInputType.emailAddress,
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter alternative e-mail ",
                                           hintStyle: TextStyle(
@@ -1609,7 +1610,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         TextInputType.numberWithOptions(
                                             signed: true, decimal: true),
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter phone number",
                                           hintStyle: TextStyle(
@@ -1719,7 +1720,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         TextInputType.numberWithOptions(
                                             signed: true, decimal: true),
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter home number",
                                           hintStyle: TextStyle(
@@ -1827,7 +1828,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         TextInputType.numberWithOptions(
                                             signed: true, decimal: true),
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter office number",
                                           hintStyle: TextStyle(
@@ -1932,7 +1933,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         },
                                         controller: street2,
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter street address",
                                           hintStyle: TextStyle(
@@ -2037,7 +2038,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         },
                                         controller: city2,
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter city",
                                           hintStyle: TextStyle(
@@ -2142,7 +2143,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         },
                                         controller: state2,
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter state",
                                           hintStyle: TextStyle(
@@ -2247,7 +2248,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         },
                                         controller: county2,
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter country",
                                           hintStyle: TextStyle(
@@ -2356,7 +2357,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         TextInputType.numberWithOptions(
                                             signed: true, decimal: true),
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter postal code",
                                           hintStyle: TextStyle(
@@ -2429,7 +2430,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                  border: Border.all(color: blueColor),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -2444,7 +2445,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           Text(
                             "Tax Payer Information ",
                             style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -2503,7 +2504,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         },
                                         controller: taxtype,
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter tax identify type",
                                           hintStyle: TextStyle(
@@ -2607,7 +2608,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         },
                                         controller: taxid,
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter SSN or EIN",
                                           hintStyle: TextStyle(
@@ -2978,7 +2979,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                     width: MediaQuery.of(context).size.width < 500 ? 160 : 190,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey,

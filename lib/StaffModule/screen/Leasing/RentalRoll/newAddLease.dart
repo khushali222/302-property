@@ -623,7 +623,7 @@ class _addLease3State extends State<addLease3>
                     //Same as `blurRadius` i guess
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
-                      color: const Color.fromRGBO(21, 43, 81, 1),
+                      color:blueColor,
                       boxShadow: const [
                         BoxShadow(
                           color: Colors.grey,
@@ -658,7 +658,7 @@ class _addLease3State extends State<addLease3>
                         width: double.infinity,
                         decoration: BoxDecoration(
                             border: Border.all(
-                              color: const Color.fromRGBO(21, 43, 83, 1),
+                              color: blueColor,
                             ),
                             borderRadius: BorderRadius.circular(10.0)),
                         child: Padding(
@@ -1268,7 +1268,7 @@ class _addLease3State extends State<addLease3>
                         width: double.infinity,
                         decoration: BoxDecoration(
                             border: Border.all(
-                              color: const Color.fromRGBO(21, 43, 83, 1),
+                              color: blueColor,
                             ),
                             borderRadius: BorderRadius.circular(10.0)),
                         child: Padding(
@@ -1335,14 +1335,14 @@ class _addLease3State extends State<addLease3>
                                                                           border: isTenantSelected
                                                                               ? null
                                                                               : Border.all(
-                                                                            color: const Color.fromRGBO(21, 43, 83, 1),
+                                                                            color: blueColor,
                                                                             width: 1,
                                                                           ),
                                                                           gradient: isTenantSelected
-                                                                              ? const LinearGradient(
+                                                                              ?  LinearGradient(
                                                                             colors: [
-                                                                              Color.fromRGBO(21, 43, 83, 1),
-                                                                              Color.fromRGBO(21, 43, 83, 1),
+                                                                              blueColor,
+                                                                              blueColor,
                                                                             ],
                                                                           )
                                                                               : null,
@@ -1367,10 +1367,10 @@ class _addLease3State extends State<addLease3>
                                                                         )
                                                                             : ShaderMask(
                                                                           shaderCallback: (bounds) {
-                                                                            return const LinearGradient(
+                                                                            return  LinearGradient(
                                                                               colors: [
-                                                                                Color.fromRGBO(21, 43, 83, 1),
-                                                                                Color.fromRGBO(21, 43, 83, 1),
+                                                                                blueColor,
+                                                                                blueColor,
                                                                               ],
                                                                             ).createShader(bounds);
                                                                           },
@@ -1399,14 +1399,14 @@ class _addLease3State extends State<addLease3>
                                                                           border: isTenantSelected == false
                                                                               ? null
                                                                               : Border.all(
-                                                                            color: const Color.fromRGBO(21, 43, 83, 1),
+                                                                            color: blueColor,
                                                                             width: 1,
                                                                           ),
                                                                           gradient: isTenantSelected == false
-                                                                              ? const LinearGradient(
+                                                                              ?  LinearGradient(
                                                                             colors: [
-                                                                              Color.fromRGBO(21, 43, 83, 1),
-                                                                              Color.fromRGBO(21, 43, 83, 1),
+                                                                              blueColor,
+                                                                              blueColor,
                                                                             ],
                                                                           )
                                                                               : null,
@@ -1431,10 +1431,10 @@ class _addLease3State extends State<addLease3>
                                                                         )
                                                                             : ShaderMask(
                                                                           shaderCallback: (bounds) {
-                                                                            return const LinearGradient(
+                                                                            return  LinearGradient(
                                                                               colors: [
-                                                                                Color.fromRGBO(21, 43, 83, 1),
-                                                                                Color.fromRGBO(21, 43, 83, 1),
+                                                                                blueColor,
+                                                                                blueColor,
                                                                               ],
                                                                             ).createShader(bounds);
                                                                           },
@@ -1510,7 +1510,7 @@ class _addLease3State extends State<addLease3>
                                         border: TableBorder.all(
                                           width: 1,
                                           color:
-                                          const Color.fromRGBO(21, 43, 83, 1),
+                                          blueColor,
                                         ),
                                         columnWidths: const {
                                           0: FlexColumnWidth(2),
@@ -1520,7 +1520,7 @@ class _addLease3State extends State<addLease3>
                                         children: [
                                           TableRow(
                                             decoration: BoxDecoration(
-                                              color: Color.fromRGBO(21, 43, 83, 1),
+                                              color: blueColor,
                                             ),
                                             children: [
                                               Padding(
@@ -1591,7 +1591,7 @@ class _addLease3State extends State<addLease3>
                                                     style: TextStyle(
                                                       fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
                                                       fontWeight: FontWeight.w700,
-                                                      color: const Color.fromRGBO(21, 43, 83, 1),
+                                                      color: blueColor,
                                                     ),
                                                   ),
                                                 ),
@@ -1658,7 +1658,7 @@ class _addLease3State extends State<addLease3>
                                                         },
                                                         child: Icon(
                                                           Icons.delete,
-                                                          color: const Color.fromRGBO(21, 43, 83, 1),
+                                                          color: blueColor,
                                                           size: MediaQuery.of(context).size.width < 500 ? 18 : 25,
                                                         ),
                                                       ),
@@ -1759,7 +1759,7 @@ class _addLease3State extends State<addLease3>
                                               TableRow(
                                                 decoration: BoxDecoration(
                                                   color:
-                                                  Color.fromRGBO(21, 43, 83, 1),
+                                                  blueColor,
                                                 ),
                                                 children: [
                                                   Padding(
@@ -1933,7 +1933,7 @@ class _addLease3State extends State<addLease3>
                         width: double.infinity,
                         decoration: BoxDecoration(
                             border: Border.all(
-                              color: const Color.fromRGBO(21, 43, 83, 1),
+                              color: blueColor,
                             ),
                             borderRadius: BorderRadius.circular(10.0)),
                         child: Padding(
@@ -2240,7 +2240,7 @@ class _addLease3State extends State<addLease3>
                         width: double.infinity,
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: const Color.fromRGBO(21, 43, 83, 1),
+                            color: blueColor,
                           ),
                           borderRadius: BorderRadius.circular(10.0),
                         ),
@@ -2374,12 +2374,12 @@ class _addLease3State extends State<addLease3>
                                       height: 10,
                                     ),
                                   if (formDataRecurringList.isNotEmpty)
-                                    const Text(
+                                     Text(
                                       'Recurring Information',
                                       style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
-                                        color: Color.fromRGBO(21, 43, 83, 1),
+                                        color: blueColor,
                                       ),
                                     ),
                                   if (formDataRecurringList.isNotEmpty)
@@ -2390,7 +2390,7 @@ class _addLease3State extends State<addLease3>
                                   Table(
                                     border: TableBorder.all(
                                       width: 1,
-                                      color: const Color.fromRGBO(21, 43, 83, 1),
+                                      color: blueColor,
                                     ),
                                     columnWidths: {
                                       0: const FlexColumnWidth(2),
@@ -2399,9 +2399,9 @@ class _addLease3State extends State<addLease3>
                                     },
                                     children: [
                                       if (formDataRecurringList.isNotEmpty)
-                                        const TableRow(
+                                         TableRow(
                                             decoration: BoxDecoration(
-                                              color: Color.fromRGBO(21, 43, 83, 1),
+                                              color: blueColor,
                                             ),
                                             children: [
                                               Padding(
@@ -2446,11 +2446,11 @@ class _addLease3State extends State<addLease3>
                                             padding: const EdgeInsets.all(8.0),
                                             child: Text(
                                               '${item['account']}',
-                                              style: const TextStyle(
+                                              style:  TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w700,
                                                 color:
-                                                Color.fromRGBO(21, 43, 83, 1),
+                                                blueColor,
                                               ),
                                             ),
                                           ),
@@ -2512,12 +2512,12 @@ class _addLease3State extends State<addLease3>
                                       height: 5,
                                     ),
                                   if (formDataOneTimeList.isNotEmpty)
-                                    const Text(
+                                     Text(
                                       'One Time Information',
                                       style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
-                                        color: Color.fromRGBO(21, 43, 83, 1),
+                                        color: blueColor,
                                       ),
                                     ),
                                   if (formDataOneTimeList.isNotEmpty)
@@ -2528,7 +2528,7 @@ class _addLease3State extends State<addLease3>
                                   Table(
                                     border: TableBorder.all(
                                       width: 1,
-                                      color: const Color.fromRGBO(21, 43, 83, 1),
+                                      color: blueColor,
                                     ),
                                     columnWidths: const {
                                       0: FlexColumnWidth(2),
@@ -2537,9 +2537,9 @@ class _addLease3State extends State<addLease3>
                                     },
                                     children: [
                                       if (formDataOneTimeList.isNotEmpty)
-                                        const TableRow(
+                                         TableRow(
                                             decoration: BoxDecoration(
-                                              color: Color.fromRGBO(21, 43, 83, 1),
+                                              color: blueColor,
                                             ),
                                             children: [
                                               Padding(
@@ -2584,11 +2584,11 @@ class _addLease3State extends State<addLease3>
                                             padding: const EdgeInsets.all(8.0),
                                             child: Text(
                                               '${item['account']}',
-                                              style: const TextStyle(
+                                              style:  TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w700,
                                                 color:
-                                                Color.fromRGBO(21, 43, 83, 1),
+                                                blueColor,
                                               ),
                                             ),
                                           ),
@@ -2657,7 +2657,7 @@ class _addLease3State extends State<addLease3>
                         width: double.infinity,
                         decoration: BoxDecoration(
                             border: Border.all(
-                              color: const Color.fromRGBO(21, 43, 83, 1),
+                              color: blueColor,
                             ),
                             borderRadius: BorderRadius.circular(10.0)),
                         child: Padding(
@@ -2719,7 +2719,7 @@ class _addLease3State extends State<addLease3>
                         width: double.infinity,
                         decoration: BoxDecoration(
                             border: Border.all(
-                              color: const Color.fromRGBO(21, 43, 83, 1),
+                              color: blueColor,
                             ),
                             borderRadius: BorderRadius.circular(10.0)),
                         child: Padding(
@@ -2809,7 +2809,7 @@ class _addLease3State extends State<addLease3>
                         width: double.infinity,
                         decoration: BoxDecoration(
                             border: Border.all(
-                              color: const Color.fromRGBO(21, 43, 83, 1),
+                              color: blueColor,
                             ),
                             borderRadius: BorderRadius.circular(10.0)),
                         child: Padding(
@@ -3493,10 +3493,10 @@ class _addLease3State extends State<addLease3>
                                                     21, 43, 83, 1),
                                                 width: 1),
                                         gradient: isTenantSelected
-                                            ? const LinearGradient(
+                                            ?  LinearGradient(
                                                 colors: [
-                                                  Color.fromRGBO(21, 43, 83, 1),
-                                                  Color.fromRGBO(21, 43, 83, 1),
+                                                  blueColor,
+                                                  blueColor,
                                                 ],
                                               )
                                             : null,
@@ -3561,10 +3561,10 @@ class _addLease3State extends State<addLease3>
                                                     21, 43, 83, 1),
                                                 width: 1),
                                         gradient: isTenantSelected == false
-                                            ? const LinearGradient(
+                                            ?  LinearGradient(
                                                 colors: [
-                                                  Color.fromRGBO(21, 43, 83, 1),
-                                                  Color.fromRGBO(21, 43, 83, 1),
+                                                  blueColor,
+                                                  blueColor,
                                                 ],
                                               )
                                             : null,
@@ -3779,7 +3779,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Color.fromRGBO(21, 43, 83, 1),
+                            color: blueColor,
                           ),
                         ),
                         SizedBox(height: 10),
@@ -4525,7 +4525,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Color.fromRGBO(21, 43, 83, 1),
+                    color: blueColor,
                   ),
                 ),
                 SizedBox(height: 10),
@@ -5270,7 +5270,7 @@ class _AddTenantState extends State<AddTenant> {
                       });
                     },
                     activeColor: isChecked
-                        ? Color.fromRGBO(21, 43, 81, 1)
+                        ? blueColor
                         : Colors.black,
                   ),
                 ),
@@ -5335,7 +5335,7 @@ class _AddTenantState extends State<AddTenant> {
                                     }*/
                                       },
                                       activeColor:
-                                          Color.fromRGBO(21, 43, 81, 1),
+                                          blueColor,
                                     ),
                                   ),
                                 ),
@@ -5360,7 +5360,7 @@ class _AddTenantState extends State<AddTenant> {
                                 width: 90,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
-                                  color: const Color.fromRGBO(21, 43, 81, 1),
+                                  color:blueColor,
                                   boxShadow: const [
                                     BoxShadow(
                                       color: Colors.grey,
@@ -5394,7 +5394,7 @@ class _AddTenantState extends State<AddTenant> {
                   decoration: BoxDecoration(
                       color: const Color.fromRGBO(21, 43, 103, 1),
                       border: Border.all(
-                        color: const Color.fromRGBO(21, 43, 83, 1),
+                        color: blueColor,
                       ),
                       borderRadius: BorderRadius.circular(10.0)),
                   child: const Padding(
@@ -5672,7 +5672,7 @@ class _AddTenantState extends State<AddTenant> {
                     decoration: BoxDecoration(
                         color: const Color.fromRGBO(21, 43, 103, 1),
                         border: Border.all(
-                          color: const Color.fromRGBO(21, 43, 83, 1),
+                          color: blueColor,
                         ),
                         borderRadius: BorderRadius.circular(10.0)),
                     child: const Padding(
@@ -5832,7 +5832,7 @@ class _AddTenantState extends State<AddTenant> {
                     decoration: BoxDecoration(
                         color: const Color.fromRGBO(21, 43, 103, 1),
                         border: Border.all(
-                          color: const Color.fromRGBO(21, 43, 83, 1),
+                          color: blueColor,
                         ),
                         borderRadius: BorderRadius.circular(10.0)),
                     child: const Padding(
@@ -5962,7 +5962,7 @@ class _AddTenantState extends State<AddTenant> {
                           width: 90,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
-                            color: const Color.fromRGBO(21, 43, 81, 1),
+                            color:blueColor,
                             boxShadow: const [
                               BoxShadow(
                                 color: Colors.grey,
@@ -6056,7 +6056,7 @@ class _AddCosignerState extends State<AddCosigner> {
             decoration: BoxDecoration(
                 color: const Color.fromRGBO(21, 43, 103, 1),
                 border: Border.all(
-                  color: const Color.fromRGBO(21, 43, 83, 1),
+                  color: blueColor,
                 ),
                 borderRadius: BorderRadius.circular(10.0)),
             child: const Padding(
@@ -6255,12 +6255,12 @@ class _AddCosignerState extends State<AddCosigner> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                 Text(
                   'Address',
                   style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: Color.fromRGBO(21, 43, 83, 1)),
+                      color: blueColor),
                 ),
                 const SizedBox(
                   height: 10,
@@ -6388,7 +6388,7 @@ class _AddCosignerState extends State<AddCosigner> {
                           width: 90,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
-                            color: const Color.fromRGBO(21, 43, 81, 1),
+                            color:blueColor,
                             boxShadow: const [
                               BoxShadow(
                                 color: Colors.grey,

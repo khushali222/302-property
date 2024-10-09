@@ -272,12 +272,12 @@ class ShimmerTabletTable extends StatelessWidget {
                       decoration: BoxDecoration(
                         border: Border(
                           left:
-                              BorderSide(color: Color.fromRGBO(21, 43, 81, 1)),
+                              BorderSide(color: blueColor),
                           right:
-                              BorderSide(color: Color.fromRGBO(21, 43, 81, 1)),
-                          top: BorderSide(color: Color.fromRGBO(21, 43, 81, 1)),
+                              BorderSide(color: blueColor),
+                          top: BorderSide(color: blueColor),
                           bottom: i == 4 // Simulate last row
-                              ? BorderSide(color: Color.fromRGBO(21, 43, 81, 1))
+                              ? BorderSide(color: blueColor)
                               : BorderSide.none,
                         ),
                       ),

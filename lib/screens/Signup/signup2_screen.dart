@@ -112,7 +112,7 @@ class _Signup2State extends State<Signup2> {
                                   enabled: false,
                                   controller: firstname,
                                   cursorColor:
-                                      Color.fromRGBO(21, 43, 81, 1),
+                                      blueColor,
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                     contentPadding: EdgeInsets.all(14),
@@ -159,7 +159,7 @@ class _Signup2State extends State<Signup2> {
                                     enabled: false,
                                     controller: lastname,
                                     cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
                                       contentPadding: EdgeInsets.all(14),
@@ -207,7 +207,7 @@ class _Signup2State extends State<Signup2> {
                                     controller: email,
                                     enabled: false,
                                     cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
                                       contentPadding: EdgeInsets.all(14),
@@ -258,7 +258,7 @@ class _Signup2State extends State<Signup2> {
                                       });
                                     },
                                     cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                     decoration: InputDecoration(
                                       enabledBorder: companynameerror
                                           ? OutlineInputBorder(
@@ -327,7 +327,7 @@ class _Signup2State extends State<Signup2> {
                                     controller: phonenumber,
                                     keyboardType: TextInputType.number,
                                     cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                     decoration: InputDecoration(
                                       enabledBorder: phoneerror
                                           ? OutlineInputBorder(
@@ -395,7 +395,7 @@ class _Signup2State extends State<Signup2> {
                                     obscureText: true,
                                     controller: password,
                                     cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
                                       contentPadding: EdgeInsets.all(15),
@@ -464,7 +464,7 @@ class _Signup2State extends State<Signup2> {
                                     obscureText: true,
                                     controller: confirmpassword,
                                     cursorColor:
-                                    Color.fromRGBO(21, 43, 81, 1),
+                                    blueColor,
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
                                       contentPadding: EdgeInsets.all(14),

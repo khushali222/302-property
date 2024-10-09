@@ -656,7 +656,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
             size: 30,
             color: _currentPage == 0
                 ? Colors.grey
-                : const Color.fromRGBO(21, 43, 83, 1),
+                : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -718,7 +718,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Color.fromRGBO(21, 43, 83, 1),
+                    color: blueColor,
                   ),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -1576,7 +1576,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                       FontAwesomeIcons.circleChevronLeft,
                                       color: currentPage == 0
                                           ? Colors.grey
-                                          : Color.fromRGBO(21, 43, 83, 1),
+                                          : blueColor,
                                     ),
                                     onPressed: currentPage == 0
                                         ? null
@@ -1592,7 +1592,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                     icon: FaIcon(
                                       FontAwesomeIcons.circleChevronRight,
                                       color: currentPage < totalPages - 1
-                                          ? Color.fromRGBO(21, 43, 83, 1)
+                                          ? blueColor
                                           : Colors.grey,
                                     ),
                                     onPressed: currentPage < totalPages - 1
@@ -1860,15 +1860,15 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                   decoration: BoxDecoration(
                                     border: Border(
                                       left: BorderSide(
-                                          color: Color.fromRGBO(21, 43, 81, 1)),
+                                          color: blueColor),
                                       right: BorderSide(
-                                          color: Color.fromRGBO(21, 43, 81, 1)),
+                                          color: blueColor),
                                       top: BorderSide(
-                                          color: Color.fromRGBO(21, 43, 81, 1)),
+                                          color: blueColor),
                                       bottom: i == pagedData.length - 1
                                           ? BorderSide(
                                               color:
-                                                  Color.fromRGBO(21, 43, 81, 1))
+                                                  blueColor)
                                           : BorderSide.none,
                                     ),
                                   ),

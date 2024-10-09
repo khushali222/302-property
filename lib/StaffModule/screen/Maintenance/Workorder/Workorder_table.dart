@@ -560,7 +560,7 @@ class _Workorder_tableState extends State<Workorder_table> {
             size: 30,
             color: _currentPage == 0
                 ? Colors.grey
-                : const Color.fromRGBO(21, 43, 83, 1),
+                : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -641,7 +641,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                           ? MediaQuery.of(context).size.width * 0.25
                           : MediaQuery.of(context).size.width * 0.25,
                       decoration: BoxDecoration(
-                        color: const Color.fromRGBO(21, 43, 81, 1),
+                        color:blueColor,
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Center(
@@ -716,7 +716,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                   searchvalue = value;
                                 });
                               },
-                              cursorColor: const Color.fromRGBO(21, 43, 81, 1),
+                              cursorColor:blueColor,
                               decoration: InputDecoration(
                                   border: InputBorder.none,
                                   hintText: "Search here...",
@@ -864,7 +864,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                             });
                           },
                           activeColor: isChecked
-                              ? const Color.fromRGBO(21, 43, 81, 1)
+                              ?blueColor
                               : Colors.black,
                         ),
                       ),

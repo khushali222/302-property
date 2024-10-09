@@ -167,7 +167,7 @@
 //           Container(
 //             height: 50,
 //             decoration: const BoxDecoration(
-//               color: Color.fromRGBO(21, 43, 81, 1),
+//               color: blueColor,
 //               borderRadius: BorderRadius.only(
 //                   topLeft: Radius.circular(20), topRight: Radius.circular(20)),
 //             ),
@@ -203,7 +203,7 @@
 //                     style: TextStyle(
 //                         fontSize: 16,
 //                         fontWeight: FontWeight.bold,
-//                         color: Color.fromRGBO(21, 43, 81, 1)))
+//                         color: blueColor))
 //               ],
 //             ),
 //           ),
@@ -227,7 +227,7 @@
 //                               style: TextStyle(
 //                                   fontSize: 14,
 //                                   fontWeight: FontWeight.w500,
-//                                   color: Color.fromRGBO(21, 43, 81, 1))),
+//                                   color: blueColor)),
 //                         ],
 //                       )),
 //                     ],
@@ -253,7 +253,7 @@
 //                   width: 120,
 //                   height: 40,
 //                   decoration: BoxDecoration(
-//                       color: const Color.fromRGBO(21, 43, 81, 1),
+//                       color:blueColor,
 //                       borderRadius: BorderRadius.circular(4)),
 //                   child: const Center(
 //                       child: Text(
@@ -271,7 +271,7 @@
 //               child: Text(
 //             "Term Apply",
 //             style: TextStyle(
-//                 color: Color.fromRGBO(21, 43, 81, 1),
+//                 color: blueColor,
 //                 fontWeight: FontWeight.bold),
 //           )),
 //           const SizedBox(
@@ -571,7 +571,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
             size: 30,
             color: _currentPage == 0
                 ? Colors.grey
-                : const Color.fromRGBO(21, 43, 83, 1),
+                : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -591,7 +591,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
             size: 30,
             color: (_currentPage + 1) * _rowsPerPage >= totalrecords
                 ? Colors.grey
-                : const Color.fromRGBO(21, 43, 83, 1),
+                : blueColor,
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= totalrecords
               ? null
@@ -836,7 +836,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color: const Color.fromRGBO(21, 43, 83, 1),
+                                      color: blueColor,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
@@ -1679,7 +1679,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                   decoration: BoxDecoration(
                                     border: Border.all(
                                       color:
-                                          const Color.fromRGBO(21, 43, 83, 1),
+                                          blueColor,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),

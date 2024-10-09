@@ -237,7 +237,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                           fontSize: 20
                                       ),
                                       controller: email,
-                                      cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                      cursorColor: blueColor,
                                       decoration: InputDecoration(
                                         enabledBorder: emailerror
                                             ? OutlineInputBorder(
@@ -418,7 +418,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                             ),
                                             controller: password,
                                             obscureText: visiable_password,
-                                            cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                            cursorColor: blueColor,
                                             decoration: InputDecoration(
                                               enabledBorder: passworderror
                                                   ? OutlineInputBorder(
@@ -772,7 +772,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                         });
                                       },
                                       controller: email,
-                                      cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                      cursorColor: blueColor,
                                       decoration: InputDecoration(
                                         enabledBorder: emailerror
                                             ? OutlineInputBorder(
@@ -949,7 +949,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                             },
                                             controller: password,
                                             obscureText: visiable_password,
-                                            cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                            cursorColor: blueColor,
                                             decoration: InputDecoration(
                                               enabledBorder: passworderror
                                                   ? OutlineInputBorder(
@@ -1953,7 +1953,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                           fontSize: 20
                                       ),
                                       controller: email,
-                                      cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                      cursorColor: blueColor,
                                       decoration: InputDecoration(
                                         enabledBorder: emailerror
                                             ? OutlineInputBorder(
@@ -2133,7 +2133,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                             ),
                                             controller: password,
                                             obscureText: visiable_password,
-                                            cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                            cursorColor: blueColor,
                                             decoration: InputDecoration(
                                               enabledBorder: passworderror
                                                   ? OutlineInputBorder(
@@ -2486,7 +2486,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                         });
                                       },
                                       controller: email,
-                                      cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                      cursorColor: blueColor,
                                       decoration: InputDecoration(
                                         enabledBorder: emailerror
                                             ? OutlineInputBorder(
@@ -2662,7 +2662,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                             },
                                             controller: password,
                                             obscureText: visiable_password,
-                                            cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                            cursorColor: blueColor,
                                             decoration: InputDecoration(
                                               enabledBorder: passworderror
                                                   ? OutlineInputBorder(

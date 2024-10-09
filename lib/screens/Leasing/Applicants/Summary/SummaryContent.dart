@@ -152,8 +152,8 @@ class _SummaryContentState extends State<SummaryContent> {
                 flex: 2,
                 child: Text(
                   status.applicantNotes ?? '',
-                  style: const TextStyle(
-                      color: Color.fromRGBO(21, 43, 83, 1),
+                  style:  TextStyle(
+                      color: blueColor,
                       fontSize: 14,
                       fontWeight: FontWeight.w500),
                   softWrap: true,
@@ -165,8 +165,8 @@ class _SummaryContentState extends State<SummaryContent> {
                 flex: 2,
                 child: Text(
                   status.applicantFile ?? 'N/A',
-                  style: const TextStyle(
-                      color: Color.fromRGBO(21, 43, 83, 1),
+                  style:  TextStyle(
+                      color: blueColor,
                       fontSize: 14,
                       fontWeight: FontWeight.w500),
                   softWrap: true,
@@ -177,8 +177,8 @@ class _SummaryContentState extends State<SummaryContent> {
               Expanded(
                 flex: 1,
                 child: IconButton(
-                  icon: const Icon(Icons.clear,
-                      color: Color.fromRGBO(21, 43, 83, 1)),
+                  icon:  Icon(Icons.clear,
+                      color: blueColor),
                   onPressed: () {
                     deleteNoteAndFile(
                         i, widget.summery.applicantId!, status.sId!);
@@ -230,7 +230,7 @@ class _SummaryContentState extends State<SummaryContent> {
                   child: Row(
                     children: [
                       Checkbox(
-                        activeColor: const Color.fromRGBO(21, 43, 83, 1),
+                        activeColor:  blueColor,
                         value: widget.summery.applicantCheckedChecklist!
                             .contains(item),
                         onChanged: (bool? value) {
@@ -261,7 +261,7 @@ class _SummaryContentState extends State<SummaryContent> {
                   child: Row(
                     children: [
                       Checkbox(
-                        activeColor: const Color.fromRGBO(21, 43, 83, 1),
+                        activeColor:  blueColor,
                         value: widget.summery.applicantCheckedChecklist!
                             .contains(item),
                         onChanged: (bool? value) {
@@ -372,12 +372,12 @@ class _SummaryContentState extends State<SummaryContent> {
                   height: 40,
                   width: 150,
                   decoration: const BoxDecoration(
-                    //color: Color.fromRGBO(21, 43, 81, 1),
+                    //color: blueColor,
                     borderRadius: BorderRadius.all(
                       Radius.circular(5),
                     ),
                   ),
-                  child: const Row(
+                  child:  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.add),
@@ -386,7 +386,7 @@ class _SummaryContentState extends State<SummaryContent> {
                         "Add Checklist",
                         style: TextStyle(
                             fontWeight: FontWeight.w500,
-                            color: Color.fromRGBO(21, 43, 83, 1)),
+                            color: blueColor),
                       )),
                     ],
                   ),
@@ -418,7 +418,7 @@ class _SummaryContentState extends State<SummaryContent> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                          color: const Color.fromRGBO(21, 43, 81, 1)),
+                          color:blueColor),
                     ),
                     child: const Padding(
                       padding: EdgeInsets.all(8.0),
@@ -435,19 +435,19 @@ class _SummaryContentState extends State<SummaryContent> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
                   border:
-                      Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
+                      Border.all(color:blueColor),
                 ),
                 child: Form(
                   key: formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                       Text(
                         'Notes',
                         style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
-                            color: Color.fromRGBO(21, 43, 83, 1)),
+                            color: blueColor),
                       ),
                       const SizedBox(
                         height: 5,
@@ -489,7 +489,7 @@ class _SummaryContentState extends State<SummaryContent> {
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
-                                  const Color.fromRGBO(21, 43, 83, 1),
+                                   blueColor,
                             ),
                             onPressed: () async {
                               if (formKey.currentState!.validate()) {
@@ -546,7 +546,7 @@ class _SummaryContentState extends State<SummaryContent> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                    color: const Color.fromRGBO(21, 43, 81, 1)),
+                                    color:blueColor),
                               ),
                               child: const Text('Cancel'),
                             ),
@@ -570,20 +570,20 @@ class _SummaryContentState extends State<SummaryContent> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                            color: const Color.fromRGBO(21, 43, 81, 1)),
+                            color:blueColor),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 20),
-                          const Padding(
+                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 8.0),
                             child: Text(
                               "Notes And Files",
                               style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 16,
-                                  color: Color.fromRGBO(21, 43, 83, 1)),
+                                  color: blueColor),
                             ),
                           ),
                           Padding(
@@ -643,21 +643,21 @@ class _SummaryContentState extends State<SummaryContent> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
                   border:
-                      Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
+                      Border.all(color:blueColor),
                 ),
                 //width: ,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
-                    const Padding(
+                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8.0),
                       child: Text(
                         "Updates",
                         style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 16,
-                            color: Color.fromRGBO(21, 43, 83, 1)),
+                            color: blueColor),
                       ),
                     ),
                     DataTable(
@@ -690,7 +690,7 @@ class _SummaryContentState extends State<SummaryContent> {
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
                                       color:
-                                          const Color.fromRGBO(21, 43, 81, 1)),
+                                         blueColor),
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -717,7 +717,7 @@ class _SummaryContentState extends State<SummaryContent> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
                   border:
-                      Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
+                      Border.all(color:blueColor),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -727,16 +727,16 @@ class _SummaryContentState extends State<SummaryContent> {
                     children: [
                       Text(
                           '${widget.summery.applicantFirstName} ${widget.summery.applicantLastName}',
-                          style: const TextStyle(
+                          style:  TextStyle(
                               fontSize: 16,
-                              color: Color.fromRGBO(21, 43, 81, 1),
+                              color: blueColor,
                               fontWeight: FontWeight.bold)),
                       const SizedBox(
                         height: 5,
                       ),
-                      const Text('Applicant',
+                       Text('Applicant',
                           style: TextStyle(
-                              color: Color.fromRGBO(21, 43, 81, 1),
+                              color: blueColor,
                               fontWeight: FontWeight.normal)),
                       const SizedBox(
                         height: 10,
@@ -752,9 +752,9 @@ class _SummaryContentState extends State<SummaryContent> {
                           ),
                           Text(
                             "${widget.summery.applicantHomeNumber != null ? 'N/A' : widget.summery.applicantHomeNumber ?? "N/A"}",
-                            style: const TextStyle(
+                            style:  TextStyle(
                               fontWeight: FontWeight.w500,
-                              color: Color.fromRGBO(21, 43, 83, 1),
+                              color: blueColor,
                             ),
                           )
                         ],
@@ -773,9 +773,9 @@ class _SummaryContentState extends State<SummaryContent> {
                           ),
                           Text(
                             "${widget.summery.applicantBusinessNumber != null ? 'N/A' : widget.summery.applicantBusinessNumber ?? "N/A"}",
-                            style: const TextStyle(
+                            style:  TextStyle(
                               fontWeight: FontWeight.w500,
-                              color: Color.fromRGBO(21, 43, 83, 1),
+                              color: blueColor,
                             ),
                           )
                         ],
@@ -794,9 +794,9 @@ class _SummaryContentState extends State<SummaryContent> {
                           ),
                           Text(
                             "${widget.summery.applicantPhoneNumber!.isEmpty ? 'N/A' : widget.summery.applicantPhoneNumber}",
-                            style: const TextStyle(
+                            style:  TextStyle(
                               fontWeight: FontWeight.w500,
-                              color: Color.fromRGBO(21, 43, 83, 1),
+                              color: blueColor,
                             ),
                           )
                         ],
@@ -815,9 +815,9 @@ class _SummaryContentState extends State<SummaryContent> {
                           ),
                           Text(
                             "${widget.summery.applicantEmail ?? 'N/A'}",
-                            style: const TextStyle(
+                            style:  TextStyle(
                               fontWeight: FontWeight.w500,
-                              color: Color.fromRGBO(21, 43, 83, 1),
+                              color: blueColor,
                             ),
                           )
                         ],

@@ -183,14 +183,14 @@ class _CardpaymentState extends State<Cardpayment> {
 
     // Add the Local group
     result.add(
-      const DropdownMenuItem<String>(
+       DropdownMenuItem<String>(
         enabled: false,
         child: Text(
           'LIABILITY ACCOUNT',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
-            color: Color.fromRGBO(21, 43, 83, 1),
+            color: blueColor,
           ),
         ),
       ),
@@ -206,14 +206,14 @@ class _CardpaymentState extends State<Cardpayment> {
 
     // Add the Dynamic group
     result.add(
-      const DropdownMenuItem<String>(
+       DropdownMenuItem<String>(
         enabled: false,
         child: Text(
           'RECURRING CHARGES',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
-            color: Color.fromRGBO(21, 43, 83, 1),
+            color: blueColor,
           ),
         ),
       ),
@@ -227,14 +227,14 @@ class _CardpaymentState extends State<Cardpayment> {
       }).toList(),
     );
     result.add(
-      const DropdownMenuItem<String>(
+       DropdownMenuItem<String>(
         enabled: false,
         child: Text(
           'ONE TIME CHARGES',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
-            color: Color.fromRGBO(21, 43, 83, 1),
+            color: blueColor,
           ),
         ),
       ),
@@ -481,7 +481,7 @@ class _CardpaymentState extends State<Cardpayment> {
                           //Same as `blurRadius` i guess
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
-                            color: const Color.fromRGBO(21, 43, 81, 1),
+                            color:blueColor,
                             boxShadow: [
                               const BoxShadow(
                                 color: Colors.grey,
@@ -507,7 +507,7 @@ class _CardpaymentState extends State<Cardpayment> {
                       width: double.infinity,
                       decoration: BoxDecoration(
                           border: Border.all(
-                            color: const Color.fromRGBO(21, 43, 83, 1),
+                            color: blueColor,
                           ),
                           borderRadius: BorderRadius.circular(10.0)),
                       child: Padding(
@@ -1535,7 +1535,7 @@ class _CardpaymentState extends State<Cardpayment> {
                                       decoration: BoxDecoration(
                                         borderRadius:
                                             BorderRadius.circular(5.0),
-                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                        color: blueColor,
                                         boxShadow: [
                                           BoxShadow(
                                             color: Colors.grey,
@@ -1595,7 +1595,7 @@ class _CardpaymentState extends State<Cardpayment> {
                                       decoration: BoxDecoration(
                                         borderRadius:
                                             BorderRadius.circular(5.0),
-                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                        color: blueColor,
                                         boxShadow: [
                                           BoxShadow(
                                             color: Colors.grey,

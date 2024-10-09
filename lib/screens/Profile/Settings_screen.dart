@@ -743,7 +743,7 @@ class _TabBarExampleState extends State<TabBarExample> {
             FontAwesomeIcons.circleChevronLeft,
             size: 30,
             color:
-            _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+            _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -802,7 +802,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                 margin: const EdgeInsets.only(bottom: 6.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
-                  color: Color.fromRGBO(21, 43, 81, 1),
+                  color: blueColor,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey,
@@ -831,7 +831,7 @@ class _TabBarExampleState extends State<TabBarExample> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
-                //border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                //border: Border.all(color: blueColor),
               ),
               child: Column(
                 children: [
@@ -859,10 +859,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       : 50,
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: Color.fromRGBO(21, 43, 81, 1)),
+                                    color: blueColor),
                                 color: !issurge
                                     ? Colors.white
-                                    : Color.fromRGBO(21, 43, 81, 1),
+                                    : blueColor,
                               ),
                               child: Center(
                                 child: Text(
@@ -871,7 +871,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     fontWeight: FontWeight.bold,
                                       color: issurge
                                           ? Colors.white
-                                          : Color.fromRGBO(21, 43, 81, 1),
+                                          : blueColor,
                                       fontSize: MediaQuery.of(context)
                                                   .size
                                                   .width <
@@ -897,10 +897,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                             child: Container(
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: Color.fromRGBO(21, 43, 81, 1)),
+                                    color: blueColor),
                                 color: !islatefee
                                     ? Colors.white
-                                    : Color.fromRGBO(21, 43, 81, 1),
+                                    : blueColor,
                               ),
                               child: Center(
                                 child: Text(
@@ -909,7 +909,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       fontWeight: FontWeight.bold,
                                       color: islatefee
                                           ? Colors.white
-                                          : Color.fromRGBO(21, 43, 81, 1),
+                                          : blueColor,
                                       fontSize: MediaQuery.of(context)
                                                   .size
                                                   .width <
@@ -946,10 +946,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                             child: Container(
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: Color.fromRGBO(21, 43, 81, 1)),
+                                    color: blueColor),
                                 color:  !ismail
                                     ? Colors.white
-                                    : Color.fromRGBO(21, 43, 81, 1),
+                                    : blueColor,
                               ),
                               child: Center(
                                 child: Text(
@@ -958,7 +958,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     fontWeight: FontWeight.bold,
                                       color: ismail
                                           ? Colors.white
-                                          : Color.fromRGBO(21, 43, 81, 1),
+                                          : blueColor,
                                       fontSize: MediaQuery.of(context)
                                           .size
                                           .width <
@@ -984,10 +984,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                             child: Container(
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: Color.fromRGBO(21, 43, 81, 1)),
+                                    color: blueColor),
                                 color: !isaccounts
                                     ? Colors.white
-                                    : Color.fromRGBO(21, 43, 81, 1),
+                                    : blueColor,
                               ),
                               child: Center(
                                 child: Text(
@@ -996,7 +996,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     fontWeight: FontWeight.bold,
                                       color: isaccounts
                                           ? Colors.white
-                                          : Color.fromRGBO(21, 43, 81, 1),
+                                          : blueColor,
                                       fontSize: MediaQuery.of(context)
                                           .size
                                           .width <
@@ -1028,7 +1028,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                             Text(
                               "Surcharge",
                               style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
                                     MediaQuery.of(context).size.width < 500
@@ -1916,7 +1916,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   decoration: BoxDecoration(
                                     borderRadius:
                                         BorderRadius.circular(5.0),
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.grey,
@@ -1965,7 +1965,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       : 100,
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color: Color.fromRGBO(21, 43, 81, 1),
+                                      color: blueColor,
                                     ),
                                     borderRadius: BorderRadius.circular(5),
                                   ),
@@ -1998,7 +1998,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                             Text(
                               "Mail Service",
                               style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
                                 MediaQuery.of(context).size.width < 500
@@ -2141,7 +2141,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   decoration: BoxDecoration(
                                     borderRadius:
                                     BorderRadius.circular(5.0),
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.grey,
@@ -2186,7 +2186,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       : 120,
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color: Color.fromRGBO(21, 43, 81, 1),
+                                      color: blueColor,
                                     ),
                                     borderRadius: BorderRadius.circular(5),
                                   ),
@@ -2218,7 +2218,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                             Text(
                               "Late Fee Charge",
                               style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
                                     MediaQuery.of(context).size.width < 500
@@ -2845,7 +2845,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   decoration: BoxDecoration(
                                     borderRadius:
                                         BorderRadius.circular(5.0),
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.grey,
@@ -2893,7 +2893,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                           : 120,
                                       decoration: BoxDecoration(
                                         border: Border.all(
-                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          color: blueColor,
                                         ),
                                         borderRadius: BorderRadius.circular(5),
                                       ),
@@ -2945,7 +2945,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     width: MediaQuery.of(context).size.width < 500 ? 120 : 180,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(5.0),
-                                      color: Color.fromRGBO(21, 43, 81, 1),
+                                      color: blueColor,
                                       boxShadow: [
                                         BoxShadow(
                                           color: Colors.grey,
@@ -3244,7 +3244,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                     //         icon: FaIcon(
                                                                     //           FontAwesomeIcons.edit,
                                                                     //           size: 20,
-                                                                    //           color: Color.fromRGBO(21, 43, 83, 1),
+                                                                    //           color: blueColor,
                                                                     //         ),
                                                                     //         onPressed: () async {
                                                                     //           var check = await Navigator.push(
@@ -3264,7 +3264,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                     //         icon: FaIcon(
                                                                     //           FontAwesomeIcons.trashCan,
                                                                     //           size: 20,
-                                                                    //           color: Color.fromRGBO(21, 43, 83, 1),
+                                                                    //           color: blueColor,
                                                                     //         ),
                                                                     //         onPressed: () {
                                                                     //           _showDeleteAlert(context, staffmembers.staffmemberId!);
@@ -3374,7 +3374,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                     FontAwesomeIcons.circleChevronLeft,
                                                     color: currentPage == 0
                                                         ? Colors.grey
-                                                        : Color.fromRGBO(21, 43, 83, 1),
+                                                        : blueColor,
                                                   ),
                                                   onPressed: currentPage == 0
                                                       ? null
@@ -3410,7 +3410,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   icon: FaIcon(
                                                     FontAwesomeIcons.circleChevronRight,
                                                     color: currentPage < totalPages - 1
-                                                        ? Color.fromRGBO(21, 43, 83, 1)
+                                                        ? blueColor
                                                         : Colors.grey,
                                                   ),
                                                   onPressed: currentPage < totalPages - 1
@@ -3723,7 +3723,7 @@ class _TabBarExampleState extends State<TabBarExample> {
               'Account Type',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Color.fromRGBO(21, 43, 81, 1),
+                color: blueColor,
               ),
             ),
             actions: <Widget>[
@@ -3757,7 +3757,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                       "Select Account Type",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Color.fromRGBO(21, 43, 81, 1),
+                        color: blueColor,
                         fontSize: 17,
                       ),
                     ),
@@ -4049,7 +4049,7 @@ class _TabBarExampleState extends State<TabBarExample> {
               'Add Account',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Color.fromRGBO(21, 43, 81, 1),
+                color: blueColor,
               ),
             ),
             content: SingleChildScrollView(
@@ -4061,7 +4061,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                     "Account Name",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       fontSize: 16,
                     ),
                   ),
@@ -4082,7 +4082,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                     "Account Type",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       fontSize: 16,
                     ),
                   ),
@@ -4108,7 +4108,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                     "Fund Type",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       fontSize: 16,
                     ),
                   ),
@@ -4134,7 +4134,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                     "Note",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       fontSize: 16,
                     ),
                   ),

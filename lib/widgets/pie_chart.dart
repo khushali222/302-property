@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart';
 
+import '../constant/constant.dart';
+
 /*void main() {
   runApp(const MyApp());
 }
@@ -29,7 +31,7 @@ class MyApp extends StatelessWidget {
 class PieCharts extends StatelessWidget {
   final Map<String, double> dataMap;
   final colorList = <Color>[
-    Color.fromRGBO(21, 43, 81, 1),
+    blueColor,
     Colors.transparent, // Gap1
     Color.fromRGBO(40, 60, 95, 1),
     Colors.transparent, // Gap2

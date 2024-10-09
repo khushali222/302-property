@@ -118,7 +118,7 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: ColorScheme.light(
-              primary: Color.fromRGBO(21, 43, 83, 1), // header background color
+              primary: blueColor, // header background color
               onPrimary: Colors.white, // header text color
               // onSurface: Colors.blue, // body text color
             ),
@@ -126,7 +126,7 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor:
-                    Color.fromRGBO(21, 43, 83, 1), // button text color
+                    blueColor, // button text color
               ),
             ),
           ),
@@ -152,7 +152,7 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: ColorScheme.light(
-              primary: Color.fromRGBO(21, 43, 83, 1), // header background color
+              primary: blueColor, // header background color
               onPrimary: Colors.white, // header text color
               // onSurface: Colors.blue, // body text color
             ),
@@ -160,7 +160,7 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor:
-                    Color.fromRGBO(21, 43, 83, 1), // button text color
+                    blueColor, // button text color
               ),
             ),
           ),
@@ -413,7 +413,7 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
                           ),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color.fromRGBO(21, 43, 83, 1),
+                              backgroundColor: blueColor,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0),
                               ),

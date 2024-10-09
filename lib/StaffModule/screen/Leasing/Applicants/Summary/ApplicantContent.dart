@@ -289,7 +289,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   decoration: BoxDecoration(
                                       border: Border.all(
                                         color:
-                                            const Color.fromRGBO(21, 43, 83, 1),
+                                            blueColor,
                                       ),
                                       borderRadius:
                                           BorderRadius.circular(10.0)),
@@ -436,7 +436,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   decoration: BoxDecoration(
                                     border: Border.all(
                                       color:
-                                          const Color.fromRGBO(21, 43, 83, 1),
+                                          blueColor,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
@@ -555,7 +555,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   decoration: BoxDecoration(
                                     border: Border.all(
                                       color:
-                                          const Color.fromRGBO(21, 43, 83, 1),
+                                          blueColor,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
@@ -681,7 +681,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   decoration: BoxDecoration(
                                     border: Border.all(
                                       color:
-                                          const Color.fromRGBO(21, 43, 83, 1),
+                                          blueColor,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
@@ -874,7 +874,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   decoration: BoxDecoration(
                                     border: Border.all(
                                       color:
-                                          const Color.fromRGBO(21, 43, 83, 1),
+                                          blueColor,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
@@ -981,7 +981,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   decoration: BoxDecoration(
                                     border: Border.all(
                                       color:
-                                          const Color.fromRGBO(21, 43, 83, 1),
+                                          blueColor,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
@@ -3394,10 +3394,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                             const SizedBox(width: 2),
                                                                             Text(
                                                                               '${data.applicantFirstName} ${data.applicantLastName}',
-                                                                              style: const TextStyle(
+                                                                              style:  TextStyle(
                                                                                 fontWeight: FontWeight.bold,
                                                                                 fontSize: 16,
-                                                                                color: Color.fromRGBO(21, 43, 83, 1),
+                                                                                color: blueColor,
                                                                               ),
                                                                             ),
                                                                             const SizedBox(width: 2),
@@ -3433,10 +3433,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                             const SizedBox(width: 2),
                                                                             Text(
                                                                               '${data.applicantCity ?? 'N/A'}',
-                                                                              style: const TextStyle(
+                                                                              style:  TextStyle(
                                                                                 fontWeight: FontWeight.bold,
                                                                                 fontSize: 16,
-                                                                                color: Color.fromRGBO(21, 43, 83, 1),
+                                                                                color: blueColor,
                                                                               ),
                                                                             ),
                                                                             const SizedBox(width: 2),
@@ -3480,10 +3480,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                             const SizedBox(width: 2),
                                                                             Text(
                                                                               '${data.applicantStreetAddress ?? 'N/A'}',
-                                                                              style: const TextStyle(
+                                                                              style:  TextStyle(
                                                                                 fontWeight: FontWeight.bold,
                                                                                 fontSize: 16,
-                                                                                color: Color.fromRGBO(21, 43, 83, 1),
+                                                                                color: blueColor,
                                                                               ),
                                                                             ),
                                                                             const SizedBox(width: 2),
@@ -3519,10 +3519,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                             const SizedBox(width: 2),
                                                                             Text(
                                                                               '${data.applicantEmail ?? 'N/A'}',
-                                                                              style: const TextStyle(
+                                                                              style:  TextStyle(
                                                                                 fontWeight: FontWeight.bold,
                                                                                 fontSize: 16,
-                                                                                color: Color.fromRGBO(21, 43, 83, 1),
+                                                                                color: blueColor,
                                                                               ),
                                                                             ),
                                                                             const SizedBox(width: 2),

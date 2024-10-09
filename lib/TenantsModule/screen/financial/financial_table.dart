@@ -574,7 +574,7 @@ class _FinancialTableState extends State<FinancialTable> {
             FontAwesomeIcons.circleChevronLeft,
             size: 30,
             color:
-            _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+            _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -657,7 +657,7 @@ class _FinancialTableState extends State<FinancialTable> {
                       width: (MediaQuery.of(context).size.width > 500)
                           ? MediaQuery.of(context).size.width * 0.2 :MediaQuery.of(context).size.width * 0.4,
                       decoration: BoxDecoration(
-                        color: Color.fromRGBO(21, 43, 81, 1),
+                        color: blueColor,
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Center(
@@ -707,7 +707,7 @@ class _FinancialTableState extends State<FinancialTable> {
                       width: (MediaQuery.of(context).size.width > 500)
                           ? MediaQuery.of(context).size.width * 0.3 :MediaQuery.of(context).size.width * 0.4,
                       decoration: BoxDecoration(
-                        color: Color.fromRGBO(21, 43, 81, 1),
+                        color: blueColor,
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Center(
@@ -780,7 +780,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                   searchvalue = value;
                                 });
                               },
-                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                              cursorColor: blueColor,
                               decoration: InputDecoration(
                                   border: InputBorder.none,
                                   hintText: "Search here...",
@@ -1450,7 +1450,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                         FontAwesomeIcons.circleChevronLeft,
                                         color: currentPage == 0
                                             ? Colors.grey
-                                            : Color.fromRGBO(21, 43, 83, 1),
+                                            : blueColor,
                                       ),
                                       onPressed: currentPage == 0
                                           ? null
@@ -1486,7 +1486,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                       icon: FaIcon(
                                         FontAwesomeIcons.circleChevronRight,
                                         color: currentPage < totalPages - 1
-                                            ? Color.fromRGBO(21, 43, 83, 1)
+                                            ? blueColor
                                             : Colors.grey,
                                       ),
                                       onPressed: currentPage < totalPages - 1

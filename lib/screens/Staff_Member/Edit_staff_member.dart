@@ -6,6 +6,7 @@ import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:keyboard_actions/keyboard_actions_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
+import '../../constant/constant.dart';
 import '../../model/staffmember.dart';
 import '../../repository/Staffmember.dart';
 import '../../widgets/drawer_tiles.dart';
@@ -78,11 +79,11 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                 height: 50.0,
                 padding: EdgeInsets.only(top: 9, left: 10),
                 width: MediaQuery.of(context).size.width * .91,
-                margin: const EdgeInsets.only(bottom: 6.0),
+                margin:  EdgeInsets.only(bottom: 6.0),
                 //Same as `blurRadius` i guess
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
-                  color: Color.fromRGBO(21, 43, 81, 1),
+                  color: blueColor,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey,
@@ -111,7 +112,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                  border: Border.all(color: blueColor),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -126,7 +127,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                           Text(
                             "New Staff Member",
                             style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -181,7 +182,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                         },
                                         controller: name,
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter staff member name",
                                           hintStyle: TextStyle(
@@ -276,7 +277,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                         },
                                         controller: designation,
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter designation",
                                           hintStyle: TextStyle(
@@ -373,7 +374,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                         controller: phonenumber,
                                         keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter phone number",
                                           hintStyle: TextStyle(
@@ -470,7 +471,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                         TextInputType.emailAddress,
                                         controller: email,
                                         cursorColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
+                                        blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter email",
                                           hintStyle: TextStyle(
@@ -636,7 +637,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                 width: MediaQuery.of(context).size.width < 500 ? 150 : 180,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
-                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                  color: blueColor,
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.grey,

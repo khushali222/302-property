@@ -325,7 +325,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                           color: blueColor,
                           borderRadius: BorderRadius.circular(4),
                           border: Border.all(
-                              color: const Color.fromRGBO(21, 43, 81, 1)),
+                              color:blueColor),
                         ),
                         child: const Padding(
                           padding: EdgeInsets.all(8.0),
@@ -359,7 +359,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
               width: double.infinity,
               decoration: BoxDecoration(
                   border: Border.all(
-                    color: const Color.fromRGBO(21, 43, 83, 1),
+                    color:  blueColor,
                   ),
                   borderRadius: BorderRadius.circular(10.0)),
               child: Padding(
@@ -470,7 +470,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
               width: double.infinity,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: const Color.fromRGBO(21, 43, 83, 1),
+                  color:  blueColor,
                 ),
                 borderRadius: BorderRadius.circular(10.0),
               ),
@@ -584,7 +584,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
               width: double.infinity,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: const Color.fromRGBO(21, 43, 83, 1),
+                  color:  blueColor,
                 ),
                 borderRadius: BorderRadius.circular(10.0),
               ),
@@ -704,7 +704,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
               width: double.infinity,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: const Color.fromRGBO(21, 43, 83, 1),
+                  color:  blueColor,
                 ),
                 borderRadius: BorderRadius.circular(10.0),
               ),
@@ -895,7 +895,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
               width: double.infinity,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: const Color.fromRGBO(21, 43, 83, 1),
+                  color:  blueColor,
                 ),
                 borderRadius: BorderRadius.circular(10.0),
               ),
@@ -996,7 +996,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
               width: double.infinity,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: const Color.fromRGBO(21, 43, 83, 1),
+                  color:  blueColor,
                 ),
                 borderRadius: BorderRadius.circular(10.0),
               ),

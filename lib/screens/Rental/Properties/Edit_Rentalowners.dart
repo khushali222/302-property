@@ -278,7 +278,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                     padding: EdgeInsets.only(top: 14, left: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey,
@@ -311,7 +311,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                           });
                         },
                         activeColor: isChecked
-                            ? Color.fromRGBO(21, 43, 81, 1)
+                            ? blueColor
                             : Colors.black,
                       ),
                     ),
@@ -380,7 +380,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                               });
                                             },
                                             cursorColor:
-                                                Color.fromRGBO(21, 43, 81, 1),
+                                                blueColor,
                                             decoration: InputDecoration(
                                               border: InputBorder.none,
                                               contentPadding: EdgeInsets.only(
@@ -420,7 +420,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                   child: DataTable(
                                     border: TableBorder(
                                       horizontalInside: BorderSide(
-                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                        color: blueColor,
                                         width: 1.0,
                                       ),
                                     ),
@@ -613,7 +613,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                                color: Color.fromRGBO(21, 43, 81, 1)),
+                                color: blueColor),
                           ),
                           child: Padding(
                               padding: const EdgeInsets.only(
@@ -1990,7 +1990,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                           width: 100,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
-                            color: Color.fromRGBO(21, 43, 81, 1),
+                            color: blueColor,
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.grey,
@@ -2047,7 +2047,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                 : Text(
                                     "Cancel",
                                     style: TextStyle(
-                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                        color: blueColor,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 13),
                                   ),

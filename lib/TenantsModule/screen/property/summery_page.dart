@@ -208,7 +208,7 @@ class _summery_pageState extends State<summery_page> {
                               Text(
                                 "Rental Owner Details",
                                 style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 83, 1),
+                                    color: blueColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 23),
                               ),
@@ -283,7 +283,7 @@ class _summery_pageState extends State<summery_page> {
                               Text(
                                 "Staff Details",
                                 style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 83, 1),
+                                    color: blueColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 23),
                               ),
@@ -346,7 +346,7 @@ class _summery_pageState extends State<summery_page> {
                               Text(
                                 "Unit Details",
                                 style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 83, 1),
+                                    color: blueColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 23),
                               ),
@@ -438,7 +438,7 @@ class _summery_pageState extends State<summery_page> {
                           Text(
                             "Property Details",
                             style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 83, 1),
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16),
                           ),
@@ -484,7 +484,7 @@ class _summery_pageState extends State<summery_page> {
                           Text(
                             "Rental Owner Details",
                             style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 83, 1),
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16),
                           ),
@@ -527,7 +527,7 @@ class _summery_pageState extends State<summery_page> {
                           Text(
                             "Staff Details",
                             style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 83, 1),
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16),
                           ),
@@ -570,7 +570,7 @@ class _summery_pageState extends State<summery_page> {
                           Text(
                             "Unit Details",
                             style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 83, 1),
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16),
                           ),

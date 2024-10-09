@@ -417,7 +417,7 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
             size: 30,
             color: _currentPage == 0
                 ? Colors.grey
-                : const Color.fromRGBO(21, 43, 83, 1),
+                :  blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -498,7 +498,7 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                         ? MediaQuery.of(context).size.width * 0.4
                         : MediaQuery.of(context).size.width * 0.3,
                     decoration: BoxDecoration(
-                      color: const Color.fromRGBO(21, 43, 81, 1),
+                      color:blueColor,
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: Center(

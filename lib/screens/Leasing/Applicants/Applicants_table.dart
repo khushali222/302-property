@@ -478,7 +478,7 @@ class _Applicants_tableState extends State<Applicants_table> {
         padding: const EdgeInsets.all(5.0),
         child: SizedBox(
           height: 50,
-          // color: Color.fromRGBO(21, 43, 83, 1),
+          // color: blueColor,
           child: Row(
             children: [
               const SizedBox(
@@ -562,7 +562,7 @@ class _Applicants_tableState extends State<Applicants_table> {
             size: 30,
             color: _currentPage == 0
                 ? Colors.grey
-                : const Color.fromRGBO(21, 43, 83, 1),
+                :  blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -645,7 +645,7 @@ class _Applicants_tableState extends State<Applicants_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () => Navigator.pop(context),
-          color: const Color.fromRGBO(21, 43, 83, 1),
+          color:  blueColor,
         ),
         /* DialogButton(
           child: Text(
@@ -733,7 +733,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                           ? MediaQuery.of(context).size.width * 0.25
                           : MediaQuery.of(context).size.width * 0.2,
                       decoration: BoxDecoration(
-                        color: const Color.fromRGBO(21, 43, 81, 1),
+                        color:blueColor,
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Center(
@@ -918,7 +918,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                               // decoration: BoxDecoration(
                               //     border: Border.all(
                               //         color:
-                              //             const Color.fromRGBO(21, 43, 83, 1))
+                              //             blueColor)
                               // ),
                               decoration: BoxDecoration(
                                   border: Border.all(

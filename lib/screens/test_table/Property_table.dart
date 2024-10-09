@@ -249,7 +249,7 @@ class _ExpandTableState extends State<ExpandTable> {
                         height: 40,
                         width: MediaQuery.of(context).size.width * 0.4,
                         decoration: BoxDecoration(
-                          color: Color.fromRGBO(21, 43, 81, 1),
+                          color: blueColor,
                           borderRadius: BorderRadius.circular(5),
                         ),
                         child: Center(
@@ -288,7 +288,7 @@ class _ExpandTableState extends State<ExpandTable> {
                         bottom: 6.0), //Same as `blurRadius` i guess
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey,
@@ -341,7 +341,7 @@ class _ExpandTableState extends State<ExpandTable> {
                                   });
                                 },
                                 cursorColor:
-                                Color.fromRGBO(21, 43, 81, 1),
+                                blueColor,
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
                                   hintText: "Search here...",
@@ -551,7 +551,7 @@ class _ExpandTableState extends State<ExpandTable> {
                                                     ? FontAwesomeIcons.sortUp
                                                     : FontAwesomeIcons.sortDown,
                                                 size: 20,
-                                                color: Color.fromRGBO(21, 43, 83, 1),
+                                                color: blueColor,
                                               ),
                                             ),
                                           ),
@@ -853,7 +853,7 @@ class _ExpandTableState extends State<ExpandTable> {
                                         FontAwesomeIcons.circleChevronLeft,
                                         color: currentPage == 0
                                             ? Colors.grey
-                                            : Color.fromRGBO(21, 43, 83, 1),
+                                            : blueColor,
                                       ),
                                       onPressed: currentPage == 0
                                           ? null
@@ -888,7 +888,7 @@ class _ExpandTableState extends State<ExpandTable> {
                                       icon: FaIcon(
                                         FontAwesomeIcons.circleChevronRight,
                                         color: currentPage < totalPages - 1
-                                            ? Color.fromRGBO(21, 43, 83, 1)
+                                            ? blueColor
                                             : Colors.grey,
                                       ),
                                       onPressed: currentPage < totalPages - 1

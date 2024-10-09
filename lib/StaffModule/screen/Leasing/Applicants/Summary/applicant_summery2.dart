@@ -184,8 +184,8 @@ class _applicant_summeryState extends State<applicant_summery>
                         children: [
                           Text(
                               'Applicant : ${snapshot.data!.applicantFirstName} ${snapshot.data!.applicantLastName}',
-                              style: const TextStyle(
-                                  color: Color.fromRGBO(21, 43, 81, 1),
+                              style:  TextStyle(
+                                  color: blueColor,
                                   fontWeight: FontWeight.bold)),
                           const SizedBox(
                             height: 5,
@@ -211,8 +211,8 @@ class _applicant_summeryState extends State<applicant_summery>
                               child: Container(
                                 height: 40,
                                 width: 80,
-                                decoration: const BoxDecoration(
-                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                decoration:  BoxDecoration(
+                                  color: blueColor,
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(5),
                                   ),
@@ -428,7 +428,7 @@ class _applicant_summeryState extends State<applicant_summery>
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                          color: const Color.fromRGBO(21, 43, 81, 1)),
+                          color:blueColor),
                       // color: Colors.blue,
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -437,9 +437,9 @@ class _applicant_summeryState extends State<applicant_summery>
                       dividerColor: Colors.transparent,
                       indicatorWeight: 5,
                       //indicatorPadding: EdgeInsets.symmetric(horizontal: 1),
-                      indicatorColor: const Color.fromRGBO(21, 43, 81, 1),
-                      labelColor: const Color.fromRGBO(21, 43, 81, 1),
-                      unselectedLabelColor: const Color.fromRGBO(21, 43, 81, 1),
+                      indicatorColor:blueColor,
+                      labelColor:blueColor,
+                      unselectedLabelColor:blueColor,
                       tabs: [
                         const Tab(text: 'Summary'),
                         const Tab(
@@ -509,7 +509,7 @@ class _applicant_summeryState extends State<applicant_summery>
                   child: Row(
                     children: [
                       Checkbox(
-                        activeColor: const Color.fromRGBO(21, 43, 83, 1),
+                        activeColor: blueColor,
                         value:
                             summery.applicantCheckedChecklist!.contains(item),
                         onChanged: (bool? value) {
@@ -538,7 +538,7 @@ class _applicant_summeryState extends State<applicant_summery>
                   child: Row(
                     children: [
                       Checkbox(
-                        activeColor: const Color.fromRGBO(21, 43, 83, 1),
+                        activeColor: blueColor,
                         value:
                             summery.applicantCheckedChecklist!.contains(item),
                         onChanged: (bool? value) {
@@ -646,12 +646,12 @@ class _applicant_summeryState extends State<applicant_summery>
                   height: 40,
                   width: 150,
                   decoration: const BoxDecoration(
-                    //color: Color.fromRGBO(21, 43, 81, 1),
+                    //color: blueColor,
                     borderRadius: BorderRadius.all(
                       Radius.circular(5),
                     ),
                   ),
-                  child: const Row(
+                  child:  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.add),
@@ -660,7 +660,7 @@ class _applicant_summeryState extends State<applicant_summery>
                         "Add Checklist",
                         style: TextStyle(
                             fontWeight: FontWeight.w500,
-                            color: Color.fromRGBO(21, 43, 83, 1)),
+                            color: blueColor),
                       )),
                     ],
                   ),
@@ -678,21 +678,21 @@ class _applicant_summeryState extends State<applicant_summery>
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
                   border:
-                      Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
+                      Border.all(color:blueColor),
                 ),
                 //width: ,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
-                    const Padding(
+                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8.0),
                       child: Text(
                         "Updates",
                         style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 16,
-                            color: Color.fromRGBO(21, 43, 83, 1)),
+                            color: blueColor),
                       ),
                     ),
                     DataTable(
@@ -728,7 +728,7 @@ class _applicant_summeryState extends State<applicant_summery>
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                    color: const Color.fromRGBO(21, 43, 81, 1)),
+                                    color:blueColor),
                               ),
                               child: const Padding(
                                 padding: EdgeInsets.all(8.0),
@@ -754,7 +754,7 @@ class _applicant_summeryState extends State<applicant_summery>
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
                   border:
-                      Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
+                      Border.all(color:blueColor),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -764,16 +764,16 @@ class _applicant_summeryState extends State<applicant_summery>
                     children: [
                       Text(
                           '${summery.applicantFirstName} ${summery.applicantLastName}',
-                          style: const TextStyle(
+                          style:  TextStyle(
                               fontSize: 16,
-                              color: Color.fromRGBO(21, 43, 81, 1),
+                              color: blueColor,
                               fontWeight: FontWeight.bold)),
                       const SizedBox(
                         height: 5,
                       ),
-                      const Text('Applicant',
+                       Text('Applicant',
                           style: TextStyle(
-                              color: Color.fromRGBO(21, 43, 81, 1),
+                              color: blueColor,
                               fontWeight: FontWeight.normal)),
                       const SizedBox(
                         height: 10,

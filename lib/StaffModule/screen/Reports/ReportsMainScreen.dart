@@ -388,7 +388,7 @@ class WideScreenLayout extends StatelessWidget {
 //             Container(
 //               height: 50,
 //               decoration: BoxDecoration(
-//                 color: Color.fromRGBO(21, 43, 81, 1),
+//                 color: blueColor,
 //                 borderRadius: BorderRadius.only(
 //                   topLeft: Radius.circular(12.0),
 //                   topRight: Radius.circular(12.0),
@@ -495,7 +495,7 @@ class ReportCard extends StatelessWidget {
             Container(
               height: 50,
               decoration: BoxDecoration(
-                color: Color.fromRGBO(21, 43, 81, 1),
+                color: blueColor,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(12.0),
                   topRight: Radius.circular(12.0),

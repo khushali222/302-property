@@ -523,7 +523,7 @@ class _Lease_tableState extends State<Lease_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () => Navigator.pop(context),
-          color: Color.fromRGBO(21, 43, 83, 1),
+          color: blueColor,
         ),
         /* DialogButton(
           child: Text(
@@ -601,7 +601,7 @@ class _Lease_tableState extends State<Lease_table> {
                           ? MediaQuery.of(context).size.width * 0.25
                           : MediaQuery.of(context).size.width * 0.2,
                       decoration: BoxDecoration(
-                        color: Color.fromRGBO(21, 43, 81, 1),
+                        color: blueColor,
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Center(
@@ -638,7 +638,7 @@ class _Lease_tableState extends State<Lease_table> {
             //       margin: const EdgeInsets.only(bottom: 6.0),
             //       decoration: BoxDecoration(
             //         borderRadius: BorderRadius.circular(5.0),
-            //         color: Color.fromRGBO(21, 43, 81, 1),
+            //         color: blueColor,
             //         boxShadow: [
             //           BoxShadow(
             //             color: Colors.grey,
@@ -1339,7 +1339,7 @@ class _Lease_tableState extends State<Lease_table> {
                                         FontAwesomeIcons.circleChevronLeft,
                                         color: currentPage == 0
                                             ? Colors.grey
-                                            : Color.fromRGBO(21, 43, 83, 1),
+                                            : blueColor,
                                       ),
                                       onPressed: currentPage == 0
                                           ? null
@@ -1375,7 +1375,7 @@ class _Lease_tableState extends State<Lease_table> {
                                       icon: FaIcon(
                                         FontAwesomeIcons.circleChevronRight,
                                         color: currentPage < totalPages - 1
-                                            ? Color.fromRGBO(21, 43, 83, 1)
+                                            ? blueColor
                                             : Colors.grey,
                                       ),
                                       onPressed: currentPage < totalPages - 1
@@ -1771,7 +1771,7 @@ class _Lease_tableState extends State<Lease_table> {
             size: 30,
             FontAwesomeIcons.circleChevronLeft,
             color:
-                _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+                _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null

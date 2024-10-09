@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../constant/constant.dart';
+
 class titleBar extends StatelessWidget {
   final String title;
   final double width;
@@ -19,7 +21,7 @@ class titleBar extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 6.0),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5.0),
-            color: Color.fromRGBO(21, 43, 81, 1),
+            color: blueColor,
             boxShadow: [
               BoxShadow(
                 color: Colors.grey,

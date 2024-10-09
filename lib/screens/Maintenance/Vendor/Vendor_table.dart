@@ -513,7 +513,7 @@ class _Vendor_tableState extends State<Vendor_table> {
             FontAwesomeIcons.circleChevronLeft,
             size: 30,
             color:
-                _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+                _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -596,7 +596,7 @@ class _Vendor_tableState extends State<Vendor_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () => Navigator.pop(context),
-          color: const Color.fromRGBO(21, 43, 83, 1),
+          color:  blueColor,
         ),
         /* DialogButton(
           child: Text(
@@ -672,7 +672,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                           ? MediaQuery.of(context).size.width * 0.25
                           : MediaQuery.of(context).size.width * 0.2,
                       decoration: BoxDecoration(
-                        color: Color.fromRGBO(21, 43, 81, 1),
+                        color: blueColor,
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Center(
@@ -747,7 +747,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                   searchvalue = value;
                                 });
                               },
-                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                              cursorColor: blueColor,
                               decoration: InputDecoration(
                                   border: InputBorder.none,
                                   hintText: "Search here...",
@@ -1409,7 +1409,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                         FontAwesomeIcons.circleChevronLeft,
                                         color: currentPage == 0
                                             ? Colors.grey
-                                            : Color.fromRGBO(21, 43, 83, 1),
+                                            : blueColor,
                                       ),
                                       onPressed: currentPage == 0
                                           ? null
@@ -1445,7 +1445,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                       icon: FaIcon(
                                         FontAwesomeIcons.circleChevronRight,
                                         color: currentPage < totalPages - 1
-                                            ? Color.fromRGBO(21, 43, 83, 1)
+                                            ? blueColor
                                             : Colors.grey,
                                       ),
                                       onPressed: currentPage < totalPages - 1

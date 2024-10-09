@@ -101,7 +101,7 @@ class _EditApplicantState extends State<EditApplicant> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                       border: Border.all(
-                        color: const Color.fromRGBO(21, 43, 83, 1),
+                        color:  blueColor,
                       ),
                       borderRadius: BorderRadius.circular(10.0)),
                   child: Padding(

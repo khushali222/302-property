@@ -711,7 +711,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
-                                    Color.fromRGBO(21, 43, 83, 1),
+                                    blueColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
@@ -1721,7 +1721,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                                     });
                                   },
                                   activeColor: isChecked
-                                      ? Color.fromRGBO(21, 43, 81, 1)
+                                      ? blueColor
                                       : Colors.black,
                                 ),
                               ),
@@ -2193,7 +2193,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
                         ),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromRGBO(21, 43, 83, 1),
+                            backgroundColor: blueColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
@@ -3017,7 +3017,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
-                                    Color.fromRGBO(21, 43, 83, 1),
+                                    blueColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
@@ -4149,13 +4149,13 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                               4: FlexColumnWidth(2),
                             },
                             children: [
-                              const TableRow(children: [
+                               TableRow(children: [
                                 Padding(
                                   padding: EdgeInsets.all(8.0),
                                   child: Text('QTY',
                                       style: TextStyle(
                                           color:
-                                              Color.fromRGBO(21, 43, 83, 1),
+                                              blueColor,
                                           fontWeight: FontWeight.bold)),
                                 ),
                                 Padding(
@@ -4163,7 +4163,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                   child: Text('Account',
                                       style: TextStyle(
                                           color:
-                                              Color.fromRGBO(21, 43, 83, 1),
+                                              blueColor,
                                           fontWeight: FontWeight.bold)),
                                 ),
                                 Padding(
@@ -4171,7 +4171,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                   child: Text('Description',
                                       style: TextStyle(
                                           color:
-                                              Color.fromRGBO(21, 43, 83, 1),
+                                              blueColor,
                                           fontWeight: FontWeight.bold)),
                                 ),
                                 Padding(
@@ -4179,7 +4179,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                   child: Text('Price',
                                       style: TextStyle(
                                           color:
-                                              Color.fromRGBO(21, 43, 83, 1),
+                                              blueColor,
                                           fontWeight: FontWeight.bold)),
                                 ),
                                 Padding(
@@ -4187,7 +4187,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                   child: Text('Amount',
                                       style: TextStyle(
                                           color:
-                                              Color.fromRGBO(21, 43, 83, 1),
+                                              blueColor,
                                           fontWeight: FontWeight.bold)),
                                 ),
                                 Padding(
@@ -4195,7 +4195,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                   child: Text('',
                                       style: TextStyle(
                                           color:
-                                              Color.fromRGBO(21, 43, 83, 1),
+                                              blueColor,
                                           fontWeight: FontWeight.bold)),
                                 ),
                               ]),
@@ -4425,7 +4425,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                 'Add Row',
                                 style: TextStyle(
                                   color:
-                                  Color.fromRGBO(21, 43, 83, 1),
+                                  blueColor,
                                 ),
                               ),
                             ),
@@ -4486,7 +4486,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                     });
                                   },
                                   activeColor: isChecked
-                                      ? Color.fromRGBO(21, 43, 81, 1)
+                                      ? blueColor
                                       : Colors.black,
                                 ),
                               ),
@@ -4831,7 +4831,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                         ),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromRGBO(21, 43, 83, 1),
+                            backgroundColor: blueColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),

@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../constant/constant.dart';
 import '../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
@@ -72,7 +73,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: Color.fromRGBO(21, 43, 81, 1),
+                        color: blueColor,
                       )),
                   child: Column(
                     children: [
@@ -88,7 +89,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                             "Edit Property Type",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: blueColor,
                                 fontSize:  MediaQuery.of(context).size.width < 500 ? 17 : 22),
                           ),
                         ],
@@ -262,7 +263,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                             ),
                             child: Checkbox(
                               activeColor: isChecked
-                                  ? Color.fromRGBO(21, 43, 81, 1)
+                                  ? blueColor
                                   : Colors.white,
                               checkColor: Colors.white,
                               value:
@@ -350,7 +351,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                 width:  MediaQuery.of(context).size.width < 500 ? 150 : 165,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
-                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                  color: blueColor,
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.grey,

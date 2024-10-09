@@ -113,7 +113,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                   child: Container(
                                     width: 70,
                                     height: 70,
-                                    color: const Color.fromRGBO(21, 43, 81, 1),
+                                    color:blueColor,
                                     child: Center(
                                       child: Text(
                                         '${_profile?.firstName?[0].toUpperCase() ?? ''}${_profile?.lastName?[0].toUpperCase() ?? ''}',
@@ -132,7 +132,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                   style: TextStyle(
                                     fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 22,
                                     fontWeight: FontWeight.bold,
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                   ),
                                 ),
                                 const SizedBox(height: 8.0),
@@ -141,7 +141,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                   style: TextStyle(
                                     fontSize: MediaQuery.of(context).size.width < 500 ? 13 :  18,
                                     fontWeight: FontWeight.w400,
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                   ),
                                 ),
                                 const SizedBox(height: 8.0),
@@ -150,7 +150,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                   style: TextStyle(
                                     fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 18,
                                     fontWeight: FontWeight.w400,
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                   ),
                                 ),
                               ],
@@ -210,7 +210,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                       "User information",
                                       style: TextStyle(
                                           fontSize: MediaQuery.of(context).size.width < 500 ? 17 : 20,
-                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          color: blueColor,
                                           fontWeight: FontWeight.bold),
                                     ),
                                     const SizedBox(height: 16.0),

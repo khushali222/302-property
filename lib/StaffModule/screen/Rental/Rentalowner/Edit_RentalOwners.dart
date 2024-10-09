@@ -157,10 +157,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
         return Theme(
           data: ThemeData.light().copyWith(
             primaryColor:
-                const Color.fromRGBO(21, 43, 83, 1), // Header background color
+                blueColor, // Header background color
             // accentColor: Colors.white, // Button text color
-            colorScheme: const ColorScheme.light(
-              primary: Color.fromRGBO(21, 43, 83, 1), // Selection color
+            colorScheme:  ColorScheme.light(
+              primary: blueColor, // Selection color
               onPrimary: Colors.white, // Text color
               surface: Colors.white, // Calendar background color
               onSurface: Colors.black, // Calendar text color
@@ -193,10 +193,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
         return Theme(
           data: ThemeData.light().copyWith(
             primaryColor:
-                const Color.fromRGBO(21, 43, 83, 1), // Header background color
+                blueColor, // Header background color
             // accentColor: Colors.white, // Button text color
-            colorScheme: const ColorScheme.light(
-              primary: Color.fromRGBO(21, 43, 83, 1), // Selection color
+            colorScheme:  ColorScheme.light(
+              primary: blueColor, // Selection color
               onPrimary: Colors.white, // Text color
               surface: Colors.white, // Calendar background color
               onSurface: Colors.black, // Calendar text color
@@ -270,7 +270,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                 //Same as `blurRadius` i guess
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
-                  color: Color.fromRGBO(21, 43, 81, 1),
+                  color: blueColor,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey,
@@ -299,7 +299,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                  border: Border.all(color: blueColor),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -314,7 +314,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                           Text(
                             "Personal information",
                             style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -376,7 +376,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: name,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                            blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter first name",
                                           hintStyle: TextStyle(
@@ -487,7 +487,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: comname,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                            blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter company name",
                                           hintStyle: TextStyle(
@@ -569,7 +569,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                  border: Border.all(color: blueColor),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -584,7 +584,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                           Text(
                             "Merchant Id",
                             style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -692,7 +692,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                             FontAwesomeIcons.trashCan,
                                             size: 20,
                                             color:
-                                                Color.fromRGBO(21, 43, 81, 1),
+                                                blueColor,
                                           ),
                                         ),
                                       ),
@@ -726,7 +726,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                       decoration: BoxDecoration(
                                         borderRadius:
                                             BorderRadius.circular(5.0),
-                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                        color: blueColor,
                                         boxShadow: [
                                           BoxShadow(
                                             color: Colors.grey,
@@ -776,7 +776,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                  border: Border.all(color: blueColor),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -791,7 +791,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                           Text(
                             "Management Agreement ",
                             style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -855,7 +855,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                           },
                                           controller: startdateController,
                                           cursorColor:
-                                              Color.fromRGBO(21, 43, 81, 1),
+                                              blueColor,
                                           decoration: InputDecoration(
                                             hintText: "dd - mm - yyyy",
                                             hintStyle: TextStyle(
@@ -981,7 +981,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                           },
                                           controller: enddateController,
                                           cursorColor:
-                                              Color.fromRGBO(21, 43, 81, 1),
+                                              blueColor,
                                           decoration: InputDecoration(
                                             hintText: "dd - mm - yyyy",
                                             hintStyle: TextStyle(
@@ -1318,7 +1318,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                  border: Border.all(color: blueColor),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -1333,7 +1333,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                           Text(
                             "Contact information",
                             style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -1395,7 +1395,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         keyboardType:
                                             TextInputType.emailAddress,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                            blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter primary e-mail",
                                           hintStyle: TextStyle(
@@ -1502,7 +1502,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         keyboardType:
                                             TextInputType.emailAddress,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                            blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter alternative e-mail ",
                                           hintStyle: TextStyle(
@@ -1611,7 +1611,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                             TextInputType.numberWithOptions(
                                                 signed: true, decimal: true),
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                            blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter phone number",
                                           hintStyle: TextStyle(
@@ -1720,7 +1720,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                             TextInputType.numberWithOptions(
                                                 signed: true, decimal: true),
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                            blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter home number",
                                           hintStyle: TextStyle(
@@ -1829,7 +1829,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                             TextInputType.numberWithOptions(
                                                 signed: true, decimal: true),
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                            blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter office number",
                                           hintStyle: TextStyle(
@@ -1934,7 +1934,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: street2,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                            blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter street address",
                                           hintStyle: TextStyle(
@@ -2039,7 +2039,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: city2,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                            blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter city",
                                           hintStyle: TextStyle(
@@ -2144,7 +2144,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: state2,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                            blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter state",
                                           hintStyle: TextStyle(
@@ -2249,7 +2249,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: county2,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                            blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter country",
                                           hintStyle: TextStyle(
@@ -2358,7 +2358,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                                 signed: true, decimal: true),
                                         controller: code2,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                            blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter postal code",
                                           hintStyle: TextStyle(
@@ -2431,7 +2431,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                  border: Border.all(color: blueColor),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -2446,7 +2446,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                           Text(
                             "Tax Payer Information ",
                             style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -2505,7 +2505,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: taxtype,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                            blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter tax identify type",
                                           hintStyle: TextStyle(
@@ -2609,7 +2609,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: taxid,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                            blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter SSN or EIN",
                                           hintStyle: TextStyle(
@@ -2973,7 +2973,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     width: MediaQuery.of(context).size.width < 500 ? 160 : 190,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey,

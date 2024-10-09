@@ -444,7 +444,7 @@ class _AddCardState extends State<AddCard> {
                             //Same as `blurRadius` i guess
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5.0),
-                              color: const Color.fromRGBO(21, 43, 81, 1),
+                              color:blueColor,
                               boxShadow: [
                                 const BoxShadow(
                                   color: Colors.grey,
@@ -832,7 +832,7 @@ class _AddCardState extends State<AddCard> {
                                 child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor:
-                                        const Color.fromRGBO(21, 43, 83, 1),
+                                         blueColor,
                                         shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(8.0))),
                                     onPressed: () async {
@@ -1007,7 +1007,7 @@ class _AddCardState extends State<AddCard> {
                         //Same as `blurRadius` i guess
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5.0),
-                          color: const Color.fromRGBO(21, 43, 81, 1),
+                          color:blueColor,
                           boxShadow: [
                             const BoxShadow(
                               color: Colors.grey,
@@ -1396,7 +1396,7 @@ class _AddCardState extends State<AddCard> {
                             child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor:
-                                        const Color.fromRGBO(21, 43, 83, 1),
+                                         blueColor,
                                     shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(8.0))),
                                 onPressed: () async {

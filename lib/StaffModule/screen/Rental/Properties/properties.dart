@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
+import '../../../../constant/constant.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/custom_drawer.dart';
 
@@ -46,7 +47,7 @@ class _PropertiesState extends State<Properties> {
                   height: 40,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5.0),
-                    color: Color.fromRGBO(21, 43, 81, 1),
+                    color: blueColor,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey,
@@ -76,7 +77,7 @@ class _PropertiesState extends State<Properties> {
                       bottom: 6.0), //Same as `blurRadius` i guess
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5.0),
-                    color: Color.fromRGBO(21, 43, 81, 1),
+                    color: blueColor,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey,

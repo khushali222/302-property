@@ -610,7 +610,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
             size: 30,
             color: _currentPage == 0
                 ? Colors.grey
-                : const Color.fromRGBO(21, 43, 83, 1),
+                : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -904,7 +904,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                   margin: const EdgeInsets.only(bottom: 6.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5.0),
-                    color: const Color.fromRGBO(21, 43, 81, 1),
+                    color:blueColor,
                     boxShadow: [
                       const BoxShadow(
                         color: Colors.grey,
@@ -932,7 +932,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
                     border:
-                        Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
+                        Border.all(color:blueColor),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(
@@ -947,7 +947,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                             Text(
                               "Contact Information",
                               style: TextStyle(
-                                  color: const Color.fromRGBO(21, 43, 81, 1),
+                                  color:blueColor,
                                   fontWeight: FontWeight.bold,
                                   // fontSize: 18
                                   fontSize:
@@ -1049,7 +1049,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                             Text(
                               "Personal Information",
                               style: TextStyle(
-                                  color: const Color.fromRGBO(21, 43, 81, 1),
+                                  color:blueColor,
                                   fontWeight: FontWeight.bold,
                                   // fontSize: 18
                                   fontSize:
@@ -1161,7 +1161,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                             Text(
                               "Emergency Contact",
                               style: TextStyle(
-                                  color: const Color.fromRGBO(21, 43, 81, 1),
+                                  color:blueColor,
                                   fontWeight: FontWeight.bold,
                                   // fontSize: 18
                                   fontSize:
@@ -1324,7 +1324,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                     ? MediaQuery.of(context).size.width * 0.25
                                     : MediaQuery.of(context).size.width * 0.3,
                                 decoration: BoxDecoration(
-                                  color: const Color.fromRGBO(21, 43, 81, 1),
+                                  color:blueColor,
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Center(
@@ -1968,13 +1968,13 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                             },
                           ),
                         const SizedBox(height: 20),
-                        const Row(
+                         Row(
                           children: [
                             SizedBox(width: 2),
                             Text(
                               "Lease Details",
                               style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
                               ),
@@ -2851,7 +2851,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
             size: 30,
             color: _currentPage == 0
                 ? Colors.grey
-                : const Color.fromRGBO(21, 43, 83, 1),
+                : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -2972,7 +2972,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                 width: MediaQuery.of(context).size.width * .15,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
-                                  color: const Color.fromRGBO(21, 43, 81, 1),
+                                  color:blueColor,
                                   boxShadow: [
                                     const BoxShadow(
                                       color: Colors.grey,
@@ -3007,7 +3007,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                 width: MediaQuery.of(context).size.width * .15,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
-                                  color: const Color.fromRGBO(21, 43, 81, 1),
+                                  color:blueColor,
                                   boxShadow: [
                                     const BoxShadow(
                                       color: Colors.grey,
@@ -3046,7 +3046,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                         margin: const EdgeInsets.only(bottom: 6.0),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5.0),
-                          color: const Color.fromRGBO(21, 43, 81, 1),
+                          color:blueColor,
                           boxShadow: [
                             const BoxShadow(
                               color: Colors.grey,
@@ -3079,7 +3079,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                  color: const Color.fromRGBO(21, 43, 81, 1)),
+                                  color:blueColor),
                             ),
                             child: Padding(
                               padding: const EdgeInsets.only(
@@ -3087,7 +3087,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Row(
+                                   Row(
                                     children: [
                                       SizedBox(
                                         width: 2,
@@ -3096,7 +3096,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                         "Contact Information",
                                         style: TextStyle(
                                             color:
-                                                Color.fromRGBO(21, 43, 81, 1),
+                                                blueColor,
                                             fontWeight: FontWeight.bold,
                                             // fontSize: 18
                                             fontSize: 21),
@@ -3213,14 +3213,14 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                    color: const Color.fromRGBO(21, 43, 81, 1)),
+                                    color:blueColor),
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.only(
                                     left: 25, right: 25, top: 20, bottom: 30),
                                 child: Column(
                                   children: [
-                                    const Row(
+                                     Row(
                                       children: [
                                         SizedBox(
                                           width: 2,
@@ -3229,7 +3229,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                           "Personal Information",
                                           style: TextStyle(
                                               color:
-                                                  Color.fromRGBO(21, 43, 81, 1),
+                                                  blueColor,
                                               fontWeight: FontWeight.bold,
                                               // fontSize: 18
                                               fontSize: 21),
@@ -3344,14 +3344,14 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                              color: const Color.fromRGBO(21, 43, 81, 1)),
+                              color:blueColor),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.only(
                               left: 25, right: 25, top: 20, bottom: 30),
                           child: Column(
                             children: [
-                              const Row(
+                               Row(
                                 children: [
                                   SizedBox(
                                     width: 2,
@@ -3359,7 +3359,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                   Text(
                                     "Emergency Contact",
                                     style: TextStyle(
-                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                        color: blueColor,
                                         fontWeight: FontWeight.bold,
                                         // fontSize: 18
                                         fontSize: 21),
@@ -3500,7 +3500,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                            color: const Color.fromRGBO(21, 43, 81, 1)),
+                            color:blueColor),
                       ),
                       child: Padding(
                           padding: const EdgeInsets.only(right: 10, bottom: 15),
@@ -3799,7 +3799,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                              color: const Color.fromRGBO(21, 43, 81, 1)),
+                              color:blueColor),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(0.0),
@@ -3808,13 +3808,13 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Row(
+                                 Row(
                                   children: [
                                     SizedBox(width: 2),
                                     Text(
                                       "Lease Details",
                                       style: TextStyle(
-                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                        color: blueColor,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 21,
                                       ),

@@ -534,7 +534,7 @@ class _enterChargeState extends State<enterCharge> {
                         //Same as `blurRadius` i guess
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5.0),
-                          color: const Color.fromRGBO(21, 43, 81, 1),
+                          color:blueColor,
                           boxShadow: const [
                             BoxShadow(
                               color: Colors.grey,
@@ -1053,13 +1053,13 @@ class _enterChargeState extends State<enterCharge> {
                       2: FlexColumnWidth(1),
                     },
                     children: [
-                      const TableRow(children: [
+ TableRow(children: [
                         Padding(
                           padding: EdgeInsets.all(8.0),
                           child: Center(
                             child: Text('Account',
                                 style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 83, 1),
+                                    color: blueColor,
                                     fontWeight: FontWeight.bold)),
                           ),
                         ),
@@ -1068,7 +1068,7 @@ class _enterChargeState extends State<enterCharge> {
                           child: Center(
                             child: Text('Amount',
                                 style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 83, 1),
+                                    color: blueColor,
                                     fontWeight: FontWeight.bold)),
                           ),
                         ),
@@ -1077,7 +1077,7 @@ class _enterChargeState extends State<enterCharge> {
                           child: Center(
                             child: Text('Actions',
                                 style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 83, 1),
+                                    color: blueColor,
                                     fontWeight: FontWeight.bold)),
                           ),
                         ),
@@ -1100,9 +1100,9 @@ class _enterChargeState extends State<enterCharge> {
                                         enabled: false,
                                         child: Text(
                                           entry.key,
-                                          style: const TextStyle(
+                                          style:  TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            color: Color.fromRGBO(21, 43, 81, 1),
+                                            color: blueColor,
                                           ),
                                         ),
                                       ),
@@ -1272,7 +1272,7 @@ class _enterChargeState extends State<enterCharge> {
                                       MediaQuery.of(context).size.width < 500
                                           ? 16
                                           : 18,
-                                  color: Color.fromRGBO(21, 43, 83, 1),
+                                  color: blueColor,
                                 ),
                               ),
                             ),
@@ -1300,7 +1300,7 @@ class _enterChargeState extends State<enterCharge> {
                     width: double.infinity,
                     decoration: BoxDecoration(
                         border: Border.all(
-                          color: const Color.fromRGBO(21, 43, 83, 1),
+                          color: blueColor,
                         ),
                         borderRadius: BorderRadius.circular(10.0)),
                     child: Padding(

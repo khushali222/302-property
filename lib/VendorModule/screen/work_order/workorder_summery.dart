@@ -199,7 +199,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                     height: 40,
                     width: 80,
                     decoration: const BoxDecoration(
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       borderRadius: BorderRadius.all(
                         Radius.circular(5),
                       ),
@@ -228,8 +228,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                   child: Container(
                     height: 40,
                     width: 100,
-                    decoration: const BoxDecoration(
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                    decoration:  BoxDecoration(
+                      color: blueColor,
                       borderRadius: BorderRadius.all(
                         Radius.circular(5),
                       ),
@@ -285,7 +285,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                  color: const Color.fromRGBO(21, 43, 81, 1)),
+                                  color:blueColor),
                               // color: Colors.blue,
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -295,10 +295,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               indicatorWeight: 5,
                               //indicatorPadding: EdgeInsets.symmetric(horizontal: 1),
                               indicatorColor:
-                                  const Color.fromRGBO(21, 43, 81, 1),
-                              labelColor: const Color.fromRGBO(21, 43, 81, 1),
+                                 blueColor,
+                              labelColor:blueColor,
                               unselectedLabelColor:
-                                  const Color.fromRGBO(21, 43, 81, 1),
+                                 blueColor,
                               tabs: [
                                 const Tab(text: 'Summary'),
                                 const Tab(
@@ -355,7 +355,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                           width: MediaQuery.of(context).size.width * .48,
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            border: Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
+                            border: Border.all(color:blueColor),
                             // color: Colors.blue,
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -369,7 +369,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     decoration: BoxDecoration(
                                       color: blueColor,
                                       border: Border.all(
-                                          color: const Color.fromRGBO(21, 43, 81, 1)),
+                                          color:blueColor),
                                       // color: Colors.blue,
                                       borderRadius: BorderRadius.circular(10),
                                     ),
@@ -1055,13 +1055,13 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   4: FlexColumnWidth(2),
                                 },
                                 children: [
-                                  const TableRow(children: [
+                                   TableRow(children: [
                                     Padding(
                                       padding: EdgeInsets.all(8.0),
                                       child: Text('QTY',
                                           style: TextStyle(
                                               color:
-                                              Color.fromRGBO(21, 43, 83, 1),
+                                              blueColor,
                                               fontWeight: FontWeight.bold)),
                                     ),
                                     Padding(
@@ -1069,7 +1069,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       child: Text('Account',
                                           style: TextStyle(
                                               color:
-                                              Color.fromRGBO(21, 43, 83, 1),
+                                              blueColor,
                                               fontWeight: FontWeight.bold)),
                                     ),
                                     Padding(
@@ -1077,7 +1077,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       child: Text('Description',
                                           style: TextStyle(
                                               color:
-                                              Color.fromRGBO(21, 43, 83, 1),
+                                              blueColor,
                                               fontWeight: FontWeight.bold)),
                                     ),
                                     Padding(
@@ -1085,7 +1085,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       child: Text('Price',
                                           style: TextStyle(
                                               color:
-                                              Color.fromRGBO(21, 43, 83, 1),
+                                              blueColor,
                                               fontWeight: FontWeight.bold)),
                                     ),
                                     Padding(
@@ -1093,7 +1093,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       child: Text('Amount',
                                           style: TextStyle(
                                               color:
-                                              Color.fromRGBO(21, 43, 83, 1),
+                                              blueColor,
                                               fontWeight: FontWeight.bold)),
                                     ),
 
@@ -1187,7 +1187,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   'Add Row',
                                   style: TextStyle(
                                     color:
-                                    Color.fromRGBO(21, 43, 83, 1),
+                                    blueColor,
                                   ),
                                 ),
                               ),
@@ -1206,7 +1206,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           border:
-                          Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
+                          Border.all(color:blueColor),
                           // color: Colors.blue,
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -1292,7 +1292,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        border: Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
+                        border: Border.all(color:blueColor),
                         // color: Colors.blue,
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -1306,7 +1306,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 decoration: BoxDecoration(
                                   color: blueColor,
                                   border: Border.all(
-                                      color: const Color.fromRGBO(21, 43, 81, 1)),
+                                      color:blueColor),
                                   // color: Colors.blue,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -1635,7 +1635,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           border:
-                          Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
+                          Border.all(color:blueColor),
                           // color: Colors.blue,
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -2081,7 +2081,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                           width: MediaQuery.of(context).size.width * .5,
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            border: Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
+                            border: Border.all(color:blueColor),
                             // color: Colors.blue,
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -2095,7 +2095,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     decoration: BoxDecoration(
                                       color: blueColor,
                                       border: Border.all(
-                                          color: const Color.fromRGBO(21, 43, 81, 1)),
+                                          color:blueColor),
                                       // color: Colors.blue,
                                       borderRadius: BorderRadius.circular(10),
                                     ),
@@ -2545,7 +2545,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        border: Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
+                        border: Border.all(color:blueColor),
                         // color: Colors.blue,
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -2559,7 +2559,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 decoration: BoxDecoration(
                                   color: blueColor,
                                   border: Border.all(
-                                      color: const Color.fromRGBO(21, 43, 81, 1)),
+                                      color:blueColor),
                                   // color: Colors.blue,
                                   borderRadius: BorderRadius.circular(10),
                                 ),

@@ -238,8 +238,8 @@ class _buildPlanCardsState extends State<buildPlanCards> {
           children: [
             Container(
               height: 50,
-              decoration: const BoxDecoration(
-                color: Color.fromRGBO(21, 43, 81, 1),
+              decoration:  BoxDecoration(
+                color: blueColor,
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20)),
@@ -273,7 +273,7 @@ class _buildPlanCardsState extends State<buildPlanCards> {
                       style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Color.fromRGBO(21, 43, 81, 1))),
+                          color: blueColor)),
                 ],
               ),
             ),
@@ -296,7 +296,7 @@ class _buildPlanCardsState extends State<buildPlanCards> {
                                 style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
-                                    color: Color.fromRGBO(21, 43, 81, 1))),
+                                    color: blueColor)),
                           ],
                         )),
                       ],
@@ -347,7 +347,7 @@ class _buildPlanCardsState extends State<buildPlanCards> {
                     width: 120,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: const Color.fromRGBO(21, 43, 81, 1),
+                      color:blueColor,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Center(
@@ -368,11 +368,11 @@ class _buildPlanCardsState extends State<buildPlanCards> {
               ),
             ),
             const SizedBox(height: 10),
-            const Center(
+             Center(
                 child: Text(
               "Term Apply",
               style: TextStyle(
-                  color: Color.fromRGBO(21, 43, 81, 1),
+                  color: blueColor,
                   fontWeight: FontWeight.bold),
             )),
             const SizedBox(height: 25),

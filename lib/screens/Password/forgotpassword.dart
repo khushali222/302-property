@@ -235,7 +235,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                               });
                             },
                             controller: email,
-                            cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                            cursorColor: blueColor,
                             decoration: InputDecoration(
                               enabledBorder: emailerror
                                   ? OutlineInputBorder(

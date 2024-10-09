@@ -57,7 +57,7 @@ class _unitScreenState extends State<unitScreen> {
                   borderRadius: BorderRadius.circular(12.0),
                   color: Colors.white,
                   border: Border.all(
-                    color: const Color.fromRGBO(21, 43, 83, 1),
+                    color: blueColor,
                     width: 1,
                   ),
                 ),
@@ -89,7 +89,7 @@ class _unitScreenState extends State<unitScreen> {
                               ),
                               style: ElevatedButton.styleFrom(
                                   backgroundColor:
-                                      const Color.fromRGBO(21, 43, 83, 1),
+                                      blueColor,
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
                                           BorderRadius.circular(12.0))),
@@ -104,7 +104,7 @@ class _unitScreenState extends State<unitScreen> {
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   backgroundColor:
-                                      const Color.fromRGBO(21, 43, 83, 1),
+                                      blueColor,
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
                                           BorderRadius.circular(12.0))),
@@ -186,13 +186,13 @@ class _unitScreenState extends State<unitScreen> {
                           borderRadius: BorderRadius.circular(12.0),
                           color: Colors.white,
                           border: Border.all(
-                            color: const Color.fromRGBO(21, 43, 83, 1),
+                            color: blueColor,
                             width: 1,
                           ),
                         ),
                         child: Column(
                           children: [
-                            const Padding(
+                             Padding(
                               padding: EdgeInsets.all(8.0),
                               child: SizedBox(
                                 width: double.infinity,
@@ -200,7 +200,7 @@ class _unitScreenState extends State<unitScreen> {
                                   'Add Lease',
                                   style: TextStyle(
                                     fontSize: 12,
-                                    color: Color.fromRGBO(21, 43, 83, 1),
+                                    color: blueColor,
                                   ),
                                 ),
                               ),
@@ -221,14 +221,14 @@ class _unitScreenState extends State<unitScreen> {
                                   ),
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor:
-                                          const Color.fromRGBO(21, 43, 83, 1),
+                                          blueColor,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10.0))),
                                 ),
                               ),
                             ),
-                            const Padding(
+                             Padding(
                               padding: EdgeInsets.all(8.0),
                               child: SizedBox(
                                 width: double.infinity,
@@ -236,7 +236,7 @@ class _unitScreenState extends State<unitScreen> {
                                   'Rental Applicant',
                                   style: TextStyle(
                                     fontSize: 12,
-                                    color: Color.fromRGBO(21, 43, 83, 1),
+                                    color: blueColor,
                                   ),
                                 ),
                               ),
@@ -257,7 +257,7 @@ class _unitScreenState extends State<unitScreen> {
                                   ),
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor:
-                                          const Color.fromRGBO(21, 43, 83, 1),
+                                          blueColor,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10.0))),
@@ -460,7 +460,7 @@ class _LeasesTableState extends State<LeasesTable> {
             size: 30,
             FontAwesomeIcons.circleChevronLeft,
             color:
-            _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+            _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -816,7 +816,7 @@ class _LeasesTableState extends State<LeasesTable> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
+           Padding(
             padding: EdgeInsets.all(8.0),
             child: SizedBox(
               width: double.infinity,
@@ -824,7 +824,7 @@ class _LeasesTableState extends State<LeasesTable> {
                 'Leases',
                 style: TextStyle(
                     fontSize: 16,
-                    color: Color.fromRGBO(21, 43, 83, 1),
+                    color: blueColor,
                     fontWeight: FontWeight.w500),
               ),
             ),
@@ -1150,7 +1150,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                       FontAwesomeIcons.circleChevronLeft,
                                       color: currentPage == 0
                                           ? Colors.grey
-                                          : Color.fromRGBO(21, 43, 83, 1),
+                                          : blueColor,
                                     ),
                                     onPressed: currentPage == 0
                                         ? null
@@ -1186,7 +1186,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                     icon: FaIcon(
                                       FontAwesomeIcons.circleChevronRight,
                                       color: currentPage < totalPages - 1
-                                          ? Color.fromRGBO(21, 43, 83, 1)
+                                          ? blueColor
                                           : Colors.grey,
                                     ),
                                     onPressed: currentPage < totalPages - 1
@@ -1570,7 +1570,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
             size: 30,
             FontAwesomeIcons.circleChevronLeft,
             color:
-            _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+            _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -1942,11 +1942,11 @@ class _AppliancesPartState extends State<AppliancesPart> {
             children: [
               Row(
                 children: [
-                  const Text(
+                   Text(
                     'Appliances',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Color.fromRGBO(21, 43, 83, 1),
+                      color: blueColor,
                     ),
                   ),
                   Padding(
@@ -2004,12 +2004,12 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                             builder: (BuildContext context, Widget? child) {
                                               return Theme(
                                                 data: ThemeData.light().copyWith(
-                                                  // primaryColor: Color.fromRGBO(21, 43, 83, 1),
-                                                  //  hintColor: Color.fromRGBO(21, 43, 83, 1),
+                                                  // primaryColor: blueColor,
+                                                  //  hintColor: blueColor,
                                                   colorScheme: ColorScheme.light(
-                                                    primary: Color.fromRGBO(21, 43, 83, 1),
-                                                    // onPrimary:Color.fromRGBO(21, 43, 83, 1),
-                                                    //  surface: Color.fromRGBO(21, 43, 83, 1),
+                                                    primary: blueColor,
+                                                    // onPrimary:blueColor,
+                                                    //  surface: blueColor,
                                                     onSurface: Colors.black,
                                                   ),
                                                   buttonTheme: ButtonThemeData(
@@ -2171,7 +2171,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                            color: const Color.fromRGBO(21, 43, 83, 1),
+                            color: blueColor,
                             width: 1,
                           ),
                         ),
@@ -2546,7 +2546,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                           FontAwesomeIcons.circleChevronLeft,
                                           color: currentPage == 0
                                               ? Colors.grey
-                                              : Color.fromRGBO(21, 43, 83, 1),
+                                              : blueColor,
                                         ),
                                         onPressed: currentPage == 0
                                             ? null
@@ -2582,7 +2582,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                         icon: FaIcon(
                                           FontAwesomeIcons.circleChevronRight,
                                           color: currentPage < totalPages - 1
-                                              ? Color.fromRGBO(21, 43, 83, 1)
+                                              ? blueColor
                                               : Colors.grey,
                                         ),
                                         onPressed: currentPage < totalPages - 1

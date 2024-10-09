@@ -290,7 +290,7 @@ class _RenewleaseState extends State<Renewlease> {
                 //Same as `blurRadius` i guess
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
-                  color: const Color.fromRGBO(21, 43, 81, 1),
+                  color:blueColor,
                   boxShadow: const [
                     BoxShadow(
                       color: Colors.grey,
@@ -360,7 +360,7 @@ class _RenewleaseState extends State<Renewlease> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                    color: const Color.fromRGBO(21, 43, 81, 1)),
+                                    color:blueColor),
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.only(
@@ -496,7 +496,7 @@ class _RenewleaseState extends State<Renewlease> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                    color: const Color.fromRGBO(21, 43, 81, 1)),
+                                    color:blueColor),
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.only(
@@ -948,14 +948,14 @@ class _RenewleaseState extends State<Renewlease> {
                                         2: FlexColumnWidth(1),
                                       },
                                       children: [
-                                        const TableRow(children: [
+                                         TableRow(children: [
                                           Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Center(
                                               child: Text('Account',
                                                   style: TextStyle(
                                                       color:
-                                                      Color.fromRGBO(21, 43, 83, 1),
+                                                      blueColor,
                                                       fontWeight: FontWeight.bold)),
                                             ),
                                           ),
@@ -965,7 +965,7 @@ class _RenewleaseState extends State<Renewlease> {
                                               child: Text('Amount',
                                                   style: TextStyle(
                                                       color:
-                                                      Color.fromRGBO(21, 43, 83, 1),
+                                                      blueColor,
                                                       fontWeight: FontWeight.bold)),
                                             ),
                                           ),
@@ -975,7 +975,7 @@ class _RenewleaseState extends State<Renewlease> {
                                               child: Text('Actions',
                                                   style: TextStyle(
                                                       color:
-                                                      Color.fromRGBO(21, 43, 83, 1),
+                                                      blueColor,
                                                       fontWeight: FontWeight.bold)),
                                             ),
                                           ),
@@ -1181,7 +1181,7 @@ class _RenewleaseState extends State<Renewlease> {
                                                         ? 14
                                                         : 18,
                                                     color:
-                                                    Color.fromRGBO(21, 43, 83, 1),
+                                                    blueColor,
                                                   ),
                                                 ),
                                               ),

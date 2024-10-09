@@ -138,7 +138,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
             size: 30,
             color: _currentPage == 0
                 ? Colors.grey
-                : const Color.fromRGBO(21, 43, 83, 1),
+                : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -1152,7 +1152,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                       FontAwesomeIcons.circleChevronLeft,
                                       color: currentPage == 0
                                           ? Colors.grey
-                                          : Color.fromRGBO(21, 43, 83, 1),
+                                          : blueColor,
                                     ),
                                     onPressed: currentPage == 0
                                         ? null
@@ -1168,7 +1168,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                     icon: FaIcon(
                                       FontAwesomeIcons.circleChevronRight,
                                       color: currentPage < totalPages - 1
-                                          ? Color.fromRGBO(21, 43, 83, 1)
+                                          ? blueColor
                                           : Colors.grey,
                                     ),
                                     onPressed: currentPage < totalPages - 1
@@ -1397,13 +1397,13 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                       border: Border(
                                         left: BorderSide(
                                             color:
-                                                Color.fromRGBO(21, 43, 81, 1)),
+                                                blueColor),
                                         right: BorderSide(
                                             color:
-                                                Color.fromRGBO(21, 43, 81, 1)),
+                                                blueColor),
                                         top: BorderSide(
                                             color:
-                                                Color.fromRGBO(21, 43, 81, 1)),
+                                                blueColor),
                                         bottom: i == pagedData.length - 1
                                             ? BorderSide(
                                                 color: Color.fromRGBO(

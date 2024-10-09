@@ -10,6 +10,7 @@ import 'package:three_zero_two_property/repository/Staffmember.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
+import '../../constant/constant.dart';
 import '../../repository/Property_type.dart';
 import '../../widgets/drawer_tiles.dart';
 import '../../widgets/custom_drawer.dart';
@@ -78,7 +79,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                 //Same as `blurRadius` i guess
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
-                  color: Color.fromRGBO(21, 43, 81, 1),
+                  color: blueColor,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey,
@@ -107,7 +108,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                  border: Border.all(color: blueColor),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -122,7 +123,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                           Text(
                             "New Staff Member",
                             style: TextStyle(
-                                color: Color.fromRGBO(21, 43, 81, 1),
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -181,7 +182,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                         },
                                         controller: name,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                            blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter staff member name",
                                           hintStyle: TextStyle(
@@ -283,7 +284,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                         },
                                         controller: designation,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                            blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter designation",
                                           hintStyle: TextStyle(
@@ -389,7 +390,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                             TextInputType.numberWithOptions(
                                                 signed: true, decimal: true),
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                            blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter phone number",
                                           hintStyle: TextStyle(
@@ -493,7 +494,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                             TextInputType.emailAddress,
                                         controller: email,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                            blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter email",
                                           hintStyle: TextStyle(
@@ -595,7 +596,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                         },
                                         controller: password,
                                         cursorColor:
-                                            Color.fromRGBO(21, 43, 81, 1),
+                                            blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter password",
                                           hintStyle: TextStyle(
@@ -779,7 +780,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                     : 180,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
-                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                  color: blueColor,
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.grey,

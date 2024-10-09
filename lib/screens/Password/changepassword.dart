@@ -148,7 +148,7 @@ class _ChangepasswordState extends State<Changepassword> {
                                   },
                                   obscureText: visiable_password,
                                   controller: password,
-                                  cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                  cursorColor: blueColor,
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                     contentPadding: EdgeInsets.all(14),
@@ -234,7 +234,7 @@ class _ChangepasswordState extends State<Changepassword> {
                                   },
                                   obscureText: visiable_password_confirm,
                                   controller: confirmpassword,
-                                  cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                  cursorColor: blueColor,
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                     contentPadding: EdgeInsets.all(14),

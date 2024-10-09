@@ -36,7 +36,7 @@ Widget buildListTile(
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 20),
     decoration: BoxDecoration(
-      color: active ? Color.fromRGBO(21, 43, 81, 1) : Colors.transparent,
+      color: active ? blueColor : Colors.transparent,
       borderRadius: BorderRadius.circular(10),
     ),
     padding: EdgeInsets.symmetric(horizontal: 16),
@@ -123,7 +123,7 @@ Widget buildDropdownListTile(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Container(
             decoration: BoxDecoration(
-              color: active ? Color.fromRGBO(21, 43, 81, 1) : Colors.transparent,
+              color: active ? blueColor : Colors.transparent,
               borderRadius: BorderRadius.circular(10),
             ),
             child: ListTile(

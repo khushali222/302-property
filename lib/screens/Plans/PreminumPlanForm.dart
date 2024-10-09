@@ -266,14 +266,14 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Row(
+                     Row(
                       children: [
                         Text(
                           "1. Enter the company Address",
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
-                              color: Color.fromRGBO(21, 43, 81, 1)),
+                              color: blueColor),
                         ),
                       ],
                     ),
@@ -291,9 +291,9 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                     SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                     Text(
                       "Street Address 1 * ${widget.plan.planName}",
-                      style: const TextStyle(
+                      style:  TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Color.fromRGBO(21, 43, 81, 1)),
+                          color: blueColor),
                     ),
                     const SizedBox(
                       height: 10,
@@ -313,7 +313,7 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                     //   "Street Address 2 *",
                     //   style: TextStyle(
                     //       fontWeight: FontWeight.bold,
-                    //       color: Color.fromRGBO(21, 43, 81, 1)),
+                    //       color: blueColor),
                     // ),
                     // const SizedBox(
                     //   height: 10,
@@ -329,11 +329,11 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                     //   },
                     // ),
                     // SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    const Text(
+                     Text(
                       "City *",
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Color.fromRGBO(21, 43, 81, 1)),
+                          color: blueColor),
                     ),
                     const SizedBox(
                       height: 10,
@@ -349,11 +349,11 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                       },
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    const Text(
+                     Text(
                       "State *",
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Color.fromRGBO(21, 43, 81, 1)),
+                          color: blueColor),
                     ),
                     const SizedBox(
                       height: 10,
@@ -369,11 +369,11 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                       },
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    const Text(
+                     Text(
                       "Postal Code *",
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Color.fromRGBO(21, 43, 81, 1)),
+                          color: blueColor),
                     ),
                     const SizedBox(
                       height: 10,
@@ -390,11 +390,11 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                       },
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    const Text(
+                     Text(
                       "Country *",
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Color.fromRGBO(21, 43, 81, 1)),
+                          color: blueColor),
                     ),
                     const SizedBox(
                       height: 10,
@@ -481,7 +481,7 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Row(
+                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               // SizedBox(
@@ -493,7 +493,7 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                                   "2.Review the subscription and enter the payment information",
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                   ),
                                 ),
                               ),
@@ -523,7 +523,7 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                const Row(
+                                 Row(
                                   children: [
                                     SizedBox(
                                       width: 15,
@@ -532,7 +532,7 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                                       "Subtotal",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          color: blueColor,
                                           fontSize: 16),
                                     ),
                                   ],
@@ -628,19 +628,19 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                                     const SizedBox(
                                       width: 12,
                                     ),
-                                    const Text(
+                                     Text(
                                       "Total:",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          color: blueColor,
                                           fontSize: 13),
                                     ),
                                     const Spacer(),
                                     Text(
                                       "\$${widget.plan.planPrice}",
-                                      style: const TextStyle(
+                                      style:  TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          color: blueColor,
                                           fontSize: 13),
                                     ),
                                     const SizedBox(
@@ -674,7 +674,7 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                const Row(
+                                 Row(
                                   children: [
                                     SizedBox(
                                       width: 15,
@@ -683,7 +683,7 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                                       "Payment information",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          color: blueColor,
                                           fontSize: 16),
                                     ),
                                   ],

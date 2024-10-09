@@ -162,7 +162,7 @@ class _SignupState extends State<Signup> {
                                 });
                               },
                               controller: firstname,
-                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                              cursorColor: blueColor,
                               decoration: InputDecoration(
                                 enabledBorder: firstnameerror
                                     ? OutlineInputBorder(
@@ -226,7 +226,7 @@ class _SignupState extends State<Signup> {
                                 });
                               },
                               controller: lastname,
-                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                              cursorColor: blueColor,
                               decoration: InputDecoration(
                                 enabledBorder: lastnameerror
                                     ? OutlineInputBorder(
@@ -292,7 +292,7 @@ class _SignupState extends State<Signup> {
                               },
                               controller: email,
                               keyboardType: TextInputType.emailAddress,
-                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                              cursorColor: blueColor,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 enabledBorder: emailerror

@@ -63,7 +63,7 @@ class widget_302 {
           child: Container(
             margin: const EdgeInsets.symmetric(vertical: 12),
             decoration: BoxDecoration(
-              color: const Color.fromRGBO(21, 43, 81, 1),
+              color:blueColor,
               borderRadius: BorderRadius.circular(5),
             ),
             child: Consumer<checkPlanPurchaseProiver>(
@@ -100,7 +100,7 @@ class widget_302 {
           child: Icon(
             Icons.notifications_outlined,
             size:  MediaQuery.of(context).size.width > 500 ?35 :25,
-            color: Color.fromRGBO(21, 43, 81, 1),
+            color: blueColor,
           ),
         ),
         const SizedBox(
@@ -113,7 +113,7 @@ class widget_302 {
               return Container(
                 margin: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
-                  color: const Color.fromRGBO(21, 43, 81, 1),
+                  color:blueColor,
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: PopupMenuButton(

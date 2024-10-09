@@ -451,7 +451,7 @@ class _StaffTableState extends State<StaffTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () => Navigator.pop(context),
-          color: Color.fromRGBO(21, 43, 83, 1),
+          color: blueColor,
         ),
         /* DialogButton(
           child: Text(
@@ -531,7 +531,7 @@ class _StaffTableState extends State<StaffTable> {
                           ? MediaQuery.of(context).size.width * 0.25
                           : MediaQuery.of(context).size.width * 0.25,
                       decoration: BoxDecoration(
-                        color: Color.fromRGBO(21, 43, 81, 1),
+                        color: blueColor,
                         borderRadius: BorderRadius.circular(5),
                         boxShadow: [
                           BoxShadow(
@@ -964,7 +964,7 @@ class _StaffTableState extends State<StaffTable> {
                                                         //         icon: FaIcon(
                                                         //           FontAwesomeIcons.edit,
                                                         //           size: 20,
-                                                        //           color: Color.fromRGBO(21, 43, 83, 1),
+                                                        //           color: blueColor,
                                                         //         ),
                                                         //         onPressed: () async {
                                                         //           var check = await Navigator.push(
@@ -984,7 +984,7 @@ class _StaffTableState extends State<StaffTable> {
                                                         //         icon: FaIcon(
                                                         //           FontAwesomeIcons.trashCan,
                                                         //           size: 20,
-                                                        //           color: Color.fromRGBO(21, 43, 83, 1),
+                                                        //           color: blueColor,
                                                         //         ),
                                                         //         onPressed: () {
                                                         //           _showDeleteAlert(context, staffmembers.staffmemberId!);
@@ -1133,7 +1133,7 @@ class _StaffTableState extends State<StaffTable> {
                                         FontAwesomeIcons.circleChevronLeft,
                                         color: currentPage == 0
                                             ? Colors.grey
-                                            : Color.fromRGBO(21, 43, 83, 1),
+                                            : blueColor,
                                       ),
                                       onPressed: currentPage == 0
                                           ? null
@@ -1169,7 +1169,7 @@ class _StaffTableState extends State<StaffTable> {
                                       icon: FaIcon(
                                         FontAwesomeIcons.circleChevronRight,
                                         color: currentPage < totalPages - 1
-                                            ? Color.fromRGBO(21, 43, 83, 1)
+                                            ? blueColor
                                             : Colors.grey,
                                       ),
                                       onPressed: currentPage < totalPages - 1
@@ -1453,7 +1453,7 @@ class _StaffTableState extends State<StaffTable> {
             FontAwesomeIcons.circleChevronLeft,
             size: 30,
             color:
-                _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+                _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null

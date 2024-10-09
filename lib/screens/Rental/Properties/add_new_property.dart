@@ -686,7 +686,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                     padding: EdgeInsets.only(top: 10, left: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey,
@@ -714,7 +714,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                      border: Border.all(color: blueColor),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.only(
@@ -730,7 +730,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 "New Property ",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                     fontSize:
                                         MediaQuery.of(context).size.width < 500
                                             ? 17
@@ -769,7 +769,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               Text(
                                 "What is the property type?",
                                 style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize:
                                         MediaQuery.of(context).size.width < 500
@@ -900,7 +900,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                               ),
                                                                               Text(
                                                                                 "New Property Type",
-                                                                                style: TextStyle(fontWeight: FontWeight.bold, color: Color.fromRGBO(21, 43, 81, 1), fontSize: MediaQuery.of(context).size.width < 500 ? 17 : 22),
+                                                                                style: TextStyle(fontWeight: FontWeight.bold, color: blueColor, fontSize: MediaQuery.of(context).size.width < 500 ? 17 : 22),
                                                                               ),
                                                                             ],
                                                                           ),
@@ -1064,7 +1064,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                   borderRadius: BorderRadius.circular(5),
                                                                                 ),
                                                                                 child: Checkbox(
-                                                                                  activeColor: isChecked ? Color.fromRGBO(21, 43, 81, 1) : Colors.white,
+                                                                                  activeColor: isChecked ? blueColor : Colors.white,
                                                                                   checkColor: Colors.white,
                                                                                   value: isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
                                                                                   onChanged: (value) {
@@ -1135,7 +1135,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                     width: MediaQuery.of(context).size.width < 500 ? 130 : 165,
                                                                                     decoration: BoxDecoration(
                                                                                       borderRadius: BorderRadius.circular(5.0),
-                                                                                      color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                      color: blueColor,
                                                                                       boxShadow: [
                                                                                         BoxShadow(
                                                                                           color: Colors.grey,
@@ -1356,7 +1356,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               Text(
                                 "What is the street  address?",
                                 style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize:
                                         MediaQuery.of(context).size.width < 500
@@ -1424,7 +1424,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                           },
                                           controller: address,
                                           cursorColor:
-                                              Color.fromRGBO(21, 43, 81, 1),
+                                              blueColor,
                                           decoration: InputDecoration(
                                             enabledBorder: addresserror
                                                 ? OutlineInputBorder(
@@ -1967,7 +1967,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                      border: Border.all(color: blueColor),
                     ),
                     child: Padding(
                         padding: const EdgeInsets.only(
@@ -1983,7 +1983,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   "Owner Information",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Color.fromRGBO(21, 43, 81, 1),
+                                      color: blueColor,
                                       fontSize:
                                           MediaQuery.of(context).size.width <
                                                   500
@@ -2333,7 +2333,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                      border: Border.all(color: blueColor),
                     ),
                     child: Padding(
                         padding: const EdgeInsets.only(
@@ -2396,7 +2396,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   "Manage (Optional)",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Color.fromRGBO(21, 43, 81, 1),
+                                      color: blueColor,
                                       fontSize: 15),
                                 ),
                               ],
@@ -2579,7 +2579,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 });
                                                                               },
                                                                               controller: name,
-                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                              cursorColor: blueColor,
                                                                               decoration: InputDecoration(
                                                                                 hintText: "Enter a staff member name here..*",
                                                                                 hintStyle: TextStyle(
@@ -2683,7 +2683,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 });
                                                                               },
                                                                               controller: designation,
-                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                              cursorColor: blueColor,
                                                                               decoration: InputDecoration(
                                                                                 hintText: "Enter Designation here..*",
                                                                                 hintStyle: TextStyle(
@@ -2787,7 +2787,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 });
                                                                               },
                                                                               controller: phonenumber,
-                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                              cursorColor: blueColor,
                                                                               decoration: InputDecoration(
                                                                                 hintText: "Enter Phone Number here..*",
                                                                                 hintStyle: TextStyle(
@@ -2891,7 +2891,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 });
                                                                               },
                                                                               controller: email,
-                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                              cursorColor: blueColor,
                                                                               decoration: InputDecoration(
                                                                                 hintText: "Enter Email here..*",
                                                                                 hintStyle: TextStyle(
@@ -2995,7 +2995,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 });
                                                                               },
                                                                               controller: password,
-                                                                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                                                                              cursorColor: blueColor,
                                                                               decoration: InputDecoration(
                                                                                 hintText: "Enter Password here..*",
                                                                                 hintStyle: TextStyle(
@@ -3415,7 +3415,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
                         border:
-                            Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                            Border.all(color: blueColor),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.only(
@@ -3529,7 +3529,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                         "Add another unit",
                                         style: TextStyle(
                                             color:
-                                                Color.fromRGBO(21, 43, 81, 1),
+                                                blueColor,
                                            // fontWeight: FontWeight.bold,
                                             fontSize: 14),
                                       ),
@@ -3553,7 +3553,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
                         border:
-                            Border.all(color: Color.fromRGBO(21, 43, 81, 1)),
+                            Border.all(color: blueColor),
                       ),
                       child: Padding(
                           padding: const EdgeInsets.only(
@@ -3664,7 +3664,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                           "Add another unit",
                                           style: TextStyle(
                                               color:
-                                                  Color.fromRGBO(21, 43, 81, 1),
+                                                  blueColor,
                                               fontWeight: FontWeight.bold,
                                               fontSize: 14),
                                         ),
@@ -3935,7 +3935,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                           height: 45,
                           width: MediaQuery.of(context).size.width * .35,
                           decoration: BoxDecoration(
-                            color: Color.fromRGBO(21, 43, 81, 1),
+                            color: blueColor,
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.grey,
@@ -4000,7 +4000,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                   group.isChecked = value ?? false;
                 });
               },
-              activeColor: Color.fromRGBO(21, 43, 81, 1),
+              activeColor: blueColor,
             ),
           ),
           SizedBox(width: MediaQuery.of(context).size.width * .02),
@@ -4020,7 +4020,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                     Positioned.fill(
                       child: TextField(
                         controller: group.controller,
-                        cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                        cursorColor: blueColor,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.only(
@@ -4048,7 +4048,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
               child: FaIcon(
                 FontAwesomeIcons.trashCan,
                 size: 20,
-                color: Color.fromRGBO(21, 43, 81, 1),
+                color: blueColor,
               ),
             ),
           ),
@@ -4120,7 +4120,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     group.isChecked = value ?? false;
                                   });
                                 },
-                                activeColor: Color.fromRGBO(21, 43, 81, 1),
+                                activeColor: blueColor,
                               ),
                             ),
                             SizedBox(
@@ -4143,7 +4143,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                         child: TextField(
                                           controller: group.controller,
                                           cursorColor:
-                                              Color.fromRGBO(21, 43, 81, 1),
+                                              blueColor,
                                           decoration: InputDecoration(
                                             border: InputBorder.none,
                                             contentPadding: EdgeInsets.only(
@@ -4174,7 +4174,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 child: FaIcon(
                                   FontAwesomeIcons.trashCan,
                                   size: 20,
-                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                  color: blueColor,
                                 ),
                               ),
                             ),

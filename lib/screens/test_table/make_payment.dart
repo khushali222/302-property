@@ -501,7 +501,7 @@ class _MakePaymentState extends State<MakePayment> {
                     //Same as `blurRadius` i guess
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
-                      color: const Color.fromRGBO(21, 43, 81, 1),
+                      color:blueColor,
                       boxShadow: const [
                         BoxShadow(
                           color: Colors.grey,
@@ -528,7 +528,7 @@ class _MakePaymentState extends State<MakePayment> {
                     width: double.infinity,
                     decoration: BoxDecoration(
                         border: Border.all(
-                          color: const Color.fromRGBO(21, 43, 83, 1),
+                          color: blueColor,
                         ),
                         borderRadius: BorderRadius.circular(10.0)),
                     child: Column(
@@ -820,7 +820,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                 width: MediaQuery.of(context).size.width * .2,
                                                 decoration: BoxDecoration(
                                                   borderRadius: BorderRadius.circular(5.0),
-                                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                                  color: blueColor,
                                                   boxShadow: [
                                                     BoxShadow(
                                                       color: Colors.grey,
@@ -1059,7 +1059,7 @@ class _MakePaymentState extends State<MakePayment> {
                         //           child: Center(
                         //             child: Text('Account',
                         //                 style: TextStyle(
-                        //                     color: Color.fromRGBO(21, 43, 83, 1),
+                        //                     color: blueColor,
                         //                     fontWeight: FontWeight.bold)),
                         //           ),
                         //         ),
@@ -1068,7 +1068,7 @@ class _MakePaymentState extends State<MakePayment> {
                         //           child: Center(
                         //             child: Text('Amount',
                         //                 style: TextStyle(
-                        //                     color: Color.fromRGBO(21, 43, 83, 1),
+                        //                     color: blueColor,
                         //                     fontWeight: FontWeight.bold)),
                         //           ),
                         //         ),
@@ -1077,7 +1077,7 @@ class _MakePaymentState extends State<MakePayment> {
                         //           child: Center(
                         //             child: Text('Actions',
                         //                 style: TextStyle(
-                        //                     color: Color.fromRGBO(21, 43, 83, 1),
+                        //                     color: blueColor,
                         //                     fontWeight: FontWeight.bold)),
                         //           ),
                         //         ),
@@ -1103,7 +1103,7 @@ class _MakePaymentState extends State<MakePayment> {
                         //                           entry.key,
                         //                           style: const TextStyle(
                         //                             fontWeight: FontWeight.bold,
-                        //                             color: Color.fromRGBO(21, 43, 81, 1),
+                        //                             color: blueColor,
                         //                           ),
                         //                         ),
                         //                       ),
@@ -1226,7 +1226,7 @@ class _MakePaymentState extends State<MakePayment> {
                         //               child: const Text(
                         //                 'Add Row',
                         //                 style: TextStyle(
-                        //                   color: Color.fromRGBO(21, 43, 83, 1),
+                        //                   color: blueColor,
                         //                 ),
                         //               ),
                         //             ),
@@ -1289,9 +1289,9 @@ class _MakePaymentState extends State<MakePayment> {
                                                     enabled: false,
                                                     child: Text(
                                                       entry.key,
-                                                      style: const TextStyle(
+                                                      style:  TextStyle(
                                                         fontWeight: FontWeight.bold,
-                                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                                        color: blueColor,
                                                       ),
                                                     ),
                                                   ),
@@ -1437,7 +1437,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   width: MediaQuery.of(context).size.width * .33,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5.0),
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.grey,

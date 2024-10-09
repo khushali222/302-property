@@ -9,6 +9,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
+import '../../constant/constant.dart';
 import '../../widgets/drawer_tiles.dart';
 import '../../widgets/custom_drawer.dart';
 void main() {
@@ -133,14 +134,14 @@ class _PlanformState extends State<Planform> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  const Row(
+                   Row(
                     children: [
                       Text(
                         "1.Enter the company Address",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
-                            color: Color.fromRGBO(21, 43, 81, 1)),
+                            color: blueColor),
                       ),
                     ],
                   ),
@@ -156,13 +157,13 @@ class _PlanformState extends State<Planform> {
                     ],
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  const Row(
+                   Row(
                     children: [
                       Text(
                         "Street Address *",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Color.fromRGBO(21, 43, 81, 1)),
+                            color: blueColor),
                       ),
                     ],
                   ),
@@ -185,7 +186,7 @@ class _PlanformState extends State<Planform> {
                               });
                             },
                             controller: streetaddress1,
-                            cursorColor: const Color.fromRGBO(21, 43, 81, 1),
+                            cursorColor:blueColor,
                             decoration: InputDecoration(
                               enabledBorder: streetaddress1error
                                   ? OutlineInputBorder(
@@ -231,7 +232,7 @@ class _PlanformState extends State<Planform> {
                               });
                             },
                             controller: streetaddress2,
-                            cursorColor: const Color.fromRGBO(21, 43, 81, 1),
+                            cursorColor:blueColor,
                             decoration: InputDecoration(
                               enabledBorder: streetaddress2error
                                   ? OutlineInputBorder(
@@ -267,29 +268,29 @@ class _PlanformState extends State<Planform> {
                     children: [
                       Row(
                         children: [
-                          const Text(
+                           Text(
                             "City *",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Color.fromRGBO(21, 43, 81, 1)),
+                                color: blueColor),
                           ),
                           SizedBox(
                             width: 80,
                           ),
-                          const Text(
+                           Text(
                             "State *",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Color.fromRGBO(21, 43, 81, 1)),
+                                color: blueColor),
                           ),
                           SizedBox(
                             width: 65,
                           ),
-                          const Text(
+                           Text(
                             "Postal code *",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Color.fromRGBO(21, 43, 81, 1)),
+                                color: blueColor),
                           ),
                         ],
                       ),
@@ -319,7 +320,7 @@ class _PlanformState extends State<Planform> {
                                         },
                                         controller: city,
                                         cursorColor:
-                                            const Color.fromRGBO(21, 43, 81, 1),
+                                           blueColor,
                                         decoration: InputDecoration(
                                           enabledBorder: cityerror
                                               ? OutlineInputBorder(
@@ -380,7 +381,7 @@ class _PlanformState extends State<Planform> {
                                         },
                                         controller: state,
                                         cursorColor:
-                                            const Color.fromRGBO(21, 43, 81, 1),
+                                           blueColor,
                                         decoration: InputDecoration(
                                           enabledBorder: stateerror
                                               ? OutlineInputBorder(
@@ -441,7 +442,7 @@ class _PlanformState extends State<Planform> {
                                         },
                                         controller: postalcode,
                                         cursorColor:
-                                            const Color.fromRGBO(21, 43, 81, 1),
+                                           blueColor,
                                         decoration: InputDecoration(
                                           enabledBorder: postalcodeerror
                                               ? OutlineInputBorder(
@@ -485,13 +486,13 @@ class _PlanformState extends State<Planform> {
                   SizedBox(
                     height: 10,
                   ),
-                  const Row(
+                   Row(
                     children: [
                       Text(
                         "Country *",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Color.fromRGBO(21, 43, 81, 1)),
+                            color: blueColor),
                       ),
                     ],
                   ),
@@ -633,7 +634,7 @@ class _PlanformState extends State<Planform> {
                           height: MediaQuery.of(context).size.height * 0.05,
                           width: MediaQuery.of(context).size.width * 0.25,
                           decoration: BoxDecoration(
-                            color: const Color.fromRGBO(21, 43, 81, 1),
+                            color:blueColor,
                             borderRadius: BorderRadius.circular(5),
                           ),
                           child: Center(
@@ -667,12 +668,12 @@ class _PlanformState extends State<Planform> {
                             SizedBox(
                               width: MediaQuery.of(context).size.width * .099,
                             ),
-                            const Expanded(
+                             Expanded(
                               child: Text(
                                 "2.Review the subscription and enter the payment information",
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: Color.fromRGBO(21, 43, 81, 1),
+                                  color: blueColor,
                                 ),
                               ),
                             ),
@@ -696,7 +697,7 @@ class _PlanformState extends State<Planform> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: const Column(
+                              child:  Column(
                                 children: [
                                   SizedBox(
                                     height: 20,
@@ -711,7 +712,7 @@ class _PlanformState extends State<Planform> {
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color:
-                                                Color.fromRGBO(21, 43, 81, 1),
+                                                blueColor,
                                             fontSize: 12),
                                       ),
                                     ],
@@ -789,7 +790,7 @@ class _PlanformState extends State<Planform> {
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color:
-                                                Color.fromRGBO(21, 43, 81, 1),
+                                                blueColor,
                                             fontSize: 12),
                                       ),
                                       Spacer(),
@@ -798,7 +799,7 @@ class _PlanformState extends State<Planform> {
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color:
-                                                Color.fromRGBO(21, 43, 81, 1),
+                                                blueColor,
                                             fontSize: 12),
                                       ),
                                       SizedBox(
@@ -830,14 +831,14 @@ class _PlanformState extends State<Planform> {
                                 children: [
                                   const SizedBox(height: 20),
                                   // Subtotal
-                                  const Row(
+                                   Row(
                                     children: [
                                       SizedBox(width: 15),
                                       Text(
                                         "Subtotal",
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          color: blueColor,
                                           fontSize: 12,
                                         ),
                                       ),
@@ -1376,7 +1377,7 @@ class _PlanformState extends State<Planform> {
                                     MediaQuery.of(context).size.height * 0.05,
                                 width: MediaQuery.of(context).size.width * 0.25,
                                 decoration: BoxDecoration(
-                                  color: const Color.fromRGBO(21, 43, 81, 1),
+                                  color:blueColor,
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Center(

@@ -72,7 +72,7 @@ class DashboardData {
   ];
 
   List<Color> colorc = [
-    const Color.fromRGBO(21, 43, 81, 1),
+   blueColor,
     const Color.fromRGBO(40, 60, 95, 1),
     const Color.fromRGBO(50, 75, 119, 1),
     const Color.fromRGBO(60, 89, 142, 1),
@@ -80,7 +80,7 @@ class DashboardData {
   ];
 
   List<Color> colors = [
-    const Color.fromRGBO(21, 43, 81, 1),
+   blueColor,
     const Color.fromRGBO(40, 60, 95, 1),
     const Color.fromRGBO(50, 75, 119, 1),
     const Color.fromRGBO(60, 89, 142, 1),
@@ -682,7 +682,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                     Container(
                                       height: height * 0.03,
                                       decoration: BoxDecoration(
-                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          color: blueColor,
                                           borderRadius: BorderRadius.only(
                                             topLeft: Radius.circular(10),
                                             topRight: Radius.circular(10),
@@ -763,7 +763,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                     Container(
                                       height: height * 0.03,
                                       decoration: BoxDecoration(
-                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          color: blueColor,
                                           borderRadius: BorderRadius.only(
                                             topLeft: Radius.circular(10),
                                             topRight: Radius.circular(10),
@@ -855,7 +855,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                       //    20,
                                       height: height * 0.03,
                                       decoration: BoxDecoration(
-                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          color: blueColor,
                                           borderRadius: BorderRadius.only(
                                             topLeft: Radius.circular(10),
                                             topRight: Radius.circular(10),
@@ -938,7 +938,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                       //     20,
                                       height: height * 0.03,
                                       decoration: BoxDecoration(
-                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          color: blueColor,
                                           borderRadius: BorderRadius.only(
                                             topLeft: Radius.circular(10),
                                             topRight: Radius.circular(10),
@@ -1098,7 +1098,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                             width: 100,
                                                             height: 30,
                                                             decoration: BoxDecoration(
-                                                              color: Color.fromRGBO(21, 43, 81, 1),
+                                                              color: blueColor,
                                                               borderRadius: BorderRadius.circular(5),
                                                             ),
                                                             child: const Center(
@@ -1311,7 +1311,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                         width: 100,
                                                         height: 30,
                                                         decoration: BoxDecoration(
-                                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                                          color: blueColor,
                                                           borderRadius: BorderRadius.circular(5),
                                                         ),
                                                         child: const Center(
@@ -1658,7 +1658,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
-          color: active?Color.fromRGBO(21, 43, 81, 1):Colors.transparent,
+          color: active?blueColor:Colors.transparent,
           borderRadius: BorderRadius.circular(10)
       ),
       padding: EdgeInsets.symmetric(horizontal: 16),

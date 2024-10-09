@@ -150,7 +150,7 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
             size: 30,
             color: _currentPage == 0
                 ? Colors.grey
-                : const Color.fromRGBO(21, 43, 83, 1),
+                : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -1539,7 +1539,7 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                                       FontAwesomeIcons.circleChevronLeft,
                                       color: currentPage == 0
                                           ? Colors.grey
-                                          : const Color.fromRGBO(21, 43, 83, 1),
+                                          : blueColor,
                                     ),
                                     onPressed: currentPage == 0
                                         ? null
@@ -1555,7 +1555,7 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                                     icon: FaIcon(
                                       FontAwesomeIcons.circleChevronRight,
                                       color: currentPage < totalPages - 1
-                                          ? const Color.fromRGBO(21, 43, 83, 1)
+                                          ? blueColor
                                           : Colors.grey,
                                     ),
                                     onPressed: currentPage < totalPages - 1
@@ -2189,7 +2189,7 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                                       FontAwesomeIcons.circleChevronLeft,
                                       color: currentPage == 0
                                           ? Colors.grey
-                                          : const Color.fromRGBO(21, 43, 83, 1),
+                                          : blueColor,
                                     ),
                                     onPressed: currentPage == 0
                                         ? null
@@ -2205,7 +2205,7 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                                     icon: FaIcon(
                                       FontAwesomeIcons.circleChevronRight,
                                       color: currentPage < totalPages - 1
-                                          ? const Color.fromRGBO(21, 43, 83, 1)
+                                          ? blueColor
                                           : Colors.grey,
                                     ),
                                     onPressed: currentPage < totalPages - 1
@@ -2238,11 +2238,11 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
       TableRow(
         decoration: BoxDecoration(
           border: Border(
-            left: const BorderSide(color: Color.fromRGBO(21, 43, 81, 1)),
-            right: const BorderSide(color: Color.fromRGBO(21, 43, 81, 1)),
-            top: const BorderSide(color: Color.fromRGBO(21, 43, 81, 1)),
+            left:  BorderSide(color: blueColor),
+            right:  BorderSide(color: blueColor),
+            top:  BorderSide(color: blueColor),
             bottom: item.tenants!.isEmpty
-                ? const BorderSide(color: Color.fromRGBO(21, 43, 81, 1))
+                ?  BorderSide(color: blueColor)
                 : BorderSide.none,
           ),
         ),
@@ -2258,10 +2258,10 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
         TableRow(
           decoration: BoxDecoration(
             border: Border(
-              left: const BorderSide(color: Color.fromRGBO(21, 43, 81, 1)),
-              right: const BorderSide(color: Color.fromRGBO(21, 43, 81, 1)),
+              left:  BorderSide(color: blueColor),
+              right:  BorderSide(color: blueColor),
               bottom: tenantEntry.key == item.tenants!.length - 1
-                  ? const BorderSide(color: Color.fromRGBO(21, 43, 81, 1))
+                  ?  BorderSide(color: blueColor)
                   : BorderSide.none,
             ),
           ),

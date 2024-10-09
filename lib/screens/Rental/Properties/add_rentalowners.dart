@@ -254,7 +254,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                     padding: EdgeInsets.only(top: 14, left: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey,
@@ -287,7 +287,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                           });
                         },
                         activeColor: isChecked
-                            ? Color.fromRGBO(21, 43, 81, 1)
+                            ? blueColor
                             : Colors.black,
                       ),
                     ),
@@ -356,7 +356,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                               });
                                             },
                                             cursorColor:
-                                                Color.fromRGBO(21, 43, 81, 1),
+                                                blueColor,
                                             decoration: InputDecoration(
                                               border: InputBorder.none,
                                               contentPadding: EdgeInsets.only(
@@ -396,7 +396,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                   child: DataTable(
                                     border: TableBorder(
                                       horizontalInside: BorderSide(
-                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                        color: blueColor,
                                         width: 1.0,
                                       ),
                                     ),
@@ -589,7 +589,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                                color: Color.fromRGBO(21, 43, 81, 1)),
+                                color: blueColor),
                           ),
                           child: Padding(
                               padding: const EdgeInsets.only(
@@ -2150,7 +2150,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                           width: 100,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
-                            color: Color.fromRGBO(21, 43, 81, 1),
+                            color: blueColor,
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.grey,
@@ -2207,7 +2207,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                 : Text(
                                     "Cancel",
                                     style: TextStyle(
-                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                        color: blueColor,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 13),
                                   ),

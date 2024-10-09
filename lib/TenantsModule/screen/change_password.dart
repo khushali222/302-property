@@ -118,7 +118,7 @@ class _Change_passwordState extends State<Change_password> {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: ColorScheme.light(
-              primary: Color.fromRGBO(21, 43, 83, 1), // header background color
+              primary: blueColor, // header background color
               onPrimary: Colors.white, // header text color
               // onSurface: Colors.blue, // body text color
             ),
@@ -126,7 +126,7 @@ class _Change_passwordState extends State<Change_password> {
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor:
-                Color.fromRGBO(21, 43, 83, 1), // button text color
+                blueColor, // button text color
               ),
             ),
           ),
@@ -151,7 +151,7 @@ class _Change_passwordState extends State<Change_password> {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: ColorScheme.light(
-              primary: Color.fromRGBO(21, 43, 83, 1), // header background color
+              primary: blueColor, // header background color
               onPrimary: Colors.white, // header text color
               // onSurface: Colors.blue, // body text color
             ),
@@ -159,7 +159,7 @@ class _Change_passwordState extends State<Change_password> {
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor:
-                Color.fromRGBO(21, 43, 83, 1), // button text color
+                blueColor, // button text color
               ),
             ),
           ),
@@ -360,7 +360,7 @@ class _Change_passwordState extends State<Change_password> {
                     ),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color.fromRGBO(21, 43, 83, 1),
+                        backgroundColor: blueColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -520,7 +520,7 @@ class _Change_passwordState extends State<Change_password> {
                     ),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color.fromRGBO(21, 43, 83, 1),
+                        backgroundColor: blueColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -679,7 +679,7 @@ class _Change_passwordState extends State<Change_password> {
                               ),
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color.fromRGBO(21, 43, 83, 1),
+                                  backgroundColor: blueColor,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),

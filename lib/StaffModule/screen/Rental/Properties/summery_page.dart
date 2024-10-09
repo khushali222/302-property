@@ -713,7 +713,7 @@ startdateController.text = displayDate;
             FontAwesomeIcons.circleChevronLeft,
             size: 30,
             color:
-            _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+            _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -1137,7 +1137,7 @@ startdateController.text = displayDate;
             size: 30,
             color: _currentPagemulti == 0
                 ? Colors.grey
-                : Color.fromRGBO(21, 43, 83, 1),
+                : blueColor,
           ),
           onPressed: _currentPagemulti == 0
               ? null
@@ -1457,7 +1457,7 @@ startdateController.text = displayDate;
             FontAwesomeIcons.circleChevronLeft,
             color: _currentPagerent == 0
                 ? Colors.grey
-                : Color.fromRGBO(21, 43, 83, 1),
+                : blueColor,
           ),
           onPressed: _currentPagerent == 0
               ? null
@@ -1528,7 +1528,7 @@ startdateController.text = displayDate;
               ),
               // Text('${widget.properties.rentalAddress}',
               //     style: TextStyle(
-              //       color: Color.fromRGBO(21, 43, 81, 1),
+              //       color: blueColor,
               //       fontWeight: FontWeight.bold,
               //       fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 20,
               //     )),
@@ -1558,7 +1558,7 @@ startdateController.text = displayDate;
             height: 60,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              border: Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
+              border: Border.all(color:blueColor),
               // color: Colors.blue,
               borderRadius: BorderRadius.circular(10),
             ),
@@ -1571,9 +1571,9 @@ startdateController.text = displayDate;
                 // fontWeight: FontWeight.bold,
               ),
               //indicatorPadding: EdgeInsets.symmetric(horizontal: 1),
-              indicatorColor: const Color.fromRGBO(21, 43, 81, 1),
-              labelColor: const Color.fromRGBO(21, 43, 81, 1),
-              unselectedLabelColor: const Color.fromRGBO(21, 43, 81, 1),
+              indicatorColor:blueColor,
+              labelColor:blueColor,
+              unselectedLabelColor:blueColor,
               tabs: [
                 Tab(
                   text: 'Summary',
@@ -1645,7 +1645,7 @@ startdateController.text = displayDate;
               // height: 150,
               // width: MediaQuery.of(context).size.width * .94,
               decoration: BoxDecoration(
-                border: Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
+                border: Border.all(color:blueColor),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Padding(
@@ -1733,7 +1733,7 @@ startdateController.text = displayDate;
                                     MediaQuery.of(context).size.width < 500
                                         ? 14
                                         : 22,
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                   ),
                                 ),
                               ],
@@ -1764,7 +1764,7 @@ startdateController.text = displayDate;
                                 Text(
                                     '${widget.properties.propertyTypeData?.propertyType}',
                                     style: TextStyle(
-                                      color: Color.fromRGBO(21, 43, 81, 1),
+                                      color: blueColor,
                                       fontSize:
                                       MediaQuery.of(context).size.width <
                                           500
@@ -1798,7 +1798,7 @@ startdateController.text = displayDate;
                                 Text(
                                   '${widget.properties.rentalCity},',
                                   style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                     fontSize:
                                     MediaQuery.of(context).size.width < 500
                                         ? 13
@@ -1809,7 +1809,7 @@ startdateController.text = displayDate;
                                 Text(
                                   '${widget.properties.rentalState},',
                                   style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                     fontSize:
                                     MediaQuery.of(context).size.width < 500
                                         ? 13
@@ -1827,7 +1827,7 @@ startdateController.text = displayDate;
                                 Text(
                                   '${widget.properties.rentalCountry},',
                                   style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                     fontSize:
                                     MediaQuery.of(context).size.width < 500
                                         ? 13
@@ -1838,7 +1838,7 @@ startdateController.text = displayDate;
                                 Text(
                                   '${widget.properties.rentalPostcode}',
                                   style: TextStyle(
-                                    color: Color.fromRGBO(21, 43, 81, 1),
+                                    color: blueColor,
                                     fontSize:
                                     MediaQuery.of(context).size.width < 500
                                         ? 13
@@ -1873,7 +1873,7 @@ startdateController.text = displayDate;
                 Text(
                   "Rental Owners",
                   style: TextStyle(
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       fontSize:
                       MediaQuery.of(context).size.width < 500 ? 16 : 20,
                       fontWeight: FontWeight.bold),
@@ -2282,7 +2282,7 @@ startdateController.text = displayDate;
                                         FontAwesomeIcons.circleChevronLeft,
                                         color: currentPage == 0
                                             ? Colors.grey
-                                            : Color.fromRGBO(21, 43, 83, 1),
+                                            : blueColor,
                                       ),
                                       onPressed: currentPage == 0
                                           ? null
@@ -2318,7 +2318,7 @@ startdateController.text = displayDate;
                                       icon: FaIcon(
                                         FontAwesomeIcons.circleChevronRight,
                                         color: currentPage < totalPages - 1
-                                            ? Color.fromRGBO(21, 43, 83, 1)
+                                            ? blueColor
                                             : Colors.grey,
                                       ),
                                       onPressed: currentPage < totalPages - 1
@@ -2524,7 +2524,7 @@ startdateController.text = displayDate;
                 Text(
                   "Staff Details",
                   style: TextStyle(
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       fontSize:
                       MediaQuery.of(context).size.width < 500 ? 17 : 20,
                       fontWeight: FontWeight.bold),
@@ -2736,7 +2736,7 @@ startdateController.text = displayDate;
               height: 30,
               width: 30,
               decoration: BoxDecoration(
-                color: const Color.fromRGBO(21, 43, 81, 1),
+                color:blueColor,
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Center(
@@ -2763,7 +2763,7 @@ startdateController.text = displayDate;
                           fontSize:
                           MediaQuery.of(context).size.width < 500 ? 16 : 19,
                           fontWeight: FontWeight.bold,
-                          color: Color.fromRGBO(21, 43, 81, 1),
+                          color: blueColor,
                         ),
                       ),
                     ),
@@ -2825,7 +2825,7 @@ startdateController.text = displayDate;
                   FaIcon(
                     FontAwesomeIcons.rightFromBracket,
                     size: 17,
-                    color: Color.fromRGBO(21, 43, 81, 1),
+                    color: blueColor,
                   ),
                   SizedBox(width: 5),
                   Text(
@@ -2834,7 +2834,7 @@ startdateController.text = displayDate;
                       fontSize:
                       MediaQuery.of(context).size.width < 500 ? 15 : 15,
                       fontWeight: FontWeight.w500,
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                     ),
                   ),
                 ],
@@ -2846,7 +2846,7 @@ startdateController.text = displayDate;
             //       FaIcon(
             //         FontAwesomeIcons.check,
             //         size: 17,
-            //         color: Color.fromRGBO(21, 43, 81, 1),
+            //         color: blueColor,
             //       ),
             //       SizedBox(width: 5),
             //       Text(
@@ -2854,7 +2854,7 @@ startdateController.text = displayDate;
             //         style: TextStyle(
             //           fontSize: 11,
             //           fontWeight: FontWeight.w500,
-            //           color: Color.fromRGBO(21, 43, 81, 1),
+            //           color: blueColor,
             //         ),
             //       ),
             //     ],
@@ -2870,7 +2870,7 @@ startdateController.text = displayDate;
               '${formatDate('${tenant.startDate}')} to',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
-                color: Color.fromRGBO(21, 43, 81, 1),
+                color: blueColor,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -2879,7 +2879,7 @@ startdateController.text = displayDate;
               '${formatDate('${tenant.endDate}')}',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
-                color: Color.fromRGBO(21, 43, 81, 1),
+                color: blueColor,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -2889,17 +2889,17 @@ startdateController.text = displayDate;
         Row(
           children: [
             const SizedBox(width: 65),
-            const FaIcon(
+             FaIcon(
               FontAwesomeIcons.phone,
               size: 15,
-              color: Color.fromRGBO(21, 43, 81, 1),
+              color: blueColor,
             ),
             const SizedBox(width: 5),
             Text(
               '${tenant.phoneNumber}',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
-                color: Color.fromRGBO(21, 43, 81, 1),
+                color: blueColor,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -2908,11 +2908,11 @@ startdateController.text = displayDate;
         const SizedBox(height: 10),
         Row(
           children: [
-            const SizedBox(width: 65),
-            const FaIcon(
+             SizedBox(width: 65),
+             FaIcon(
               FontAwesomeIcons.solidEnvelope,
               size: 15,
-              color: Color.fromRGBO(21, 43, 81, 1),
+              color: blueColor,
             ),
             const SizedBox(width: 5),
             SizedBox(
@@ -2923,7 +2923,7 @@ startdateController.text = displayDate;
                 style: TextStyle(
 
                   fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
-                  color: Color.fromRGBO(21, 43, 81, 1),
+                  color: blueColor,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -2951,7 +2951,7 @@ startdateController.text = displayDate;
             "Move out Tenants",
             style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Color.fromRGBO(21, 43, 81, 1),
+                color: blueColor,
                 fontSize: MediaQuery.of(context).size.width < 500 ? 18 : 22),
           ),
           SizedBox(height: 13),
@@ -2995,7 +2995,7 @@ startdateController.text = displayDate;
                   //border: TableBorder.all(color:blueColor),
                   border: TableBorder(
                     horizontalInside: BorderSide(
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       width: 1.0,
                     ),
 
@@ -3040,7 +3040,7 @@ startdateController.text = displayDate;
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 20,
-                        color: Color.fromRGBO(21, 43, 81, 1)),
+                        color: blueColor),
                   ),
                 ],
               ),
@@ -3160,7 +3160,7 @@ startdateController.text = displayDate;
                           style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 18,
-                              color: Color.fromRGBO(21, 43, 81, 1)),
+                              color: blueColor),
                         )),
                   ),
                 ),
@@ -3211,7 +3211,7 @@ startdateController.text = displayDate;
                     height:  MediaQuery.of(context).size.width < 500 ? 40 : 50,
                     width:  MediaQuery.of(context).size.width < 500 ? 100: 130,
                     decoration: BoxDecoration(
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       borderRadius: BorderRadius.all(Radius.circular(5)),
                     ),
                     child: Center(
@@ -3355,7 +3355,7 @@ startdateController.text = displayDate;
                               borderRadius: BorderRadius.circular(12.0),
                               color: Colors.white,
                               border: Border.all(
-                                color: const Color.fromRGBO(21, 43, 83, 1),
+                                color: blueColor,
                                 width: 1,
                               ),
                             ),
@@ -3870,11 +3870,11 @@ startdateController.text = displayDate;
                                                                             Radius.circular(5),
                                                                           ),
                                                                         ),
-                                                                        child: const Center(
+                                                                        child:  Center(
                                                                             child: Text(
                                                                               "Cancel",
                                                                               style:
-                                                                              TextStyle(fontWeight: FontWeight.w500, color: Color.fromRGBO(21, 43, 81, 1)),
+                                                                              TextStyle(fontWeight: FontWeight.w500, color: blueColor),
                                                                             )),
                                                                       ),
                                                                     ),
@@ -4222,11 +4222,11 @@ startdateController.text = displayDate;
                                                                             Radius.circular(5),
                                                                           ),
                                                                         ),
-                                                                        child: const Center(
+                                                                        child:  Center(
                                                                             child: Text(
                                                                               "Cancel",
                                                                               style:
-                                                                              TextStyle(fontWeight: FontWeight.w500, color: Color.fromRGBO(21, 43, 81, 1)),
+                                                                              TextStyle(fontWeight: FontWeight.w500, color: blueColor),
                                                                             )),
                                                                       ),
                                                                     ),
@@ -5890,7 +5890,7 @@ startdateController.text = displayDate;
                             Radius.circular(5),
                           ),
                           border: Border.all(
-                            color: Color.fromRGBO(21, 43, 81, 1),
+                            color: blueColor,
                           ),
                         ),
                         child: Center(
@@ -5898,7 +5898,7 @@ startdateController.text = displayDate;
                               "Add Unit",
                               style: TextStyle(
                                   fontWeight: FontWeight.w500,
-                                  color: Color.fromRGBO(21, 43, 81, 1)),
+                                  color: blueColor),
                             )),
                       ),
                     ),
@@ -6216,10 +6216,10 @@ startdateController.text = displayDate;
                                                                               children: [
                                                                                 Row(
                                                                                   children: [
-                                                                                    const Text(
+                                                                                     Text(
                                                                                       "Edit Unit Details",
                                                                                       style: TextStyle(
-                                                                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                        color: blueColor,
                                                                                         fontWeight: FontWeight.bold,
                                                                                       ),
                                                                                     ),
@@ -6606,8 +6606,8 @@ startdateController.text = displayDate;
                                                                                         child: Container(
                                                                                           height: 30,
                                                                                           width: 80,
-                                                                                          decoration: const BoxDecoration(
-                                                                                            color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                          decoration: BoxDecoration(
+                                                                                            color: blueColor,
                                                                                             borderRadius: BorderRadius.all(
                                                                                               Radius.circular(5),
                                                                                             ),
@@ -6639,10 +6639,10 @@ startdateController.text = displayDate;
                                                                                               Radius.circular(5),
                                                                                             ),
                                                                                           ),
-                                                                                          child: const Center(
+                                                                                          child:  Center(
                                                                                               child: Text(
                                                                                                 "Cancel",
-                                                                                                style: TextStyle(fontWeight: FontWeight.w500, color: Color.fromRGBO(21, 43, 81, 1)),
+                                                                                                style: TextStyle(fontWeight: FontWeight.w500, color: blueColor),
                                                                                               )),
                                                                                         ),
                                                                                       ),
@@ -6699,10 +6699,10 @@ startdateController.text = displayDate;
                                                                               children: [
                                                                                 Row(
                                                                                   children: [
-                                                                                    const Text(
+                                                                                     Text(
                                                                                       "Edit Unit Details",
                                                                                       style: TextStyle(
-                                                                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                        color: blueColor,
                                                                                         fontWeight: FontWeight.bold,
                                                                                       ),
                                                                                     ),
@@ -6985,8 +6985,8 @@ startdateController.text = displayDate;
                                                                                         child: Container(
                                                                                           height: 30,
                                                                                           width: 80,
-                                                                                          decoration: const BoxDecoration(
-                                                                                            color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                          decoration:  BoxDecoration(
+                                                                                            color: blueColor,
                                                                                             borderRadius: BorderRadius.all(
                                                                                               Radius.circular(5),
                                                                                             ),
@@ -7018,10 +7018,10 @@ startdateController.text = displayDate;
                                                                                               Radius.circular(5),
                                                                                             ),
                                                                                           ),
-                                                                                          child: const Center(
+                                                                                          child:  Center(
                                                                                               child: Text(
                                                                                                 "Cancel",
-                                                                                                style: TextStyle(fontWeight: FontWeight.w500, color: Color.fromRGBO(21, 43, 81, 1)),
+                                                                                                style: TextStyle(fontWeight: FontWeight.w500, color: blueColor),
                                                                                               )),
                                                                                         ),
                                                                                       ),
@@ -7164,7 +7164,7 @@ startdateController.text = displayDate;
                                           FontAwesomeIcons.circleChevronLeft,
                                           color: currentPagemulti == 0
                                               ? Colors.grey
-                                              : Color.fromRGBO(21, 43, 83, 1),
+                                              : blueColor,
                                         ),
                                         onPressed: currentPagemulti == 0
                                             ? null
@@ -7201,7 +7201,7 @@ startdateController.text = displayDate;
                                           FontAwesomeIcons.circleChevronRight,
                                           color: currentPagemulti <
                                               totalPages - 1
-                                              ? Color.fromRGBO(21, 43, 83, 1)
+                                              ? blueColor
                                               : Colors.grey,
                                         ),
                                         onPressed:
@@ -7452,10 +7452,10 @@ startdateController.text = displayDate;
                                                                               children: [
                                                                                 Row(
                                                                                   children: [
-                                                                                    const Text(
+                                                                                    Text(
                                                                                       "Edit Unit Details",
                                                                                       style: TextStyle(
-                                                                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                        color: blueColor,
                                                                                         fontWeight: FontWeight.bold,
                                                                                       ),
                                                                                     ),
@@ -7769,8 +7769,8 @@ startdateController.text = displayDate;
                                                                                         child: Container(
                                                                                           height: 30,
                                                                                           width: 80,
-                                                                                          decoration: const BoxDecoration(
-                                                                                            color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                          decoration:  BoxDecoration(
+                                                                                            color: blueColor,
                                                                                             borderRadius: BorderRadius.all(
                                                                                               Radius.circular(5),
                                                                                             ),
@@ -7802,10 +7802,10 @@ startdateController.text = displayDate;
                                                                                               Radius.circular(5),
                                                                                             ),
                                                                                           ),
-                                                                                          child: const Center(
+                                                                                          child:  Center(
                                                                                               child: Text(
                                                                                                 "Cancel",
-                                                                                                style: TextStyle(fontWeight: FontWeight.w500, color: Color.fromRGBO(21, 43, 81, 1)),
+                                                                                                style: TextStyle(fontWeight: FontWeight.w500, color: blueColor),
                                                                                               )),
                                                                                         ),
                                                                                       ),
@@ -7862,10 +7862,10 @@ startdateController.text = displayDate;
                                                                               children: [
                                                                                 Row(
                                                                                   children: [
-                                                                                    const Text(
+                                                                                     Text(
                                                                                       "Edit Unit Details",
                                                                                       style: TextStyle(
-                                                                                        color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                        color: blueColor,
                                                                                         fontWeight: FontWeight.bold,
                                                                                       ),
                                                                                     ),
@@ -8097,8 +8097,8 @@ startdateController.text = displayDate;
                                                                                         child: Container(
                                                                                           height: 30,
                                                                                           width: 80,
-                                                                                          decoration: const BoxDecoration(
-                                                                                            color: Color.fromRGBO(21, 43, 81, 1),
+                                                                                          decoration:  BoxDecoration(
+                                                                                            color: blueColor,
                                                                                             borderRadius: BorderRadius.all(
                                                                                               Radius.circular(5),
                                                                                             ),
@@ -8130,10 +8130,10 @@ startdateController.text = displayDate;
                                                                                               Radius.circular(5),
                                                                                             ),
                                                                                           ),
-                                                                                          child: const Center(
+                                                                                          child:  Center(
                                                                                               child: Text(
                                                                                                 "Cancel",
-                                                                                                style: TextStyle(fontWeight: FontWeight.w500, color: Color.fromRGBO(21, 43, 81, 1)),
+                                                                                                style: TextStyle(fontWeight: FontWeight.w500, color: blueColor),
                                                                                               )),
                                                                                         ),
                                                                                       ),
@@ -8216,7 +8216,7 @@ startdateController.text = displayDate;
                 borderRadius: BorderRadius.circular(12.0),
                 color: Colors.white,
                 border: Border.all(
-                  color: const Color.fromRGBO(21, 43, 83, 1),
+                  color: blueColor,
                   width: 1,
                 ),
               ),
@@ -8257,7 +8257,7 @@ startdateController.text = displayDate;
                             ),
                             style: ElevatedButton.styleFrom(
                                 backgroundColor:
-                                const Color.fromRGBO(21, 43, 83, 1),
+                                blueColor,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12.0))),
                           ),
@@ -8274,7 +8274,7 @@ startdateController.text = displayDate;
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 backgroundColor:
-                                const Color.fromRGBO(21, 43, 83, 1),
+                                blueColor,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12.0))),
                             onPressed: () async {
@@ -8428,7 +8428,7 @@ startdateController.text = displayDate;
                                 borderRadius: BorderRadius.circular(12.0),
                                 color: Colors.white,
                                 border: Border.all(
-                                  color: const Color.fromRGBO(21, 43, 83, 1),
+                                  color: blueColor,
                                   width: 1,
                                 ),
                               ),
@@ -8451,7 +8451,7 @@ startdateController.text = displayDate;
                                             ? 14
                                             : 18,
                                         fontWeight: FontWeight.bold,
-                                        color: Color.fromRGBO(21, 43, 83, 1),
+                                        color: blueColor,
                                       ),
                                     ),
                                   ),
@@ -8515,7 +8515,7 @@ startdateController.text = displayDate;
                                               ? 14
                                               : 18,
                                           fontWeight: FontWeight.bold,
-                                          color: Color.fromRGBO(21, 43, 83, 1),
+                                          color: blueColor,
                                         ),
                                       ),
                                     ),
@@ -8579,7 +8579,7 @@ startdateController.text = displayDate;
                           borderRadius: BorderRadius.circular(12.0),
                           color: Colors.white,
                           border: Border.all(
-                            color: const Color.fromRGBO(21, 43, 83, 1),
+                            color: blueColor,
                             width: 1,
                           ),
                         ),
@@ -8597,7 +8597,7 @@ startdateController.text = displayDate;
                                         ? 14
                                         : 18,
                                     fontWeight: FontWeight.bold,
-                                    color: Color.fromRGBO(21, 43, 83, 1),
+                                    color: blueColor,
                                   ),
                                 ),
                               ),
@@ -8633,7 +8633,7 @@ startdateController.text = displayDate;
                                   ),
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor:
-                                      const Color.fromRGBO(21, 43, 83, 1),
+                                      blueColor,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                           BorderRadius.circular(10.0))),
@@ -8652,7 +8652,7 @@ startdateController.text = displayDate;
                                         ? 14
                                         : 18,
                                     fontWeight: FontWeight.bold,
-                                    color: Color.fromRGBO(21, 43, 83, 1),
+                                    color: blueColor,
                                   ),
                                 ),
                               ),
@@ -8681,7 +8681,7 @@ startdateController.text = displayDate;
                                   ),
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor:
-                                      const Color.fromRGBO(21, 43, 83, 1),
+                                      blueColor,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                           BorderRadius.circular(10.0))),
@@ -8759,7 +8759,7 @@ startdateController.text = displayDate;
                           });
                         },
                         activeColor: isChecked
-                            ? Color.fromRGBO(21, 43, 81, 1)
+                            ? blueColor
                             : Colors.black,
                       ),
                     ),
@@ -8789,7 +8789,7 @@ startdateController.text = displayDate;
                     // height:  40,
                     width: MediaQuery.of(context).size.width * 0.29,
                     decoration: BoxDecoration(
-                      color: Color.fromRGBO(21, 43, 81, 1),
+                      color: blueColor,
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: Center(
@@ -8861,7 +8861,7 @@ startdateController.text = displayDate;
                                 searchvalue = value;
                               });
                             },
-                            cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                            cursorColor: blueColor,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Search here...",
@@ -9378,7 +9378,7 @@ startdateController.text = displayDate;
                                       FontAwesomeIcons.circleChevronLeft,
                                       color: currentPage == 0
                                           ? Colors.grey
-                                          : Color.fromRGBO(21, 43, 83, 1),
+                                          : blueColor,
                                     ),
                                     onPressed: currentPage == 0
                                         ? null
@@ -9414,7 +9414,7 @@ startdateController.text = displayDate;
                                     icon: FaIcon(
                                       FontAwesomeIcons.circleChevronRight,
                                       color: currentPage < totalPages - 1
-                                          ? Color.fromRGBO(21, 43, 83, 1)
+                                          ? blueColor
                                           : Colors.grey,
                                     ),
                                     onPressed: currentPage < totalPages - 1
@@ -9882,7 +9882,7 @@ class _LeasesTableState extends State<LeasesTable> {
             size: 30,
             FontAwesomeIcons.circleChevronLeft,
             color:
-            _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+            _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -10254,7 +10254,7 @@ class _LeasesTableState extends State<LeasesTable> {
                   style: TextStyle(
                       fontSize:
                       MediaQuery.of(context).size.width < 500 ? 17 : 20,
-                      color: Color.fromRGBO(21, 43, 83, 1),
+                      color: blueColor,
                       fontWeight: FontWeight.bold),
                 ),
               ],
@@ -10598,7 +10598,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                       FontAwesomeIcons.circleChevronLeft,
                                       color: currentPage == 0
                                           ? Colors.grey
-                                          : Color.fromRGBO(21, 43, 83, 1),
+                                          : blueColor,
                                     ),
                                     onPressed: currentPage == 0
                                         ? null
@@ -10634,7 +10634,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                     icon: FaIcon(
                                       FontAwesomeIcons.circleChevronRight,
                                       color: currentPage < totalPages - 1
-                                          ? Color.fromRGBO(21, 43, 83, 1)
+                                          ? blueColor
                                           : Colors.grey,
                                     ),
                                     onPressed: currentPage < totalPages - 1
@@ -10741,13 +10741,13 @@ class _LeasesTableState extends State<LeasesTable> {
                                       border: Border(
                                         left: BorderSide(
                                             color:
-                                            Color.fromRGBO(21, 43, 81, 1)),
+                                            blueColor),
                                         right: BorderSide(
                                             color:
-                                            Color.fromRGBO(21, 43, 81, 1)),
+                                            blueColor),
                                         top: BorderSide(
                                             color:
-                                            Color.fromRGBO(21, 43, 81, 1)),
+                                            blueColor),
                                         bottom: i == _pagedData.length - 1
                                             ? BorderSide(
                                             color: Color.fromRGBO(
@@ -11008,7 +11008,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
             size: 30,
             FontAwesomeIcons.circleChevronLeft,
             color:
-            _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+            _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -11376,7 +11376,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                       fontSize:
                       MediaQuery.of(context).size.width < 500 ? 17 : 20,
                       fontWeight: FontWeight.bold,
-                      color: Color.fromRGBO(21, 43, 83, 1),
+                      color: blueColor,
                     ),
                   ),
                   SizedBox(
@@ -11440,14 +11440,14 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                 return Theme(
                                                   data: ThemeData.light()
                                                       .copyWith(
-                                                    // primaryColor: Color.fromRGBO(21, 43, 83, 1),
-                                                    //  hintColor: Color.fromRGBO(21, 43, 83, 1),
+                                                    // primaryColor: blueColor,
+                                                    //  hintColor: blueColor,
                                                     colorScheme:
                                                     ColorScheme.light(
                                                       primary: Color.fromRGBO(
                                                           21, 43, 83, 1),
-                                                      // onPrimary:Color.fromRGBO(21, 43, 83, 1),
-                                                      //  surface: Color.fromRGBO(21, 43, 83, 1),
+                                                      // onPrimary:blueColor,
+                                                      //  surface: blueColor,
                                                       onSurface: Colors.black,
                                                     ),
                                                     buttonTheme:
@@ -11668,7 +11668,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                            color: Color.fromRGBO(21, 43, 83, 1),
+                            color: blueColor,
                             width: 1,
                           ),
                         ),
@@ -11950,12 +11950,12 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                                   builder: (BuildContext context, Widget? child) {
                                                                                     return Theme(
                                                                                       data: ThemeData.light().copyWith(
-                                                                                        // primaryColor: Color.fromRGBO(21, 43, 83, 1),
-                                                                                        //  hintColor: Color.fromRGBO(21, 43, 83, 1),
+                                                                                        // primaryColor: blueColor,
+                                                                                        //  hintColor: blueColor,
                                                                                         colorScheme: ColorScheme.light(
-                                                                                          primary: Color.fromRGBO(21, 43, 83, 1),
-                                                                                          // onPrimary:Color.fromRGBO(21, 43, 83, 1),
-                                                                                          //  surface: Color.fromRGBO(21, 43, 83, 1),
+                                                                                          primary: blueColor,
+                                                                                          // onPrimary:blueColor,
+                                                                                          //  surface: blueColor,
                                                                                           onSurface: Colors.black,
                                                                                         ),
                                                                                         buttonTheme: ButtonThemeData(
@@ -11999,7 +11999,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                                     height: 42,
                                                                                     width: 80,
                                                                                     child: ElevatedButton(
-                                                                                      style: ElevatedButton.styleFrom(backgroundColor: const Color.fromRGBO(21, 43, 83, 1), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
+                                                                                      style: ElevatedButton.styleFrom(backgroundColor: blueColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
                                                                                       onPressed: () async {
                                                                                         if (_name.text.isEmpty || _description.text.isEmpty || _installedDate.text.isEmpty) {
                                                                                           setState(() {
@@ -12265,7 +12265,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                         FontAwesomeIcons.circleChevronLeft,
                                         color: currentPage == 0
                                             ? Colors.grey
-                                            : Color.fromRGBO(21, 43, 83, 1),
+                                            : blueColor,
                                       ),
                                       onPressed: currentPage == 0
                                           ? null
@@ -12301,7 +12301,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                       icon: FaIcon(
                                         FontAwesomeIcons.circleChevronRight,
                                         color: currentPage < totalPages - 1
-                                            ? Color.fromRGBO(21, 43, 83, 1)
+                                            ? blueColor
                                             : Colors.grey,
                                       ),
                                       onPressed: currentPage < totalPages - 1
@@ -12525,12 +12525,12 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                                 (BuildContext context, Widget? child) {
                                                                               return Theme(
                                                                                 data: ThemeData.light().copyWith(
-                                                                                  // primaryColor: Color.fromRGBO(21, 43, 83, 1),
-                                                                                  //  hintColor: Color.fromRGBO(21, 43, 83, 1),
+                                                                                  // primaryColor: blueColor,
+                                                                                  //  hintColor: blueColor,
                                                                                   colorScheme: ColorScheme.light(
-                                                                                    primary: Color.fromRGBO(21, 43, 83, 1),
-                                                                                    // onPrimary:Color.fromRGBO(21, 43, 83, 1),
-                                                                                    //  surface: Color.fromRGBO(21, 43, 83, 1),
+                                                                                    primary: blueColor,
+                                                                                    // onPrimary:blueColor,
+                                                                                    //  surface: blueColor,
                                                                                     onSurface: Colors.black,
                                                                                   ),
                                                                                   buttonTheme: ButtonThemeData(
@@ -12585,7 +12585,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                               height: 42,
                                                                               width: 80,
                                                                               child: ElevatedButton(
-                                                                                style: ElevatedButton.styleFrom(backgroundColor: const Color.fromRGBO(21, 43, 83, 1), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
+                                                                                style: ElevatedButton.styleFrom(backgroundColor: blueColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
                                                                                 onPressed: () async {
                                                                                   if (_name.text.isEmpty || _description.text.isEmpty || _installedDate.text.isEmpty) {
                                                                                     setState(() {

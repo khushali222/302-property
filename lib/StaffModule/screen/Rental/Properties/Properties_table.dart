@@ -421,7 +421,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () => Navigator.pop(context),
-          color: Color.fromRGBO(21, 43, 83, 1),
+          color: blueColor,
         ),
         /* DialogButton(
           child: Text(
@@ -561,7 +561,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                             ? MediaQuery.of(context).size.width * 0.25
                             : MediaQuery.of(context).size.width * 0.25,
                         decoration: BoxDecoration(
-                          color: Color.fromRGBO(21, 43, 81, 1),
+                          color: blueColor,
                           borderRadius: BorderRadius.circular(5),
                           boxShadow: [
                             BoxShadow(
@@ -662,7 +662,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                   searchvalue = value;
                                 });
                               },
-                              cursorColor: Color.fromRGBO(21, 43, 81, 1),
+                              cursorColor: blueColor,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Search here...",
@@ -1693,7 +1693,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                         FontAwesomeIcons.circleChevronLeft,
                                         color: currentPage == 0
                                             ? Colors.grey
-                                            : Color.fromRGBO(21, 43, 83, 1),
+                                            : blueColor,
                                       ),
                                       onPressed: currentPage == 0
                                           ? null
@@ -1729,7 +1729,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                       icon: FaIcon(
                                         FontAwesomeIcons.circleChevronRight,
                                         color: currentPage < totalPages - 1
-                                            ? Color.fromRGBO(21, 43, 83, 1)
+                                            ? blueColor
                                             : Colors.grey,
                                       ),
                                       onPressed: currentPage < totalPages - 1
@@ -2141,7 +2141,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
             size: 30,
             FontAwesomeIcons.circleChevronLeft,
             color:
-                _currentPage == 0 ? Colors.grey : Color.fromRGBO(21, 43, 83, 1),
+                _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null

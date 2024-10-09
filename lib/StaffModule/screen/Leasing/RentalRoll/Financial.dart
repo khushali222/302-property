@@ -113,7 +113,7 @@ class _FinancialTableState extends State<FinancialTable> {
                         margin: const EdgeInsets.only(bottom: 6.0),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5.0),
-                          color: Color.fromRGBO(21, 43, 81, 1),
+                          color: blueColor,
                           boxShadow: [
                             BoxShadow(
                               color: Colors.grey,
@@ -899,7 +899,7 @@ class _FinancialTableState extends State<FinancialTable> {
             FontAwesomeIcons.circleChevronLeft,
             size: 30,
             color:
-                _currentPage == 0 ? grey : const Color.fromRGBO(21, 43, 83, 1),
+                _currentPage == 0 ? grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -1423,7 +1423,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                   500
                                               ? 12
                                               : 18,
-                                          color: Color.fromRGBO(21, 43, 83, 1)),
+                                          color: blueColor),
                                     ))),
                           SizedBox(
                             width: 5,
@@ -1466,7 +1466,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                     500
                                                 ? 12
                                                 : 18,
-                                        color: Color.fromRGBO(21, 43, 83, 1)),
+                                        color: blueColor),
                                   ))),
                           SizedBox(
                             width: 5,
@@ -1502,7 +1502,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                     500
                                                 ? 12
                                                 : 18,
-                                        color: Color.fromRGBO(21, 43, 83, 1)),
+                                        color: blueColor),
                                   ))),
                         ],
                       ),

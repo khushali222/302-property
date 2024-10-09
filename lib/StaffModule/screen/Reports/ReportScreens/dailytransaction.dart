@@ -801,7 +801,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
             size: 30,
             color: _currentPage == 0
                 ? Colors.grey
-                : const Color.fromRGBO(21, 43, 83, 1),
+                : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -1363,9 +1363,9 @@ class _DailyTransactionsState extends State<DailyTransactions> {
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            primaryColor: Color.fromRGBO(21, 43, 83, 1),
+            primaryColor: blueColor,
             colorScheme: ColorScheme.light(
-              primary: Color.fromRGBO(21, 43, 83, 1),
+              primary: blueColor,
             ),
             buttonTheme: ButtonThemeData(
               textTheme: ButtonTextTheme.primary,
@@ -2298,7 +2298,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                         color: Colors
                                                                             .transparent,
                                                                       ),
-                                                                      const Expanded(
+                                                                       Expanded(
                                                                         flex: 4,
                                                                         child:
                                                                             Column(
@@ -2312,7 +2312,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                                     text: 'Account : ',
                                                                                     style: TextStyle(
                                                                                       fontWeight: FontWeight.bold,
-                                                                                      color: Color.fromRGBO(21, 43, 83, 1),
+                                                                                      color: blueColor,
                                                                                     ),
                                                                                   ),
                                                                                 ],
@@ -2321,7 +2321,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                           ],
                                                                         ),
                                                                       ),
-                                                                      const Expanded(
+                                                                       Expanded(
                                                                         flex: 2,
                                                                         child:
                                                                             Column(
@@ -2335,7 +2335,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                                     text: '  Amount : ',
                                                                                     style: TextStyle(
                                                                                       fontWeight: FontWeight.bold,
-                                                                                      color: Color.fromRGBO(21, 43, 83, 1),
+                                                                                      color: blueColor,
                                                                                     ),
                                                                                   ),
                                                                                 ],
@@ -2576,7 +2576,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                             FontAwesomeIcons.circleChevronLeft,
                                             color: currentPage == 0
                                                 ? Colors.grey
-                                                : Color.fromRGBO(21, 43, 83, 1),
+                                                : blueColor,
                                           ),
                                           onPressed: currentPage == 0
                                               ? null
@@ -2592,7 +2592,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                           icon: FaIcon(
                                             FontAwesomeIcons.circleChevronRight,
                                             color: currentPage < totalPages - 1
-                                                ? Color.fromRGBO(21, 43, 83, 1)
+                                                ? blueColor
                                                 : Colors.grey,
                                           ),
                                           onPressed:
@@ -2851,13 +2851,13 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                       border: Border(
                                         left: BorderSide(
                                             color:
-                                            Color.fromRGBO(21, 43, 81, 1)),
+                                            blueColor),
                                         right: BorderSide(
                                             color:
-                                            Color.fromRGBO(21, 43, 81, 1)),
+                                            blueColor),
                                         top: BorderSide(
                                             color:
-                                            Color.fromRGBO(21, 43, 81, 1)),
+                                            blueColor),
                                         bottom: i == pagedData.length - 1
                                             ? BorderSide(
                                             color: Color.fromRGBO(

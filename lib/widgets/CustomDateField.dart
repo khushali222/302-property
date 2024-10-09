@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../constant/constant.dart';
+
 class CustomDateField extends StatefulWidget {
   final String hintText;
   final TextEditingController? controller;
@@ -36,9 +38,9 @@ class CustomDateFieldState extends State<CustomDateField> {
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            primaryColor: Color.fromRGBO(21, 43, 83, 1),
+            primaryColor: blueColor,
             colorScheme: ColorScheme.light(
-              primary: Color.fromRGBO(21, 43, 83, 1),
+              primary: blueColor,
             ),
             buttonTheme: ButtonThemeData(
               textTheme: ButtonTextTheme.primary,

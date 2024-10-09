@@ -129,7 +129,7 @@ class _RentalownersSummeryForMobileState
                           width: MediaQuery.of(context).size.width * .15,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
-                            color: const Color.fromRGBO(21, 43, 81, 1),
+                            color:blueColor,
                             boxShadow: [
                               const BoxShadow(
                                 color: Colors.grey,
@@ -170,7 +170,7 @@ class _RentalownersSummeryForMobileState
                   margin: const EdgeInsets.only(bottom: 6.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5.0),
-                    color: const Color.fromRGBO(21, 43, 81, 1),
+                    color:blueColor,
                     boxShadow: [
                       const BoxShadow(
                         color: Colors.grey,
@@ -199,7 +199,7 @@ class _RentalownersSummeryForMobileState
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
                     border:
-                        Border.all(color: const Color.fromRGBO(21, 43, 81, 1)),
+                        Border.all(color:blueColor),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(
@@ -214,7 +214,7 @@ class _RentalownersSummeryForMobileState
                             Text(
                               "Personal Information",
                               style: TextStyle(
-                                  color: const Color.fromRGBO(21, 43, 81, 1),
+                                  color:blueColor,
                                   fontWeight: FontWeight.bold,
                                   // fontSize: 18
                                   fontSize: 20),
@@ -423,7 +423,7 @@ class _RentalownersSummeryForMobileState
                             Text(
                               "Contact Information",
                               style: TextStyle(
-                                  color: const Color.fromRGBO(21, 43, 81, 1),
+                                  color:blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20),
                             ),
@@ -625,7 +625,7 @@ class _RentalownersSummeryForMobileState
                             Text(
                               "Management Agreement",
                               style: TextStyle(
-                                color: const Color.fromRGBO(21, 43, 81, 1),
+                                color:blueColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
                               ),
@@ -713,7 +713,7 @@ class _RentalownersSummeryForMobileState
                             Text(
                               "1099-NEC Tax Filling Information ",
                               style: TextStyle(
-                                color: const Color.fromRGBO(21, 43, 81, 1),
+                                color:blueColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                               ),
@@ -897,7 +897,7 @@ class _RentalownersSummeryForTabletState
                                 width: 160,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
-                                  color: const Color.fromRGBO(21, 43, 81, 1),
+                                  color:blueColor,
                                   boxShadow: [
                                     const BoxShadow(
                                       color: Colors.grey,
@@ -932,7 +932,7 @@ class _RentalownersSummeryForTabletState
                                 width: 160,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
-                                  color: const Color.fromRGBO(21, 43, 81, 1),
+                                  color:blueColor,
                                   boxShadow: [
                                     const BoxShadow(
                                       color: Colors.grey,
@@ -971,7 +971,7 @@ class _RentalownersSummeryForTabletState
                         margin: const EdgeInsets.only(bottom: 6.0),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5.0),
-                          color: const Color.fromRGBO(21, 43, 81, 1),
+                          color:blueColor,
                           boxShadow: [
                             const BoxShadow(
                               color: Colors.grey,
@@ -1005,7 +1005,7 @@ class _RentalownersSummeryForTabletState
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                  color: const Color.fromRGBO(21, 43, 81, 1)),
+                                  color:blueColor),
                             ),
                             child: Padding(
                               padding: const EdgeInsets.only(
@@ -1013,7 +1013,7 @@ class _RentalownersSummeryForTabletState
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Row(
+                                   Row(
                                     children: [
                                       SizedBox(
                                         width: 2,
@@ -1022,7 +1022,7 @@ class _RentalownersSummeryForTabletState
                                         "Personal Information",
                                         style: TextStyle(
                                             color:
-                                                Color.fromRGBO(21, 43, 81, 1),
+                                                blueColor,
                                             fontWeight: FontWeight.bold,
                                             // fontSize: 18
                                             fontSize: 21),
@@ -1235,14 +1235,14 @@ class _RentalownersSummeryForTabletState
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                    color: const Color.fromRGBO(21, 43, 81, 1)),
+                                    color:blueColor),
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.only(
                                     left: 25, right: 25, top: 20, bottom: 30),
                                 child: Column(
                                   children: [
-                                    const Row(
+                                     Row(
                                       children: [
                                         SizedBox(
                                           width: 2,
@@ -1251,7 +1251,7 @@ class _RentalownersSummeryForTabletState
                                           "Contact Information",
                                           style: TextStyle(
                                               color:
-                                                  Color.fromRGBO(21, 43, 81, 1),
+                                                  blueColor,
                                               fontWeight: FontWeight.bold,
                                               // fontSize: 18
                                               fontSize: 21),
@@ -1421,7 +1421,7 @@ class _RentalownersSummeryForTabletState
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                  color: const Color.fromRGBO(21, 43, 81, 1)),
+                                  color:blueColor),
                             ),
                             child: Padding(
                               padding: const EdgeInsets.only(
@@ -1429,7 +1429,7 @@ class _RentalownersSummeryForTabletState
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Row(
+                                   Row(
                                     children: [
                                       SizedBox(
                                         width: 2,
@@ -1438,7 +1438,7 @@ class _RentalownersSummeryForTabletState
                                         "Management Agreement",
                                         style: TextStyle(
                                             color:
-                                                Color.fromRGBO(21, 43, 81, 1),
+                                                blueColor,
                                             fontWeight: FontWeight.bold,
                                             // fontSize: 18
                                             fontSize: 21),
@@ -1527,14 +1527,14 @@ class _RentalownersSummeryForTabletState
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                    color: const Color.fromRGBO(21, 43, 81, 1)),
+                                    color:blueColor),
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.only(
                                     left: 25, right: 10, top: 20, bottom: 30),
                                 child: Column(
                                   children: [
-                                    const Row(
+                                     Row(
                                       children: [
                                         SizedBox(
                                           width: 2,
@@ -1543,7 +1543,7 @@ class _RentalownersSummeryForTabletState
                                           "1099-NEC Tax Filling Information",
                                           style: TextStyle(
                                               color:
-                                                  Color.fromRGBO(21, 43, 81, 1),
+                                                  blueColor,
                                               fontWeight: FontWeight.bold,
                                               // fontSize: 18
                                               fontSize: 21),

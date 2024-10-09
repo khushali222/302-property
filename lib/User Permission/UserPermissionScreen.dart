@@ -286,7 +286,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Color.fromRGBO(21, 43, 83, 1),
+                      color: blueColor,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -326,7 +326,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Color.fromRGBO(21, 43, 83, 1),
+                      color: blueColor,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -495,7 +495,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Color.fromRGBO(21, 43, 83, 1),
+                      color: blueColor,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -970,7 +970,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Color.fromRGBO(21, 43, 83, 1),
+                      color: blueColor,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                   ),

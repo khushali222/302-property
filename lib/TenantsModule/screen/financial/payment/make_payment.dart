@@ -891,7 +891,7 @@ class _MakePaymentState extends State<MakePayment> {
                             //Same as `blurRadius` i guess
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5.0),
-                              color: const Color.fromRGBO(21, 43, 81, 1),
+                              color:blueColor,
                               boxShadow: const [
                                 BoxShadow(
                                   color: Colors.grey,
@@ -918,7 +918,7 @@ class _MakePaymentState extends State<MakePayment> {
                             width: double.infinity,
                             decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: const Color.fromRGBO(21, 43, 83, 1),
+                                  color: blueColor,
                                 ),
                                 borderRadius: BorderRadius.circular(10.0)),
                             child: Column(
@@ -1824,7 +1824,7 @@ class _MakePaymentState extends State<MakePayment> {
                                           child: Text('Account',
                                               style: TextStyle(
                                                   color:
-                                                  Color.fromRGBO(21, 43, 83, 1),
+                                                  blueColor,
                                                   fontWeight: FontWeight.bold)),
                                         ),
                                         Padding(
@@ -1832,7 +1832,7 @@ class _MakePaymentState extends State<MakePayment> {
                                           child: Text('Amount',
                                               style: TextStyle(
                                                   color:
-                                                  Color.fromRGBO(21, 43, 83, 1),
+                                                  blueColor,
                                                   fontWeight: FontWeight.bold)),
                                         ),
 
@@ -1841,7 +1841,7 @@ class _MakePaymentState extends State<MakePayment> {
                                           child: Text('Balance',
                                               style: TextStyle(
                                                   color:
-                                                  Color.fromRGBO(21, 43, 83, 1),
+                                                  blueColor,
                                                   fontWeight: FontWeight.bold)),
                                         ),
                                         Padding(
@@ -1849,7 +1849,7 @@ class _MakePaymentState extends State<MakePayment> {
                                           child: Text('',
                                               style: TextStyle(
                                                   color:
-                                                  Color.fromRGBO(21, 43, 83, 1),
+                                                  blueColor,
                                                   fontWeight: FontWeight.bold)),
                                         ),
                                       ]),
@@ -2432,7 +2432,7 @@ class _MakePaymentState extends State<MakePayment> {
                                             width: double.infinity,
                                             decoration: BoxDecoration(
                                               // border: Border.all(
-                                              //   color: const Color.fromRGBO(21, 43, 83, 1),
+                                              //   color: blueColor,
                                               // ),
                                                 borderRadius:
                                                 BorderRadius.circular(10.0)),
@@ -2834,7 +2834,7 @@ class _MakePaymentState extends State<MakePayment> {
                           //Same as `blurRadius` i guess
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
-                            color: const Color.fromRGBO(21, 43, 81, 1),
+                            color:blueColor,
                             boxShadow: const [
                               BoxShadow(
                                 color: Colors.grey,
@@ -2861,7 +2861,7 @@ class _MakePaymentState extends State<MakePayment> {
                           width: double.infinity,
                           decoration: BoxDecoration(
                               border: Border.all(
-                                color: const Color.fromRGBO(21, 43, 83, 1),
+                                color: blueColor,
                               ),
                               borderRadius: BorderRadius.circular(10.0)),
                           child: Column(
@@ -4147,7 +4147,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                                     entry.key,
                                                                     style: const TextStyle(
                                                                       fontWeight: FontWeight.bold,
-                                                                      color: Color.fromRGBO(21, 43, 81, 1),
+                                                                      color: blueColor,
                                                                     ),
                                                                   ),
                                                                 ),
@@ -4345,7 +4345,7 @@ class _MakePaymentState extends State<MakePayment> {
                                         MediaQuery.of(context).size.width * .33,
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(5.0),
-                                          color: Color.fromRGBO(21, 43, 81, 1),
+                                          color: blueColor,
                                           boxShadow: [
                                             BoxShadow(
                                               color: Colors.grey,
@@ -4433,7 +4433,7 @@ class _MakePaymentState extends State<MakePayment> {
                                           width: double.infinity,
                                           decoration: BoxDecoration(
                                             // border: Border.all(
-                                            //   color: const Color.fromRGBO(21, 43, 83, 1),
+                                            //   color: blueColor,
                                             // ),
                                               borderRadius:
                                               BorderRadius.circular(10.0)),
@@ -5722,7 +5722,7 @@ class _MakePaymentState extends State<MakePayment> {
       decoration: BoxDecoration(
         color: Colors.grey[200],
         border: Border.all(
-          color: const Color.fromRGBO(21, 43, 83, 1),
+          color: blueColor,
         ),
         borderRadius: BorderRadius.circular(8.0),
       ),
@@ -5736,7 +5736,7 @@ class _MakePaymentState extends State<MakePayment> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: const Color.fromRGBO(21, 43, 83, 1),
+                color: blueColor,
               ),
             ),
             Text(
