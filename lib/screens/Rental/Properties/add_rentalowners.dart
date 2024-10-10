@@ -566,8 +566,10 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     }
                                                   });
                                                 },
-                                                activeColor: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                activeColor: blueColor
+
+
+,
                                               ),
                                             ),
                                           ),
@@ -660,8 +662,10 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     });
                                                   },
                                                   controller: firstname,
-                                                  cursorColor: Color.fromRGBO(
-                                                      21, 43, 81, 1),
+                                                  cursorColor: blueColor
+
+
+,
                                                   decoration: InputDecoration(
                                                     enabledBorder: firstnameerror
                                                         ? OutlineInputBorder(
@@ -777,8 +781,10 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     });
                                                   },
                                                   controller: comname,
-                                                  cursorColor: Color.fromRGBO(
-                                                      21, 43, 81, 1),
+                                                  cursorColor: blueColor
+
+
+,
                                                   decoration: InputDecoration(
                                                     enabledBorder: comnameerror
                                                         ? OutlineInputBorder(
@@ -896,8 +902,10 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   },
 
                                                   controller: primaryemail,
-                                                  cursorColor: Color.fromRGBO(
-                                                      21, 43, 81, 1),
+                                                  cursorColor: blueColor
+
+
+,
                                                   decoration: InputDecoration(
                                                     enabledBorder:
                                                         primaryemailerror
@@ -1015,8 +1023,10 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     });
                                                   },
                                                   controller: alternativeemail,
-                                                  cursorColor: Color.fromRGBO(
-                                                      21, 43, 81, 1),
+                                                  cursorColor: blueColor
+
+
+,
                                                   decoration: InputDecoration(
                                                     enabledBorder:
                                                         alternativeerror
@@ -1131,8 +1141,10 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     });
                                                   },
                                                   controller: phonenum,
-                                                  cursorColor: Color.fromRGBO(
-                                                      21, 43, 81, 1),
+                                                  cursorColor: blueColor
+
+
+,
                                                   decoration: InputDecoration(
                                                     enabledBorder: phonenumerror
                                                         ? OutlineInputBorder(
@@ -1231,8 +1243,10 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     });
                                                   },
                                                   controller: homenum,
-                                                  cursorColor: Color.fromRGBO(
-                                                      21, 43, 81, 1),
+                                                  cursorColor: blueColor
+
+
+,
                                                   decoration: InputDecoration(
                                                     enabledBorder: homenumerror
                                                         ? OutlineInputBorder(
@@ -1324,8 +1338,10 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     });
                                                   },
                                                   controller: businessnum,
-                                                  cursorColor: Color.fromRGBO(
-                                                      21, 43, 81, 1),
+                                                  cursorColor: blueColor
+
+
+,
                                                   decoration: InputDecoration(
                                                     enabledBorder:
                                                         businessnumerror
@@ -1436,8 +1452,10 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     });
                                                   },
                                                   controller: street2,
-                                                  cursorColor: Color.fromRGBO(
-                                                      21, 43, 81, 1),
+                                                  cursorColor: blueColor
+
+
+,
                                                   decoration: InputDecoration(
                                                     enabledBorder: street2error
                                                         ? OutlineInputBorder(

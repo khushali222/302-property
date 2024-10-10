@@ -1386,10 +1386,14 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                             .sortDown,
                                                     size: 20,
                                                     color: isRowExpanded
-                                                        ? Color.fromARGB(
-                                                            255, 35, 67, 126)
-                                                        : Color.fromRGBO(
-                                                            21, 43, 83, 1),
+                                                        ? blueColor
+
+
+
+                                                        : blueColor
+
+
+,
                                                   ),
                                                 ),
                                               ),
@@ -1475,18 +1479,14 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                                     .sortDown,
                                                             size: 20,
                                                             color: isTenantExpanded
-                                                                ? Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        35,
-                                                                        67,
-                                                                        126)
-                                                                : Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
+                                                                ? blueColor
+
+
+
+                                                                : blueColor
+
+
+,
                                                           ),
                                                         ),
                                                       ),

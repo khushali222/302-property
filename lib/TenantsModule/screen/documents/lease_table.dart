@@ -1564,19 +1564,27 @@ class _Lease_TableState extends State<Lease_Table> {
                                               decoration: BoxDecoration(
                                                 border: Border(
                                                   left: BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
+                                                      color: blueColor
+
+
+),
                                                   right: BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
+                                                      color: blueColor
+
+
+),
                                                   top: BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
+                                                      color: blueColor
+
+
+),
                                                   bottom: i ==
                                                       _pagedData.length - 1
                                                       ? BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1))
+                                                      color: blueColor
+
+
+)
                                                       : BorderSide.none,
                                                 ),
                                               ),

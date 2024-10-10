@@ -2647,20 +2647,28 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                           TableRow(
                                             decoration: BoxDecoration(
                                               border: Border(
-                                                left: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
-                                                right: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
-                                                top: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
+                                                left:  BorderSide(
+                                                    color: blueColor
+
+
+),
+                                                right:  BorderSide(
+                                                    color: blueColor
+
+
+),
+                                                top:  BorderSide(
+                                                    color: blueColor
+
+
+),
                                                 bottom: i ==
                                                         pagedData.length - 1
-                                                    ? const BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1))
+                                                    ?  BorderSide(
+                                                        color: blueColor
+
+
+)
                                                     : BorderSide.none,
                                               ),
                                             ),

@@ -1603,8 +1603,10 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                           bottom: i == _pagedData.length - 1
                                               ? BorderSide(
                                                   width: 2,
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 81, 1))
+                                                  color: blueColor
+
+
+)
                                               : BorderSide.none,
                                         ),
                                       ),

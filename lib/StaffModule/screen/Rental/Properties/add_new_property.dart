@@ -1156,7 +1156,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                   borderRadius: BorderRadius.circular(5.0),
                                                                                   child: Container(
                                                                                     height: MediaQuery.of(context).size.width < 500 ? 40 : 45,
-                                                                                    width: MediaQuery.of(context).size.width < 500 ? 130 : 165,
+                                                                                    width: MediaQuery.of(context).size.width < 500 ? 120 : 165,
                                                                                     decoration: BoxDecoration(
                                                                                       borderRadius: BorderRadius.circular(5.0),
                                                                                       color: blueColor,
@@ -1182,9 +1182,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                   ),
                                                                                 ),
                                                                               ),
-                                                                              SizedBox(
-                                                                                width: 15,
-                                                                              ),
+                                                                              Spacer(),
                                                                               InkWell(
                                                                                 onTap: () {
                                                                                   Navigator.pop(context);
@@ -1193,6 +1191,9 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                   elevation: 2,
                                                                                   child: Container(width: MediaQuery.of(context).size.width < 500 ? 90 : 90, height: MediaQuery.of(context).size.width < 500 ? 40 : 40, color: Colors.white, child: Center(child: Text("Cancel"))),
                                                                                 ),
+                                                                              ),
+                                                                              SizedBox(
+                                                                                width: 2,
                                                                               ),
                                                                             ],
                                                                           ),
@@ -1572,8 +1573,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                     cityerror = false;
                                                   });
                                                 },
-                                                cursorColor: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                cursorColor: blueColor
+
+
+,
                                                 decoration: InputDecoration(
                                                   enabledBorder: cityerror
                                                       ? OutlineInputBorder(
@@ -1683,8 +1686,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                     stateerror = false;
                                                   });
                                                 },
-                                                cursorColor: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                cursorColor: blueColor
+
+
+,
                                                 decoration: InputDecoration(
                                                   enabledBorder: stateerror
                                                       ? OutlineInputBorder(
@@ -1805,8 +1810,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                     countryerror = false;
                                                   });
                                                 },
-                                                cursorColor: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                cursorColor: blueColor
+
+
+,
                                                 decoration: InputDecoration(
                                                   enabledBorder: countryerror
                                                       ? OutlineInputBorder(
@@ -1921,8 +1928,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                     .numberWithOptions(
                                                         signed: true,
                                                         decimal: true),
-                                                cursorColor: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                cursorColor: blueColor
+
+
+,
                                                 decoration: InputDecoration(
                                                   enabledBorder: postalcodeerror
                                                       ? OutlineInputBorder(
@@ -2171,8 +2180,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                     border: TableBorder(
                                                       horizontalInside:
                                                           BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1),
+                                                        color: blueColor
+
+
+,
                                                         width: 1.0,
                                                       ),
                                                     ),
@@ -2514,11 +2525,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                   Text(
                                                                     "New Staff Member",
                                                                     style: TextStyle(
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            81,
-                                                                            1),
+                                                                        color: blueColor
+
+
+,
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .bold,
@@ -3260,11 +3270,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                             BoxDecoration(
                                                                           borderRadius:
                                                                               BorderRadius.circular(5.0),
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              81,
-                                                                              1),
+                                                                          color: blueColor
+
+
+,
                                                                           boxShadow: [
                                                                             BoxShadow(
                                                                               color: Colors.grey,

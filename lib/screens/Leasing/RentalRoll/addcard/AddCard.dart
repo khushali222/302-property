@@ -1371,13 +1371,16 @@ class _AddCardState extends State<AddCard> {
                   ),
                   selectedTenantId == null
                       ? Container()
-                      : const Padding(
+                      :  Padding(
                           padding: EdgeInsets.only(left: 16.0),
                           child: Text('Cards',
                               style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFF152b51))),
+                                  color: blueColor
+
+
+)),
                         ),
                   selectedTenantId == null ? Container() : const SizedBox(height: 8),
                   selectedTenantId == null

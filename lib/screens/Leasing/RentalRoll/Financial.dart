@@ -1685,9 +1685,10 @@ class _FinancialTableState extends State<FinancialTable> {
                                                             : FontAwesomeIcons
                                                                 .sortDown,
                                                         size: 20,
-                                                        color: const Color
-                                                            .fromRGBO(
-                                                            21, 43, 83, 1),
+                                                        color: blueColor
+
+
+,
                                                       ),
                                                     ),
                                                   ),
@@ -1830,18 +1831,17 @@ class _FinancialTableState extends State<FinancialTable> {
                                                               Text.rich(
                                                                 TextSpan(
                                                                   children: [
-                                                                    const TextSpan(
+                                                                     TextSpan(
                                                                       text:
                                                                           'Amount : ',
                                                                       style:
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
+                                                                        color: blueColor
+
+
+,
                                                                       ),
                                                                     ),
                                                                     TextSpan(
@@ -1863,18 +1863,17 @@ class _FinancialTableState extends State<FinancialTable> {
                                                               Text.rich(
                                                                 TextSpan(
                                                                   children: [
-                                                                    const TextSpan(
+                                                                     TextSpan(
                                                                       text:
                                                                           'Tenant : ',
                                                                       style:
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
+                                                                        color: blueColor
+
+
+,
                                                                       ),
                                                                     ),
                                                                     TextSpan(
@@ -1932,18 +1931,17 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                   Text.rich(
                                                                     TextSpan(
                                                                       children: [
-                                                                        const TextSpan(
+                                                                         TextSpan(
                                                                           text:
                                                                               'Account : ',
                                                                           style:
                                                                               TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.bold,
-                                                                            color: Color.fromRGBO(
-                                                                                21,
-                                                                                43,
-                                                                                83,
-                                                                                1),
+                                                                            color: blueColor
+
+
+,
                                                                           ),
                                                                         ),
                                                                       ],
@@ -1962,18 +1960,17 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                   Text.rich(
                                                                     TextSpan(
                                                                       children: [
-                                                                        const TextSpan(
+                                                                         TextSpan(
                                                                           text:
                                                                               '  Amount : ',
                                                                           style:
                                                                               TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.bold,
-                                                                            color: Color.fromRGBO(
-                                                                                21,
-                                                                                43,
-                                                                                83,
-                                                                                1),
+                                                                            color: blueColor
+
+
+,
                                                                           ),
                                                                         ),
                                                                       ],
@@ -2580,15 +2577,21 @@ class _FinancialTableState extends State<FinancialTable> {
                                               TableRow(
                                                 decoration: BoxDecoration(
                                                   border: Border(
-                                                    left: const BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1)),
-                                                    right: const BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1)),
-                                                    top: const BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1)),
+                                                    left:  BorderSide(
+                                                        color: blueColor
+
+
+),
+                                                    right:  BorderSide(
+                                                        color: blueColor
+
+
+),
+                                                    top:  BorderSide(
+                                                        color: blueColor
+
+
+),
                                                     bottom: i ==
                                                             _pagedData.length -
                                                                 1
@@ -2746,19 +2749,27 @@ class _FinancialTableState extends State<FinancialTable> {
                                       TableRow(
                                         decoration: BoxDecoration(
                                           border: Border(
-                                            left: const BorderSide(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1)),
-                                            right: const BorderSide(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1)),
-                                            top: const BorderSide(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1)),
+                                            left:  BorderSide(
+                                                color: blueColor
+
+
+),
+                                            right:  BorderSide(
+                                                color: blueColor
+
+
+),
+                                            top:  BorderSide(
+                                                color: blueColor
+
+
+),
                                             bottom: i == _pagedData.length - 1
-                                                ? const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1))
+                                                ?  BorderSide(
+                                                    color: blueColor
+
+
+)
                                                 : BorderSide.none,
                                           ),
                                         ),
@@ -2831,15 +2842,19 @@ class _FinancialTableState extends State<FinancialTable> {
                                           decoration: BoxDecoration(
                                             border: Border(
                                               left: BorderSide(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                color: blueColor
+
+
+,
                                                 width: 1.0,
                                               ),
                                               bottom:
                                                   (i == _pagedData.length - 1)
                                                       ? BorderSide(
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 81, 1),
+                                                          color:blueColor
+
+
+,
                                                           width: 1.0,
                                                         )
                                                       : BorderSide.none,

@@ -27,6 +27,7 @@ import 'package:http/http.dart' as http;
 
 import 'EditProperties.dart';
 import '../../../widgets/custom_drawer.dart';
+
 class _Dessert {
   _Dessert(
     this.name,
@@ -99,8 +100,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
 
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
-    return
-      Container(
+    return Container(
       decoration: BoxDecoration(
         color: blueColor,
         borderRadius: BorderRadius.only(
@@ -146,7 +146,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     SizedBox(width: 6),
                     width < 400
                         ? Text("Property",
-                            style: TextStyle(color: Colors.white,fontSize: 14))
+                            style: TextStyle(color: Colors.white, fontSize: 14))
                         : Text("Property",
                             style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
@@ -197,7 +197,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                 child: Row(
                   children: [
                     Text("     Type",
-                        style: TextStyle(color: Colors.white,fontSize: 15)),
+                        style: TextStyle(color: Colors.white, fontSize: 15)),
                     SizedBox(width: 2),
                     ascending2
                         ? Padding(
@@ -246,7 +246,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                 child: Row(
                   children: [
                     Text(" SubType",
-                        style: TextStyle(color: Colors.white,fontSize: 14)),
+                        style: TextStyle(color: Colors.white, fontSize: 14)),
                     SizedBox(width: 5),
                     ascending3
                         ? Padding(
@@ -348,7 +348,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
       desc: "Once deleted, you will not be able to recover this property!",
       content: Column(
         children: <Widget>[
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           SizedBox(
             height: 45,
             child: TextField(
@@ -356,8 +358,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Enter reason for deletion',
-                  contentPadding: EdgeInsets.only(top: 8,left: 15)
-              ),
+                  contentPadding: EdgeInsets.only(top: 8, left: 15)),
             ),
           ),
         ],
@@ -383,7 +384,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
           onPressed: () async {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             print(id);
-            var data = await PropertiesRepository().DeleteProperties(id: id,reason: reason.text);
+            var data = await PropertiesRepository()
+                .DeleteProperties(id: id, reason: reason.text);
             setState(() {
               futureRentalOwners = PropertiesRepository().fetchProperties();
               //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
@@ -500,7 +502,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Properties",dropdown: true,),
+      drawer: CustomDrawer(
+        currentpage: "Properties",
+        dropdown: true,
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -522,7 +527,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   GestureDetector(
                     onTap: () async {
                       if (rentalCount < propertyCountLimit) {
-                        final ownerDetailsProvider = Provider.of<OwnerDetailsProvider>(context, listen: false);
+                        final ownerDetailsProvider =
+                            Provider.of<OwnerDetailsProvider>(context,
+                                listen: false);
                         ownerDetailsProvider.clearOwners();
                         final result = await Navigator.of(context).push(
                             MaterialPageRoute(
@@ -540,10 +547,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
                       }
                     },
                     child: Container(
-                     //  height: 45,
-                      height: (MediaQuery.of(context).size.width < 500)
-                          ? 50
-                          : 45,
+                      //  height: 45,
+                      height:
+                          (MediaQuery.of(context).size.width < 500) ? 50 : 45,
                       width: (MediaQuery.of(context).size.width < 500)
                           ? MediaQuery.of(context).size.width * 0.25
                           : MediaQuery.of(context).size.width * 0.25,
@@ -568,9 +574,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 18
-                                    : 20,
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 18
+                                        : 20,
                               ),
                             ),
                           ],
@@ -759,7 +765,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     SizedBox(
                       width: 5,
                     ),
-                     Text("/",style: TextStyle(color: greyColor),),
+                    Text(
+                      "/",
+                      style: TextStyle(color: greyColor),
+                    ),
                     SizedBox(
                       width: 5,
                     ),
@@ -791,16 +800,28 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return ColabShimmerLoadingWidget();
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                     return Container(
+                      return Container(
                         height: MediaQuery.of(context).size.height * .5,
                         child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
-                              SizedBox(height: 10,),
-                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                              Image.asset(
+                                "assets/images/no_data.jpg",
+                                height: 200,
+                                width: 200,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                "No Data Available",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                    fontSize: 16),
+                              )
                             ],
                           ),
                         ),
@@ -839,10 +860,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                             SizedBox(height: 20),
                             Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: blueColor
-
-
-)),
+                                  border: Border.all(color:  Color.fromRGBO(152, 162, 179, .5))
+                              ),
                               // decoration: BoxDecoration(
                               //     border: Border.all(color: blueColor)),
                               child: Column(
@@ -859,11 +878,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                     //   border: Border.all(color: blueColor),
                                     // ),
                                     decoration: BoxDecoration(
-                                      color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                      border: Border.all(color: blueColor
-
-
-),
+                                      color: index % 2 != 0
+                                          ? Colors.white
+                                          : blueColor.withOpacity(0.09),
+                                      border: Border.all(color:  Color.fromRGBO(152, 162, 179, .5)),
                                     ),
                                     child: Column(
                                       children: <Widget>[
@@ -903,9 +921,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                   },
                                                   child: Container(
                                                     //width: 25,
-                                                   // color: Colors.blue,
+                                                    // color: Colors.blue,
                                                     margin: EdgeInsets.only(
-                                                        left: 5,right: 2),
+                                                        left: 5, right: 2),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
                                                             bottom: 10)
@@ -918,8 +936,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                           : FontAwesomeIcons
                                                               .sortDown,
                                                       size: 20,
-                                                      color: blueColor
-,
+                                                      color: blueColor,
                                                     ),
                                                   ),
                                                 ),
@@ -934,13 +951,13 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                           expandedIndex = index;
                                                         }
                                                       });
-                                                      },
+                                                    },
                                                     child: Padding(
                                                       padding:
                                                           const EdgeInsets.only(
                                                               left: 10.0),
                                                       child: Text(
-                                                        '${(rentals.rentalAddress ?? '').isEmpty ? 'N/A': rentals.rentalAddress}',
+                                                        '${(rentals.rentalAddress ?? '').isEmpty ? 'N/A' : rentals.rentalAddress}',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -959,7 +976,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                             .01),
                                                 Expanded(
                                                   child: Text(
-                                                    '${(rentals.propertyTypeData!.propertyType ?? '').isEmpty ? 'N/A':rentals.propertyTypeData!.propertyType}',
+                                                    '${(rentals.propertyTypeData!.propertyType ?? '').isEmpty ? 'N/A' : rentals.propertyTypeData!.propertyType}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -976,7 +993,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                 //             .08),
                                                 Expanded(
                                                   child: Text(
-                                                    '${(rentals.propertyTypeData!.propertySubType ?? '').isEmpty ? 'N/A' :rentals.propertyTypeData!.propertySubType}',
+                                                    '${(rentals.propertyTypeData!.propertySubType ?? '').isEmpty ? 'N/A' : rentals.propertyTypeData!.propertySubType}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -1003,19 +1020,18 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
-
                                                   Row(
                                                     children: [
                                                       FaIcon(
-                                                              isExpanded
-                                                                  ? FontAwesomeIcons
-                                                                      .sortUp
-                                                                  : FontAwesomeIcons
-                                                                      .sortDown,
-                                                              size: 20,
-                                                              color:
-                                                                  Colors.transparent,
-                                                            ),
+                                                        isExpanded
+                                                            ? FontAwesomeIcons
+                                                                .sortUp
+                                                            : FontAwesomeIcons
+                                                                .sortDown,
+                                                        size: 20,
+                                                        color:
+                                                            Colors.transparent,
+                                                      ),
                                                       Expanded(
                                                         child: Table(
                                                           columnWidths: {
@@ -1026,21 +1042,38 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                           },
                                                           children: [
                                                             _buildTableRow(
-                                                                'RentalOwners Name:', _getDisplayValue(rentals.rentalOwnerData?.rentalOwnerName),
-                                                                'Phone Number:', _getDisplayValue(rentals.rentalOwnerData?.rentalOwnerPhoneNumber)
-                                                            ),
+                                                                'RentalOwners Name:',
+                                                                _getDisplayValue(rentals
+                                                                    .rentalOwnerData
+                                                                    ?.rentalOwnerName),
+                                                                'Phone Number:',
+                                                                _getDisplayValue(rentals
+                                                                    .rentalOwnerData
+                                                                    ?.rentalOwnerPhoneNumber)),
                                                             _buildTableRow(
-                                                                'Rental Company Name:', _getDisplayValue(rentals.rentalOwnerData?.rentalOwnerCompanyName),
-                                                                'Primary Email', _getDisplayValue(rentals.rentalOwnerData?.rentalOwnerPrimaryEmail)
-                                                            ),
+                                                                'Rental Company Name:',
+                                                                _getDisplayValue(rentals
+                                                                    .rentalOwnerData
+                                                                    ?.rentalOwnerCompanyName),
+                                                                'Primary Email',
+                                                                _getDisplayValue(rentals
+                                                                    .rentalOwnerData
+                                                                    ?.rentalOwnerPrimaryEmail)),
                                                             _buildTableRow(
-                                                                'Locality:', _getDisplayValue(rentals.rentalOwnerData?.city),
-                                                                'Created At:', formatDate('${rentals.createdAt}')
-
-                                                            ),
+                                                                'Locality:',
+                                                                _getDisplayValue(
+                                                                    rentals
+                                                                        .rentalOwnerData
+                                                                        ?.city),
+                                                                'Created At:',
+                                                                formatDate(
+                                                                    '${rentals.createdAt}')),
                                                             _buildTableRow(
-                                                              'Updated At:', formatDate('${rentals.updatedAt}'),
-                                                                '', '',
+                                                              'Updated At:',
+                                                              formatDate(
+                                                                  '${rentals.updatedAt}'),
+                                                              '',
+                                                              '',
                                                             ),
                                                           ],
                                                         ),
@@ -1055,7 +1088,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                       //   color:
                                                       //   Colors.transparent,
                                                       // ),
-
                                                     ],
                                                   ),
                                                   SizedBox(
@@ -1066,122 +1098,185 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                     children: [
                                                       Expanded(
                                                         child: GestureDetector(
-                                                          onTap:()async{
-                                                            var check = await Navigator.push(
+                                                          onTap: () async {
+                                                            var check =
+                                                                await Navigator
+                                                                    .push(
                                                               context,
                                                               MaterialPageRoute(
-                                                                builder: (context) => Edit_properties(
-                                                                  properties: rentals,
-                                                                  rentalId: rentals.rentalId!,
+                                                                builder:
+                                                                    (context) =>
+                                                                        Edit_properties(
+                                                                  properties:
+                                                                      rentals,
+                                                                  rentalId: rentals
+                                                                      .rentalId!,
                                                                 ),
                                                               ),
                                                             );
                                                             if (check == true) {
                                                               setState(() {
-                                                                futureRentalOwners = PropertiesRepository().fetchProperties();
-
+                                                                futureRentalOwners =
+                                                                    PropertiesRepository()
+                                                                        .fetchProperties();
                                                               });
                                                               // Update State
                                                             }
                                                           },
                                                           child: Container(
-                                                            height:40,
-                                                             decoration: BoxDecoration(
-                                                               color: Colors.grey[350]
-                                                             ),                                               // color:Colors.grey[100],
+                                                            height: 40,
+                                                            decoration: BoxDecoration(
+                                                                color: Colors
+                                                                        .grey[
+                                                                    350]), // color:Colors.grey[100],
                                                             child: Row(
                                                               mainAxisAlignment:
-                                                              MainAxisAlignment.center,
+                                                                  MainAxisAlignment
+                                                                      .center,
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment.center,
+                                                                  CrossAxisAlignment
+                                                                      .center,
                                                               children: [
                                                                 FaIcon(
-                                                                  FontAwesomeIcons.edit,
+                                                                  FontAwesomeIcons
+                                                                      .edit,
                                                                   size: 15,
-                                                                  color:blueColor,
+                                                                  color:
+                                                                      blueColor,
                                                                 ),
-                                                                SizedBox(width: 10,),
-                                                                Text("Edit",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                                                                SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                Text(
+                                                                  "Edit",
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                          blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                ),
                                                               ],
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(width: 5,),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
                                                       Expanded(
                                                         child: GestureDetector(
-                                                          onTap:(){
-                                                           setState(() {
-                                                             _showAlert(context, rentals.rentalId!);
-
-                                                           });
-                                                           },
+                                                          onTap: () {
+                                                            setState(() {
+                                                              _showAlert(
+                                                                  context,
+                                                                  rentals
+                                                                      .rentalId!);
+                                                            });
+                                                          },
                                                           child: Container(
-                                                            height:40,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors.grey[350]
-                                                            ),
+                                                            height: 40,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        350]),
                                                             child: Row(
                                                               mainAxisAlignment:
-                                                              MainAxisAlignment.center,
+                                                                  MainAxisAlignment
+                                                                      .center,
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment.center,
+                                                                  CrossAxisAlignment
+                                                                      .center,
                                                               children: [
                                                                 FaIcon(
-                                                                  FontAwesomeIcons.trashCan,
+                                                                  FontAwesomeIcons
+                                                                      .trashCan,
                                                                   size: 15,
-                                                                  color:blueColor,
+                                                                  color:
+                                                                      blueColor,
                                                                 ),
-                                                                SizedBox(width: 10,),
-                                                                Text("Delete",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
+                                                                SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                Text(
+                                                                  "Delete",
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                          blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                )
                                                               ],
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(width: 5,),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
                                                       Expanded(
                                                         child: GestureDetector(
                                                           onTap: () {
                                                             Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(
-                                                                    builder: (context) =>
-                                                                        Summery_page(
-                                                                          properties:
-                                                                          rentals,
-                                                                        )));
-
+                                                                    builder:
+                                                                        (context) =>
+                                                                            Summery_page(
+                                                                              properties: rentals,
+                                                                            )));
                                                           },
                                                           child: Container(
-                                                            height:40,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors.grey[350]
-                                                            ),
+                                                            height: 40,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        350]),
                                                             child: Row(
                                                               mainAxisAlignment:
-                                                              MainAxisAlignment.center,
+                                                                  MainAxisAlignment
+                                                                      .center,
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment.center,
+                                                                  CrossAxisAlignment
+                                                                      .center,
                                                               children: [
-                                                                SizedBox(width: 5,),
-                                                                Image.asset('assets/icons/view.png'),
+                                                                SizedBox(
+                                                                  width: 5,
+                                                                ),
+                                                                Image.asset(
+                                                                  'assets/icons/view.png',
+                                                                  color:
+                                                                      blueColor,
+                                                                ),
                                                                 // FaIcon(
                                                                 //   FontAwesomeIcons.trashCan,
                                                                 //   size: 15,
                                                                 //   color:blueColor,
                                                                 // ),
-                                                                SizedBox(width: 8,),
-                                                                Text("View Summery",style: TextStyle(fontSize: 11,color: blueColor,fontWeight: FontWeight.bold),)
+                                                                SizedBox(
+                                                                  width: 8,
+                                                                ),
+                                                                Text(
+                                                                  "View Summery",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          11,
+                                                                      color:
+                                                                          blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                )
                                                               ],
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-
                                                     ],
                                                   ),
-
                                                 ],
                                               ),
                                             ),
@@ -1228,13 +1323,16 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                             //         0; // Reset to first page when items per page change
                                             //   });
                                             // },
-                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                            onChanged: data.length >
+                                                    itemsPerPageOptions
+                                                        .first // Condition to check if dropdown should be enabled
                                                 ? (newValue) {
-                                              setState(() {
-                                                itemsPerPage = newValue!;
-                                                currentPage = 0; // Reset to first page when items per page change
-                                              });
-                                            }
+                                                    setState(() {
+                                                      itemsPerPage = newValue!;
+                                                      currentPage =
+                                                          0; // Reset to first page when items per page change
+                                                    });
+                                                  }
                                                 : null,
                                           ),
                                         ),
@@ -1316,20 +1414,32 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                   return Container(
-                        height: MediaQuery.of(context).size.height * .5,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
-                              SizedBox(height: 10,),
-                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
-                            ],
-                          ),
+                    return Container(
+                      height: MediaQuery.of(context).size.height * .5,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/images/no_data.jpg",
+                              height: 200,
+                              width: 200,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              "No Data Available",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                  fontSize: 16),
+                            )
+                          ],
                         ),
-                      );
+                      ),
+                    );
                   } else {
                     List<Rentals>? filteredData = [];
                     _tableData = snapshot.data!;
@@ -1339,15 +1449,15 @@ class _PropertiesTableState extends State<PropertiesTable> {
                       _tableData = snapshot.data!;
                     } else if (searchvalue.isNotEmpty) {
                       _tableData = snapshot.data!
-                          .where((property) =>
-                      property.rentalAddress!
-                          .toLowerCase()
-                          .contains(searchvalue.toLowerCase()) )
+                          .where((property) => property.rentalAddress!
+                              .toLowerCase()
+                              .contains(searchvalue.toLowerCase()))
                           .toList();
                     } else {
                       _tableData = snapshot.data!
                           .where((property) =>
-                      property.propertyTypeData?.propertyType == selectedValue)
+                              property.propertyTypeData?.propertyType ==
+                              selectedValue)
                           .toList();
                     }
                     totalrecords = _tableData.length;
@@ -1432,9 +1542,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                               color: Color.fromRGBO(
                                                   21, 43, 81, 1)),
                                           bottom: i == _pagedData.length - 1
-                                              ? BorderSide(
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 81, 1))
+                                              ? BorderSide(color: blueColor)
                                               : BorderSide.none,
                                         ),
                                       ),
@@ -1533,7 +1641,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
   //   );
   // }
 
-  TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel, String rightValue) {
+  TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel,
+      String rightValue) {
     return TableRow(
       children: [
         TableCell(
@@ -1544,7 +1653,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
               children: [
                 Text(
                   leftLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
                 SizedBox(height: 4.0), // Space between label and value
                 Text(
@@ -1563,7 +1673,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
               children: [
                 Text(
                   rightLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
                 SizedBox(height: 4.0), // Space between label and value
                 Text(
@@ -1610,8 +1721,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
     );
   }
 
-
-
   Widget _buildDataCell(String text, Rentals inkText) {
     return TableCell(
       child: Padding(
@@ -1623,7 +1732,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   MaterialPageRoute(
                       builder: (context) => Summery_page(properties: inkText)));
             },
-            child: Text(text?.isNotEmpty == true ? text! : 'N/A', style: const TextStyle(fontSize: 18))),
+            child: Text(text?.isNotEmpty == true ? text! : 'N/A',
+                style: const TextStyle(fontSize: 18))),
       ),
     );
   }
@@ -1717,8 +1827,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
           icon: FaIcon(
             size: 30,
             FontAwesomeIcons.circleChevronLeft,
-            color:
-                _currentPage == 0 ? Colors.grey : blueColor,
+            color: _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null

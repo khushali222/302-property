@@ -1491,11 +1491,14 @@ class _MakePaymentState extends State<MakePayment> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                const Text('Upload Files (Maximum of 10)',
+                                 Text('Upload Files (Maximum of 10)',
                                     style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,
-                                        color: Color(0xFF152b51))),
+                                        color: blueColor
+
+
+)),
                                 const SizedBox(
                                   height: 10,
                                 ),
@@ -1507,7 +1510,10 @@ class _MakePaymentState extends State<MakePayment> {
                                   ),
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFF152b51),
+                                      backgroundColor:  blueColor
+
+
+,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(8.0),
                                       ),

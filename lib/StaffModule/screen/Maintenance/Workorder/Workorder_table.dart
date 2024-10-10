@@ -943,7 +943,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                             const SizedBox(height: 20),
                             Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: blueColor
+                                  border: Border.all(color:  Color.fromRGBO(152, 162, 179, .5)
 
 
 )),
@@ -961,7 +961,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                   return Container(
                                     decoration: BoxDecoration(
                                       color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                      border: Border.all(color: blueColor
+                                      border: Border.all(color:  Color.fromRGBO(152, 162, 179, .5)
 
 
 ),
@@ -1022,8 +1022,10 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                               .sortDown,
                                                       size: 20,
                                                       color:
-                                                          const Color.fromRGBO(
-                                                              21, 43, 83, 1),
+                                                           blueColor
+
+
+,
                                                     ),
                                                   ),
                                                 ),
@@ -1264,7 +1266,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                               CrossAxisAlignment.center,
                                                               children: [
                                                                 SizedBox(width: 5,),
-                                                                Image.asset('assets/icons/view.png'),
+                                                                Image.asset('assets/icons/view.png',color: blueColor,),
                                                                 // FaIcon(
                                                                 //   FontAwesomeIcons.trashCan,
                                                                 //   size: 15,
@@ -1536,20 +1538,19 @@ class _Workorder_tableState extends State<Workorder_table> {
                                             TableRow(
                                               decoration: BoxDecoration(
                                                 border: Border(
-                                                  left: const BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
-                                                  right: const BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
-                                                  top: const BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
+                                                  left:  BorderSide(
+                                                      color: blueColor),
+                                                  right:  BorderSide(
+                                                      color: blueColor),
+                                                  top:  BorderSide(
+                                                      color: blueColor),
                                                   bottom: i ==
                                                           _pagedData.length - 1
-                                                      ? const BorderSide(
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 81, 1))
+                                                      ?  BorderSide(
+                                                          color:blueColor
+
+
+)
                                                       : BorderSide.none,
                                                 ),
                                               ),

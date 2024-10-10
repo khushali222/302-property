@@ -355,7 +355,10 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                               ),
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF152b51),
+                                  backgroundColor:  blueColor
+
+
+,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),

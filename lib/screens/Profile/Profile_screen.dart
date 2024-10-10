@@ -186,8 +186,10 @@ class _Profile_screenState extends State<Profile_screen> {
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(5.0),
-                                          color: const Color.fromRGBO(
-                                              21, 43, 81, 1),
+                                          color: blueColor
+
+
+,
                                           boxShadow: [
                                             const BoxShadow(
                                               color: Colors.grey,
@@ -409,8 +411,10 @@ class _Profile_screenState extends State<Profile_screen> {
                                             height: 40,
                                             width: 160,
                                             decoration: BoxDecoration(
-                                              color: const Color.fromRGBO(
-                                                  21, 43, 81, 1),
+                                              color: blueColor
+
+
+,
                                               borderRadius:
                                                   BorderRadius.circular(5),
                                             ),

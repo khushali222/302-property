@@ -1277,12 +1277,10 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                                                     : FontAwesomeIcons
                                                                         .sortDown,
                                                                 size: 20,
-                                                                color: const Color
-                                                                    .fromRGBO(
-                                                                    21,
-                                                                    43,
-                                                                    83,
-                                                                    1),
+                                                                color: blueColor
+
+
+,
                                                               ),
                                                             ),
                                                           ),
@@ -1945,12 +1943,10 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                                                     : FontAwesomeIcons
                                                                         .sortDown,
                                                                 size: 20,
-                                                                color: const Color
-                                                                    .fromRGBO(
-                                                                    21,
-                                                                    43,
-                                                                    83,
-                                                                    1),
+                                                                color: blueColor
+
+
+,
                                                               ),
                                                             ),
                                                           ),

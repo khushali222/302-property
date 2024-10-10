@@ -1118,13 +1118,14 @@ class _addLease3State extends State<addLease3>
                                                   builder: (BuildContext context, Widget? child) {
                                                     return Theme(
                                                       data: ThemeData.light().copyWith(
-                                                        colorScheme: const ColorScheme.light(
-                                                          primary: Color.fromRGBO(21, 43, 83,
-                                                              1), // header background color
+                                                        colorScheme:  ColorScheme.light(
+                                                          primary: blueColor, // header background color
                                                           onPrimary:
                                                           Colors.white, // header text color
-                                                          onSurface: Color.fromRGBO(
-                                                              21, 43, 83, 1), // body text color
+                                                          onSurface: blueColor
+
+
+, // body text color
                                                         ),
                                                         textButtonTheme: TextButtonThemeData(
                                                           style: TextButton.styleFrom(
@@ -1200,13 +1201,14 @@ class _addLease3State extends State<addLease3>
                                                   builder: (BuildContext context, Widget? child) {
                                                     return Theme(
                                                       data: ThemeData.light().copyWith(
-                                                        colorScheme: const ColorScheme.light(
-                                                          primary: Color.fromRGBO(21, 43, 83,
-                                                              1), // header background color
+                                                        colorScheme:  ColorScheme.light(
+                                                          primary:blueColor, // header background color
                                                           onPrimary:
                                                           Colors.white, // header text color
-                                                          onSurface: Color.fromRGBO(
-                                                              21, 43, 83, 1), // body text color
+                                                          onSurface: blueColor
+
+
+, // body text color
                                                         ),
                                                         textButtonTheme: TextButtonThemeData(
                                                           style: TextButton.styleFrom(
@@ -1279,11 +1281,14 @@ class _addLease3State extends State<addLease3>
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text('Add lease',
+                               Text('Add lease',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
-                                      color: Color(0xFF152b51))),
+                                      color: blueColor
+
+
+)),
                               const SizedBox(
                                 height: 10,
                               ),
@@ -1300,12 +1305,15 @@ class _addLease3State extends State<addLease3>
                                               return AlertDialog(
                                                 backgroundColor: Colors.white,
                                                 contentPadding: EdgeInsets.zero,
-                                                title: const Text(
+                                                title:  Text(
                                                   'Add Tenant or Cosigner',
                                                   style: TextStyle(
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w500,
-                                                    color: Color(0xFF152b51),
+                                                    color: blueColor
+
+
+,
                                                   ),
                                                 ),
                                                 content: Form(
@@ -1843,8 +1851,10 @@ class _addLease3State extends State<addLease3>
                                                               : 20,
                                                           fontWeight:
                                                           FontWeight.w700,
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 83, 1),
+                                                          color: blueColor
+
+
+,
                                                         ),
                                                       ),
                                                     ),
@@ -1944,11 +1954,14 @@ class _addLease3State extends State<addLease3>
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text('Rent',
+                               Text('Rent',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
-                                      color: Color(0xFF152b51))),
+                                      color: blueColor
+
+
+)),
                               const SizedBox(
                                 height: 10,
                               ),
@@ -2014,13 +2027,14 @@ class _addLease3State extends State<addLease3>
                                                   builder: (BuildContext context, Widget? child) {
                                                     return Theme(
                                                       data: ThemeData.light().copyWith(
-                                                        colorScheme: const ColorScheme.light(
-                                                          primary: Color.fromRGBO(21, 43, 83,
-                                                              1), // header background color
+                                                        colorScheme:  ColorScheme.light(
+                                                          primary: blueColor, // header background color
                                                           onPrimary:
                                                           Colors.white, // header text color
-                                                          onSurface: Color.fromRGBO(
-                                                              21, 43, 83, 1), // body text color
+                                                          onSurface: blueColor
+
+
+, // body text color
                                                         ),
                                                         textButtonTheme: TextButtonThemeData(
                                                           style: TextButton.styleFrom(
@@ -2252,12 +2266,15 @@ class _addLease3State extends State<addLease3>
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text(
+                               Text(
                                 'Charges (Optional)',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFF152b51),
+                                  color: blueColor
+
+
+,
                                 ),
                               ),
                               const SizedBox(
@@ -2676,11 +2693,14 @@ class _addLease3State extends State<addLease3>
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text('Security Deposit (Optional)',
+                               Text('Security Deposit (Optional)',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
-                                      color: Color(0xFF152b51))),
+                                      color: blueColor
+
+
+)),
                               const SizedBox(
                                 height: 10,
                               ),
@@ -2739,11 +2759,14 @@ class _addLease3State extends State<addLease3>
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text('Upload Files (Maximum of 10)',
+                               Text('Upload Files (Maximum of 10)',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
-                                      color: Color(0xFF152b51))),
+                                      color: blueColor
+
+
+)),
                               const SizedBox(
                                 height: 20,
                               ),
@@ -2756,7 +2779,10 @@ class _addLease3State extends State<addLease3>
                                 ),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF152b51),
+                                    backgroundColor:  blueColor
+
+
+,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),
@@ -2831,16 +2857,22 @@ class _addLease3State extends State<addLease3>
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  const Text('Residents center Welcome Email',
+                                   Text('Residents center Welcome Email',
                                       style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
-                                          color: Color(0xFF152b51))),
+                                          color: blueColor
+
+
+)),
                                   const SizedBox(
                                     width: 5,
                                   ),
                                   Switch(
-                                    activeColor: const Color(0xFF152b51),
+                                    activeColor:  blueColor
+
+
+,
                                     value: _selectedResidentsEmail,
                                     onChanged: (newValue) {
                                       setState(() {
@@ -3465,11 +3497,14 @@ class _addLease3State extends State<addLease3>
             return AlertDialog(
               backgroundColor: Colors.white,
               contentPadding: EdgeInsets.zero,
-              title: const Text('Add Tenant or Cosigner',
+              title:  Text('Add Tenant or Cosigner',
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: Color(0xFF152b51))),
+                      color: blueColor
+
+
+)),
               content: Form(
                 key: _addRecurringFormKey,
                 child: Padding(
@@ -3654,7 +3689,10 @@ class _addLease3State extends State<addLease3>
 
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF152b51),
+                            backgroundColor: blueColor
+
+
+,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0))),
                         onPressed: () {
@@ -4128,7 +4166,10 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                                                                 borderRadius:
                                                                                 BorderRadius.circular(8.0)),
                                                                             child: ElevatedButton(
-                                                                                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF152b51), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
+                                                                                style: ElevatedButton.styleFrom(backgroundColor:  blueColor
+
+
+, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
                                                                                 onPressed: () {
                                                                                   _submitSubForm();
                                                                                 },
@@ -4287,7 +4328,10 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                 child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor:
-                                            const Color(0xFF152b51),
+                                             blueColor
+
+
+,
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(8.0))),
@@ -5008,7 +5052,10 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                             borderRadius: BorderRadius.circular(8.0)),
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF152b51),
+                                backgroundColor:  blueColor
+
+
+,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0))),
                             onPressed: () {
@@ -5409,7 +5456,10 @@ class _AddTenantState extends State<AddTenant> {
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                      color: const Color.fromRGBO(21, 43, 103, 1),
+                      color: blueColor
+
+
+,
                       border: Border.all(
                         color: blueColor,
                       ),
@@ -5687,7 +5737,10 @@ class _AddTenantState extends State<AddTenant> {
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                        color: const Color.fromRGBO(21, 43, 103, 1),
+                        color: blueColor
+
+
+,
                         border: Border.all(
                           color: blueColor,
                         ),
@@ -5847,7 +5900,10 @@ class _AddTenantState extends State<AddTenant> {
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                        color: const Color.fromRGBO(21, 43, 103, 1),
+                        color: blueColor
+
+
+,
                         border: Border.all(
                           color: blueColor,
                         ),
@@ -6071,7 +6127,10 @@ class _AddCosignerState extends State<AddCosigner> {
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-                color: const Color.fromRGBO(21, 43, 103, 1),
+                color: blueColor
+
+
+,
                 border: Border.all(
                   color: blueColor,
                 ),

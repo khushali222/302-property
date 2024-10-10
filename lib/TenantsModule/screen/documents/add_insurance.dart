@@ -352,7 +352,10 @@ class _add_insuranceState extends State<add_insurance> {
                             ),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF152b51),
+                                backgroundColor:  blueColor
+
+
+,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),

@@ -1537,8 +1537,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                     cityerror = false;
                                                   });
                                                 },
-                                                cursorColor: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                cursorColor: blueColor
+
+
+,
                                                 decoration: InputDecoration(
                                                   enabledBorder: cityerror
                                                       ? OutlineInputBorder(
@@ -1648,8 +1650,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                     stateerror = false;
                                                   });
                                                 },
-                                                cursorColor: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                cursorColor: blueColor
+
+
+,
                                                 decoration: InputDecoration(
                                                   enabledBorder: stateerror
                                                       ? OutlineInputBorder(
@@ -1770,8 +1774,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                     countryerror = false;
                                                   });
                                                 },
-                                                cursorColor: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                cursorColor: blueColor
+
+
+,
                                                 decoration: InputDecoration(
                                                   enabledBorder: countryerror
                                                       ? OutlineInputBorder(
@@ -1886,8 +1892,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                     .numberWithOptions(
                                                         signed: true,
                                                         decimal: true),
-                                                cursorColor: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                cursorColor: blueColor
+
+
+,
                                                 decoration: InputDecoration(
                                                   enabledBorder: postalcodeerror
                                                       ? OutlineInputBorder(
@@ -2134,8 +2142,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                     border: TableBorder(
                                                       horizontalInside:
                                                           BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1),
+                                                        color: blueColor
+
+
+,
                                                         width: 1.0,
                                                       ),
                                                     ),
@@ -2477,11 +2487,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                   Text(
                                                                     "New Staff Member",
                                                                     style: TextStyle(
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            81,
-                                                                            1),
+                                                                        color: blueColor
+
+
+,
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .bold,
@@ -3223,11 +3232,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                             BoxDecoration(
                                                                           borderRadius:
                                                                               BorderRadius.circular(5.0),
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              81,
-                                                                              1),
+                                                                          color: blueColor
+
+
+,
                                                                           boxShadow: [
                                                                             BoxShadow(
                                                                               color: Colors.grey,

@@ -1257,12 +1257,10 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                           foregroundColor:
                                                               Colors.white,
                                                           backgroundColor:
-                                                              const Color
-                                                                  .fromRGBO(
-                                                                  21,
-                                                                  43,
-                                                                  83,
-                                                                  1), // button text color
+                                                               blueColor
+
+
+, // button text color
                                                         ),
                                                       ),
                                                     ),
@@ -1586,29 +1584,35 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                 dataRowHeight: 75,
                                                 horizontalMargin: 0.0,
                                                 columnSpacing: 40.0,
-                                                columns: const [
+                                                columns:  [
                                                   DataColumn(
                                                     label: Text(
                                                       'Select',
                                                       style: TextStyle(
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 81, 1)),
+                                                          color:blueColor
+
+
+),
                                                     ),
                                                   ),
                                                   DataColumn(
                                                     label: Text(
                                                       'Card Number',
                                                       style: TextStyle(
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 81, 1)),
+                                                          color:blueColor
+
+
+),
                                                     ),
                                                   ),
                                                   DataColumn(
                                                     label: Text(
                                                       'Card Type',
                                                       style: TextStyle(
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 81, 1)),
+                                                          color:blueColor
+
+
+),
                                                     ),
                                                   ),
                                                 ],
@@ -1692,10 +1696,12 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                     ),
                                                     DataCell(Text(
                                                       item.ccNumber!,
-                                                      style: const TextStyle(
+                                                      style:  TextStyle(
                                                           fontSize: 13,
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 81, 1)),
+                                                          color:blueColor
+
+
+),
                                                     )),
                                                     DataCell(Column(
                                                       mainAxisAlignment:
@@ -1737,9 +1743,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                               // ignore: unrelated_type_equality_checks
                                               Text(
                                                 '${cardDetails[selectedcardindex!].binResult} card transactions will charge $surCharge%',
-                                                style: const TextStyle(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1),
+                                                style:  TextStyle(
+                                                    color: blueColor
+
+
+,
                                                     fontSize: 14,
                                                     fontWeight:
                                                         FontWeight.w500),
@@ -1793,8 +1801,10 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           5.0),
-                                                  color: const Color.fromRGBO(
-                                                      21, 43, 81, 1),
+                                                  color: blueColor
+
+
+,
                                                   boxShadow: [
                                                     const BoxShadow(
                                                       color: Colors.grey,
@@ -2847,10 +2857,12 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                 enabled: false,
                                                 child: Text(
                                                   entry.key,
-                                                  style: const TextStyle(
+                                                  style:  TextStyle(
                                                     fontWeight: FontWeight.bold,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1),
+                                                    color: blueColor
+
+
+,
                                                   ),
                                                 ),
                                               ),
@@ -3145,7 +3157,10 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 ),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF152b51),
+                                    backgroundColor:  blueColor
+
+
+,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),

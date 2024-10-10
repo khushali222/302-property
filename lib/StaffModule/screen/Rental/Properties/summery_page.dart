@@ -3823,12 +3823,11 @@ startdateController.text = displayDate;
                                                                         width:
                                                                         80,
                                                                         decoration:
-                                                                        const BoxDecoration(
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              81,
-                                                                              1),
+                                                                         BoxDecoration(
+                                                                          color: blueColor
+
+
+,
                                                                           borderRadius:
                                                                           BorderRadius.all(
                                                                             Radius.circular(5),
@@ -4175,12 +4174,11 @@ startdateController.text = displayDate;
                                                                         width:
                                                                         80,
                                                                         decoration:
-                                                                        const BoxDecoration(
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              81,
-                                                                              1),
+                                                                         BoxDecoration(
+                                                                          color: blueColor
+
+
+,
                                                                           borderRadius:
                                                                           BorderRadius.all(
                                                                             Radius.circular(5),
@@ -4533,8 +4531,10 @@ startdateController.text = displayDate;
                                                             : 18,
                                                         fontWeight:
                                                         FontWeight.bold,
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 83, 1),
+                                                        color: blueColor
+
+
+,
                                                       ),
                                                     ),
                                                   ),
@@ -4883,8 +4883,10 @@ startdateController.text = displayDate;
                                             Text(
                                               "Add Unit Details",
                                               style: TextStyle(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                color: blueColor
+
+
+,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
@@ -5368,8 +5370,10 @@ startdateController.text = displayDate;
                                                   height: 30,
                                                   width: 80,
                                                   decoration: BoxDecoration(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1),
+                                                    color: blueColor
+
+
+,
                                                     borderRadius:
                                                     BorderRadius.all(
                                                       Radius.circular(5),
@@ -5458,8 +5462,10 @@ startdateController.text = displayDate;
                                             Text(
                                               "Add Unit Details",
                                               style: TextStyle(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                color: blueColor
+
+
+,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
@@ -5824,8 +5830,10 @@ startdateController.text = displayDate;
                                                   height: 30,
                                                   width: 80,
                                                   decoration: BoxDecoration(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1),
+                                                    color: blueColor
+
+
+,
                                                     borderRadius:
                                                     BorderRadius.all(
                                                       Radius.circular(5),
@@ -6074,8 +6082,10 @@ startdateController.text = displayDate;
                                                             : FontAwesomeIcons
                                                             .sortDown,
                                                         size: 20,
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 83, 1),
+                                                        color: blueColor
+
+
+,
                                                       ),
                                                     ),
                                                   ),
@@ -7111,7 +7121,7 @@ startdateController.text = displayDate;
                                                                 CrossAxisAlignment.center,
                                                                 children: [
                                                                   SizedBox(width: 5,),
-                                                                  Image.asset('assets/icons/view.png'),
+                                                                  Image.asset('assets/icons/view.png',color: blueColor,),
                                                                   // FaIcon(
                                                                   //   FontAwesomeIcons.trashCan,
                                                                   //   size: 15,
@@ -7365,21 +7375,29 @@ startdateController.text = displayDate;
                                               decoration: BoxDecoration(
                                                 border: Border(
                                                   left: BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
+                                                      color: blueColor
+
+
+),
                                                   right: BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
+                                                      color: blueColor
+
+
+),
                                                   top: BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
+                                                      color: blueColor
+
+
+),
                                                   bottom: i ==
                                                       _pagedDatamulti
                                                           .length -
                                                           1
                                                       ? BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1))
+                                                      color: blueColor
+
+
+)
                                                       : BorderSide.none,
                                                 ),
                                               ),
@@ -9334,7 +9352,7 @@ startdateController.text = displayDate;
                                                             CrossAxisAlignment.center,
                                                             children: [
                                                               SizedBox(width: 5,),
-                                                              Image.asset('assets/icons/view.png'),
+                                                              Image.asset('assets/icons/view.png',color: blueColor,),
                                                               // FaIcon(
                                                               //   FontAwesomeIcons.trashCan,
                                                               //   size: 15,
@@ -9600,19 +9618,27 @@ startdateController.text = displayDate;
                                             decoration: BoxDecoration(
                                               border: Border(
                                                 left: BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
+                                                    color: blueColor
+
+
+),
                                                 right: BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
+                                                    color: blueColor
+
+
+),
                                                 top: BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
+                                                    color: blueColor
+
+
+),
                                                 bottom: i ==
                                                     _pagedData.length - 1
                                                     ? BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1))
+                                                    color: blueColor
+
+
+)
                                                     : BorderSide.none,
                                               ),
                                             ),
@@ -10788,8 +10814,10 @@ class _LeasesTableState extends State<LeasesTable> {
                                             blueColor),
                                         bottom: i == _pagedData.length - 1
                                             ? BorderSide(
-                                            color: Color.fromRGBO(
-                                                21, 43, 81, 1))
+                                            color: blueColor
+
+
+)
                                             : BorderSide.none,
                                       ),
                                     ),
@@ -12137,12 +12165,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                               FontAwesomeIcons
                                                                   .edit,
                                                               size: 20,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                  21,
-                                                                  43,
-                                                                  83,
-                                                                  1),
+                                                              color: blueColor
+
+
+,
                                                             ),
                                                           ),
                                                         ),
@@ -12161,12 +12187,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                               FontAwesomeIcons
                                                                   .trashCan,
                                                               size: 20,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                  21,
-                                                                  43,
-                                                                  83,
-                                                                  1),
+                                                              color:blueColor,
                                                             ),
                                                           ),
                                                         ),
@@ -12449,18 +12470,26 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                         decoration: BoxDecoration(
                                           border: Border(
                                             left: BorderSide(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1)),
+                                                color: blueColor
+
+
+),
                                             right: BorderSide(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1)),
+                                                color: blueColor
+
+
+),
                                             top: BorderSide(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1)),
+                                                color: blueColor
+
+
+),
                                             bottom: i == _pagedData.length - 1
                                                 ? BorderSide(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1))
+                                                color: blueColor
+
+
+)
                                                 : BorderSide.none,
                                           ),
                                         ),
@@ -12725,8 +12754,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                       child: FaIcon(
                                                         FontAwesomeIcons.edit,
                                                         size: 20,
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 83, 1),
+                                                        color: blueColor
+
+
+,
                                                       ),
                                                     ),
                                                   ),
@@ -12745,8 +12776,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                         FontAwesomeIcons
                                                             .trashCan,
                                                         size: 20,
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 83, 1),
+                                                        color: blueColor
+
+
+,
                                                       ),
                                                     ),
                                                   ),

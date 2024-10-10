@@ -22,6 +22,7 @@ import 'Add_staffmember.dart';
 import 'Edit_staff_member.dart';
 import 'package:http/http.dart' as http;
 import '../../widgets/custom_drawer.dart';
+
 class _Dessert {
   _Dessert(
     this.name,
@@ -178,7 +179,8 @@ class _StaffTableState extends State<StaffTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Designation", style: TextStyle(color: Colors.white,fontSize:15)),
+                    Text("Designation",
+                        style: TextStyle(color: Colors.white, fontSize: 15)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
@@ -334,7 +336,9 @@ class _StaffTableState extends State<StaffTable> {
       desc: "Once deleted, you will not be able to recover this staff member!",
       content: Column(
         children: <Widget>[
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           SizedBox(
             height: 45,
             child: TextField(
@@ -342,8 +346,7 @@ class _StaffTableState extends State<StaffTable> {
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Enter reason for deletion',
-                  contentPadding: EdgeInsets.only(top: 8,left: 15)
-              ),
+                  contentPadding: EdgeInsets.only(top: 8, left: 15)),
             ),
           ),
         ],
@@ -366,7 +369,8 @@ class _StaffTableState extends State<StaffTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            await StaffMemberRepository().DeleteStaffMember(id: id,reason: reason.text);
+            await StaffMemberRepository()
+                .DeleteStaffMember(id: id, reason: reason.text);
             setState(() {
               futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
             });
@@ -478,7 +482,10 @@ class _StaffTableState extends State<StaffTable> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Add Staff Member",dropdown: false,),
+      drawer: CustomDrawer(
+        currentpage: "Add Staff Member",
+        dropdown: false,
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -486,9 +493,8 @@ class _StaffTableState extends State<StaffTable> {
             Padding(
               padding: const EdgeInsets.all(0),
               child: Row(
-              //  mainAxisAlignment: MainAxisAlignment.end,
+                //  mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: titleBar(
@@ -661,16 +667,28 @@ class _StaffTableState extends State<StaffTable> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                     return Container(
+                      return Container(
                         height: MediaQuery.of(context).size.height * .5,
                         child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
-                              SizedBox(height: 10,),
-                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                              Image.asset(
+                                "assets/images/no_data.jpg",
+                                height: 200,
+                                width: 200,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                "No Data Available",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                    fontSize: 16),
+                              )
                             ],
                           ),
                         ),
@@ -707,10 +725,7 @@ class _StaffTableState extends State<StaffTable> {
                             SizedBox(height: 20),
                             Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: blueColor
-
-
-)),
+                                  border: Border.all(color:  Color.fromRGBO(152, 162, 179, .5))),
                               // decoration: BoxDecoration(
                               //     border: Border.all(color: blueColor)),
                               child: Column(
@@ -724,11 +739,13 @@ class _StaffTableState extends State<StaffTable> {
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
                                     decoration: BoxDecoration(
-                                      color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                      border: Border.all(color: blueColor
-
-
-),
+                                      color: index % 2 != 0
+                                          ? Colors.white
+                                          : blueColor.withOpacity(0.09),
+//                                       border: Border.all(color: blueColor
+//
+//
+// ),
                                     ),
                                     // decoration: BoxDecoration(
                                     //   border: Border.all(color: blueColor),
@@ -771,7 +788,7 @@ class _StaffTableState extends State<StaffTable> {
                                                   },
                                                   child: Container(
                                                     margin: EdgeInsets.only(
-                                                        left: 5,right: 5),
+                                                        left: 5, right: 5),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
                                                             bottom: 10)
@@ -784,14 +801,13 @@ class _StaffTableState extends State<StaffTable> {
                                                           : FontAwesomeIcons
                                                               .sortDown,
                                                       size: 20,
-                                                      color: blueColor
-,
+                                                      color: blueColor,
                                                     ),
                                                   ),
                                                 ),
                                                 Expanded(
                                                   child: InkWell(
-                                                    onTap:(){
+                                                    onTap: () {
                                                       setState(() {
                                                         if (expandedIndex ==
                                                             index) {
@@ -856,10 +872,10 @@ class _StaffTableState extends State<StaffTable> {
                                             ),
                                           ),
                                         ),
-
                                         if (isExpanded)
                                           Container(
-                                            padding: EdgeInsets.only(left: 2,right: 2),
+                                            padding: EdgeInsets.only(
+                                                left: 2, right: 2),
                                             margin: EdgeInsets.only(bottom: 2),
                                             child: SingleChildScrollView(
                                               child: Container(
@@ -867,93 +883,128 @@ class _StaffTableState extends State<StaffTable> {
                                                 child: Column(
                                                   children: [
                                                     Row(
-                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
                                                       children: [
                                                         Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment.start,
-                                                                children: [
-                                                                  FaIcon(
-                                                                    isExpanded
-                                                                        ? FontAwesomeIcons
-                                                                            .sortUp
-                                                                        : FontAwesomeIcons
-                                                                            .sortDown,
-                                                                    size: 50,
-                                                                    color:
-                                                                        Colors.transparent,
-                                                                  ),
-                                                    ],
-                                                                                                  ),
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            FaIcon(
+                                                              isExpanded
+                                                                  ? FontAwesomeIcons
+                                                                      .sortUp
+                                                                  : FontAwesomeIcons
+                                                                      .sortDown,
+                                                              size: 50,
+                                                              color: Colors
+                                                                  .transparent,
+                                                            ),
+                                                          ],
+                                                        ),
                                                         Column(
-                                                          mainAxisAlignment: MainAxisAlignment.start,
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
                                                           children: [
                                                             Text.rich(
                                                               TextSpan(
                                                                 children: [
                                                                   TextSpan(
-                                                                    text: 'Mail-Id: ',
-                                                                    style: TextStyle(
-                                                                      fontWeight: FontWeight.bold,
-                                                                      color: blueColor, // Bold and blue
+                                                                    text:
+                                                                        'Mail-Id: ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color:
+                                                                          blueColor, // Bold and blue
                                                                     ),
                                                                   ),
                                                                   TextSpan(
-                                                                    text: '${staffmembers.staffmemberEmail}',
-                                                                    style: TextStyle(
-                                                                      fontWeight: FontWeight.w700,
-                                                                      color: grey, // Light and grey
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                                height:
-                                                                    5),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text: 'Created At: ',
-                                                                    style: TextStyle(
-                                                                      fontWeight: FontWeight.bold,
-                                                                      color: blueColor, // Bold and blue
-                                                                    ),
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: staffmembers.createdAt?.isNotEmpty == true
-                                                                        ? formatDate('${staffmembers.createdAt}')
-                                                                        : 'N/A',
-                                                                    style: TextStyle(
-                                                                      fontWeight: FontWeight.w700,
-                                                                      color: grey, // Light and grey
+                                                                    text:
+                                                                        '${staffmembers.staffmemberEmail}',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                      color:
+                                                                          grey, // Light and grey
                                                                     ),
                                                                   ),
                                                                 ],
                                                               ),
                                                             ),
-                                                            SizedBox(
-                                                                height:
-                                                                5),
+                                                            SizedBox(height: 5),
                                                             Text.rich(
                                                               TextSpan(
                                                                 children: [
                                                                   TextSpan(
-                                                                    text: 'Updated At: ',
-                                                                    style: TextStyle(
-                                                                      fontWeight: FontWeight.bold,
-                                                                      color: blueColor, // Bold and blue
+                                                                    text:
+                                                                        'Created At: ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color:
+                                                                          blueColor, // Bold and blue
                                                                     ),
                                                                   ),
                                                                   TextSpan(
-                                                                    text: staffmembers.updatedAt?.isNotEmpty == true
-                                                                        ? formatDate('${staffmembers.updatedAt}')
+                                                                    text: staffmembers.createdAt?.isNotEmpty ==
+                                                                            true
+                                                                        ? formatDate(
+                                                                            '${staffmembers.createdAt}')
                                                                         : 'N/A',
-                                                                    style: TextStyle(
-                                                                      fontWeight: FontWeight.w700,
-                                                                      color: grey, // Light and grey
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                      color:
+                                                                          grey, // Light and grey
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            SizedBox(height: 5),
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                        'Updated At: ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color:
+                                                                          blueColor, // Bold and blue
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text: staffmembers.updatedAt?.isNotEmpty ==
+                                                                            true
+                                                                        ? formatDate(
+                                                                            '${staffmembers.updatedAt}')
+                                                                        : 'N/A',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                      color:
+                                                                          grey, // Light and grey
                                                                     ),
                                                                   ),
                                                                 ],
@@ -1009,74 +1060,114 @@ class _StaffTableState extends State<StaffTable> {
                                                       //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: [
                                                         Expanded(
-                                                          child: GestureDetector(
-                                                            onTap:()async{
-                                                              var check = await Navigator.push(
+                                                          child:
+                                                              GestureDetector(
+                                                            onTap: () async {
+                                                              var check =
+                                                                  await Navigator
+                                                                      .push(
                                                                 context,
                                                                 MaterialPageRoute(
-                                                                  builder: (context) => Edit_staff_member(
-                                                                    staff: staffmembers,
+                                                                  builder:
+                                                                      (context) =>
+                                                                          Edit_staff_member(
+                                                                    staff:
+                                                                        staffmembers,
                                                                   ),
                                                                 ),
                                                               );
-                                                              if (check == true) {
+                                                              if (check ==
+                                                                  true) {
                                                                 setState(() {});
                                                               }
                                                             },
                                                             child: Container(
-                                                              height:40,
+                                                              height: 40,
                                                               decoration: BoxDecoration(
-                                                                  color: Colors.grey[350]
-                                                              ),                                               // color:Colors.grey[100],
+                                                                  color: Colors
+                                                                          .grey[
+                                                                      350]), // color:Colors.grey[100],
                                                               child: Row(
                                                                 mainAxisAlignment:
-                                                                MainAxisAlignment.center,
+                                                                    MainAxisAlignment
+                                                                        .center,
                                                                 crossAxisAlignment:
-                                                                CrossAxisAlignment.center,
+                                                                    CrossAxisAlignment
+                                                                        .center,
                                                                 children: [
                                                                   FaIcon(
-                                                                    FontAwesomeIcons.edit,
+                                                                    FontAwesomeIcons
+                                                                        .edit,
                                                                     size: 15,
-                                                                    color:blueColor,
+                                                                    color:
+                                                                        blueColor,
                                                                   ),
-                                                                  SizedBox(width: 10,),
-                                                                  Text("Edit",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                                                                  SizedBox(
+                                                                    width: 10,
+                                                                  ),
+                                                                  Text(
+                                                                    "Edit",
+                                                                    style: TextStyle(
+                                                                        color:
+                                                                            blueColor,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                  ),
                                                                 ],
                                                               ),
                                                             ),
                                                           ),
                                                         ),
-                                                        SizedBox(width: 5,),
+                                                        SizedBox(
+                                                          width: 5,
+                                                        ),
                                                         Expanded(
-                                                          child: GestureDetector(
-                                                            onTap:(){
-                                                              _showDeleteAlert(context, staffmembers.staffmemberId!);
+                                                          child:
+                                                              GestureDetector(
+                                                            onTap: () {
+                                                              _showDeleteAlert(
+                                                                  context,
+                                                                  staffmembers
+                                                                      .staffmemberId!);
                                                             },
                                                             child: Container(
-                                                              height:40,
-                                                              decoration: BoxDecoration(
-                                                                  color: Colors.grey[350]
-                                                              ),
+                                                              height: 40,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                      color: Colors
+                                                                              .grey[
+                                                                          350]),
                                                               child: Row(
                                                                 mainAxisAlignment:
-                                                                MainAxisAlignment.center,
+                                                                    MainAxisAlignment
+                                                                        .center,
                                                                 crossAxisAlignment:
-                                                                CrossAxisAlignment.center,
+                                                                    CrossAxisAlignment
+                                                                        .center,
                                                                 children: [
                                                                   FaIcon(
-                                                                    FontAwesomeIcons.trashCan,
+                                                                    FontAwesomeIcons
+                                                                        .trashCan,
                                                                     size: 15,
-                                                                    color:blueColor,
+                                                                    color:
+                                                                        blueColor,
                                                                   ),
-                                                                  SizedBox(width: 10,),
-                                                                  Text("Delete",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
+                                                                  SizedBox(
+                                                                    width: 10,
+                                                                  ),
+                                                                  Text(
+                                                                    "Delete",
+                                                                    style: TextStyle(
+                                                                        color:
+                                                                            blueColor,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                  )
                                                                 ],
                                                               ),
                                                             ),
                                                           ),
                                                         ),
-
-
                                                       ],
                                                     ),
                                                   ],
@@ -1118,13 +1209,16 @@ class _StaffTableState extends State<StaffTable> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                            onChanged: data.length >
+                                                    itemsPerPageOptions
+                                                        .first // Condition to check if dropdown should be enabled
                                                 ? (newValue) {
-                                              setState(() {
-                                                itemsPerPage = newValue!;
-                                                currentPage = 0; // Reset to first page when items per page change
-                                              });
-                                            }
+                                                    setState(() {
+                                                      itemsPerPage = newValue!;
+                                                      currentPage =
+                                                          0; // Reset to first page when items per page change
+                                                    });
+                                                  }
                                                 : null,
                                           ),
                                         ),
@@ -1206,20 +1300,32 @@ class _StaffTableState extends State<StaffTable> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                   return Container(
-                        height: MediaQuery.of(context).size.height * .5,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
-                              SizedBox(height: 10,),
-                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
-                            ],
-                          ),
+                    return Container(
+                      height: MediaQuery.of(context).size.height * .5,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/images/no_data.jpg",
+                              height: 200,
+                              width: 200,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              "No Data Available",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                  fontSize: 16),
+                            )
+                          ],
                         ),
-                      );
+                      ),
+                    );
                   } else {
                     List<Staffmembers>? filteredData = [];
                     if (selectedRole == null && searchValue == "") {
@@ -1298,9 +1404,7 @@ class _StaffTableState extends State<StaffTable> {
                                               color: Color.fromRGBO(
                                                   21, 43, 81, 1)),
                                           bottom: i == _pagedData.length - 1
-                                              ? BorderSide(
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 81, 1))
+                                              ? BorderSide(color: blueColor)
                                               : BorderSide.none,
                                         ),
                                       ),
@@ -1458,8 +1562,7 @@ class _StaffTableState extends State<StaffTable> {
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
             size: 30,
-            color:
-                _currentPage == 0 ? Colors.grey : blueColor,
+            color: _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null

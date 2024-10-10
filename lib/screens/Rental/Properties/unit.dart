@@ -1304,18 +1304,26 @@ class _LeasesTableState extends State<LeasesTable> {
                                     decoration: BoxDecoration(
                                       border: Border(
                                         left: BorderSide(
-                                            color: Color.fromRGBO(
-                                                21, 43, 81, 1)),
+                                            color: blueColor
+
+
+),
                                         right: BorderSide(
-                                            color: Color.fromRGBO(
-                                                21, 43, 81, 1)),
+                                            color: blueColor
+
+
+),
                                         top: BorderSide(
-                                            color: Color.fromRGBO(
-                                                21, 43, 81, 1)),
+                                            color: blueColor
+
+
+),
                                         bottom: i == _pagedData.length - 1
                                             ? BorderSide(
-                                            color: Color.fromRGBO(
-                                                21, 43, 81, 1))
+                                            color: blueColor
+
+
+)
                                             : BorderSide.none,
                                       ),
                                     ),
@@ -2060,8 +2068,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                     child: ElevatedButton(
                                                       style: ElevatedButton.styleFrom(
                                                           backgroundColor:
-                                                          const Color.fromRGBO(
-                                                              21, 43, 83, 1),
+                                                           blueColor
+
+
+,
                                                           shape: RoundedRectangleBorder(
                                                               borderRadius:
                                                               BorderRadius.circular(
@@ -2301,8 +2311,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                             : FontAwesomeIcons
                                                             .sortDown,
                                                         size: 20,
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 83, 1),
+                                                        color: blueColor
+
+
+,
                                                       ),
                                                     ),
                                                   ),
@@ -2690,18 +2702,26 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                         decoration: BoxDecoration(
                                           border: Border(
                                             left: BorderSide(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1)),
+                                                color: blueColor
+
+
+),
                                             right: BorderSide(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1)),
+                                                color: blueColor
+
+
+),
                                             top: BorderSide(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1)),
+                                                color: blueColor
+
+
+),
                                             bottom: i == _pagedData.length - 1
                                                 ? BorderSide(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1))
+                                                color: blueColor
+
+
+)
                                                 : BorderSide.none,
                                           ),
                                         ),

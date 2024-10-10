@@ -885,7 +885,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color:
-                                          blueColor
+                                      Color.fromRGBO(152, 162, 179, .5)
 
 
 )),
@@ -1599,7 +1599,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                   width: 5,
                                                                 ),
                                                                 Image.asset(
-                                                                    'assets/icons/view.png'),
+                                                                    'assets/icons/view.png',color: blueColor,),
                                                                 // FaIcon(
                                                                 //   FontAwesomeIcons.trashCan,
                                                                 //   size: 15,
@@ -1892,8 +1892,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                   21, 43, 81, 1)),
                                           bottom: i == _pagedData.length - 1
                                               ? BorderSide(
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 81, 1))
+                                                  color: blueColor
+
+
+)
                                               : BorderSide.none,
                                         ),
                                       ),

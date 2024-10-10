@@ -1297,8 +1297,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 },
                                                 controller: credit,
                                                 cursorColor:
-                                                Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                blueColor
+
+
+,
                                                 decoration:
                                                 InputDecoration(
                                                   // hintText: "Enter password",
@@ -1326,8 +1328,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   EdgeInsets.all(13),
                                                   suffixIcon: Icon(
                                                     Icons.percent,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1),
+                                                    color: blueColor
+
+
+,
                                                     size: 18,
                                                   ),
                                                 ),
@@ -1382,8 +1386,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 },
                                                 controller: debit,
                                                 cursorColor:
-                                                Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                blueColor
+
+
+,
                                                 decoration:
                                                 InputDecoration(
                                                   // hintText: "Enter password",
@@ -1411,8 +1417,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   EdgeInsets.all(13),
                                                   suffixIcon: Icon(
                                                     Icons.percent,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1),
+                                                    color: blueColor
+
+
+,
                                                     size: 18,
                                                   ),
                                                 ),
@@ -1483,8 +1491,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   },
                                                   controller: credit,
                                                   cursorColor:
-                                                      Color.fromRGBO(
-                                                          21, 43, 81, 1),
+                                                      blueColor
+
+
+,
                                                   decoration:
                                                       InputDecoration(
                                                     // hintText: "Enter password",
@@ -1512,8 +1522,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                         EdgeInsets.all(13),
                                                     suffixIcon: Icon(
                                                       Icons.percent,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1),
+                                                      color: blueColor
+
+
+,
                                                       size: 18,
                                                     ),
                                                   ),
@@ -1572,8 +1584,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   },
                                                   controller: debit,
                                                   cursorColor:
-                                                      Color.fromRGBO(
-                                                          21, 43, 81, 1),
+                                                      blueColor
+
+
+,
                                                   decoration:
                                                       InputDecoration(
                                                     // hintText: "Enter password",
@@ -1601,8 +1615,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                         EdgeInsets.all(13),
                                                     suffixIcon: Icon(
                                                       Icons.percent,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1),
+                                                      color: blueColor
+
+
+,
                                                       size: 18,
                                                     ),
                                                   ),
@@ -1750,8 +1766,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             });
                                           },
                                           controller: percent,
-                                          cursorColor: Color.fromRGBO(
-                                              21, 43, 81, 1),
+                                          cursorColor: blueColor
+
+
+,
                                           decoration: InputDecoration(
                                             // hintText: "Enter password",
                                             hintStyle: TextStyle(
@@ -1844,8 +1862,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             });
                                           },
                                           controller: flat,
-                                          cursorColor: Color.fromRGBO(
-                                              21, 43, 81, 1),
+                                          cursorColor: blueColor
+
+
+,
                                           decoration: InputDecoration(
                                             // hintText: "Enter password",
                                             hintStyle: TextStyle(
@@ -2302,8 +2322,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 },
                                                 //  controller: password,
                                                 cursorColor:
-                                                Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                blueColor
+
+
+,
                                                 decoration:
                                                 InputDecoration(
                                                   // hintText: "Enter password",
@@ -2331,8 +2353,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   EdgeInsets.all(13),
                                                   suffixIcon: Icon(
                                                     Icons.percent,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1),
+                                                    color: blueColor
+
+
+,
                                                     size: 18,
                                                   ),
                                                 ),
@@ -2388,8 +2412,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 },
                                                 //  controller: password,
                                                 cursorColor:
-                                                Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                blueColor
+
+
+,
                                                 decoration:
                                                 InputDecoration(
                                                   // hintText: "Enter password",
@@ -2417,8 +2443,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   EdgeInsets.all(13),
                                                   suffixIcon: Icon(
                                                     Icons.percent,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1),
+                                                    color: blueColor
+
+
+,
                                                     size: 18,
                                                   ),
                                                 ),
@@ -2680,8 +2708,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   },
                                                   //  controller: password,
                                                   cursorColor:
-                                                      Color.fromRGBO(
-                                                          21, 43, 81, 1),
+                                                      blueColor
+
+
+,
                                                   decoration:
                                                       InputDecoration(
                                                     // hintText: "Enter password",
@@ -2709,8 +2739,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                         EdgeInsets.all(13),
                                                     suffixIcon: Icon(
                                                       Icons.percent,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1),
+                                                      color: blueColor
+
+
+,
                                                       size: 18,
                                                     ),
                                                   ),
@@ -2770,8 +2802,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   },
                                                   //  controller: password,
                                                   cursorColor:
-                                                      Color.fromRGBO(
-                                                          21, 43, 81, 1),
+                                                      blueColor
+
+
+,
                                                   decoration:
                                                       InputDecoration(
                                                     // hintText: "Enter password",
@@ -2799,8 +2833,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                         EdgeInsets.all(13),
                                                     suffixIcon: Icon(
                                                       Icons.percent,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1),
+                                                      color: blueColor
+
+
+,
                                                       size: 18,
                                                     ),
                                                   ),
@@ -3110,8 +3146,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                       : FontAwesomeIcons
                                                                       .sortDown,
                                                                   size: 20,
-                                                                  color: Color.fromRGBO(
-                                                                      21, 43, 83, 1),
+                                                                  color: blueColor
+
+
+,
                                                                 ),
                                                               ),
                                                             ),

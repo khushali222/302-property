@@ -1646,8 +1646,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     cityerror = false;
                                                   });
                                                 },
-                                                cursorColor: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                cursorColor: blueColor
+
+
+,
                                                 decoration: InputDecoration(
                                                   enabledBorder: cityerror
                                                       ? OutlineInputBorder(
@@ -1757,8 +1759,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     stateerror = false;
                                                   });
                                                 },
-                                                cursorColor: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                cursorColor: blueColor
+
+
+,
                                                 decoration: InputDecoration(
                                                   enabledBorder: stateerror
                                                       ? OutlineInputBorder(
@@ -1880,8 +1884,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
                                                   });
                                                 },
-                                                cursorColor: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                cursorColor: blueColor
+
+
+,
                                                 decoration: InputDecoration(
                                                   enabledBorder: countryerror
                                                       ? OutlineInputBorder(
@@ -1996,8 +2002,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     .numberWithOptions(
                                                         signed: true,
                                                         decimal: true),
-                                                cursorColor: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                cursorColor: blueColor
+
+
+,
                                                 decoration: InputDecoration(
                                                   enabledBorder: postalcodeerror
                                                       ? OutlineInputBorder(
@@ -2243,8 +2251,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     border: TableBorder(
                                                       horizontalInside:
                                                           BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1),
+                                                        color: blueColor
+
+
+,
                                                         width: 1.0,
                                                       ),
                                                     ),
@@ -2582,11 +2592,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                   Text(
                                                                     "New Staff Member",
                                                                     style: TextStyle(
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            81,
-                                                                            1),
+                                                                        color: blueColor
+
+
+,
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .bold,
@@ -3328,11 +3337,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                             BoxDecoration(
                                                                           borderRadius:
                                                                               BorderRadius.circular(5.0),
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              81,
-                                                                              1),
+                                                                          color: blueColor
+
+
+,
                                                                           boxShadow: [
                                                                             BoxShadow(
                                                                               color: Colors.grey,
@@ -3867,8 +3875,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                           child: Text(
                                             "Add another unit",
                                             style: TextStyle(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                color: blueColor
+
+
+,
                                                 // fontWeight: FontWeight.bold,
                                                 fontSize: 14),
                                           ),

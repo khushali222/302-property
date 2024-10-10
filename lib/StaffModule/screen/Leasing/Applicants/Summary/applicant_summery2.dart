@@ -365,8 +365,10 @@ class _applicant_summeryState extends State<applicant_summery>
                                         .contains(MaterialState.disabled)) {
                                       return Colors.grey; // Disabled color
                                     }
-                                    return const Color.fromRGBO(
-                                        21, 43, 81, 1); // Enabled color
+                                    return blueColor
+
+
+; // Enabled color
                                   },
                                 ),
                                 shape: MaterialStateProperty.all(

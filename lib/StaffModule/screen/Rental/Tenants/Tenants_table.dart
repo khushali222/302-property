@@ -957,7 +957,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color:
-                                          blueColor
+                                      Color.fromRGBO(152, 162, 179, .5)
 
 
 )),
@@ -1439,7 +1439,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                   width: 5,
                                                                 ),
                                                                 Image.asset(
-                                                                    'assets/icons/view.png'),
+                                                                    'assets/icons/view.png',color: blueColor,),
                                                                 // FaIcon(
                                                                 //   FontAwesomeIcons.trashCan,
                                                                 //   size: 15,
@@ -1726,14 +1726,20 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                 decoration: BoxDecoration(
                                                   border: Border(
                                                     left: BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1)),
+                                                        color: blueColor
+
+
+),
                                                     right: BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1)),
+                                                        color: blueColor
+
+
+),
                                                     top: BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1)),
+                                                        color: blueColor
+
+
+),
                                                     bottom: i ==
                                                             _pagedData.length -
                                                                 1

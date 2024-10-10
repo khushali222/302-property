@@ -872,7 +872,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color:
-                                          blueColor
+                                      Color.fromRGBO(152, 162, 179, .5)
 
 
 )),
@@ -1576,19 +1576,27 @@ class _Vendor_tableState extends State<Vendor_table> {
                                               decoration: BoxDecoration(
                                                 border: Border(
                                                   left: BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
+                                                      color: blueColor
+
+
+),
                                                   right: BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
+                                                      color: blueColor
+
+
+),
                                                   top: BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
+                                                      color: blueColor
+
+
+),
                                                   bottom: i ==
                                                           _pagedData.length - 1
                                                       ? BorderSide(
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 81, 1))
+                                                          color:blueColor
+
+
+)
                                                       : BorderSide.none,
                                                 ),
                                               ),

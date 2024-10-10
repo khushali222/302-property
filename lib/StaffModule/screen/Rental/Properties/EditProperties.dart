@@ -1251,7 +1251,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                               borderRadius: BorderRadius.circular(5.0),
                                                                               child: Container(
                                                                                 height:  MediaQuery.of(context).size.width < 500 ? 40 :45,
-                                                                                width: MediaQuery.of(context).size.width < 500 ? 150 : 165,
+                                                                                width: MediaQuery.of(context).size.width < 500 ? 140 : 165,
                                                                                 decoration: BoxDecoration(
                                                                                   borderRadius: BorderRadius.circular(5.0),
                                                                                   color: blueColor,
@@ -1274,15 +1274,13 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                     style: TextStyle(
                                                                                         color: Colors.white,
                                                                                         fontWeight: FontWeight.bold,
-                                                                                        fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :15.5),
+                                                                                        fontSize:  MediaQuery.of(context).size.width < 500 ? 13 :15.5),
                                                                                   ),
                                                                                 ),
                                                                               ),
                                                                             ),
                                                                           ),
-                                                                          SizedBox(
-                                                                            width: 15,
-                                                                          ),
+                                                                          Spacer(),
                                                                           InkWell(
                                                                             onTap: () {
                                                                               Navigator.pop(context);
@@ -1290,11 +1288,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                             child: Material(
                                                                               elevation: 2,
                                                                               child: Container(
-                                                                                  width:  MediaQuery.of(context).size.width < 500 ? 90 : 100,
+                                                                                  width:  MediaQuery.of(context).size.width < 500 ? 80 : 100,
                                                                                   height:  MediaQuery.of(context).size.width < 500 ? 40 :40,
                                                                                   color: Colors.white,
                                                                                   child: Center(child: Text("Cancel"))),
                                                                             ),
+                                                                          ),
+                                                                          SizedBox(
+                                                                            width: 3,
                                                                           ),
                                                                         ],
                                                                       ),
@@ -1364,8 +1365,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                       style: TextStyle(
                                                           fontWeight:
                                                           FontWeight.bold,
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 81, 1)),
+                                                          color:blueColor
+
+
+),
                                                     ),
                                                   ),
                                                   ...entry.value.map((item) {
@@ -2394,11 +2397,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                   Text(
                                                                     "New Staff Member",
                                                                     style: TextStyle(
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            81,
-                                                                            1),
+                                                                        color: blueColor,
+
+
+
                                                                         fontWeight:
                                                                         FontWeight
                                                                             .bold,
@@ -3127,11 +3129,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                         BoxDecoration(
                                                                           borderRadius:
                                                                           BorderRadius.circular(5.0),
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              81,
-                                                                              1),
+                                                                          color: blueColor
+
+
+,
                                                                           boxShadow: [
                                                                             BoxShadow(
                                                                               color: Colors.grey,
@@ -3807,8 +3808,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                           child: Text(
                                             "Add another unit",
                                             style: TextStyle(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                color: blueColor
+
+
+,
                                                 // fontWeight: FontWeight.bold,
                                                 fontSize: 14),
                                           ),

@@ -1505,8 +1505,10 @@ class _MakePaymentState extends State<MakePayment> {
                                                           borderRadius:
                                                           BorderRadius.circular(
                                                               5.0),
-                                                          color: const Color.fromRGBO(
-                                                              21, 43, 81, 1),
+                                                          color: constblueColor
+
+
+,
                                                           boxShadow: [
                                                             const BoxShadow(
                                                               color: Colors.grey,
@@ -2404,7 +2406,10 @@ class _MakePaymentState extends State<MakePayment> {
                                             style: TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w500,
-                                                color: Color(0xFF152b51))),
+                                                color: blueColor
+
+
+)),
                                         const SizedBox(
                                           height: 10,
                                         ),
@@ -2416,7 +2421,10 @@ class _MakePaymentState extends State<MakePayment> {
                                           ),
                                           child: ElevatedButton(
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: const Color(0xFF152b51),
+                                              backgroundColor: const blueColor
+
+
+,
                                               shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                 BorderRadius.circular(8.0),
@@ -3000,11 +3008,10 @@ class _MakePaymentState extends State<MakePayment> {
                                                   style: TextButton.styleFrom(
                                                     foregroundColor: Colors.white,
                                                     backgroundColor:
-                                                    const Color.fromRGBO(
-                                                        21,
-                                                        43,
-                                                        83,
-                                                        1), // button text color
+                                                    blueColor
+
+
+, // button text color
                                                   ),
                                                 ),
                                               ),
@@ -4405,7 +4412,10 @@ class _MakePaymentState extends State<MakePayment> {
                                           style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w500,
-                                              color: Color(0xFF152b51))),
+                                              color: blueColor
+
+
+)),
                                       const SizedBox(
                                         height: 10,
                                       ),
@@ -4417,7 +4427,10 @@ class _MakePaymentState extends State<MakePayment> {
                                         ),
                                         child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
-                                            backgroundColor: const Color(0xFF152b51),
+                                            backgroundColor: const blueColor
+
+
+,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                               BorderRadius.circular(8.0),
