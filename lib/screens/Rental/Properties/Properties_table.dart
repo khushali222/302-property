@@ -20,6 +20,7 @@ import '../../../model/properties.dart';
 import '../../../model/properties_summery.dart';
 import '../../../model/rental_properties.dart';
 import '../../../provider/add_property.dart';
+import '../../../provider/dateProvider.dart';
 import '../../../repository/properties.dart';
 import '../../../repository/rental_properties.dart';
 import '../../../widgets/drawer_tiles.dart';
@@ -497,6 +498,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -1029,11 +1031,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                             ),
                                                             _buildTableRow(
                                                                 'Locality:', _getDisplayValue(rentals.rentalOwnerData?.city),
-                                                                'Created At:', formatDate('${rentals.createdAt}')
+                                                                'Created At:',  dateProvider.formatCurrentDate('${rentals.createdAt}')
 
                                                             ),
                                                             _buildTableRow(
-                                                              'Updated At:', formatDate('${rentals.updatedAt}'),
+                                                              'Updated At:',  dateProvider.formatCurrentDate('${rentals.updatedAt}'),
                                                                 '', '',
                                                             ),
                                                           ],

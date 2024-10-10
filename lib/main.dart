@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/provider/Plan%20Purchase/plancheckProvider.dart';
 
 import 'package:three_zero_two_property/provider/add_property.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/editapplicationsummaryForm.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
 
@@ -142,6 +143,7 @@ void main() {
           ChangeNotifierProvider(
             create: (context) => ProfileProvider(),
           ),
+          ChangeNotifierProvider(create: (_) => DateProvider()),
         ],
         child: MyApp(),
       ),

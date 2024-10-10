@@ -12,6 +12,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
+import '../../../../provider/dateProvider.dart';
 import '../../../repository/GetAdminAddressPdf.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -1370,6 +1371,7 @@ class _FinancialTableState extends State<FinancialTable> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     bool isFreePlan = Provider.of<checkPlanPurchaseProiver>(context)
             .checkplanpurchaseModel
             ?.data
@@ -1727,7 +1729,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                   ),
                                                   Expanded(
                                                     child: Text(
-                                                      formatDate(
+                                                      dateProvider.formatCurrentDate(
                                                           '${data.entry!.first.date}'),
                                                       style: TextStyle(
                                                         color: blueColor,

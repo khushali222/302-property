@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,6 +16,7 @@ import 'package:http/http.dart' as http;
 
 import '../../constant/constant.dart';
 import '../../model/setting.dart';
+import '../../provider/dateProvider.dart';
 import '../../widgets/CustomTableShimmer.dart';
 import '../../widgets/drawer_tiles.dart';
 import '../../widgets/custom_drawer.dart';
@@ -46,6 +49,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   bool isaccounts = false;
   bool islatefee = false;
   bool isLoading = false;
+  bool isdateformate = false;
 
 
   @override
@@ -535,10 +539,13 @@ class _TabBarExampleState extends State<TabBarExample> {
       ),
     );
   }
-
+  int dateformateselect = 0;
   int? expandedIndex;
   Set<int> expandedIndices = {};
-
+  String? dateformate1 ;
+  String? dateformate2 ;
+  String? dateformate3 ;
+  String? customdate ;
   int totalrecords = 0;
   List<Setting4> _tableData = [];
   int _rowsPerPage = 10;
@@ -781,6 +788,7 @@ class _TabBarExampleState extends State<TabBarExample> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return DefaultTabController(
       length: 3, // Number of tabs
       child: Scaffold(
@@ -850,6 +858,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 ismail = false;
                                 isaccounts = false;
                                 islatefee = false;
+                                isdateformate = false;
                               });
                             },
                             child: Container(
@@ -891,6 +900,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 issurge = false;
                                 ismail = false;
                                 isaccounts = false;
+                                isdateformate = false;
                                 islatefee = true;
                               });
                             },
@@ -941,6 +951,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 isaccounts = false;
                                 ismail = true;
                                 islatefee = false;
+                                isdateformate = false;
                               });
                             },
                             child: Container(
@@ -979,6 +990,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 ismail = false;
                                 isaccounts = true;
                                 islatefee = false;
+                                isdateformate = false;
                               });
                             },
                             child: Container(
@@ -1003,6 +1015,105 @@ class _TabBarExampleState extends State<TabBarExample> {
                                           500
                                           ? 15
                                           : 20),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 15,),
+                  SizedBox(
+                    height:
+                    MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                    width:
+                    MediaQuery.of(context).size.width < 500 ? 850 : 900,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              final dateProvider = Provider.of<DateProvider>(context,listen: false);
+                              setState(() {
+                                issurge = false;
+                                isaccounts = false;
+                                ismail = false;
+                                isdateformate = true;
+                                islatefee = false;
+                                DateTime now = DateTime.now();
+                                  dateformateselect = dateProvider.dateformateselect;
+                                 dateformate1 = DateFormat('MM/dd/yyyy').format(now);
+                                 dateformate2 = DateFormat('yyyy-MM-dd').format(now);
+                                 dateformate3 = DateFormat('yyyy-MMM-dd').format(now);
+                               //dateformate1 = DateFormat('mm/dd/yyyy').parse(DateTime.now().toString()).toString();
+
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: blueColor),
+                                color:  !isdateformate
+                                    ? Colors.white
+                                    : blueColor,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "Date Formate",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: isdateformate
+                                          ? Colors.white
+                                          : blueColor,
+                                      fontSize: MediaQuery.of(context)
+                                          .size
+                                          .width <
+                                          500
+                                          ? 15
+                                          : 20),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 10,),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                issurge = false;
+                                ismail = false;
+                                isaccounts = true;
+                                islatefee = false;
+                              });
+                            },
+                            child: Visibility(
+                              visible: false,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: blueColor),
+                                  color: !isaccounts
+                                      ? Colors.white
+                                      : blueColor,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Manage Accounts",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: isaccounts
+                                            ? Colors.white
+                                            : blueColor,
+                                        fontSize: MediaQuery.of(context)
+                                            .size
+                                            .width <
+                                            500
+                                            ? 15
+                                            : 20),
+                                  ),
                                 ),
                               ),
                             ),
@@ -3564,6 +3675,214 @@ class _TabBarExampleState extends State<TabBarExample> {
                             ),
 
                         ],
+                    ),
+                  if(isdateformate)
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                            height:15
+                        ),
+                        Row(
+                          children: [
+                            Text("Manage Date Format",style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: blueColor,
+                              fontSize: MediaQuery.of(context).size.width < 500
+                                  ? 18
+                                  : 25,
+                            ),),
+                            Spacer(),
+
+                          ],
+                        ),
+                        SizedBox(
+                            height:15
+                        ),
+                        Row(
+                            children: [
+                              Text("Current Date Format :- dd-mm-yyyy",style: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                color: blueColor,
+                                fontSize: MediaQuery.of(context).size.width < 500
+                                    ? 16
+                                    : 25,
+                              ),),
+                            ],
+                        ),
+                        SizedBox(
+                            height:15
+                        ),
+                        Text("Select Date Format",style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          color: blueColor,
+                          fontSize: MediaQuery.of(context).size.width < 500
+                              ? 16
+                              : 25,
+                        ),),
+                        Row(
+                          children: [
+                            Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        height: 20,width: 30,
+                                        child: Radio(value: 0, groupValue: dateformateselect, onChanged: (value){
+                                          setState(() {
+                                            dateProvider.updateDateFormat('MM/dd/yyyy',value);
+                                            dateformateselect = value!;
+                                          });
+                                        })),
+
+                                      Text("MM/DD/YYYY",style: TextStyle(
+                                        fontSize: 16,
+
+                                      ),)
+                                    ],
+                                  ),
+                                  SizedBox(height: 10,),
+                                  SizedBox(
+                                    height: 50,
+                                    width: 150,
+
+                                    child: TextFormField(
+                                      enabled: false,
+                                      initialValue: dateformate1 ?? "",
+                                      decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.symmetric(horizontal: 15),
+                                          border: OutlineInputBorder(),
+                                        filled: true,
+                                        fillColor: Colors.grey.shade200,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                            ),
+                            SizedBox(width: 15,),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                        height: 20,width: 30,
+                                      child: Radio(value: 1, groupValue: dateformateselect, onChanged: (value){
+                                        setState(() {
+                                          dateProvider.updateDateFormat('yyyy-MM-dd',value);
+                                          dateformateselect = value!;
+                                        });
+                                      })),
+                                    Text("YYYY-MM-DD",style: TextStyle(
+                                      fontSize: 16,
+
+                                    ),)
+                                  ],
+                                ),
+                                SizedBox(height: 10,),
+                                SizedBox(
+                                  height: 50,
+                                  width: 150,
+                                  child: TextFormField(
+                                    enabled: false,
+                                    initialValue: dateformate2 ??"",
+
+                                    decoration:  InputDecoration(
+                                        contentPadding: EdgeInsets.symmetric(horizontal: 15),
+                                        border: OutlineInputBorder(),
+                                      filled: true,
+                                      fillColor: Colors.grey.shade200,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                        SizedBox(height: 10,),
+                        Row(
+                          children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                        height: 20,width: 30,
+                                      child: Radio(value: 2, groupValue: dateformateselect, onChanged: (value){
+                                        setState(() {
+                                          dateProvider.updateDateFormat('yyyy-MMM-dd',value);
+                                          dateformateselect = value!;
+                                        });
+                                      })),
+                                    Text("YYYY-MMM-DD",style: TextStyle(
+                                      fontSize: 16,
+
+                                    ),)
+                                  ],
+                                ),
+                                SizedBox(height: 10,),
+                                SizedBox(
+                                  height: 50,
+                                  width: 150,
+                                  child: TextFormField(
+                                    initialValue: dateformate3??"",
+                                    enabled: false,
+                                    decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.symmetric(horizontal: 15),
+                                        border: OutlineInputBorder(),
+                                      filled: true,
+                                      fillColor: Colors.grey.shade200,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                            SizedBox(width: 15,),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                        height: 20,width: 30,
+                                      child: Radio(value: 3, groupValue: dateformateselect, onChanged: (value){
+                                        setState(() {
+                                          dateformateselect = value!;
+                                        });
+                                      })),
+                                    Text("Custom",style: TextStyle(
+                                      fontSize: 16,
+
+                                    ),)
+                                  ],
+                                ),
+                                SizedBox(height: 10,),
+                                SizedBox(
+                                  height: 50,
+                                  width: 150,
+                                  child: TextFormField(
+                                    initialValue: customdate??"",
+                                    enabled:dateformateselect ==3 ,
+                                    decoration:  InputDecoration(
+                                        contentPadding: EdgeInsets.symmetric(horizontal: 15),
+                                        border: OutlineInputBorder(),
+                                      filled: dateformateselect !=3,
+                                      fillColor: Colors.grey.shade200,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )
+                          ],
+                        )
+                      ],
                     ),
                 ],
               ),

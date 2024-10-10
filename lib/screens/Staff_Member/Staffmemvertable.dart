@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
@@ -14,6 +15,7 @@ import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../Model/propertytype.dart';
 import '../../constant/constant.dart';
 import '../../model/staffmember.dart';
+import '../../provider/dateProvider.dart';
 import '../../repository/Property_type.dart';
 import '../../repository/Staffmember.dart';
 import '../../widgets/drawer_tiles.dart';
@@ -475,6 +477,7 @@ class _StaffTableState extends State<StaffTable> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -918,7 +921,7 @@ class _StaffTableState extends State<StaffTable> {
                                                                   ),
                                                                   TextSpan(
                                                                     text: staffmembers.createdAt?.isNotEmpty == true
-                                                                        ? formatDate('${staffmembers.createdAt}')
+                                                                        ? dateProvider.formatCurrentDate('${staffmembers.createdAt}')
                                                                         : 'N/A',
                                                                     style: TextStyle(
                                                                       fontWeight: FontWeight.w700,
@@ -943,7 +946,7 @@ class _StaffTableState extends State<StaffTable> {
                                                                   ),
                                                                   TextSpan(
                                                                     text: staffmembers.updatedAt?.isNotEmpty == true
-                                                                        ? formatDate('${staffmembers.updatedAt}')
+                                                                        ?  dateProvider.formatCurrentDate('${staffmembers.updatedAt}')
                                                                         : 'N/A',
                                                                     style: TextStyle(
                                                                       fontWeight: FontWeight.w700,

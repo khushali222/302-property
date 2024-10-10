@@ -26,6 +26,7 @@ import '../../../model/get_lease.dart';
 import '../../../model/rentalOwner.dart';
 import '../../../model/rentalowners_summery.dart';
 import '../../../model/staffmember.dart';
+import '../../../provider/dateProvider.dart';
 import '../../../provider/lease_provider.dart';
 import '../../../repository/Rental_ownersData.dart';
 import '../../../repository/Staffmember.dart';
@@ -547,6 +548,7 @@ class _Lease_tableState extends State<Lease_table> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -945,7 +947,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                   flex:
                                                       2, // Smaller size for the second field
                                                   child: Text(
-                                                    formatDate(
+                                                    dateProvider.formatCurrentDate(
                                                         '${lease.startDate}'),
                                                     style: TextStyle(
                                                       color: blueColor,
@@ -965,7 +967,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                   flex:
                                                       2, // Smaller size for the third field
                                                   child: Text(
-                                                    formatDate(
+                                                    dateProvider.formatCurrentDate(
                                                         '${lease.endDate}'),
                                                     style: TextStyle(
                                                       color: blueColor,
@@ -1029,7 +1031,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                                     .remainingDays
                                                                     .toString()),
                                                                 'Rent Start :',
-                                                               '${formatDate(lease.rentDueDate!)}')
+                                                               '${ dateProvider.formatCurrentDate(lease.rentDueDate!)}')
 
                                                           ],
                                                         ),

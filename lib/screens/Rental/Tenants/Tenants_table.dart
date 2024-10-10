@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/repository/tenants.dart';
@@ -15,6 +16,7 @@ import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../Model/tenants.dart';
 import '../../../constant/constant.dart';
 
+import '../../../provider/dateProvider.dart';
 import '../../../widgets/drawer_tiles.dart';
 import 'package:http/http.dart' as http;
 
@@ -630,6 +632,7 @@ class _Tenants_tableState extends State<Tenants_table> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -1021,7 +1024,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .03),
+                                                            .02),
                                                 Expanded(
                                                   flex: 3,
                                                   child: Text(
@@ -1039,13 +1042,13 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .02),
+                                                            .00),
                                                 Expanded(
                                                   flex: 2,
                                                   child: Text(
                                                     // '${widget.data.createdAt}',
 
-                                                    '${formatDate(tenants.createdAt!) ?? ''}',
+                                                    '${ dateProvider.formatCurrentDate(tenants.createdAt!) ?? ''}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:

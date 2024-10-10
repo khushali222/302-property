@@ -26,6 +26,7 @@ import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../Model/Preminum Plans/checkPlanPurchaseModel.dart';
 import '../../../Model/Preminum Plans/checkPlanPurchaseModel.dart';
 import '../../../provider/Plan Purchase/plancheckProvider.dart';
+import '../../../provider/dateProvider.dart';
 import 'Edit_make_payment.dart';
 import 'make_payment.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
@@ -1365,6 +1366,7 @@ class _FinancialTableState extends State<FinancialTable> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    final dateProvider = Provider.of<DateProvider>(context);
     bool isFreePlan = Provider.of<checkPlanPurchaseProiver>(context)
             .checkplanpurchaseModel
             ?.data
@@ -1731,7 +1733,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                   ),
                                                   Expanded(
                                                     child: Text(
-                                                      formatDate(
+                                                      dateProvider.formatCurrentDate(
                                                           '${data.entry!.first.date}'),
                                                       style: TextStyle(
                                                         color: blueColor,

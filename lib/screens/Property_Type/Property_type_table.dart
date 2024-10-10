@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../Model/propertytype.dart';
 import '../../constant/constant.dart';
+import '../../provider/dateProvider.dart';
 import '../../repository/Property_type.dart';
 import '../../widgets/drawer_tiles.dart';
 import 'Edit_property_type.dart';
@@ -603,6 +605,7 @@ class _PropertyTableState extends State<PropertyTable> {
   final _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -1049,7 +1052,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                     // formatDate(
                                                     //     '${Propertytype.createdAt}'),
                                                     Propertytype.createdAt?.isNotEmpty == true
-                                                        ? formatDate('${Propertytype.createdAt}')
+                                                        ? dateProvider.formatCurrentDate('${Propertytype.createdAt}')
                                                         : 'N/A',
 
                                                     style: TextStyle(
@@ -1115,7 +1118,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                                     // text: formatDate(
                                                                     //     '${Propertytype.updatedAt}'),
                                                                     text: Propertytype.updatedAt?.isNotEmpty == true
-                                                                        ? formatDate('${Propertytype.updatedAt}')
+                                                                        ? dateProvider.formatCurrentDate('${Propertytype.updatedAt}')
                                                                         : 'N/A',
                                                                     style: TextStyle(
                                                                         fontWeight:

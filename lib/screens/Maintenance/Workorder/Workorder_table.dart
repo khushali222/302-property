@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/Model/propertytype.dart';
 import 'package:three_zero_two_property/repository/Property_type.dart';
@@ -16,6 +17,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../constant/constant.dart';
 import '../../../model/workordr.dart';
+import '../../../provider/dateProvider.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/custom_drawer.dart';
 
@@ -552,6 +554,7 @@ class _Workorder_tableState extends State<Workorder_table> {
 
   final _scrollController = ScrollController();
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -1381,11 +1384,11 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                                         .workOrderData
                                                                         ?.workCategory),
                                                                 'Created At:',
-                                                                formatDate(
+                                                                dateProvider.formatCurrentDate(
                                                                     '${workOrder.workOrderData?.createdAt}')),
                                                             _buildTableRow(
                                                                 'Updated At:',
-                                                                formatDate(
+                                                                dateProvider.formatCurrentDate(
                                                                     '${workOrder.workOrderData?.updatedAt}}'),
                                                                 '',
                                                                 ''),
