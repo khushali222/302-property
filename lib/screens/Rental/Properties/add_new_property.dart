@@ -1092,7 +1092,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                           Row(
                                                                             children: [
                                                                               if (MediaQuery.of(context).size.width < 500)
-                                                                                SizedBox(width: MediaQuery.of(context).size.width * 0.05),
+                                                                                SizedBox(width: MediaQuery.of(context).size.width * 0.03),
                                                                               if (MediaQuery.of(context).size.width > 500)
                                                                                 SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                                                                               GestureDetector(
@@ -1150,26 +1150,28 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                               color: Colors.white,
                                                                                               size: 25.0,
                                                                                             )
-                                                                                          : Text(
-                                                                                              "Add Property Type",
-                                                                                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 15.5),
-                                                                                            ),
+                                                                                          : Padding(
+                                                                                            padding: const EdgeInsets.all(2.0),
+                                                                                            child: Text(
+                                                                                                "Add Property Type",
+                                                                                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 15.5),
+                                                                                              ),
+                                                                                          ),
                                                                                     ),
                                                                                   ),
                                                                                 ),
                                                                               ),
-                                                                              SizedBox(
-                                                                                width: 15,
-                                                                              ),
+                                                                             Spacer(),
                                                                               InkWell(
                                                                                 onTap: () {
                                                                                   Navigator.pop(context);
                                                                                 },
                                                                                 child: Material(
                                                                                   elevation: 2,
-                                                                                  child: Container(width: MediaQuery.of(context).size.width < 500 ? 90 : 100, height: MediaQuery.of(context).size.width < 500 ? 40 : 40, color: Colors.white, child: Center(child: Text("Cancel"))),
+                                                                                  child: Container(width: MediaQuery.of(context).size.width < 500 ? 90 : 90, height: MediaQuery.of(context).size.width < 500 ? 40 : 40, color: Colors.white, child: Center(child: Text("Cancel"))),
                                                                                 ),
                                                                               ),
+                                                                              SizedBox(width: 2,),
                                                                             ],
                                                                           ),
                                                                           SizedBox(
@@ -3295,7 +3297,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                       .size
                                                                       .width <
                                                                   500
-                                                              ? 14
+                                                              ? 13
                                                               : 15),
                                                 ),
                                               ],

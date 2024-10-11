@@ -1190,7 +1190,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                           Row(
                                                                             children: [
                                                                               if (MediaQuery.of(context).size.width < 500)
-                                                                                SizedBox(width: MediaQuery.of(context).size.width * 0.05),
+                                                                                SizedBox(width: MediaQuery.of(context).size.width * 0.03),
                                                                               if (MediaQuery.of(context).size.width > 500)
                                                                                 SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                                                                               GestureDetector(
@@ -1230,7 +1230,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                   borderRadius: BorderRadius.circular(5.0),
                                                                                   child: Container(
                                                                                     height: MediaQuery.of(context).size.width < 500 ? 40 : 45,
-                                                                                    width: MediaQuery.of(context).size.width < 500 ? 130 : 165,
+                                                                                    width: MediaQuery.of(context).size.width < 500 ? 125 : 165,
                                                                                     decoration: BoxDecoration(
                                                                                       borderRadius: BorderRadius.circular(5.0),
                                                                                       color: blueColor,
@@ -1256,18 +1256,17 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                   ),
                                                                                 ),
                                                                               ),
-                                                                              SizedBox(
-                                                                                width: 15,
-                                                                              ),
+                                                                              Spacer(),
                                                                               InkWell(
                                                                                 onTap: () {
                                                                                   Navigator.pop(context);
                                                                                 },
                                                                                 child: Material(
                                                                                   elevation: 2,
-                                                                                  child: Container(width: MediaQuery.of(context).size.width < 500 ? 90 : 100, height: MediaQuery.of(context).size.width < 500 ? 40 : 40, color: Colors.white, child: Center(child: Text("Cancel"))),
+                                                                                  child: Container(width: MediaQuery.of(context).size.width < 500 ? 90 : 90, height: MediaQuery.of(context).size.width < 500 ? 40 : 40, color: Colors.white, child: Center(child: Text("Cancel"))),
                                                                                 ),
                                                                               ),
+                                                                              SizedBox(width: 2,),
                                                                             ],
                                                                           ),
                                                                           SizedBox(
@@ -3400,7 +3399,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                       .size
                                                                       .width <
                                                                   500
-                                                              ? 14
+                                                              ? 13
                                                               : 18),
                                                 ),
                                               ],

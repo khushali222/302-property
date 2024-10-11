@@ -1529,12 +1529,10 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                       : FontAwesomeIcons
                                                                           .sortDown,
                                                                   size: 20,
-                                                                  color: const Color
-                                                                      .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
+                                                                  color: blueColor
+
+
+,
                                                                 ),
                                                               ),
                                                             ),

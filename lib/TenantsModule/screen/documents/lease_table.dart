@@ -850,7 +850,8 @@ class _Lease_TableState extends State<Lease_Table> {
                             SizedBox(height: 20),
                             Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: blueColor
+                                  border: Border.all(color: Color.fromRGBO(
+                                      152, 162, 179, .5)
 
 
 )),
@@ -866,7 +867,8 @@ class _Lease_TableState extends State<Lease_Table> {
                                   return Container(
                                     decoration: BoxDecoration(
                                       color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                      border: Border.all(color: blueColor
+                                      border: Border.all(color: Color.fromRGBO(
+                                          152, 162, 179, .5)
 
 
 ),
