@@ -9,10 +9,12 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/Model/tenants.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/repository/lease.dart';
 import 'package:three_zero_two_property/repository/workorder.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newModel.dart';
@@ -261,6 +263,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
   }
 
   Summery_page(WorkOrderData_summery summery) {
+    final dateProvider = Provider.of<DateProvider>(context);
     double grandTotal = 0;
     // applicantChecklist = List<String>.from(summery.applicantCheckedChecklist!);
     return LayoutBuilder(builder: (context, constraints) {
@@ -449,7 +452,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       height: 4,
                                     ),
                                     Text(
-                                        '${summery.workorderUpdates?.last.date ?? "N/A"} ',
+                                        dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}'),
                                         style: TextStyle(
                                             color: blueColor,
                                             fontWeight: FontWeight.bold)),
@@ -1192,7 +1195,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '${update.statusUpdatedBy ?? ""} updated this work order (${update.date ?? "N/A"})',
+                                    '${update.statusUpdatedBy ?? ""} updated this work order (${dateProvider.formatCurrentDate('${update.date}')})',
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: blueColor),
@@ -1400,9 +1403,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   height: 4,
                                 ),
                                 Text(
-                                    '${summery.workorderUpdates?.isEmpty == true ?
-                                    "N/A" : summery.workorderUpdates?.last.date?.toString()
-                                    }',
+                                    dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}'),
+                                    // '${summery.workorderUpdates?.isEmpty == true ?
+                                    // "N/A" : summery.workorderUpdates?.last.date?.toString()
+                                    // }',
                                     style: TextStyle(
                                         color: blueColor,
                                         fontWeight: FontWeight.bold)),
@@ -1635,7 +1639,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '${update.statusUpdatedBy ?? ""} updated this work order (${update.date ?? "N/A"})',
+                                    '${update.statusUpdatedBy ?? ""} updated this work order (${dateProvider.formatCurrentDate('${update.date}') ?? "N/A"})',
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: blueColor),
@@ -2122,6 +2126,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
   }
 
   Task(WorkOrderData_summery summery) {
+    final dateProvider = Provider.of<DateProvider>(context);
     print(summery.workOrderImages);
     double grandTotal = 0;
     // applicantChecklist = List<String>.from(summery.applicantCheckedChecklist!);
@@ -2362,7 +2367,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       height: 4,
                                     ),
                                     Text(
-                                        '${summery.workorderUpdates?.last.date ?? "N/A"}',
+                                        dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}'),
                                         style: TextStyle(
                                             color: blueColor,
                                             fontWeight: FontWeight.bold)),
@@ -2855,9 +2860,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 SizedBox(
                                   height: 4,
                                 ),
-                                Text( '${summery.workorderUpdates?.isEmpty == true ?
-                                "N/A" : summery.workorderUpdates?.last.date?.toString()
-                                }',
+                                Text( dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}'),
                                     style: TextStyle(
                                         color: blueColor,
                                         fontWeight: FontWeight.bold)),

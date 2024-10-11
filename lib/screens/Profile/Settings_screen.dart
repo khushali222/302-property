@@ -1061,7 +1061,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                               ),
                               child: Center(
                                 child: Text(
-                                  "Date Formate",
+                                  "Date Format",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: isdateformate

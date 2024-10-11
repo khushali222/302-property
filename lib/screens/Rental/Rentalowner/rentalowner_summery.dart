@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
 import '../../../Model/RentalOwnersData.dart';
@@ -60,6 +62,7 @@ class _RentalownersSummeryForMobileState
     extends State<RentalownersSummeryForMobile> {
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       // appBar: widget302.,
       appBar: widget_302.App_Bar(context: context),
@@ -666,8 +669,8 @@ class _RentalownersSummeryForMobileState
                                   child: Padding(
                                 padding: const EdgeInsets.only(top: 12),
                                 child: Text(
-                                  formatDate(
-                                      '${(widget.rentalowners?.startDate ?? '').isEmpty ? 'N/A' : widget.rentalowners?.startDate}'),
+                                  dateProvider.formatCurrentDate('${widget.rentalowners?.startDate}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${widget.rentalowners?.startDate}'),
+
                                   style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
@@ -691,9 +694,8 @@ class _RentalownersSummeryForMobileState
                                   child: Padding(
                                 padding: const EdgeInsets.only(top: 12),
                                 child: Text(
-                                  formatDate(
-                                      '${(widget.rentalowners?.endDate ?? '').isEmpty ? 'N/A' : widget.rentalowners?.endDate}'),
-                                  style: TextStyle(
+                           dateProvider.formatCurrentDate('${widget.rentalowners?.endDate}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${widget.rentalowners?.endDate}'),
+    style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
                                       color: grey),

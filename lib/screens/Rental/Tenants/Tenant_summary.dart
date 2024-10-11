@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/AdminTenantInsuranceModel/adminTenantInsuranceModel.dart';
@@ -10,6 +11,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/repository/AdminTenantInsuranceService/adminTenantinsuranceService.dart';
 import 'package:three_zero_two_property/repository/tenants.dart';
 
@@ -629,8 +631,10 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
-                : const Color.fromRGBO(
-                    21, 43, 83, 1), // Change color based on availability
+                :  blueColor
+
+
+, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -831,6 +835,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       // appBar: widget302.,
       appBar: widget_302.App_Bar(context: context),
@@ -1596,8 +1601,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                               flex: 3,
                                                               child: Text(
                                                                 // '${widget.data.createdAt}',
-                                                                '${formatDate(Propertytype.expirationDate!)}',
-
+                                                                dateProvider.formatCurrentDate('${Propertytype.expirationDate}'),
                                                                 style:
                                                                     TextStyle(
                                                                   color:
@@ -1690,7 +1694,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                                 style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
                                                                               ),
                                                                               TextSpan(
-                                                                                text: '${formatDate(Propertytype.effectiveDate!)}',
+                                                                                text: dateProvider.formatCurrentDate('${Propertytype.effectiveDate}'),
                                                                                 style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey), // Light and grey
                                                                               ),
                                                                             ],
@@ -2189,7 +2193,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                           ),
                                                           Expanded(
                                                             child: Text(
-                                                              '${Propertytype.startDate}',
+                                                              dateProvider.formatCurrentDate('${Propertytype.startDate}'),
                                                               style: TextStyle(
                                                                 color:
                                                                     blueColor,
@@ -2210,7 +2214,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                             child: Text(
                                                               // '${widget.data.createdAt}',
 
-                                                              '${Propertytype.endDate!}',
+                                                              dateProvider.formatCurrentDate('${Propertytype.endDate}'),
 
                                                               style: TextStyle(
                                                                 color:
@@ -2862,8 +2866,10 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
-                : const Color.fromRGBO(
-                    21, 43, 83, 1), // Change color based on availability
+                :  blueColor
+
+
+, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -2881,6 +2887,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       // appBar: widget302.,
@@ -3254,7 +3261,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                             padding:
                                                 const EdgeInsets.only(top: 12),
                                             child: Text(
-                                              '${(tenantsummery.first.tenantBirthDate ?? '').isEmpty ? 'N/A' : tenantsummery.first.tenantBirthDate}',
+                                              dateProvider.formatCurrentDate('${tenantsummery.first.tenantBirthDate}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${tenantsummery.first.tenantBirthDate}'),
                                               style: TextStyle(
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.bold,
