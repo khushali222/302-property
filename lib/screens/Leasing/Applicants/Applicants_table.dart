@@ -923,7 +923,10 @@ class _Applicants_tableState extends State<Applicants_table> {
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color:
-                                          Color.fromRGBO(152, 162, 179, .5))),
+                                      Color.fromRGBO(152, 162, 179, .5)
+
+
+)),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -986,8 +989,10 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                               .sortDown,
                                                       size: 20,
                                                       color:
-                                                          const Color.fromRGBO(
-                                                              21, 43, 83, 1),
+                                                           blueColor
+
+
+,
                                                     ),
                                                   ),
                                                 ),
@@ -1010,9 +1015,11 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                               left: 0.0),
                                                       child: Text(
                                                         '${applicant.applicantFirstName} ${applicant.applicantLastName}',
-                                                        style: const TextStyle(
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 83, 1),
+                                                        style:  TextStyle(
+                                                          color: blueColor
+
+
+,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           fontSize: 13,
@@ -1031,9 +1038,9 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                   flex: 3,
                                                   child: Text(
                                                     '${applicant.applicantPhoneNumber}',
-                                                    style: const TextStyle(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                    style:  TextStyle(
+                                                      color: blueColor
+,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       fontSize: 13,
@@ -1054,9 +1061,11 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                             left: 15.0),
                                                     child: Text(
                                                       '   ${applicant.applicantStatus != null && applicant.applicantStatus.isNotEmpty ? applicant.applicantStatus.first.status.toString() : 'N/A'}',
-                                                      style: const TextStyle(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 83, 1),
+                                                      style:  TextStyle(
+                                                        color: blueColor
+
+
+,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         fontSize: 13,
@@ -1106,18 +1115,17 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                             Text.rich(
                                                               TextSpan(
                                                                 children: [
-                                                                  const TextSpan(
+                                                                   TextSpan(
                                                                     text:
                                                                         'Email : ',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .bold,
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1)),
+                                                                        color: blueColor
+
+
+),
                                                                   ),
                                                                   TextSpan(
                                                                     text: applicant.applicantEmail !=
@@ -1290,7 +1298,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                   width: 5,
                                                                 ),
                                                                 Image.asset(
-                                                                    'assets/icons/view.png'),
+                                                                    'assets/icons/view.png',color: blueColor,),
                                                                 // FaIcon(
                                                                 //   FontAwesomeIcons.trashCan,
                                                                 //   size: 15,
@@ -1512,20 +1520,28 @@ class _Applicants_tableState extends State<Applicants_table> {
                                             TableRow(
                                               decoration: BoxDecoration(
                                                 border: Border(
-                                                  left: const BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
-                                                  right: const BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
-                                                  top: const BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
+                                                  left:  BorderSide(
+                                                      color: blueColor
+
+
+),
+                                                  right:  BorderSide(
+                                                      color: blueColor
+
+
+),
+                                                  top:  BorderSide(
+                                                      color: blueColor
+
+
+),
                                                   bottom: i ==
                                                           _pagedData.length - 1
-                                                      ? const BorderSide(
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 81, 1))
+                                                      ?  BorderSide(
+                                                          color:blueColor
+
+
+)
                                                       : BorderSide.none,
                                                 ),
                                               ),

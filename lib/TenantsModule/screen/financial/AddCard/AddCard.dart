@@ -641,11 +641,14 @@ class _AddCardState extends State<AddCard> {
                   ? Container()
                   : Padding(
                 padding: const EdgeInsets.only(left: 16.0),
-                child: const Text('Cards',
+                child:  Text('Cards',
                     style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFF152b51))),
+                        color: blueColor
+
+
+)),
               ),
               SizedBox(height: 8),
               Padding(

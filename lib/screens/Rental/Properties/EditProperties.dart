@@ -1190,7 +1190,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                           Row(
                                                                             children: [
                                                                               if (MediaQuery.of(context).size.width < 500)
-                                                                                SizedBox(width: MediaQuery.of(context).size.width * 0.05),
+                                                                                SizedBox(width: MediaQuery.of(context).size.width * 0.03),
                                                                               if (MediaQuery.of(context).size.width > 500)
                                                                                 SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                                                                               GestureDetector(
@@ -1230,7 +1230,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                   borderRadius: BorderRadius.circular(5.0),
                                                                                   child: Container(
                                                                                     height: MediaQuery.of(context).size.width < 500 ? 40 : 45,
-                                                                                    width: MediaQuery.of(context).size.width < 500 ? 130 : 165,
+                                                                                    width: MediaQuery.of(context).size.width < 500 ? 125 : 165,
                                                                                     decoration: BoxDecoration(
                                                                                       borderRadius: BorderRadius.circular(5.0),
                                                                                       color: blueColor,
@@ -1256,18 +1256,17 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                   ),
                                                                                 ),
                                                                               ),
-                                                                              SizedBox(
-                                                                                width: 15,
-                                                                              ),
+                                                                              Spacer(),
                                                                               InkWell(
                                                                                 onTap: () {
                                                                                   Navigator.pop(context);
                                                                                 },
                                                                                 child: Material(
                                                                                   elevation: 2,
-                                                                                  child: Container(width: MediaQuery.of(context).size.width < 500 ? 90 : 100, height: MediaQuery.of(context).size.width < 500 ? 40 : 40, color: Colors.white, child: Center(child: Text("Cancel"))),
+                                                                                  child: Container(width: MediaQuery.of(context).size.width < 500 ? 90 : 90, height: MediaQuery.of(context).size.width < 500 ? 40 : 40, color: Colors.white, child: Center(child: Text("Cancel"))),
                                                                                 ),
                                                                               ),
+                                                                              SizedBox(width: 2,),
                                                                             ],
                                                                           ),
                                                                           SizedBox(
@@ -1646,8 +1645,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     cityerror = false;
                                                   });
                                                 },
-                                                cursorColor: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                cursorColor: blueColor
+
+
+,
                                                 decoration: InputDecoration(
                                                   enabledBorder: cityerror
                                                       ? OutlineInputBorder(
@@ -1757,8 +1758,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     stateerror = false;
                                                   });
                                                 },
-                                                cursorColor: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                cursorColor: blueColor
+
+
+,
                                                 decoration: InputDecoration(
                                                   enabledBorder: stateerror
                                                       ? OutlineInputBorder(
@@ -1880,8 +1883,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
                                                   });
                                                 },
-                                                cursorColor: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                cursorColor: blueColor
+
+
+,
                                                 decoration: InputDecoration(
                                                   enabledBorder: countryerror
                                                       ? OutlineInputBorder(
@@ -1996,8 +2001,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     .numberWithOptions(
                                                         signed: true,
                                                         decimal: true),
-                                                cursorColor: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                cursorColor: blueColor
+
+
+,
                                                 decoration: InputDecoration(
                                                   enabledBorder: postalcodeerror
                                                       ? OutlineInputBorder(
@@ -2243,8 +2250,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     border: TableBorder(
                                                       horizontalInside:
                                                           BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1),
+                                                        color: blueColor
+
+
+,
                                                         width: 1.0,
                                                       ),
                                                     ),
@@ -2582,11 +2591,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                   Text(
                                                                     "New Staff Member",
                                                                     style: TextStyle(
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            81,
-                                                                            1),
+                                                                        color: blueColor
+
+
+,
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .bold,
@@ -3328,11 +3336,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                             BoxDecoration(
                                                                           borderRadius:
                                                                               BorderRadius.circular(5.0),
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              81,
-                                                                              1),
+                                                                          color: blueColor
+
+
+,
                                                                           boxShadow: [
                                                                             BoxShadow(
                                                                               color: Colors.grey,
@@ -3392,7 +3399,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                       .size
                                                                       .width <
                                                                   500
-                                                              ? 14
+                                                              ? 13
                                                               : 18),
                                                 ),
                                               ],
@@ -3867,8 +3874,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                           child: Text(
                                             "Add another unit",
                                             style: TextStyle(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                color: blueColor
+
+
+,
                                                 // fontWeight: FontWeight.bold,
                                                 fontSize: 14),
                                           ),

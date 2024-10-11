@@ -1530,12 +1530,10 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                       : FontAwesomeIcons
                                                                           .sortDown,
                                                                   size: 20,
-                                                                  color: const Color
-                                                                      .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
+                                                                  color: blueColor
+
+
+,
                                                                 ),
                                                               ),
                                                             ),
@@ -1709,15 +1707,14 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                       children: [
                                                                         IconButton(
                                                                           icon:
-                                                                              const FaIcon(
+                                                                               FaIcon(
                                                                             FontAwesomeIcons.edit,
                                                                             size:
                                                                                 20,
-                                                                            color: Color.fromRGBO(
-                                                                                21,
-                                                                                43,
-                                                                                83,
-                                                                                1),
+                                                                            color: blueColor
+
+
+,
                                                                           ),
                                                                           onPressed:
                                                                               () async {
@@ -1739,15 +1736,14 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                         ),
                                                                         IconButton(
                                                                           icon:
-                                                                              const FaIcon(
+                                                                               FaIcon(
                                                                             FontAwesomeIcons.trashCan,
                                                                             size:
                                                                                 20,
-                                                                            color: Color.fromRGBO(
-                                                                                21,
-                                                                                43,
-                                                                                83,
-                                                                                1),
+                                                                            color: blueColor
+
+
+,
                                                                           ),
                                                                           onPressed:
                                                                               () {
@@ -2157,12 +2153,10 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                     : FontAwesomeIcons
                                                                         .sortDown,
                                                                 size: 20,
-                                                                color: const Color
-                                                                    .fromRGBO(
-                                                                    21,
-                                                                    43,
-                                                                    83,
-                                                                    1),
+                                                                color: blueColor
+
+
+,
                                                               ),
                                                             ),
                                                           ),
@@ -2323,16 +2317,15 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                     children: [
                                                                       IconButton(
                                                                         icon:
-                                                                            const FaIcon(
+                                                                             FaIcon(
                                                                           FontAwesomeIcons
                                                                               .edit,
                                                                           size:
                                                                               20,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
+                                                                          color: blueColor
+
+
+,
                                                                         ),
                                                                         onPressed:
                                                                             () async {
@@ -2353,16 +2346,15 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                       ),
                                                                       IconButton(
                                                                         icon:
-                                                                            const FaIcon(
+                                                                             FaIcon(
                                                                           FontAwesomeIcons
                                                                               .trashCan,
                                                                           size:
                                                                               20,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
+                                                                          color: blueColor
+
+
+,
                                                                         ),
                                                                         onPressed:
                                                                             () {
@@ -3548,8 +3540,10 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 20, vertical: 8),
                                             decoration: BoxDecoration(
-                                              color: const Color.fromRGBO(
-                                                  21, 43, 81, 1),
+                                              color: blueColor
+
+
+,
                                               borderRadius:
                                                   BorderRadius.circular(5),
                                             ),
@@ -3699,24 +3693,21 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                                                     BoxDecoration(
                                                                   border:
                                                                       Border(
-                                                                    left: const BorderSide(
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            81,
-                                                                            1)),
-                                                                    right: const BorderSide(
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            81,
-                                                                            1)),
-                                                                    top: const BorderSide(
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            81,
-                                                                            1)),
+                                                                    left:  BorderSide(
+                                                                        color: blueColor
+
+
+),
+                                                                    right:  BorderSide(
+                                                                        color: blueColor
+
+
+),
+                                                                    top:  BorderSide(
+                                                                        color: blueColor
+
+
+),
                                                                     bottom: i ==
                                                                             _pagedData.length -
                                                                                 1

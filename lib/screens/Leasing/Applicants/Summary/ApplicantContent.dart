@@ -250,8 +250,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               borderRadius:
                                                   BorderRadius.circular(4),
                                               border: Border.all(
-                                                  color: const Color.fromRGBO(
-                                                      21, 43, 81, 1)),
+                                                  color: blueColor
+
+
+),
                                             ),
                                             child: const Padding(
                                               padding: EdgeInsets.all(8.0),
@@ -1499,8 +1501,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                 borderRadius:
                                                     BorderRadius.circular(4),
                                                 border: Border.all(
-                                                    color: const Color.fromRGBO(
-                                                        21, 43, 81, 1)),
+                                                    color:  blueColor
+
+
+),
                                               ),
                                               child: Padding(
                                                 padding:
@@ -1542,8 +1546,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       BorderRadius.circular(4),
                                                   border: Border.all(
                                                       color:
-                                                          const Color.fromRGBO(
-                                                              21, 43, 81, 1)),
+                                                          blueColor
+
+
+),
                                                 ),
                                                 child: Padding(
                                                   padding:
@@ -1613,8 +1619,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             borderRadius:
                                                 BorderRadius.circular(4),
                                             border: Border.all(
-                                                color: const Color.fromRGBO(
-                                                    21, 43, 81, 1)),
+                                                color:  blueColor
+
+
+),
                                           ),
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
@@ -1652,8 +1660,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             borderRadius:
                                                 BorderRadius.circular(4),
                                             border: Border.all(
-                                                color: const Color.fromRGBO(
-                                                    21, 43, 81, 1)),
+                                                color:  blueColor
+
+
+),
                                           ),
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
@@ -1695,8 +1705,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               border: Border.all(
-                                                  color: const Color.fromRGBO(
-                                                      21, 43, 81, 1)),
+                                                  color: blueColor
+
+
+),
                                             ),
                                             child: Padding(
                                               padding: const EdgeInsets.only(
@@ -1797,11 +1809,13 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       const SizedBox(width: 2),
                                                       Text(
                                                         '${(data.applicantFirstName ?? '').isEmpty ? 'N/A' : data.applicantFirstName} ${(data.applicantLastName ?? '').isEmpty ? 'N/A' : data.applicantLastName}',
-                                                        style: const TextStyle(
+                                                        style:  TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 83, 1),
+                                                          color: blueColor
+
+
+,
                                                         ),
                                                       ),
                                                       const SizedBox(width: 2),
@@ -1835,11 +1849,13 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       const SizedBox(width: 2),
                                                       Text(
                                                         '${(data.applicantFirstName ?? '').isEmpty ? 'N/A' : data.applicantFirstName}',
-                                                        style: const TextStyle(
+                                                        style:  TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 83, 1),
+                                                          color: blueColor
+
+
+,
                                                         ),
                                                       ),
                                                       const SizedBox(width: 2),
@@ -1873,11 +1889,13 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       const SizedBox(width: 2),
                                                       Text(
                                                         '${(data.applicantCity ?? '').isEmpty ? 'N/A' : data.applicantCity}',
-                                                        style: const TextStyle(
+                                                        style:  TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 83, 1),
+                                                          color: blueColor
+
+
+,
                                                         ),
                                                       ),
                                                       const SizedBox(width: 2),
@@ -1981,8 +1999,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                   border: Border.all(
-                                                    color: const Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color:  blueColor
+
+
+,
                                                   ),
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -2115,8 +2135,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                 border: Border.all(
-                                                  color: const Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  color:  blueColor
+
+
+,
                                                 ),
                                                 borderRadius:
                                                     BorderRadius.circular(10.0),
@@ -2249,8 +2271,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                 border: Border.all(
-                                                  color: const Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  color:  blueColor
+
+
+,
                                                 ),
                                                 borderRadius:
                                                     BorderRadius.circular(10.0),
@@ -2383,8 +2407,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                 border: Border.all(
-                                                  color: const Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  color:  blueColor
+
+
+,
                                                 ),
                                                 borderRadius:
                                                     BorderRadius.circular(10.0),
@@ -2598,8 +2624,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                 border: Border.all(
-                                                  color: const Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  color:  blueColor
+
+
+,
                                                 ),
                                                 borderRadius:
                                                     BorderRadius.circular(10.0),
@@ -2711,8 +2739,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                 border: Border.all(
-                                                  color: const Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  color:  blueColor
+
+
+,
                                                 ),
                                                 borderRadius:
                                                     BorderRadius.circular(10.0),
@@ -3718,16 +3748,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 Text(
                                                                   '${data.applicantFirstName} ${data.applicantLastName}',
                                                                   style:
-                                                                      const TextStyle(
+                                                                       TextStyle(
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
-                                                                    color: Color
-                                                                        .fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
+                                                                    color: blueColor
+
+
+,
                                                                   ),
                                                                 ),
                                                                 const SizedBox(
@@ -3766,16 +3794,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 Text(
                                                                   '${data.applicantCity ?? 'N/A'}',
                                                                   style:
-                                                                      const TextStyle(
+                                                                       TextStyle(
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
-                                                                    color: Color
-                                                                        .fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
+                                                                    color: blueColor
+
+
+,
                                                                   ),
                                                                 ),
                                                                 const SizedBox(
@@ -3814,16 +3840,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 Text(
                                                                   '${data.applicantStreetAddress ?? 'N/A'}',
                                                                   style:
-                                                                      const TextStyle(
+                                                                       TextStyle(
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
-                                                                    color: Color
-                                                                        .fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
+                                                                    color: blueColor
+
+
+,
                                                                   ),
                                                                 ),
                                                                 const SizedBox(
@@ -3863,16 +3887,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 Text(
                                                                   '${data.applicantEmail ?? 'N/A'}',
                                                                   style:
-                                                                      const TextStyle(
+                                                                       TextStyle(
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
-                                                                    color: Color
-                                                                        .fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
+                                                                    color: blueColor
+
+
+,
                                                                   ),
                                                                 ),
                                                                 const SizedBox(
@@ -3911,16 +3933,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 Text(
                                                                   '${data.applicantPhoneNumber ?? 'N/A'}',
                                                                   style:
-                                                                      const TextStyle(
+                                                                       TextStyle(
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
-                                                                    color: Color
-                                                                        .fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
+                                                                    color: blueColor
+
+
+,
                                                                   ),
                                                                 ),
                                                                 const SizedBox(
@@ -3957,8 +3977,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               border: Border.all(
-                                                  color: const Color.fromRGBO(
-                                                      21, 43, 81, 1)),
+                                                  color: blueColor
+
+
+),
                                             ),
                                             child: Padding(
                                               padding: const EdgeInsets.only(
@@ -4353,9 +4375,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                           BorderRadius.circular(
                                                               10),
                                                       border: Border.all(
-                                                          color: const Color
-                                                              .fromRGBO(
-                                                              21, 43, 81, 1)),
+                                                          color: blueColor
+
+
+),
                                                     ),
                                                     child: Padding(
                                                       padding:
@@ -4449,7 +4472,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 child:
                                                                     Container(
                                                                   child:
-                                                                      const Column(
+                                                                       Column(
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .start,
@@ -4478,11 +4501,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
+                                                                          color: blueColor
+
+
+,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -4493,7 +4515,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 child:
                                                                     Container(
                                                                   child:
-                                                                      const Column(
+                                                                       Column(
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .start,
@@ -4522,11 +4544,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
+                                                                          color: blueColor
+
+
+,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -4544,7 +4565,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 child:
                                                                     Container(
                                                                   child:
-                                                                      const Column(
+                                                                       Column(
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .start,
@@ -4573,11 +4594,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
+                                                                          color: blueColor
+
+
+,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -4588,7 +4608,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 child:
                                                                     Container(
                                                                   child:
-                                                                      const Column(
+                                                                       Column(
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .start,
@@ -4617,11 +4637,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
+                                                                          color: blueColor
+
+
+,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -4663,16 +4682,15 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                       Text(
                                                                         '${(data.rentalHistory?.rentalOwnerPhoneNumber ?? 'N/A').toString().isEmpty ? 'N/A' : 'N/A'}',
                                                                         style:
-                                                                            const TextStyle(
+                                                                             TextStyle(
                                                                           fontWeight:
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
+                                                                          color: blueColor
+
+
+,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -4706,16 +4724,15 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                       Text(
                                                                         '${(data.rentalHistory?.rentalOwnerPrimaryEmail ?? 'N/A').isEmpty ? 'N/A' : 'N/A'}',
                                                                         style:
-                                                                            const TextStyle(
+                                                                             TextStyle(
                                                                           fontWeight:
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
+                                                                          color: blueColor
+
+
+,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -4816,7 +4833,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         const SizedBox(
                                                           height: 5,
                                                         ),
-                                                        const Row(
+                                                         Row(
                                                           children: [
                                                             SizedBox(width: 2),
                                                             Text(
@@ -4825,12 +4842,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
+                                                                color: blueColor
+
+
+,
                                                               ),
                                                             ),
                                                             SizedBox(width: 2),
@@ -4845,7 +4860,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                             Expanded(
                                                               child: Container(
                                                                 child:
-                                                                    const Column(
+                                                                     Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .start,
@@ -4872,11 +4887,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
+                                                                        color: blueColor
+
+
+,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -4886,7 +4900,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                             Expanded(
                                                               child: Container(
                                                                 child:
-                                                                    const Column(
+                                                                     Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .start,
@@ -4913,11 +4927,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
+                                                                        color: blueColor
+
+
+,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -4934,7 +4947,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                             Expanded(
                                                               child: Container(
                                                                 child:
-                                                                    const Column(
+                                                                     Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .start,
@@ -4961,11 +4974,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
+                                                                        color: blueColor
+
+
+,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -4975,7 +4987,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                             Expanded(
                                                               child: Container(
                                                                 child:
-                                                                    const Column(
+                                                                     Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .start,
@@ -5002,11 +5014,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
+                                                                        color: blueColor
+
+
+,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -5047,14 +5058,13 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                     Text(
                                                                       '${(data.rentalHistory?.rentalOwnerPhoneNumber ?? 'N/A').toString().isEmpty ? 'N/A' : 'N/A'}',
                                                                       style:
-                                                                          const TextStyle(
+                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
+                                                                        color: blueColor
+
+
+,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -5087,14 +5097,13 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                     Text(
                                                                       '${(data.rentalHistory?.rentalOwnerPrimaryEmail ?? 'N/A').isEmpty ? 'N/A' : 'N/A'}',
                                                                       style:
-                                                                          const TextStyle(
+                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
+                                                                        color: blueColor
+
+
+,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -5135,8 +5144,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               border: Border.all(
-                                                  color: const Color.fromRGBO(
-                                                      21, 43, 81, 1)),
+                                                  color: blueColor
+
+
+),
                                             ),
                                             child: Padding(
                                               padding: const EdgeInsets.only(
@@ -5195,11 +5206,13 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       const SizedBox(width: 2),
                                                       Text(
                                                         '${(data.emergencyContact?.firstName ?? 'N/A').isEmpty ? '' : data.emergencyContact!.firstName} ${(data.emergencyContact?.lastName ?? 'N/A').isEmpty ? 'N/A' : data.emergencyContact!.lastName}',
-                                                        style: const TextStyle(
+                                                        style:  TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 83, 1),
+                                                          color: blueColor
+
+
+,
                                                         ),
                                                       ),
                                                       const SizedBox(width: 2),
@@ -5233,11 +5246,13 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       const SizedBox(width: 2),
                                                       Text(
                                                         '${(data.emergencyContact?.relationship ?? 'N/A').isEmpty ? 'N/A' : data.emergencyContact!.relationship}',
-                                                        style: const TextStyle(
+                                                        style:  TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 83, 1),
+                                                          color: blueColor
+
+
+,
                                                         ),
                                                       ),
                                                       const SizedBox(width: 2),
@@ -5271,11 +5286,13 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       const SizedBox(width: 2),
                                                       Text(
                                                         '${(data.emergencyContact?.email ?? 'N/A').isEmpty ? 'N/A' : data.emergencyContact!.email}',
-                                                        style: const TextStyle(
+                                                        style:  TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 83, 1),
+                                                          color: blueColor
+
+
+,
                                                         ),
                                                       ),
                                                       const SizedBox(width: 2),
@@ -5309,11 +5326,13 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       const SizedBox(width: 2),
                                                       Text(
                                                         '${(data.emergencyContact?.phoneNumber ?? 'N/A').toString().isEmpty ? 'N/A' : data.emergencyContact!.phoneNumber}',
-                                                        style: const TextStyle(
+                                                        style:  TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 83, 1),
+                                                          color: blueColor
+
+
+,
                                                         ),
                                                       ),
                                                       const SizedBox(width: 2),
@@ -5356,9 +5375,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                           BorderRadius.circular(
                                                               10),
                                                       border: Border.all(
-                                                          color: const Color
-                                                              .fromRGBO(
-                                                              21, 43, 81, 1)),
+                                                          color: blueColor
+
+
+),
                                                     ),
                                                     child: Padding(
                                                       padding:
@@ -5420,7 +5440,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                     const SizedBox(
                                                                       height: 5,
                                                                     ),
-                                                                    const Row(
+                                                                     Row(
                                                                       children: [
                                                                         SizedBox(
                                                                             width:
@@ -5433,11 +5453,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                                 FontWeight.bold,
                                                                             fontSize:
                                                                                 16,
-                                                                            color: Color.fromRGBO(
-                                                                                21,
-                                                                                43,
-                                                                                83,
-                                                                                1),
+                                                                            color: blueColor
+
+
+,
                                                                           ),
                                                                         ),
                                                                         SizedBox(
@@ -5472,7 +5491,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                     const SizedBox(
                                                                       height: 5,
                                                                     ),
-                                                                    const Row(
+                                                                     Row(
                                                                       children: [
                                                                         SizedBox(
                                                                             width:
@@ -5485,11 +5504,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                                 FontWeight.bold,
                                                                             fontSize:
                                                                                 16,
-                                                                            color: Color.fromRGBO(
-                                                                                21,
-                                                                                43,
-                                                                                83,
-                                                                                1),
+                                                                            color: blueColor
+
+
+,
                                                                           ),
                                                                         ),
                                                                         SizedBox(
@@ -5509,7 +5527,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                             height: 18,
                                                           ),
                                                           // Tenant
-                                                          const Row(
+                                                           Row(
                                                             children: [
                                                               Expanded(
                                                                 child: Column(
@@ -5545,11 +5563,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                                 FontWeight.bold,
                                                                             fontSize:
                                                                                 16,
-                                                                            color: Color.fromRGBO(
-                                                                                21,
-                                                                                43,
-                                                                                83,
-                                                                                1),
+                                                                            color: blueColor
+
+
+,
                                                                           ),
                                                                         ),
                                                                         SizedBox(
@@ -5598,11 +5615,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                                 FontWeight.bold,
                                                                             fontSize:
                                                                                 16,
-                                                                            color: Color.fromRGBO(
-                                                                                21,
-                                                                                43,
-                                                                                83,
-                                                                                1),
+                                                                            color: blueColor
+
+
+,
                                                                           ),
                                                                         ),
                                                                         SizedBox(
@@ -5707,7 +5723,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         const SizedBox(
                                                           height: 5,
                                                         ),
-                                                        const Row(
+                                                         Row(
                                                           children: [
                                                             SizedBox(width: 2),
                                                             Text(
@@ -5716,12 +5732,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
+                                                                color: blueColor
+
+
+,
                                                               ),
                                                             ),
                                                             SizedBox(width: 2),
@@ -5751,7 +5765,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         const SizedBox(
                                                           height: 5,
                                                         ),
-                                                        const Row(
+                                                         Row(
                                                           children: [
                                                             SizedBox(width: 2),
                                                             Text(
@@ -5760,12 +5774,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
+                                                                color: blueColor
+
+
+,
                                                               ),
                                                             ),
                                                             SizedBox(width: 2),
@@ -5795,7 +5807,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         const SizedBox(
                                                           height: 5,
                                                         ),
-                                                        const Row(
+                                                         Row(
                                                           children: [
                                                             SizedBox(width: 2),
                                                             Text(
@@ -5804,12 +5816,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
+                                                                color: blueColor
+
+
+,
                                                               ),
                                                             ),
                                                             SizedBox(width: 2),
@@ -5839,7 +5849,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         const SizedBox(
                                                           height: 5,
                                                         ),
-                                                        const Row(
+                                                         Row(
                                                           children: [
                                                             SizedBox(width: 2),
                                                             Text(
@@ -5848,12 +5858,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
+                                                                color: blueColor
+
+
+,
                                                               ),
                                                             ),
                                                             SizedBox(width: 2),
@@ -5890,8 +5898,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               border: Border.all(
-                                                  color: const Color.fromRGBO(
-                                                      21, 43, 81, 1)),
+                                                  color: blueColor
+
+
+),
                                             ),
                                             child: Padding(
                                               padding: const EdgeInsets.only(
@@ -6283,9 +6293,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                           BorderRadius.circular(
                                                               10),
                                                       border: Border.all(
-                                                          color: const Color
-                                                              .fromRGBO(
-                                                              21, 43, 81, 1)),
+                                                          color: blueColor
+
+
+),
                                                     ),
                                                     child: Padding(
                                                       padding:
@@ -6385,7 +6396,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 child:
                                                                     Container(
                                                                   child:
-                                                                      const Column(
+                                                                       Column(
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .start,
@@ -6414,11 +6425,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
+                                                                          color: blueColor
+
+
+,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -6429,7 +6439,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 child:
                                                                     Container(
                                                                   child:
-                                                                      const Column(
+                                                                       Column(
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .start,
@@ -6458,11 +6468,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
+                                                                          color: blueColor
+
+
+,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -6483,7 +6492,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 child:
                                                                     Container(
                                                                   child:
-                                                                      const Column(
+                                                                       Column(
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .start,
@@ -6512,11 +6521,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
+                                                                          color: blueColor
+
+
+,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -6527,7 +6535,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 child:
                                                                     Container(
                                                                   child:
-                                                                      const Column(
+                                                                       Column(
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .start,
@@ -6556,11 +6564,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
+                                                                          color: blueColor
+
+
+,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -6579,7 +6586,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 child:
                                                                     Container(
                                                                   child:
-                                                                      const Column(
+                                                                       Column(
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .start,
@@ -6608,11 +6615,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
+                                                                          color: blueColor
+
+
+,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -6623,7 +6629,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 child:
                                                                     Container(
                                                                   child:
-                                                                      const Column(
+                                                                       Column(
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .start,
@@ -6652,11 +6658,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: Color.fromRGBO(
-                                                                              21,
-                                                                              43,
-                                                                              83,
-                                                                              1),
+                                                                          color: blueColor
+
+
+,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -6761,7 +6766,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         const SizedBox(
                                                           height: 5,
                                                         ),
-                                                        const Row(
+                                                         Row(
                                                           children: [
                                                             SizedBox(width: 2),
                                                             Text(
@@ -6770,12 +6775,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        83,
-                                                                        1),
+                                                                color: blueColor
+
+
+,
                                                               ),
                                                             ),
                                                             SizedBox(width: 2),
@@ -6792,7 +6795,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                             Expanded(
                                                               child: Container(
                                                                 child:
-                                                                    const Column(
+                                                                     Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .start,
@@ -6819,11 +6822,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
+                                                                        color: blueColor
+
+
+,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -6833,7 +6835,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                             Expanded(
                                                               child: Container(
                                                                 child:
-                                                                    const Column(
+                                                                     Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .start,
@@ -6860,11 +6862,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
+                                                                        color: blueColor
+
+
+,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -6884,7 +6885,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                             Expanded(
                                                               child: Container(
                                                                 child:
-                                                                    const Column(
+                                                                     Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .start,
@@ -6911,11 +6912,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
+                                                                        color: blueColor
+
+
+,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -6925,7 +6925,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                             Expanded(
                                                               child: Container(
                                                                 child:
-                                                                    const Column(
+                                                                     Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .start,
@@ -6952,11 +6952,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
+                                                                        color: blueColor
+
+
+,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -6974,7 +6973,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                             Expanded(
                                                               child: Container(
                                                                 child:
-                                                                    const Column(
+                                                                     Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .start,
@@ -7001,11 +7000,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
+                                                                        color: blueColor
+
+
+,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -7015,7 +7013,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                             Expanded(
                                                               child: Container(
                                                                 child:
-                                                                    const Column(
+                                                                     Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .start,
@@ -7042,11 +7040,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: Color.fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
+                                                                        color: blueColor
+
+
+,
                                                                       ),
                                                                     ),
                                                                   ],

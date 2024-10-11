@@ -660,8 +660,10 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                         : FontAwesomeIcons
                                                             .sortDown,
                                                     size: 20,
-                                                    color: const Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color:  blueColor
+
+
+,
                                                   ),
                                                 ),
                                               ),
@@ -846,16 +848,14 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                       child: Column(
                                                         children: [
                                                           IconButton(
-                                                            icon: const FaIcon(
+                                                            icon:  FaIcon(
                                                               FontAwesomeIcons
                                                                   .edit,
                                                               size: 20,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
+                                                              color:blueColor
+
+
+,
                                                             ),
                                                             onPressed:
                                                                 () async {
@@ -880,16 +880,14 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                             },
                                                           ),
                                                           IconButton(
-                                                            icon: const FaIcon(
+                                                            icon:  FaIcon(
                                                               FontAwesomeIcons
                                                                   .trashCan,
                                                               size: 20,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      83,
-                                                                      1),
+                                                              color:blueColor
+
+
+,
                                                             ),
                                                             onPressed: () {
                                                               //handleDelete(Propertytype);
@@ -1000,20 +998,28 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                           TableRow(
                                             decoration: BoxDecoration(
                                               border: Border(
-                                                left: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
-                                                right: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
-                                                top: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
+                                                left:  BorderSide(
+                                                    color: blueColor
+
+
+),
+                                                right:  BorderSide(
+                                                    color: blueColor
+
+
+),
+                                                top:  BorderSide(
+                                                    color: blueColor
+
+
+),
                                                 bottom: i ==
                                                         _pagedData.length - 1
-                                                    ? const BorderSide(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 81, 1))
+                                                    ?  BorderSide(
+                                                        color: blueColor
+
+
+)
                                                     : BorderSide.none,
                                               ),
                                             ),

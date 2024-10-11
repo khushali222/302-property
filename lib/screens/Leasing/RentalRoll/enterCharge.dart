@@ -1359,11 +1359,14 @@ class _enterChargeState extends State<enterCharge> {
                           const SizedBox(
                             height: 10,
                           ),
-                          const Text('Upload Files',
+                           Text('Upload Files',
                               style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFF152b51))),
+                                  color: blueColor
+
+
+)),
                           const SizedBox(
                             height: 20,
                           ),
@@ -1375,7 +1378,10 @@ class _enterChargeState extends State<enterCharge> {
                             ),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF152b51),
+                                backgroundColor:  blueColor
+
+
+,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),

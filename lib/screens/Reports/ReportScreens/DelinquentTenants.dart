@@ -1040,7 +1040,8 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                           const SizedBox(height: 20),
                           Container(
                             decoration: BoxDecoration(
-                                border: Border.all(color: blueColor)),
+                                border: Border.all(color: Color.fromRGBO(
+                                    152, 162, 179, .5))),
                             child: Column(
                               children:
                                   currentPageData.asMap().entries.map((entry) {
@@ -1051,7 +1052,9 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
 
                                 return Container(
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: blueColor),
+                                    color: rowIndex %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                                    border: Border.all(color: Color.fromRGBO(
+                                        152, 162, 179, .5)),
                                   ),
                                   child: Column(
                                     children: <Widget>[
@@ -1093,10 +1096,14 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                                                             .sortDown,
                                                     size: 20,
                                                     color: isRowExpanded
-                                                        ? Color.fromARGB(
-                                                            255, 35, 67, 126)
-                                                        : Color.fromRGBO(
-                                                            21, 43, 83, 1),
+                                                        ? blueColor
+
+
+
+                                                        : blueColor
+
+
+,
                                                   ),
                                                 ),
                                               ),
@@ -1192,18 +1199,14 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                                                                         .sortDown,
                                                                 size: 20,
                                                                 color: isTenantExpanded
-                                                                    ? Color
-                                                                        .fromARGB(
-                                                                            255,
-                                                                            35,
-                                                                            67,
-                                                                            126)
-                                                                    : Color
-                                                                        .fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
+                                                                    ? blueColor
+
+
+
+                                                                    : blueColor
+
+
+,
                                                               ),
                                                             ),
                                                           ),
@@ -1717,7 +1720,10 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                           const SizedBox(height: 20),
                           Container(
                             decoration: BoxDecoration(
-                                border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                                border: Border.all(color: blueColor
+
+
+)),
                             // decoration: BoxDecoration(
                             //     border: Border.all(color: blueColor)),
                             child: Column(
@@ -1731,7 +1737,10 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                                 return Container(
                                   decoration: BoxDecoration(
                                     color: rowIndex %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                    border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                                    border: Border.all(color: blueColor
+
+
+),
                                   ),
                                   // decoration: BoxDecoration(
                                   //   border: Border.all(color: blueColor),
@@ -1776,10 +1785,14 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                                                             .sortDown,
                                                     size: 20,
                                                     color: isRowExpanded
-                                                        ? Color.fromARGB(
-                                                            255, 35, 67, 126)
-                                                        : Color.fromRGBO(
-                                                            21, 43, 83, 1),
+                                                        ? blueColor
+
+
+
+                                                        : blueColor
+
+
+,
                                                   ),
                                                 ),
                                               ),
@@ -1875,18 +1888,14 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                                                                         .sortDown,
                                                                 size: 20,
                                                                 color: isTenantExpanded
-                                                                    ? Color
-                                                                        .fromARGB(
-                                                                            255,
-                                                                            35,
-                                                                            67,
-                                                                            126)
-                                                                    : Color
-                                                                        .fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            83,
-                                                                            1),
+                                                                    ? blueColor
+
+
+
+                                                                    : blueColor
+
+
+,
                                                               ),
                                                             ),
                                                           ),

@@ -2077,8 +2077,10 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                               : FontAwesomeIcons
                                                                   .sortDown,
                                                           size: 20,
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 83, 1),
+                                                          color: blueColor
+
+
+,
                                                         ),
                                                       ),
                                                     ),
@@ -2882,8 +2884,10 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                             blueColor),
                                         bottom: i == pagedData.length - 1
                                             ? BorderSide(
-                                            color: Color.fromRGBO(
-                                                21, 43, 81, 1))
+                                            color: blueColor
+
+
+)
                                             : BorderSide.none,
                                       ),
                                     ),

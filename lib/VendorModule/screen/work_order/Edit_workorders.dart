@@ -1522,13 +1522,15 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                         4: FlexColumnWidth(2),
                                       },
                                       children: [
-                                        const TableRow(children: [
+                                         TableRow(children: [
                                           Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('QTY',
                                                 style: TextStyle(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor
+
+
+,
                                                     fontWeight:
                                                         FontWeight.bold)),
                                           ),
@@ -1536,8 +1538,10 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('Account',
                                                 style: TextStyle(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor
+
+
+,
                                                     fontWeight:
                                                         FontWeight.bold)),
                                           ),
@@ -1545,8 +1549,10 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('Description',
                                                 style: TextStyle(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor
+
+
+,
                                                     fontWeight:
                                                         FontWeight.bold)),
                                           ),
@@ -1554,8 +1560,10 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('Price',
                                                 style: TextStyle(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor
+
+
+,
                                                     fontWeight:
                                                         FontWeight.bold)),
                                           ),
@@ -1563,8 +1571,10 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('Amount',
                                                 style: TextStyle(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor
+
+
+,
                                                     fontWeight:
                                                         FontWeight.bold)),
                                           ),
@@ -1572,8 +1582,10 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('',
                                                 style: TextStyle(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    color: blueColor
+
+
+,
                                                     fontWeight:
                                                         FontWeight.bold)),
                                           ),

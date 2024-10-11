@@ -82,8 +82,10 @@ class _RejectedContentState extends State<RejectedContent> {
                                   decoration: BoxDecoration(
                                     color:blueColor,
                                     border: Border.all(
-                                        color: const Color.fromRGBO(
-                                            21, 43, 81, 1)),
+                                        color:  blueColor
+
+
+),
                                     borderRadius: BorderRadius.circular(5),
                                   ),
                                   child: const Center(

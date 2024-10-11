@@ -891,8 +891,10 @@ class _PlanformState extends State<Planform> {
                                                   },
                                                   controller: cardtype,
                                                   cursorColor:
-                                                      const Color.fromRGBO(
-                                                          21, 43, 81, 1),
+                                                       blueColor
+
+
+,
                                                   decoration: InputDecoration(
                                                     enabledBorder: cardtypeerror
                                                         ? OutlineInputBorder(
@@ -971,8 +973,10 @@ class _PlanformState extends State<Planform> {
                                                   },
                                                   controller: cardnumber,
                                                   cursorColor:
-                                                      const Color.fromRGBO(
-                                                          21, 43, 81, 1),
+                                                       blueColor
+
+
+,
                                                   decoration: InputDecoration(
                                                     enabledBorder:
                                                         cardnumbererror
@@ -1184,8 +1188,10 @@ class _PlanformState extends State<Planform> {
                                                   },
                                                   controller: cvv,
                                                   cursorColor:
-                                                      const Color.fromRGBO(
-                                                          21, 43, 81, 1),
+                                                       blueColor
+
+
+,
                                                   decoration: InputDecoration(
                                                     enabledBorder: cvverror
                                                         ? OutlineInputBorder(
@@ -1258,8 +1264,10 @@ class _PlanformState extends State<Planform> {
                                                   },
                                                   controller: cardholder,
                                                   cursorColor:
-                                                      const Color.fromRGBO(
-                                                          21, 43, 81, 1),
+                                                       blueColor
+
+
+,
                                                   decoration: InputDecoration(
                                                     enabledBorder:
                                                         cardholdererror

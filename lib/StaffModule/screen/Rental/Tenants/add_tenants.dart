@@ -487,7 +487,7 @@ class _AddTenantState extends State<AddTenant> {
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
                                           color:
-                                              Color.fromRGBO(21, 43, 103, 1))),
+                                              blueColor)),
                                   SizedBox(
                                     height: 15,
                                   ),
@@ -655,7 +655,7 @@ class _AddTenantState extends State<AddTenant> {
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
                                           color:
-                                              Color.fromRGBO(21, 43, 103, 1))),
+                                              blueColor)),
                                   SizedBox(
                                     height: 15,
                                   ),
@@ -855,8 +855,10 @@ class _AddTenantState extends State<AddTenant> {
                                                 _validateInput();
                                               },
                                               controller: overrideFee,
-                                              cursorColor: const Color.fromRGBO(
-                                                  21, 43, 81, 1),
+                                              cursorColor: blueColor
+
+
+,
                                             ),
                                           ),
                                         )
@@ -1209,7 +1211,7 @@ class _AddTenantState extends State<AddTenant> {
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
                                           color:
-                                              Color.fromRGBO(21, 43, 103, 1))),
+                                              blueColor)),
                                   SizedBox(
                                     height: 15,
                                   ),
@@ -1357,7 +1359,7 @@ class _AddTenantState extends State<AddTenant> {
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
                                           color:
-                                              Color.fromRGBO(21, 43, 103, 1))),
+                                              blueColor)),
                                   SizedBox(
                                     height: 15,
                                   ),
@@ -1762,7 +1764,7 @@ class _AddTenantState extends State<AddTenant> {
                                 style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w400,
-                                    color: Color.fromRGBO(21, 43, 103, 1))),
+                                    color: blueColor)),
                             SizedBox(
                               height: 15,
                             ),
@@ -1904,7 +1906,7 @@ class _AddTenantState extends State<AddTenant> {
                                 style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w400,
-                                    color: Color.fromRGBO(21, 43, 103, 1))),
+                                    color: blueColor)),
                             SizedBox(
                               height: 15,
                             ),

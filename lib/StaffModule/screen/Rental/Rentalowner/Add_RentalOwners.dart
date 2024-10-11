@@ -655,8 +655,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                 Positioned.fill(
                                                   child: TextField(
                                                     controller: entry.value,
-                                                    cursorColor: Color.fromRGBO(
-                                                        21, 43, 81, 1),
+                                                    cursorColor: blueColor
+
+
+,
                                                     decoration: InputDecoration(
                                                       border: InputBorder.none,
                                                       contentPadding:
@@ -1097,8 +1099,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                   });
                                                 },
                                                 controller: startdateController,
-                                                cursorColor: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                cursorColor: blueColor
+
+
+,
                                                 decoration: InputDecoration(
                                                   hintText: "dd - mm - yyyy",
                                                   hintStyle: TextStyle(
@@ -1220,8 +1224,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                   });
                                                 },
                                                 controller: enddateController,
-                                                cursorColor: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                cursorColor: blueColor
+
+
+,
                                                 decoration: InputDecoration(
                                                   hintText: "dd - mm - yyyy",
                                                   hintStyle: TextStyle(

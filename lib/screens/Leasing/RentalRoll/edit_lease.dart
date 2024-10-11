@@ -1257,27 +1257,27 @@ class _Edit_leaseState extends State<Edit_lease>
                                         return Theme(
                                           data: ThemeData.light().copyWith(
                                             colorScheme:
-                                                const ColorScheme.light(
-                                              primary: Color.fromRGBO(
-                                                  21,
-                                                  43,
-                                                  83,
-                                                  1), // header background color
+                                                 ColorScheme.light(
+                                              primary: blueColor
+
+
+, // header background color
                                               onPrimary: Colors
                                                   .white, // header text color
-                                              onSurface: Color.fromRGBO(21, 43,
-                                                  83, 1), // body text color
+                                              onSurface: blueColor
+
+
+, // body text color
                                             ),
                                             textButtonTheme:
                                                 TextButtonThemeData(
                                               style: TextButton.styleFrom(
                                                 foregroundColor: Colors.white,
                                                 backgroundColor:
-                                                    const Color.fromRGBO(
-                                                        21,
-                                                        43,
-                                                        83,
-                                                        1), // button text color
+                                                    blueColor
+
+
+, // button text color
                                               ),
                                             ),
                                           ),
@@ -1353,27 +1353,27 @@ class _Edit_leaseState extends State<Edit_lease>
                                         return Theme(
                                           data: ThemeData.light().copyWith(
                                             colorScheme:
-                                                const ColorScheme.light(
-                                              primary: Color.fromRGBO(
-                                                  21,
-                                                  43,
-                                                  83,
-                                                  1), // header background color
+                                                 ColorScheme.light(
+                                              primary: blueColor
+
+
+, // header background color
                                               onPrimary: Colors
                                                   .white, // header text color
-                                              onSurface: Color.fromRGBO(21, 43,
-                                                  83, 1), // body text color
+                                              onSurface: blueColor
+
+
+, // body text color
                                             ),
                                             textButtonTheme:
                                                 TextButtonThemeData(
                                               style: TextButton.styleFrom(
                                                 foregroundColor: Colors.white,
                                                 backgroundColor:
-                                                    const Color.fromRGBO(
-                                                        21,
-                                                        43,
-                                                        83,
-                                                        1), // button text color
+                                                    blueColor
+
+
+, // button text color
                                               ),
                                             ),
                                           ),
@@ -1475,12 +1475,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                                             foregroundColor:
                                                                 Colors.white,
                                                             backgroundColor:
-                                                                const Color
-                                                                    .fromRGBO(
-                                                                    21,
-                                                                    43,
-                                                                    83,
-                                                                    1), // button text color
+                                                                blueColor
+
+
+, // button text color
                                                           ),
                                                         ),
                                                       ),
@@ -1584,12 +1582,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                                             foregroundColor:
                                                                 Colors.white,
                                                             backgroundColor:
-                                                                const Color
-                                                                    .fromRGBO(
-                                                                    21,
-                                                                    43,
-                                                                    83,
-                                                                    1), // button text color
+                                                                blueColor
+
+
+, // button text color
                                                           ),
                                                         ),
                                                       ),
@@ -1657,11 +1653,14 @@ class _Edit_leaseState extends State<Edit_lease>
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text('Add lease',
+                               Text('Add lease',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
-                                      color: Color(0xFF152b51))),
+                                      color: blueColor
+
+
+)),
                               const SizedBox(
                                 height: 10,
                               ),
@@ -1677,12 +1676,15 @@ class _Edit_leaseState extends State<Edit_lease>
                                               return AlertDialog(
                                                 backgroundColor: Colors.white,
                                                 contentPadding: EdgeInsets.zero,
-                                                title: const Text(
+                                                title:  Text(
                                                   'Add Tenant or Cosigner',
                                                   style: TextStyle(
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w500,
-                                                    color: Color(0xFF152b51),
+                                                    color: blueColor
+
+
+,
                                                   ),
                                                 ),
                                                 content: Form(
@@ -2015,8 +2017,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                                       fontWeight:
                                                           FontWeight.w700,
                                                       color:
-                                                          const Color.fromRGBO(
-                                                              21, 43, 83, 1),
+                                                           blueColor
+
+
+,
                                                     ),
                                                   ),
                                                 ),
@@ -2262,8 +2266,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                             children: [
                                               TableRow(
                                                 decoration: BoxDecoration(
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  color: blueColor
+
+
+,
                                                 ),
                                                 children: [
                                                   Padding(
@@ -2355,8 +2361,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                                               : 20,
                                                           fontWeight:
                                                               FontWeight.w700,
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 83, 1),
+                                                          color: blueColor
+
+
+,
                                                         ),
                                                       ),
                                                     ),
@@ -2467,11 +2475,14 @@ class _Edit_leaseState extends State<Edit_lease>
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text('Rent',
+                               Text('Rent',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
-                                      color: Color(0xFF152b51))),
+                                      color: blueColor
+
+
+)),
                               const SizedBox(
                                 height: 10,
                               ),
@@ -2708,12 +2719,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                                             foregroundColor:
                                                                 Colors.white,
                                                             backgroundColor:
-                                                                const Color
-                                                                    .fromRGBO(
-                                                                    21,
-                                                                    43,
-                                                                    83,
-                                                                    1), // button text color
+                                                                blueColor
+
+
+, // button text color
                                                           ),
                                                         ),
                                                       ),
@@ -2956,27 +2965,27 @@ class _Edit_leaseState extends State<Edit_lease>
                                         return Theme(
                                           data: ThemeData.light().copyWith(
                                             colorScheme:
-                                                const ColorScheme.light(
-                                              primary: Color.fromRGBO(
-                                                  21,
-                                                  43,
-                                                  83,
-                                                  1), // header background color
+                                                 ColorScheme.light(
+                                              primary: blueColor
+
+
+, // header background color
                                               onPrimary: Colors
                                                   .white, // header text color
-                                              onSurface: Color.fromRGBO(21, 43,
-                                                  83, 1), // body text color
+                                              onSurface: blueColor
+
+
+, // body text color
                                             ),
                                             textButtonTheme:
                                                 TextButtonThemeData(
                                               style: TextButton.styleFrom(
                                                 foregroundColor: Colors.white,
                                                 backgroundColor:
-                                                    const Color.fromRGBO(
-                                                        21,
-                                                        43,
-                                                        83,
-                                                        1), // button text color
+                                                    blueColor
+
+
+, // button text color
                                               ),
                                             ),
                                           ),
@@ -3059,12 +3068,15 @@ class _Edit_leaseState extends State<Edit_lease>
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text(
+                               Text(
                                 'Charges (Optional)',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFF152b51),
+                                  color: blueColor
+
+
+,
                                 ),
                               ),
                               const SizedBox(
@@ -3217,10 +3229,12 @@ class _Edit_leaseState extends State<Edit_lease>
                                       },
                                       children: [
                                         if (formDataRecurringList.isNotEmpty)
-                                          const TableRow(
+                                           TableRow(
                                               decoration: BoxDecoration(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 83, 1),
+                                                color: blueColor
+
+
+,
                                               ),
                                               children: [
                                                 Padding(
@@ -3269,11 +3283,13 @@ class _Edit_leaseState extends State<Edit_lease>
                                                   const EdgeInsets.all(8.0),
                                               child: Text(
                                                 '${item['account']}',
-                                                style: const TextStyle(
+                                                style:  TextStyle(
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.w700,
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  color: blueColor
+
+
+,
                                                 ),
                                               ),
                                             ),
@@ -3302,10 +3318,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                                           initialData: item,
                                                           index: index);
                                                     },
-                                                    child: const Icon(
+                                                    child:  Icon(
                                                       Icons.edit,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: blueColor
+,
                                                       size: 18,
                                                     ),
                                                   ),
@@ -3317,10 +3333,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                                             .removeAt(index);
                                                       });
                                                     },
-                                                    child: const Icon(
+                                                    child:  Icon(
                                                       Icons.delete,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: blueColor
+,
                                                       size: 18,
                                                     ),
                                                   )
@@ -3364,10 +3380,12 @@ class _Edit_leaseState extends State<Edit_lease>
                                       },
                                       children: [
                                         if (formDataOneTimeList.isNotEmpty)
-                                          const TableRow(
+                                           TableRow(
                                               decoration: BoxDecoration(
-                                                color: Color.fromRGBO(
-                                                    21, 43, 83, 1),
+                                                color: blueColor
+
+
+,
                                               ),
                                               children: [
                                                 Padding(
@@ -3416,11 +3434,13 @@ class _Edit_leaseState extends State<Edit_lease>
                                                   const EdgeInsets.all(8.0),
                                               child: Text(
                                                 '${item['account']}',
-                                                style: const TextStyle(
+                                                style:  TextStyle(
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.w700,
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 83, 1),
+                                                  color: blueColor
+
+
+,
                                                 ),
                                               ),
                                             ),
@@ -3451,10 +3471,10 @@ class _Edit_leaseState extends State<Edit_lease>
 
                                                       // Implement edit functionality here
                                                     },
-                                                    child: const Icon(
+                                                    child:  Icon(
                                                       Icons.edit,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: blueColor
+,
                                                       size: 18,
                                                     ),
                                                   ),
@@ -3466,10 +3486,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                                             .removeAt(index);
                                                       });
                                                     },
-                                                    child: const Icon(
+                                                    child:  Icon(
                                                       Icons.delete,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: blueColor
+,
                                                       size: 18,
                                                     ),
                                                   )
@@ -3502,11 +3522,14 @@ class _Edit_leaseState extends State<Edit_lease>
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text('Security Deposit (Optional)',
+                               Text('Security Deposit (Optional)',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
-                                      color: Color(0xFF152b51))),
+                                      color: blueColor
+
+
+)),
                               const SizedBox(
                                 height: 10,
                               ),
@@ -3566,11 +3589,14 @@ class _Edit_leaseState extends State<Edit_lease>
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text('Upload Files (Maximum of 10)',
+                               Text('Upload Files (Maximum of 10)',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
-                                      color: Color(0xFF152b51))),
+                                      color: blueColor
+
+
+)),
                               const SizedBox(
                                 height: 20,
                               ),
@@ -3582,7 +3608,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                 ),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF152b51),
+                                    backgroundColor:  blueColor
+
+
+,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),
@@ -4182,11 +4211,14 @@ class _Edit_leaseState extends State<Edit_lease>
             return AlertDialog(
               backgroundColor: Colors.white,
               contentPadding: EdgeInsets.zero,
-              title: const Text('Add Tenant or Cosigner',
+              title:  Text('Add Tenant or Cosigner',
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: Color(0xFF152b51))),
+                      color: blueColor
+
+
+)),
               content: Form(
                 key: _addRecurringFormKey,
                 child: Padding(
@@ -4214,8 +4246,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                         border: isTenantSelected
                                             ? null
                                             : Border.all(
-                                                color: const Color.fromRGBO(
-                                                    21, 43, 83, 1),
+                                                color: blueColor
+
+
+,
                                                 width: 1),
                                         gradient: isTenantSelected
                                             ?  LinearGradient(
@@ -4248,12 +4282,16 @@ class _Edit_leaseState extends State<Edit_lease>
                                             )
                                           : ShaderMask(
                                               shaderCallback: (bounds) {
-                                                return const LinearGradient(
+                                                return  LinearGradient(
                                                   colors: [
-                                                    Color.fromRGBO(
-                                                        21, 43, 83, 1),
-                                                    Color.fromRGBO(
-                                                        21, 43, 83, 1),
+
+
+
+
+                                                    blueColor
+
+
+,
                                                   ],
                                                 ).createShader(bounds);
                                               },
@@ -4282,8 +4320,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                         border: isTenantSelected == false
                                             ? null
                                             : Border.all(
-                                                color: const Color.fromRGBO(
-                                                    21, 43, 83, 1),
+                                                color: blueColor
+
+
+,
                                                 width: 1),
                                         gradient: isTenantSelected == false
                                             ?  LinearGradient(
@@ -4316,12 +4356,12 @@ class _Edit_leaseState extends State<Edit_lease>
                                             )
                                           : ShaderMask(
                                               shaderCallback: (bounds) {
-                                                return const LinearGradient(
+                                                return  LinearGradient(
                                                   colors: [
-                                                    Color.fromRGBO(
-                                                        21, 43, 83, 1),
-                                                    Color.fromRGBO(
-                                                        21, 43, 83, 1),
+                                                    blueColor
+
+
+,
                                                   ],
                                                 ).createShader(bounds);
                                               },
@@ -4837,11 +4877,14 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                                                           borderRadius:
                                                                           BorderRadius.circular(8.0)),
                                                                       child: ElevatedButton(
-                                                                          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF152b51), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
+                                                                          style: ElevatedButton.styleFrom(backgroundColor:  blueColor
+
+
+, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
                                                                           onPressed: () {
                                                                             _submitSubForm();
                                                                           },
-                                                                          child: const Text(
+                                                                          child:  Text(
                                                                             'Add',
                                                                             style:
                                                                             TextStyle(color: Color(0xFFf7f8f9)),
@@ -5002,7 +5045,10 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                 child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor:
-                                        const Color(0xFF152b51),
+                                         blueColor
+
+
+,
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                             BorderRadius.circular(8.0))),
@@ -5700,7 +5746,10 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                             borderRadius: BorderRadius.circular(8.0)),
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF152b51),
+                                backgroundColor:  blueColor
+
+
+,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0))),
                             onPressed: () {
@@ -6129,7 +6178,10 @@ class _AddTenantState extends State<AddTenant> {
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                      color: const Color.fromRGBO(21, 43, 103, 1),
+                      color: blueColor
+
+
+,
                       border: Border.all(
                         color: blueColor,
                       ),
@@ -6402,7 +6454,10 @@ class _AddTenantState extends State<AddTenant> {
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                        color: const Color.fromRGBO(21, 43, 103, 1),
+                        color: blueColor
+
+
+,
                         border: Border.all(
                           color: blueColor,
                         ),
@@ -6562,7 +6617,10 @@ class _AddTenantState extends State<AddTenant> {
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                        color: const Color.fromRGBO(21, 43, 103, 1),
+                        color: blueColor
+
+
+,
                         border: Border.all(
                           color: blueColor,
                         ),
@@ -6787,7 +6845,10 @@ class _AddCosignerState extends State<AddCosigner> {
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-                color: const Color.fromRGBO(21, 43, 103, 1),
+                color: blueColor
+
+
+,
                 border: Border.all(
                   color: blueColor,
                 ),

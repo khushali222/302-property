@@ -861,8 +861,10 @@ class _CardpaymentState extends State<Cardpayment> {
                                               decoration: BoxDecoration(
                                                 borderRadius:
                                                     BorderRadius.circular(5.0),
-                                                color: Color.fromRGBO(
-                                                    21, 43, 81, 1),
+                                                color: blueColor
+
+
+,
                                                 boxShadow: [
                                                   BoxShadow(
                                                     color: Colors.grey,
@@ -1103,14 +1105,16 @@ class _CardpaymentState extends State<Cardpayment> {
                                           2: FlexColumnWidth(1),
                                         },
                                         children: [
-                                          const TableRow(children: [
+                                           TableRow(children: [
                                             Padding(
                                               padding: EdgeInsets.all(8.0),
                                               child: Center(
                                                 child: Text('Account',
                                                     style: TextStyle(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 83, 1),
+                                                        color: blueColor
+
+
+,
                                                         fontWeight:
                                                             FontWeight.bold)),
                                               ),
@@ -1120,8 +1124,10 @@ class _CardpaymentState extends State<Cardpayment> {
                                               child: Center(
                                                 child: Text('Amount',
                                                     style: TextStyle(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 83, 1),
+                                                        color: blueColor
+
+
+,
                                                         fontWeight:
                                                             FontWeight.bold)),
                                               ),
@@ -1131,8 +1137,10 @@ class _CardpaymentState extends State<Cardpayment> {
                                               child: Center(
                                                 child: Text('Actions',
                                                     style: TextStyle(
-                                                        color: Color.fromRGBO(
-                                                            21, 43, 83, 1),
+                                                        color: blueColor
+
+
+,
                                                         fontWeight:
                                                             FontWeight.bold)),
                                               ),
@@ -1324,11 +1332,11 @@ class _CardpaymentState extends State<Cardpayment> {
                                                       backgroundColor:
                                                           Colors.white),
                                                   onPressed: addRow,
-                                                  child: const Text(
+                                                  child:  Text(
                                                     'Add Row',
                                                     style: TextStyle(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: blueColor
+,
                                                     ),
                                                   ),
                                                 ),

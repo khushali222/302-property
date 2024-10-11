@@ -567,7 +567,7 @@ class _EditTenantsState extends State<EditTenants> {
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w400,
-                                      color: Color.fromRGBO(21, 43, 103, 1))),
+                                      color: blueColor)),
                               SizedBox(
                                 height: 15,
                               ),
@@ -731,7 +731,7 @@ class _EditTenantsState extends State<EditTenants> {
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w400,
-                                      color: Color.fromRGBO(21, 43, 103, 1))),
+                                      color: blueColor)),
                               SizedBox(
                                 height: 15,
                               ),
@@ -930,8 +930,10 @@ class _EditTenantsState extends State<EditTenants> {
                                             _validateInput();
                                           },
                                           controller: overrideFee,
-                                          cursorColor: const Color.fromRGBO(
-                                              21, 43, 81, 1),
+                                          cursorColor: blueColor
+
+
+,
                                         ),
                                       ),
                                     )
@@ -1371,7 +1373,7 @@ class _EditTenantsState extends State<EditTenants> {
                                 style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w400,
-                                    color: Color.fromRGBO(21, 43, 103, 1))),
+                                    color: blueColor)),
                             SizedBox(
                               height: 15,
                             ),
@@ -1514,7 +1516,7 @@ class _EditTenantsState extends State<EditTenants> {
                                 style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w400,
-                                    color: Color.fromRGBO(21, 43, 103, 1))),
+                                    color: blueColor)),
                             SizedBox(
                               height: 15,
                             ),
@@ -1687,8 +1689,10 @@ class _EditTenantsState extends State<EditTenants> {
                                           _validateInput();
                                         },
                                         controller: overrideFee,
-                                        cursorColor: const Color.fromRGBO(
-                                            21, 43, 81, 1),
+                                        cursorColor:  blueColor
+
+
+,
                                       ),
                                     ),
                                   )

@@ -512,11 +512,14 @@ class _SummaryContentState extends State<SummaryContent> {
                         controller: noteController,
                       ),
                       const SizedBox(height: 10),
-                      const Text('Upload File',
+                       Text('Upload File',
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
-                              color: Color(0xFF152b51))),
+                              color: blueColor
+
+
+)),
                       const SizedBox(
                         height: 20,
                       ),
@@ -528,7 +531,10 @@ class _SummaryContentState extends State<SummaryContent> {
                         ),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF152b51),
+                            backgroundColor:  blueColor
+
+
+,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
@@ -669,8 +675,10 @@ class _SummaryContentState extends State<SummaryContent> {
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(10),
                                         border: Border.all(
-                                            color: const Color.fromRGBO(
-                                                21, 43, 81, 1)),
+                                            color: blueColor
+
+
+),
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),

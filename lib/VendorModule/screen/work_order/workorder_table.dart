@@ -940,7 +940,11 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                             SizedBox(height: 20),
                             Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                                  border: Border.all(color: Color.fromRGBO(
+                                      152, 162, 179, .5)
+
+
+)),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -954,7 +958,11 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                   return Container(
                                     decoration: BoxDecoration(
                                       color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                                      border: Border.all(color: Color.fromRGBO(
+                                          152, 162, 179, .5)
+
+
+),
                                     ),
                                     child: Column(
                                       children: <Widget>[
@@ -1007,8 +1015,8 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                           : FontAwesomeIcons
                                                           .sortDown,
                                                       size: 20,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: blueColor
+,
                                                     ),
                                                   ),
                                                 ),
@@ -1225,7 +1233,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                               CrossAxisAlignment.center,
                                                               children: [
                                                                 SizedBox(width: 5,),
-                                                                Image.asset('assets/icons/view.png'),
+                                                                Image.asset('assets/icons/view.png',color: blueColor,),
                                                                 // FaIcon(
                                                                 //   FontAwesomeIcons.trashCan,
                                                                 //   size: 15,

@@ -960,7 +960,11 @@ class _FinancialTableState extends State<FinancialTable> {
                             SizedBox(height: 20),
                             Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                                  border: Border.all(color: Color.fromRGBO(
+                                      152, 162, 179, .5)
+
+
+)),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -984,7 +988,11 @@ class _FinancialTableState extends State<FinancialTable> {
                                   return Container(
                                     decoration: BoxDecoration(
                                       color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                                      border: Border.all(color: Color.fromRGBO(
+                                          152, 162, 179, .5)
+
+
+),
                                     ),
                                     child: Column(
                                       children: <Widget>[
@@ -1037,8 +1045,8 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           : FontAwesomeIcons
                                                           .sortDown,
                                                       size: 20,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: blueColor
+,
                                                     ),
                                                   ),
                                                 ),
@@ -1652,19 +1660,27 @@ class _FinancialTableState extends State<FinancialTable> {
                                               decoration: BoxDecoration(
                                                 border: Border(
                                                   left: BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
+                                                      color: blueColor
+
+
+),
                                                   right: BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
+                                                      color: blueColor
+
+
+),
                                                   top: BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
+                                                      color: blueColor
+
+
+),
                                                   bottom: i ==
                                                       _pagedData.length - 1
                                                       ? BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1))
+                                                      color: blueColor
+
+
+)
                                                       : BorderSide.none,
                                                 ),
                                               ),

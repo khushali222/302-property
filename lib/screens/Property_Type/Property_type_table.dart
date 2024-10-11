@@ -920,7 +920,10 @@ class _PropertyTableState extends State<PropertyTable> {
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color:
-                                          Color.fromRGBO(152, 162, 179, .5))),
+                                      Color.fromRGBO(152, 162, 179, .5)
+
+
+)),
                               // decoration: BoxDecoration(
                               //     border: Border.all(color: blueColor)),
                               child: Column(
@@ -995,8 +998,8 @@ class _PropertyTableState extends State<PropertyTable> {
                                                           : FontAwesomeIcons
                                                               .sortDown,
                                                       size: 20,
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 83, 1),
+                                                      color: blueColor
+,
                                                     ),
                                                   ),
                                                 ),
@@ -1487,19 +1490,27 @@ class _PropertyTableState extends State<PropertyTable> {
                                               decoration: BoxDecoration(
                                                 border: Border(
                                                   left: BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
+                                                      color: blueColor
+
+
+),
                                                   right: BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
+                                                      color: blueColor
+
+
+),
                                                   top: BorderSide(
-                                                      color: Color.fromRGBO(
-                                                          21, 43, 81, 1)),
+                                                      color: blueColor
+
+
+),
                                                   bottom: i ==
                                                           _pagedData.length - 1
                                                       ? BorderSide(
-                                                          color: Color.fromRGBO(
-                                                              21, 43, 81, 1))
+                                                          color:blueColor
+
+
+)
                                                       : BorderSide.none,
                                                 ),
                                               ),
