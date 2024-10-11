@@ -2615,7 +2615,7 @@ class _Summery_pageState extends State<Summery_page>
       ),
     );
   }
-
+  bool recurringswith = false;
   Tenants(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -2690,6 +2690,27 @@ class _Summery_pageState extends State<Summery_page>
                   scrollDirection: Axis.vertical,
                   child: Column(
                     children: [
+                      if(tenants.length >0)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+
+                            children: [
+                          Text("Enable Recurring Payments"),
+                          Switch(value: recurringswith, onChanged: (value){
+                           /* setState(() {
+                              recurringswith = value;
+                            });*/
+                            if(value == true){
+                              recurringcarddialog();
+                            }
+                          },
+                          activeColor: blueColor,
+                          )
+                        ],),
+                      ),
+
                       Wrap(
                         alignment: WrapAlignment.start,
                         spacing: MediaQuery.of(context).size.width * 0.03,
@@ -2707,8 +2728,8 @@ class _Summery_pageState extends State<Summery_page>
                                       ismove =  moveoutDate.difference(currentDate).inDays < 1;
                                     }
                                    return Padding(
-                                      padding: const EdgeInsets.only(
-                                        left: 20, right: 20, top: 20,),
+                                      padding:  EdgeInsets.only(
+                                        left: 20, right: 20, top: index == 0 ? 0:20,),
                                       child: Material(
                                         elevation: 3,
                                         borderRadius: BorderRadius.circular(10),
@@ -2747,6 +2768,58 @@ class _Summery_pageState extends State<Summery_page>
       );
 
 
+  }
+
+  recurringcarddialog(){
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)), //this right here
+          content: Container(
+            height: 300.0,
+            width: 300.0,
+
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+               Text(
+                 "Select Reccuring Cards",
+                 style: TextStyle(
+                   color: blueColor,
+                   fontSize:20,
+                   fontWeight: FontWeight.bold
+                 ),
+               ),
+
+
+              ],
+            ),
+          ),
+          actions: [
+            Container(
+                height: 50,
+                width: 100,
+                decoration: BoxDecoration(border: Border.all(color: blueColor)
+                    ,borderRadius: BorderRadius.circular(6)
+                ),
+
+                child:Center(child: Text("Cancel",style: TextStyle(color: blueColor,fontSize: 16),))
+            ),
+            Container(
+              height: 50,
+              width: 100,
+              decoration: BoxDecoration(color: blueColor
+              ,borderRadius: BorderRadius.circular(6)
+              ),
+              
+              child:Center(child: Text("Save",style: TextStyle(color: Colors.white,fontSize: 16),))
+            )
+          ],
+        );
+      }
+    );
   }
 
   Widget buildTenantCard(TenantData tenant,{bool? isMoveouts }) {

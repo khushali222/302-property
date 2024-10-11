@@ -151,7 +151,8 @@ class _SplashScreenState extends State<SplashScreen> {
                 width: 300,
               ),
               SizedBox(height: 30),
-              Lottie.asset('assets/images/loader.json',height: 130,width: 100),
+              Lottie.asset('assets/images/loader.json',height: 130,width: 100,
+               ),
               // LoadingAnimationWidget.fourRotatingDots(
               //  color: blueColor,
               //   size: 40,
