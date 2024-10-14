@@ -128,7 +128,7 @@ class _AddCardState extends State<AddCard> {
 
           'tenant_firstName': '${tenant['tenant_firstName']}',
           'tenant_lastName': '${tenant['tenant_lastName']}',
-          '': '${tenant['tenant_lastName']}',
+
           'tenant_email':'${tenant['tenant_email']}',
           'tenant_phoneNumber':'${tenant['tenant_phoneNumber']}',
           'rental_adress':"${data['data']['rental_adress']}",

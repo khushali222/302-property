@@ -40,6 +40,7 @@ import '../../../repository/unit_data.dart';
 import '../../../repository/workorder.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../Leasing/Applicants/addApplicant.dart';
+import '../../Leasing/RentalRoll/addcard/CardModel.dart';
 import '../../Maintenance/Workorder/workorder_summery.dart';
 import 'moveout/repository.dart';
 import '../../Leasing/RentalRoll/newAddLease.dart';
@@ -2640,6 +2641,9 @@ class _Summery_pageState extends State<Summery_page>
               return Text('Error: ${snapshot.error}');
             } else {
               List<TenantData> tenants = snapshot.data ?? [];
+              bool hasRecurringTenants = tenants.any((tenant) => tenant!.recurring??false) ?? false;
+              print(hasRecurringTenants);
+              recurringswith = hasRecurringTenants;
               if (snapshot.data!.length == 0) {
                 return Container(
                   height: MediaQuery.of(context).size.height * .5,
@@ -2656,6 +2660,8 @@ class _Summery_pageState extends State<Summery_page>
                   ),
                 );
               }
+
+
               return isTablet
                   ? SingleChildScrollView(
                       scrollDirection: Axis.vertical,
@@ -2703,12 +2709,17 @@ class _Summery_pageState extends State<Summery_page>
 
                             children: [
                           Text("Enable Recurring Payments"),
-                          Switch(value: recurringswith, onChanged: (value){
-                           /* setState(() {
-                              recurringswith = value;
-                            });*/
+                          Switch(value: recurringswith, onChanged: (value)async{
+
                             if(value == true){
-                              recurringcarddialog();
+                              recurringCardDialog(tenants);
+                            }
+                            else if(value == false){
+                              await tenant_cards().disableCard(widget.properties.rentalId!).then((element){
+                                setState(() {
+                                  recurringswith = value;
+                                });
+                              });
                             }
                           },
                           activeColor: blueColor,
@@ -2775,55 +2786,252 @@ class _Summery_pageState extends State<Summery_page>
 
   }
 
-  recurringcarddialog(){
+  recurringCardDialog(List<TenantData> tenants) async {
+    List<List<BillingData>>? billingDataList;
+    List<String> tenant_card = List<String>.generate(tenants.length, (index) => '').toList();
+
+    // Fetch the response to determine if credit or debit cards are accepted
+    Map<String, Map<String, bool>> cardAcceptanceResponses = {};
+    for (var tenant in tenants) {
+      var response = await  tenant_cards().fetchCardAcceptance(tenant.tenantId!.first,tenant.leaseId!);
+      cardAcceptanceResponses[tenant.tenantId!.first] = response;
+    }
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)), //this right here
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
           content: Container(
             height: 300.0,
             width: 300.0,
-
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-               Text(
-                 "Select Reccuring Cards",
-                 style: TextStyle(
-                   color: blueColor,
-                   fontSize:20,
-                   fontWeight: FontWeight.bold
-                 ),
-               ),
+              children: [
+                Text(
+                  "Select Recurring Cards",
+                  style: TextStyle(
+                    color: blueColor,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Expanded(
+                  child: FutureBuilder<List<Map<String, dynamic>>>(
+                    future: Future.wait(
+                      tenants.map((tenant) async {
+                        var paymentSettings = await tenant_cards().fetchCardAcceptance(
+                          tenant.tenantId!.first,
+                          tenant.leaseId!,
+                        );
+
+                        bool creditAccepted = paymentSettings['creditCardAccepted']!;
+                        bool debitAccepted = paymentSettings['debitCardAccepted']!;
+
+                        // Fetch and filter cards based on payment settings.
+                        var cards = await tenant_cards().fetchcreditcard(tenant.tenantId!.first);
+                        var filteredCards = cards.where((card) {
+                          if (creditAccepted && card.binResult == 'CREDIT') return true;
+                          if (debitAccepted && card.binResult == 'DEBIT') return true;
+                          return false;
+                        }).toList();
+
+                        // Return the tenant and their valid cards
+                        return {'tenant': tenant, 'cards': filteredCards};
+                      }).toList(),
+                    ),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        List<Map<String, dynamic>> tenantsWithCards = snapshot.data!
+                            .where((entry) => entry['cards'].isNotEmpty)
+                            .toList();
+
+                        // If no tenants have valid cards, show a message
+                        if (tenantsWithCards.isEmpty) {
+                          return Center(child: Text('No tenants with valid cards.'));
+                        }
+                        List<List<BillingData>> Cardsdata = tenantsWithCards.map((e) => e['cards'] as List<BillingData>).toList();
+                        // Initialize the tenant card data in the provider
+                        Provider.of<DropdownProvider>(context, listen: false)
+                            .initializeTenantCard(
+                            tenantsWithCards.map((e) => e['cards'] as List<BillingData>).toList());
+
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: ClampingScrollPhysics(),
+                          itemCount: tenantsWithCards.length,
+                          itemBuilder: (context, index) {
+                            TenantData tenantsdata = tenantsWithCards[index]["tenant"];
+                            String tenantId = tenantsdata.tenantId!.first;
+                            Map<String, bool> cardAcceptanceResponse = cardAcceptanceResponses[tenantId]!;
+
+                            List<BillingData> filteredCards = tenant_cards().filterCards(
+                              Cardsdata[index],
+                              cardAcceptanceResponse,
+                            );
+
+                            return Consumer<DropdownProvider>(
+                              builder: (context, provider, child) {
+                                // Filter the cards based on the card acceptance response
 
 
+                                return Padding(
+                                  padding: const EdgeInsets.all(3.0),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "${tenantsdata.firstName} ",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      SizedBox(width: 6),
+                                      Expanded(
+                                        child: Container(
+                                          height: 45,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(),
+                                            borderRadius: BorderRadius.circular(5),
+                                          ),
+                                          padding: EdgeInsets.symmetric(horizontal: 5),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton<String>(
+                                              isExpanded: true,
+                                              value: provider.tenantCard[index], // Use ccNumber as selected value
+                                              // Custom display of the selected item:
+                                              selectedItemBuilder: (BuildContext context) {
+                                                return filteredCards.map((card) {
+                                                  return Align(
+                                                    alignment: Alignment.centerLeft,
+                                                    child: Text(
+                                                      card.ccNumber!, // Only display ccNumber in selected state
+                                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                                                    ),
+                                                  );
+                                                }).toList();
+                                              },
+                                              // Expanded dropdown list items:
+                                              items: filteredCards.map((card) {
+                                                return DropdownMenuItem(
+                                                  value: card.ccNumber, // ccNumber remains the value
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        card.ccNumber!,
+                                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                                      ),
+                                                      Text(
+                                                        card.binResult ?? '',
+                                                        style: TextStyle(color: Colors.grey),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              onChanged: (String? selectedCard) {
+                                                if (selectedCard != null) {
+                                                  provider.updateTenantCard(index, selectedCard);
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+
+
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                    },
+                  ),
+                ),
               ],
             ),
           ),
           actions: [
-            Container(
+            GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Container(
                 height: 50,
                 width: 100,
-                decoration: BoxDecoration(border: Border.all(color: blueColor)
-                    ,borderRadius: BorderRadius.circular(6)
+                decoration: BoxDecoration(
+                  border: Border.all(color: blueColor),
+                  borderRadius: BorderRadius.circular(6),
                 ),
-
-                child:Center(child: Text("Cancel",style: TextStyle(color: blueColor,fontSize: 16),))
-            ),
-            Container(
-              height: 50,
-              width: 100,
-              decoration: BoxDecoration(color: blueColor
-              ,borderRadius: BorderRadius.circular(6)
+                child: Center(
+                  child: Text(
+                    "Cancel",
+                    style: TextStyle(color: blueColor, fontSize: 16),
+                  ),
+                ),
               ),
-              
-              child:Center(child: Text("Save",style: TextStyle(color: Colors.white,fontSize: 16),))
-            )
+            ),
+            GestureDetector(
+              onTap: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                String? token = prefs.getString('token');
+                String? id = prefs.getString('adminId');
+                final provider = Provider.of<DropdownProvider>(context, listen: false);
+                List<Map<String, dynamic>> data = [];
+                for (var i = 0; i < tenants.length; i++) {
+                  List<String> selected_card = provider.tenantCard;
+                  print(selected_card);
+                  List<BillingData> billdata = billingDataList![i];
+                  BillingData current_data =
+                  billdata.firstWhere((element) => element.ccNumber == selected_card[i]);
+                  data.add({
+                    "lease_id": tenants[i].leaseId,
+                    "tenant_id": tenants[i].tenantId!.first,
+                    "card_type": current_data.binResult,
+                    "customer_vault_id": current_data.customerVaultId,
+                    "billing_id": current_data.billingId,
+                  });
+                }
+                print(data);
+
+               await Properies_summery_Repo().addrecurringtenant({
+                  "admin_id": id,
+                  "rental_id": widget.properties.rentalId,
+                  "recurrings": data
+                }).then((value){
+                  Navigator.pop(context);
+                  setState(() {
+
+                  });
+               });
+              },
+              child: Container(
+                height: 50,
+                width: 100,
+                decoration: BoxDecoration(
+                  color: blueColor,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Center(
+                  child: Text(
+                    "Save",
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                ),
+              ),
+            ),
           ],
         );
-      }
+      },
     );
   }
 
@@ -2895,8 +3103,7 @@ class _Summery_pageState extends State<Summery_page>
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    bool isChecked =
-                        false; // Moved isChecked inside the StatefulBuilder
+                    bool isChecked = false; // Moved isChecked inside the StatefulBuilder
                     return StatefulBuilder(
                       builder: (BuildContext context, StateSetter setState) {
                         return
