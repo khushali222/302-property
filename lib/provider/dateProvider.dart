@@ -183,7 +183,7 @@ import '../constant/constant.dart';
 
 class DateProvider with ChangeNotifier {
   DateTime _currentDate = DateTime.now();
-  String _dateFormat = 'MM-dd-yyyy';
+  String _dateFormat = 'MM-DD-YYYY';
   int dateformateselect = 0; // default date format
 
   DateTime get currentDate => _currentDate;
@@ -191,7 +191,7 @@ class DateProvider with ChangeNotifier {
   int get _dateformateselect => dateformateselect;
   DateProvider() {
     _loadDateFormat();
-    _loadSelectedDateFormat();
+    //_loadSelectedDateFormat();
   }
 
   Future<void> _loadDateFormat() async {
@@ -213,20 +213,25 @@ class DateProvider with ChangeNotifier {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-
+    print(_dateFormat);
     if (token != null) {
       final response = await http.post(
         Uri.parse('${Api_url}/api/themes/date-format'),
         headers: {
           "authorization": "CRM $token",
           "id": "CRM $id",
+          "Content-Type": "application/json"
         },
         body: jsonEncode({
           'format': _dateFormat,
           'admin_id': id,
         }),
       );
-
+      print(jsonEncode({
+        'format': _dateFormat,
+        'admin_id': id,
+      }));
+      print(response.body);
       if (response.statusCode != 200) {
         // Handle error
         print("Failed to save date format.");
@@ -238,6 +243,7 @@ class DateProvider with ChangeNotifier {
   }
 
   void updateDateFormat(String newFormat,  selectIndex) {
+    print(newFormat);
     _dateFormat = newFormat;
     dateformateselect = selectIndex;
     _saveDateFormat();
@@ -289,7 +295,7 @@ class DateProvider with ChangeNotifier {
         },
         body: json.encode({"token": token}),
       );
-      print(response.body);
+      print("date formate calling ${response.body}");
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
         if (jsonData["statusCode"] == 200) {
