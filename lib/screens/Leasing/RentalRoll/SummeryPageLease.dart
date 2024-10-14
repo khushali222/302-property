@@ -1920,7 +1920,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                     children: [
                                                       const SizedBox(width: 2),
                                                       Text(
-                                                        '${snapshot.data![index].tenantFirstName} ${snapshot.data![index].tenantLastName}',
+                                                        '${dateProvider.formatCurrentDate(snapshot.data![index].tenantFirstName)} ${dateProvider.formatCurrentDate(snapshot.data![index].tenantLastName)}',
                                                         style:  TextStyle(
                                                           fontSize: 16,
                                                           fontWeight:

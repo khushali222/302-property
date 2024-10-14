@@ -489,11 +489,30 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   SizedBox(
                                     height: 8,
                                   ),
-                                  Container(
-                                      child: Text(
-                                    '${summery.vendorNotes}',
-                                    style: TextStyle(color: blueColor),
-                                  )),
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width > 500
+                                        ? 200
+                                        : 150,
+                                    child: Text(
+                                      '${summery.vendorNotes}',
+                                      maxLines: 4, // Set maximum number of lines
+                                      overflow: TextOverflow
+                                          .ellipsis,
+                                      textAlign: TextAlign.justify,// Handle overflow with ellipsis
+                                      style: TextStyle(
+                                        fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 13
+                                            : 18,
+                                        color: blueColor,
+                                      ),
+                                    ),
+                                  ),
+                                  // Container(
+                                  //     child: Text(
+                                  //   '${summery.vendorNotes}',
+                                  //   style: TextStyle(color: blueColor),
+                                  // )),
                                 ],
                               ),
                               Spacer(),
@@ -1403,10 +1422,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   height: 4,
                                 ),
                                 Text(
-                                    dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}'),
-                                    // '${summery.workorderUpdates?.isEmpty == true ?
-                                    // "N/A" : summery.workorderUpdates?.last.date?.toString()
-                                    // }',
+                                    // '${summery.workorderUpdates}'.isEmpty == true ? 'N/A' : dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date.toString()}'),
+                                    '${summery.workorderUpdates?.isEmpty == true ?
+                                    "N/A" : summery.workorderUpdates?.last.date?.toString()
+                                    }',
                                     style: TextStyle(
                                         color: blueColor,
                                         fontWeight: FontWeight.bold)),
@@ -1443,11 +1462,30 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               SizedBox(
                                 height: 8,
                               ),
-                              Container(
-                                  child: Text(
-                                '${summery.vendorNotes}',
-                                style: TextStyle(color: blueColor),
-                              )),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width > 500
+                                    ? 200
+                                    : 150,
+                                child: Text(
+                                  '${summery.vendorNotes}',
+                                  maxLines: 4, // Set maximum number of lines
+                                  overflow: TextOverflow
+                                      .ellipsis,
+                                  textAlign: TextAlign.justify,// Handle overflow with ellipsis
+                                  style: TextStyle(
+                                    fontSize:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 13
+                                        : 18,
+                                    color: blueColor,
+                                  ),
+                                ),
+                              ),
+                              // Container(
+                              //     child: Text(
+                              //   '${summery.vendorNotes}',
+                              //   style: TextStyle(color: blueColor),
+                              // )),
                             ],
                           ),
                           Spacer(),
@@ -2404,11 +2442,30 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   SizedBox(
                                     height: 8,
                                   ),
-                                  Container(
-                                      child: Text(
-                                    '${summery.vendorNotes}',
-                                    style: TextStyle(color: blueColor),
-                                  )),
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width > 500
+                                        ? 200
+                                        : 150,
+                                    child: Text(
+                                      '${summery.vendorNotes}',
+                                      maxLines: 4, // Set maximum number of lines
+                                      overflow: TextOverflow
+                                          .ellipsis,
+                                      textAlign: TextAlign.justify,// Handle overflow with ellipsis
+                                      style: TextStyle(
+                                        fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 13
+                                            : 18,
+                                        color: blueColor,
+                                      ),
+                                    ),
+                                  ),
+                                  // Container(
+                                  //     child: Text(
+                                  //   '${summery.vendorNotes}',
+                                  //   style: TextStyle(color: blueColor),
+                                  // )),
                                 ],
                               ),
                               Spacer(),
@@ -2860,7 +2917,11 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 SizedBox(
                                   height: 4,
                                 ),
-                                Text( dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}'),
+                                Text(
+                                    //dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date}'),
+                                    '${summery.workorderUpdates?.isEmpty == true ?
+                                    "N/A" : summery.workorderUpdates?.last.date?.toString()
+                                    }',
                                     style: TextStyle(
                                         color: blueColor,
                                         fontWeight: FontWeight.bold)),
@@ -2897,11 +2958,30 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               SizedBox(
                                 height: 8,
                               ),
-                              Container(
-                                  child: Text(
-                                '${summery.vendorNotes}',
-                                style: TextStyle(color: blueColor),
-                              )),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width > 500
+                                    ? 200
+                                    : 150,
+                                child: Text(
+                                  '${summery.vendorNotes}',
+                                  maxLines: 4, // Set maximum number of lines
+                                  overflow: TextOverflow
+                                      .ellipsis,
+                                  textAlign: TextAlign.justify,// Handle overflow with ellipsis
+                                  style: TextStyle(
+                                    fontSize:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 13
+                                        : 18,
+                                    color: blueColor,
+                                  ),
+                                ),
+                              ),
+                              // Container(
+                              //     child: Text(
+                              //   '${summery.vendorNotes}',
+                              //   style: TextStyle(color: blueColor),
+                              // )),
                             ],
                           ),
                           Spacer(),

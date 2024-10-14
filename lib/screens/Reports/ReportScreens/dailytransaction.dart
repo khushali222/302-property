@@ -9,6 +9,7 @@ import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 
 import '../../../Model/profile.dart';
 import '../../../repository/GetAdminAddressPdf.dart';
@@ -1502,6 +1503,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
   String? chargetype;
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
@@ -2240,7 +2242,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                       ),
                                                                       TextSpan(
                                                                         text:
-                                                                            '${formatDate(workOrder.createdAt.toString())}',
+                                                                            '${dateProvider.formatCurrentDate(workOrder.createdAt.toString())}',
                                                                         style: TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.w700,
