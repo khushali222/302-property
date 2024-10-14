@@ -21,6 +21,7 @@ import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:three_zero_two_property/Model/ReportExpiringLease.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
 import 'package:three_zero_two_property/repository/ExpiringLeaseTable.dart';
 import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
@@ -684,8 +685,10 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
-                : const Color.fromRGBO(
-                    21, 43, 83, 1), // Change color based on availability
+                :  blueColor
+
+
+, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -702,7 +705,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       drawer:CustomDrawer(currentpage: "Reports",dropdown: false,),
@@ -1461,8 +1464,8 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                      ' ${formatDate(lease.createdAt!)}',
-                                                                  style: TextStyle(
+                                                                  dateProvider.formatCurrentDate('${lease.createdAt}'),
+                                                                    style: TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .w700,
@@ -1489,7 +1492,8 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                      '${formatDate(lease.endDate!)}',
+                                                                  dateProvider.formatCurrentDate('${lease.endDate}')
+                                                                    ,
                                                                   style: TextStyle(
                                                                       fontWeight:
                                                                           FontWeight

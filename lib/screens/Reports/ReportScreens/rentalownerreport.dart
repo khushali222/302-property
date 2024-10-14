@@ -17,6 +17,7 @@ import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
 import 'package:three_zero_two_property/repository/DelinquentTenantsService.dart';
 import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
@@ -201,8 +202,10 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
-                : const Color.fromRGBO(
-                    21, 43, 83, 1), // Change color based on availability
+                :  blueColor
+
+
+, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -1228,6 +1231,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
   String? selectedrenatalownerid;
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       drawer: CustomDrawer(
@@ -1520,7 +1524,8 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                         )),
                                                     Expanded(
                                                         child: Text(
-                                                      "${formatDate(tenant.createdAt.toString())}",
+                                            dateProvider.formatCurrentDate('${tenant.createdAt}'),
+                                                      // "${formatDate(tenant.createdAt.toString())}",
                                                       style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
@@ -1562,9 +1567,13 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                             _buildTableRow(
                                                                 'Transaction Date:',
                                                                 _getDisplayValue(
-                                                                    formatDate(tenant
-                                                                        .createdAt
-                                                                        .toString())),
+                                                            dateProvider.formatCurrentDate('${tenant
+                                                                .createdAt
+                                                                .toString()}'),
+                                                                    // formatDate(tenant
+                                                                    //     .createdAt
+                                                                    //     .toString())
+                                                                ),
                                                                 'Transaction Type:',
                                                                 _getDisplayValue(
                                                                     tenant

@@ -11,6 +11,7 @@ import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
 import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/repository/RentersInsuranceService.dart';
@@ -167,8 +168,10 @@ class _RentersInsuranceState extends State<RentersInsurance> {
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
-                : const Color.fromRGBO(
-                    21, 43, 83, 1), // Change color based on availability
+                :  blueColor
+
+
+, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -952,6 +955,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: widget_302.App_Bar(context: context),
@@ -1115,7 +1119,8 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                           const SizedBox(height: 20),
                           Container(
                             decoration: BoxDecoration(
-                                border: Border.all(color: blueColor
+                                border: Border.all(color: Color.fromRGBO(
+                                    152, 162, 179, .5)
 
 
 )),
@@ -1132,7 +1137,8 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                 return Container(
                                   decoration: BoxDecoration(
                                     color: rowIndex %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                    border: Border.all(color: blueColor
+                                    border: Border.all(color: Color.fromRGBO(
+                                        152, 162, 179, .5)
 
 
 ),
@@ -1500,7 +1506,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                                                       ),
                                                                       TextSpan(
                                                                         text:
-                                                                            '${tenant.tenantInsurance?.effectiveDate ?? '-'}',
+                                                                        '${dateProvider.formatCurrentDate(tenant.tenantInsurance?.effectiveDate ?? '-')}',
                                                                         style:
                                                                             TextStyle(
                                                                           color:
@@ -1543,7 +1549,9 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                                                       ),
                                                                       TextSpan(
                                                                         text:
-                                                                            '${tenant.tenantInsurance?.expirationDate ?? '-'}',
+                                                                        '${
+                                                                            dateProvider.formatCurrentDate(tenant.tenantInsurance?.expirationDate ?? '-')
+                                                                        }',
                                                                         style:
                                                                             TextStyle(
                                                                           color:

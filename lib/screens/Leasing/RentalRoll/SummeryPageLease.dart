@@ -1043,7 +1043,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                      '${snapshot.data!.data!.startDate} to ${snapshot.data!.data!.endDate}',
+                                                                      '${dateProvider.formatCurrentDate('${snapshot.data!.data!.startDate}')} to ${dateProvider.formatCurrentDate('${snapshot.data!.data!.endDate}')}',
                                                                   style: const TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
@@ -1548,6 +1548,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   }
 
   Tenant(context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return LayoutBuilder(
       builder: (context, constraints) {
         bool isTablet = constraints.maxWidth > 600;
@@ -1750,7 +1751,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                         children: [
                                           const SizedBox(width: 65),
                                           Text(
-                                            '${snapshot.data![index].startDate} to',
+                                            '${dateProvider.formatCurrentDate('${snapshot.data![index].startDate}')} to',
                                             style:  TextStyle(
                                               fontSize: 15,
                                               color:
@@ -1764,7 +1765,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                         children: [
                                           const SizedBox(width: 65),
                                           Text(
-                                            '${snapshot.data![index].endDate}',
+                                            '${dateProvider.formatCurrentDate('${snapshot.data![index].endDate}')}',
                                             style:  TextStyle(
                                               fontSize: 15,
                                               color:
@@ -1919,7 +1920,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                     children: [
                                                       const SizedBox(width: 2),
                                                       Text(
-                                                        '${snapshot.data![index].tenantFirstName} ${snapshot.data![index].tenantLastName}',
+                                                        '${dateProvider.formatCurrentDate(snapshot.data![index].tenantFirstName)} ${dateProvider.formatCurrentDate(snapshot.data![index].tenantLastName)}',
                                                         style:  TextStyle(
                                                           fontSize: 16,
                                                           fontWeight:
@@ -2079,7 +2080,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                             children: [
                                               const SizedBox(width: 65),
                                               Text(
-                                               ' ${formatDate(snapshot.data![index].startDate)} to',
+                                               ' ${dateProvider.formatCurrentDate('${snapshot.data![index].startDate}')} to',
                                                 style:  TextStyle(
                                                   fontSize: 15,
                                                   color: blueColor
@@ -2091,7 +2092,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               ),
 
                                               Text(
-                                                ' ${formatDate(snapshot.data![index].endDate)}'
+                                                ' ${dateProvider.formatCurrentDate('${snapshot.data![index].endDate}')}'
                                                 ,
                                                 style:  TextStyle(
                                                   fontSize: 15,

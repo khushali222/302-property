@@ -9,6 +9,7 @@ import 'package:three_zero_two_property/Model/CompletedWorkOrdersModel.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
 import 'package:three_zero_two_property/repository/CompletedWorkData.dart';
 import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
@@ -163,8 +164,10 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
-                : const Color.fromRGBO(
-                    21, 43, 83, 1), // Change color based on availability
+                :  blueColor
+
+
+, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -688,6 +691,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
@@ -947,7 +951,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                               ),
                                               Expanded(
                                                 child: Text(
-                                                  '   ${workOrder.date!.isEmpty ? '-- - - -- ----' : formatDate(workOrder.date!)} ',
+                                                  '   ${workOrder.date!.isEmpty ? '-- - - -- ----' : dateProvider.formatCurrentDate(workOrder.date!)} ',
                                                   style: TextStyle(
                                                     color: blueColor,
                                                     fontWeight: FontWeight.bold,

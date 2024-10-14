@@ -16,6 +16,7 @@ import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 
 import 'package:three_zero_two_property/provider/property_summery.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/Applicants_table.dart';
@@ -719,8 +720,10 @@ class _Summery_pageState extends State<Summery_page>
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
-                : Color.fromRGBO(
-                    21, 43, 83, 1), // Change color based on availability
+                : blueColor
+
+
+, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -1059,8 +1062,10 @@ class _Summery_pageState extends State<Summery_page>
             color: (_currentPagemulti + 1) * _rowsPerPagemulti >=
                     _tableDatamulti.length
                 ? Colors.grey
-                : Color.fromRGBO(
-                    21, 43, 83, 1), // Change color based on availability
+                : blueColor
+
+
+, // Change color based on availability
           ),
           onPressed: (_currentPagemulti + 1) * _rowsPerPagemulti >=
                   _tableDatamulti.length
@@ -1392,8 +1397,10 @@ class _Summery_pageState extends State<Summery_page>
             color: (_currentPagerent + 1) * _rowsPerPagerent >=
                     _tableDatarent.length
                 ? Colors.grey
-                : Color.fromRGBO(
-                    21, 43, 83, 1), // Change color based on availability
+                : blueColor
+
+
+, // Change color based on availability
           ),
           onPressed:
               (_currentPagerent + 1) * _rowsPerPagerent >= _tableDatarent.length
@@ -1956,7 +1963,8 @@ class _Summery_pageState extends State<Summery_page>
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color:
-                                          blueColor
+                                      Color.fromRGBO(
+                                          152, 162, 179, .5)
 
 
 )),
@@ -3036,6 +3044,7 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   Widget buildTenantCard(TenantData tenant,{bool? isMoveouts }) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Column(
       children: [
         const SizedBox(height: 10),
@@ -3085,7 +3094,7 @@ class _Summery_pageState extends State<Summery_page>
                   children: [
                     const SizedBox(width: 2),
                     Text(
-                      formatDate(tenant.endDate!),
+                      dateProvider.formatCurrentDate('${tenant.endDate}'),
                       style: TextStyle(
                         fontSize:
                             MediaQuery.of(context).size.width < 500 ? 15 : 17,
@@ -3174,7 +3183,7 @@ class _Summery_pageState extends State<Summery_page>
           children: [
             const SizedBox(width: 65),
             Text(
-              '${formatDate('${tenant.startDate}')}  to',
+              '${dateProvider.formatCurrentDate('${tenant.startDate}')}  to',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
                 color: blueColor,
@@ -3183,7 +3192,7 @@ class _Summery_pageState extends State<Summery_page>
             ),
             SizedBox(width: 5),
             Text(
-              '${formatDate('${tenant.endDate}')}',
+              '${dateProvider.formatCurrentDate('${tenant.endDate}')}',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
                 color: blueColor,
@@ -3242,6 +3251,7 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   Widget buildMoveout(TenantData tenant) {
+    final dateProvider = Provider.of<DateProvider>(context);
     displayDate = DateFormat('dd-MM-yyyy').format(DateTime.parse(moveOutDate));
     startdateController.text = displayDate;
     return SingleChildScrollView(
@@ -6399,7 +6409,8 @@ class _Summery_pageState extends State<Summery_page>
                                 decoration: BoxDecoration(
                                     border: Border.all(
                                         color:
-                                            blueColor
+                                        Color.fromRGBO(
+                                            152, 162, 179, .5)
 
 
 )),
@@ -9301,6 +9312,7 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   Workorder(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -9983,11 +9995,9 @@ class _Summery_pageState extends State<Summery_page>
                                                                       .staffmemberName)),
                                                           _buildTableRow(
                                                               'Created At:',
-                                                              formatDate(
-                                                                  '${workOrder.createdAt}'),
+                                                              dateProvider.formatCurrentDate('${workOrder.createdAt}'),
                                                               'Updated At:',
-                                                              formatDate(
-                                                                  '${workOrder.updatedAt}}')),
+                                                              dateProvider.formatCurrentDate('${workOrder.createdAt}')),
                                                         ],
                                                       ),
                                                     ),
@@ -10693,8 +10703,10 @@ class _LeasesTableState extends State<LeasesTable> {
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
-                : Color.fromRGBO(
-                    21, 43, 83, 1), // Change color based on availability
+                : blueColor
+
+
+, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -11020,6 +11032,7 @@ class _LeasesTableState extends State<LeasesTable> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     return Padding(
@@ -11102,7 +11115,8 @@ class _LeasesTableState extends State<LeasesTable> {
                           Container(
                             decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: blueColor
+                                    color: Color.fromRGBO(
+                                        152, 162, 179, .5)
 
 
 )),
@@ -11122,7 +11136,8 @@ class _LeasesTableState extends State<LeasesTable> {
                                         : blueColor.withOpacity(0.09),
                                     border: Border.all(
                                         color:
-                                            blueColor
+                                        Color.fromRGBO(
+                                            152, 162, 179, .5)
 
 
 ),
@@ -11295,7 +11310,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                      '${rentals.startDate} - ${rentals.endDate}',
+                                                                      '${dateProvider.formatCurrentDate('${rentals.startDate}')} - ${dateProvider.formatCurrentDate('${rentals.endDate}')}',
                                                                   style: TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
@@ -11835,8 +11850,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
-                : Color.fromRGBO(
-                    21, 43, 83, 1), // Change color based on availability
+                : blueColor
+
+
+, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -12155,6 +12172,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     return Padding(
@@ -12525,7 +12543,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color:
-                                          blueColor
+                                      Color.fromRGBO(
+                                          152, 162, 179, .5)
 
 
 )),
@@ -12960,8 +12979,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                             blueColor), // Bold and black
                                                                   ),
                                                                   TextSpan(
-                                                                    text: formatDate(
-                                                                        '${rentals.installedDate}'),
+                                                                    text: dateProvider.formatCurrentDate('${rentals.installedDate}'),
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
