@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
@@ -333,12 +334,18 @@ class _Applicants_tableState extends State<Applicants_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            await ApplicantRepository().DeleteApplicant(Applicantid: id,reason: reason.text);
-            setState(() {
-              futureApplicantdata = ApplicantRepository().fetchApplicants();
-            });
-            fetchapplicantadded();
-            Navigator.pop(context);
+            if(reason.text.isEmpty){
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+            }
+            else{
+              await ApplicantRepository()
+                  .DeleteApplicant(Applicantid: id, reason: reason.text);
+              setState(() {
+                futureApplicantdata = ApplicantRepository().fetchApplicants();
+              });
+              fetchapplicantadded();
+              Navigator.pop(context);
+            }
           },
           color: Colors.red,
         ),
@@ -346,42 +353,7 @@ class _Applicants_tableState extends State<Applicants_table> {
     ).show();
   }
 
-  void _showAlert(BuildContext context, String id) {
-    Alert(
-      context: context,
-      type: AlertType.warning,
-      title: "Are you sure?",
-      desc: "Once deleted, you will not be able to recover this applicant!",
-      style: const AlertStyle(
-        backgroundColor: Colors.white,
-      ),
-      buttons: [
-        DialogButton(
-          child: const Text(
-            "Cancel",
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          onPressed: () => Navigator.pop(context),
-          color: Colors.grey,
-        ),
-        DialogButton(
-          child: const Text(
-            "Delete",
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          onPressed: () async {
-            var data = ApplicantRepository().DeleteApplicant(Applicantid: id);
-            // Add your delete logic here
-            setState(() {
-              futureApplicantdata = ApplicantRepository().fetchApplicants();
-            });
-            Navigator.pop(context);
-          },
-          color: Colors.red,
-        )
-      ],
-    ).show();
-  }
+
 
   List<Datum> _tableData = [];
   int _rowsPerPage = 10;
@@ -418,7 +390,8 @@ class _Applicants_tableState extends State<Applicants_table> {
   }
 
   void handleDelete(Datum applicant) {
-    _showAlert(context, applicant.applicantId!);
+    _showDeleteAlert(context, applicant.applicantId!);
+   // _showAlert(context, applicant.applicantId!);
     // Handle delete action
     print('Delete ${applicant.applicantId}');
   }

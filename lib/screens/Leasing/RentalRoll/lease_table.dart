@@ -419,13 +419,18 @@ class _Lease_tableState extends State<Lease_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            await LeaseRepository()
-                .deleteLease(leaseId: id, companyName: companyName,reason: reason.text);
-            setState(() {
-              futureLease = LeaseRepository().fetchLease("");
-            });
-            fetchLeaseadded();
-            Navigator.pop(context);
+            if(reason.text.isEmpty){
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+            }
+            else{
+              await LeaseRepository().deleteLease(
+                  leaseId: id, companyName: companyName, reason: reason.text);
+              setState(() {
+                futureLease = LeaseRepository().fetchLease("");
+              });
+              fetchLeaseadded();
+              Navigator.pop(context);
+            }
           },
           color: Colors.red,
         ),

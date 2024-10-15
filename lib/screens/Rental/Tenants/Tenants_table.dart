@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -313,13 +314,21 @@ class _Tenants_tableState extends State<Tenants_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            await TenantsRepository().deleteTenant(
-                tenantId: id, companyName: companyName, tenantEmail: '',reason: reason.text);
-            setState(() {
-              futureTenants = TenantsRepository().fetchTenants();
-            });
-            fetchtenantsadded();
-            Navigator.pop(context);
+            if(reason.text.isEmpty){
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+            }
+           else {
+              await TenantsRepository().deleteTenant(
+                  tenantId: id,
+                  companyName: companyName,
+                  tenantEmail: '',
+                  reason: reason.text);
+              setState(() {
+                futureTenants = TenantsRepository().fetchTenants();
+              });
+              fetchtenantsadded();
+              Navigator.pop(context);
+            }
           },
           color: Colors.red,
         ),

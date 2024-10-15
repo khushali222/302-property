@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -318,13 +319,19 @@ class _PropertyTableState extends State<PropertyTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data = PropertyTypeRepository().DeletePropertyType(pro_id: id,reason: reason.text);
-            // Add your delete logic here
-            setState(() {
-              futurePropertyTypes =
-                  PropertyTypeRepository().fetchPropertyTypes();
-            });
-            Navigator.pop(context);
+            if(reason.text.isEmpty){
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+            }
+            else{
+              var data = PropertyTypeRepository()
+                  .DeletePropertyType(pro_id: id, reason: reason.text);
+              // Add your delete logic here
+              setState(() {
+                futurePropertyTypes =
+                    PropertyTypeRepository().fetchPropertyTypes();
+              });
+              Navigator.pop(context);
+            }
           },
           color: Colors.red,
         )

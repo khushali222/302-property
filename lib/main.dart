@@ -2,6 +2,7 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:three_zero_two_property/provider/NetworkProvider.dart';
 import 'package:three_zero_two_property/provider/Plan%20Purchase/plancheckProvider.dart';
 
 import 'package:three_zero_two_property/provider/add_property.dart';
@@ -146,6 +147,7 @@ void main() {
           ),
           ChangeNotifierProvider(create: (_) => DateProvider()),
           ChangeNotifierProvider(create: (_) => DropdownProvider()),
+
         ],
         child: MyApp(),
       ),

@@ -2903,7 +2903,7 @@ class _Summery_pageState extends State<Summery_page>
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              "${tenantsdata.firstName}  ${tenantsdata.lastName}",
+                                              "${tenantsdata.firstName} ${tenantsdata.lastName}",
                                               style: TextStyle(
                                                 fontSize: 15,
                                                 color: blueColor,

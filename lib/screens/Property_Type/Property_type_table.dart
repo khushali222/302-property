@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -260,7 +261,7 @@ class _PropertyTableState extends State<PropertyTable> {
       });
     }*/
   }
-
+  bool _errorText = false;
   void _showAlert(BuildContext context, String id) {
     TextEditingController reason = TextEditingController();
     Alert(
@@ -278,10 +279,16 @@ class _PropertyTableState extends State<PropertyTable> {
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'Enter reason for deletion',
-                contentPadding: EdgeInsets.only(top: 8,left: 15)
+                contentPadding: EdgeInsets.only(top: 8,left: 15),
               ),
             ),
           ),
+          // if (_errorText)
+          //   Text(
+          //     "Please fill in all fields correctly.",
+          //     style: TextStyle(color: Colors.redAccent),
+          //   ),
+
         ],
       ),
       style: AlertStyle(
@@ -302,20 +309,31 @@ class _PropertyTableState extends State<PropertyTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data = await PropertyTypeRepository().DeletePropertyType(pro_id: id,reason: reason.text);
-            // Add your delete logic here
-            if(data != null)
-            setState(() {
-              futurePropertyTypes =
-                  PropertyTypeRepository().fetchPropertyTypes();
-            });
-            Navigator.pop(context);
+            if (reason.text.isEmpty) {
+              // setState(() {
+              //  _errorText == true;
+              // });
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+            }else{
+              var data = await PropertyTypeRepository().DeletePropertyType(pro_id: id,reason: reason.text);
+              // Add your delete logic here
+              if(data != null)
+                setState(() {
+                  futurePropertyTypes =
+                      PropertyTypeRepository().fetchPropertyTypes();
+                });
+              Navigator.pop(context);
+            }
+
           },
           color: Colors.red,
         )
       ],
     ).show();
   }
+
+
+
 
   List<propertytype> _tableData = [];
   int _rowsPerPage = 10;

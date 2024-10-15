@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/Model/propertytype.dart';
@@ -334,12 +335,17 @@ class _Workorder_tableState extends State<Workorder_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data = WorkOrderRepository().DeleteWorkOrder(workOrderid: id);
-            // Add your delete logic here
-            setState(() {
-              futureworkorders = WorkOrderRepository().fetchWorkOrders();
-            });
-            Navigator.pop(context);
+            if(reason.text.isEmpty){
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+            }
+            else{
+              var data = WorkOrderRepository().DeleteWorkOrder(workOrderid: id);
+              // Add your delete logic here
+              setState(() {
+                futureworkorders = WorkOrderRepository().fetchWorkOrders();
+              });
+              Navigator.pop(context);
+            }
           },
           color: Colors.red,
         )

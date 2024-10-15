@@ -1,9 +1,13 @@
 
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
-
+import 'dart:developer' as developer;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/StaffModule/repository/staffpermission_provider.dart';
@@ -25,12 +29,19 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  bool? isPlanActive;
+
   @override
   void initState() {
     super.initState();
+
+
+
     _navigateToCorrectScreen();
   }
+
+
+  bool? isPlanActive;
+
   _navigateToCorrectScreen() async {
 
     await Future.delayed(Duration(seconds: 5)); // Simulate splash screen delay

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
@@ -335,12 +336,18 @@ class _Applicants_tableState extends State<Applicants_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            await ApplicantRepository().DeleteApplicant(Applicantid: id,reason: reason.text);
-            setState(() {
-              futureApplicantdata = ApplicantRepository().fetchApplicants();
-            });
-            fetchapplicantadded();
-            Navigator.pop(context);
+            if(reason.text.isEmpty){
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+            }
+           else {
+              await ApplicantRepository()
+                  .DeleteApplicant(Applicantid: id, reason: reason.text);
+              setState(() {
+                futureApplicantdata = ApplicantRepository().fetchApplicants();
+              });
+              fetchapplicantadded();
+              Navigator.pop(context);
+            }
           },
           color: Colors.red,
         ),
