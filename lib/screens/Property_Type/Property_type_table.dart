@@ -1621,7 +1621,8 @@ class _PropertyTableState extends State<PropertyTable> {
               ),
           ],
         ),
-      ):SizedBox(
+      ):
+      SizedBox(
         width: double.infinity,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
