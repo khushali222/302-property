@@ -1,64 +1,46 @@
+import 'dart:async';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-class InternetConnectivity with ChangeNotifier {
-  ConnectivityResult _connectionStatus = ConnectivityResult.none;
 
-  InternetConnectivity() {
-    _initConnectivity();
+class checkConnection extends ChangeNotifier {
+  bool _isConnect = false;
+
+  bool get isConnect => _isConnect;
+
+  final StreamController<bool> _connectivityController =
+  StreamController<bool>();
+
+  Stream<bool> get connectivityStream => _connectivityController.stream;
+
+  checkConnection() {
+    _checkConnectivity();
   }
 
-  Future<void> _initConnectivity() async {
+  void _checkConnectivity() async {
+    print('Entry');
+    List<ConnectivityResult> connectivityResult =
+    await (Connectivity().checkConnectivity());
 
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      _connectionStatus = result;
+    if (connectivityResult.contains(ConnectivityResult.mobile)) {
+      _connectivityController.add(true);
+    } else if (connectivityResult.contains(ConnectivityResult.wifi)) {
+      _connectivityController.add(true);
+    } else if (connectivityResult.contains(ConnectivityResult.ethernet)) {
+      _connectivityController.add(true);
+    } else {
+      _connectivityController.add(false);
+    }
 
-      notifyListeners();
+    // Listen to the connectivity changes
+    Connectivity()
+        .onConnectivityChanged
+        .listen((List<ConnectivityResult> results) {
+      bool isConnected = results.any((result) =>
+      result == ConnectivityResult.mobile ||
+          result == ConnectivityResult.wifi ||
+          result == ConnectivityResult.ethernet);
+      _connectivityController.add(isConnected);
     });
-  }
-
-  bool get isConnected => _connectionStatus != ConnectivityResult.none;
-}
-class InternetWrapper extends StatefulWidget {
-  final Widget child;
-
-  const InternetWrapper({ required this.child}) ;
-
-  @override
-  _InternetWrapperState createState() => _InternetWrapperState();
-}
-
-
-class _InternetWrapperState extends State<InternetWrapper> {
-  /*ConnectivityResult _connectionStatus = ConnectivityResult.none;
-  @override
-  void initState() {
-    super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectionStatus = result;
-      });
-    });
-  }*/
-
-  Widget build(BuildContext context) {
-    final internetConnectivity = Provider.of<InternetConnectivity>(context);
-    return internetConnectivity.isConnected
-        ? Scaffold(body: widget.child)
-        : Scaffold(
-      body: Center(
-        child: AlertDialog(
-          title: Text('No Internet Connection'),
-          content: Text('Please check your internet connection.'),
-          actions: <Widget>[
-            ElevatedButton(
-              onPressed: () => SystemNavigator.pop(),
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

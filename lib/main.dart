@@ -147,6 +147,7 @@ void main() {
           ),
           ChangeNotifierProvider(create: (_) => DateProvider()),
           ChangeNotifierProvider(create: (_) => DropdownProvider()),
+          ChangeNotifierProvider(create: (_) => checkConnection()),
 
         ],
         child: MyApp(),
