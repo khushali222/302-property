@@ -5307,6 +5307,7 @@ class _AddTenantState extends State<AddTenant> {
   //     }).toList();
   //   });
   // }
+  List<Tenant> selectedTenantsTemp = [];
   @override
   Widget build(BuildContext context) {
     var selectedTenantsProvider =
@@ -5358,19 +5359,10 @@ class _AddTenantState extends State<AddTenant> {
                             DataColumn(label: Text('Select')),
                           ],
                           rows: filteredTenants.map((tenant) {
-                            /* final isSelected = Provider.of<SelectedTenantsProvider>(context)
-                                .selectedTenants
-                                .contains(tenant);*/
-                            final matchingTenants =
-                                Provider.of<SelectedTenantsProvider>(context)
-                                    .selectedTenants
-                                    .where((test) =>
-                                        test.tenantFirstName ==
-                                        tenant.tenantFirstName)
-                                    .toList();
-                            print(matchingTenants);
+                            // Check if the tenant is temporarily selected
                             final isSelected =
-                                matchingTenants.length > 0 ? true : false;
+                            selectedTenantsTemp.contains(tenant);
+
                             return DataRow(
                               cells: [
                                 DataCell(
@@ -5384,22 +5376,18 @@ class _AddTenantState extends State<AddTenant> {
                                     child: Checkbox(
                                       value: isSelected,
                                       onChanged: (bool? value) {
-                                        if (value!) {
-                                          selectedTenantsProvider
-                                              .addTenant(tenant);
-                                        } else {
-                                          selectedTenantsProvider
-                                              .removeTenant(tenant);
-                                        }
-                                        setState(() {});
-                                        /* if (value) {
-                                      selectedTenantsProvider.addTenant(tenant);
-                                    } else {
-                                      selectedTenantsProvider.removeTenant(tenant);
-                                    }*/
+                                        setState(() {
+                                          if (value!) {
+                                            // Add tenant to temporary list
+                                            selectedTenantsTemp.add(tenant);
+                                          } else {
+                                            // Remove tenant from temporary list
+                                            selectedTenantsTemp.remove(tenant);
+                                          }
+                                        });
                                       },
                                       activeColor:
-                                          blueColor,
+                                      blueColor,
                                     ),
                                   ),
                                 ),
@@ -5415,6 +5403,13 @@ class _AddTenantState extends State<AddTenant> {
                           SizedBox(width: 2,),
                           GestureDetector(
                             onTap: (){
+                              setState(() {
+                                for (var tenant in selectedTenantsTemp) {
+                                  selectedTenantsProvider.addTenant(tenant);
+                                }
+                                // Clear the temporary list after adding
+                                selectedTenantsTemp.clear();
+                              });
                              Navigator.pop(context);
                             },
                             child: ClipRRect(

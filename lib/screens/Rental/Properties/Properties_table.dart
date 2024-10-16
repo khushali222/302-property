@@ -5,6 +5,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
@@ -402,16 +403,21 @@ class _PropertiesTableState extends State<PropertiesTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            print(id);
-            var data = await PropertiesRepository()
-                .DeleteProperties(id: id, reason: reason.text);
-            setState(() {
-              futureRentalOwners = PropertiesRepository().fetchProperties();
-              //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-            });
-            fetchRentaladded();
-            Navigator.pop(context);
+            if(reason.text.isEmpty){
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+            }
+            else{
+              print(id);
+              var data = await PropertiesRepository()
+                  .DeleteProperties(id: id, reason: reason.text);
+              if(data != null)
+              setState(() {
+                futureRentalOwners = PropertiesRepository().fetchProperties();
+                //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+              });
+              fetchRentaladded();
+              Navigator.pop(context);
+            }
           },
           color: Colors.red,
         )

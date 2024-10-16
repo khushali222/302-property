@@ -130,8 +130,5 @@ String getDisplayValue(String? value) {
   return (value == null || value.trim().isEmpty) ? 'N/A' : value;
 }
 //Color grey = Color.fromRGBO(21, 43, 83, .5);
-
-
-
 //Color grey = Color.fromRGBO(21, 43, 83, .5);
 

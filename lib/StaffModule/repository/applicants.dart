@@ -95,6 +95,7 @@ class ApplicantRepository {
   }
 
   Future<Map<String, dynamic>> DeleteApplicant(
+
       {required String? Applicantid, String? reason}) async {
     print('id is $Applicantid');
     // print('$apiUrl/$id');

@@ -4144,7 +4144,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                               rentalState: state.text,
                               rentalCountry: country.text,
                               rentalPostcode: postalcode.text,
-                              staffMemberId: widget.properties.staffMemberId,
+                              staffMemberId: sid,
                               processor_id: processorId);
 
                           await Future.wait([
