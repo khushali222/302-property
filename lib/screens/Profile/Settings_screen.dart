@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/provider/color_theme.dart';
 
 import 'package:three_zero_two_property/repository/setting.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
@@ -62,6 +64,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     fetchMailData();
     accountname = TextEditingController();
     note = TextEditingController();
+   // _loadColorPreference();
   }
 
   @override
@@ -785,6 +788,140 @@ class _TabBarExampleState extends State<TabBarExample> {
     );
   }
 
+  Color _selectedColor = Colors.blue;
+  Color _selectedLabelColor = Colors.grey; // Default label color
+
+
+
+
+
+  // void _showColorPicker() {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text('Select a color', style: TextStyle(fontWeight: FontWeight.bold)),
+  //         content: SingleChildScrollView(
+  //           child: ColorPicker(
+  //          paletteType: PaletteType.hueWheel,
+  //             pickerColor: _selectedColor,
+  //             enableAlpha: false,
+  //             showLabel: false,
+  //             onColorChanged: (Color color) {
+  //               setState(() {
+  //                 _selectedColor = color;
+  //                 _selectedColors = color;
+  //               });
+  //             },
+  //           ),
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             child: Text('OK'),
+  //             onPressed: () {
+  //               final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+  //               themeProvider.updateColor(_selectedColor);
+  //               _saveColorPreference(_selectedColor);
+  //               Navigator.of(context).pop();
+  //             },
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
+  // Future<void> _saveColorPreference(Color color, Color labelColor) async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   await prefs.setInt('selectedColor', color.value);
+  //   await prefs.setInt('labelColor', labelColor.value);
+  //   setState(() {
+  //     _selectedColor = color;
+  //     _selectedLabelColor = labelColor;
+  //   });
+  // }
+  //
+  // Future<void> _loadColorPreference() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final colorValue = prefs.getInt('selectedColor');
+  //   final colorLabelValue = prefs.getInt('labelColor');
+  //   if (colorValue != null) {
+  //     setState(() {
+  //       _selectedColor = Color(colorValue);
+  //     });
+  //   }
+  //   if (colorLabelValue != null) {
+  //     setState(() {
+  //       _selectedLabelColor = Color(colorLabelValue);
+  //     });
+  //   }
+  // }
+  //
+  // void _showColorPicker(Color currentColor, Function(Color) onColorSelected, String title, String preferenceKey) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+  //         content: SingleChildScrollView(
+  //           child: ColorPicker(
+  //             paletteType: PaletteType.hueWheel,
+  //             pickerColor: currentColor,
+  //             enableAlpha: false,
+  //             showLabel: false,
+  //             onColorChanged: (Color color) {
+  //               onColorSelected(color);
+  //             },
+  //           ),
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             child: Text('OK'),
+  //             onPressed: () {
+  //               if (preferenceKey == 'selectedColor') {
+  //                 _saveColorPreference(currentColor, _selectedLabelColor);
+  //               } else if (preferenceKey == 'labelColor') {
+  //                 _saveColorPreference(_selectedColor, currentColor);
+  //               }
+  //               Navigator.of(context).pop();
+  //             },
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
+
+  // void _showColorPicker(Color currentColor, Function(Color) onColorSelected, String title) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+  //         content: SingleChildScrollView(
+  //           child: ColorPicker(
+  //             paletteType: PaletteType.hueWheel,
+  //             pickerColor: currentColor,
+  //             enableAlpha: false,
+  //             showLabel: false,
+  //             onColorChanged: (Color color) {
+  //               onColorSelected(color);
+  //             },
+  //           ),
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             child: Text('OK'),
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -1061,7 +1198,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                               ),
                               child: Center(
                                 child: Text(
-                                  "Date Format",
+                                  "Date Formate",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: isdateformate
@@ -3925,7 +4062,70 @@ class _TabBarExampleState extends State<TabBarExample> {
                               ],
                             )
                           ],
-                        )
+                        ),
+                        SizedBox(height: 10,),
+                        // Text("Select text color",style: TextStyle(
+                        //   fontWeight: FontWeight.normal,
+                        //   color: blueColor,
+                        //   fontSize: MediaQuery.of(context).size.width < 500
+                        //       ? 16
+                        //       : 25,
+                        // ),),
+                        // Card(
+                        //   elevation: 4,
+                        //   child: ListTile(
+                        //     title: Text('Choose a color', style: TextStyle(fontSize: 18)),
+                        //     trailing: Icon(Icons.color_lens, color: _selectedColor),
+                        //     // onTap: _showColorPicker,
+                        //     // onTap: () {
+                        //     //   _showColorPicker(_selectedColor, (Color color) {
+                        //     //     setState(() {
+                        //     //       _selectedColor = color;
+                        //     //     });
+                        //     //     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+                        //     //     themeProvider.updateColor(_selectedColor);
+                        //     //   //  _saveColorPreference(_selectedColor,_selectedColor);
+                        //     //   }, 'Select a text color','_selectedColor');
+                        //     // },
+                        //     onTap: () {
+                        //       _showColorPicker(_selectedColor, (Color color) {
+                        //         setState(() {
+                        //           _selectedColor = color;
+                        //         });
+                        //       }, 'Select a text color', 'selectedColor');
+                        //     },
+                        //   ),
+                        // ),
+                        // Text("Select label color",style: TextStyle(
+                        //   fontWeight: FontWeight.normal,
+                        //   color: blueColor,
+                        //   fontSize: MediaQuery.of(context).size.width < 500
+                        //       ? 16
+                        //       : 25,
+                        // ),),
+                        // Card(
+                        //   elevation: 4,
+                        //   child: ListTile(
+                        //     title: Text('Choose a color', style: TextStyle(fontSize: 18)),
+                        //     trailing: Icon(Icons.color_lens, color: _selectedLabelColor),
+                        //     // onTap: _showColorPicker,
+                        //     onTap: () {
+                        //       // _showColorPicker(_selectedLabelColor, (Color color) {
+                        //       //   setState(() {
+                        //       //     _selectedLabelColor = color;
+                        //       //   });
+                        //       //   final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+                        //       //   themeProvider.updatelabelColor(_selectedLabelColor);
+                        //       //    //_saveColorPreference(_selectedLabelColor,_selectedLabelColor);
+                        //       // }, 'Select a label color','labelColor');
+                        //       _showColorPicker(_selectedColor, (Color color) {
+                        //         setState(() {
+                        //           _selectedColor = color;
+                        //         });
+                        //       }, 'Select a label color', 'labelColor');
+                        //     },
+                        //   ),
+                        // ),
                       ],
                     ),
                 ],

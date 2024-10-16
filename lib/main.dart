@@ -6,6 +6,7 @@ import 'package:three_zero_two_property/provider/NetworkProvider.dart';
 import 'package:three_zero_two_property/provider/Plan%20Purchase/plancheckProvider.dart';
 
 import 'package:three_zero_two_property/provider/add_property.dart';
+import 'package:three_zero_two_property/provider/color_theme.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/editapplicationsummaryForm.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
@@ -147,6 +148,7 @@ void main() {
           ),
           ChangeNotifierProvider(create: (_) => DateProvider()),
           ChangeNotifierProvider(create: (_) => DropdownProvider()),
+          ChangeNotifierProvider(create: (_) => ThemeProvider()),
 
         ],
         child: MyApp(),
@@ -166,8 +168,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: "Poppins",
         iconTheme:  IconThemeData(color: blueColor),
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: blueColor),
+        // colorScheme: ColorScheme.fromSeed(
+        //     seedColor: blueColor),
         useMaterial3: false,
 
       ),

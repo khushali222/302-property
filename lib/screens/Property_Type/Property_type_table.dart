@@ -12,6 +12,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../Model/propertytype.dart';
 import '../../constant/constant.dart';
+import '../../provider/color_theme.dart';
 import '../../provider/dateProvider.dart';
 import '../../repository/Property_type.dart';
 import '../../widgets/drawer_tiles.dart';
@@ -623,9 +624,11 @@ class _PropertyTableState extends State<PropertyTable> {
   }
 
   final _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
+    //final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -712,6 +715,19 @@ class _PropertyTableState extends State<PropertyTable> {
                 ],
               ),
             ),
+            // SizedBox(height: 10),
+            // Row(
+            //   children: [
+            //     SizedBox(width: 15,),
+            //     Text("Welcome to property type",style: TextStyle(color:themeProvider.colorScheme.selectedColor,fontSize: 14),),
+            //   ],
+            // ),
+            // Row(
+            //   children: [
+            //     SizedBox(width: 15,),
+            //     Text("Label color",style: TextStyle(color:themeProvider.colorScheme.selectedLabelColor,fontSize: 14),),
+            //   ],
+            // ),
             SizedBox(height: 10),
             //search
             Padding(
