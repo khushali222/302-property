@@ -3,6 +3,7 @@ import 'dart:core';
 import 'dart:io';
 import 'dart:io';
 import 'dart:ui';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/services.dart';
@@ -147,7 +148,7 @@ class _DashboardState extends State<Dashboard> {
   double totalRentPastDue = 0.0;
 
   Future<void> fetchData() async {
-    print("calling");
+    //   print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -157,7 +158,7 @@ class _DashboardState extends State<Dashboard> {
       "id": "CRM $id",
       "Content-Type": "application/json"
     });
-    print('${Api_url}/api/payment/admin_balance/$id');
+    // print('${Api_url}/api/payment/admin_balance/$id');
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
@@ -179,7 +180,7 @@ class _DashboardState extends State<Dashboard> {
       throw Exception('Failed to load datawwwwww');
     }
   }
-
+  ConnectivityResult? _connectivityResult ;
   late DashboardData dashboardData;
   List<int> countList = List.filled(5, 0);
   List<int> amountList = List.filled(5, 0);
@@ -187,6 +188,13 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
+
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
     fetchchartdata();
     dashboardData =
         DashboardData(countList: [0, 0, 0, 0, 0], amountList: [0, 0, 0, 0, 0]);
@@ -206,10 +214,17 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Future<void> fetchchartdata() async {
-    print("calling");
+    // print("calling");
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+
     setState(() {
       loading = true;
+
+      _connectivityResult = connectiondata;
     });
+
+    print("network  ${await Connectivity().checkConnectivity()}");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -220,13 +235,13 @@ class _DashboardState extends State<Dashboard> {
           "id": "CRM $id",
           "Content-Type": "application/json"
         });
-    print('${Api_url}/api/payment/admin_balance/$id');
-    print(response.body);
+    // print('${Api_url}/api/payment/admin_balance/$id');
+    // print(response.body);
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
         final dataaa = jsonData["data"];
-        print("dataaaaa ${dataaa.length}");
+        //   print("dataaaaa ${dataaa.length}");
         setState(() {
           data = [];
           dataaa.forEach((element) {
@@ -259,7 +274,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     final connectionProvider =
-        Provider.of<checkConnection>(context, listen: false);
+    Provider.of<CheckConnection>(context, listen: false);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return WillPopScope(
@@ -267,410 +282,3696 @@ class _DashboardState extends State<Dashboard> {
         return await _showExitPopup(context);
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
-        drawer: CustomDrawer(
-          currentpage: "Dashboard",
-          dropdown: false,
-        ),
-        appBar: widget_302.App_Bar(context: context),
-        body: StreamBuilder<bool>(
-            stream: connectionProvider.connectivityStream,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasData && snapshot.data!) {
-                return Center(
-                    child: loading
-                        ? Lottie.asset('assets/images/loader.json',
-                            height: 150, width: 100)
-                        : ListView(
+          backgroundColor: Colors.white,
+          drawer: CustomDrawer(
+            currentpage: "Dashboard",
+            dropdown: false,
+          ),
+          appBar: widget_302.App_Bar(context: context),
+          // body: StreamBuilder<bool>(
+          //     stream: connectionProvider.connectivityStream,
+          //     builder: (context, snapshot) {
+          //       if (snapshot.connectionState == ConnectionState.waiting) {
+          //         return Center(
+          //             child: loading
+          //                 ? Lottie.asset('assets/images/loader.json',
+          //                 height: 150, width: 100)
+          //                 : ListView(
+          //               children: [
+          //                 // Material(
+          //                 //   elevation: 3,
+          //                 //   child: Divider(
+          //                 //     height: 1,
+          //                 //     color: Colors.transparent,
+          //                 //   ),
+          //                 // ),
+          //                 SizedBox(
+          //                     height: MediaQuery.of(context).size.height *
+          //                         0.012),
+          //                 //welcome
+          //                 LayoutBuilder(
+          //                   builder: (BuildContext context,
+          //                       BoxConstraints constraints) {
+          //                     return Row(
+          //                       children: [
+          //                         SizedBox(width: width * 0.05),
+          //                         Container(
+          //                           color: Color.fromRGBO(2, 121, 210, 1),
+          //                           margin: EdgeInsets.only(
+          //                             top: MediaQuery.of(context)
+          //                                 .size
+          //                                 .height *
+          //                                 0.012,
+          //                           ),
+          //                           width: 3,
+          //                           child: Column(
+          //                             children: [
+          //                               Container(
+          //                                 height: MediaQuery.of(context)
+          //                                     .size
+          //                                     .height *
+          //                                     0.012 +
+          //                                     MediaQuery.of(context)
+          //                                         .size
+          //                                         .width *
+          //                                         0.04 +
+          //                                     3 +
+          //                                     16,
+          //                               ),
+          //                             ],
+          //                           ),
+          //                         ),
+          //                         Column(
+          //                           mainAxisAlignment:
+          //                           MainAxisAlignment.start,
+          //                           crossAxisAlignment:
+          //                           CrossAxisAlignment.start,
+          //                           children: [
+          //                             SizedBox(
+          //                                 height: MediaQuery.of(context)
+          //                                     .size
+          //                                     .height *
+          //                                     0.012),
+          //                             Row(
+          //                               children: [
+          //                                 SizedBox(width: width * 0.05),
+          //                                 Text(
+          //                                   "Hello $firstname $lastname, Welcome back",
+          //                                   style: TextStyle(
+          //                                     color: Colors.black,
+          //                                     fontSize: MediaQuery.of(
+          //                                         context)
+          //                                         .size
+          //                                         .width >
+          //                                         500
+          //                                         ? MediaQuery.of(context)
+          //                                         .size
+          //                                         .width *
+          //                                         0.03
+          //                                         : MediaQuery.of(context)
+          //                                         .size
+          //                                         .width *
+          //                                         0.04,
+          //                                   ),
+          //                                 ),
+          //                               ],
+          //                             ),
+          //                             //   SizedBox(height: 3),
+          //                             // My Dashboard
+          //                             Row(
+          //                               children: [
+          //                                 SizedBox(width: width * 0.05),
+          //                                 Text(
+          //                                   "My Dashboard",
+          //                                   style: TextStyle(
+          //                                     color: Colors.black,
+          //                                     fontWeight: FontWeight.bold,
+          //                                     fontSize: 22,
+          //                                   ),
+          //                                 ),
+          //                               ],
+          //                             ),
+          //                           ],
+          //                         ),
+          //                       ],
+          //                     );
+          //                   },
+          //                 ),
+          //                 LayoutBuilder(
+          //                   builder: (context, constraints) {
+          //                     if (constraints.maxWidth > 600) {
+          //                       // Tablet layout - horizontal
+          //                       return Padding(
+          //                         padding: const EdgeInsets.only(
+          //                             left: 35, right: 80, top: 20),
+          //                         child: Wrap(
+          //                           alignment: WrapAlignment.start,
+          //                           spacing:
+          //                           MediaQuery.of(context).size.width *
+          //                               0.02,
+          //                           runSpacing:
+          //                           MediaQuery.of(context).size.width *
+          //                               0.02,
+          //                           children: List.generate(
+          //                             5,
+          //                                 (index) => SizedBox(
+          //                               width:
+          //                               160, // Ensure SizedBox has defined width
+          //                               height:
+          //                               160, // Ensure SizedBox has defined height
+          //                               child: Material(
+          //                                 elevation: 3,
+          //                                 borderRadius:
+          //                                 BorderRadius.circular(10),
+          //                                 child: Container(
+          //                                   decoration: BoxDecoration(
+          //                                     color: dashboardData
+          //                                         .colorc[index],
+          //                                     borderRadius:
+          //                                     BorderRadius.circular(10),
+          //                                   ),
+          //                                   child: Column(
+          //                                     children: [
+          //                                       const SizedBox(height: 10),
+          //                                       Row(
+          //                                         children: [
+          //                                           const SizedBox(
+          //                                               width: 10),
+          //                                           Material(
+          //                                             elevation: 5,
+          //                                             borderRadius:
+          //                                             BorderRadius
+          //                                                 .circular(20),
+          //                                             child: Container(
+          //                                               height: 40,
+          //                                               width: 40,
+          //                                               padding:
+          //                                               const EdgeInsets
+          //                                                   .all(10),
+          //                                               decoration:
+          //                                               BoxDecoration(
+          //                                                 color: dashboardData
+          //                                                     .colors[
+          //                                                 index],
+          //                                                 borderRadius:
+          //                                                 BorderRadius
+          //                                                     .circular(
+          //                                                     20),
+          //                                               ),
+          //                                               child: SvgPicture
+          //                                                   .asset(
+          //                                                 "${dashboardData.icons[index]}",
+          //                                                 fit: BoxFit.cover,
+          //                                                 height: 27,
+          //                                                 width: 27,
+          //                                               ),
+          //                                             ),
+          //                                           ),
+          //                                         ],
+          //                                       ),
+          //                                       const SizedBox(height: 10),
+          //                                       Row(
+          //                                         children: [
+          //                                           const SizedBox(
+          //                                               width: 10),
+          //                                           Text(
+          //                                             countList[index]
+          //                                                 .toString(),
+          //                                             style:
+          //                                             const TextStyle(
+          //                                               color: Colors.white,
+          //                                               fontSize: 15,
+          //                                               fontWeight:
+          //                                               FontWeight.bold,
+          //                                             ),
+          //                                           ),
+          //                                         ],
+          //                                       ),
+          //                                       const SizedBox(height: 10),
+          //                                       Row(
+          //                                         children: [
+          //                                           const SizedBox(
+          //                                               width: 10),
+          //                                           Text(
+          //                                             dashboardData
+          //                                                 .titles[index],
+          //                                             style:
+          //                                             const TextStyle(
+          //                                               color: Colors.white,
+          //                                               fontWeight:
+          //                                               FontWeight.bold,
+          //                                               fontSize: 20,
+          //                                             ),
+          //                                           ),
+          //                                         ],
+          //                                       ),
+          //                                     ],
+          //                                   ),
+          //                                 ),
+          //                               ),
+          //                             ),
+          //                           ),
+          //                         ),
+          //                       );
+          //                     } else {
+          //                       // Phone layout - vertical
+          //                       return Column(
+          //                         children: [
+          //                           SizedBox(
+          //                               height: MediaQuery.of(context)
+          //                                   .size
+          //                                   .width *
+          //                                   0.05),
+          //                           Padding(
+          //                             padding: const EdgeInsets.only(
+          //                                 left: 25, right: 25),
+          //                             child: GridView.builder(
+          //                               itemCount: 5,
+          //                               gridDelegate:
+          //                               SliverGridDelegateWithFixedCrossAxisCount(
+          //                                 crossAxisCount:
+          //                                 2, // Number of items per row
+          //                                 crossAxisSpacing:
+          //                                 MediaQuery.of(context)
+          //                                     .size
+          //                                     .width *
+          //                                     0.02,
+          //                                 mainAxisSpacing:
+          //                                 MediaQuery.of(context)
+          //                                     .size
+          //                                     .width *
+          //                                     0.02,
+          //                                 childAspectRatio:
+          //                                 .99, // Adjust as needed for your design
+          //                               ),
+          //                               itemBuilder: (context, index) {
+          //                                 return GestureDetector(
+          //                                   onTap: () {
+          //                                     Navigator.push(
+          //                                       context,
+          //                                       MaterialPageRoute(
+          //                                           builder: (context) =>
+          //                                           pages[index]),
+          //                                     );
+          //                                   },
+          //                                   child: Material(
+          //                                     elevation: 3,
+          //                                     borderRadius:
+          //                                     BorderRadius.circular(10),
+          //                                     child: Container(
+          //                                       decoration: BoxDecoration(
+          //                                         color: dashboardData
+          //                                             .colorc[index],
+          //                                         borderRadius:
+          //                                         BorderRadius.circular(
+          //                                             8),
+          //                                       ),
+          //                                       child: Padding(
+          //                                         padding:
+          //                                         const EdgeInsets.only(
+          //                                             left: 5),
+          //                                         child: Column(
+          //                                           children: [
+          //                                             const SizedBox(
+          //                                                 height: 15),
+          //                                             Row(
+          //                                               children: [
+          //                                                 const SizedBox(
+          //                                                     width: 10),
+          //                                                 Material(
+          //                                                   elevation: 5,
+          //                                                   borderRadius:
+          //                                                   BorderRadius
+          //                                                       .circular(
+          //                                                       15),
+          //                                                   child:
+          //                                                   Container(
+          //                                                       height:
+          //                                                       50,
+          //                                                       width:
+          //                                                       50,
+          //                                                       padding: const EdgeInsets
+          //                                                           .all(
+          //                                                           10),
+          //                                                       decoration:
+          //                                                       BoxDecoration(
+          //                                                         color:
+          //                                                         dashboardData.colors[index],
+          //                                                         borderRadius:
+          //                                                         BorderRadius.circular(15),
+          //                                                       ),
+          //                                                       child: SvgPicture
+          //                                                           .asset(
+          //                                                         "${dashboardData.icons[index]}",
+          //                                                         // fit: BoxFit.cover,
+          //                                                         height:
+          //                                                         30,
+          //                                                         width:
+          //                                                         30,
+          //                                                       )),
+          //                                                 ),
+          //                                               ],
+          //                                             ),
+          //                                             const SizedBox(
+          //                                                 height: 16),
+          //                                             Row(
+          //                                               children: [
+          //                                                 const SizedBox(
+          //                                                     width: 10),
+          //                                                 Text(
+          //                                                   countList[index]
+          //                                                       .toString(),
+          //                                                   style:
+          //                                                   const TextStyle(
+          //                                                     color: Colors
+          //                                                         .white,
+          //                                                     fontWeight:
+          //                                                     FontWeight
+          //                                                         .bold,
+          //                                                     fontSize: 20,
+          //                                                   ),
+          //                                                 ),
+          //                                               ],
+          //                                             ),
+          //                                             const SizedBox(
+          //                                                 height: 10),
+          //                                             Row(
+          //                                               children: [
+          //                                                 const SizedBox(
+          //                                                     width: 10),
+          //                                                 Text(
+          //                                                   dashboardData
+          //                                                       .titles[
+          //                                                   index],
+          //                                                   style:
+          //                                                   const TextStyle(
+          //                                                     color: Colors
+          //                                                         .white,
+          //                                                     fontWeight:
+          //                                                     FontWeight
+          //                                                         .bold,
+          //                                                     fontSize: 18,
+          //                                                   ),
+          //                                                 ),
+          //                                                 SizedBox(
+          //                                                   width: 5,
+          //                                                 ),
+          //                                                 Icon(
+          //                                                   Icons
+          //                                                       .arrow_forward_rounded,
+          //                                                   color: Colors
+          //                                                       .white,
+          //                                                 ),
+          //                                               ],
+          //                                             ),
+          //                                           ],
+          //                                         ),
+          //                                       ),
+          //                                     ),
+          //                                   ),
+          //                                 );
+          //                               },
+          //                               shrinkWrap:
+          //                               true, // If you want the GridView to take only the space it needs
+          //                               physics:
+          //                               const NeverScrollableScrollPhysics(), // If you don't want it to scroll
+          //                             ),
+          //                           )
+          //                         ],
+          //                       );
+          //                     }
+          //                   },
+          //                 ),
+          //
+          //                 /*  SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+          //             Row(
+          //               children: [
+          //                 SizedBox(
+          //                   width: width * 0.1,
+          //                 ),
+          //                 Material(
+          //                   elevation: 3,
+          //                   borderRadius: BorderRadius.circular(10),
+          //                   child: Stack(
+          //                     children: [
+          //                       Container(
+          //                         width: MediaQuery.of(context).size.width * .37,
+          //                         // height: 50,
+          //                         height: height * 0.071,
+          //                         decoration: BoxDecoration(
+          //                           color: Colors.white,
+          //                           borderRadius: BorderRadius.circular(10),
+          //                         ),
+          //                         child: Column(
+          //                           children: [
+          //                             Stack(
+          //                               children: [
+          //                                 Container(
+          //                                   height: height * 0.03,
+          //                                   decoration: BoxDecoration(
+          //                                       color: blueColor,
+          //                                       borderRadius: BorderRadius.only(
+          //                                         topLeft: Radius.circular(10),
+          //                                         topRight: Radius.circular(10),
+          //                                       )),
+          //                                 ),
+          //                                 Row(
+          //                                   mainAxisAlignment: MainAxisAlignment.center,
+          //                                   children: [
+          //                                     SizedBox(
+          //                                       height: 20,
+          //                                     ),
+          //                                     Text(
+          //                                       "Due rent for the month",
+          //                                       style: TextStyle(
+          //                                           color: Colors.white,
+          //                                           fontSize:
+          //                                           MediaQuery.of(context).size.width *
+          //                                               0.024,
+          //                                           fontWeight: FontWeight.bold),
+          //                                     ),
+          //                                   ],
+          //                                 ),
+          //                               ],
+          //                             ),
+          //                             Row(
+          //                               mainAxisAlignment: MainAxisAlignment.center,
+          //                               crossAxisAlignment: CrossAxisAlignment.center,
+          //                               children: [
+          //                                 SizedBox(
+          //                                   height: 25,
+          //                                 ),
+          //                                 // Text(
+          //                                 //   // "1200",
+          //                                 //   // nextMonthCharge.toString(),
+          //                                 //   '\$${nextMonthCharge.toStringAsFixed(2)}',
+          //                                 //  //   nextMonthCharge.toStringAsFixed(2),
+          //                                 //   style: TextStyle(
+          //                                 //       color: Colors.blue,
+          //                                 //       fontSize:
+          //                                 //       MediaQuery.of(context).size.width *
+          //                                 //           0.034),
+          //                                 // ),
+          //                                 Text(
+          //                                   nextMonthCharge != 0 ? '\$${nextMonthCharge.toStringAsFixed(2)}' : '0',
+          //                                   style: TextStyle(
+          //                                     color: Colors.blue,
+          //                                     fontSize: MediaQuery.of(context).size.width * 0.034,
+          //                                   ),
+          //                                 ),
+          //
+          //                               ],
+          //                             ),
+          //                           ],
+          //                         ),
+          //                       ),
+          //                     ],
+          //                   ),
+          //                 ),
+          //                 SizedBox(
+          //                   width: MediaQuery.of(context).size.width * 0.06,
+          //                 ),
+          //                 Material(
+          //                   elevation: 3,
+          //                   borderRadius: BorderRadius.circular(10),
+          //                   child: Stack(
+          //                     children: [
+          //                       Container(
+          //                         width: MediaQuery.of(context).size.width * .37,
+          //                         height: height * 0.071,
+          //                         decoration: BoxDecoration(
+          //                           color: Colors.white,
+          //                           borderRadius: BorderRadius.circular(10),
+          //                         ),
+          //                         child: Column(
+          //                           children: [
+          //                             Stack(
+          //                               children: [
+          //                                 Container(
+          //                                   height: height * 0.03,
+          //                                   decoration: BoxDecoration(
+          //                                       color: blueColor,
+          //                                       borderRadius: BorderRadius.only(
+          //                                         topLeft: Radius.circular(10),
+          //                                         topRight: Radius.circular(10),
+          //                                       )),
+          //                                 ),
+          //                                 Row(
+          //                                   mainAxisAlignment: MainAxisAlignment.center,
+          //                                   children: [
+          //                                     SizedBox(
+          //                                       height: 20,
+          //                                     ),
+          //                                     Text(
+          //                                       "Total collected amount",
+          //                                       style: TextStyle(
+          //                                           color: Colors.white,
+          //                                           // fontSize: 9,
+          //                                           fontSize:
+          //                                           MediaQuery.of(context).size.width *
+          //                                               0.024,
+          //                                           fontWeight: FontWeight.bold),
+          //                                     ),
+          //                                   ],
+          //                                 ),
+          //                               ],
+          //                             ),
+          //                             Row(
+          //                               mainAxisAlignment: MainAxisAlignment.center,
+          //                               crossAxisAlignment: CrossAxisAlignment.center,
+          //                               children: [
+          //                                 SizedBox(
+          //                                   height: 25,
+          //                                 ),
+          //                                 // Text(
+          //                                 //   // "2500",
+          //                                 //   //   countList[1].toString(),
+          //                                 //   '\$${totalCollectedAmount.toString()}',
+          //                                 //   style: TextStyle(
+          //                                 //       color: Colors.blue,
+          //                                 //       fontSize:
+          //                                 //       MediaQuery.of(context).size.width *
+          //                                 //           0.034),
+          //                                 // ),
+          //                                 Text(
+          //                                   totalCollectedAmount != 0 ? '\$${totalCollectedAmount.toString()}' : '0',
+          //                                   style: TextStyle(
+          //                                     color: Colors.blue,
+          //                                     fontSize: MediaQuery.of(context).size.width * 0.034,
+          //                                   ),
+          //                                 ),
+          //
+          //                               ],
+          //                             ),
+          //                           ],
+          //                         ),
+          //                       ),
+          //                     ],
+          //                   ),
+          //                 ),
+          //                 SizedBox(
+          //                   width: width * 0.1,
+          //                 ),
+          //               ],
+          //             ),
+          //             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+          //             Row(
+          //               children: [
+          //                 SizedBox(
+          //                   width: width * 0.1,
+          //                 ),
+          //                 Material(
+          //                   elevation: 3,
+          //                   borderRadius: BorderRadius.circular(10),
+          //                   child: Stack(
+          //                     children: [
+          //                       Container(
+          //                         width: MediaQuery.of(context).size.width * .37,
+          //                         // height: 50,
+          //                         height: height * 0.071,
+          //                         decoration: BoxDecoration(
+          //                           color: Colors.white,
+          //                           borderRadius: BorderRadius.circular(10),
+          //                         ),
+          //                         child: Column(
+          //                           children: [
+          //                             Stack(
+          //                               children: [
+          //                                 Container(
+          //                                   // height:
+          //                                   //    20,
+          //                                   height: height * 0.03,
+          //                                   decoration: BoxDecoration(
+          //                                       color: blueColor,
+          //                                       borderRadius: BorderRadius.only(
+          //                                         topLeft: Radius.circular(10),
+          //                                         topRight: Radius.circular(10),
+          //                                       )),
+          //                                 ),
+          //                                 Row(
+          //                                   mainAxisAlignment: MainAxisAlignment.center,
+          //                                   children: [
+          //                                     SizedBox(
+          //                                       height: 20,
+          //                                     ),
+          //                                     Text(
+          //                                       "Total past due amount",
+          //                                       style: TextStyle(
+          //                                           color: Colors.white,
+          //                                           fontSize:
+          //                                           MediaQuery.of(context).size.width *
+          //                                               0.024,
+          //                                           fontWeight: FontWeight.bold),
+          //                                     ),
+          //                                   ],
+          //                                 ),
+          //                               ],
+          //                             ),
+          //                             Row(
+          //                               mainAxisAlignment: MainAxisAlignment.center,
+          //                               crossAxisAlignment: CrossAxisAlignment.center,
+          //                               children: [
+          //                                 SizedBox(
+          //                                   height: 25,
+          //                                 ),
+          //                                 // Text(
+          //                                 //   // "1000",
+          //                                 //   "\$${pastDueAmount.toStringAsFixed(2).toString()}",
+          //                                 //   //  pastDueAmount.toStringAsFixed(2),
+          //                                 //   style: TextStyle(
+          //                                 //       color: Colors.blue,
+          //                                 //       fontSize:
+          //                                 //       MediaQuery.of(context).size.width *
+          //                                 //           0.034),
+          //                                 // ),
+          //                                 Text(
+          //                                   pastDueAmount != 0 ? '\$${pastDueAmount.toStringAsFixed(2)}' : '0',
+          //                                   style: TextStyle(
+          //                                     color: Colors.blue,
+          //                                     fontSize: MediaQuery.of(context).size.width * 0.034,
+          //                                   ),
+          //                                 ),
+          //
+          //                               ],
+          //                             ),
+          //                           ],
+          //                         ),
+          //                       ),
+          //                     ],
+          //                   ),
+          //                 ),
+          //                 SizedBox(
+          //                   width: MediaQuery.of(context).size.width * 0.06,
+          //                 ),
+          //                 Material(
+          //                   elevation: 3,
+          //                   borderRadius: BorderRadius.circular(10),
+          //                   child: Stack(
+          //                     children: [
+          //                       Container(
+          //                         width: MediaQuery.of(context).size.width * .37,
+          //                         // height:50,
+          //                         height: height * 0.071,
+          //                         decoration: BoxDecoration(
+          //                           color: Colors.white,
+          //                           borderRadius: BorderRadius.circular(10),
+          //                         ),
+          //                         child: Column(
+          //                           children: [
+          //                             Stack(
+          //                               children: [
+          //                                 Container(
+          //                                   // height:
+          //                                   //     20,
+          //                                   height: height * 0.03,
+          //                                   decoration: BoxDecoration(
+          //                                       color: blueColor,
+          //                                       borderRadius: BorderRadius.only(
+          //                                         topLeft: Radius.circular(10),
+          //                                         topRight: Radius.circular(10),
+          //                                       )),
+          //                                 ),
+          //                                 Row(
+          //                                   mainAxisAlignment: MainAxisAlignment.center,
+          //                                   children: [
+          //                                     SizedBox(
+          //                                       height: 20,
+          //                                     ),
+          //                                     Text(
+          //                                       "Last month collected amount",
+          //                                       style: TextStyle(
+          //                                           color: Colors.white,
+          //                                           // fontSize: 9,
+          //                                           fontSize:
+          //                                           MediaQuery.of(context).size.width *
+          //                                               0.022,
+          //                                           fontWeight: FontWeight.bold),
+          //                                     ),
+          //                                   ],
+          //                                 ),
+          //                               ],
+          //                             ),
+          //                             Row(
+          //                               mainAxisAlignment: MainAxisAlignment.center,
+          //                               crossAxisAlignment: CrossAxisAlignment.center,
+          //                               children: [
+          //                                 SizedBox(
+          //                                   height: 25,
+          //                                 ),
+          //                                 // Text(
+          //                                 //   // "1800",
+          //                                 //  "\$${ lastMonthCollectedAmount.toString()}",
+          //                                 //   // amountList[3].toString(),
+          //                                 //   style: TextStyle(
+          //                                 //       color: Colors.blue,
+          //                                 //       fontSize:
+          //                                 //       MediaQuery.of(context).size.width *
+          //                                 //           0.034),
+          //                                 // ),
+          //                                 Text(
+          //                                   lastMonthCollectedAmount != 0 ? '\$${lastMonthCollectedAmount.toString()}' : '0',
+          //                                   style: TextStyle(
+          //                                     color: Colors.blue,
+          //                                     fontSize: MediaQuery.of(context).size.width * 0.034,
+          //                                   ),
+          //                                 ),
+          //
+          //                               ],
+          //                             ),
+          //                           ],
+          //                         ),
+          //                       ),
+          //                     ],
+          //                   ),
+          //                 ),
+          //                 SizedBox(
+          //                   width: width * 0.1,
+          //                 ),
+          //               ],
+          //
+          //             ),*/
+          //                 // LayoutBuilder(builder: (context, BoxConstraints) {
+          //                 //   if (BoxConstraints.maxWidth > 500) {
+          //                 //     return Container();
+          //                 //   } else {
+          //                 //     return Container();
+          //                 //   }
+          //                 // }),
+          //
+          //                 LayoutBuilder(
+          //                   builder: (context, constraints) {
+          //                     if (constraints.maxWidth > 600) {
+          //                       // Tablet layout - horizontal
+          //                       return Column(
+          //                         children: [
+          //                           const SizedBox(
+          //                             height: 20,
+          //                           ),
+          //                           Row(
+          //                             children: [
+          //                               Container(
+          //                                 width: 360,
+          //                                 height: 110,
+          //                                 margin: EdgeInsets.symmetric(
+          //                                     horizontal: width * .040),
+          //                                 decoration: const BoxDecoration(
+          //                                   borderRadius: BorderRadius.all(
+          //                                       Radius.circular(15)),
+          //                                 ),
+          //                                 child: Material(
+          //                                   elevation: 3,
+          //                                   borderRadius:
+          //                                   const BorderRadius.all(
+          //                                       Radius.circular(15)),
+          //                                   child: Column(
+          //                                     children: [
+          //                                       Expanded(
+          //                                         flex: 4,
+          //                                         child: Container(
+          //                                           decoration:
+          //                                           const BoxDecoration(
+          //                                             color: Color.fromRGBO(
+          //                                                 50, 75, 119, 1),
+          //                                             borderRadius:
+          //                                             BorderRadius.vertical(
+          //                                                 top: Radius
+          //                                                     .circular(
+          //                                                     15)),
+          //                                           ),
+          //                                           child: const Center(
+          //                                               child: Text(
+          //                                                 "Rent Due",
+          //                                                 style: TextStyle(
+          //                                                     color:
+          //                                                     Colors.white,
+          //                                                     fontSize: 16,
+          //                                                     fontWeight:
+          //                                                     FontWeight
+          //                                                         .bold),
+          //                                               )),
+          //                                         ),
+          //                                       ),
+          //                                       Expanded(
+          //                                         flex: 8,
+          //                                         child: Container(
+          //                                           decoration:
+          //                                           const BoxDecoration(
+          //                                             color: Colors.white,
+          //                                             borderRadius:
+          //                                             BorderRadius.vertical(
+          //                                                 bottom: Radius
+          //                                                     .circular(
+          //                                                     15)),
+          //                                           ),
+          //                                           child: Padding(
+          //                                             padding:
+          //                                             const EdgeInsets
+          //                                                 .all(8.0),
+          //                                             child: Row(
+          //                                               mainAxisAlignment:
+          //                                               MainAxisAlignment
+          //                                                   .spaceEvenly,
+          //                                               children: [
+          //                                                 Column(
+          //                                                   mainAxisAlignment:
+          //                                                   MainAxisAlignment
+          //                                                       .center,
+          //                                                   crossAxisAlignment:
+          //                                                   CrossAxisAlignment
+          //                                                       .center,
+          //                                                   children: [
+          //                                                     const Text(
+          //                                                       "Current Month",
+          //                                                       style: TextStyle(
+          //                                                           fontSize:
+          //                                                           16,
+          //                                                           fontWeight:
+          //                                                           FontWeight
+          //                                                               .bold,
+          //                                                           color: Color.fromRGBO(
+          //                                                               138,
+          //                                                               149,
+          //                                                               168,
+          //                                                               1)),
+          //                                                     ),
+          //                                                     // SizedBox(height: 8), // Space between the text
+          //                                                     Text(
+          //                                                       "\$${currentMonthRentDue}",
+          //                                                       style: const TextStyle(
+          //                                                           fontSize:
+          //                                                           16,
+          //                                                           color: Color.fromRGBO(
+          //                                                               90,
+          //                                                               134,
+          //                                                               213,
+          //                                                               1),
+          //                                                           fontWeight:
+          //                                                           FontWeight.bold),
+          //                                                     ),
+          //                                                   ],
+          //                                                 ),
+          //                                                 Column(
+          //                                                   mainAxisAlignment:
+          //                                                   MainAxisAlignment
+          //                                                       .center,
+          //                                                   crossAxisAlignment:
+          //                                                   CrossAxisAlignment
+          //                                                       .center,
+          //                                                   children: [
+          //                                                     const Text(
+          //                                                       "Last Month",
+          //                                                       style: TextStyle(
+          //                                                           fontSize:
+          //                                                           16,
+          //                                                           fontWeight:
+          //                                                           FontWeight
+          //                                                               .bold,
+          //                                                           color: Color.fromRGBO(
+          //                                                               138,
+          //                                                               149,
+          //                                                               168,
+          //                                                               1)),
+          //                                                     ),
+          //                                                     // SizedBox(height: 8), // Space between the text
+          //                                                     Text(
+          //                                                       "\$${lastMonthRentDue}",
+          //                                                       style: const TextStyle(
+          //                                                           fontSize:
+          //                                                           16,
+          //                                                           color: Color.fromRGBO(
+          //                                                               90,
+          //                                                               134,
+          //                                                               213,
+          //                                                               1),
+          //                                                           fontWeight:
+          //                                                           FontWeight.bold),
+          //                                                     ),
+          //                                                   ],
+          //                                                 ),
+          //                                               ],
+          //                                             ),
+          //                                           ),
+          //                                         ),
+          //                                       ),
+          //                                     ],
+          //                                   ),
+          //                                 ),
+          //                               ),
+          //                               Container(
+          //                                 width: 360,
+          //                                 height: 110,
+          //                                 margin: EdgeInsets.symmetric(
+          //                                     horizontal: width * .00),
+          //                                 decoration: const BoxDecoration(
+          //                                   borderRadius: BorderRadius.all(
+          //                                       Radius.circular(15)),
+          //                                 ),
+          //                                 child: Material(
+          //                                   elevation: 3,
+          //                                   borderRadius:
+          //                                   const BorderRadius.all(
+          //                                       Radius.circular(15)),
+          //                                   child: Column(
+          //                                     children: [
+          //                                       Expanded(
+          //                                         flex: 4,
+          //                                         child: Container(
+          //                                           decoration:
+          //                                           const BoxDecoration(
+          //                                             color: Color.fromRGBO(
+          //                                                 50, 75, 119, 1),
+          //                                             borderRadius:
+          //                                             BorderRadius.vertical(
+          //                                                 top: Radius
+          //                                                     .circular(
+          //                                                     15)),
+          //                                           ),
+          //                                           child: const Center(
+          //                                               child: Text(
+          //                                                 "Rent Paid",
+          //                                                 style: TextStyle(
+          //                                                     color:
+          //                                                     Colors.white,
+          //                                                     fontSize: 16,
+          //                                                     fontWeight:
+          //                                                     FontWeight
+          //                                                         .bold),
+          //                                               )),
+          //                                         ),
+          //                                       ),
+          //                                       Expanded(
+          //                                         flex: 8,
+          //                                         child: Container(
+          //                                           decoration:
+          //                                           const BoxDecoration(
+          //                                             color: Colors.white,
+          //                                             borderRadius:
+          //                                             BorderRadius.vertical(
+          //                                                 bottom: Radius
+          //                                                     .circular(
+          //                                                     15)),
+          //                                           ),
+          //                                           child: Padding(
+          //                                             padding:
+          //                                             const EdgeInsets
+          //                                                 .all(8.0),
+          //                                             child: Row(
+          //                                               mainAxisAlignment:
+          //                                               MainAxisAlignment
+          //                                                   .spaceEvenly,
+          //                                               children: [
+          //                                                 Column(
+          //                                                   mainAxisAlignment:
+          //                                                   MainAxisAlignment
+          //                                                       .center,
+          //                                                   crossAxisAlignment:
+          //                                                   CrossAxisAlignment
+          //                                                       .center,
+          //                                                   children: [
+          //                                                     const Text(
+          //                                                       "Current Month",
+          //                                                       style: TextStyle(
+          //                                                           fontSize:
+          //                                                           16,
+          //                                                           fontWeight:
+          //                                                           FontWeight
+          //                                                               .bold,
+          //                                                           color: Color.fromRGBO(
+          //                                                               138,
+          //                                                               149,
+          //                                                               168,
+          //                                                               1)),
+          //                                                     ),
+          //                                                     // SizedBox(height: 8), // Space between the text
+          //                                                     Text(
+          //                                                       "\$${currentMonthRentPaid}",
+          //                                                       style: const TextStyle(
+          //                                                           fontSize:
+          //                                                           16,
+          //                                                           color: Color.fromRGBO(
+          //                                                               90,
+          //                                                               134,
+          //                                                               213,
+          //                                                               1),
+          //                                                           fontWeight:
+          //                                                           FontWeight.bold),
+          //                                                     ),
+          //                                                   ],
+          //                                                 ),
+          //                                                 Column(
+          //                                                   mainAxisAlignment:
+          //                                                   MainAxisAlignment
+          //                                                       .center,
+          //                                                   crossAxisAlignment:
+          //                                                   CrossAxisAlignment
+          //                                                       .center,
+          //                                                   children: [
+          //                                                     const Text(
+          //                                                       "Last Month",
+          //                                                       style: TextStyle(
+          //                                                           fontSize:
+          //                                                           16,
+          //                                                           fontWeight:
+          //                                                           FontWeight
+          //                                                               .bold,
+          //                                                           color: Color.fromRGBO(
+          //                                                               138,
+          //                                                               149,
+          //                                                               168,
+          //                                                               1)),
+          //                                                     ),
+          //                                                     // SizedBox(height: 8), // Space between the text
+          //                                                     Text(
+          //                                                       "\$${lastMonthRentPaid}",
+          //                                                       style: const TextStyle(
+          //                                                           fontSize:
+          //                                                           16,
+          //                                                           color: Color.fromRGBO(
+          //                                                               90,
+          //                                                               134,
+          //                                                               213,
+          //                                                               1),
+          //                                                           fontWeight:
+          //                                                           FontWeight.bold),
+          //                                                     ),
+          //                                                   ],
+          //                                                 ),
+          //                                               ],
+          //                                             ),
+          //                                           ),
+          //                                         ),
+          //                                       ),
+          //                                     ],
+          //                                   ),
+          //                                 ),
+          //                               ),
+          //                             ],
+          //                           ),
+          //                           const SizedBox(
+          //                             height: 20,
+          //                           ),
+          //                           Row(
+          //                             children: [
+          //                               Container(
+          //                                 width: 360,
+          //                                 height: 110,
+          //                                 margin: EdgeInsets.symmetric(
+          //                                     horizontal: width * .040),
+          //                                 decoration: const BoxDecoration(
+          //                                   borderRadius: BorderRadius.all(
+          //                                       Radius.circular(15)),
+          //                                 ),
+          //                                 child: Material(
+          //                                   elevation: 3,
+          //                                   borderRadius:
+          //                                   const BorderRadius.all(
+          //                                       Radius.circular(15)),
+          //                                   child: Column(
+          //                                     children: [
+          //                                       Expanded(
+          //                                         flex: 4,
+          //                                         child: Container(
+          //                                           decoration:
+          //                                           const BoxDecoration(
+          //                                             color: Color.fromRGBO(
+          //                                                 50, 75, 119, 1),
+          //                                             borderRadius:
+          //                                             BorderRadius.vertical(
+          //                                                 top: Radius
+          //                                                     .circular(
+          //                                                     15)),
+          //                                           ),
+          //                                           child: const Center(
+          //                                               child: Text(
+          //                                                 "Rent Past Due",
+          //                                                 style: TextStyle(
+          //                                                     color:
+          //                                                     Colors.white,
+          //                                                     fontSize: 16,
+          //                                                     fontWeight:
+          //                                                     FontWeight
+          //                                                         .bold),
+          //                                               )),
+          //                                         ),
+          //                                       ),
+          //                                       Expanded(
+          //                                         flex: 8,
+          //                                         child: Container(
+          //                                             decoration:
+          //                                             const BoxDecoration(
+          //                                               color: Colors.white,
+          //                                               borderRadius:
+          //                                               BorderRadius.vertical(
+          //                                                   bottom: Radius
+          //                                                       .circular(
+          //                                                       15)),
+          //                                             ),
+          //                                             child: Center(
+          //                                               child: Text(
+          //                                                 "\$${totalRentPastDue}",
+          //                                                 style: const TextStyle(
+          //                                                     fontSize: 18,
+          //                                                     color: Color
+          //                                                         .fromRGBO(
+          //                                                         90,
+          //                                                         134,
+          //                                                         213,
+          //                                                         1),
+          //                                                     fontWeight:
+          //                                                     FontWeight
+          //                                                         .bold),
+          //                                               ),
+          //                                             )),
+          //                                       ),
+          //                                     ],
+          //                                   ),
+          //                                 ),
+          //                               ),
+          //                               Container(
+          //                                 width: 350,
+          //                                 height: 110,
+          //                                 margin: EdgeInsets.symmetric(
+          //                                     horizontal: width * .00),
+          //                               ),
+          //                             ],
+          //                           ),
+          //                         ],
+          //                       );
+          //                     } else {
+          //                       // Phone layout - vertical
+          //                       return Column(
+          //                         children: [
+          //                           const SizedBox(
+          //                             height: 20,
+          //                           ),
+          //                           Container(
+          //                             height: 110,
+          //                             margin: EdgeInsets.symmetric(
+          //                                 horizontal: width * .05),
+          //                             decoration: const BoxDecoration(
+          //                               borderRadius: BorderRadius.all(
+          //                                   Radius.circular(15)),
+          //                             ),
+          //                             child: Material(
+          //                               elevation: 3,
+          //                               borderRadius:
+          //                               const BorderRadius.all(
+          //                                   Radius.circular(15)),
+          //                               child: Column(
+          //                                 children: [
+          //                                   Expanded(
+          //                                     flex: 4,
+          //                                     child: Container(
+          //                                       decoration:
+          //                                       const BoxDecoration(
+          //                                         color: Color.fromRGBO(
+          //                                             50, 75, 119, 1),
+          //                                         borderRadius:
+          //                                         BorderRadius.vertical(
+          //                                             top: Radius
+          //                                                 .circular(
+          //                                                 15)),
+          //                                       ),
+          //                                       child: const Center(
+          //                                           child: Text(
+          //                                             "Rent Due",
+          //                                             style: TextStyle(
+          //                                                 color: Colors.white,
+          //                                                 fontSize: 16,
+          //                                                 fontWeight:
+          //                                                 FontWeight.bold),
+          //                                           )),
+          //                                     ),
+          //                                   ),
+          //                                   Expanded(
+          //                                     flex: 8,
+          //                                     child: Container(
+          //                                       decoration:
+          //                                       const BoxDecoration(
+          //                                         color: Colors.white,
+          //                                         borderRadius:
+          //                                         BorderRadius.vertical(
+          //                                             bottom: Radius
+          //                                                 .circular(
+          //                                                 15)),
+          //                                       ),
+          //                                       child: Padding(
+          //                                         padding:
+          //                                         const EdgeInsets.all(
+          //                                             8.0),
+          //                                         child: Row(
+          //                                           mainAxisAlignment:
+          //                                           MainAxisAlignment
+          //                                               .spaceEvenly,
+          //                                           children: [
+          //                                             Column(
+          //                                               mainAxisAlignment:
+          //                                               MainAxisAlignment
+          //                                                   .center,
+          //                                               crossAxisAlignment:
+          //                                               CrossAxisAlignment
+          //                                                   .center,
+          //                                               children: [
+          //                                                 const Text(
+          //                                                   "Current Month",
+          //                                                   style: TextStyle(
+          //                                                       fontSize:
+          //                                                       16,
+          //                                                       fontWeight:
+          //                                                       FontWeight
+          //                                                           .bold,
+          //                                                       color: Color
+          //                                                           .fromRGBO(
+          //                                                           138,
+          //                                                           149,
+          //                                                           168,
+          //                                                           1)),
+          //                                                 ),
+          //                                                 // SizedBox(height: 8), // Space between the text
+          //                                                 Text(
+          //                                                   "\$${currentMonthRentDue}",
+          //                                                   style: const TextStyle(
+          //                                                       fontSize:
+          //                                                       16,
+          //                                                       color: Color
+          //                                                           .fromRGBO(
+          //                                                           90,
+          //                                                           134,
+          //                                                           213,
+          //                                                           1),
+          //                                                       fontWeight:
+          //                                                       FontWeight
+          //                                                           .bold),
+          //                                                 ),
+          //                                               ],
+          //                                             ),
+          //                                             Column(
+          //                                               mainAxisAlignment:
+          //                                               MainAxisAlignment
+          //                                                   .center,
+          //                                               crossAxisAlignment:
+          //                                               CrossAxisAlignment
+          //                                                   .center,
+          //                                               children: [
+          //                                                 const Text(
+          //                                                   "Last Month",
+          //                                                   style: TextStyle(
+          //                                                       fontSize:
+          //                                                       16,
+          //                                                       fontWeight:
+          //                                                       FontWeight
+          //                                                           .bold,
+          //                                                       color: Color
+          //                                                           .fromRGBO(
+          //                                                           138,
+          //                                                           149,
+          //                                                           168,
+          //                                                           1)),
+          //                                                 ),
+          //                                                 // SizedBox(height: 8), // Space between the text
+          //                                                 Text(
+          //                                                   "\$${lastMonthRentDue}",
+          //                                                   style: const TextStyle(
+          //                                                       fontSize:
+          //                                                       16,
+          //                                                       color: Color
+          //                                                           .fromRGBO(
+          //                                                           90,
+          //                                                           134,
+          //                                                           213,
+          //                                                           1),
+          //                                                       fontWeight:
+          //                                                       FontWeight
+          //                                                           .bold),
+          //                                                 ),
+          //                                               ],
+          //                                             ),
+          //                                           ],
+          //                                         ),
+          //                                       ),
+          //                                     ),
+          //                                   ),
+          //                                 ],
+          //                               ),
+          //                             ),
+          //                           ),
+          //                           const SizedBox(
+          //                             height: 10,
+          //                           ),
+          //                           Container(
+          //                             height: 110,
+          //                             margin: EdgeInsets.symmetric(
+          //                                 horizontal: width * .05),
+          //                             decoration: const BoxDecoration(
+          //                               borderRadius: BorderRadius.all(
+          //                                   Radius.circular(15)),
+          //                             ),
+          //                             child: Material(
+          //                               elevation: 3,
+          //                               borderRadius:
+          //                               const BorderRadius.all(
+          //                                   Radius.circular(15)),
+          //                               child: Column(
+          //                                 children: [
+          //                                   Expanded(
+          //                                     flex: 4,
+          //                                     child: Container(
+          //                                       decoration:
+          //                                       const BoxDecoration(
+          //                                         color: Color.fromRGBO(
+          //                                             50, 75, 119, 1),
+          //                                         borderRadius:
+          //                                         BorderRadius.vertical(
+          //                                             top: Radius
+          //                                                 .circular(
+          //                                                 15)),
+          //                                       ),
+          //                                       child: const Center(
+          //                                           child: Text(
+          //                                             "Rent Paid",
+          //                                             style: TextStyle(
+          //                                                 color: Colors.white,
+          //                                                 fontSize: 16,
+          //                                                 fontWeight:
+          //                                                 FontWeight.bold),
+          //                                           )),
+          //                                     ),
+          //                                   ),
+          //                                   Expanded(
+          //                                     flex: 8,
+          //                                     child: Container(
+          //                                       decoration:
+          //                                       const BoxDecoration(
+          //                                         color: Colors.white,
+          //                                         borderRadius:
+          //                                         BorderRadius.vertical(
+          //                                             bottom: Radius
+          //                                                 .circular(
+          //                                                 15)),
+          //                                       ),
+          //                                       child: Padding(
+          //                                         padding:
+          //                                         const EdgeInsets.all(
+          //                                             8.0),
+          //                                         child: Row(
+          //                                           mainAxisAlignment:
+          //                                           MainAxisAlignment
+          //                                               .spaceEvenly,
+          //                                           children: [
+          //                                             Column(
+          //                                               mainAxisAlignment:
+          //                                               MainAxisAlignment
+          //                                                   .center,
+          //                                               crossAxisAlignment:
+          //                                               CrossAxisAlignment
+          //                                                   .center,
+          //                                               children: [
+          //                                                 const Text(
+          //                                                   "Current Month",
+          //                                                   style: TextStyle(
+          //                                                       fontSize:
+          //                                                       16,
+          //                                                       fontWeight:
+          //                                                       FontWeight
+          //                                                           .bold,
+          //                                                       color: Color
+          //                                                           .fromRGBO(
+          //                                                           138,
+          //                                                           149,
+          //                                                           168,
+          //                                                           1)),
+          //                                                 ),
+          //                                                 // SizedBox(height: 8), // Space between the text
+          //                                                 Text(
+          //                                                   "\$${currentMonthRentPaid}",
+          //                                                   style: const TextStyle(
+          //                                                       fontSize:
+          //                                                       16,
+          //                                                       color: Color
+          //                                                           .fromRGBO(
+          //                                                           90,
+          //                                                           134,
+          //                                                           213,
+          //                                                           1),
+          //                                                       fontWeight:
+          //                                                       FontWeight
+          //                                                           .bold),
+          //                                                 ),
+          //                                               ],
+          //                                             ),
+          //                                             Column(
+          //                                               mainAxisAlignment:
+          //                                               MainAxisAlignment
+          //                                                   .center,
+          //                                               crossAxisAlignment:
+          //                                               CrossAxisAlignment
+          //                                                   .center,
+          //                                               children: [
+          //                                                 const Text(
+          //                                                   "Last Month",
+          //                                                   style: TextStyle(
+          //                                                       fontSize:
+          //                                                       16,
+          //                                                       fontWeight:
+          //                                                       FontWeight
+          //                                                           .bold,
+          //                                                       color: Color
+          //                                                           .fromRGBO(
+          //                                                           138,
+          //                                                           149,
+          //                                                           168,
+          //                                                           1)),
+          //                                                 ),
+          //                                                 // SizedBox(height: 8), // Space between the text
+          //                                                 Text(
+          //                                                   "\$${lastMonthRentPaid}",
+          //                                                   style: const TextStyle(
+          //                                                       fontSize:
+          //                                                       16,
+          //                                                       color: Color
+          //                                                           .fromRGBO(
+          //                                                           90,
+          //                                                           134,
+          //                                                           213,
+          //                                                           1),
+          //                                                       fontWeight:
+          //                                                       FontWeight
+          //                                                           .bold),
+          //                                                 ),
+          //                                               ],
+          //                                             ),
+          //                                           ],
+          //                                         ),
+          //                                       ),
+          //                                     ),
+          //                                   ),
+          //                                 ],
+          //                               ),
+          //                             ),
+          //                           ),
+          //                           const SizedBox(
+          //                             height: 10,
+          //                           ),
+          //                           Container(
+          //                             height: 110,
+          //                             margin: EdgeInsets.symmetric(
+          //                                 horizontal: width * .05),
+          //                             decoration: const BoxDecoration(
+          //                               borderRadius: BorderRadius.all(
+          //                                   Radius.circular(15)),
+          //                             ),
+          //                             child: Material(
+          //                               elevation: 3,
+          //                               borderRadius:
+          //                               const BorderRadius.all(
+          //                                   Radius.circular(15)),
+          //                               child: Column(
+          //                                 children: [
+          //                                   Expanded(
+          //                                     flex: 4,
+          //                                     child: Container(
+          //                                       decoration:
+          //                                       const BoxDecoration(
+          //                                         color: Color.fromRGBO(
+          //                                             50, 75, 119, 1),
+          //                                         borderRadius:
+          //                                         BorderRadius.vertical(
+          //                                             top: Radius
+          //                                                 .circular(
+          //                                                 15)),
+          //                                       ),
+          //                                       child: const Center(
+          //                                           child: Text(
+          //                                             "Rent Past Due",
+          //                                             style: TextStyle(
+          //                                                 color: Colors.white,
+          //                                                 fontSize: 16,
+          //                                                 fontWeight:
+          //                                                 FontWeight.bold),
+          //                                           )),
+          //                                     ),
+          //                                   ),
+          //                                   Expanded(
+          //                                     flex: 8,
+          //                                     child: Container(
+          //                                         decoration:
+          //                                         const BoxDecoration(
+          //                                           color: Colors.white,
+          //                                           borderRadius:
+          //                                           BorderRadius.vertical(
+          //                                               bottom: Radius
+          //                                                   .circular(
+          //                                                   15)),
+          //                                         ),
+          //                                         child: Center(
+          //                                           child: Text(
+          //                                             "\$${totalRentPastDue}",
+          //                                             style: const TextStyle(
+          //                                                 fontSize: 18,
+          //                                                 color: Color
+          //                                                     .fromRGBO(
+          //                                                     90,
+          //                                                     134,
+          //                                                     213,
+          //                                                     1),
+          //                                                 fontWeight:
+          //                                                 FontWeight
+          //                                                     .bold),
+          //                                           ),
+          //                                         )),
+          //                                   ),
+          //                                 ],
+          //                               ),
+          //                             ),
+          //                           ),
+          //                         ],
+          //                       );
+          //                     }
+          //                   },
+          //                 ),
+          //
+          //                 // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+          //                 // PieCharts(),
+          //                 // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+          //                 // Barchart()
+          //                 /*  const SizedBox(
+          //               height: 10,
+          //             ),*/
+          //                 LayoutBuilder(
+          //                   builder: (BuildContext context,
+          //                       BoxConstraints constraints) {
+          //                     // Check if the device width is less than 600 (considered as phone screen)
+          //                     if (constraints.maxWidth < 500) {
+          //                       // Phone layout
+          //                       return Column(
+          //                         children: [
+          //                           /* Padding(
+          //                         padding: const EdgeInsets.only(
+          //                             left: 10, right: 10),
+          //                         child: PieCharts(dataMap: {
+          //                           "Properties": countList[0].toDouble(),
+          //                           "Gap1": 0.2,
+          //                           "Tenants": countList[1].toDouble(),
+          //                           "Gap2": 0.2,
+          //                           "Applicants": countList[2].toDouble(),
+          //                           "Gap3": 0.2,
+          //                           "Vendors": countList[3].toDouble(),
+          //                           "Gap4": 0.2,
+          //                           "Work Orders": countList[4].toDouble(),
+          //                           "Gap5": 0.2,
+          //                         }),
+          //                       ),*/
+          //                           FlChartApp(
+          //                             data: data,
+          //                           ),
+          //                           // Vertical layout for phone
+          //                           SizedBox(
+          //                               height: MediaQuery.of(context)
+          //                                   .size
+          //                                   .height *
+          //                                   0.015),
+          //                           Padding(
+          //                             padding: const EdgeInsets.only(
+          //                                 left: 0, right: 8),
+          //                             child: Barchart(),
+          //                           ),
+          //                         ],
+          //                       );
+          //                     } else {
+          //                       // Tablet layout
+          //                       return Padding(
+          //                         padding: const EdgeInsets.only(
+          //                           top: 10,
+          //                         ),
+          //                         child: Row(
+          //                           children: [
+          //                             const SizedBox(
+          //                               width: 20,
+          //                             ),
+          //                             Padding(
+          //                               padding: const EdgeInsets.only(
+          //                                   left: 10, right: 10),
+          //                               child: PieCharts(dataMap: {
+          //                                 "Properties":
+          //                                 countList[0].toDouble(),
+          //                                 "Gap1": 0.2,
+          //                                 "Tenants":
+          //                                 countList[1].toDouble(),
+          //                                 "Gap2": 0.2,
+          //                                 "Applicants":
+          //                                 countList[2].toDouble(),
+          //                                 "Gap3": 0.2,
+          //                                 "Vendors":
+          //                                 countList[3].toDouble(),
+          //                                 "Gap4": 0.2,
+          //                                 "Work Orders":
+          //                                 countList[4].toDouble(),
+          //                                 "Gap5": 0.2,
+          //                               }),
+          //                             ),
+          //                             const SizedBox(
+          //                               width: 10,
+          //                             ),
+          //                             Barchart(),
+          //                           ],
+          //                         ),
+          //                       );
+          //                     }
+          //                   },
+          //                 ),
+          //               ],
+          //             ));
+          //       } else if (snapshot.hasData && snapshot.data!) {
+          //         return Center(
+          //             child: loading
+          //                 ? Lottie.asset('assets/images/loader.json',
+          //                     height: 150, width: 100)
+          //                 : ListView(
+          //                     children: [
+          //                       // Material(
+          //                       //   elevation: 3,
+          //                       //   child: Divider(
+          //                       //     height: 1,
+          //                       //     color: Colors.transparent,
+          //                       //   ),
+          //                       // ),
+          //                       SizedBox(
+          //                           height: MediaQuery.of(context).size.height *
+          //                               0.012),
+          //                       //welcome
+          //                       LayoutBuilder(
+          //                         builder: (BuildContext context,
+          //                             BoxConstraints constraints) {
+          //                           return Row(
+          //                             children: [
+          //                               SizedBox(width: width * 0.05),
+          //                               Container(
+          //                                 color: Color.fromRGBO(2, 121, 210, 1),
+          //                                 margin: EdgeInsets.only(
+          //                                   top: MediaQuery.of(context)
+          //                                           .size
+          //                                           .height *
+          //                                       0.012,
+          //                                 ),
+          //                                 width: 3,
+          //                                 child: Column(
+          //                                   children: [
+          //                                     Container(
+          //                                       height: MediaQuery.of(context)
+          //                                                   .size
+          //                                                   .height *
+          //                                               0.012 +
+          //                                           MediaQuery.of(context)
+          //                                                   .size
+          //                                                   .width *
+          //                                               0.04 +
+          //                                           3 +
+          //                                           16,
+          //                                     ),
+          //                                   ],
+          //                                 ),
+          //                               ),
+          //                               Column(
+          //                                 mainAxisAlignment:
+          //                                     MainAxisAlignment.start,
+          //                                 crossAxisAlignment:
+          //                                     CrossAxisAlignment.start,
+          //                                 children: [
+          //                                   SizedBox(
+          //                                       height: MediaQuery.of(context)
+          //                                               .size
+          //                                               .height *
+          //                                           0.012),
+          //                                   Row(
+          //                                     children: [
+          //                                       SizedBox(width: width * 0.05),
+          //                                       Text(
+          //                                         "Hello $firstname $lastname, Welcome back",
+          //                                         style: TextStyle(
+          //                                           color: Colors.black,
+          //                                           fontSize: MediaQuery.of(
+          //                                                           context)
+          //                                                       .size
+          //                                                       .width >
+          //                                                   500
+          //                                               ? MediaQuery.of(context)
+          //                                                       .size
+          //                                                       .width *
+          //                                                   0.03
+          //                                               : MediaQuery.of(context)
+          //                                                       .size
+          //                                                       .width *
+          //                                                   0.04,
+          //                                         ),
+          //                                       ),
+          //                                     ],
+          //                                   ),
+          //                                   //   SizedBox(height: 3),
+          //                                   // My Dashboard
+          //                                   Row(
+          //                                     children: [
+          //                                       SizedBox(width: width * 0.05),
+          //                                       Text(
+          //                                         "My Dashboard",
+          //                                         style: TextStyle(
+          //                                           color: Colors.black,
+          //                                           fontWeight: FontWeight.bold,
+          //                                           fontSize: 22,
+          //                                         ),
+          //                                       ),
+          //                                     ],
+          //                                   ),
+          //                                 ],
+          //                               ),
+          //                             ],
+          //                           );
+          //                         },
+          //                       ),
+          //                       LayoutBuilder(
+          //                         builder: (context, constraints) {
+          //                           if (constraints.maxWidth > 600) {
+          //                             // Tablet layout - horizontal
+          //                             return Padding(
+          //                               padding: const EdgeInsets.only(
+          //                                   left: 35, right: 80, top: 20),
+          //                               child: Wrap(
+          //                                 alignment: WrapAlignment.start,
+          //                                 spacing:
+          //                                     MediaQuery.of(context).size.width *
+          //                                         0.02,
+          //                                 runSpacing:
+          //                                     MediaQuery.of(context).size.width *
+          //                                         0.02,
+          //                                 children: List.generate(
+          //                                   5,
+          //                                   (index) => SizedBox(
+          //                                     width:
+          //                                         160, // Ensure SizedBox has defined width
+          //                                     height:
+          //                                         160, // Ensure SizedBox has defined height
+          //                                     child: Material(
+          //                                       elevation: 3,
+          //                                       borderRadius:
+          //                                           BorderRadius.circular(10),
+          //                                       child: Container(
+          //                                         decoration: BoxDecoration(
+          //                                           color: dashboardData
+          //                                               .colorc[index],
+          //                                           borderRadius:
+          //                                               BorderRadius.circular(10),
+          //                                         ),
+          //                                         child: Column(
+          //                                           children: [
+          //                                             const SizedBox(height: 10),
+          //                                             Row(
+          //                                               children: [
+          //                                                 const SizedBox(
+          //                                                     width: 10),
+          //                                                 Material(
+          //                                                   elevation: 5,
+          //                                                   borderRadius:
+          //                                                       BorderRadius
+          //                                                           .circular(20),
+          //                                                   child: Container(
+          //                                                     height: 40,
+          //                                                     width: 40,
+          //                                                     padding:
+          //                                                         const EdgeInsets
+          //                                                             .all(10),
+          //                                                     decoration:
+          //                                                         BoxDecoration(
+          //                                                       color: dashboardData
+          //                                                               .colors[
+          //                                                           index],
+          //                                                       borderRadius:
+          //                                                           BorderRadius
+          //                                                               .circular(
+          //                                                                   20),
+          //                                                     ),
+          //                                                     child: SvgPicture
+          //                                                         .asset(
+          //                                                       "${dashboardData.icons[index]}",
+          //                                                       fit: BoxFit.cover,
+          //                                                       height: 27,
+          //                                                       width: 27,
+          //                                                     ),
+          //                                                   ),
+          //                                                 ),
+          //                                               ],
+          //                                             ),
+          //                                             const SizedBox(height: 10),
+          //                                             Row(
+          //                                               children: [
+          //                                                 const SizedBox(
+          //                                                     width: 10),
+          //                                                 Text(
+          //                                                   countList[index]
+          //                                                       .toString(),
+          //                                                   style:
+          //                                                       const TextStyle(
+          //                                                     color: Colors.white,
+          //                                                     fontSize: 15,
+          //                                                     fontWeight:
+          //                                                         FontWeight.bold,
+          //                                                   ),
+          //                                                 ),
+          //                                               ],
+          //                                             ),
+          //                                             const SizedBox(height: 10),
+          //                                             Row(
+          //                                               children: [
+          //                                                 const SizedBox(
+          //                                                     width: 10),
+          //                                                 Text(
+          //                                                   dashboardData
+          //                                                       .titles[index],
+          //                                                   style:
+          //                                                       const TextStyle(
+          //                                                     color: Colors.white,
+          //                                                     fontWeight:
+          //                                                         FontWeight.bold,
+          //                                                     fontSize: 20,
+          //                                                   ),
+          //                                                 ),
+          //                                               ],
+          //                                             ),
+          //                                           ],
+          //                                         ),
+          //                                       ),
+          //                                     ),
+          //                                   ),
+          //                                 ),
+          //                               ),
+          //                             );
+          //                           } else {
+          //                             // Phone layout - vertical
+          //                             return Column(
+          //                               children: [
+          //                                 SizedBox(
+          //                                     height: MediaQuery.of(context)
+          //                                             .size
+          //                                             .width *
+          //                                         0.05),
+          //                                 Padding(
+          //                                   padding: const EdgeInsets.only(
+          //                                       left: 25, right: 25),
+          //                                   child: GridView.builder(
+          //                                     itemCount: 5,
+          //                                     gridDelegate:
+          //                                         SliverGridDelegateWithFixedCrossAxisCount(
+          //                                       crossAxisCount:
+          //                                           2, // Number of items per row
+          //                                       crossAxisSpacing:
+          //                                           MediaQuery.of(context)
+          //                                                   .size
+          //                                                   .width *
+          //                                               0.02,
+          //                                       mainAxisSpacing:
+          //                                           MediaQuery.of(context)
+          //                                                   .size
+          //                                                   .width *
+          //                                               0.02,
+          //                                       childAspectRatio:
+          //                                           .99, // Adjust as needed for your design
+          //                                     ),
+          //                                     itemBuilder: (context, index) {
+          //                                       return GestureDetector(
+          //                                         onTap: () {
+          //                                           Navigator.push(
+          //                                             context,
+          //                                             MaterialPageRoute(
+          //                                                 builder: (context) =>
+          //                                                     pages[index]),
+          //                                           );
+          //                                         },
+          //                                         child: Material(
+          //                                           elevation: 3,
+          //                                           borderRadius:
+          //                                               BorderRadius.circular(10),
+          //                                           child: Container(
+          //                                             decoration: BoxDecoration(
+          //                                               color: dashboardData
+          //                                                   .colorc[index],
+          //                                               borderRadius:
+          //                                                   BorderRadius.circular(
+          //                                                       8),
+          //                                             ),
+          //                                             child: Padding(
+          //                                               padding:
+          //                                                   const EdgeInsets.only(
+          //                                                       left: 5),
+          //                                               child: Column(
+          //                                                 children: [
+          //                                                   const SizedBox(
+          //                                                       height: 15),
+          //                                                   Row(
+          //                                                     children: [
+          //                                                       const SizedBox(
+          //                                                           width: 10),
+          //                                                       Material(
+          //                                                         elevation: 5,
+          //                                                         borderRadius:
+          //                                                             BorderRadius
+          //                                                                 .circular(
+          //                                                                     15),
+          //                                                         child:
+          //                                                             Container(
+          //                                                                 height:
+          //                                                                     50,
+          //                                                                 width:
+          //                                                                     50,
+          //                                                                 padding: const EdgeInsets
+          //                                                                     .all(
+          //                                                                     10),
+          //                                                                 decoration:
+          //                                                                     BoxDecoration(
+          //                                                                   color:
+          //                                                                       dashboardData.colors[index],
+          //                                                                   borderRadius:
+          //                                                                       BorderRadius.circular(15),
+          //                                                                 ),
+          //                                                                 child: SvgPicture
+          //                                                                     .asset(
+          //                                                                   "${dashboardData.icons[index]}",
+          //                                                                   // fit: BoxFit.cover,
+          //                                                                   height:
+          //                                                                       30,
+          //                                                                   width:
+          //                                                                       30,
+          //                                                                 )),
+          //                                                       ),
+          //                                                     ],
+          //                                                   ),
+          //                                                   const SizedBox(
+          //                                                       height: 16),
+          //                                                   Row(
+          //                                                     children: [
+          //                                                       const SizedBox(
+          //                                                           width: 10),
+          //                                                       Text(
+          //                                                         countList[index]
+          //                                                             .toString(),
+          //                                                         style:
+          //                                                             const TextStyle(
+          //                                                           color: Colors
+          //                                                               .white,
+          //                                                           fontWeight:
+          //                                                               FontWeight
+          //                                                                   .bold,
+          //                                                           fontSize: 20,
+          //                                                         ),
+          //                                                       ),
+          //                                                     ],
+          //                                                   ),
+          //                                                   const SizedBox(
+          //                                                       height: 10),
+          //                                                   Row(
+          //                                                     children: [
+          //                                                       const SizedBox(
+          //                                                           width: 10),
+          //                                                       Text(
+          //                                                         dashboardData
+          //                                                                 .titles[
+          //                                                             index],
+          //                                                         style:
+          //                                                             const TextStyle(
+          //                                                           color: Colors
+          //                                                               .white,
+          //                                                           fontWeight:
+          //                                                               FontWeight
+          //                                                                   .bold,
+          //                                                           fontSize: 18,
+          //                                                         ),
+          //                                                       ),
+          //                                                       SizedBox(
+          //                                                         width: 5,
+          //                                                       ),
+          //                                                       Icon(
+          //                                                         Icons
+          //                                                             .arrow_forward_rounded,
+          //                                                         color: Colors
+          //                                                             .white,
+          //                                                       ),
+          //                                                     ],
+          //                                                   ),
+          //                                                 ],
+          //                                               ),
+          //                                             ),
+          //                                           ),
+          //                                         ),
+          //                                       );
+          //                                     },
+          //                                     shrinkWrap:
+          //                                         true, // If you want the GridView to take only the space it needs
+          //                                     physics:
+          //                                         const NeverScrollableScrollPhysics(), // If you don't want it to scroll
+          //                                   ),
+          //                                 )
+          //                               ],
+          //                             );
+          //                           }
+          //                         },
+          //                       ),
+          //
+          //                       /*  SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+          //             Row(
+          //               children: [
+          //                 SizedBox(
+          //                   width: width * 0.1,
+          //                 ),
+          //                 Material(
+          //                   elevation: 3,
+          //                   borderRadius: BorderRadius.circular(10),
+          //                   child: Stack(
+          //                     children: [
+          //                       Container(
+          //                         width: MediaQuery.of(context).size.width * .37,
+          //                         // height: 50,
+          //                         height: height * 0.071,
+          //                         decoration: BoxDecoration(
+          //                           color: Colors.white,
+          //                           borderRadius: BorderRadius.circular(10),
+          //                         ),
+          //                         child: Column(
+          //                           children: [
+          //                             Stack(
+          //                               children: [
+          //                                 Container(
+          //                                   height: height * 0.03,
+          //                                   decoration: BoxDecoration(
+          //                                       color: blueColor,
+          //                                       borderRadius: BorderRadius.only(
+          //                                         topLeft: Radius.circular(10),
+          //                                         topRight: Radius.circular(10),
+          //                                       )),
+          //                                 ),
+          //                                 Row(
+          //                                   mainAxisAlignment: MainAxisAlignment.center,
+          //                                   children: [
+          //                                     SizedBox(
+          //                                       height: 20,
+          //                                     ),
+          //                                     Text(
+          //                                       "Due rent for the month",
+          //                                       style: TextStyle(
+          //                                           color: Colors.white,
+          //                                           fontSize:
+          //                                           MediaQuery.of(context).size.width *
+          //                                               0.024,
+          //                                           fontWeight: FontWeight.bold),
+          //                                     ),
+          //                                   ],
+          //                                 ),
+          //                               ],
+          //                             ),
+          //                             Row(
+          //                               mainAxisAlignment: MainAxisAlignment.center,
+          //                               crossAxisAlignment: CrossAxisAlignment.center,
+          //                               children: [
+          //                                 SizedBox(
+          //                                   height: 25,
+          //                                 ),
+          //                                 // Text(
+          //                                 //   // "1200",
+          //                                 //   // nextMonthCharge.toString(),
+          //                                 //   '\$${nextMonthCharge.toStringAsFixed(2)}',
+          //                                 //  //   nextMonthCharge.toStringAsFixed(2),
+          //                                 //   style: TextStyle(
+          //                                 //       color: Colors.blue,
+          //                                 //       fontSize:
+          //                                 //       MediaQuery.of(context).size.width *
+          //                                 //           0.034),
+          //                                 // ),
+          //                                 Text(
+          //                                   nextMonthCharge != 0 ? '\$${nextMonthCharge.toStringAsFixed(2)}' : '0',
+          //                                   style: TextStyle(
+          //                                     color: Colors.blue,
+          //                                     fontSize: MediaQuery.of(context).size.width * 0.034,
+          //                                   ),
+          //                                 ),
+          //
+          //                               ],
+          //                             ),
+          //                           ],
+          //                         ),
+          //                       ),
+          //                     ],
+          //                   ),
+          //                 ),
+          //                 SizedBox(
+          //                   width: MediaQuery.of(context).size.width * 0.06,
+          //                 ),
+          //                 Material(
+          //                   elevation: 3,
+          //                   borderRadius: BorderRadius.circular(10),
+          //                   child: Stack(
+          //                     children: [
+          //                       Container(
+          //                         width: MediaQuery.of(context).size.width * .37,
+          //                         height: height * 0.071,
+          //                         decoration: BoxDecoration(
+          //                           color: Colors.white,
+          //                           borderRadius: BorderRadius.circular(10),
+          //                         ),
+          //                         child: Column(
+          //                           children: [
+          //                             Stack(
+          //                               children: [
+          //                                 Container(
+          //                                   height: height * 0.03,
+          //                                   decoration: BoxDecoration(
+          //                                       color: blueColor,
+          //                                       borderRadius: BorderRadius.only(
+          //                                         topLeft: Radius.circular(10),
+          //                                         topRight: Radius.circular(10),
+          //                                       )),
+          //                                 ),
+          //                                 Row(
+          //                                   mainAxisAlignment: MainAxisAlignment.center,
+          //                                   children: [
+          //                                     SizedBox(
+          //                                       height: 20,
+          //                                     ),
+          //                                     Text(
+          //                                       "Total collected amount",
+          //                                       style: TextStyle(
+          //                                           color: Colors.white,
+          //                                           // fontSize: 9,
+          //                                           fontSize:
+          //                                           MediaQuery.of(context).size.width *
+          //                                               0.024,
+          //                                           fontWeight: FontWeight.bold),
+          //                                     ),
+          //                                   ],
+          //                                 ),
+          //                               ],
+          //                             ),
+          //                             Row(
+          //                               mainAxisAlignment: MainAxisAlignment.center,
+          //                               crossAxisAlignment: CrossAxisAlignment.center,
+          //                               children: [
+          //                                 SizedBox(
+          //                                   height: 25,
+          //                                 ),
+          //                                 // Text(
+          //                                 //   // "2500",
+          //                                 //   //   countList[1].toString(),
+          //                                 //   '\$${totalCollectedAmount.toString()}',
+          //                                 //   style: TextStyle(
+          //                                 //       color: Colors.blue,
+          //                                 //       fontSize:
+          //                                 //       MediaQuery.of(context).size.width *
+          //                                 //           0.034),
+          //                                 // ),
+          //                                 Text(
+          //                                   totalCollectedAmount != 0 ? '\$${totalCollectedAmount.toString()}' : '0',
+          //                                   style: TextStyle(
+          //                                     color: Colors.blue,
+          //                                     fontSize: MediaQuery.of(context).size.width * 0.034,
+          //                                   ),
+          //                                 ),
+          //
+          //                               ],
+          //                             ),
+          //                           ],
+          //                         ),
+          //                       ),
+          //                     ],
+          //                   ),
+          //                 ),
+          //                 SizedBox(
+          //                   width: width * 0.1,
+          //                 ),
+          //               ],
+          //             ),
+          //             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+          //             Row(
+          //               children: [
+          //                 SizedBox(
+          //                   width: width * 0.1,
+          //                 ),
+          //                 Material(
+          //                   elevation: 3,
+          //                   borderRadius: BorderRadius.circular(10),
+          //                   child: Stack(
+          //                     children: [
+          //                       Container(
+          //                         width: MediaQuery.of(context).size.width * .37,
+          //                         // height: 50,
+          //                         height: height * 0.071,
+          //                         decoration: BoxDecoration(
+          //                           color: Colors.white,
+          //                           borderRadius: BorderRadius.circular(10),
+          //                         ),
+          //                         child: Column(
+          //                           children: [
+          //                             Stack(
+          //                               children: [
+          //                                 Container(
+          //                                   // height:
+          //                                   //    20,
+          //                                   height: height * 0.03,
+          //                                   decoration: BoxDecoration(
+          //                                       color: blueColor,
+          //                                       borderRadius: BorderRadius.only(
+          //                                         topLeft: Radius.circular(10),
+          //                                         topRight: Radius.circular(10),
+          //                                       )),
+          //                                 ),
+          //                                 Row(
+          //                                   mainAxisAlignment: MainAxisAlignment.center,
+          //                                   children: [
+          //                                     SizedBox(
+          //                                       height: 20,
+          //                                     ),
+          //                                     Text(
+          //                                       "Total past due amount",
+          //                                       style: TextStyle(
+          //                                           color: Colors.white,
+          //                                           fontSize:
+          //                                           MediaQuery.of(context).size.width *
+          //                                               0.024,
+          //                                           fontWeight: FontWeight.bold),
+          //                                     ),
+          //                                   ],
+          //                                 ),
+          //                               ],
+          //                             ),
+          //                             Row(
+          //                               mainAxisAlignment: MainAxisAlignment.center,
+          //                               crossAxisAlignment: CrossAxisAlignment.center,
+          //                               children: [
+          //                                 SizedBox(
+          //                                   height: 25,
+          //                                 ),
+          //                                 // Text(
+          //                                 //   // "1000",
+          //                                 //   "\$${pastDueAmount.toStringAsFixed(2).toString()}",
+          //                                 //   //  pastDueAmount.toStringAsFixed(2),
+          //                                 //   style: TextStyle(
+          //                                 //       color: Colors.blue,
+          //                                 //       fontSize:
+          //                                 //       MediaQuery.of(context).size.width *
+          //                                 //           0.034),
+          //                                 // ),
+          //                                 Text(
+          //                                   pastDueAmount != 0 ? '\$${pastDueAmount.toStringAsFixed(2)}' : '0',
+          //                                   style: TextStyle(
+          //                                     color: Colors.blue,
+          //                                     fontSize: MediaQuery.of(context).size.width * 0.034,
+          //                                   ),
+          //                                 ),
+          //
+          //                               ],
+          //                             ),
+          //                           ],
+          //                         ),
+          //                       ),
+          //                     ],
+          //                   ),
+          //                 ),
+          //                 SizedBox(
+          //                   width: MediaQuery.of(context).size.width * 0.06,
+          //                 ),
+          //                 Material(
+          //                   elevation: 3,
+          //                   borderRadius: BorderRadius.circular(10),
+          //                   child: Stack(
+          //                     children: [
+          //                       Container(
+          //                         width: MediaQuery.of(context).size.width * .37,
+          //                         // height:50,
+          //                         height: height * 0.071,
+          //                         decoration: BoxDecoration(
+          //                           color: Colors.white,
+          //                           borderRadius: BorderRadius.circular(10),
+          //                         ),
+          //                         child: Column(
+          //                           children: [
+          //                             Stack(
+          //                               children: [
+          //                                 Container(
+          //                                   // height:
+          //                                   //     20,
+          //                                   height: height * 0.03,
+          //                                   decoration: BoxDecoration(
+          //                                       color: blueColor,
+          //                                       borderRadius: BorderRadius.only(
+          //                                         topLeft: Radius.circular(10),
+          //                                         topRight: Radius.circular(10),
+          //                                       )),
+          //                                 ),
+          //                                 Row(
+          //                                   mainAxisAlignment: MainAxisAlignment.center,
+          //                                   children: [
+          //                                     SizedBox(
+          //                                       height: 20,
+          //                                     ),
+          //                                     Text(
+          //                                       "Last month collected amount",
+          //                                       style: TextStyle(
+          //                                           color: Colors.white,
+          //                                           // fontSize: 9,
+          //                                           fontSize:
+          //                                           MediaQuery.of(context).size.width *
+          //                                               0.022,
+          //                                           fontWeight: FontWeight.bold),
+          //                                     ),
+          //                                   ],
+          //                                 ),
+          //                               ],
+          //                             ),
+          //                             Row(
+          //                               mainAxisAlignment: MainAxisAlignment.center,
+          //                               crossAxisAlignment: CrossAxisAlignment.center,
+          //                               children: [
+          //                                 SizedBox(
+          //                                   height: 25,
+          //                                 ),
+          //                                 // Text(
+          //                                 //   // "1800",
+          //                                 //  "\$${ lastMonthCollectedAmount.toString()}",
+          //                                 //   // amountList[3].toString(),
+          //                                 //   style: TextStyle(
+          //                                 //       color: Colors.blue,
+          //                                 //       fontSize:
+          //                                 //       MediaQuery.of(context).size.width *
+          //                                 //           0.034),
+          //                                 // ),
+          //                                 Text(
+          //                                   lastMonthCollectedAmount != 0 ? '\$${lastMonthCollectedAmount.toString()}' : '0',
+          //                                   style: TextStyle(
+          //                                     color: Colors.blue,
+          //                                     fontSize: MediaQuery.of(context).size.width * 0.034,
+          //                                   ),
+          //                                 ),
+          //
+          //                               ],
+          //                             ),
+          //                           ],
+          //                         ),
+          //                       ),
+          //                     ],
+          //                   ),
+          //                 ),
+          //                 SizedBox(
+          //                   width: width * 0.1,
+          //                 ),
+          //               ],
+          //
+          //             ),*/
+          //                       // LayoutBuilder(builder: (context, BoxConstraints) {
+          //                       //   if (BoxConstraints.maxWidth > 500) {
+          //                       //     return Container();
+          //                       //   } else {
+          //                       //     return Container();
+          //                       //   }
+          //                       // }),
+          //
+          //                       LayoutBuilder(
+          //                         builder: (context, constraints) {
+          //                           if (constraints.maxWidth > 600) {
+          //                             // Tablet layout - horizontal
+          //                             return Column(
+          //                               children: [
+          //                                 const SizedBox(
+          //                                   height: 20,
+          //                                 ),
+          //                                 Row(
+          //                                   children: [
+          //                                     Container(
+          //                                       width: 360,
+          //                                       height: 110,
+          //                                       margin: EdgeInsets.symmetric(
+          //                                           horizontal: width * .040),
+          //                                       decoration: const BoxDecoration(
+          //                                         borderRadius: BorderRadius.all(
+          //                                             Radius.circular(15)),
+          //                                       ),
+          //                                       child: Material(
+          //                                         elevation: 3,
+          //                                         borderRadius:
+          //                                             const BorderRadius.all(
+          //                                                 Radius.circular(15)),
+          //                                         child: Column(
+          //                                           children: [
+          //                                             Expanded(
+          //                                               flex: 4,
+          //                                               child: Container(
+          //                                                 decoration:
+          //                                                     const BoxDecoration(
+          //                                                   color: Color.fromRGBO(
+          //                                                       50, 75, 119, 1),
+          //                                                   borderRadius:
+          //                                                       BorderRadius.vertical(
+          //                                                           top: Radius
+          //                                                               .circular(
+          //                                                                   15)),
+          //                                                 ),
+          //                                                 child: const Center(
+          //                                                     child: Text(
+          //                                                   "Rent Due",
+          //                                                   style: TextStyle(
+          //                                                       color:
+          //                                                           Colors.white,
+          //                                                       fontSize: 16,
+          //                                                       fontWeight:
+          //                                                           FontWeight
+          //                                                               .bold),
+          //                                                 )),
+          //                                               ),
+          //                                             ),
+          //                                             Expanded(
+          //                                               flex: 8,
+          //                                               child: Container(
+          //                                                 decoration:
+          //                                                     const BoxDecoration(
+          //                                                   color: Colors.white,
+          //                                                   borderRadius:
+          //                                                       BorderRadius.vertical(
+          //                                                           bottom: Radius
+          //                                                               .circular(
+          //                                                                   15)),
+          //                                                 ),
+          //                                                 child: Padding(
+          //                                                   padding:
+          //                                                       const EdgeInsets
+          //                                                           .all(8.0),
+          //                                                   child: Row(
+          //                                                     mainAxisAlignment:
+          //                                                         MainAxisAlignment
+          //                                                             .spaceEvenly,
+          //                                                     children: [
+          //                                                       Column(
+          //                                                         mainAxisAlignment:
+          //                                                             MainAxisAlignment
+          //                                                                 .center,
+          //                                                         crossAxisAlignment:
+          //                                                             CrossAxisAlignment
+          //                                                                 .center,
+          //                                                         children: [
+          //                                                           const Text(
+          //                                                             "Current Month",
+          //                                                             style: TextStyle(
+          //                                                                 fontSize:
+          //                                                                     16,
+          //                                                                 fontWeight:
+          //                                                                     FontWeight
+          //                                                                         .bold,
+          //                                                                 color: Color.fromRGBO(
+          //                                                                     138,
+          //                                                                     149,
+          //                                                                     168,
+          //                                                                     1)),
+          //                                                           ),
+          //                                                           // SizedBox(height: 8), // Space between the text
+          //                                                           Text(
+          //                                                             "\$${currentMonthRentDue}",
+          //                                                             style: const TextStyle(
+          //                                                                 fontSize:
+          //                                                                     16,
+          //                                                                 color: Color.fromRGBO(
+          //                                                                     90,
+          //                                                                     134,
+          //                                                                     213,
+          //                                                                     1),
+          //                                                                 fontWeight:
+          //                                                                     FontWeight.bold),
+          //                                                           ),
+          //                                                         ],
+          //                                                       ),
+          //                                                       Column(
+          //                                                         mainAxisAlignment:
+          //                                                             MainAxisAlignment
+          //                                                                 .center,
+          //                                                         crossAxisAlignment:
+          //                                                             CrossAxisAlignment
+          //                                                                 .center,
+          //                                                         children: [
+          //                                                           const Text(
+          //                                                             "Last Month",
+          //                                                             style: TextStyle(
+          //                                                                 fontSize:
+          //                                                                     16,
+          //                                                                 fontWeight:
+          //                                                                     FontWeight
+          //                                                                         .bold,
+          //                                                                 color: Color.fromRGBO(
+          //                                                                     138,
+          //                                                                     149,
+          //                                                                     168,
+          //                                                                     1)),
+          //                                                           ),
+          //                                                           // SizedBox(height: 8), // Space between the text
+          //                                                           Text(
+          //                                                             "\$${lastMonthRentDue}",
+          //                                                             style: const TextStyle(
+          //                                                                 fontSize:
+          //                                                                     16,
+          //                                                                 color: Color.fromRGBO(
+          //                                                                     90,
+          //                                                                     134,
+          //                                                                     213,
+          //                                                                     1),
+          //                                                                 fontWeight:
+          //                                                                     FontWeight.bold),
+          //                                                           ),
+          //                                                         ],
+          //                                                       ),
+          //                                                     ],
+          //                                                   ),
+          //                                                 ),
+          //                                               ),
+          //                                             ),
+          //                                           ],
+          //                                         ),
+          //                                       ),
+          //                                     ),
+          //                                     Container(
+          //                                       width: 360,
+          //                                       height: 110,
+          //                                       margin: EdgeInsets.symmetric(
+          //                                           horizontal: width * .00),
+          //                                       decoration: const BoxDecoration(
+          //                                         borderRadius: BorderRadius.all(
+          //                                             Radius.circular(15)),
+          //                                       ),
+          //                                       child: Material(
+          //                                         elevation: 3,
+          //                                         borderRadius:
+          //                                             const BorderRadius.all(
+          //                                                 Radius.circular(15)),
+          //                                         child: Column(
+          //                                           children: [
+          //                                             Expanded(
+          //                                               flex: 4,
+          //                                               child: Container(
+          //                                                 decoration:
+          //                                                     const BoxDecoration(
+          //                                                   color: Color.fromRGBO(
+          //                                                       50, 75, 119, 1),
+          //                                                   borderRadius:
+          //                                                       BorderRadius.vertical(
+          //                                                           top: Radius
+          //                                                               .circular(
+          //                                                                   15)),
+          //                                                 ),
+          //                                                 child: const Center(
+          //                                                     child: Text(
+          //                                                   "Rent Paid",
+          //                                                   style: TextStyle(
+          //                                                       color:
+          //                                                           Colors.white,
+          //                                                       fontSize: 16,
+          //                                                       fontWeight:
+          //                                                           FontWeight
+          //                                                               .bold),
+          //                                                 )),
+          //                                               ),
+          //                                             ),
+          //                                             Expanded(
+          //                                               flex: 8,
+          //                                               child: Container(
+          //                                                 decoration:
+          //                                                     const BoxDecoration(
+          //                                                   color: Colors.white,
+          //                                                   borderRadius:
+          //                                                       BorderRadius.vertical(
+          //                                                           bottom: Radius
+          //                                                               .circular(
+          //                                                                   15)),
+          //                                                 ),
+          //                                                 child: Padding(
+          //                                                   padding:
+          //                                                       const EdgeInsets
+          //                                                           .all(8.0),
+          //                                                   child: Row(
+          //                                                     mainAxisAlignment:
+          //                                                         MainAxisAlignment
+          //                                                             .spaceEvenly,
+          //                                                     children: [
+          //                                                       Column(
+          //                                                         mainAxisAlignment:
+          //                                                             MainAxisAlignment
+          //                                                                 .center,
+          //                                                         crossAxisAlignment:
+          //                                                             CrossAxisAlignment
+          //                                                                 .center,
+          //                                                         children: [
+          //                                                           const Text(
+          //                                                             "Current Month",
+          //                                                             style: TextStyle(
+          //                                                                 fontSize:
+          //                                                                     16,
+          //                                                                 fontWeight:
+          //                                                                     FontWeight
+          //                                                                         .bold,
+          //                                                                 color: Color.fromRGBO(
+          //                                                                     138,
+          //                                                                     149,
+          //                                                                     168,
+          //                                                                     1)),
+          //                                                           ),
+          //                                                           // SizedBox(height: 8), // Space between the text
+          //                                                           Text(
+          //                                                             "\$${currentMonthRentPaid}",
+          //                                                             style: const TextStyle(
+          //                                                                 fontSize:
+          //                                                                     16,
+          //                                                                 color: Color.fromRGBO(
+          //                                                                     90,
+          //                                                                     134,
+          //                                                                     213,
+          //                                                                     1),
+          //                                                                 fontWeight:
+          //                                                                     FontWeight.bold),
+          //                                                           ),
+          //                                                         ],
+          //                                                       ),
+          //                                                       Column(
+          //                                                         mainAxisAlignment:
+          //                                                             MainAxisAlignment
+          //                                                                 .center,
+          //                                                         crossAxisAlignment:
+          //                                                             CrossAxisAlignment
+          //                                                                 .center,
+          //                                                         children: [
+          //                                                           const Text(
+          //                                                             "Last Month",
+          //                                                             style: TextStyle(
+          //                                                                 fontSize:
+          //                                                                     16,
+          //                                                                 fontWeight:
+          //                                                                     FontWeight
+          //                                                                         .bold,
+          //                                                                 color: Color.fromRGBO(
+          //                                                                     138,
+          //                                                                     149,
+          //                                                                     168,
+          //                                                                     1)),
+          //                                                           ),
+          //                                                           // SizedBox(height: 8), // Space between the text
+          //                                                           Text(
+          //                                                             "\$${lastMonthRentPaid}",
+          //                                                             style: const TextStyle(
+          //                                                                 fontSize:
+          //                                                                     16,
+          //                                                                 color: Color.fromRGBO(
+          //                                                                     90,
+          //                                                                     134,
+          //                                                                     213,
+          //                                                                     1),
+          //                                                                 fontWeight:
+          //                                                                     FontWeight.bold),
+          //                                                           ),
+          //                                                         ],
+          //                                                       ),
+          //                                                     ],
+          //                                                   ),
+          //                                                 ),
+          //                                               ),
+          //                                             ),
+          //                                           ],
+          //                                         ),
+          //                                       ),
+          //                                     ),
+          //                                   ],
+          //                                 ),
+          //                                 const SizedBox(
+          //                                   height: 20,
+          //                                 ),
+          //                                 Row(
+          //                                   children: [
+          //                                     Container(
+          //                                       width: 360,
+          //                                       height: 110,
+          //                                       margin: EdgeInsets.symmetric(
+          //                                           horizontal: width * .040),
+          //                                       decoration: const BoxDecoration(
+          //                                         borderRadius: BorderRadius.all(
+          //                                             Radius.circular(15)),
+          //                                       ),
+          //                                       child: Material(
+          //                                         elevation: 3,
+          //                                         borderRadius:
+          //                                             const BorderRadius.all(
+          //                                                 Radius.circular(15)),
+          //                                         child: Column(
+          //                                           children: [
+          //                                             Expanded(
+          //                                               flex: 4,
+          //                                               child: Container(
+          //                                                 decoration:
+          //                                                     const BoxDecoration(
+          //                                                   color: Color.fromRGBO(
+          //                                                       50, 75, 119, 1),
+          //                                                   borderRadius:
+          //                                                       BorderRadius.vertical(
+          //                                                           top: Radius
+          //                                                               .circular(
+          //                                                                   15)),
+          //                                                 ),
+          //                                                 child: const Center(
+          //                                                     child: Text(
+          //                                                   "Rent Past Due",
+          //                                                   style: TextStyle(
+          //                                                       color:
+          //                                                           Colors.white,
+          //                                                       fontSize: 16,
+          //                                                       fontWeight:
+          //                                                           FontWeight
+          //                                                               .bold),
+          //                                                 )),
+          //                                               ),
+          //                                             ),
+          //                                             Expanded(
+          //                                               flex: 8,
+          //                                               child: Container(
+          //                                                   decoration:
+          //                                                       const BoxDecoration(
+          //                                                     color: Colors.white,
+          //                                                     borderRadius:
+          //                                                         BorderRadius.vertical(
+          //                                                             bottom: Radius
+          //                                                                 .circular(
+          //                                                                     15)),
+          //                                                   ),
+          //                                                   child: Center(
+          //                                                     child: Text(
+          //                                                       "\$${totalRentPastDue}",
+          //                                                       style: const TextStyle(
+          //                                                           fontSize: 18,
+          //                                                           color: Color
+          //                                                               .fromRGBO(
+          //                                                                   90,
+          //                                                                   134,
+          //                                                                   213,
+          //                                                                   1),
+          //                                                           fontWeight:
+          //                                                               FontWeight
+          //                                                                   .bold),
+          //                                                     ),
+          //                                                   )),
+          //                                             ),
+          //                                           ],
+          //                                         ),
+          //                                       ),
+          //                                     ),
+          //                                     Container(
+          //                                       width: 350,
+          //                                       height: 110,
+          //                                       margin: EdgeInsets.symmetric(
+          //                                           horizontal: width * .00),
+          //                                     ),
+          //                                   ],
+          //                                 ),
+          //                               ],
+          //                             );
+          //                           } else {
+          //                             // Phone layout - vertical
+          //                             return Column(
+          //                               children: [
+          //                                 const SizedBox(
+          //                                   height: 20,
+          //                                 ),
+          //                                 Container(
+          //                                   height: 110,
+          //                                   margin: EdgeInsets.symmetric(
+          //                                       horizontal: width * .05),
+          //                                   decoration: const BoxDecoration(
+          //                                     borderRadius: BorderRadius.all(
+          //                                         Radius.circular(15)),
+          //                                   ),
+          //                                   child: Material(
+          //                                     elevation: 3,
+          //                                     borderRadius:
+          //                                         const BorderRadius.all(
+          //                                             Radius.circular(15)),
+          //                                     child: Column(
+          //                                       children: [
+          //                                         Expanded(
+          //                                           flex: 4,
+          //                                           child: Container(
+          //                                             decoration:
+          //                                                 const BoxDecoration(
+          //                                               color: Color.fromRGBO(
+          //                                                   50, 75, 119, 1),
+          //                                               borderRadius:
+          //                                                   BorderRadius.vertical(
+          //                                                       top: Radius
+          //                                                           .circular(
+          //                                                               15)),
+          //                                             ),
+          //                                             child: const Center(
+          //                                                 child: Text(
+          //                                               "Rent Due",
+          //                                               style: TextStyle(
+          //                                                   color: Colors.white,
+          //                                                   fontSize: 16,
+          //                                                   fontWeight:
+          //                                                       FontWeight.bold),
+          //                                             )),
+          //                                           ),
+          //                                         ),
+          //                                         Expanded(
+          //                                           flex: 8,
+          //                                           child: Container(
+          //                                             decoration:
+          //                                                 const BoxDecoration(
+          //                                               color: Colors.white,
+          //                                               borderRadius:
+          //                                                   BorderRadius.vertical(
+          //                                                       bottom: Radius
+          //                                                           .circular(
+          //                                                               15)),
+          //                                             ),
+          //                                             child: Padding(
+          //                                               padding:
+          //                                                   const EdgeInsets.all(
+          //                                                       8.0),
+          //                                               child: Row(
+          //                                                 mainAxisAlignment:
+          //                                                     MainAxisAlignment
+          //                                                         .spaceEvenly,
+          //                                                 children: [
+          //                                                   Column(
+          //                                                     mainAxisAlignment:
+          //                                                         MainAxisAlignment
+          //                                                             .center,
+          //                                                     crossAxisAlignment:
+          //                                                         CrossAxisAlignment
+          //                                                             .center,
+          //                                                     children: [
+          //                                                       const Text(
+          //                                                         "Current Month",
+          //                                                         style: TextStyle(
+          //                                                             fontSize:
+          //                                                                 16,
+          //                                                             fontWeight:
+          //                                                                 FontWeight
+          //                                                                     .bold,
+          //                                                             color: Color
+          //                                                                 .fromRGBO(
+          //                                                                     138,
+          //                                                                     149,
+          //                                                                     168,
+          //                                                                     1)),
+          //                                                       ),
+          //                                                       // SizedBox(height: 8), // Space between the text
+          //                                                       Text(
+          //                                                         "\$${currentMonthRentDue}",
+          //                                                         style: const TextStyle(
+          //                                                             fontSize:
+          //                                                                 16,
+          //                                                             color: Color
+          //                                                                 .fromRGBO(
+          //                                                                     90,
+          //                                                                     134,
+          //                                                                     213,
+          //                                                                     1),
+          //                                                             fontWeight:
+          //                                                                 FontWeight
+          //                                                                     .bold),
+          //                                                       ),
+          //                                                     ],
+          //                                                   ),
+          //                                                   Column(
+          //                                                     mainAxisAlignment:
+          //                                                         MainAxisAlignment
+          //                                                             .center,
+          //                                                     crossAxisAlignment:
+          //                                                         CrossAxisAlignment
+          //                                                             .center,
+          //                                                     children: [
+          //                                                       const Text(
+          //                                                         "Last Month",
+          //                                                         style: TextStyle(
+          //                                                             fontSize:
+          //                                                                 16,
+          //                                                             fontWeight:
+          //                                                                 FontWeight
+          //                                                                     .bold,
+          //                                                             color: Color
+          //                                                                 .fromRGBO(
+          //                                                                     138,
+          //                                                                     149,
+          //                                                                     168,
+          //                                                                     1)),
+          //                                                       ),
+          //                                                       // SizedBox(height: 8), // Space between the text
+          //                                                       Text(
+          //                                                         "\$${lastMonthRentDue}",
+          //                                                         style: const TextStyle(
+          //                                                             fontSize:
+          //                                                                 16,
+          //                                                             color: Color
+          //                                                                 .fromRGBO(
+          //                                                                     90,
+          //                                                                     134,
+          //                                                                     213,
+          //                                                                     1),
+          //                                                             fontWeight:
+          //                                                                 FontWeight
+          //                                                                     .bold),
+          //                                                       ),
+          //                                                     ],
+          //                                                   ),
+          //                                                 ],
+          //                                               ),
+          //                                             ),
+          //                                           ),
+          //                                         ),
+          //                                       ],
+          //                                     ),
+          //                                   ),
+          //                                 ),
+          //                                 const SizedBox(
+          //                                   height: 10,
+          //                                 ),
+          //                                 Container(
+          //                                   height: 110,
+          //                                   margin: EdgeInsets.symmetric(
+          //                                       horizontal: width * .05),
+          //                                   decoration: const BoxDecoration(
+          //                                     borderRadius: BorderRadius.all(
+          //                                         Radius.circular(15)),
+          //                                   ),
+          //                                   child: Material(
+          //                                     elevation: 3,
+          //                                     borderRadius:
+          //                                         const BorderRadius.all(
+          //                                             Radius.circular(15)),
+          //                                     child: Column(
+          //                                       children: [
+          //                                         Expanded(
+          //                                           flex: 4,
+          //                                           child: Container(
+          //                                             decoration:
+          //                                                 const BoxDecoration(
+          //                                               color: Color.fromRGBO(
+          //                                                   50, 75, 119, 1),
+          //                                               borderRadius:
+          //                                                   BorderRadius.vertical(
+          //                                                       top: Radius
+          //                                                           .circular(
+          //                                                               15)),
+          //                                             ),
+          //                                             child: const Center(
+          //                                                 child: Text(
+          //                                               "Rent Paid",
+          //                                               style: TextStyle(
+          //                                                   color: Colors.white,
+          //                                                   fontSize: 16,
+          //                                                   fontWeight:
+          //                                                       FontWeight.bold),
+          //                                             )),
+          //                                           ),
+          //                                         ),
+          //                                         Expanded(
+          //                                           flex: 8,
+          //                                           child: Container(
+          //                                             decoration:
+          //                                                 const BoxDecoration(
+          //                                               color: Colors.white,
+          //                                               borderRadius:
+          //                                                   BorderRadius.vertical(
+          //                                                       bottom: Radius
+          //                                                           .circular(
+          //                                                               15)),
+          //                                             ),
+          //                                             child: Padding(
+          //                                               padding:
+          //                                                   const EdgeInsets.all(
+          //                                                       8.0),
+          //                                               child: Row(
+          //                                                 mainAxisAlignment:
+          //                                                     MainAxisAlignment
+          //                                                         .spaceEvenly,
+          //                                                 children: [
+          //                                                   Column(
+          //                                                     mainAxisAlignment:
+          //                                                         MainAxisAlignment
+          //                                                             .center,
+          //                                                     crossAxisAlignment:
+          //                                                         CrossAxisAlignment
+          //                                                             .center,
+          //                                                     children: [
+          //                                                       const Text(
+          //                                                         "Current Month",
+          //                                                         style: TextStyle(
+          //                                                             fontSize:
+          //                                                                 16,
+          //                                                             fontWeight:
+          //                                                                 FontWeight
+          //                                                                     .bold,
+          //                                                             color: Color
+          //                                                                 .fromRGBO(
+          //                                                                     138,
+          //                                                                     149,
+          //                                                                     168,
+          //                                                                     1)),
+          //                                                       ),
+          //                                                       // SizedBox(height: 8), // Space between the text
+          //                                                       Text(
+          //                                                         "\$${currentMonthRentPaid}",
+          //                                                         style: const TextStyle(
+          //                                                             fontSize:
+          //                                                                 16,
+          //                                                             color: Color
+          //                                                                 .fromRGBO(
+          //                                                                     90,
+          //                                                                     134,
+          //                                                                     213,
+          //                                                                     1),
+          //                                                             fontWeight:
+          //                                                                 FontWeight
+          //                                                                     .bold),
+          //                                                       ),
+          //                                                     ],
+          //                                                   ),
+          //                                                   Column(
+          //                                                     mainAxisAlignment:
+          //                                                         MainAxisAlignment
+          //                                                             .center,
+          //                                                     crossAxisAlignment:
+          //                                                         CrossAxisAlignment
+          //                                                             .center,
+          //                                                     children: [
+          //                                                       const Text(
+          //                                                         "Last Month",
+          //                                                         style: TextStyle(
+          //                                                             fontSize:
+          //                                                                 16,
+          //                                                             fontWeight:
+          //                                                                 FontWeight
+          //                                                                     .bold,
+          //                                                             color: Color
+          //                                                                 .fromRGBO(
+          //                                                                     138,
+          //                                                                     149,
+          //                                                                     168,
+          //                                                                     1)),
+          //                                                       ),
+          //                                                       // SizedBox(height: 8), // Space between the text
+          //                                                       Text(
+          //                                                         "\$${lastMonthRentPaid}",
+          //                                                         style: const TextStyle(
+          //                                                             fontSize:
+          //                                                                 16,
+          //                                                             color: Color
+          //                                                                 .fromRGBO(
+          //                                                                     90,
+          //                                                                     134,
+          //                                                                     213,
+          //                                                                     1),
+          //                                                             fontWeight:
+          //                                                                 FontWeight
+          //                                                                     .bold),
+          //                                                       ),
+          //                                                     ],
+          //                                                   ),
+          //                                                 ],
+          //                                               ),
+          //                                             ),
+          //                                           ),
+          //                                         ),
+          //                                       ],
+          //                                     ),
+          //                                   ),
+          //                                 ),
+          //                                 const SizedBox(
+          //                                   height: 10,
+          //                                 ),
+          //                                 Container(
+          //                                   height: 110,
+          //                                   margin: EdgeInsets.symmetric(
+          //                                       horizontal: width * .05),
+          //                                   decoration: const BoxDecoration(
+          //                                     borderRadius: BorderRadius.all(
+          //                                         Radius.circular(15)),
+          //                                   ),
+          //                                   child: Material(
+          //                                     elevation: 3,
+          //                                     borderRadius:
+          //                                         const BorderRadius.all(
+          //                                             Radius.circular(15)),
+          //                                     child: Column(
+          //                                       children: [
+          //                                         Expanded(
+          //                                           flex: 4,
+          //                                           child: Container(
+          //                                             decoration:
+          //                                                 const BoxDecoration(
+          //                                               color: Color.fromRGBO(
+          //                                                   50, 75, 119, 1),
+          //                                               borderRadius:
+          //                                                   BorderRadius.vertical(
+          //                                                       top: Radius
+          //                                                           .circular(
+          //                                                               15)),
+          //                                             ),
+          //                                             child: const Center(
+          //                                                 child: Text(
+          //                                               "Rent Past Due",
+          //                                               style: TextStyle(
+          //                                                   color: Colors.white,
+          //                                                   fontSize: 16,
+          //                                                   fontWeight:
+          //                                                       FontWeight.bold),
+          //                                             )),
+          //                                           ),
+          //                                         ),
+          //                                         Expanded(
+          //                                           flex: 8,
+          //                                           child: Container(
+          //                                               decoration:
+          //                                                   const BoxDecoration(
+          //                                                 color: Colors.white,
+          //                                                 borderRadius:
+          //                                                     BorderRadius.vertical(
+          //                                                         bottom: Radius
+          //                                                             .circular(
+          //                                                                 15)),
+          //                                               ),
+          //                                               child: Center(
+          //                                                 child: Text(
+          //                                                   "\$${totalRentPastDue}",
+          //                                                   style: const TextStyle(
+          //                                                       fontSize: 18,
+          //                                                       color: Color
+          //                                                           .fromRGBO(
+          //                                                               90,
+          //                                                               134,
+          //                                                               213,
+          //                                                               1),
+          //                                                       fontWeight:
+          //                                                           FontWeight
+          //                                                               .bold),
+          //                                                 ),
+          //                                               )),
+          //                                         ),
+          //                                       ],
+          //                                     ),
+          //                                   ),
+          //                                 ),
+          //                               ],
+          //                             );
+          //                           }
+          //                         },
+          //                       ),
+          //
+          //                       // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+          //                       // PieCharts(),
+          //                       // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+          //                       // Barchart()
+          //                       /*  const SizedBox(
+          //               height: 10,
+          //             ),*/
+          //                       LayoutBuilder(
+          //                         builder: (BuildContext context,
+          //                             BoxConstraints constraints) {
+          //                           // Check if the device width is less than 600 (considered as phone screen)
+          //                           if (constraints.maxWidth < 500) {
+          //                             // Phone layout
+          //                             return Column(
+          //                               children: [
+          //                                 /* Padding(
+          //                         padding: const EdgeInsets.only(
+          //                             left: 10, right: 10),
+          //                         child: PieCharts(dataMap: {
+          //                           "Properties": countList[0].toDouble(),
+          //                           "Gap1": 0.2,
+          //                           "Tenants": countList[1].toDouble(),
+          //                           "Gap2": 0.2,
+          //                           "Applicants": countList[2].toDouble(),
+          //                           "Gap3": 0.2,
+          //                           "Vendors": countList[3].toDouble(),
+          //                           "Gap4": 0.2,
+          //                           "Work Orders": countList[4].toDouble(),
+          //                           "Gap5": 0.2,
+          //                         }),
+          //                       ),*/
+          //                                 FlChartApp(
+          //                                   data: data,
+          //                                 ),
+          //                                 // Vertical layout for phone
+          //                                 SizedBox(
+          //                                     height: MediaQuery.of(context)
+          //                                             .size
+          //                                             .height *
+          //                                         0.015),
+          //                                 Padding(
+          //                                   padding: const EdgeInsets.only(
+          //                                       left: 0, right: 8),
+          //                                   child: Barchart(),
+          //                                 ),
+          //                               ],
+          //                             );
+          //                           } else {
+          //                             // Tablet layout
+          //                             return Padding(
+          //                               padding: const EdgeInsets.only(
+          //                                 top: 10,
+          //                               ),
+          //                               child: Row(
+          //                                 children: [
+          //                                   const SizedBox(
+          //                                     width: 20,
+          //                                   ),
+          //                                   Padding(
+          //                                     padding: const EdgeInsets.only(
+          //                                         left: 10, right: 10),
+          //                                     child: PieCharts(dataMap: {
+          //                                       "Properties":
+          //                                           countList[0].toDouble(),
+          //                                       "Gap1": 0.2,
+          //                                       "Tenants":
+          //                                           countList[1].toDouble(),
+          //                                       "Gap2": 0.2,
+          //                                       "Applicants":
+          //                                           countList[2].toDouble(),
+          //                                       "Gap3": 0.2,
+          //                                       "Vendors":
+          //                                           countList[3].toDouble(),
+          //                                       "Gap4": 0.2,
+          //                                       "Work Orders":
+          //                                           countList[4].toDouble(),
+          //                                       "Gap5": 0.2,
+          //                                     }),
+          //                                   ),
+          //                                   const SizedBox(
+          //                                     width: 10,
+          //                                   ),
+          //                                   Barchart(),
+          //                                 ],
+          //                               ),
+          //                             );
+          //                           }
+          //                         },
+          //                       ),
+          //                     ],
+          //                   ));
+          //       } else {
+          //         return SizedBox(
+          //           width: double.infinity,
+          //           child: Column(
+          //             mainAxisAlignment: MainAxisAlignment.center,
+          //             crossAxisAlignment: CrossAxisAlignment.center,
+          //             children: [
+          //            /*   Lottie.asset(
+          //                 'assets/Lottie/Connection.json',
+          //                 width: 200,
+          //                 height: 200,
+          //                 fit: BoxFit.fill,
+          //               ),*/
+          //               Text(
+          //                 'No Internet',
+          //                 style: TextStyle(
+          //                     fontSize: 18, fontWeight: FontWeight.bold),
+          //               ),
+          //               Text(
+          //                 'Check you internet connection',
+          //                 style: TextStyle(
+          //                     fontSize: 16, fontWeight: FontWeight.w500),
+          //               ),
+          //             ],
+          //           ),
+          //         );
+          //       }
+          //     }),
+          body: _connectivityResult !=ConnectivityResult.none ?
+          Center(
+              child: loading
+                  ? Lottie.asset('assets/images/loader.json',
+                  height: 150, width: 100)
+                  : ListView(
+                children: [
+                  // Material(
+                  //   elevation: 3,
+                  //   child: Divider(
+                  //     height: 1,
+                  //     color: Colors.transparent,
+                  //   ),
+                  // ),
+                  SizedBox(
+                      height: MediaQuery.of(context).size.height *
+                          0.012),
+                  //welcome
+                  LayoutBuilder(
+                    builder: (BuildContext context,
+                        BoxConstraints constraints) {
+                      return Row(
+                        children: [
+                          SizedBox(width: width * 0.05),
+                          Container(
+                            color: Color.fromRGBO(2, 121, 210, 1),
+                            margin: EdgeInsets.only(
+                              top: MediaQuery.of(context)
+                                  .size
+                                  .height *
+                                  0.012,
+                            ),
+                            width: 3,
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: MediaQuery.of(context)
+                                      .size
+                                      .height *
+                                      0.012 +
+                                      MediaQuery.of(context)
+                                          .size
+                                          .width *
+                                          0.04 +
+                                      3 +
+                                      16,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            mainAxisAlignment:
+                            MainAxisAlignment.start,
+                            crossAxisAlignment:
+                            CrossAxisAlignment.start,
                             children: [
-                              // Material(
-                              //   elevation: 3,
-                              //   child: Divider(
-                              //     height: 1,
-                              //     color: Colors.transparent,
-                              //   ),
-                              // ),
                               SizedBox(
-                                  height: MediaQuery.of(context).size.height *
+                                  height: MediaQuery.of(context)
+                                      .size
+                                      .height *
                                       0.012),
-                              //welcome
-                              LayoutBuilder(
-                                builder: (BuildContext context,
-                                    BoxConstraints constraints) {
-                                  return Row(
-                                    children: [
-                                      SizedBox(width: width * 0.05),
-                                      Container(
-                                        color: Color.fromRGBO(2, 121, 210, 1),
-                                        margin: EdgeInsets.only(
-                                          top: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.012,
-                                        ),
-                                        width: 3,
-                                        child: Column(
+                              Row(
+                                children: [
+                                  SizedBox(width: width * 0.05),
+                                  Text(
+                                    "Hello $firstname $lastname, Welcome back",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: MediaQuery.of(
+                                          context)
+                                          .size
+                                          .width >
+                                          500
+                                          ? MediaQuery.of(context)
+                                          .size
+                                          .width *
+                                          0.03
+                                          : MediaQuery.of(context)
+                                          .size
+                                          .width *
+                                          0.04,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              //   SizedBox(height: 3),
+                              // My Dashboard
+                              Row(
+                                children: [
+                                  SizedBox(width: width * 0.05),
+                                  Text(
+                                    "My Dashboard",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 22,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (constraints.maxWidth > 600) {
+                        // Tablet layout - horizontal
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                              left: 35, right: 80, top: 20),
+                          child: Wrap(
+                            alignment: WrapAlignment.start,
+                            spacing:
+                            MediaQuery.of(context).size.width *
+                                0.02,
+                            runSpacing:
+                            MediaQuery.of(context).size.width *
+                                0.02,
+                            children: List.generate(
+                              5,
+                                  (index) => SizedBox(
+                                width:
+                                160, // Ensure SizedBox has defined width
+                                height:
+                                160, // Ensure SizedBox has defined height
+                                child: Material(
+                                  elevation: 3,
+                                  borderRadius:
+                                  BorderRadius.circular(10),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: dashboardData
+                                          .colorc[index],
+                                      borderRadius:
+                                      BorderRadius.circular(10),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        const SizedBox(height: 10),
+                                        Row(
                                           children: [
-                                            Container(
-                                              height: MediaQuery.of(context)
-                                                          .size
-                                                          .height *
-                                                      0.012 +
-                                                  MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.04 +
-                                                  3 +
-                                                  16,
+                                            const SizedBox(
+                                                width: 10),
+                                            Material(
+                                              elevation: 5,
+                                              borderRadius:
+                                              BorderRadius
+                                                  .circular(20),
+                                              child: Container(
+                                                height: 40,
+                                                width: 40,
+                                                padding:
+                                                const EdgeInsets
+                                                    .all(10),
+                                                decoration:
+                                                BoxDecoration(
+                                                  color: dashboardData
+                                                      .colors[
+                                                  index],
+                                                  borderRadius:
+                                                  BorderRadius
+                                                      .circular(
+                                                      20),
+                                                ),
+                                                child: SvgPicture
+                                                    .asset(
+                                                  "${dashboardData.icons[index]}",
+                                                  fit: BoxFit.cover,
+                                                  height: 27,
+                                                  width: 27,
+                                                ),
+                                              ),
                                             ),
                                           ],
                                         ),
-                                      ),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.012),
-                                          Row(
-                                            children: [
-                                              SizedBox(width: width * 0.05),
-                                              Text(
-                                                "Hello $firstname $lastname, Welcome back",
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: MediaQuery.of(
-                                                                  context)
-                                                              .size
-                                                              .width >
-                                                          500
-                                                      ? MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          0.03
-                                                      : MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          0.04,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          //   SizedBox(height: 3),
-                                          // My Dashboard
-                                          Row(
-                                            children: [
-                                              SizedBox(width: width * 0.05),
-                                              Text(
-                                                "My Dashboard",
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 22,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  );
-                                },
-                              ),
-                              LayoutBuilder(
-                                builder: (context, constraints) {
-                                  if (constraints.maxWidth > 600) {
-                                    // Tablet layout - horizontal
-                                    return Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 35, right: 80, top: 20),
-                                      child: Wrap(
-                                        alignment: WrapAlignment.start,
-                                        spacing:
-                                            MediaQuery.of(context).size.width *
-                                                0.02,
-                                        runSpacing:
-                                            MediaQuery.of(context).size.width *
-                                                0.02,
-                                        children: List.generate(
-                                          5,
-                                          (index) => SizedBox(
-                                            width:
-                                                160, // Ensure SizedBox has defined width
-                                            height:
-                                                160, // Ensure SizedBox has defined height
-                                            child: Material(
-                                              elevation: 3,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: dashboardData
-                                                      .colorc[index],
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                child: Column(
-                                                  children: [
-                                                    const SizedBox(height: 10),
-                                                    Row(
-                                                      children: [
-                                                        const SizedBox(
-                                                            width: 10),
-                                                        Material(
-                                                          elevation: 5,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(20),
-                                                          child: Container(
-                                                            height: 40,
-                                                            width: 40,
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(10),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: dashboardData
-                                                                      .colors[
-                                                                  index],
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          20),
-                                                            ),
-                                                            child: SvgPicture
-                                                                .asset(
-                                                              "${dashboardData.icons[index]}",
-                                                              fit: BoxFit.cover,
-                                                              height: 27,
-                                                              width: 27,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(height: 10),
-                                                    Row(
-                                                      children: [
-                                                        const SizedBox(
-                                                            width: 10),
-                                                        Text(
-                                                          countList[index]
-                                                              .toString(),
-                                                          style:
-                                                              const TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(height: 10),
-                                                    Row(
-                                                      children: [
-                                                        const SizedBox(
-                                                            width: 10),
-                                                        Text(
-                                                          dashboardData
-                                                              .titles[index],
-                                                          style:
-                                                              const TextStyle(
-                                                            color: Colors.white,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 20,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
+                                        const SizedBox(height: 10),
+                                        Row(
+                                          children: [
+                                            const SizedBox(
+                                                width: 10),
+                                            Text(
+                                              countList[index]
+                                                  .toString(),
+                                              style:
+                                              const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 15,
+                                                fontWeight:
+                                                FontWeight.bold,
                                               ),
                                             ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Row(
+                                          children: [
+                                            const SizedBox(
+                                                width: 10),
+                                            Text(
+                                              dashboardData
+                                                  .titles[index],
+                                              style:
+                                              const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight:
+                                                FontWeight.bold,
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      } else {
+                        // Phone layout - vertical
+                        return Column(
+                          children: [
+                            SizedBox(
+                                height: MediaQuery.of(context)
+                                    .size
+                                    .width *
+                                    0.05),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 25, right: 25),
+                              child: GridView.builder(
+                                itemCount: 5,
+                                gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount:
+                                  2, // Number of items per row
+                                  crossAxisSpacing:
+                                  MediaQuery.of(context)
+                                      .size
+                                      .width *
+                                      0.02,
+                                  mainAxisSpacing:
+                                  MediaQuery.of(context)
+                                      .size
+                                      .width *
+                                      0.02,
+                                  childAspectRatio:
+                                  .99, // Adjust as needed for your design
+                                ),
+                                itemBuilder: (context, index) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                            pages[index]),
+                                      );
+                                    },
+                                    child: Material(
+                                      elevation: 3,
+                                      borderRadius:
+                                      BorderRadius.circular(10),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: dashboardData
+                                              .colorc[index],
+                                          borderRadius:
+                                          BorderRadius.circular(
+                                              8),
+                                        ),
+                                        child: Padding(
+                                          padding:
+                                          const EdgeInsets.only(
+                                              left: 5),
+                                          child: Column(
+                                            children: [
+                                              const SizedBox(
+                                                  height: 15),
+                                              Row(
+                                                children: [
+                                                  const SizedBox(
+                                                      width: 10),
+                                                  Material(
+                                                    elevation: 5,
+                                                    borderRadius:
+                                                    BorderRadius
+                                                        .circular(
+                                                        15),
+                                                    child:
+                                                    Container(
+                                                        height:
+                                                        50,
+                                                        width:
+                                                        50,
+                                                        padding: const EdgeInsets
+                                                            .all(
+                                                            10),
+                                                        decoration:
+                                                        BoxDecoration(
+                                                          color:
+                                                          dashboardData.colors[index],
+                                                          borderRadius:
+                                                          BorderRadius.circular(15),
+                                                        ),
+                                                        child: SvgPicture
+                                                            .asset(
+                                                          "${dashboardData.icons[index]}",
+                                                          // fit: BoxFit.cover,
+                                                          height:
+                                                          30,
+                                                          width:
+                                                          30,
+                                                        )),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                  height: 16),
+                                              Row(
+                                                children: [
+                                                  const SizedBox(
+                                                      width: 10),
+                                                  Text(
+                                                    countList[index]
+                                                        .toString(),
+                                                    style:
+                                                    const TextStyle(
+                                                      color: Colors
+                                                          .white,
+                                                      fontWeight:
+                                                      FontWeight
+                                                          .bold,
+                                                      fontSize: 20,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                  height: 10),
+                                              Row(
+                                                children: [
+                                                  const SizedBox(
+                                                      width: 10),
+                                                  Text(
+                                                    dashboardData
+                                                        .titles[
+                                                    index],
+                                                    style:
+                                                    const TextStyle(
+                                                      color: Colors
+                                                          .white,
+                                                      fontWeight:
+                                                      FontWeight
+                                                          .bold,
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  Icon(
+                                                    Icons
+                                                        .arrow_forward_rounded,
+                                                    color: Colors
+                                                        .white,
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),
-                                    );
-                                  } else {
-                                    // Phone layout - vertical
-                                    return Column(
-                                      children: [
-                                        SizedBox(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.05),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 25, right: 25),
-                                          child: GridView.builder(
-                                            itemCount: 5,
-                                            gridDelegate:
-                                                SliverGridDelegateWithFixedCrossAxisCount(
-                                              crossAxisCount:
-                                                  2, // Number of items per row
-                                              crossAxisSpacing:
-                                                  MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.02,
-                                              mainAxisSpacing:
-                                                  MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.02,
-                                              childAspectRatio:
-                                                  .99, // Adjust as needed for your design
-                                            ),
-                                            itemBuilder: (context, index) {
-                                              return GestureDetector(
-                                                onTap: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            pages[index]),
-                                                  );
-                                                },
-                                                child: Material(
-                                                  elevation: 3,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      color: dashboardData
-                                                          .colorc[index],
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                    ),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 5),
-                                                      child: Column(
-                                                        children: [
-                                                          const SizedBox(
-                                                              height: 15),
-                                                          Row(
-                                                            children: [
-                                                              const SizedBox(
-                                                                  width: 10),
-                                                              Material(
-                                                                elevation: 5,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            15),
-                                                                child:
-                                                                    Container(
-                                                                        height:
-                                                                            50,
-                                                                        width:
-                                                                            50,
-                                                                        padding: const EdgeInsets
-                                                                            .all(
-                                                                            10),
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          color:
-                                                                              dashboardData.colors[index],
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(15),
-                                                                        ),
-                                                                        child: SvgPicture
-                                                                            .asset(
-                                                                          "${dashboardData.icons[index]}",
-                                                                          // fit: BoxFit.cover,
-                                                                          height:
-                                                                              30,
-                                                                          width:
-                                                                              30,
-                                                                        )),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                              height: 16),
-                                                          Row(
-                                                            children: [
-                                                              const SizedBox(
-                                                                  width: 10),
-                                                              Text(
-                                                                countList[index]
-                                                                    .toString(),
-                                                                style:
-                                                                    const TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontSize: 20,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                              height: 10),
-                                                          Row(
-                                                            children: [
-                                                              const SizedBox(
-                                                                  width: 10),
-                                                              Text(
-                                                                dashboardData
-                                                                        .titles[
-                                                                    index],
-                                                                style:
-                                                                    const TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontSize: 18,
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                width: 5,
-                                                              ),
-                                                              Icon(
-                                                                Icons
-                                                                    .arrow_forward_rounded,
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                            shrinkWrap:
-                                                true, // If you want the GridView to take only the space it needs
-                                            physics:
-                                                const NeverScrollableScrollPhysics(), // If you don't want it to scroll
-                                          ),
-                                        )
-                                      ],
-                                    );
-                                  }
+                                    ),
+                                  );
                                 },
+                                shrinkWrap:
+                                true, // If you want the GridView to take only the space it needs
+                                physics:
+                                const NeverScrollableScrollPhysics(), // If you don't want it to scroll
                               ),
+                            )
+                          ],
+                        );
+                      }
+                    },
+                  ),
 
-                              /*  SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+                  /*  SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                     Row(
                       children: [
                         SizedBox(
@@ -1017,822 +4318,822 @@ class _DashboardState extends State<Dashboard> {
                       ],
 
                     ),*/
-                              // LayoutBuilder(builder: (context, BoxConstraints) {
-                              //   if (BoxConstraints.maxWidth > 500) {
-                              //     return Container();
-                              //   } else {
-                              //     return Container();
-                              //   }
-                              // }),
+                  // LayoutBuilder(builder: (context, BoxConstraints) {
+                  //   if (BoxConstraints.maxWidth > 500) {
+                  //     return Container();
+                  //   } else {
+                  //     return Container();
+                  //   }
+                  // }),
 
-                              LayoutBuilder(
-                                builder: (context, constraints) {
-                                  if (constraints.maxWidth > 600) {
-                                    // Tablet layout - horizontal
-                                    return Column(
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (constraints.maxWidth > 600) {
+                        // Tablet layout - horizontal
+                        return Column(
+                          children: [
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                  width: 360,
+                                  height: 110,
+                                  margin: EdgeInsets.symmetric(
+                                      horizontal: width * .040),
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(15)),
+                                  ),
+                                  child: Material(
+                                    elevation: 3,
+                                    borderRadius:
+                                    const BorderRadius.all(
+                                        Radius.circular(15)),
+                                    child: Column(
                                       children: [
-                                        const SizedBox(
-                                          height: 20,
-                                        ),
-                                        Row(
-                                          children: [
-                                            Container(
-                                              width: 360,
-                                              height: 110,
-                                              margin: EdgeInsets.symmetric(
-                                                  horizontal: width * .040),
-                                              decoration: const BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(15)),
-                                              ),
-                                              child: Material(
-                                                elevation: 3,
-                                                borderRadius:
-                                                    const BorderRadius.all(
-                                                        Radius.circular(15)),
-                                                child: Column(
-                                                  children: [
-                                                    Expanded(
-                                                      flex: 4,
-                                                      child: Container(
-                                                        decoration:
-                                                            const BoxDecoration(
-                                                          color: Color.fromRGBO(
-                                                              50, 75, 119, 1),
-                                                          borderRadius:
-                                                              BorderRadius.vertical(
-                                                                  top: Radius
-                                                                      .circular(
-                                                                          15)),
-                                                        ),
-                                                        child: const Center(
-                                                            child: Text(
-                                                          "Rent Due",
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        )),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 8,
-                                                      child: Container(
-                                                        decoration:
-                                                            const BoxDecoration(
-                                                          color: Colors.white,
-                                                          borderRadius:
-                                                              BorderRadius.vertical(
-                                                                  bottom: Radius
-                                                                      .circular(
-                                                                          15)),
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceEvenly,
-                                                            children: [
-                                                              Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  const Text(
-                                                                    "Current Month",
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            16,
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color: Color.fromRGBO(
-                                                                            138,
-                                                                            149,
-                                                                            168,
-                                                                            1)),
-                                                                  ),
-                                                                  // SizedBox(height: 8), // Space between the text
-                                                                  Text(
-                                                                    "\$${currentMonthRentDue}",
-                                                                    style: const TextStyle(
-                                                                        fontSize:
-                                                                            16,
-                                                                        color: Color.fromRGBO(
-                                                                            90,
-                                                                            134,
-                                                                            213,
-                                                                            1),
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  const Text(
-                                                                    "Last Month",
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            16,
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color: Color.fromRGBO(
-                                                                            138,
-                                                                            149,
-                                                                            168,
-                                                                            1)),
-                                                                  ),
-                                                                  // SizedBox(height: 8), // Space between the text
-                                                                  Text(
-                                                                    "\$${lastMonthRentDue}",
-                                                                    style: const TextStyle(
-                                                                        fontSize:
-                                                                            16,
-                                                                        color: Color.fromRGBO(
-                                                                            90,
-                                                                            134,
-                                                                            213,
-                                                                            1),
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
+                                        Expanded(
+                                          flex: 4,
+                                          child: Container(
+                                            decoration:
+                                            const BoxDecoration(
+                                              color: Color.fromRGBO(
+                                                  50, 75, 119, 1),
+                                              borderRadius:
+                                              BorderRadius.vertical(
+                                                  top: Radius
+                                                      .circular(
+                                                      15)),
                                             ),
-                                            Container(
-                                              width: 360,
-                                              height: 110,
-                                              margin: EdgeInsets.symmetric(
-                                                  horizontal: width * .00),
-                                              decoration: const BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(15)),
-                                              ),
-                                              child: Material(
-                                                elevation: 3,
-                                                borderRadius:
-                                                    const BorderRadius.all(
-                                                        Radius.circular(15)),
-                                                child: Column(
-                                                  children: [
-                                                    Expanded(
-                                                      flex: 4,
-                                                      child: Container(
-                                                        decoration:
-                                                            const BoxDecoration(
-                                                          color: Color.fromRGBO(
-                                                              50, 75, 119, 1),
-                                                          borderRadius:
-                                                              BorderRadius.vertical(
-                                                                  top: Radius
-                                                                      .circular(
-                                                                          15)),
-                                                        ),
-                                                        child: const Center(
-                                                            child: Text(
-                                                          "Rent Paid",
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        )),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 8,
-                                                      child: Container(
-                                                        decoration:
-                                                            const BoxDecoration(
-                                                          color: Colors.white,
-                                                          borderRadius:
-                                                              BorderRadius.vertical(
-                                                                  bottom: Radius
-                                                                      .circular(
-                                                                          15)),
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceEvenly,
-                                                            children: [
-                                                              Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  const Text(
-                                                                    "Current Month",
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            16,
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color: Color.fromRGBO(
-                                                                            138,
-                                                                            149,
-                                                                            168,
-                                                                            1)),
-                                                                  ),
-                                                                  // SizedBox(height: 8), // Space between the text
-                                                                  Text(
-                                                                    "\$${currentMonthRentPaid}",
-                                                                    style: const TextStyle(
-                                                                        fontSize:
-                                                                            16,
-                                                                        color: Color.fromRGBO(
-                                                                            90,
-                                                                            134,
-                                                                            213,
-                                                                            1),
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  const Text(
-                                                                    "Last Month",
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            16,
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color: Color.fromRGBO(
-                                                                            138,
-                                                                            149,
-                                                                            168,
-                                                                            1)),
-                                                                  ),
-                                                                  // SizedBox(height: 8), // Space between the text
-                                                                  Text(
-                                                                    "\$${lastMonthRentPaid}",
-                                                                    style: const TextStyle(
-                                                                        fontSize:
-                                                                            16,
-                                                                        color: Color.fromRGBO(
-                                                                            90,
-                                                                            134,
-                                                                            213,
-                                                                            1),
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(
-                                          height: 20,
-                                        ),
-                                        Row(
-                                          children: [
-                                            Container(
-                                              width: 360,
-                                              height: 110,
-                                              margin: EdgeInsets.symmetric(
-                                                  horizontal: width * .040),
-                                              decoration: const BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(15)),
-                                              ),
-                                              child: Material(
-                                                elevation: 3,
-                                                borderRadius:
-                                                    const BorderRadius.all(
-                                                        Radius.circular(15)),
-                                                child: Column(
-                                                  children: [
-                                                    Expanded(
-                                                      flex: 4,
-                                                      child: Container(
-                                                        decoration:
-                                                            const BoxDecoration(
-                                                          color: Color.fromRGBO(
-                                                              50, 75, 119, 1),
-                                                          borderRadius:
-                                                              BorderRadius.vertical(
-                                                                  top: Radius
-                                                                      .circular(
-                                                                          15)),
-                                                        ),
-                                                        child: const Center(
-                                                            child: Text(
-                                                          "Rent Past Due",
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        )),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 8,
-                                                      child: Container(
-                                                          decoration:
-                                                              const BoxDecoration(
-                                                            color: Colors.white,
-                                                            borderRadius:
-                                                                BorderRadius.vertical(
-                                                                    bottom: Radius
-                                                                        .circular(
-                                                                            15)),
-                                                          ),
-                                                          child: Center(
-                                                            child: Text(
-                                                              "\$${totalRentPastDue}",
-                                                              style: const TextStyle(
-                                                                  fontSize: 18,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          90,
-                                                                          134,
-                                                                          213,
-                                                                          1),
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                            ),
-                                                          )),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Container(
-                                              width: 350,
-                                              height: 110,
-                                              margin: EdgeInsets.symmetric(
-                                                  horizontal: width * .00),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    );
-                                  } else {
-                                    // Phone layout - vertical
-                                    return Column(
-                                      children: [
-                                        const SizedBox(
-                                          height: 20,
-                                        ),
-                                        Container(
-                                          height: 110,
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal: width * .05),
-                                          decoration: const BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(15)),
-                                          ),
-                                          child: Material(
-                                            elevation: 3,
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(15)),
-                                            child: Column(
-                                              children: [
-                                                Expanded(
-                                                  flex: 4,
-                                                  child: Container(
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                      color: Color.fromRGBO(
-                                                          50, 75, 119, 1),
-                                                      borderRadius:
-                                                          BorderRadius.vertical(
-                                                              top: Radius
-                                                                  .circular(
-                                                                      15)),
-                                                    ),
-                                                    child: const Center(
-                                                        child: Text(
-                                                      "Rent Due",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    )),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 8,
-                                                  child: Container(
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius:
-                                                          BorderRadius.vertical(
-                                                              bottom: Radius
-                                                                  .circular(
-                                                                      15)),
-                                                    ),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceEvenly,
-                                                        children: [
-                                                          Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              const Text(
-                                                                "Current Month",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color: Color
-                                                                        .fromRGBO(
-                                                                            138,
-                                                                            149,
-                                                                            168,
-                                                                            1)),
-                                                              ),
-                                                              // SizedBox(height: 8), // Space between the text
-                                                              Text(
-                                                                "\$${currentMonthRentDue}",
-                                                                style: const TextStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    color: Color
-                                                                        .fromRGBO(
-                                                                            90,
-                                                                            134,
-                                                                            213,
-                                                                            1),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              const Text(
-                                                                "Last Month",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color: Color
-                                                                        .fromRGBO(
-                                                                            138,
-                                                                            149,
-                                                                            168,
-                                                                            1)),
-                                                              ),
-                                                              // SizedBox(height: 8), // Space between the text
-                                                              Text(
-                                                                "\$${lastMonthRentDue}",
-                                                                style: const TextStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    color: Color
-                                                                        .fromRGBO(
-                                                                            90,
-                                                                            134,
-                                                                            213,
-                                                                            1),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                            child: const Center(
+                                                child: Text(
+                                                  "Rent Due",
+                                                  style: TextStyle(
+                                                      color:
+                                                      Colors.white,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                      FontWeight
+                                                          .bold),
+                                                )),
                                           ),
                                         ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Container(
-                                          height: 110,
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal: width * .05),
-                                          decoration: const BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(15)),
-                                          ),
-                                          child: Material(
-                                            elevation: 3,
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(15)),
-                                            child: Column(
-                                              children: [
-                                                Expanded(
-                                                  flex: 4,
-                                                  child: Container(
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                      color: Color.fromRGBO(
-                                                          50, 75, 119, 1),
-                                                      borderRadius:
-                                                          BorderRadius.vertical(
-                                                              top: Radius
-                                                                  .circular(
-                                                                      15)),
-                                                    ),
-                                                    child: const Center(
-                                                        child: Text(
-                                                      "Rent Paid",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    )),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 8,
-                                                  child: Container(
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius:
-                                                          BorderRadius.vertical(
-                                                              bottom: Radius
-                                                                  .circular(
-                                                                      15)),
-                                                    ),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceEvenly,
-                                                        children: [
-                                                          Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              const Text(
-                                                                "Current Month",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color: Color
-                                                                        .fromRGBO(
-                                                                            138,
-                                                                            149,
-                                                                            168,
-                                                                            1)),
-                                                              ),
-                                                              // SizedBox(height: 8), // Space between the text
-                                                              Text(
-                                                                "\$${currentMonthRentPaid}",
-                                                                style: const TextStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    color: Color
-                                                                        .fromRGBO(
-                                                                            90,
-                                                                            134,
-                                                                            213,
-                                                                            1),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              const Text(
-                                                                "Last Month",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color: Color
-                                                                        .fromRGBO(
-                                                                            138,
-                                                                            149,
-                                                                            168,
-                                                                            1)),
-                                                              ),
-                                                              // SizedBox(height: 8), // Space between the text
-                                                              Text(
-                                                                "\$${lastMonthRentPaid}",
-                                                                style: const TextStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    color: Color
-                                                                        .fromRGBO(
-                                                                            90,
-                                                                            134,
-                                                                            213,
-                                                                            1),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
+                                        Expanded(
+                                          flex: 8,
+                                          child: Container(
+                                            decoration:
+                                            const BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                              BorderRadius.vertical(
+                                                  bottom: Radius
+                                                      .circular(
+                                                      15)),
                                             ),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Container(
-                                          height: 110,
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal: width * .05),
-                                          decoration: const BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(15)),
-                                          ),
-                                          child: Material(
-                                            elevation: 3,
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(15)),
-                                            child: Column(
-                                              children: [
-                                                Expanded(
-                                                  flex: 4,
-                                                  child: Container(
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                      color: Color.fromRGBO(
-                                                          50, 75, 119, 1),
-                                                      borderRadius:
-                                                          BorderRadius.vertical(
-                                                              top: Radius
-                                                                  .circular(
-                                                                      15)),
-                                                    ),
-                                                    child: const Center(
-                                                        child: Text(
-                                                      "Rent Past Due",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    )),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 8,
-                                                  child: Container(
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                        color: Colors.white,
-                                                        borderRadius:
-                                                            BorderRadius.vertical(
-                                                                bottom: Radius
-                                                                    .circular(
-                                                                        15)),
+                                            child: Padding(
+                                              padding:
+                                              const EdgeInsets
+                                                  .all(8.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .spaceEvenly,
+                                                children: [
+                                                  Column(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .center,
+                                                    crossAxisAlignment:
+                                                    CrossAxisAlignment
+                                                        .center,
+                                                    children: [
+                                                      const Text(
+                                                        "Current Month",
+                                                        style: TextStyle(
+                                                            fontSize:
+                                                            16,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .bold,
+                                                            color: Color.fromRGBO(
+                                                                138,
+                                                                149,
+                                                                168,
+                                                                1)),
                                                       ),
-                                                      child: Center(
-                                                        child: Text(
-                                                          "\$${totalRentPastDue}",
-                                                          style: const TextStyle(
-                                                              fontSize: 18,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      90,
-                                                                      134,
-                                                                      213,
-                                                                      1),
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        ),
-                                                      )),
-                                                ),
-                                              ],
+                                                      // SizedBox(height: 8), // Space between the text
+                                                      Text(
+                                                        "\$${currentMonthRentDue}",
+                                                        style: const TextStyle(
+                                                            fontSize:
+                                                            16,
+                                                            color: Color.fromRGBO(
+                                                                90,
+                                                                134,
+                                                                213,
+                                                                1),
+                                                            fontWeight:
+                                                            FontWeight.bold),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Column(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .center,
+                                                    crossAxisAlignment:
+                                                    CrossAxisAlignment
+                                                        .center,
+                                                    children: [
+                                                      const Text(
+                                                        "Last Month",
+                                                        style: TextStyle(
+                                                            fontSize:
+                                                            16,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .bold,
+                                                            color: Color.fromRGBO(
+                                                                138,
+                                                                149,
+                                                                168,
+                                                                1)),
+                                                      ),
+                                                      // SizedBox(height: 8), // Space between the text
+                                                      Text(
+                                                        "\$${lastMonthRentDue}",
+                                                        style: const TextStyle(
+                                                            fontSize:
+                                                            16,
+                                                            color: Color.fromRGBO(
+                                                                90,
+                                                                134,
+                                                                213,
+                                                                1),
+                                                            fontWeight:
+                                                            FontWeight.bold),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ],
-                                    );
-                                  }
-                                },
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  width: 360,
+                                  height: 110,
+                                  margin: EdgeInsets.symmetric(
+                                      horizontal: width * .00),
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(15)),
+                                  ),
+                                  child: Material(
+                                    elevation: 3,
+                                    borderRadius:
+                                    const BorderRadius.all(
+                                        Radius.circular(15)),
+                                    child: Column(
+                                      children: [
+                                        Expanded(
+                                          flex: 4,
+                                          child: Container(
+                                            decoration:
+                                            const BoxDecoration(
+                                              color: Color.fromRGBO(
+                                                  50, 75, 119, 1),
+                                              borderRadius:
+                                              BorderRadius.vertical(
+                                                  top: Radius
+                                                      .circular(
+                                                      15)),
+                                            ),
+                                            child: const Center(
+                                                child: Text(
+                                                  "Rent Paid",
+                                                  style: TextStyle(
+                                                      color:
+                                                      Colors.white,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                      FontWeight
+                                                          .bold),
+                                                )),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 8,
+                                          child: Container(
+                                            decoration:
+                                            const BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                              BorderRadius.vertical(
+                                                  bottom: Radius
+                                                      .circular(
+                                                      15)),
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                              const EdgeInsets
+                                                  .all(8.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .spaceEvenly,
+                                                children: [
+                                                  Column(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .center,
+                                                    crossAxisAlignment:
+                                                    CrossAxisAlignment
+                                                        .center,
+                                                    children: [
+                                                      const Text(
+                                                        "Current Month",
+                                                        style: TextStyle(
+                                                            fontSize:
+                                                            16,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .bold,
+                                                            color: Color.fromRGBO(
+                                                                138,
+                                                                149,
+                                                                168,
+                                                                1)),
+                                                      ),
+                                                      // SizedBox(height: 8), // Space between the text
+                                                      Text(
+                                                        "\$${currentMonthRentPaid}",
+                                                        style: const TextStyle(
+                                                            fontSize:
+                                                            16,
+                                                            color: Color.fromRGBO(
+                                                                90,
+                                                                134,
+                                                                213,
+                                                                1),
+                                                            fontWeight:
+                                                            FontWeight.bold),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Column(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .center,
+                                                    crossAxisAlignment:
+                                                    CrossAxisAlignment
+                                                        .center,
+                                                    children: [
+                                                      const Text(
+                                                        "Last Month",
+                                                        style: TextStyle(
+                                                            fontSize:
+                                                            16,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .bold,
+                                                            color: Color.fromRGBO(
+                                                                138,
+                                                                149,
+                                                                168,
+                                                                1)),
+                                                      ),
+                                                      // SizedBox(height: 8), // Space between the text
+                                                      Text(
+                                                        "\$${lastMonthRentPaid}",
+                                                        style: const TextStyle(
+                                                            fontSize:
+                                                            16,
+                                                            color: Color.fromRGBO(
+                                                                90,
+                                                                134,
+                                                                213,
+                                                                1),
+                                                            fontWeight:
+                                                            FontWeight.bold),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                  width: 360,
+                                  height: 110,
+                                  margin: EdgeInsets.symmetric(
+                                      horizontal: width * .040),
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(15)),
+                                  ),
+                                  child: Material(
+                                    elevation: 3,
+                                    borderRadius:
+                                    const BorderRadius.all(
+                                        Radius.circular(15)),
+                                    child: Column(
+                                      children: [
+                                        Expanded(
+                                          flex: 4,
+                                          child: Container(
+                                            decoration:
+                                            const BoxDecoration(
+                                              color: Color.fromRGBO(
+                                                  50, 75, 119, 1),
+                                              borderRadius:
+                                              BorderRadius.vertical(
+                                                  top: Radius
+                                                      .circular(
+                                                      15)),
+                                            ),
+                                            child: const Center(
+                                                child: Text(
+                                                  "Rent Past Due",
+                                                  style: TextStyle(
+                                                      color:
+                                                      Colors.white,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                      FontWeight
+                                                          .bold),
+                                                )),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 8,
+                                          child: Container(
+                                              decoration:
+                                              const BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                BorderRadius.vertical(
+                                                    bottom: Radius
+                                                        .circular(
+                                                        15)),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  "\$${totalRentPastDue}",
+                                                  style: const TextStyle(
+                                                      fontSize: 18,
+                                                      color: Color
+                                                          .fromRGBO(
+                                                          90,
+                                                          134,
+                                                          213,
+                                                          1),
+                                                      fontWeight:
+                                                      FontWeight
+                                                          .bold),
+                                                ),
+                                              )),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  width: 350,
+                                  height: 110,
+                                  margin: EdgeInsets.symmetric(
+                                      horizontal: width * .00),
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      } else {
+                        // Phone layout - vertical
+                        return Column(
+                          children: [
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Container(
+                              height: 110,
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: width * .05),
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(15)),
                               ),
+                              child: Material(
+                                elevation: 3,
+                                borderRadius:
+                                const BorderRadius.all(
+                                    Radius.circular(15)),
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      flex: 4,
+                                      child: Container(
+                                        decoration:
+                                        const BoxDecoration(
+                                          color: Color.fromRGBO(
+                                              50, 75, 119, 1),
+                                          borderRadius:
+                                          BorderRadius.vertical(
+                                              top: Radius
+                                                  .circular(
+                                                  15)),
+                                        ),
+                                        child: const Center(
+                                            child: Text(
+                                              "Rent Due",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                  fontWeight:
+                                                  FontWeight.bold),
+                                            )),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 8,
+                                      child: Container(
+                                        decoration:
+                                        const BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                          BorderRadius.vertical(
+                                              bottom: Radius
+                                                  .circular(
+                                                  15)),
+                                        ),
+                                        child: Padding(
+                                          padding:
+                                          const EdgeInsets.all(
+                                              8.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment
+                                                .spaceEvenly,
+                                            children: [
+                                              Column(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .center,
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment
+                                                    .center,
+                                                children: [
+                                                  const Text(
+                                                    "Current Month",
+                                                    style: TextStyle(
+                                                        fontSize:
+                                                        16,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            138,
+                                                            149,
+                                                            168,
+                                                            1)),
+                                                  ),
+                                                  // SizedBox(height: 8), // Space between the text
+                                                  Text(
+                                                    "\$${currentMonthRentDue}",
+                                                    style: const TextStyle(
+                                                        fontSize:
+                                                        16,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            90,
+                                                            134,
+                                                            213,
+                                                            1),
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ],
+                                              ),
+                                              Column(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .center,
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment
+                                                    .center,
+                                                children: [
+                                                  const Text(
+                                                    "Last Month",
+                                                    style: TextStyle(
+                                                        fontSize:
+                                                        16,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            138,
+                                                            149,
+                                                            168,
+                                                            1)),
+                                                  ),
+                                                  // SizedBox(height: 8), // Space between the text
+                                                  Text(
+                                                    "\$${lastMonthRentDue}",
+                                                    style: const TextStyle(
+                                                        fontSize:
+                                                        16,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            90,
+                                                            134,
+                                                            213,
+                                                            1),
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                              height: 110,
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: width * .05),
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(15)),
+                              ),
+                              child: Material(
+                                elevation: 3,
+                                borderRadius:
+                                const BorderRadius.all(
+                                    Radius.circular(15)),
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      flex: 4,
+                                      child: Container(
+                                        decoration:
+                                        const BoxDecoration(
+                                          color: Color.fromRGBO(
+                                              50, 75, 119, 1),
+                                          borderRadius:
+                                          BorderRadius.vertical(
+                                              top: Radius
+                                                  .circular(
+                                                  15)),
+                                        ),
+                                        child: const Center(
+                                            child: Text(
+                                              "Rent Paid",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                  fontWeight:
+                                                  FontWeight.bold),
+                                            )),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 8,
+                                      child: Container(
+                                        decoration:
+                                        const BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                          BorderRadius.vertical(
+                                              bottom: Radius
+                                                  .circular(
+                                                  15)),
+                                        ),
+                                        child: Padding(
+                                          padding:
+                                          const EdgeInsets.all(
+                                              8.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment
+                                                .spaceEvenly,
+                                            children: [
+                                              Column(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .center,
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment
+                                                    .center,
+                                                children: [
+                                                  const Text(
+                                                    "Current Month",
+                                                    style: TextStyle(
+                                                        fontSize:
+                                                        16,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            138,
+                                                            149,
+                                                            168,
+                                                            1)),
+                                                  ),
+                                                  // SizedBox(height: 8), // Space between the text
+                                                  Text(
+                                                    "\$${currentMonthRentPaid}",
+                                                    style: const TextStyle(
+                                                        fontSize:
+                                                        16,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            90,
+                                                            134,
+                                                            213,
+                                                            1),
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ],
+                                              ),
+                                              Column(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .center,
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment
+                                                    .center,
+                                                children: [
+                                                  const Text(
+                                                    "Last Month",
+                                                    style: TextStyle(
+                                                        fontSize:
+                                                        16,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            138,
+                                                            149,
+                                                            168,
+                                                            1)),
+                                                  ),
+                                                  // SizedBox(height: 8), // Space between the text
+                                                  Text(
+                                                    "\$${lastMonthRentPaid}",
+                                                    style: const TextStyle(
+                                                        fontSize:
+                                                        16,
+                                                        color: Color
+                                                            .fromRGBO(
+                                                            90,
+                                                            134,
+                                                            213,
+                                                            1),
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                              height: 110,
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: width * .05),
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(15)),
+                              ),
+                              child: Material(
+                                elevation: 3,
+                                borderRadius:
+                                const BorderRadius.all(
+                                    Radius.circular(15)),
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      flex: 4,
+                                      child: Container(
+                                        decoration:
+                                        const BoxDecoration(
+                                          color: Color.fromRGBO(
+                                              50, 75, 119, 1),
+                                          borderRadius:
+                                          BorderRadius.vertical(
+                                              top: Radius
+                                                  .circular(
+                                                  15)),
+                                        ),
+                                        child: const Center(
+                                            child: Text(
+                                              "Rent Past Due",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                  fontWeight:
+                                                  FontWeight.bold),
+                                            )),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 8,
+                                      child: Container(
+                                          decoration:
+                                          const BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                            BorderRadius.vertical(
+                                                bottom: Radius
+                                                    .circular(
+                                                    15)),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "\$${totalRentPastDue}",
+                                              style: const TextStyle(
+                                                  fontSize: 18,
+                                                  color: Color
+                                                      .fromRGBO(
+                                                      90,
+                                                      134,
+                                                      213,
+                                                      1),
+                                                  fontWeight:
+                                                  FontWeight
+                                                      .bold),
+                                            ),
+                                          )),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                    },
+                  ),
 
-                              // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-                              // PieCharts(),
-                              // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-                              // Barchart()
-                              /*  const SizedBox(
+                  // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+                  // PieCharts(),
+                  // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+                  // Barchart()
+                  /*  const SizedBox(
                       height: 10,
                     ),*/
-                              LayoutBuilder(
-                                builder: (BuildContext context,
-                                    BoxConstraints constraints) {
-                                  // Check if the device width is less than 600 (considered as phone screen)
-                                  if (constraints.maxWidth < 500) {
-                                    // Phone layout
-                                    return Column(
-                                      children: [
-                                        /* Padding(
+                  LayoutBuilder(
+                    builder: (BuildContext context,
+                        BoxConstraints constraints) {
+                      // Check if the device width is less than 600 (considered as phone screen)
+                      if (constraints.maxWidth < 500) {
+                        // Phone layout
+                        return Column(
+                          children: [
+                            /* Padding(
                                 padding: const EdgeInsets.only(
                                     left: 10, right: 10),
                                 child: PieCharts(dataMap: {
@@ -1848,94 +5149,91 @@ class _DashboardState extends State<Dashboard> {
                                   "Gap5": 0.2,
                                 }),
                               ),*/
-                                        FlChartApp(
-                                          data: data,
-                                        ),
-                                        // Vertical layout for phone
-                                        SizedBox(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.015),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 0, right: 8),
-                                          child: Barchart(),
-                                        ),
-                                      ],
-                                    );
-                                  } else {
-                                    // Tablet layout
-                                    return Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 10,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          const SizedBox(
-                                            width: 20,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 10, right: 10),
-                                            child: PieCharts(dataMap: {
-                                              "Properties":
-                                                  countList[0].toDouble(),
-                                              "Gap1": 0.2,
-                                              "Tenants":
-                                                  countList[1].toDouble(),
-                                              "Gap2": 0.2,
-                                              "Applicants":
-                                                  countList[2].toDouble(),
-                                              "Gap3": 0.2,
-                                              "Vendors":
-                                                  countList[3].toDouble(),
-                                              "Gap4": 0.2,
-                                              "Work Orders":
-                                                  countList[4].toDouble(),
-                                              "Gap5": 0.2,
-                                            }),
-                                          ),
-                                          const SizedBox(
-                                            width: 10,
-                                          ),
-                                          Barchart(),
-                                        ],
-                                      ),
-                                    );
-                                  }
-                                },
+                            FlChartApp(
+                              data: data,
+                            ),
+                            // Vertical layout for phone
+                            SizedBox(
+                                height: MediaQuery.of(context)
+                                    .size
+                                    .height *
+                                    0.015),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 0, right: 8),
+                              child: Barchart(),
+                            ),
+                          ],
+                        );
+                      } else {
+                        // Tablet layout
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                            top: 10,
+                          ),
+                          child: Row(
+                            children: [
+                              const SizedBox(
+                                width: 20,
                               ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10, right: 10),
+                                child: PieCharts(dataMap: {
+                                  "Properties":
+                                  countList[0].toDouble(),
+                                  "Gap1": 0.2,
+                                  "Tenants":
+                                  countList[1].toDouble(),
+                                  "Gap2": 0.2,
+                                  "Applicants":
+                                  countList[2].toDouble(),
+                                  "Gap3": 0.2,
+                                  "Vendors":
+                                  countList[3].toDouble(),
+                                  "Gap4": 0.2,
+                                  "Work Orders":
+                                  countList[4].toDouble(),
+                                  "Gap5": 0.2,
+                                }),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Barchart(),
                             ],
-                          ));
-              } else {
-                return SizedBox(
-                  width: double.infinity,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                   /*   Lottie.asset(
-                        'assets/Lottie/Connection.json',
-                        width: 200,
-                        height: 200,
-                        fit: BoxFit.fill,
-                      ),*/
-                      Text(
-                        'No Internet',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        'Check you internet connection',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500),
-                      ),
-                    ],
+                          ),
+                        );
+                      }
+                    },
                   ),
-                );
-              }
-            }),
+                ],
+              ))
+              : SizedBox(
+            width: double.infinity,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                   Lottie.asset(
+                    'assets/no_internet.json',
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.fill,
+                  ),
+                Text(
+                  'No Internet',
+                  style: TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  'Check your internet connection',
+                  style: TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+          )
       ),
     );
   }

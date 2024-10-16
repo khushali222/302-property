@@ -1,46 +1,55 @@
 import 'dart:async';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 
-class checkConnection extends ChangeNotifier {
-  bool _isConnect = false;
+class CheckConnection extends ChangeNotifier {
+  bool _isConnected = false;
+  bool get isConnected => _isConnected;
 
-  bool get isConnect => _isConnect;
-
+  // Broadcast stream to support multiple listeners
   final StreamController<bool> _connectivityController =
-  StreamController<bool>();
+  StreamController<bool>.broadcast();
 
   Stream<bool> get connectivityStream => _connectivityController.stream;
 
-  checkConnection() {
-    _checkConnectivity();
+  CheckConnection() {
+    _initializeConnectivity();
   }
 
-  void _checkConnectivity() async {
-    print('Entry');
-    List<ConnectivityResult> connectivityResult =
-    await (Connectivity().checkConnectivity());
+  void _initializeConnectivity() async {
+    await _checkInitialConnectivity(); // Check initial connectivity.
+    _listenForConnectivityChanges(); // Listen for changes in connectivity.
+  }
 
-    if (connectivityResult.contains(ConnectivityResult.mobile)) {
-      _connectivityController.add(true);
-    } else if (connectivityResult.contains(ConnectivityResult.wifi)) {
-      _connectivityController.add(true);
-    } else if (connectivityResult.contains(ConnectivityResult.ethernet)) {
-      _connectivityController.add(true);
-    } else {
-      _connectivityController.add(false);
-    }
+  Future<void> _checkInitialConnectivity() async {
+    // Check the initial connectivity status
+    ConnectivityResult result = await Connectivity().checkConnectivity();
+    _updateConnectivityStatus(result);
+  }
 
-    // Listen to the connectivity changes
-    Connectivity()
-        .onConnectivityChanged
-        .listen((List<ConnectivityResult> results) {
-      bool isConnected = results.any((result) =>
-      result == ConnectivityResult.mobile ||
-          result == ConnectivityResult.wifi ||
-          result == ConnectivityResult.ethernet);
-      _connectivityController.add(isConnected);
+  void _listenForConnectivityChanges() {
+    // Listen to connectivity changes
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      _updateConnectivityStatus(result);
     });
+  }
+
+  void _updateConnectivityStatus(ConnectivityResult result) {
+    // Update connectivity based on the result
+    bool isConnected = result == ConnectivityResult.mobile ||
+        result == ConnectivityResult.wifi ||
+        result == ConnectivityResult.ethernet;
+
+    if (_isConnected != isConnected) {
+      _isConnected = isConnected;
+      _connectivityController.add(_isConnected); // Add to the stream
+      notifyListeners(); // Notify listeners of change
+    }
+  }
+
+  @override
+  void dispose() {
+    _connectivityController.close();
+    super.dispose();
   }
 }

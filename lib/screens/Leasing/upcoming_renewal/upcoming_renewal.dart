@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -228,12 +230,29 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
   final List<String> items = ['Residential', "Commercial", "All"];
   String? selectedValue;
   String searchvalue = "";
+  ConnectivityResult? _connectivityResult ;
   @override
   void initState() {
     super.initState();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
     futureLeaseRenewal = Upcoming_renewal_repo().fetchupcomingrenewal();
   }
 
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
+  }
   void _showAlert(BuildContext context, String id) {
     Alert(
       context: context,
@@ -554,7 +573,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
         currentpage: "Upcoming renewal",
         dropdown: true,
       ),
-      body: SingleChildScrollView(
+      body:_connectivityResult ==ConnectivityResult.none ? SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(
@@ -1324,6 +1343,30 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                   }
                 },
               ),*/
+          ],
+        ),
+      ):SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
           ],
         ),
       ),
