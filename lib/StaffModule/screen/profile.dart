@@ -310,9 +310,6 @@ class _Profile_screenState extends State<Profile_screen> {
     );
   }
 
-
-
-
 }
 
 class InfoRow extends StatelessWidget {
