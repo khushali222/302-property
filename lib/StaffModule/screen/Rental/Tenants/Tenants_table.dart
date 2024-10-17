@@ -667,7 +667,7 @@ class _Tenants_tableState extends State<Tenants_table> {
         currentpage: "Tenants",
         dropdown: true,
       ),
-      body: _connectivityResult ==ConnectivityResult.none ?
+      body: _connectivityResult !=ConnectivityResult.none ?
       SingleChildScrollView(
         child: Column(
           children: [

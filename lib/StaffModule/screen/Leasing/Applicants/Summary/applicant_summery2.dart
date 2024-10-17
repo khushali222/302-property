@@ -161,7 +161,7 @@ class _applicant_summeryState extends State<applicant_summery>
         currentpage: "Applicants",
         dropdown: true,
       ),
-      body: _connectivityResult == ConnectivityResult.none ?
+      body: _connectivityResult != ConnectivityResult.none ?
       FutureBuilder<applicant_summery_details>(
           future: futureLeaseSummary,
           builder: (context, snapshot) {

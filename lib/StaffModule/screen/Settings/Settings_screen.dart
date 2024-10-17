@@ -10,20 +10,26 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/provider/color_theme.dart';
+import 'package:three_zero_two_property/StaffModule/repository/setting.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
 
-import 'package:three_zero_two_property/repository/setting.dart';
+
+import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/model/setting.dart';
+import 'package:three_zero_two_property/provider/color_theme.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
+
+
+import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:http/http.dart' as http;
 
-import '../../constant/constant.dart';
-import '../../model/setting.dart';
-import '../../provider/dateProvider.dart';
-import '../../widgets/CustomTableShimmer.dart';
-import '../../widgets/drawer_tiles.dart';
-import '../../widgets/custom_drawer.dart';
+import '../../../screens/Leasing/RentalRoll/addcard/AddCard.dart';
 import '../Leasing/RentalRoll/newAddLease.dart';
-import '../Rental/Tenants/add_tenants.dart';
+
+
+
+
 class TabBarExample extends StatefulWidget {
   @override
   State<TabBarExample> createState() => _TabBarExampleState();
@@ -627,6 +633,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       ],
     ).show();
   }
+
 
   void handleDelete(Setting4 staff) {
     _showDeleteAlert(context, staff.accountId!);

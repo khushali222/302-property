@@ -1,8 +1,10 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/Model/CompletedWorkOrdersModel.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
@@ -40,6 +42,23 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
     // TODO: implement initState
     super.initState();
     _fetchCompletedWorkOrders();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
+  }
+  ConnectivityResult? _connectivityResult ;
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
   }
 
   void _fetchCompletedWorkOrders() {
@@ -684,7 +703,8 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       drawer:CustomDrawer(currentpage: "Reports",dropdown: false,),
-      body: SingleChildScrollView(
+      body: _connectivityResult !=ConnectivityResult.none ?
+      SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: 16),
@@ -1477,6 +1497,30 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                   );
                 },
               ),
+          ],
+        ),
+      ):SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
           ],
         ),
       ),

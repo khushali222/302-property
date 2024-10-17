@@ -243,7 +243,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                 ],
               );
             }
-          }): SizedBox(
+          }):
+      SizedBox(
         width: double.infinity,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

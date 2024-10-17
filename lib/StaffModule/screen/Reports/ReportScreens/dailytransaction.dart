@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -697,6 +699,23 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     // TODO: implement initState
     super.initState();
     _fetchTrasactionsReport();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
+  }
+  ConnectivityResult? _connectivityResult ;
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
   }
 
   void _fetchTrasactionsReport() {
@@ -1500,7 +1519,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
         currentpage: "Reports",
         dropdown: false,
       ),
-      body: SingleChildScrollView(
+      body: _connectivityResult !=ConnectivityResult.none ?
+      SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: 16),
@@ -2894,6 +2914,30 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   );
                 },
               )*/
+          ],
+        ),
+      ):SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
           ],
         ),
       ),

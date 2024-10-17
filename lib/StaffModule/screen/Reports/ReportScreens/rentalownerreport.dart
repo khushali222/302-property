@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -9,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -56,6 +58,22 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
     super.initState();
     fetchRentalOwners();
     fetchReport();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
+  }
+  ConnectivityResult? _connectivityResult ;
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
 
   }
 
@@ -1237,7 +1255,8 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
         currentpage: "Report",
         dropdown: false,
       ),
-      body: SingleChildScrollView(
+      body: _connectivityResult !=ConnectivityResult.none ?
+      SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: 16),
@@ -2310,6 +2329,30 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                   );
                 },
               ),*/
+          ],
+        ),
+      ):SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
           ],
         ),
       ),
