@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/property/summery_page.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
@@ -251,13 +253,32 @@ class _PropertyTableState extends State<PropertyTable> {
 
   final List<String> items = ['Residential', "Commercial", "All"];
   String? selectedValue;
+
+  ConnectivityResult? _connectivityResult ;
   String searchvalue = "";
   @override
   void initState() {
     super.initState();
+
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
     futurePropertyTypes = TenantPropertyRepository().fetchTenantProperties();
   }
 
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
+  }
   void handleEdit(tenant_property property) async {
    /* // Handle edit action
     print('Edit ${property.sId}');
@@ -626,7 +647,9 @@ class _PropertyTableState extends State<PropertyTable> {
       },),
       backgroundColor: Colors.white,
       drawer:  CustomDrawer(currentpage: 'Properties',),
-      body: SingleChildScrollView(
+      body:
+      _connectivityResult !=ConnectivityResult.none ?
+      SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(
@@ -1557,6 +1580,30 @@ class _PropertyTableState extends State<PropertyTable> {
                   }
                 },
               ),
+          ],
+        ),
+      ):SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
           ],
         ),
       ),

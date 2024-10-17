@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../constant/constant.dart';
 import '../../../widgets/titleBar.dart';
@@ -68,11 +70,32 @@ class _summery_pageState extends State<summery_page> {
       });
     }
   }
+  ConnectivityResult? _connectivityResult ;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
     fetchProfile();
+  }
+
+
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
   }
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   @override
@@ -84,7 +107,10 @@ class _summery_pageState extends State<summery_page> {
       },),
       backgroundColor: Colors.white,
       drawer:  CustomDrawer(currentpage: 'Properties',),
-      body: _isLoading
+      body:
+      _connectivityResult !=ConnectivityResult.none ?
+
+      _isLoading
           ? Center(
         child: SpinKitFadingCircle(
           color: Colors.black,
@@ -598,7 +624,31 @@ class _summery_pageState extends State<summery_page> {
                       ),
                     );
             }
-          ),
+          ):SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+      ),
     );
   }
   TableRow _buildTableRow(String label, String value) {

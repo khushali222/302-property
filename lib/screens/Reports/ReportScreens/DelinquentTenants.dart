@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:csv/csv.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -42,13 +44,29 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
   String? errorMessage;
   int? expandedRowIndex;
   Map<int, int?> expandedTenantIndex = {};
-
+  ConnectivityResult? _connectivityResult ;
   @override
   void initState() {
     super.initState();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+     checkInternet();
     _futureRentersInsurance = fetchDelinquentTenantsData();
   }
 
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
+  }
   Future<List<DelinquentTenantsData>> fetchDelinquentTenantsData() async {
     try {
       List<DelinquentTenantsData> data =
@@ -878,7 +896,8 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       drawer:CustomDrawer(currentpage: "Report",dropdown: false,),
-      body: SingleChildScrollView(
+      body: _connectivityResult !=ConnectivityResult.none ?
+      SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: 16),
@@ -2245,6 +2264,30 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                   );
                 },
               ),
+          ],
+        ),
+      ):SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
           ],
         ),
       ),

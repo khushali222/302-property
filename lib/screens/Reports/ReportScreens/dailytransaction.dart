@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -691,11 +693,18 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     });
     return tableData;
   }
-
+  ConnectivityResult? _connectivityResult ;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
     _fetchTrasactionsReport();
     DateTime today = DateTime.now();
     selectdate.text = DateFormat('yyyy-MM-dd').format(today);
@@ -703,6 +712,15 @@ class _DailyTransactionsState extends State<DailyTransactions> {
         DailyTrasactionReport().fetchTransactions(selectdate.text!);
   }
 
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
+  }
   void _fetchTrasactionsReport() {
     setState(() {
       _futureReport = DailyTrasactionReport().fetchTransactions(
@@ -1512,7 +1530,9 @@ class _DailyTransactionsState extends State<DailyTransactions> {
         currentpage: "Reports",
         dropdown: false,
       ),
-      body: SingleChildScrollView(
+      body:
+      _connectivityResult !=ConnectivityResult.none ?
+      SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: 16),
@@ -2920,7 +2940,33 @@ class _DailyTransactionsState extends State<DailyTransactions> {
               )*/
           ],
         ),
-      ),
+      )
+      :SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+      )
+      ,
     );
   }
 }

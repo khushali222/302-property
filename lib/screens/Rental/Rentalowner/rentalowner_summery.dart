@@ -1,7 +1,9 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
@@ -60,6 +62,30 @@ class RentalownersSummeryForMobile extends StatefulWidget {
 
 class _RentalownersSummeryForMobileState
     extends State<RentalownersSummeryForMobile> {
+  ConnectivityResult? _connectivityResult ;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
+  }
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
+  }
+
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -71,7 +97,9 @@ class _RentalownersSummeryForMobileState
         currentpage: "RentalOwner",
         dropdown: true,
       ),
-      body: Center(
+      body:
+      _connectivityResult !=ConnectivityResult.none ?
+      Center(
         child: ListView(
           scrollDirection: Axis.vertical,
           children: [
@@ -795,6 +823,30 @@ class _RentalownersSummeryForMobileState
                   ),
                 ),
               ),
+            ),
+          ],
+        ),
+      ):SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
             ),
           ],
         ),

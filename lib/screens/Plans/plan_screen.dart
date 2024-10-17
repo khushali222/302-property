@@ -282,6 +282,9 @@
 //     ),
 //   );
 // }
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:lottie/lottie.dart';
+
 import '../../widgets/custom_drawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -316,10 +319,17 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
   bool isLoading = false;
   String? globalPlanName;
   bool isPlanCancelling = false;
-
+  ConnectivityResult? _connectivityResult ;
   @override
   void initState() {
     super.initState();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider =
           Provider.of<checkPlanPurchaseProiver>(context, listen: false);
@@ -334,7 +344,15 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
     _futureReport = _fetchPastPlans();
     _futurePlanDetails = _service.fetchPlanPurchaseDetails();
   }
+  void checkInternet()async{
 
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
+  }
   Future<List<pastPlanData>> _fetchPastPlans() async {
     // Use await to get the Future result from PastPlansHistoryService
     return await PastPlansHistoryService().fetchPastPlans();
@@ -798,7 +816,10 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
         currentpage: "Dashboard",
         dropdown: false,
       ),
-      body: globalPlanName == 'Free Plan'
+      body:
+      _connectivityResult !=ConnectivityResult.none ?
+
+      globalPlanName == 'Free Plan'
           ? PlanPurchaseCard(isappbarShow: false)
           : Container(
               color: Colors.white,
@@ -2701,7 +2722,31 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                   ],
                 ),
               ),
+            ):SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
             ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+      ),
     );
   }
   TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel, String rightValue) {

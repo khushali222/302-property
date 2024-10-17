@@ -1,8 +1,10 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/AdminUser%20Permission/adminUserPermissionModel.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -80,11 +82,34 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
   bool staffRentalOwnerDelete = false;
   bool _isLoading = false;
   bool selectAll = false;
+
+  ConnectivityResult? _connectivityResult ;
+
   @override
   void initState() {
     super.initState();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
+
+
     _fetchAndSetPermissions();
   }
+
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
+  }
+
   void checkAllPermissions() {
     selectAll = tenantPropertyView &&
         tenantFinancialView &&
@@ -273,7 +298,9 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
       appBar:
           widget_302.App_Bar(context: context, isUserPermitePageActive: true),
       drawer:CustomDrawer(currentpage: "Dashboard",dropdown: false,),
-      body: Padding(
+      body:
+      _connectivityResult !=ConnectivityResult.none ?
+      Padding(
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
           child: Column(
@@ -1271,6 +1298,30 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
 
             ],
           ),
+        ),
+      ):SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ],
         ),
       ),
     );

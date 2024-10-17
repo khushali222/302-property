@@ -1,9 +1,11 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/Model/propertytype.dart';
@@ -30,6 +32,8 @@ class Workorder_table extends StatefulWidget {
 }
 
 class _Workorder_tableState extends State<Workorder_table> {
+
+
   int totalrecords = 0;
   late Future<List<Data>> futureworkorders;
   int rowsPerPage = 5;
@@ -247,13 +251,29 @@ class _Workorder_tableState extends State<Workorder_table> {
     "All"
   ];
   String? selectedValue;
+  ConnectivityResult? _connectivityResult ;
   String searchvalue = "";
   @override
   void initState() {
     super.initState();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
     futureworkorders = WorkOrderRepository().fetchWorkOrders();
   }
+  void checkInternet()async{
 
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
+  }
   void handleEdit(Data property) async {
     // Handle edit action
     //print('Edit ${property.sId}');
@@ -570,7 +590,10 @@ class _Workorder_tableState extends State<Workorder_table> {
         currentpage: "Work Order",
         dropdown: true,
       ),
-      body: SingleChildScrollView(
+      body:
+      _connectivityResult !=ConnectivityResult.none ?
+
+      SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(height: 20),
@@ -2036,6 +2059,30 @@ class _Workorder_tableState extends State<Workorder_table> {
                   }
                 },
               ),
+          ],
+        ),
+      ):SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
           ],
         ),
       ),

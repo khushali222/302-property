@@ -1,10 +1,12 @@
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/RenewLease.dart';
@@ -49,8 +51,17 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   late Future<List<LeaseTenant>> futureLeasetenant;
   late Future<LeaseLedger?> _leaseLedgerFuture;
   TabController? _tabController;
+  ConnectivityResult? _connectivityResult ;
+
   @override
   void initState() {
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
     // TODO: implement initState
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
     futureLeasetenant = LeaseRepository.fetchLeaseTenants(widget.leaseId);
@@ -63,6 +74,15 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     super.initState();
   }
 
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
+  }
   final TextEditingController startDateController = TextEditingController();
   DateTime? _startDate;
   final TextEditingController endDateController = TextEditingController();
@@ -86,7 +106,10 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
         currentpage: "Rent Roll",
         dropdown: true,
       ),
-      body: FutureBuilder<LeaseSummary>(
+      body:
+      _connectivityResult !=ConnectivityResult.none ?
+
+      FutureBuilder<LeaseSummary>(
           future: futureLeaseSummary,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -235,7 +258,31 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                 ],
               );
             }
-          }),
+          }):SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

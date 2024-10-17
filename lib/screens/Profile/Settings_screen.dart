@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -52,12 +54,20 @@ class _TabBarExampleState extends State<TabBarExample> {
   bool islatefee = false;
   bool isLoading = false;
   bool isdateformate = false;
-
+  ConnectivityResult? _connectivityResult ;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
     futureaccount = accountRepository().fetchAccounts();
     fetchSurchargeData();
     fetchlatefeeData();
@@ -66,7 +76,15 @@ class _TabBarExampleState extends State<TabBarExample> {
     note = TextEditingController();
    // _loadColorPreference();
   }
+  void checkInternet()async{
 
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
+  }
   @override
   void dispose() {
     accountname.dispose();
@@ -932,7 +950,9 @@ class _TabBarExampleState extends State<TabBarExample> {
         appBar: widget_302.App_Bar(context: context, isSettingPageActive: true),
         backgroundColor: Colors.white,
         drawer:CustomDrawer(currentpage: "Dashboard",dropdown: false,),
-        body: ListView(children: [
+        body:
+        _connectivityResult !=ConnectivityResult.none ?
+        ListView(children: [
           SizedBox(
             height: 25,
           ),
@@ -4132,7 +4152,31 @@ class _TabBarExampleState extends State<TabBarExample> {
               ),
             ),
           ),
-        ]),
+        ]):SizedBox(
+          width: double.infinity,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Lottie.asset(
+                'assets/no_internet.json',
+                width: 200,
+                height: 200,
+                fit: BoxFit.fill,
+              ),
+              Text(
+                'No Internet',
+                style: TextStyle(
+                    fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                'Check your internet connection',
+                style: TextStyle(
+                    fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

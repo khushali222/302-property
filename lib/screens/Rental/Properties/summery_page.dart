@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +13,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -111,10 +113,20 @@ class _Summery_pageState extends State<Summery_page>
       });
     }
   }
+  ConnectivityResult? _connectivityResult ;
+
 
   @override
   void initState() {
     super.initState();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
+
     futureUnitsummery =
         Properies_summery_Repo().fetchunit(widget.properties.rentalId!);
 
@@ -138,6 +150,15 @@ class _Summery_pageState extends State<Summery_page>
     WidgetsBinding.instance.addPostFrameCallback((_) {});
   }
 
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
+  }
   String moveOutDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String displayDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
   Future<Map<String, dynamic>> fetchDataOfCountWork(String rentalId) async {
@@ -1430,7 +1451,9 @@ class _Summery_pageState extends State<Summery_page>
         currentpage: "Properties",
         dropdown: true,
       ),
-      body: Column(
+      body:
+      _connectivityResult !=ConnectivityResult.none ?
+      Column(
         children: <Widget>[
           const SizedBox(
             height: 20,
@@ -1604,6 +1627,30 @@ class _Summery_pageState extends State<Summery_page>
 
 
         ],
+      ):SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
       ),
     );
   }

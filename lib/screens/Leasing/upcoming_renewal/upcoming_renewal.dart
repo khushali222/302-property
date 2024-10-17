@@ -573,7 +573,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
         currentpage: "Upcoming renewal",
         dropdown: true,
       ),
-      body:_connectivityResult ==ConnectivityResult.none ? SingleChildScrollView(
+      body:_connectivityResult !=ConnectivityResult.none ? SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(

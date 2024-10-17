@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:shimmer/shimmer.dart';
@@ -42,13 +44,29 @@ class _Profile_screenState extends State<Profile_screen> {
   bool _hasError = false;
   String _errorMessage = '';
   profile? _profile;
-
+  ConnectivityResult? _connectivityResult ;
   @override
   void initState() {
     super.initState();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
     _fetchProfile();
   }
 
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
+  }
   Future<void> _fetchProfile() async {
     try {
       final profileData = await ProfileRepository().fetchProfile();
@@ -83,7 +101,10 @@ class _Profile_screenState extends State<Profile_screen> {
       appBar: widget_302.App_Bar(context: context, isProfilePageActive: true),
       backgroundColor: Colors.white,
       drawer:CustomDrawer(currentpage: "Dashboard",dropdown: false,),
-      body: _isLoading
+      body:
+      _connectivityResult !=ConnectivityResult.none ?
+
+      _isLoading
           ? const ProfileShimmer()
           : _hasError
               ? Center(
@@ -450,7 +471,33 @@ class _Profile_screenState extends State<Profile_screen> {
                       ],
                     ),
                   ),
-                ),
+                ):
+      SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+      )
+      ,
     );
   }
 

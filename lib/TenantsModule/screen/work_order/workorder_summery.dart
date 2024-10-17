@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/Model/tenants.dart';
@@ -63,9 +65,18 @@ class _Workorder_summeryState extends State<Workorder_summery>
   String? _selectedValue;
   TabController? _tabController;
   List<String> items = ["Approved", "Rejected"];
+  ConnectivityResult? _connectivityResult ;
   @override
   void initState() {
     print(widget.workorder_id);
+
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
     // TODO: implement initState
     futureworkorderSummary =
         WorkOrderRepository.getworkorderSummary(widget.workorder_id!);
@@ -73,6 +84,17 @@ class _Workorder_summeryState extends State<Workorder_summery>
     _tabController = TabController(length: 2, vsync: this);
     super.initState();
   }
+
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
+  }
+
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
@@ -84,7 +106,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
       },),
       backgroundColor: Colors.white,
       drawer:  CustomDrawer(currentpage: 'Work Order',),
-      body: Column(
+      body:
+      _connectivityResult !=ConnectivityResult.none ?
+      Column(
         children: [
           SizedBox(
             height: 15,
@@ -92,7 +116,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
          /* Row(
             children: [
               Spacer(),
-             *//* GestureDetector(
+             */
+          /* GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
                 },
@@ -118,7 +143,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                     )),
                   ),
                 ),
-              ),*//*
+              ),*/
+          /*
               const SizedBox(
                 width: 20,
               ),
@@ -207,6 +233,30 @@ class _Workorder_summeryState extends State<Workorder_summery>
             ),
           ),
         ],
+      ):SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
       ),
     );
   }
