@@ -28,10 +28,33 @@ class ResponsiveRentalSummary extends StatefulWidget {
 }
 
 class _ResponsiveRentalSummaryState extends State<ResponsiveRentalSummary> {
+  void initState() {
+    super.initState();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
+
+  }
+  ConnectivityResult? _connectivityResult ;
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      print(connectiondata);
+      _connectivityResult = connectiondata;
+    });
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: LayoutBuilder(
+      body: _connectivityResult ==ConnectivityResult.none ?
+      LayoutBuilder(
         builder: (context, constraints) {
           if (constraints.maxWidth > 500) {
             return RentalownersSummeryForTablet(
@@ -45,6 +68,30 @@ class _ResponsiveRentalSummaryState extends State<ResponsiveRentalSummary> {
             );
           }
         },
+      ): SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
       ),
     );
   }

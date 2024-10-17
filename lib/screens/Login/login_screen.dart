@@ -1332,6 +1332,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       print(firstname);
       prefs.setString('first_name', firstname.first);
       prefs.setString('last_name', firstname[1]);
+      prefs.setString('staffemail', jsonData['staffmember_email']);
       await Provider.of<StaffPermissionProvider>(context, listen: false)
           .fetchPermissions();
       Navigator.push(

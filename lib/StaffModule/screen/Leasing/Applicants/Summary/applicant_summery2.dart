@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lottie/lottie.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -69,12 +71,29 @@ class _applicant_summeryState extends State<applicant_summery>
   @override
   void initState() {
     // TODO: implement initState
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
     print(widget.applicant_id);
     futureLeaseSummary =
         ApplicantSummeryRepository.getApplicantSummary(widget.applicant_id!);
     _tabController = TabController(length: 4, vsync: this);
     print('end init');
     super.initState();
+  }
+  ConnectivityResult? _connectivityResult ;
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+
   }
 
   Future<bool> updateApplicantStatus(
@@ -133,7 +152,8 @@ class _applicant_summeryState extends State<applicant_summery>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return
+      Scaffold(
       // appBar: widget302.,
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -141,7 +161,8 @@ class _applicant_summeryState extends State<applicant_summery>
         currentpage: "Applicants",
         dropdown: true,
       ),
-      body: FutureBuilder<applicant_summery_details>(
+      body: _connectivityResult != ConnectivityResult.none ?
+      FutureBuilder<applicant_summery_details>(
           future: futureLeaseSummary,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -491,7 +512,31 @@ class _applicant_summeryState extends State<applicant_summery>
                 ],
               );
             }
-          }),
+          }): SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

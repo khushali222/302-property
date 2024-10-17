@@ -1,7 +1,9 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import '../../../widgets/appbar.dart';
 
@@ -58,6 +60,28 @@ class RentalownersSummeryForMobile extends StatefulWidget {
 
 class _RentalownersSummeryForMobileState
     extends State<RentalownersSummeryForMobile> {
+  void initState() {
+    super.initState();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
+
+  }
+  ConnectivityResult? _connectivityResult ;
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      print(connectiondata);
+      _connectivityResult = connectiondata;
+    });
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,7 +92,8 @@ class _RentalownersSummeryForMobileState
         currentpage: "RentalOwner",
         dropdown: true,
       ),
-      body: Center(
+      body: _connectivityResult !=ConnectivityResult.none ?
+      Center(
         child: ListView(
           scrollDirection: Axis.vertical,
           children: [
@@ -796,6 +821,30 @@ class _RentalownersSummeryForMobileState
             ),
           ],
         ),
+      ): SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -813,6 +862,28 @@ class RentalownersSummeryForTablet extends StatefulWidget {
 
 class _RentalownersSummeryForTabletState
     extends State<RentalownersSummeryForTablet> {
+  void initState() {
+    super.initState();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        print(result);
+        _connectivityResult = result;
+      });
+    });
+    checkInternet();
+
+  }
+  ConnectivityResult? _connectivityResult ;
+  void checkInternet()async{
+
+    var connectiondata;
+    connectiondata = await Connectivity().checkConnectivity();
+    setState(() {
+      print(connectiondata);
+      _connectivityResult = connectiondata;
+    });
+
+  }
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -824,7 +895,8 @@ class _RentalownersSummeryForTabletState
         currentpage: "RentalOwner",
         dropdown: true,
       ),
-      body: Center(
+      body: _connectivityResult !=ConnectivityResult.none ?
+      Center(
         child: FutureBuilder<List<RentalOwnerData>>(
           future: RentalOwnerService()
               .fetchRentalOwnerssummery(widget.rentalOwnersid),
@@ -1625,6 +1697,30 @@ class _RentalownersSummeryForTabletState
               );
             }
           },
+        ),
+      ): SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
+            ),
+            Text(
+              'No Internet',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(
+                  fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ],
         ),
       ),
     );

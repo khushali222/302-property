@@ -309,16 +309,19 @@ class accountRepository{
     required String? account_id
   }) async {
 
+
     //print('$apiUrl/$id');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  adminid = prefs.getString('adminId');
+    String? id = prefs.getString("staff_id");
+
 
     final http.Response response = await http.delete(
       Uri.parse('${Api_url}/api/accounts/accounts/$account_id'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id":"CRM $adminid",
+        "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );

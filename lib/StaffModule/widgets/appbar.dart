@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Settings/Settings_screen.dart';
+import 'package:three_zero_two_property/StaffModule/screen/change_password.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Profile/Profile_screen.dart';
 import 'package:three_zero_two_property/screens/Login/login_screen.dart';
@@ -8,9 +11,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/screens/Profile/Profile_screen.dart';
 import 'package:three_zero_two_property/screens/Login/login_screen.dart';
 import 'package:three_zero_two_property/screens/Plans/plan_screen.dart';
-import 'package:three_zero_two_property/screens/Profile/Settings_screen.dart';
+
 import 'package:three_zero_two_property/widgets/test.dart';
 
+import '../model/staffpermission.dart';
+import '../repository/staffpermission_provider.dart';
 import '../screen/notifications/notifications.dart';
 
 class widget_302 {
@@ -22,6 +27,8 @@ class widget_302 {
     var arrowNearText,
     required BuildContext context,
   }) {
+    final permissionProvider = Provider.of<StaffPermissionProvider>(context);
+    StaffPermission? permissions = permissionProvider.permissions;
     return AppBar(
       iconTheme: IconThemeData(color: Colors.black),
       elevation: 1,
@@ -138,10 +145,10 @@ class widget_302 {
                           style: TextStyle(color: blueColor),
                         ),
                       ),
-                    /*  PopupMenuItem(
+                      PopupMenuItem(
                         child: Row(
                           children: [
-                            Icon(Icons.person),
+                            Icon(Icons.key,color: blueColor,),
                             //  FaIcon(
                             //    FontAwesomeIcons.user,
                             //    size: 20,
@@ -150,15 +157,16 @@ class widget_302 {
                             SizedBox(
                               width: 10,
                             ),
-                            Text("My Profile"),
+                            Text("Change Password",style: TextStyle(color: blueColor),),
                           ],
                         ),
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => Profile_screen()));
+                              builder: (context) => Change_password()));
                         },
                       ),
-                      PopupMenuItem(
+                     if(permissions!.settingView!)
+                     PopupMenuItem(
                         child: Row(
                           children: [
                             FaIcon(
@@ -176,7 +184,7 @@ class widget_302 {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => TabBarExample()));
                         },
-                      ),*/
+                      ),
                       PopupMenuItem(
                         child: Row(
                           children: [
