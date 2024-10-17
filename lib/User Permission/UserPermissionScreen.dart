@@ -50,6 +50,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
   bool staffLeaseView = false;
   bool staffLeaseEdit = false;
   bool staffLeaseDelete = false;
+  bool staffSetting = false;
 
   bool staffWorkorderView = false;
   bool staffWorkorderAdd = false;
@@ -156,6 +157,8 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
         staffRentalOwnerView &&
         staffRentalOwnerAdd &&
         staffRentalOwnerEdit &&
+        staffSetting &&
+
         staffRentalOwnerDelete;
     setState(() {
 
@@ -191,6 +194,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
     staffLeaseView = selectAll;
     staffLeaseEdit = selectAll;
     staffLeaseDelete = selectAll;
+    staffSetting = selectAll;
 
     staffWorkorderView = selectAll;
     staffWorkorderAdd = selectAll;
@@ -256,6 +260,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
           staffLeaseView = permissions.staffPermission?.leaseView ?? false;
           staffLeaseEdit = permissions.staffPermission?.leaseEdit ?? false;
           staffLeaseDelete = permissions.staffPermission?.leaseDelete ?? false;
+          staffSetting = permissions.staffPermission?.setting ?? false;
        //   staffLeasedetailView = permissions.staffPermission?.leasedetailView ?? false;
           staffWorkorderView = permissions.staffPermission?.workorderView ?? false;
           staffWorkorderAdd = permissions.staffPermission?.workorderAdd ?? false;
@@ -986,6 +991,26 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                         ],
                       ),
 
+                      Divider(color: blueColor),
+
+                      _buildPermissionTable(
+                        'Setting',
+                        [
+                          _buildCheckboxRow(
+                            'VIEW',
+                            staffSetting,
+                                (value) {
+                              setState(() {
+                                staffSetting = value!;
+                                if (!staffSetting) {
+
+                                }
+                              });
+                            },
+                          ),
+
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -1072,7 +1097,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                                       documentsDelete: tenantDocumentsDelete,
                                     ),
                                     staffPermission: StaffPermission(
-
+                                      setting: staffSetting,
                                       propertyView: staffPropertyView,
                                       leaseAdd: staffLeaseAdd,
                                       workorderEdit: staffWorkorderEdit,
@@ -1214,7 +1239,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                                   leaseEdit: staffLeaseEdit,
                                   leaseDelete: staffLeaseDelete,
 
-
+                                  setting: staffSetting,
 
 
 
