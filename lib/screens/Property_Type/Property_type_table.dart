@@ -29,7 +29,7 @@ class PropertyTable extends StatefulWidget {
 
 class _PropertyTableState extends State<PropertyTable> {
   int totalrecords = 0;
-  late Future<List<propertytype>> futurePropertyTypes;
+   Future<List<propertytype>>? futurePropertyTypes;
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
   bool sortAscending = true;
@@ -241,10 +241,12 @@ class _PropertyTableState extends State<PropertyTable> {
       setState(() {
         print(result);
         _connectivityResult = result;
+        if(_connectivityResult != ConnectivityResult.none)
+          futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
       });
     });
     checkInternet();
-    futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+
   }
 
   void checkInternet()async{
@@ -254,6 +256,9 @@ class _PropertyTableState extends State<PropertyTable> {
     setState(() {
       _connectivityResult = connectiondata;
     });
+
+    if(_connectivityResult != ConnectivityResult.none)
+      futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
 
   }
   void handleEdit(propertytype property) async {
