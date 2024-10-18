@@ -33,7 +33,8 @@ class _Add_propertyState extends State<Add_property> {
   bool iserror = false;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return
+      Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer:CustomDrawer(currentpage: "Add Property Type",dropdown: false,),

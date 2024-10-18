@@ -146,8 +146,10 @@ void main() {
           ChangeNotifierProvider(
             create: (context) => ProfileProvider(),
           ),
-          ChangeNotifierProvider(create: (_) => DateProvider()),
-          ChangeNotifierProvider(create: (_) => DropdownProvider()),
+          ChangeNotifierProvider(
+              create: (_) => DateProvider()),
+          ChangeNotifierProvider(
+              create: (_) => DropdownProvider()),
           ChangeNotifierProvider(create: (_) => CheckConnection()),
           ChangeNotifierProvider(create: (_) => ThemeProvider()),
 

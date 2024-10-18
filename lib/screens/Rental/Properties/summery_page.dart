@@ -2681,7 +2681,8 @@ class _Summery_pageState extends State<Summery_page>
     return LayoutBuilder(
       builder: (context, constraints) {
         bool isTablet = constraints.maxWidth > 600;
-        return FutureBuilder<List<TenantData>>(
+        return
+          FutureBuilder<List<TenantData>>(
           future: Properies_summery_Repo()
               .fetchPropertiessummery(widget.properties.rentalId!),
           builder: (context, snapshot) {
@@ -2726,11 +2727,13 @@ class _Summery_pageState extends State<Summery_page>
                           right: 35,
                           top: 30,
                         ),
-                        child: Wrap(
+                        child:
+                        Wrap(
                           alignment: WrapAlignment.start,
                           spacing: MediaQuery.of(context).size.width * 0.03,
                           runSpacing: MediaQuery.of(context).size.width * 0.035,
-                          children: List.generate(
+                          children:
+                          List.generate(
                             tenants.length,
                             (index) => Material(
                           elevation: 3,
