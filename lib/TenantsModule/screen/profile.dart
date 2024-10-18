@@ -249,7 +249,7 @@ class _Profile_screenState extends State<Profile_screen> {
                           padding: const EdgeInsets.all(16.0),
                           child: Column(
                             children: [
-                              buildWidget('Name', "${profiledata['tenant_firstName']} ${profiledata['tenant_firstName']}"),
+                              buildWidget('Name', "${profiledata['tenant_firstName']}${profiledata['tenant_lastName']}"),
                               buildWidget('Phone Number', profiledata['tenant_phoneNumber']),
                               buildWidget('Email', profiledata['tenant_email']),
 

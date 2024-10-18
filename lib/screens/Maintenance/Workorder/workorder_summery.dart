@@ -159,7 +159,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
         dropdown: true,
       ),
       body:
-      _connectivityResult ==ConnectivityResult.none ?
+      _connectivityResult !=ConnectivityResult.none ?
       Column(
         children: [
           SizedBox(

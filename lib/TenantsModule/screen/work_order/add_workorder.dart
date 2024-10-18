@@ -328,7 +328,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
     String? token = prefs.getString('token');
     try {
       final response =
-      await http.get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'),headers: {"authorization" : "CRM $token","id":"CRM $id",});
+      await http.get(Uri.parse('$Api_url/api/unit/rental_unit_dropdown/$rentalId?tenant_id=$id'),headers: {"authorization" : "CRM $token","id":"CRM $id",});
       print('$Api_url/api/unit/rental_unit/$rentalId');
 
       if (response.statusCode == 200) {
