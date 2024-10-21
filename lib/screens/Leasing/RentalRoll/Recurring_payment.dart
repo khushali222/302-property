@@ -34,9 +34,12 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     // TODO: implement initState
 
     _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(widget.leaseId);
-    for (int i = 0; i < _tenants.length; i++) {
-      _controllers.add([TextEditingController()]); // Start with one controller per tenant
-    }
+    // for (var tenant in _tenants) {
+    //   _controllers[tenant.name] = [
+    //     TextEditingController(), // For Amount
+    //     TextEditingController(), // For Charge
+    //   ];
+    // }
     super.initState();
   }
 
@@ -49,18 +52,35 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     });
   }
 
+  // void addRow(String tenantName) {
+  //   setState(() {
+  //     _controllers[tenantName]?.add(TextEditingController()); // Add new controller for Amount
+  //     _controllers[tenantName]?.add(TextEditingController());
+  //
+  //   });
+  // }
+  //
+  //
+  // void deleteTextField(String tenantName, int index) {
+  //   setState(() {
+  //     if (index < _controllers[tenantName]!.length) {
+  //       _controllers[tenantName]!.removeAt(index); // Remove the specified controller
+  //     }
+  //   });
+  // }
+  void addRow(Tenant tenant) {
 
-
-  void addRow(int tenantIndex) {
     setState(() {
-
-      _controllers[tenantIndex].add(TextEditingController());
+      tenant.controllers.add(TextEditingController()); // Add new controller for Amount
+      tenant.controllers.add(TextEditingController()); // Add new controller for Charge
     });
   }
 
-  void deleteTextField(int tenantIndex, int textFieldIndex) {
+  void deleteTextField(Tenant tenant, int index) {
     setState(() {
-      _controllers[tenantIndex].removeAt(textFieldIndex);
+      if (index < tenant.controllers.length) {
+        tenant.controllers.removeAt(index); // Remove the specified controller
+      }
     });
   }
 
@@ -76,8 +96,13 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     ),
   ];
 
-  List<List<TextEditingController>> _controllers = [];
+  List<Map<String, dynamic>> tenant = [];
+
+
+  // List<List<TextEditingController>> _controllers = [];
+ // Map<String, List<TextEditingController>> controllers = {};
   bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,10 +131,10 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                 leaseLedger.data?.map((item) => item.tenantData).toList() ?? [];
 
             //final data = leaseLedger.data!.toList();
-            return
-              ListView.builder(
+            return ListView.builder(
               itemCount: _tenants.length,
               itemBuilder: (context, tenantIndex) {
+                Tenant tenant = _tenants[tenantIndex];
                 return Container(
                   child: Column(
                     children: [
@@ -144,61 +169,77 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                       SizedBox(
                         height: 10,
                       ),
-                      for (int textFieldIndex = 0; textFieldIndex < _controllers[tenantIndex].length; textFieldIndex++) ...[
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: IconButton(
-                            icon: Icon(Icons.close),
-                            onPressed: () {
-                              deleteTextField(tenantIndex, textFieldIndex);
-                            },
+
+                      // for (int textFieldIndex = 0; textFieldIndex < _controllers[tenantIndex].length; textFieldIndex++) ...
+                      // for (int textFieldIndex = 0;
+                      //     textFieldIndex < _controllers[tenantIndex].length;
+                      //     textFieldIndex += 2) ...[
+                      //   if (textFieldIndex + 1 < _controllers[tenantIndex].length) ...[
+                      // for (int i = 0; i < _controllers[tenantName]!.length; i += 2) ...
+                      // [  if (i + 1 < _controllers[tenantName]!.length) ...[
+                      for (int i = 0; i < tenant.controllers.length; i += 2) ...[
+                          if (i + 1 < tenant.controllers.length) ...[
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                              icon: Icon(Icons.close),
+                              onPressed: () {
+                                deleteTextField(tenant, i,);
+                              },
+                            ),
                           ),
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding:
-                                const EdgeInsets.only(left: 15, right: 15),
-                                child: CustomTextField(
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter amount';
-                                    }
-                                    return null;
-                                  },
-                                  keyboardType: TextInputType.number,
-                                  hintText: 'Enter Amount',
-                                  controller: _controllers[tenantIndex][textFieldIndex],
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 15, right: 15),
+                                  child: CustomTextField(
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter amount';
+                                      }
+                                      return null;
+                                    },
+                                    keyboardType: TextInputType.number,
+                                    hintText: 'Enter Amount',
+                                    // controller: _controllers[tenantIndex]
+                                    //     [textFieldIndex],
+                                   // controller: _controllers[tenantName]![i],
+                                    controller: tenant.controllers[i],
+                                  ),
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding:
-                                const EdgeInsets.only(left: 15, right: 15),
-                                child: CustomTextField(
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter amount';
-                                    }
-                                    return null;
-                                  },
-                                  keyboardType: TextInputType.number,
-                                  hintText: 'Enter Amount',
-                                  controller: _controllers[tenantIndex][textFieldIndex],
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 15, right: 15),
+                                  child: CustomTextField(
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter drop';
+                                      }
+                                      return null;
+                                    },
+                                    keyboardType: TextInputType.number,
+                                    hintText: 'Enter drop',
+                                    // controller: _controllers[tenantIndex]
+                                    //     [textFieldIndex + 1],
+                                    // controller:  _controllers[tenantName]![i + 1],
+                                    controller:  tenant.controllers[i + 1],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
+]
                       ],
                       SizedBox(
                         height: 10,
                       ),
                       GestureDetector(
                         onTap: () async {
-                          addRow(tenantIndex);
+                          addRow(tenant);
                           print("hello");
                         },
                         child: Row(
@@ -228,17 +269,37 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                         ),
                       ),
                       GestureDetector(
-                          onTap: (){
-                            for (int tenantIndex = 0; tenantIndex < _tenants.length; tenantIndex++) {
-                              List<String> values = [];
-                              for (var controller in _controllers[tenantIndex]) {
-                                values.add(controller.text);
-                              }
-                              print('tenant ${_tenants[tenantIndex].name}: $values');
-
-                            }
+                          onTap: () {
+                            // for (int tenantIndex = 0;
+                            //     tenantIndex < _tenants.length;
+                            //     tenantIndex++) {
+                            //   List<String> values = [];
+                            //   for (var controller
+                            //       in _controllers[tenantIndex]) {
+                            //     values.add(controller.text);
+                            //   }
+                            //   print(
+                            //       'tenant ${_tenants[tenantIndex].name}: $values');
+                            // }
+                            // List<String> values = [];
+                            // for (int i = 0; i < _controllers[tenantName]!.length; i++) {
+                            //   String fieldType = (i % 2 == 0) ? 'Amount' : 'Drop';
+                            //   values.add('$fieldType: ${_controllers[tenantName]![i].text}');
+                            // }
+                            // print('Tenant: $tenantName, Values: $values');
+                            // List<String> values = [];
+                            // for (int i = 0; i < tenant._controllers.length; i++) {
+                            //   String fieldType = (i % 2 == 0) ? 'Amount' : 'Drop';
+                            //   values.add('$fieldType: ${tenant._controllers[i].text}');
+                            //   print('Tenant: ${tenant.name}, Values: $values');
+                            // }
+                            _saveData();
                           },
-                          child: Text("Save",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),)),
+                          child: Text(
+                            "Save",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          )),
                     ],
                   ),
                 );
@@ -688,11 +749,100 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       ),
     );
   }
+  void _saveData() {
+    List<TenantData> tenantDataList = [];
+
+    for (int tenantIndex = 0; tenantIndex < _tenants.length; tenantIndex++) {
+      Tenant tenant = _tenants[tenantIndex];
+      String? amounts;
+      String? drops;
+
+      if (tenant.controllers.isNotEmpty) {
+        // Assuming the first controller is for amount and the second is for drop
+        if (tenant.controllers.length > 1) {
+          amounts = tenant.controllers[0].text;
+          drops = tenant.controllers[1].text;
+        }
+      } else {
+        print('No controllers found for tenant: ${tenant.name}');
+      }
+
+      TenantData tenantData = TenantData(
+        tenantName: tenant.name,
+        amounts: amounts ?? '',
+        drops: drops ?? '',
+      );
+      tenantDataList.add(tenantData);
+    }
+
+    AllTenantsData allTenantsData = AllTenantsData(tenants: tenantDataList);
+    print('Tenant Data: ${allTenantsData.toJson()}');
+  }
+
+
 }
+
+// class Tenant {
+//   String name;
+//   List<TextEditingController> _controllers;
+//
+//   Tenant({
+//     required this.name,
+//   }) : _controllers = [
+//     TextEditingController(), // For Amount
+//     TextEditingController(), // For Charge
+//   ];
+// }
 
 class Tenant {
   String name;
-  Tenant({
-    required this.name,
-  });
+  List<TextEditingController> controllers;
+
+  Tenant({required this.name}) :
+        controllers = List.generate(2, (_) => TextEditingController());
 }
+
+// class TenantData {
+//   String tenantName;
+//   List<String> amounts;
+//   List<String> drops;
+//
+//   TenantData({required this.tenantName, required this.amounts, required this.drops});
+//
+//   Map<String, dynamic> toJson() {
+//     return {
+//       'tenantName': tenantName,
+//       'amounts': amounts,
+//       'drops': drops,
+//     };
+//   }
+// }
+class TenantData {
+  String tenantName;
+  String amounts;
+  String drops;
+
+  TenantData({required this.tenantName, required this.amounts, required this.drops});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'tenantName': tenantName,
+      'amounts': amounts,
+      'drops': drops,
+    };
+  }
+}
+
+
+class AllTenantsData {
+  List<TenantData> tenants;
+
+  AllTenantsData({required this.tenants});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'tenants': tenants.map((tenant) => tenant.toJson()).toList(),
+    };
+  }
+}
+

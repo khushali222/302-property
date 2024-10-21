@@ -182,7 +182,7 @@ class _RenewleaseState extends State<Renewlease> {
       String adminId = prefs.getString('adminId') ?? '';
       String? token = prefs.getString('token');
       print(token);
-      print('lease ${widget.leaseId}');
+      print('lease drop ${widget.leaseId}');
       String? id = prefs.getString("adminId");
       final response = await http.get(
         Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
@@ -191,7 +191,7 @@ class _RenewleaseState extends State<Renewlease> {
           "id": "CRM $id",
         },
       );
-
+      print('lease drop ${response.body}');
       if (response.statusCode == 200) {
         List<dynamic> jsonResponse = json.decode(response.body)['data'];
         Map<String, List<String>> fetchedData = {};

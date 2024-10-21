@@ -171,8 +171,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: "Poppins",
         iconTheme:  IconThemeData(color: blueColor),
-        // colorScheme: ColorScheme.fromSeed(
-        //     seedColor: blueColor),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: blueColor),
         useMaterial3: false,
 
       ),

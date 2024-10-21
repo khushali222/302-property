@@ -27,6 +27,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/rental_widget.dart';
 
 import '../../../Model/unit.dart';
+import '../../../StaffModule/screen/Leasing/RentalRoll/addcard/AddCard.dart';
 import '../../../constant/constant.dart';
 import '../../../model/properties.dart';
 import '../../../model/properties_summery.dart';
@@ -113,8 +114,8 @@ class _Summery_pageState extends State<Summery_page>
       });
     }
   }
-  ConnectivityResult? _connectivityResult ;
 
+  ConnectivityResult? _connectivityResult;
 
   @override
   void initState() {
@@ -150,15 +151,14 @@ class _Summery_pageState extends State<Summery_page>
     WidgetsBinding.instance.addPostFrameCallback((_) {});
   }
 
-  void checkInternet()async{
-
+  void checkInternet() async {
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
     setState(() {
       _connectivityResult = connectiondata;
     });
-
   }
+
   String moveOutDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String displayDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
   Future<Map<String, dynamic>> fetchDataOfCountWork(String rentalId) async {
@@ -436,7 +436,7 @@ class _Summery_pageState extends State<Summery_page>
               ),
             ),
             Expanded(
-              flex:4,
+              flex: 4,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -489,7 +489,7 @@ class _Summery_pageState extends State<Summery_page>
               ),
             ),
             Expanded(
-                flex:3,
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -537,7 +537,7 @@ class _Summery_pageState extends State<Summery_page>
               ),
             ),
             Expanded(
-              flex:3,
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -562,9 +562,9 @@ class _Summery_pageState extends State<Summery_page>
                 },
                 child: Row(
                   children: [
-                    Text("       Billable ", style: TextStyle(color: Colors.white)),
+                    Text("       Billable ",
+                        style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
-
                   ],
                 ),
               ),
@@ -720,8 +720,7 @@ class _Summery_pageState extends State<Summery_page>
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
             size: 30,
-            color:
-                _currentPage == 0 ? Colors.grey : blueColor,
+            color: _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -741,10 +740,7 @@ class _Summery_pageState extends State<Summery_page>
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
-                : blueColor
-
-
-, // Change color based on availability
+                : blueColor, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -1060,9 +1056,7 @@ class _Summery_pageState extends State<Summery_page>
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
             size: 30,
-            color: _currentPagemulti == 0
-                ? Colors.grey
-                : blueColor,
+            color: _currentPagemulti == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPagemulti == 0
               ? null
@@ -1083,10 +1077,7 @@ class _Summery_pageState extends State<Summery_page>
             color: (_currentPagemulti + 1) * _rowsPerPagemulti >=
                     _tableDatamulti.length
                 ? Colors.grey
-                : blueColor
-
-
-, // Change color based on availability
+                : blueColor, // Change color based on availability
           ),
           onPressed: (_currentPagemulti + 1) * _rowsPerPagemulti >=
                   _tableDatamulti.length
@@ -1176,16 +1167,11 @@ class _Summery_pageState extends State<Summery_page>
                     width < 400
                         ? Text(" Contact\nName",
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
-                                fontSize: 14
-                            ))
+                            style: TextStyle(color: Colors.white, fontSize: 14))
                         : Text(" Contact\nName",
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
-                                fontSize: 14
-                            )),
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 14)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                   ],
@@ -1218,7 +1204,7 @@ class _Summery_pageState extends State<Summery_page>
                   children: [
                     Text("Company \nName",
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white,fontSize: 14)),
+                        style: TextStyle(color: Colors.white, fontSize: 14)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -1250,10 +1236,10 @@ class _Summery_pageState extends State<Summery_page>
                 child: Row(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left:8.0),
+                      padding: const EdgeInsets.only(left: 8.0),
                       child: Text("   Phone\n   Number",
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white,fontSize: 14)),
+                          style: TextStyle(color: Colors.white, fontSize: 14)),
                     ),
                   ],
                 ),
@@ -1395,9 +1381,7 @@ class _Summery_pageState extends State<Summery_page>
           icon: FaIcon(
             size: 30,
             FontAwesomeIcons.circleChevronLeft,
-            color: _currentPagerent == 0
-                ? Colors.grey
-                : blueColor,
+            color: _currentPagerent == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPagerent == 0
               ? null
@@ -1418,10 +1402,7 @@ class _Summery_pageState extends State<Summery_page>
             color: (_currentPagerent + 1) * _rowsPerPagerent >=
                     _tableDatarent.length
                 ? Colors.grey
-                : blueColor
-
-
-, // Change color based on availability
+                : blueColor, // Change color based on availability
           ),
           onPressed:
               (_currentPagerent + 1) * _rowsPerPagerent >= _tableDatarent.length
@@ -1439,9 +1420,6 @@ class _Summery_pageState extends State<Summery_page>
   bool isMovedOut = false;
   int _selectedIndex = 0;
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1451,207 +1429,208 @@ class _Summery_pageState extends State<Summery_page>
         currentpage: "Properties",
         dropdown: true,
       ),
-      body:
-      _connectivityResult !=ConnectivityResult.none ?
-      Column(
-        children: <Widget>[
-          const SizedBox(
-            height: 20,
-          ),
-          Row(
-            children: [
-              const SizedBox(
-                width: 20,
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width > 500 ? 200 : 170,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 1),
-                  child: Text(
-                    '${widget.properties?.rentalAddress}',
-                    maxLines: 5, // Set maximum number of lines
-                    overflow:
-                        TextOverflow.ellipsis, // Handle overflow with ellipsis
-                    style: TextStyle(
-                      fontSize:
-                          MediaQuery.of(context).size.width < 500 ? 13 : 18,
-                      color: blueColor,
-                      fontWeight: FontWeight.bold,
+      body: _connectivityResult != ConnectivityResult.none
+          ? Column(
+              children: <Widget>[
+                const SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  children: [
+                    const SizedBox(
+                      width: 20,
                     ),
+                    SizedBox(
+                      width:
+                          MediaQuery.of(context).size.width > 500 ? 200 : 170,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 1),
+                        child: Text(
+                          '${widget.properties?.rentalAddress}',
+                          maxLines: 5, // Set maximum number of lines
+                          overflow: TextOverflow
+                              .ellipsis, // Handle overflow with ellipsis
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width < 500
+                                ? 13
+                                : 18,
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Text('${widget.properties.rentalAddress}',
+                    //     style: TextStyle(
+                    //       color: blueColor,
+                    //       fontWeight: FontWeight.bold,
+                    //       fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 20,
+                    //     )),
+                  ],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Text('${widget.properties.propertyTypeData?.propertyType}',
+                        style: TextStyle(
+                          color: Color(0xFF8A95A8),
+                          fontWeight: FontWeight.bold,
+                          fontSize:
+                              MediaQuery.of(context).size.width < 500 ? 13 : 20,
+                        )),
+                  ],
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
+                  height: 60,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: blueColor),
+                    // color: Colors.blue,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: TabBar(
+                    controller: _tabController,
+                    dividerColor: Colors.transparent,
+                    indicatorWeight: 5,
+                    labelStyle: TextStyle(
+                      fontSize:
+                          MediaQuery.of(context).size.width < 500 ? 14 : 20,
+                      // fontWeight: FontWeight.bold,
+                    ),
+                    //indicatorPadding: EdgeInsets.symmetric(horizontal: 1),
+                    indicatorColor: blueColor,
+                    labelColor: blueColor,
+                    unselectedLabelColor: blueColor,
+                    tabs: [
+                      Tab(
+                        text: 'Summary',
+                      ),
+                      Tab(
+                        text: 'Units',
+                      ),
+                      StatefulBuilder(
+                        builder: (BuildContext context,
+                            void Function(void Function()) setState) {
+                          return Tab(text: 'Tenant');
+                        },
+                      ),
+                      StatefulBuilder(
+                        builder: (BuildContext context,
+                            void Function(void Function()) setState) {
+                          return Tab(text: 'Work');
+                        },
+                      ),
+                      // Consumer<WorkOrderCountProvider>(
+                      //   builder: (context, provider, child) {
+                      //     return Tab(text: 'Work(${provider.isChecked ? provider.count : provider.count})');
+                      //   },
+                      // ),
+                    ],
+                  ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  //     SizedBox(width: 2,),
+                  //     Expanded(
+                  //       child: Container(
+                  //         height: 43,
+                  //         decoration: BoxDecoration(
+                  //           color: blueColor,
+                  //           borderRadius: BorderRadius.circular(5),
+                  //         ),
+                  //           child: Center(child: Text("Summary",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
+                  //     ),
+                  //     SizedBox(width: 5,),
+                  //     Expanded(
+                  //       child: Container( height: 43,
+                  //           decoration: BoxDecoration(
+                  //               color: blueColor,
+                  //             borderRadius: BorderRadius.circular(5),
+                  //           ),
+                  //           child: Center(child: Text("Unit",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
+                  //     ),
+                  //     SizedBox(width: 5,),
+                  //     Expanded(
+                  //       child: Container(
+                  //           height: 43,
+                  //           decoration: BoxDecoration(
+                  //               color: blueColor,
+                  //             borderRadius: BorderRadius.circular(5),
+                  //           ),
+                  //           child: Center(child: Text("Tenats",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
+                  //     ),
+                  //     SizedBox(width: 5,),
+                  //     Expanded(
+                  //       child: Container(
+                  //           height: 43,
+                  //           decoration: BoxDecoration(
+                  //               color: blueColor,
+                  //             borderRadius: BorderRadius.circular(5),
+                  //           ),
+                  //           child: Center(child: Text("Workorder",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
+                  //     ),
+                  //     SizedBox(width: 2,),
+                  //   ],
+                  // ),
+                ),
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      Summary_page(),
+                      // showdetails
+                      //     ? unitScreen(properties: widget.properties
+                      //         //properties: widget.properties,
+                      //       //  unit: unit,
+                      //       )
+                      //     : Unit_page(),
+                      // showdetails ? unitScreen1(context, unit!) : Unit_page(context),
+                      showdetails
+                          ? unitScreen1(context, unit!)
+                          : Unit_page(context),
+
+                      // unitScreen(),
+                      // Center(child: Text('Content of Tab 2')),
+                      //  Container(color:Colors.blue),
+                      Tenants(context),
+                      Workorder(context),
+                    ],
                   ),
                 ),
-              ),
-              // Text('${widget.properties.rentalAddress}',
-              //     style: TextStyle(
-              //       color: blueColor,
-              //       fontWeight: FontWeight.bold,
-              //       fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 20,
-              //     )),
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Row(
-            children: [
-              const SizedBox(
-                width: 20,
-              ),
-              Text('${widget.properties.propertyTypeData?.propertyType}',
-                  style: TextStyle(
-                    color: Color(0xFF8A95A8),
-                    fontWeight: FontWeight.bold,
-                    fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 20,
-                  )),
-            ],
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10),
-            height: 60,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              border: Border.all(color:blueColor),
-              // color: Colors.blue,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child:
-            TabBar(
-              controller: _tabController,
-              dividerColor: Colors.transparent,
-              indicatorWeight: 5,
-              labelStyle: TextStyle(
-                fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 20,
-                // fontWeight: FontWeight.bold,
-              ),
-              //indicatorPadding: EdgeInsets.symmetric(horizontal: 1),
-              indicatorColor:blueColor,
-              labelColor:blueColor,
-              unselectedLabelColor:blueColor,
-              tabs: [
-                Tab(
-                  text: 'Summary',
-                ),
-                Tab(
-                  text: 'Units',
-                ),
-                StatefulBuilder(
-                  builder: (BuildContext context,
-                      void Function(void Function()) setState) {
-                    return Tab(text: 'Tenant');
-                  },
-                ),
-                StatefulBuilder(
-                  builder: (BuildContext context,
-                      void Function(void Function()) setState) {
-                    return Tab(text: 'Work');
-                  },
-                ),
-                // Consumer<WorkOrderCountProvider>(
-                //   builder: (context, provider, child) {
-                //     return Tab(text: 'Work(${provider.isChecked ? provider.count : provider.count})');
-                //   },
-                // ),
               ],
+            )
+          : SizedBox(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Lottie.asset(
+                    'assets/no_internet.json',
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.fill,
+                  ),
+                  Text(
+                    'No Internet',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'Check your internet connection',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
             ),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     SizedBox(width: 2,),
-            //     Expanded(
-            //       child: Container(
-            //         height: 43,
-            //         decoration: BoxDecoration(
-            //           color: blueColor,
-            //           borderRadius: BorderRadius.circular(5),
-            //         ),
-            //           child: Center(child: Text("Summary",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
-            //     ),
-            //     SizedBox(width: 5,),
-            //     Expanded(
-            //       child: Container( height: 43,
-            //           decoration: BoxDecoration(
-            //               color: blueColor,
-            //             borderRadius: BorderRadius.circular(5),
-            //           ),
-            //           child: Center(child: Text("Unit",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
-            //     ),
-            //     SizedBox(width: 5,),
-            //     Expanded(
-            //       child: Container(
-            //           height: 43,
-            //           decoration: BoxDecoration(
-            //               color: blueColor,
-            //             borderRadius: BorderRadius.circular(5),
-            //           ),
-            //           child: Center(child: Text("Tenats",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
-            //     ),
-            //     SizedBox(width: 5,),
-            //     Expanded(
-            //       child: Container(
-            //           height: 43,
-            //           decoration: BoxDecoration(
-            //               color: blueColor,
-            //             borderRadius: BorderRadius.circular(5),
-            //           ),
-            //           child: Center(child: Text("Workorder",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
-            //     ),
-            //     SizedBox(width: 2,),
-            //   ],
-            // ),
-          ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                Summary_page(),
-                // showdetails
-                //     ? unitScreen(properties: widget.properties
-                //         //properties: widget.properties,
-                //       //  unit: unit,
-                //       )
-                //     : Unit_page(),
-                // showdetails ? unitScreen1(context, unit!) : Unit_page(context),
-                showdetails ? unitScreen1(context, unit!) : Unit_page(context),
-
-                // unitScreen(),
-                // Center(child: Text('Content of Tab 2')),
-                //  Container(color:Colors.blue),
-                Tenants(context),
-                Workorder(context),
-              ],
-            ),
-          ),
-
-
-        ],
-      ):SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Lottie.asset(
-              'assets/no_internet.json',
-              width: 200,
-              height: 200,
-              fit: BoxFit.fill,
-            ),
-            Text(
-              'No Internet',
-              style: TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Check your internet connection',
-              style: TextStyle(
-                  fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -1671,7 +1650,7 @@ class _Summery_pageState extends State<Summery_page>
               // height: 150,
               // width: MediaQuery.of(context).size.width * .94,
               decoration: BoxDecoration(
-                border: Border.all(color:blueColor),
+                border: Border.all(color: blueColor),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Padding(
@@ -2010,11 +1989,7 @@ class _Summery_pageState extends State<Summery_page>
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color:
-                                      Color.fromRGBO(
-                                          152, 162, 179, .5)
-
-
-)),
+                                          Color.fromRGBO(152, 162, 179, .5))),
                               // decoration: BoxDecoration(
                               //     border: Border.all(color: blueColor)),
                               child: Column(
@@ -2089,8 +2064,7 @@ class _Summery_pageState extends State<Summery_page>
                                                           : FontAwesomeIcons
                                                               .sortDown,
                                                       size: 20,
-                                                      color: blueColor
-,
+                                                      color: blueColor,
                                                     ),
                                                   ),
                                                 ),
@@ -2547,11 +2521,7 @@ class _Summery_pageState extends State<Summery_page>
                                               color: Color.fromRGBO(
                                                   21, 43, 81, 1)),
                                           bottom: i == _pagedDatarent.length - 1
-                                              ? BorderSide(
-                                                  color: blueColor
-
-
-)
+                                              ? BorderSide(color: blueColor)
                                               : BorderSide.none,
                                         ),
                                       ),
@@ -2676,13 +2646,13 @@ class _Summery_pageState extends State<Summery_page>
       ),
     );
   }
+
   bool recurringswith = false;
   Tenants(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         bool isTablet = constraints.maxWidth > 600;
-        return
-          FutureBuilder<List<TenantData>>(
+        return FutureBuilder<List<TenantData>>(
           future: Properies_summery_Repo()
               .fetchPropertiessummery(widget.properties.rentalId!),
           builder: (context, snapshot) {
@@ -2697,7 +2667,8 @@ class _Summery_pageState extends State<Summery_page>
               return Text('Error: ${snapshot.error}');
             } else {
               List<TenantData> tenants = snapshot.data ?? [];
-              bool hasRecurringTenants = tenants.any((tenant) => tenant!.recurring??false) ?? false;
+              bool hasRecurringTenants =
+                  tenants.any((tenant) => tenant!.recurring ?? false) ?? false;
               print(hasRecurringTenants);
               recurringswith = hasRecurringTenants;
               if (snapshot.data!.length == 0) {
@@ -2708,15 +2679,26 @@ class _Summery_pageState extends State<Summery_page>
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
-                        SizedBox(height: 10,),
-                        Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                        Image.asset(
+                          "assets/images/no_data.jpg",
+                          height: 200,
+                          width: 200,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "No Data Available",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: blueColor,
+                              fontSize: 16),
+                        )
                       ],
                     ),
                   ),
                 );
               }
-
 
               return isTablet
                   ? SingleChildScrollView(
@@ -2727,656 +2709,981 @@ class _Summery_pageState extends State<Summery_page>
                           right: 35,
                           top: 30,
                         ),
-                        child:
-                        Wrap(
+                        child: Wrap(
                           alignment: WrapAlignment.start,
                           spacing: MediaQuery.of(context).size.width * 0.03,
                           runSpacing: MediaQuery.of(context).size.width * 0.035,
-                          children:
-                          List.generate(
+                          children: List.generate(
                             tenants.length,
                             (index) => Material(
-                          elevation: 3,
-                          borderRadius: BorderRadius.circular(10),
-                          child:
-                          Container(
-                            height: 245,
-                            width: MediaQuery.of(context).size.width * .44,
-                            decoration: BoxDecoration(
-                              color:
-                              Colors.white, // Change as per your need
+                              elevation: 3,
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: blueColor),
+                              child: Container(
+                                height: 245,
+                                width: MediaQuery.of(context).size.width * .44,
+                                decoration: BoxDecoration(
+                                  color:
+                                      Colors.white, // Change as per your need
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: blueColor),
+                                ),
+                                child: buildTenantCard(tenants[index]),
+                              ),
                             ),
-                            child: buildTenantCard(tenants[index]),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                )
-                    : SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Column(
-                    children: [
-                      if(tenants.length >0)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                    )
+                  : SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: Column(
+                        children: [
+                          if (tenants.length > 0)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 5),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text("Enable Recurring Payments"),
+                                  Switch(
+                                    value: recurringswith,
+                                    onChanged: (value) async {
+                                      if (value == true) {
+                                        recurringCardDialog(tenants);
+                                      } else if (value == false) {
+                                        await tenant_cards()
+                                            .disableCard(
+                                                widget.properties.rentalId!)
+                                            .then((element) {
+                                          setState(() {
+                                            recurringswith = value;
+                                          });
+                                        });
+                                      }
+                                    },
+                                    activeColor: blueColor,
+                                  )
+                                ],
+                              ),
+                            ),
+                          Wrap(
+                            alignment: WrapAlignment.start,
+                            spacing: MediaQuery.of(context).size.width * 0.03,
+                            runSpacing:
+                                MediaQuery.of(context).size.width * 0.02,
+                            children: List.generate(tenants.length, (index) {
+                              DateTime currentDate = DateTime.now();
+                              DateTime moveoutDate;
+                              bool? ismove = false;
 
-                            children: [
-                          Text("Enable Recurring Payments"),
-                          Switch(value: recurringswith, onChanged: (value)async{
-
-                            if(value == true){
-                              recurringCardDialog(tenants);
-                            }
-                            else if(value == false){
-                              await tenant_cards().disableCard(widget.properties.rentalId!).then((element){
-                                setState(() {
-                                  recurringswith = value;
-                                });
-                              });
-                            }
-                          },
-                          activeColor: blueColor,
-                          )
-                        ],),
+                              if (snapshot.data![index].moveoutDate != null &&
+                                  snapshot.data![index].moveoutDate! != "") {
+                                moveoutDate = DateFormat('yyyy-MM-dd')
+                                    .parse(snapshot.data![index].moveoutDate!);
+                                ismove =
+                                    moveoutDate.difference(currentDate).inDays <
+                                        1;
+                              }
+                              return Padding(
+                                padding: EdgeInsets.only(
+                                  left: 20,
+                                  right: 20,
+                                  top: index == 0 ? 0 : 20,
+                                ),
+                                child: Material(
+                                  elevation: 3,
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Container(
+                                    //height: 230,
+                                    //  width: MediaQuery.of(context).size.width * .44,
+                                    decoration: BoxDecoration(
+                                      color: Colors
+                                          .white, // Change as per your need
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(color: blueColor),
+                                    ),
+                                    child: buildTenantCard(tenants[index],
+                                        isMoveouts: (snapshot.data![index]
+                                                        .moveoutDate ==
+                                                    "" ||
+                                                ismove == false)
+                                            ? false
+                                            : (snapshot.data![index]
+                                                            .moveoutDate !=
+                                                        "" &&
+                                                    ismove)
+                                                ? true
+                                                : false),
+                                  ),
+                                ),
+                              );
+                            }),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                        ],
                       ),
-
-                      Wrap(
-                        alignment: WrapAlignment.start,
-                        spacing: MediaQuery.of(context).size.width * 0.03,
-                        runSpacing: MediaQuery.of(context).size.width * 0.02,
-                        children: List.generate(
-                          tenants.length,
-                              (index)
-                                  {
-                                    DateTime currentDate = DateTime.now();
-                                    DateTime moveoutDate;
-                                    bool? ismove = false;
-
-                                    if(snapshot.data![index].moveoutDate != null && snapshot.data![index].moveoutDate!!= "" ){
-                                      moveoutDate = DateFormat('yyyy-MM-dd').parse(snapshot.data![index].moveoutDate!);
-                                      ismove =  moveoutDate.difference(currentDate).inDays < 1;
-                                    }
-                                   return Padding(
-                                      padding:  EdgeInsets.only(
-                                        left: 20, right: 20, top: index == 0 ? 0:20,),
-                                      child: Material(
-                                        elevation: 3,
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: Container(
-                                          //height: 230,
-                                          //  width: MediaQuery.of(context).size.width * .44,
-                                          decoration: BoxDecoration(
-                                            color:
-                                            Colors.white, // Change as per your need
-                                            borderRadius: BorderRadius.circular(10),
-                                            border: Border.all(color: blueColor),
-                                          ),
-                                          child: buildTenantCard(
-                                              tenants[index],
-                                              isMoveouts:      (snapshot.data![index].moveoutDate == "" || ismove ==false ) ? false :   (snapshot.data![index].moveoutDate != "" && ismove) ? true : false
-
-
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }
-
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                    ],
-                  ),
-                );
-              }
-            },
-          );
-        },
-      );
-
-
+                    );
+            }
+          },
+        );
+      },
+    );
   }
 
-  recurringCardDialog(List<TenantData> tenants) async {
+  // recurringCardDialog(List<TenantData> tenants) async {
+  //
+  //   List<List<BillingData>>? billingDataList;
+  //   List<String> tenant_card = List<String>.generate(tenants.length, (index) => '').toList();
+  //
+  //   // Fetch the response to determine if credit or debit cards are accepted
+  //   Map<String, Map<String, bool>> cardAcceptanceResponses = {};
+  //   for (var tenant in tenants) {
+  //     var response = await  tenant_cards().fetchCardAcceptance(tenant.tenantId!.first,tenant.leaseId!);
+  //     cardAcceptanceResponses[tenant.tenantId!.first] = response;
+  //
+  //   }
+  //   return showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return
+  //         Dialog(
+  //           backgroundColor: Colors.white,
+  //           surfaceTintColor: Colors.white,
+  //           shape: RoundedRectangleBorder(
+  //               borderRadius:
+  //               BorderRadius.circular(10.0)),
+  //           child:
+  //           Container(
+  //             // width: MediaQuery.of(context).size.width - 10,
+  //               width: 999,
+  //                  height: 400,
+  //               child: Padding(
+  //                 padding: const EdgeInsets.all(8.0),
+  //                 child: Column(
+  //
+  //                   mainAxisAlignment: MainAxisAlignment.start,
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                     SizedBox(height: 10),
+  //                     Text(
+  //                       "Select Recurring Cards",
+  //                       style: TextStyle(
+  //                         color: blueColor,
+  //                         fontSize: 20,
+  //                         fontWeight: FontWeight.bold,
+  //                       ),
+  //                     ),
+  //                     Divider(color: grey,),
+  //                     SizedBox(height: 10),
+  //                     Expanded(
+  //                       child: FutureBuilder<List<Map<String, dynamic>>>(
+  //                         future: Future.wait(
+  //                           tenants.map((tenant) async {
+  //                             var paymentSettings = await tenant_cards().fetchCardAcceptance(
+  //                               tenant.tenantId!.first,
+  //                               tenant.leaseId!,
+  //                             );
+  //
+  //                             bool creditAccepted = paymentSettings['creditCardAccepted']!;
+  //                             bool debitAccepted = paymentSettings['debitCardAccepted']!;
+  //
+  //                             // Fetch and filter cards based on payment settings.
+  //                             var cards = await tenant_cards().fetchcreditcard(tenant.tenantId!.first);
+  //                             var filteredCards = cards.where((card) {
+  //                               if (creditAccepted && card.binResult == 'CREDIT') return true;
+  //                               if (debitAccepted && card.binResult == 'DEBIT') return true;
+  //                               return false;
+  //                             }).toList();
+  //
+  //                             // Return the tenant and their valid cards
+  //                             return {'tenant': tenant, 'cards': filteredCards};
+  //                           }).toList(),
+  //                         ),
+  //                         builder: (context, snapshot) {
+  //                           if (snapshot.hasData) {
+  //                             List<Map<String, dynamic>> tenantsWithCards = snapshot.data!
+  //                                 .where((entry) => entry['cards'].isNotEmpty)
+  //                                 .toList();
+  //
+  //                             // If no tenants have valid cards, show a message
+  //                             if (tenantsWithCards.isEmpty) {
+  //                               return Center(child: Text('No tenants with valid cards.'));
+  //                             }
+  //                             List<List<BillingData>> Cardsdata = tenantsWithCards.map((e) => e['cards'] as List<BillingData>).toList();
+  //                             // Initialize the tenant card data in the provider
+  //                             Provider.of<DropdownProvider>(context, listen: false)
+  //                                 .initializeTenantCard(
+  //                                 tenantsWithCards.map((e) => e['cards'] as List<BillingData>).toList());
+  //
+  //                             return ListView.builder(
+  //                               shrinkWrap: true,
+  //                               physics: ClampingScrollPhysics(),
+  //                               itemCount: tenantsWithCards.length,
+  //                               itemBuilder: (context, index) {
+  //                                 TenantData tenantsdata = tenantsWithCards[index]["tenant"];
+  //                                 String tenantId = tenantsdata.tenantId!.first;
+  //                                 Map<String, bool> cardAcceptanceResponse = cardAcceptanceResponses[tenantId]!;
+  //
+  //                                 List<BillingData> filteredCards = tenant_cards().filterCards(
+  //                                   Cardsdata[index],
+  //                                   cardAcceptanceResponse,
+  //                                 );
+  //                                 return Consumer<DropdownProvider>(
+  //                                   builder: (context, provider, child) {
+  //                                     // Filter the cards based on the card acceptance response
+  //                                     return Padding(
+  //                                       padding: const EdgeInsets.all(3.0),
+  //                                       child: Column(
+  //                                         mainAxisAlignment: MainAxisAlignment.start,
+  //                                         crossAxisAlignment: CrossAxisAlignment.start,
+  //                                         children: [
+  //                                           Text(
+  //                                             "${tenantsdata.firstName} ${tenantsdata.lastName}",
+  //                                             style: TextStyle(
+  //                                               fontSize: 15,
+  //                                               color: blueColor,
+  //                                               fontWeight: FontWeight.bold,
+  //                                             ),
+  //                                           ),
+  //                                           SizedBox(
+  //                                             height: 5,
+  //                                           ),
+  //                                           Container(
+  //                                             height: 45,
+  //                                             decoration: BoxDecoration(
+  //                                               border: Border.all(),
+  //                                               borderRadius: BorderRadius.circular(5),
+  //                                             ),
+  //                                             padding: EdgeInsets.symmetric(horizontal: 2),
+  //                                             child: DropdownButtonHideUnderline(
+  //                                               child: DropdownButton<String>(
+  //                                                 isExpanded: true,
+  //                                                 value: provider.tenantCard[index], // Use ccNumber as selected value
+  //                                                 // Custom display of the selected item:
+  //                                                 selectedItemBuilder: (BuildContext context) {
+  //                                                   return filteredCards.map((card) {
+  //                                                     return Align(
+  //                                                       alignment: Alignment.centerLeft,
+  //                                                       child: Text(
+  //                                                         card.ccNumber!, // Only display ccNumber in selected state
+  //                                                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+  //                                                       ),
+  //                                                     );
+  //                                                   }).toList();
+  //                                                 },
+  //                                                 // Expanded dropdown list items:
+  //                                                 items: filteredCards.map((card) {
+  //                                                   return DropdownMenuItem(
+  //                                                     value: card.ccNumber, // ccNumber remains the value
+  //                                                     child: Column(
+  //                                                       crossAxisAlignment: CrossAxisAlignment.start,
+  //                                                       children: [
+  //                                                         Text(
+  //                                                           card.ccNumber!,
+  //                                                           style: TextStyle(fontWeight: FontWeight.bold),
+  //                                                         ),
+  //                                                         Text(
+  //                                                           card.binResult ?? '',
+  //                                                           style: TextStyle(color: Colors.grey),
+  //                                                         ),
+  //                                                       ],
+  //                                                     ),
+  //                                                   );
+  //                                                 }).toList(),
+  //                                                 onChanged: (String? selectedCard) {
+  //                                                   if (selectedCard != null) {
+  //                                                     provider.updateTenantCard(index, selectedCard);
+  //                                                   }
+  //                                                 },
+  //                                               ),
+  //                                             ),
+  //                                           ),
+  //
+  //                                         ],
+  //                                       ),
+  //                                     );
+  //                                   },
+  //                                 );
+  //                               },
+  //                             );
+  //                           } else if (snapshot.hasError) {
+  //                             return Text('Error: ${snapshot.error}');
+  //                           } else {
+  //                             return Center(
+  //                                 child: SpinKitFadingCircle(
+  //                                   color: Colors.black,
+  //                                   size: 40.0,
+  //                                 ));
+  //                           }
+  //                         },
+  //                       ),
+  //                     ),
+  //                     Row(
+  //                       mainAxisAlignment: MainAxisAlignment.end,
+  //                       crossAxisAlignment: CrossAxisAlignment.end,
+  //                       children: [
+  //                         GestureDetector(
+  //                           onTap: () {
+  //                             Navigator.pop(context);
+  //                           },
+  //                           child: Container(
+  //                             height: 45,
+  //                             width: 100,
+  //                             decoration: BoxDecoration(
+  //                               border: Border.all(color: blueColor),
+  //                               borderRadius: BorderRadius.circular(6),
+  //                             ),
+  //                             child: Center(
+  //                               child: Text(
+  //                                 "Cancel",
+  //                                 style: TextStyle(color: blueColor, fontSize: 16),
+  //                               ),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         SizedBox(width: 10,),
+  //                         GestureDetector(
+  //                           onTap: () async {
+  //                             SharedPreferences prefs = await SharedPreferences.getInstance();
+  //                             String? token = prefs.getString('token');
+  //                             String? id = prefs.getString('adminId');
+  //                             final provider = Provider.of<DropdownProvider>(context, listen: false);
+  //                             List<Map<String, dynamic>> data = [];
+  //                             for (var i = 0; i < tenants.length; i++) {
+  //                               List<String> selected_card = provider.tenantCard;
+  //                               print(selected_card);
+  //                               List<BillingData> billdata = billingDataList![i];
+  //                               BillingData current_data =
+  //                               billdata.firstWhere((element) => element.ccNumber == selected_card[i]);
+  //                               data.add({
+  //                                 "lease_id": tenants[i].leaseId,
+  //                                 "tenant_id": tenants[i].tenantId!.first,
+  //                                 "card_type": current_data.binResult,
+  //                                 "customer_vault_id": current_data.customerVaultId,
+  //                                 "billing_id": current_data.billingId,
+  //                               });
+  //                             }
+  //                             print(data);
+  //
+  //                             await Properies_summery_Repo().addrecurringtenant({
+  //                               "admin_id": id,
+  //                               "rental_id": widget.properties.rentalId,
+  //                               "recurrings": data
+  //                             }).then((value){
+  //                               Navigator.pop(context);
+  //                               setState(() {
+  //
+  //                               });
+  //                             });
+  //                           },
+  //                           child: Container(
+  //                             height: 45,
+  //                             width: 100,
+  //                             decoration: BoxDecoration(
+  //                               color: blueColor,
+  //                               borderRadius: BorderRadius.circular(6),
+  //                             ),
+  //                             child: Center(
+  //                               child: Text(
+  //                                 "Save",
+  //                                 style: TextStyle(color: Colors.white, fontSize: 16),
+  //                               ),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),),
+  //         );
+  //       //   AlertDialog(
+  //       //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+  //       //   content:
+  //       //   Container(
+  //       //     height: 350.0,
+  //       //     width: 450.0,
+  //       //     child: Column(
+  //       //       mainAxisAlignment: MainAxisAlignment.start,
+  //       //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       //       children: [
+  //       //         Text(
+  //       //           "Select Recurring Cards",
+  //       //           style: TextStyle(
+  //       //             color: blueColor,
+  //       //             fontSize: 20,
+  //       //             fontWeight: FontWeight.bold,
+  //       //           ),
+  //       //         ),
+  //       //         SizedBox(height: 10),
+  //       //         Expanded(
+  //       //           child: FutureBuilder<List<Map<String, dynamic>>>(
+  //       //             future: Future.wait(
+  //       //               tenants.map((tenant) async {
+  //       //                 var paymentSettings = await tenant_cards().fetchCardAcceptance(
+  //       //                   tenant.tenantId!.first,
+  //       //                   tenant.leaseId!,
+  //       //                 );
+  //       //
+  //       //                 bool creditAccepted = paymentSettings['creditCardAccepted']!;
+  //       //                 bool debitAccepted = paymentSettings['debitCardAccepted']!;
+  //       //
+  //       //                 // Fetch and filter cards based on payment settings.
+  //       //                 var cards = await tenant_cards().fetchcreditcard(tenant.tenantId!.first);
+  //       //                 var filteredCards = cards.where((card) {
+  //       //                   if (creditAccepted && card.binResult == 'CREDIT') return true;
+  //       //                   if (debitAccepted && card.binResult == 'DEBIT') return true;
+  //       //                   return false;
+  //       //                 }).toList();
+  //       //
+  //       //                 // Return the tenant and their valid cards
+  //       //                 return {'tenant': tenant, 'cards': filteredCards};
+  //       //               }).toList(),
+  //       //             ),
+  //       //             builder: (context, snapshot) {
+  //       //               if (snapshot.hasData) {
+  //       //                 List<Map<String, dynamic>> tenantsWithCards = snapshot.data!
+  //       //                     .where((entry) => entry['cards'].isNotEmpty)
+  //       //                     .toList();
+  //       //
+  //       //                 // If no tenants have valid cards, show a message
+  //       //                 if (tenantsWithCards.isEmpty) {
+  //       //                   return Center(child: Text('No tenants with valid cards.'));
+  //       //                 }
+  //       //                 List<List<BillingData>> Cardsdata = tenantsWithCards.map((e) => e['cards'] as List<BillingData>).toList();
+  //       //                 // Initialize the tenant card data in the provider
+  //       //                 Provider.of<DropdownProvider>(context, listen: false)
+  //       //                     .initializeTenantCard(
+  //       //                     tenantsWithCards.map((e) => e['cards'] as List<BillingData>).toList());
+  //       //
+  //       //                 return ListView.builder(
+  //       //                   shrinkWrap: true,
+  //       //                   physics: ClampingScrollPhysics(),
+  //       //                   itemCount: tenantsWithCards.length,
+  //       //                   itemBuilder: (context, index) {
+  //       //                     TenantData tenantsdata = tenantsWithCards[index]["tenant"];
+  //       //                     String tenantId = tenantsdata.tenantId!.first;
+  //       //                     Map<String, bool> cardAcceptanceResponse = cardAcceptanceResponses[tenantId]!;
+  //       //
+  //       //                     List<BillingData> filteredCards = tenant_cards().filterCards(
+  //       //                       Cardsdata[index],
+  //       //                       cardAcceptanceResponse,
+  //       //                     );
+  //       //
+  //       //                     return Consumer<DropdownProvider>(
+  //       //                       builder: (context, provider, child) {
+  //       //                         // Filter the cards based on the card acceptance response
+  //       //
+  //       //
+  //       //                         return Padding(
+  //       //                           padding: const EdgeInsets.only(top: 3,bottom: 3),
+  //       //                           child: Row(
+  //       //                             mainAxisAlignment: MainAxisAlignment.start,
+  //       //                             crossAxisAlignment: CrossAxisAlignment.start,
+  //       //                             children: [
+  //       //                               SizedBox(
+  //       //                                 width: MediaQuery.of(context)
+  //       //                                     .size
+  //       //                                     .width >
+  //       //                                     500
+  //       //                                     ? 100
+  //       //                                     : 90,
+  //       //                                 child: Text(
+  //       //                                  ' ${tenantsdata.firstName} ${tenantsdata.lastName}',
+  //       //                                   maxLines:
+  //       //                                   5, // Set maximum number of lines
+  //       //                                   overflow: TextOverflow
+  //       //                                       .ellipsis,
+  //       //                                   textAlign: TextAlign.left,
+  //       //                                   style: TextStyle(
+  //       //                                     fontSize: MediaQuery.of(context)
+  //       //                                         .size
+  //       //                                         .width <
+  //       //                                         500
+  //       //                                         ? 13
+  //       //                                         : 18,
+  //       //                                     color: blueColor,
+  //       //                                     fontWeight: FontWeight.bold,
+  //       //                                   ),
+  //       //                                 ),
+  //       //                               ),
+  //       //                               // Text(
+  //       //                               //   "${tenantsdata.firstName} ${tenantsdata.lastName}",
+  //       //                               //   style: TextStyle(
+  //       //                               //     fontSize: 16,
+  //       //                               //     fontWeight: FontWeight.w500,
+  //       //                               //   ),
+  //       //                               // ),
+  //       //                               SizedBox(width: 3),
+  //       //                               Expanded(
+  //       //                                 child: Container(
+  //       //                                   height: 45,
+  //       //                                   decoration: BoxDecoration(
+  //       //                                     border: Border.all(),
+  //       //                                     borderRadius: BorderRadius.circular(5),
+  //       //                                   ),
+  //       //                                   padding: EdgeInsets.symmetric(horizontal: 5),
+  //       //                                   child: DropdownButtonHideUnderline(
+  //       //                                     child: DropdownButton<String>(
+  //       //                                       isExpanded: true,
+  //       //                                       value: provider.tenantCard[index], // Use ccNumber as selected value
+  //       //                                       // Custom display of the selected item:
+  //       //                                       selectedItemBuilder: (BuildContext context) {
+  //       //                                         return filteredCards.map((card) {
+  //       //                                           return Align(
+  //       //                                             alignment: Alignment.centerLeft,
+  //       //                                             child: Text(
+  //       //                                               card.ccNumber!, // Only display ccNumber in selected state
+  //       //                                               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+  //       //                                             ),
+  //       //                                           );
+  //       //                                         }).toList();
+  //       //                                       },
+  //       //                                       // Expanded dropdown list items:
+  //       //                                       items: filteredCards.map((card) {
+  //       //                                         return DropdownMenuItem(
+  //       //                                           value: card.ccNumber, // ccNumber remains the value
+  //       //                                           child: Column(
+  //       //                                             crossAxisAlignment: CrossAxisAlignment.start,
+  //       //                                             children: [
+  //       //                                               Text(
+  //       //                                                 card.ccNumber!,
+  //       //                                                 style: TextStyle(fontWeight: FontWeight.bold),
+  //       //                                               ),
+  //       //                                               Text(
+  //       //                                                 card.binResult ?? '',
+  //       //                                                 style: TextStyle(color: Colors.grey),
+  //       //                                               ),
+  //       //                                             ],
+  //       //                                           ),
+  //       //                                         );
+  //       //                                       }).toList(),
+  //       //                                       onChanged: (String? selectedCard) {
+  //       //                                         if (selectedCard != null) {
+  //       //                                           provider.updateTenantCard(index, selectedCard);
+  //       //                                         }
+  //       //                                       },
+  //       //                                     ),
+  //       //                                   ),
+  //       //                                 ),
+  //       //                               ),
+  //       //
+  //       //
+  //       //                             ],
+  //       //                           ),
+  //       //                         );
+  //       //                       },
+  //       //                     );
+  //       //                   },
+  //       //                 );
+  //       //               } else if (snapshot.hasError) {
+  //       //                 return Text('Error: ${snapshot.error}');
+  //       //               } else {
+  //       //                 return Center(child: CircularProgressIndicator());
+  //       //               }
+  //       //             },
+  //       //           ),
+  //       //         ),
+  //       //       ],
+  //       //     ),
+  //       //   ),
+  //       //   actions: [
+  //       //     GestureDetector(
+  //       //       onTap: () {
+  //       //         Navigator.pop(context);
+  //       //       },
+  //       //       child: Container(
+  //       //         height: 45,
+  //       //         width: 100,
+  //       //         decoration: BoxDecoration(
+  //       //           border: Border.all(color: blueColor),
+  //       //           borderRadius: BorderRadius.circular(6),
+  //       //         ),
+  //       //         child: Center(
+  //       //           child: Text(
+  //       //             "Cancel",
+  //       //             style: TextStyle(color: blueColor, fontSize: 16),
+  //       //           ),
+  //       //         ),
+  //       //       ),
+  //       //     ),
+  //       //     GestureDetector(
+  //       //       onTap: () async {
+  //       //         SharedPreferences prefs = await SharedPreferences.getInstance();
+  //       //         String? token = prefs.getString('token');
+  //       //         String? id = prefs.getString('adminId');
+  //       //         final provider = Provider.of<DropdownProvider>(context, listen: false);
+  //       //         List<Map<String, dynamic>> data = [];
+  //       //         for (var i = 0; i < tenants.length; i++) {
+  //       //           List<String> selected_card = provider.tenantCard;
+  //       //           print(selected_card);
+  //       //           List<BillingData> billdata = billingDataList![i];
+  //       //           BillingData current_data =
+  //       //           billdata.firstWhere((element) => element.ccNumber == selected_card[i]);
+  //       //           data.add({
+  //       //             "lease_id": tenants[i].leaseId,
+  //       //             "tenant_id": tenants[i].tenantId!.first,
+  //       //             "card_type": current_data.binResult,
+  //       //             "customer_vault_id": current_data.customerVaultId,
+  //       //             "billing_id": current_data.billingId,
+  //       //           });
+  //       //         }
+  //       //         print(data);
+  //       //
+  //       //        await Properies_summery_Repo().addrecurringtenant({
+  //       //           "admin_id": id,
+  //       //           "rental_id": widget.properties.rentalId,
+  //       //           "recurrings": data
+  //       //         }).then((value){
+  //       //           Navigator.pop(context);
+  //       //           setState(() {
+  //       //
+  //       //           });
+  //       //        });
+  //       //       },
+  //       //       child: Container(
+  //       //         height: 45,
+  //       //         width: 100,
+  //       //         decoration: BoxDecoration(
+  //       //           color: blueColor,
+  //       //           borderRadius: BorderRadius.circular(6),
+  //       //         ),
+  //       //         child: Center(
+  //       //           child: Text(
+  //       //             "Save",
+  //       //             style: TextStyle(color: Colors.white, fontSize: 16),
+  //       //           ),
+  //       //         ),
+  //       //       ),
+  //       //     ),
+  //       //   ],
+  //       // );
+  //     },
+  //   );
+  // }
 
+  List<String> tenantCardControllers = [];
+  List<TextEditingController> amountControllers = [];
+
+// Add this where you define the dialog.
+  recurringCardDialog(List<TenantData> tenants) async {
     List<List<BillingData>>? billingDataList;
-    List<String> tenant_card = List<String>.generate(tenants.length, (index) => '').toList();
+    List<String> tenant_card =
+        List<String>.generate(tenants.length, (index) => '').toList();
 
     // Fetch the response to determine if credit or debit cards are accepted
     Map<String, Map<String, bool>> cardAcceptanceResponses = {};
     for (var tenant in tenants) {
-      var response = await  tenant_cards().fetchCardAcceptance(tenant.tenantId!.first,tenant.leaseId!);
+      var response = await tenant_cards()
+          .fetchCardAcceptance(tenant.tenantId!.first, tenant.leaseId!);
       cardAcceptanceResponses[tenant.tenantId!.first] = response;
-
     }
+
+    // Initialize one row at the start.
+    tenantCardControllers.add('');
+    amountControllers.add(TextEditingController());
+
     return showDialog(
       context: context,
       builder: (BuildContext context) {
-        return
-          Dialog(
-            backgroundColor: Colors.white,
-            surfaceTintColor: Colors.white,
-            shape: RoundedRectangleBorder(
-                borderRadius:
-                BorderRadius.circular(10.0)),
-            child:
-            Container(
-              // width: MediaQuery.of(context).size.width - 10,
-                width: 999,
-                   height: 400,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
+        return Dialog(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+          child: Container(
+            width: 999,
+            height: 400,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 10),
+                  Text(
+                    "Select Recurring Cards",
+                    style: TextStyle(
+                      color: blueColor,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Divider(
+                    color: grey,
+                  ),
+                  SizedBox(height: 10),
+                  Expanded(
+                    child: FutureBuilder<List<Map<String, dynamic>>>(
+                      future: Future.wait(
+                        tenants.map((tenant) async {
+                          var paymentSettings =
+                              await tenant_cards().fetchCardAcceptance(
+                            tenant.tenantId!.first,
+                            tenant.leaseId!,
+                          );
 
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 10),
-                      Text(
-                        "Select Recurring Cards",
-                        style: TextStyle(
-                          color: blueColor,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                          bool creditAccepted =
+                              paymentSettings['creditCardAccepted']!;
+                          bool debitAccepted =
+                              paymentSettings['debitCardAccepted']!;
+
+                          // Fetch and filter cards based on payment settings.
+                          var cards = await tenant_cards()
+                              .fetchcreditcard(tenant.tenantId!.first);
+                          var filteredCards = cards.where((card) {
+                            if (creditAccepted && card.binResult == 'CREDIT')
+                              return true;
+                            if (debitAccepted && card.binResult == 'DEBIT')
+                              return true;
+                            return false;
+                          }).toList();
+
+                          // Return the tenant and their valid cards
+                          return {'tenant': tenant, 'cards': filteredCards};
+                        }).toList(),
                       ),
-                      Divider(color: grey,),
-                      SizedBox(height: 10),
-                      Expanded(
-                        child: FutureBuilder<List<Map<String, dynamic>>>(
-                          future: Future.wait(
-                            tenants.map((tenant) async {
-                              var paymentSettings = await tenant_cards().fetchCardAcceptance(
-                                tenant.tenantId!.first,
-                                tenant.leaseId!,
-                              );
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          List<Map<String, dynamic>> tenantsWithCards = snapshot
+                              .data!
+                              .where((entry) => entry['cards'].isNotEmpty)
+                              .toList();
 
-                              bool creditAccepted = paymentSettings['creditCardAccepted']!;
-                              bool debitAccepted = paymentSettings['debitCardAccepted']!;
+                          // If no tenants have valid cards, show a message
+                          if (tenantsWithCards.isEmpty) {
+                            return Center(
+                                child: Text('No tenants with valid cards.'));
+                          }
+                          List<List<BillingData>> Cardsdata = tenantsWithCards
+                              .map((e) => e['cards'] as List<BillingData>)
+                              .toList();
 
-                              // Fetch and filter cards based on payment settings.
-                              var cards = await tenant_cards().fetchcreditcard(tenant.tenantId!.first);
-                              var filteredCards = cards.where((card) {
-                                if (creditAccepted && card.binResult == 'CREDIT') return true;
-                                if (debitAccepted && card.binResult == 'DEBIT') return true;
-                                return false;
-                              }).toList();
+                          // Initialize the tenant card data in the provider
+                          Provider.of<DropdownProvider>(context, listen: false)
+                              .initializeTenantCard(tenantsWithCards
+                                  .map((e) => e['cards'] as List<BillingData>)
+                                  .toList());
 
-                              // Return the tenant and their valid cards
-                              return {'tenant': tenant, 'cards': filteredCards};
-                            }).toList(),
-                          ),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              List<Map<String, dynamic>> tenantsWithCards = snapshot.data!
-                                  .where((entry) => entry['cards'].isNotEmpty)
-                                  .toList();
-
-                              // If no tenants have valid cards, show a message
-                              if (tenantsWithCards.isEmpty) {
-                                return Center(child: Text('No tenants with valid cards.'));
-                              }
-                              List<List<BillingData>> Cardsdata = tenantsWithCards.map((e) => e['cards'] as List<BillingData>).toList();
-                              // Initialize the tenant card data in the provider
-                              Provider.of<DropdownProvider>(context, listen: false)
-                                  .initializeTenantCard(
-                                  tenantsWithCards.map((e) => e['cards'] as List<BillingData>).toList());
-
+                          return StatefulBuilder(
+                            builder: (context, setState) {
                               return ListView.builder(
                                 shrinkWrap: true,
                                 physics: ClampingScrollPhysics(),
-                                itemCount: tenantsWithCards.length,
+                                itemCount: tenantCardControllers.length,
                                 itemBuilder: (context, index) {
-                                  TenantData tenantsdata = tenantsWithCards[index]["tenant"];
+                                  TenantData tenantsdata =
+                                      tenantsWithCards[index]["tenant"];
                                   String tenantId = tenantsdata.tenantId!.first;
-                                  Map<String, bool> cardAcceptanceResponse = cardAcceptanceResponses[tenantId]!;
+                                  Map<String, bool> cardAcceptanceResponse =
+                                      cardAcceptanceResponses[tenantId]!;
 
-                                  List<BillingData> filteredCards = tenant_cards().filterCards(
+                                  List<BillingData> filteredCards =
+                                      tenant_cards().filterCards(
                                     Cardsdata[index],
                                     cardAcceptanceResponse,
                                   );
+                                  Provider.of<DropdownProvider>(context, listen: false)
+                                                                  .initializeTenantCard(
+                                                                  tenantsWithCards.map((e) => e['cards'] as List<BillingData>).toList());
 
-                                  return Consumer<DropdownProvider>(
-                                    builder: (context, provider, child) {
-                                      // Filter the cards based on the card acceptance response
-                                      return Padding(
-                                        padding: const EdgeInsets.all(3.0),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                  return Padding(
+                                    padding: const EdgeInsets.all(3.0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "${tenantsdata.firstName} ${tenantsdata.lastName}",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        SizedBox(height: 5),
+                                        Row(
                                           children: [
-                                            Text(
-                                              "${tenantsdata.firstName} ${tenantsdata.lastName}",
-                                              style: TextStyle(
-                                                fontSize: 15,
-                                                color: blueColor,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
                                             Container(
                                               height: 45,
                                               decoration: BoxDecoration(
                                                 border: Border.all(),
-                                                borderRadius: BorderRadius.circular(5),
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
                                               ),
-                                              padding: EdgeInsets.symmetric(horizontal: 2),
-                                              child: DropdownButtonHideUnderline(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 2),
+                                              child:
+                                                  DropdownButtonHideUnderline(
                                                 child: DropdownButton<String>(
                                                   isExpanded: true,
-                                                  value: provider.tenantCard[index], // Use ccNumber as selected value
+                                                //  value: , // Use ccNumber as selected value
                                                   // Custom display of the selected item:
-                                                  selectedItemBuilder: (BuildContext context) {
-                                                    return filteredCards.map((card) {
+                                                  selectedItemBuilder:
+                                                      (BuildContext context) {
+                                                    return filteredCards
+                                                        .map((card) {
                                                       return Align(
-                                                        alignment: Alignment.centerLeft,
+                                                        alignment: Alignment
+                                                            .centerLeft,
                                                         child: Text(
                                                           card.ccNumber!, // Only display ccNumber in selected state
-                                                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                                                          style: TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500),
                                                         ),
                                                       );
                                                     }).toList();
                                                   },
                                                   // Expanded dropdown list items:
-                                                  items: filteredCards.map((card) {
+                                                  items:
+                                                      filteredCards.map((card) {
                                                     return DropdownMenuItem(
-                                                      value: card.ccNumber, // ccNumber remains the value
+                                                      value: card
+                                                          .ccNumber, // ccNumber remains the value
                                                       child: Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
                                                         children: [
                                                           Text(
                                                             card.ccNumber!,
-                                                            style: TextStyle(fontWeight: FontWeight.bold),
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
                                                           ),
                                                           Text(
-                                                            card.binResult ?? '',
-                                                            style: TextStyle(color: Colors.grey),
+                                                            card.binResult ??
+                                                                '',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .grey),
                                                           ),
                                                         ],
                                                       ),
                                                     );
                                                   }).toList(),
-                                                  onChanged: (String? selectedCard) {
-                                                    if (selectedCard != null) {
-                                                      provider.updateTenantCard(index, selectedCard);
-                                                    }
+                                                  onChanged:
+                                                      (String? selectedCard) {
+                                                    // if (selectedCard != null) {
+                                                    //   provider.updateTenantCard(
+                                                    //       index, selectedCard);
+                                                    // }
                                                   },
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 15, right: 15),
+                                                child: CustomTextField(
+                                                  controller:
+                                                      amountControllers[index],
+                                                  validator: (value) {
+                                                    if (value == null ||
+                                                        value.isEmpty) {
+                                                      return 'Please enter amount';
+                                                    }
+                                                    return null;
+                                                  },
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  hintText: 'Enter Amount',
                                                 ),
                                               ),
                                             ),
                                           ],
                                         ),
-                                      );
-                                    },
+                                      ],
+                                    ),
                                   );
                                 },
                               );
-                            } else if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                            } else {
-                              return Center(
-                                  child: SpinKitFadingCircle(
-                                    color: Colors.black,
-                                    size: 40.0,
-                                  ));
-                            }
-                          },
+                            },
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else {
+                          return Center(
+                            child: SpinKitFadingCircle(
+                              color: Colors.black,
+                              size: 40.0,
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        tenantCardControllers.add('');
+                        amountControllers.add(TextEditingController());
+                      });
+                    },
+                    child: Row(
+                      children: [
+                        SizedBox(width: 15),
+                        Icon(Icons.add, color: Colors.green, size: 30),
+                        SizedBox(width: 6),
+                        Text(
+                          "Add Row",
+                          style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: MediaQuery.of(context).size.width < 500
+                                ? 16
+                                : 17,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          height: 45,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: blueColor),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Cancel",
+                              style: TextStyle(color: blueColor, fontSize: 16),
+                            ),
+                          ),
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                              height: 45,
-                              width: 100,
-                              decoration: BoxDecoration(
-                                border: Border.all(color: blueColor),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Cancel",
-                                  style: TextStyle(color: blueColor, fontSize: 16),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 10,),
-                          GestureDetector(
-                            onTap: () async {
-                              SharedPreferences prefs = await SharedPreferences.getInstance();
-                              String? token = prefs.getString('token');
-                              String? id = prefs.getString('adminId');
-                              final provider = Provider.of<DropdownProvider>(context, listen: false);
-                              List<Map<String, dynamic>> data = [];
-                              for (var i = 0; i < tenants.length; i++) {
-                                List<String> selected_card = provider.tenantCard;
-                                print(selected_card);
-                                List<BillingData> billdata = billingDataList![i];
-                                BillingData current_data =
-                                billdata.firstWhere((element) => element.ccNumber == selected_card[i]);
-                                data.add({
-                                  "lease_id": tenants[i].leaseId,
-                                  "tenant_id": tenants[i].tenantId!.first,
-                                  "card_type": current_data.binResult,
-                                  "customer_vault_id": current_data.customerVaultId,
-                                  "billing_id": current_data.billingId,
-                                });
-                              }
-                              print(data);
-
-                              await Properies_summery_Repo().addrecurringtenant({
-                                "admin_id": id,
-                                "rental_id": widget.properties.rentalId,
-                                "recurrings": data
-                              }).then((value){
-                                Navigator.pop(context);
-                                setState(() {
-
-                                });
-                              });
-                            },
-                            child: Container(
-                              height: 45,
-                              width: 100,
-                              decoration: BoxDecoration(
-                                color: blueColor,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Save",
-                                  style: TextStyle(color: Colors.white, fontSize: 16),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      SizedBox(width: 10),
                     ],
                   ),
-                ),),
-          );
-        //   AlertDialog(
-        //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-        //   content:
-        //   Container(
-        //     height: 350.0,
-        //     width: 450.0,
-        //     child: Column(
-        //       mainAxisAlignment: MainAxisAlignment.start,
-        //       crossAxisAlignment: CrossAxisAlignment.start,
-        //       children: [
-        //         Text(
-        //           "Select Recurring Cards",
-        //           style: TextStyle(
-        //             color: blueColor,
-        //             fontSize: 20,
-        //             fontWeight: FontWeight.bold,
-        //           ),
-        //         ),
-        //         SizedBox(height: 10),
-        //         Expanded(
-        //           child: FutureBuilder<List<Map<String, dynamic>>>(
-        //             future: Future.wait(
-        //               tenants.map((tenant) async {
-        //                 var paymentSettings = await tenant_cards().fetchCardAcceptance(
-        //                   tenant.tenantId!.first,
-        //                   tenant.leaseId!,
-        //                 );
-        //
-        //                 bool creditAccepted = paymentSettings['creditCardAccepted']!;
-        //                 bool debitAccepted = paymentSettings['debitCardAccepted']!;
-        //
-        //                 // Fetch and filter cards based on payment settings.
-        //                 var cards = await tenant_cards().fetchcreditcard(tenant.tenantId!.first);
-        //                 var filteredCards = cards.where((card) {
-        //                   if (creditAccepted && card.binResult == 'CREDIT') return true;
-        //                   if (debitAccepted && card.binResult == 'DEBIT') return true;
-        //                   return false;
-        //                 }).toList();
-        //
-        //                 // Return the tenant and their valid cards
-        //                 return {'tenant': tenant, 'cards': filteredCards};
-        //               }).toList(),
-        //             ),
-        //             builder: (context, snapshot) {
-        //               if (snapshot.hasData) {
-        //                 List<Map<String, dynamic>> tenantsWithCards = snapshot.data!
-        //                     .where((entry) => entry['cards'].isNotEmpty)
-        //                     .toList();
-        //
-        //                 // If no tenants have valid cards, show a message
-        //                 if (tenantsWithCards.isEmpty) {
-        //                   return Center(child: Text('No tenants with valid cards.'));
-        //                 }
-        //                 List<List<BillingData>> Cardsdata = tenantsWithCards.map((e) => e['cards'] as List<BillingData>).toList();
-        //                 // Initialize the tenant card data in the provider
-        //                 Provider.of<DropdownProvider>(context, listen: false)
-        //                     .initializeTenantCard(
-        //                     tenantsWithCards.map((e) => e['cards'] as List<BillingData>).toList());
-        //
-        //                 return ListView.builder(
-        //                   shrinkWrap: true,
-        //                   physics: ClampingScrollPhysics(),
-        //                   itemCount: tenantsWithCards.length,
-        //                   itemBuilder: (context, index) {
-        //                     TenantData tenantsdata = tenantsWithCards[index]["tenant"];
-        //                     String tenantId = tenantsdata.tenantId!.first;
-        //                     Map<String, bool> cardAcceptanceResponse = cardAcceptanceResponses[tenantId]!;
-        //
-        //                     List<BillingData> filteredCards = tenant_cards().filterCards(
-        //                       Cardsdata[index],
-        //                       cardAcceptanceResponse,
-        //                     );
-        //
-        //                     return Consumer<DropdownProvider>(
-        //                       builder: (context, provider, child) {
-        //                         // Filter the cards based on the card acceptance response
-        //
-        //
-        //                         return Padding(
-        //                           padding: const EdgeInsets.only(top: 3,bottom: 3),
-        //                           child: Row(
-        //                             mainAxisAlignment: MainAxisAlignment.start,
-        //                             crossAxisAlignment: CrossAxisAlignment.start,
-        //                             children: [
-        //                               SizedBox(
-        //                                 width: MediaQuery.of(context)
-        //                                     .size
-        //                                     .width >
-        //                                     500
-        //                                     ? 100
-        //                                     : 90,
-        //                                 child: Text(
-        //                                  ' ${tenantsdata.firstName} ${tenantsdata.lastName}',
-        //                                   maxLines:
-        //                                   5, // Set maximum number of lines
-        //                                   overflow: TextOverflow
-        //                                       .ellipsis,
-        //                                   textAlign: TextAlign.left,
-        //                                   style: TextStyle(
-        //                                     fontSize: MediaQuery.of(context)
-        //                                         .size
-        //                                         .width <
-        //                                         500
-        //                                         ? 13
-        //                                         : 18,
-        //                                     color: blueColor,
-        //                                     fontWeight: FontWeight.bold,
-        //                                   ),
-        //                                 ),
-        //                               ),
-        //                               // Text(
-        //                               //   "${tenantsdata.firstName} ${tenantsdata.lastName}",
-        //                               //   style: TextStyle(
-        //                               //     fontSize: 16,
-        //                               //     fontWeight: FontWeight.w500,
-        //                               //   ),
-        //                               // ),
-        //                               SizedBox(width: 3),
-        //                               Expanded(
-        //                                 child: Container(
-        //                                   height: 45,
-        //                                   decoration: BoxDecoration(
-        //                                     border: Border.all(),
-        //                                     borderRadius: BorderRadius.circular(5),
-        //                                   ),
-        //                                   padding: EdgeInsets.symmetric(horizontal: 5),
-        //                                   child: DropdownButtonHideUnderline(
-        //                                     child: DropdownButton<String>(
-        //                                       isExpanded: true,
-        //                                       value: provider.tenantCard[index], // Use ccNumber as selected value
-        //                                       // Custom display of the selected item:
-        //                                       selectedItemBuilder: (BuildContext context) {
-        //                                         return filteredCards.map((card) {
-        //                                           return Align(
-        //                                             alignment: Alignment.centerLeft,
-        //                                             child: Text(
-        //                                               card.ccNumber!, // Only display ccNumber in selected state
-        //                                               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-        //                                             ),
-        //                                           );
-        //                                         }).toList();
-        //                                       },
-        //                                       // Expanded dropdown list items:
-        //                                       items: filteredCards.map((card) {
-        //                                         return DropdownMenuItem(
-        //                                           value: card.ccNumber, // ccNumber remains the value
-        //                                           child: Column(
-        //                                             crossAxisAlignment: CrossAxisAlignment.start,
-        //                                             children: [
-        //                                               Text(
-        //                                                 card.ccNumber!,
-        //                                                 style: TextStyle(fontWeight: FontWeight.bold),
-        //                                               ),
-        //                                               Text(
-        //                                                 card.binResult ?? '',
-        //                                                 style: TextStyle(color: Colors.grey),
-        //                                               ),
-        //                                             ],
-        //                                           ),
-        //                                         );
-        //                                       }).toList(),
-        //                                       onChanged: (String? selectedCard) {
-        //                                         if (selectedCard != null) {
-        //                                           provider.updateTenantCard(index, selectedCard);
-        //                                         }
-        //                                       },
-        //                                     ),
-        //                                   ),
-        //                                 ),
-        //                               ),
-        //
-        //
-        //                             ],
-        //                           ),
-        //                         );
-        //                       },
-        //                     );
-        //                   },
-        //                 );
-        //               } else if (snapshot.hasError) {
-        //                 return Text('Error: ${snapshot.error}');
-        //               } else {
-        //                 return Center(child: CircularProgressIndicator());
-        //               }
-        //             },
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //   ),
-        //   actions: [
-        //     GestureDetector(
-        //       onTap: () {
-        //         Navigator.pop(context);
-        //       },
-        //       child: Container(
-        //         height: 45,
-        //         width: 100,
-        //         decoration: BoxDecoration(
-        //           border: Border.all(color: blueColor),
-        //           borderRadius: BorderRadius.circular(6),
-        //         ),
-        //         child: Center(
-        //           child: Text(
-        //             "Cancel",
-        //             style: TextStyle(color: blueColor, fontSize: 16),
-        //           ),
-        //         ),
-        //       ),
-        //     ),
-        //     GestureDetector(
-        //       onTap: () async {
-        //         SharedPreferences prefs = await SharedPreferences.getInstance();
-        //         String? token = prefs.getString('token');
-        //         String? id = prefs.getString('adminId');
-        //         final provider = Provider.of<DropdownProvider>(context, listen: false);
-        //         List<Map<String, dynamic>> data = [];
-        //         for (var i = 0; i < tenants.length; i++) {
-        //           List<String> selected_card = provider.tenantCard;
-        //           print(selected_card);
-        //           List<BillingData> billdata = billingDataList![i];
-        //           BillingData current_data =
-        //           billdata.firstWhere((element) => element.ccNumber == selected_card[i]);
-        //           data.add({
-        //             "lease_id": tenants[i].leaseId,
-        //             "tenant_id": tenants[i].tenantId!.first,
-        //             "card_type": current_data.binResult,
-        //             "customer_vault_id": current_data.customerVaultId,
-        //             "billing_id": current_data.billingId,
-        //           });
-        //         }
-        //         print(data);
-        //
-        //        await Properies_summery_Repo().addrecurringtenant({
-        //           "admin_id": id,
-        //           "rental_id": widget.properties.rentalId,
-        //           "recurrings": data
-        //         }).then((value){
-        //           Navigator.pop(context);
-        //           setState(() {
-        //
-        //           });
-        //        });
-        //       },
-        //       child: Container(
-        //         height: 45,
-        //         width: 100,
-        //         decoration: BoxDecoration(
-        //           color: blueColor,
-        //           borderRadius: BorderRadius.circular(6),
-        //         ),
-        //         child: Center(
-        //           child: Text(
-        //             "Save",
-        //             style: TextStyle(color: Colors.white, fontSize: 16),
-        //           ),
-        //         ),
-        //       ),
-        //     ),
-        //   ],
-        // );
+                ],
+              ),
+            ),
+          ),
+        );
       },
     );
   }
 
-  Widget buildTenantCard(TenantData tenant,{bool? isMoveouts }) {
+  Widget buildTenantCard(TenantData tenant, {bool? isMoveouts}) {
     final dateProvider = Provider.of<DateProvider>(context);
     return Column(
       children: [
@@ -3388,7 +3695,7 @@ class _Summery_pageState extends State<Summery_page>
               height: 30,
               width: 30,
               decoration: BoxDecoration(
-                color:blueColor,
+                color: blueColor,
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Center(
@@ -3439,57 +3746,56 @@ class _Summery_pageState extends State<Summery_page>
               ],
             ),
             const Spacer(),
-            if(isMoveouts ==false)
-            InkWell(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    bool isChecked = false; // Moved isChecked inside the StatefulBuilder
-                    return StatefulBuilder(
-                      builder: (BuildContext context, StateSetter setState) {
-                        return
-                          Dialog(
+            if (isMoveouts == false)
+              InkWell(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      bool isChecked =
+                          false; // Moved isChecked inside the StatefulBuilder
+                      return StatefulBuilder(
+                        builder: (BuildContext context, StateSetter setState) {
+                          return Dialog(
                             backgroundColor: Colors.white,
                             surfaceTintColor: Colors.white,
                             shape: RoundedRectangleBorder(
-                                borderRadius:
-                                BorderRadius.circular(10.0)),
-                            child:
-                            Padding(
-                              padding: const EdgeInsets.only(left: 16,right: 16,top: 10,bottom: 10),
+                                borderRadius: BorderRadius.circular(10.0)),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 16, right: 16, top: 10, bottom: 10),
                               child: Container(
-                                // width: MediaQuery.of(context).size.width - 10,
+                                  // width: MediaQuery.of(context).size.width - 10,
                                   width: 900,
                                   child: buildMoveout(tenant)),
                             ),
                           );
                         },
-                    );
-                  },
-                );
-              },
-              child: Row(
-                children: [
-                  FaIcon(
-                    FontAwesomeIcons.rightFromBracket,
-                    size: 17,
-                    color: blueColor,
-                  ),
-                  SizedBox(width: 5),
-                  Text(
-                    "Move out",
-                    style: TextStyle(
-                      fontSize:
-                          MediaQuery.of(context).size.width < 500 ? 15 : 15,
-                      fontWeight: FontWeight.w500,
+                      );
+                    },
+                  );
+                },
+                child: Row(
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.rightFromBracket,
+                      size: 17,
                       color: blueColor,
                     ),
-                  ),
-                ],
+                    SizedBox(width: 5),
+                    Text(
+                      "Move out",
+                      style: TextStyle(
+                        fontSize:
+                            MediaQuery.of(context).size.width < 500 ? 15 : 15,
+                        fontWeight: FontWeight.w500,
+                        color: blueColor,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            if(isMoveouts== true)
+            if (isMoveouts == true)
               Row(
                 children: [
                   FaIcon(
@@ -3538,7 +3844,7 @@ class _Summery_pageState extends State<Summery_page>
         Row(
           children: [
             const SizedBox(width: 65),
-             FaIcon(
+            FaIcon(
               FontAwesomeIcons.phone,
               size: 15,
               color: blueColor,
@@ -3558,7 +3864,7 @@ class _Summery_pageState extends State<Summery_page>
         Row(
           children: [
             const SizedBox(width: 65),
-             FaIcon(
+            FaIcon(
               FontAwesomeIcons.solidEnvelope,
               size: 15,
               color: blueColor,
@@ -3675,9 +3981,16 @@ class _Summery_pageState extends State<Summery_page>
                     ),
                     TableRow(
                       children: [
-                        buildTableCell(Text('Start End',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,
-                          fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 17,))),
-                        buildTableCell(Text('${tenant.startDate} ${tenant.endDate}')),
+                        buildTableCell(Text('Start End',
+                            style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: MediaQuery.of(context).size.width < 500
+                                  ? 15
+                                  : 17,
+                            ))),
+                        buildTableCell(
+                            Text('${tenant.startDate} ${tenant.endDate}')),
                       ],
                     ),
                   ],
@@ -3777,13 +4090,15 @@ class _Summery_pageState extends State<Summery_page>
                                 //     ),
                                 //   ),
                                 // ),
-                                SizedBox(width: 4,),
+                                SizedBox(
+                                  width: 4,
+                                ),
                                 Expanded(
                                   child: Material(
-                                    elevation:2,
+                                    elevation: 2,
                                     borderRadius: BorderRadius.circular(5),
                                     child: Container(
-                                      height:45,
+                                      height: 45,
                                       // width:130,
                                       decoration: BoxDecoration(
                                         color: Colors.grey[300],
@@ -3791,16 +4106,18 @@ class _Summery_pageState extends State<Summery_page>
                                       ),
                                       child: Center(
                                         child: Padding(
-                                          padding: const EdgeInsets.only(left: 5,),
-                                          child:
-                                          TextField(
+                                          padding: const EdgeInsets.only(
+                                            left: 5,
+                                          ),
+                                          child: TextField(
                                             enabled: true,
                                             // controller: displayDate,
                                             decoration: InputDecoration(
                                               border: InputBorder.none,
                                               hintText: displayDate,
                                               suffixIcon: IconButton(
-                                                icon: Icon(Icons.calendar_today),
+                                                icon:
+                                                    Icon(Icons.calendar_today),
                                                 onPressed: () async {
                                                   // DateTime? pickedDate = await showDatePicker(
                                                   //   context: context,
@@ -3823,7 +4140,9 @@ class _Summery_pageState extends State<Summery_page>
                                     ),
                                   ),
                                 ),
-                                SizedBox(width:1,),
+                                SizedBox(
+                                  width: 1,
+                                ),
                               ],
                             ),
                           ],
@@ -3931,7 +4250,6 @@ class _Summery_pageState extends State<Summery_page>
               ),
             ],
           ),
-
           SizedBox(height: 15),
         ],
       ),
@@ -3948,72 +4266,67 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   Widget buildDateField(TextEditingController controller) {
-    return
-      Padding(
-        padding:  EdgeInsets.only(left: 5,right: 2),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.grey[300],
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: Center(
-            child: Padding(
-              padding:  EdgeInsets.only(left: 5),
-              child:
-              TextField(
-                controller: controller,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Select Date',
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.calendar_today),
-                    onPressed: () async {
-                      DateTime? pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2101),
-                        builder: (BuildContext context, Widget? child) {
-                          return Theme(
-                            data: ThemeData.light().copyWith(
-                              colorScheme: const ColorScheme.light(
-                                primary: Color.fromRGBO(21, 43, 83,
-                                    1), // header background color
-                                onPrimary:
-                                Colors.white, // header text color
-                                onSurface: Color.fromRGBO(
-                                    21, 43, 83, 1), // body text color
-                              ),
-                              textButtonTheme: TextButtonThemeData(
-                                style: TextButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  backgroundColor: const Color.fromRGBO(
-                                      21,
-                                      43,
-                                      83,
-                                      1), // button text color
-                                ),
+    return Padding(
+      padding: EdgeInsets.only(left: 5, right: 2),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.only(left: 5),
+            child: TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Select Date',
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.calendar_today),
+                  onPressed: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2101),
+                      builder: (BuildContext context, Widget? child) {
+                        return Theme(
+                          data: ThemeData.light().copyWith(
+                            colorScheme: const ColorScheme.light(
+                              primary: Color.fromRGBO(
+                                  21, 43, 83, 1), // header background color
+                              onPrimary: Colors.white, // header text color
+                              onSurface: Color.fromRGBO(
+                                  21, 43, 83, 1), // body text color
+                            ),
+                            textButtonTheme: TextButtonThemeData(
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: const Color.fromRGBO(
+                                    21, 43, 83, 1), // button text color
                               ),
                             ),
-                            child: child!,
-                          );
-                        },
-                      );
-                      if (pickedDate != null) {
-                        setState(() {
-                          controller.text = displayDate;
-                          controller.text = DateFormat('dd-MM-yyyy').format(pickedDate);
-                        });
-                      }
-                    },
-                  ),
+                          ),
+                          child: child!,
+                        );
+                      },
+                    );
+                    if (pickedDate != null) {
+                      setState(() {
+                        controller.text = displayDate;
+                        controller.text =
+                            DateFormat('dd-MM-yyyy').format(pickedDate);
+                      });
+                    }
+                  },
                 ),
-                readOnly: true,
               ),
+              readOnly: true,
             ),
           ),
         ),
-      );
+      ),
+    );
   }
 
   Unit_page(BuildContext context) {
@@ -4536,11 +4849,9 @@ class _Summery_pageState extends State<Summery_page>
                                                                         width:
                                                                             80,
                                                                         decoration:
-                                                                             BoxDecoration(
-                                                                          color: blueColor
-
-
-,
+                                                                            BoxDecoration(
+                                                                          color:
+                                                                              blueColor,
                                                                           borderRadius:
                                                                               BorderRadius.all(
                                                                             Radius.circular(5),
@@ -4589,7 +4900,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                             Radius.circular(5),
                                                                           ),
                                                                         ),
-                                                                        child:  Center(
+                                                                        child: Center(
                                                                             child: Text(
                                                                           "Cancel",
                                                                           style: TextStyle(
@@ -4894,11 +5205,9 @@ class _Summery_pageState extends State<Summery_page>
                                                                         width:
                                                                             80,
                                                                         decoration:
-                                                                             BoxDecoration(
-                                                                          color: blueColor
-
-
-,
+                                                                            BoxDecoration(
+                                                                          color:
+                                                                              blueColor,
                                                                           borderRadius:
                                                                               BorderRadius.all(
                                                                             Radius.circular(5),
@@ -4947,7 +5256,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                             Radius.circular(5),
                                                                           ),
                                                                         ),
-                                                                        child:  Center(
+                                                                        child: Center(
                                                                             child: Text(
                                                                           "Cancel",
                                                                           style: TextStyle(
@@ -4990,11 +5299,8 @@ class _Summery_pageState extends State<Summery_page>
                                                 color: Colors.white),
                                           ),
                                           style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                   blueColor
-
-
-, shape: RoundedRectangleBorder(
+                                              backgroundColor: blueColor,
+                                              shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           12.0))),
@@ -5167,10 +5473,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   BorderRadius.circular(12.0),
                                               color: Colors.white,
                                               border: Border.all(
-                                                color: blueColor
-
-
-,
+                                                color: blueColor,
                                                 width: 1,
                                               ),
                                             ),
@@ -5198,8 +5501,7 @@ class _Summery_pageState extends State<Summery_page>
                                                               : 18,
                                                       fontWeight:
                                                           FontWeight.bold,
-                                                      color: blueColor
-,
+                                                      color: blueColor,
                                                     ),
                                                   ),
                                                 ),
@@ -5234,10 +5536,7 @@ class _Summery_pageState extends State<Summery_page>
                                                       ),
                                                       style: ElevatedButton.styleFrom(
                                                           backgroundColor:
-                                                               blueColor
-
-
-,
+                                                              blueColor,
                                                           shape: RoundedRectangleBorder(
                                                               borderRadius:
                                                                   BorderRadius
@@ -5266,10 +5565,7 @@ class _Summery_pageState extends State<Summery_page>
                                                             : 18,
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        color: blueColor
-
-
-,
+                                                        color: blueColor,
                                                       ),
                                                     ),
                                                   ),
@@ -5312,10 +5608,7 @@ class _Summery_pageState extends State<Summery_page>
                                                       ),
                                                       style: ElevatedButton.styleFrom(
                                                           backgroundColor:
-                                                               blueColor
-
-
-,
+                                                              blueColor,
                                                           shape: RoundedRectangleBorder(
                                                               borderRadius:
                                                                   BorderRadius
@@ -5370,10 +5663,7 @@ class _Summery_pageState extends State<Summery_page>
                                                           ? 14
                                                           : 18,
                                                   fontWeight: FontWeight.bold,
-                                                  color: blueColor
-
-
-,
+                                                  color: blueColor,
                                                 ),
                                               ),
                                             ),
@@ -5422,11 +5712,7 @@ class _Summery_pageState extends State<Summery_page>
                                                           FontWeight.bold),
                                                 ),
                                                 style: ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        blueColor
-
-
-,
+                                                    backgroundColor: blueColor,
                                                     shape:
                                                         RoundedRectangleBorder(
                                                             borderRadius:
@@ -5451,10 +5737,7 @@ class _Summery_pageState extends State<Summery_page>
                                                           ? 14
                                                           : 18,
                                                   fontWeight: FontWeight.bold,
-                                                  color: blueColor
-
-
-,
+                                                  color: blueColor,
                                                 ),
                                               ),
                                             ),
@@ -5492,11 +5775,7 @@ class _Summery_pageState extends State<Summery_page>
                                                           FontWeight.bold),
                                                 ),
                                                 style: ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        blueColor
-
-
-,
+                                                    backgroundColor: blueColor,
                                                     shape:
                                                         RoundedRectangleBorder(
                                                             borderRadius:
@@ -5572,10 +5851,7 @@ class _Summery_pageState extends State<Summery_page>
                                             Text(
                                               "Add Unit Details",
                                               style: TextStyle(
-                                                color: blueColor
-
-
-,
+                                                color: blueColor,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
@@ -6084,10 +6360,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   height: 30,
                                                   width: 80,
                                                   decoration: BoxDecoration(
-                                                    color: blueColor
-
-
-,
+                                                    color: blueColor,
                                                     borderRadius:
                                                         BorderRadius.all(
                                                       Radius.circular(5),
@@ -6130,10 +6403,7 @@ class _Summery_pageState extends State<Summery_page>
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.w500,
-                                                        color: blueColor
-
-
-),
+                                                        color: blueColor),
                                                   )),
                                                 ),
                                               ),
@@ -6177,10 +6447,7 @@ class _Summery_pageState extends State<Summery_page>
                                             Text(
                                               "Add Unit Details",
                                               style: TextStyle(
-                                                color: blueColor
-
-
-,
+                                                color: blueColor,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
@@ -6565,10 +6832,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   height: 30,
                                                   width: 80,
                                                   decoration: BoxDecoration(
-                                                    color: blueColor
-
-
-,
+                                                    color: blueColor,
                                                     borderRadius:
                                                         BorderRadius.all(
                                                       Radius.circular(5),
@@ -6611,10 +6875,7 @@ class _Summery_pageState extends State<Summery_page>
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.w500,
-                                                        color: blueColor
-
-
-),
+                                                        color: blueColor),
                                                   )),
                                                 ),
                                               ),
@@ -6658,8 +6919,7 @@ class _Summery_pageState extends State<Summery_page>
                             child: Text(
                           "Add Unit",
                           style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              color: blueColor),
+                              fontWeight: FontWeight.w500, color: blueColor),
                         )),
                       ),
                     ),
@@ -6742,11 +7002,7 @@ class _Summery_pageState extends State<Summery_page>
                                 decoration: BoxDecoration(
                                     border: Border.all(
                                         color:
-                                        Color.fromRGBO(
-                                            152, 162, 179, .5)
-
-
-)),
+                                            Color.fromRGBO(152, 162, 179, .5))),
                                 // decoration: BoxDecoration(
                                 //     border: Border.all(color: blueColor)),
                                 child: Column(
@@ -6989,7 +7245,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                               children: [
                                                                                 Row(
                                                                                   children: [
-                                                                                     Text(
+                                                                                    Text(
                                                                                       "Edit Unit Details",
                                                                                       style: TextStyle(
                                                                                         color: blueColor,
@@ -7380,7 +7636,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         child: Container(
                                                                                           height: 30,
                                                                                           width: 80,
-                                                                                          decoration:  BoxDecoration(
+                                                                                          decoration: BoxDecoration(
                                                                                             color: blueColor,
                                                                                             borderRadius: BorderRadius.all(
                                                                                               Radius.circular(5),
@@ -7413,7 +7669,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                               Radius.circular(5),
                                                                                             ),
                                                                                           ),
-                                                                                          child:  Center(
+                                                                                          child: Center(
                                                                                               child: Text(
                                                                                             "Cancel",
                                                                                             style: TextStyle(fontWeight: FontWeight.w500, color: blueColor),
@@ -7473,7 +7729,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                               children: [
                                                                                 Row(
                                                                                   children: [
-                                                                                     Text(
+                                                                                    Text(
                                                                                       "Edit Unit Details",
                                                                                       style: TextStyle(
                                                                                         color: blueColor,
@@ -7772,7 +8028,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         child: Container(
                                                                                           height: 30,
                                                                                           width: 80,
-                                                                                          decoration:  BoxDecoration(
+                                                                                          decoration: BoxDecoration(
                                                                                             color: blueColor,
                                                                                             borderRadius: BorderRadius.all(
                                                                                               Radius.circular(5),
@@ -7805,7 +8061,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                               Radius.circular(5),
                                                                                             ),
                                                                                           ),
-                                                                                          child:  Center(
+                                                                                          child: Center(
                                                                                               child: Text(
                                                                                             "Cancel",
                                                                                             style: TextStyle(fontWeight: FontWeight.w500, color: blueColor),
@@ -7901,7 +8157,10 @@ class _Summery_pageState extends State<Summery_page>
                                                                     width: 5,
                                                                   ),
                                                                   Image.asset(
-                                                                      'assets/icons/view.png',color: blueColor,),
+                                                                    'assets/icons/view.png',
+                                                                    color:
+                                                                        blueColor,
+                                                                  ),
                                                                   // FaIcon(
                                                                   //   FontAwesomeIcons.trashCan,
                                                                   //   size: 15,
@@ -8021,10 +8280,10 @@ class _Summery_pageState extends State<Summery_page>
                                       IconButton(
                                         icon: FaIcon(
                                           FontAwesomeIcons.circleChevronRight,
-                                          color: currentPagemulti <
-                                                  totalPages - 1
-                                              ? blueColor
-                                              : Colors.grey,
+                                          color:
+                                              currentPagemulti < totalPages - 1
+                                                  ? blueColor
+                                                  : Colors.grey,
                                         ),
                                         onPressed:
                                             currentPagemulti < totalPages - 1
@@ -8177,29 +8436,17 @@ class _Summery_pageState extends State<Summery_page>
                                               decoration: BoxDecoration(
                                                 border: Border(
                                                   left: BorderSide(
-                                                      color: blueColor
-
-
-),
+                                                      color: blueColor),
                                                   right: BorderSide(
-                                                      color: blueColor
-
-
-),
+                                                      color: blueColor),
                                                   top: BorderSide(
-                                                      color: blueColor
-
-
-),
+                                                      color: blueColor),
                                                   bottom: i ==
                                                           _pagedDatamulti
                                                                   .length -
                                                               1
                                                       ? BorderSide(
-                                                          color:blueColor
-
-
-)
+                                                          color: blueColor)
                                                       : BorderSide.none,
                                                 ),
                                               ),
@@ -8294,7 +8541,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                               children: [
                                                                                 Row(
                                                                                   children: [
-                                                                                     Text(
+                                                                                    Text(
                                                                                       "Edit Unit Details",
                                                                                       style: TextStyle(
                                                                                         color: blueColor,
@@ -8611,7 +8858,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         child: Container(
                                                                                           height: 30,
                                                                                           width: 80,
-                                                                                          decoration:  BoxDecoration(
+                                                                                          decoration: BoxDecoration(
                                                                                             color: blueColor,
                                                                                             borderRadius: BorderRadius.all(
                                                                                               Radius.circular(5),
@@ -8644,7 +8891,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                               Radius.circular(5),
                                                                                             ),
                                                                                           ),
-                                                                                          child:  Center(
+                                                                                          child: Center(
                                                                                               child: Text(
                                                                                             "Cancel",
                                                                                             style: TextStyle(fontWeight: FontWeight.w500, color: blueColor),
@@ -8704,7 +8951,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                               children: [
                                                                                 Row(
                                                                                   children: [
-                                                                                     Text(
+                                                                                    Text(
                                                                                       "Edit Unit Details",
                                                                                       style: TextStyle(
                                                                                         color: blueColor,
@@ -8939,7 +9186,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         child: Container(
                                                                                           height: 30,
                                                                                           width: 80,
-                                                                                          decoration:  BoxDecoration(
+                                                                                          decoration: BoxDecoration(
                                                                                             color: blueColor,
                                                                                             borderRadius: BorderRadius.all(
                                                                                               Radius.circular(5),
@@ -8972,7 +9219,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                               Radius.circular(5),
                                                                                             ),
                                                                                           ),
-                                                                                          child:  Center(
+                                                                                          child: Center(
                                                                                               child: Text(
                                                                                             "Cancel",
                                                                                             style: TextStyle(fontWeight: FontWeight.w500, color: blueColor),
@@ -9003,10 +9250,8 @@ class _Summery_pageState extends State<Summery_page>
                                                                 FontAwesomeIcons
                                                                     .edit,
                                                                 size: 20,
-                                                                color: blueColor
-
-
-,
+                                                                color:
+                                                                    blueColor,
                                                               ),
                                                             ),
                                                           ),
@@ -9096,8 +9341,7 @@ class _Summery_pageState extends State<Summery_page>
                                   color: Colors.white),
                             ),
                             style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    blueColor,
+                                backgroundColor: blueColor,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12.0))),
                           ),
@@ -9113,19 +9357,17 @@ class _Summery_pageState extends State<Summery_page>
                               : 150,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    blueColor,
+                                backgroundColor: blueColor,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12.0))),
                             onPressed: () async {
-                              var data =  await Properies_summery_Repo()
+                              var data = await Properies_summery_Repo()
                                   .Deleteunit(unitId: unit?.unitId!);
                               // Add your delete logic here
                               setState(() {
                                 futureUnitsummery = Properies_summery_Repo()
                                     .fetchunit(widget.properties.rentalId!);
                                 showdetails = false;
-
                               });
                               //Navigator.pop(context);
                             },
@@ -9348,11 +9590,7 @@ class _Summery_pageState extends State<Summery_page>
                                               fontWeight: FontWeight.bold),
                                         ),
                                         style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                blueColor
-
-
-,
+                                            backgroundColor: blueColor,
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(
@@ -9412,11 +9650,7 @@ class _Summery_pageState extends State<Summery_page>
                                               fontWeight: FontWeight.bold),
                                         ),
                                         style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                blueColor
-
-
-,
+                                            backgroundColor: blueColor,
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(
@@ -9556,8 +9790,7 @@ class _Summery_pageState extends State<Summery_page>
                                         fontWeight: FontWeight.bold),
                                   ),
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          blueColor,
+                                      backgroundColor: blueColor,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10.0))),
@@ -9608,8 +9841,7 @@ class _Summery_pageState extends State<Summery_page>
                                         fontWeight: FontWeight.bold),
                                   ),
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          blueColor,
+                                      backgroundColor: blueColor,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10.0))),
@@ -9687,9 +9919,7 @@ class _Summery_pageState extends State<Summery_page>
                             isChecked = value ?? false;
                           });
                         },
-                        activeColor: isChecked
-                            ? blueColor
-                            : Colors.black,
+                        activeColor: isChecked ? blueColor : Colors.black,
                       ),
                     ),
                   ],
@@ -9995,10 +10225,7 @@ class _Summery_pageState extends State<Summery_page>
                           Container(
                             decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: Color.fromRGBO(152, 162, 179, .5)
-
-
-)),
+                                    color: Color.fromRGBO(152, 162, 179, .5))),
                             // decoration: BoxDecoration(
                             //     border: Border.all(color: blueColor)),
                             child: Column(
@@ -10015,10 +10242,7 @@ class _Summery_pageState extends State<Summery_page>
                                         : blueColor.withOpacity(0.09),
                                     border: Border.all(
                                         color:
-                                        Color.fromRGBO(152, 162, 179, .5)
-
-
-),
+                                            Color.fromRGBO(152, 162, 179, .5)),
                                   ),
                                   // decoration: BoxDecoration(
                                   //   border: Border.all(color: blueColor),
@@ -10074,15 +10298,12 @@ class _Summery_pageState extends State<Summery_page>
                                                         : FontAwesomeIcons
                                                             .sortDown,
                                                     size: 20,
-                                                    color: blueColor
-
-
-,
+                                                    color: blueColor,
                                                   ),
                                                 ),
                                               ),
                                               Expanded(
-                                                flex:4,
+                                                flex: 4,
                                                 child: Text(
                                                   '${workOrder.workSubject}',
                                                   style: TextStyle(
@@ -10098,7 +10319,7 @@ class _Summery_pageState extends State<Summery_page>
                                                           .width *
                                                       .05),
                                               Expanded(
-                                                flex:3,
+                                                flex: 3,
                                                 child: Text(
                                                   '${workOrder.status}',
                                                   style: TextStyle(
@@ -10114,7 +10335,7 @@ class _Summery_pageState extends State<Summery_page>
                                                           .width *
                                                       .05),
                                               Expanded(
-                                                flex:2,
+                                                flex: 2,
                                                 child: Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.center,
@@ -10328,9 +10549,13 @@ class _Summery_pageState extends State<Summery_page>
                                                                       .staffmemberName)),
                                                           _buildTableRow(
                                                               'Created At:',
-                                                              dateProvider.formatCurrentDate('${workOrder.createdAt}'),
+                                                              dateProvider
+                                                                  .formatCurrentDate(
+                                                                      '${workOrder.createdAt}'),
                                                               'Updated At:',
-                                                              dateProvider.formatCurrentDate('${workOrder.createdAt}')),
+                                                              dateProvider
+                                                                  .formatCurrentDate(
+                                                                      '${workOrder.createdAt}')),
                                                         ],
                                                       ),
                                                     ),
@@ -10396,37 +10621,60 @@ class _Summery_pageState extends State<Summery_page>
                                                           Navigator.push(
                                                               context,
                                                               MaterialPageRoute(
-                                                                  builder: (context) =>
-                                                                  Workorder_summery(workorder_id: workOrder.workOrderId,)
-                                                              ));
-
+                                                                  builder:
+                                                                      (context) =>
+                                                                          Workorder_summery(
+                                                                            workorder_id:
+                                                                                workOrder.workOrderId,
+                                                                          )));
                                                         },
                                                         child: Container(
-                                                          height:40,
-                                                          decoration: BoxDecoration(
-                                                              color: Colors.grey[350]
-                                                          ),
+                                                          height: 40,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                                  color: Colors
+                                                                          .grey[
+                                                                      350]),
                                                           child: Row(
                                                             mainAxisAlignment:
-                                                            MainAxisAlignment.center,
+                                                                MainAxisAlignment
+                                                                    .center,
                                                             crossAxisAlignment:
-                                                            CrossAxisAlignment.center,
+                                                                CrossAxisAlignment
+                                                                    .center,
                                                             children: [
-                                                              SizedBox(width: 5,),
-                                                              Image.asset('assets/icons/view.png',color: blueColor,),
+                                                              SizedBox(
+                                                                width: 5,
+                                                              ),
+                                                              Image.asset(
+                                                                'assets/icons/view.png',
+                                                                color:
+                                                                    blueColor,
+                                                              ),
                                                               // FaIcon(
                                                               //   FontAwesomeIcons.trashCan,
                                                               //   size: 15,
                                                               //   color:blueColor,
                                                               // ),
-                                                              SizedBox(width: 8,),
-                                                              Text("View Summery",style: TextStyle(fontSize: 11,color: blueColor,fontWeight: FontWeight.bold),)
+                                                              SizedBox(
+                                                                width: 8,
+                                                              ),
+                                                              Text(
+                                                                "View Summery",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        11,
+                                                                    color:
+                                                                        blueColor,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                              )
                                                             ],
                                                           ),
                                                         ),
                                                       ),
                                                     ),
-
                                                   ],
                                                 ),
                                               ],
@@ -10691,28 +10939,16 @@ class _Summery_pageState extends State<Summery_page>
                                             decoration: BoxDecoration(
                                               border: Border(
                                                 left: BorderSide(
-                                                    color: blueColor
-
-
-),
+                                                    color: blueColor),
                                                 right: BorderSide(
-                                                    color: blueColor
-
-
-),
+                                                    color: blueColor),
                                                 top: BorderSide(
-                                                    color: blueColor
-
-
-),
-                                                bottom: i ==
-                                                        _pagedData.length - 1
-                                                    ? BorderSide(
-                                                        color: blueColor
-
-
-)
-                                                    : BorderSide.none,
+                                                    color: blueColor),
+                                                bottom:
+                                                    i == _pagedData.length - 1
+                                                        ? BorderSide(
+                                                            color: blueColor)
+                                                        : BorderSide.none,
                                               ),
                                             ),
                                             children: [
@@ -11015,8 +11251,7 @@ class _LeasesTableState extends State<LeasesTable> {
           icon: FaIcon(
             size: 30,
             FontAwesomeIcons.circleChevronLeft,
-            color:
-                _currentPage == 0 ? Colors.grey : blueColor,
+            color: _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -11036,10 +11271,7 @@ class _LeasesTableState extends State<LeasesTable> {
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
-                : blueColor
-
-
-, // Change color based on availability
+                : blueColor, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -11448,11 +11680,7 @@ class _LeasesTableState extends State<LeasesTable> {
                           Container(
                             decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: Color.fromRGBO(
-                                        152, 162, 179, .5)
-
-
-)),
+                                    color: Color.fromRGBO(152, 162, 179, .5))),
                             // decoration: BoxDecoration(
                             //     border: Border.all(color: blueColor)),
                             child: Column(
@@ -11469,11 +11697,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                         : blueColor.withOpacity(0.09),
                                     border: Border.all(
                                         color:
-                                        Color.fromRGBO(
-                                            152, 162, 179, .5)
-
-
-),
+                                            Color.fromRGBO(152, 162, 179, .5)),
                                   ),
                                   // decoration: BoxDecoration(
                                   //   border: Border.all(color: blueColor),
@@ -11529,10 +11753,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                                         : FontAwesomeIcons
                                                             .sortDown,
                                                     size: 20,
-                                                    color: blueColor
-
-
-,
+                                                    color: blueColor,
                                                   ),
                                                 ),
                                               ),
@@ -11891,21 +12112,11 @@ class _LeasesTableState extends State<LeasesTable> {
                                   TableRow(
                                     decoration: BoxDecoration(
                                       border: Border(
-                                        left: BorderSide(
-                                            color:
-                                                blueColor),
-                                        right: BorderSide(
-                                            color:
-                                                blueColor),
-                                        top: BorderSide(
-                                            color:
-                                                blueColor),
+                                        left: BorderSide(color: blueColor),
+                                        right: BorderSide(color: blueColor),
+                                        top: BorderSide(color: blueColor),
                                         bottom: i == _pagedData.length - 1
-                                            ? BorderSide(
-                                                color: blueColor
-
-
-)
+                                            ? BorderSide(color: blueColor)
                                             : BorderSide.none,
                                       ),
                                     ),
@@ -12162,8 +12373,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
           icon: FaIcon(
             size: 30,
             FontAwesomeIcons.circleChevronLeft,
-            color:
-                _currentPage == 0 ? Colors.grey : blueColor,
+            color: _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -12183,10 +12393,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
-                : blueColor
-
-
-, // Change color based on availability
+                : blueColor, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -12599,8 +12806,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                     //  hintColor: blueColor,
                                                     colorScheme:
                                                         ColorScheme.light(
-                                                      primary: blueColor
-,
+                                                      primary: blueColor,
                                                       // onPrimary:blueColor,
                                                       //  surface: blueColor,
                                                       onSurface: Colors.black,
@@ -12655,10 +12861,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                 child: ElevatedButton(
                                                   style: ElevatedButton.styleFrom(
                                                       backgroundColor:
-                                                           blueColor
-
-
-,
+                                                          blueColor,
                                                       shape:
                                                           RoundedRectangleBorder(
                                                               borderRadius:
@@ -12695,7 +12898,9 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                         appliancedescription:
                                                             _description.text,
                                                         installeddate:
-                                                         reverseFormatDate(  _installedDate.text),
+                                                            reverseFormatDate(
+                                                                _installedDate
+                                                                    .text),
                                                       )
                                                           .then((value) {
                                                         print(widget.properties
@@ -12876,11 +13081,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color:
-                                      Color.fromRGBO(
-                                          152, 162, 179, .5)
-
-
-)),
+                                          Color.fromRGBO(152, 162, 179, .5))),
                               // decoration: BoxDecoration(
                               //     border: Border.all(color: blueColor)),
                               child: Column(
@@ -12955,8 +13156,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                           : FontAwesomeIcons
                                                               .sortDown,
                                                       size: 20,
-                                                      color: blueColor
-,
+                                                      color: blueColor,
                                                     ),
                                                   ),
                                                 ),
@@ -13154,7 +13354,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                                             unitId: widget.unit?.unitId,
                                                                                             appliancename: _name.text,
                                                                                             appliancedescription: _description.text,
-                                                                                            installeddate: reverseFormatDate( _installedDate.text),
+                                                                                            installeddate: reverseFormatDate(_installedDate.text),
                                                                                           )
                                                                                               .then((value) {
                                                                                             print(widget.properties?.adminId);
@@ -13227,10 +13427,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                               FontAwesomeIcons
                                                                   .edit,
                                                               size: 20,
-                                                              color:blueColor
-
-
-,
+                                                              color: blueColor,
                                                             ),
                                                           ),
                                                         ),
@@ -13249,10 +13446,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                               FontAwesomeIcons
                                                                   .trashCan,
                                                               size: 20,
-                                                              color:blueColor
-
-
-,
+                                                              color: blueColor,
                                                             ),
                                                           ),
                                                         ),
@@ -13312,7 +13506,9 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                             blueColor), // Bold and black
                                                                   ),
                                                                   TextSpan(
-                                                                    text: dateProvider.formatCurrentDate('${rentals.installedDate}'),
+                                                                    text: dateProvider
+                                                                        .formatCurrentDate(
+                                                                            '${rentals.installedDate}'),
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -13533,27 +13729,11 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                       TableRow(
                                         decoration: BoxDecoration(
                                           border: Border(
-                                            left: BorderSide(
-                                                color: blueColor
-
-
-),
-                                            right: BorderSide(
-                                                color: blueColor
-
-
-),
-                                            top: BorderSide(
-                                                color: blueColor
-
-
-),
+                                            left: BorderSide(color: blueColor),
+                                            right: BorderSide(color: blueColor),
+                                            top: BorderSide(color: blueColor),
                                             bottom: i == _pagedData.length - 1
-                                                ? BorderSide(
-                                                    color: blueColor
-
-
-)
+                                                ? BorderSide(color: blueColor)
                                                 : BorderSide.none,
                                           ),
                                         ),
@@ -13818,10 +13998,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                       child: FaIcon(
                                                         FontAwesomeIcons.edit,
                                                         size: 20,
-                                                        color: blueColor
-
-
-,
+                                                        color: blueColor,
                                                       ),
                                                     ),
                                                   ),
@@ -13840,10 +14017,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                         FontAwesomeIcons
                                                             .trashCan,
                                                         size: 20,
-                                                        color: blueColor
-
-
-,
+                                                        color: blueColor,
                                                       ),
                                                     ),
                                                   ),

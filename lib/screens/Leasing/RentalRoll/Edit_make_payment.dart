@@ -1410,12 +1410,17 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                               FormField<String>(
                                 validator: (value) {
                                   if (_selectedPaymentMethod == null ||
-                                      _selectedPaymentMethod!.isEmpty) {
+                                      _selectedPaymentMethod!.isEmpty ) {
                                     return 'Please select a payment method';
                                   }
                                   return null;
                                 },
                                 builder: (FormFieldState<String> state) {
+                                  if (!_paymentMethods
+                                      .contains(_selectedPaymentMethod)) {
+                                    _selectedPaymentMethod =
+                                    null;
+                                  }
                                   return Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -1432,10 +1437,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                             );
                                           }).toList(),
                                           onChanged: (String? newValue) {
-                                            state.didChange(
-                                                newValue); // Update FormField state
+                                             // Update FormField state
                                             setState(() {
                                               _selectedPaymentMethod = newValue;
+                                              state.didChange(
+                                                  newValue);
                                               AddFields(); // Call your method to add fields
                                             });
                                             state.reset();
