@@ -766,7 +766,8 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                   child: Form(
                     key: _formKey,
                     child: screenWidth > 500
-                        ? Row(
+                        ?
+                    Row(
                             children: [
                               Expanded(
                                 child: Column(

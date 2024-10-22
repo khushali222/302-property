@@ -33,7 +33,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     checkInternet();
     // TODO: implement initState
 
-    _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(widget.leaseId);
+    _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
     // for (var tenant in _tenants) {
     //   _controllers[tenant.name] = [
     //     TextEditingController(), // For Amount

@@ -9,6 +9,7 @@ class CustomDateField extends StatefulWidget {
   final void Function(DateTime?)? onDateSelected;
   final IconData? prefixIcon;
   final bool readOnly;
+  final  void Function(dynamic)? onChanged;
 
   CustomDateField({
     Key? key,
@@ -18,6 +19,7 @@ class CustomDateField extends StatefulWidget {
     this.validator,
     this.onDateSelected,
     this.prefixIcon,
+    this.onChanged,
   }) : super(key: key);
 
   @override
@@ -61,6 +63,9 @@ class CustomDateFieldState extends State<CustomDateField> {
       });
       if (widget.onDateSelected != null) {
         widget.onDateSelected!(_selectedDate);
+      }
+      if (widget.onChanged != null) {
+        widget.onChanged!(_selectedDate);
       }
       // Notify the FormField state of the change
       state.didChange(widget.controller?.text);

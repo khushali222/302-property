@@ -400,7 +400,7 @@ class _FinancialTableState extends State<FinancialTable> {
 
   reload_screen() {
     setState(() {
-      _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(widget.leaseId);
+      _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
     });
   }
 
@@ -608,8 +608,9 @@ class _FinancialTableState extends State<FinancialTable> {
   @override
   void initState() {
     super.initState();
-    _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(widget.leaseId);
+    _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId,);
     _expanded = List.generate(_pagedData.length, (_) => false);
+
   }
 
   void handleEdit(Data? ledge) async {}
@@ -660,7 +661,7 @@ class _FinancialTableState extends State<FinancialTable> {
             if (data == 200)
               setState(() {
                 _leaseLedgerFuture =
-                    LeaseRepository().fetchLeaseLedger(widget.leaseId);
+                    LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
               });
             Navigator.pop(context);
           },
@@ -715,7 +716,7 @@ class _FinancialTableState extends State<FinancialTable> {
             if (data == 200)
               setState(() {
                 _leaseLedgerFuture =
-                    LeaseRepository().fetchLeaseLedger(widget.leaseId);
+                    LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
               });
             Navigator.pop(context);
           },
@@ -735,6 +736,22 @@ class _FinancialTableState extends State<FinancialTable> {
     int endIndex = startIndex + _rowsPerPage;
     return _tableData.sublist(startIndex,
         endIndex > _tableData.length ? _tableData.length : endIndex);
+  }
+
+  void sortData(List<Data> data) {
+    if (sorting1) {
+      data.sort((a, b) => ascending1
+          ? a.type!.compareTo(b.type!)
+          : b.type!.compareTo(a.type!));
+    } else if (sorting2) {
+      data.sort((a, b) => ascending2
+          ? a.balance!.compareTo(b.balance!)
+          : b.balance!.compareTo(a.balance!));
+    } else if (sorting3) {
+      data.sort((a, b) => ascending3
+          ? a.createdAt!.compareTo(b.createdAt!)
+          : b.createdAt!.compareTo(a.createdAt!));
+    }
   }
 
   void _changeRowsPerPage(int selectedRowsPerPage) {
@@ -790,6 +807,8 @@ class _FinancialTableState extends State<FinancialTable> {
       ),
     );
   }
+
+
 
   Widget _buildDataCell(String text) {
     return TableCell(
@@ -1365,6 +1384,38 @@ class _FinancialTableState extends State<FinancialTable> {
 
   final TextEditingController _fromDateController = TextEditingController();
   final TextEditingController _toDateController = TextEditingController();
+
+
+  void _fetchData() {
+    if (_fromDateController.text.isNotEmpty &&
+        _toDateController.text.isNotEmpty) {
+      _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId,fromDate: _fromDateController.text,toDate: _toDateController.text);
+    } else {
+      _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger();
+    }
+    setState(() {});
+  }
+
+  void _onDateChanged() {
+   setState(() {
+     _fetchData();
+   });
+  }
+
+  Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null) {
+      setState(() {
+        controller.text = picked.toLocal().toString().split(' ')[0]; // Format as yyyy-mm-dd
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -1376,6 +1427,7 @@ class _FinancialTableState extends State<FinancialTable> {
             ?.planName ==
         'Free Plan';
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Container(
         child: SingleChildScrollView(
           child: Column(
@@ -1384,7 +1436,7 @@ class _FinancialTableState extends State<FinancialTable> {
                 height: 10,
               ),
 
-                   Padding(
+              Padding(
                       padding: const EdgeInsets.only(right: 16.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -1453,7 +1505,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                     if (value == true) {
                                       setState(() {
                                         _leaseLedgerFuture = LeaseRepository()
-                                            .fetchLeaseLedger(widget.leaseId);
+                                            .fetchLeaseLedger(leaseId: widget.leaseId);
                                       });
                                     }
                                   },
@@ -1496,7 +1548,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                     if (value == true) {
                                       setState(() {
                                         _leaseLedgerFuture = LeaseRepository()
-                                            .fetchLeaseLedger(widget.leaseId);
+                                            .fetchLeaseLedger(leaseId: widget.leaseId);
                                       });
                                     }
                                   },
@@ -1534,8 +1586,38 @@ class _FinancialTableState extends State<FinancialTable> {
                         return Center(child: Text('No data found'));
                       } else {
                         final leaseLedger = snapshot.data!;
-                        final data = leaseLedger.data!.toList();
+                        var data = leaseLedger.data!.toList();
+                      //final data = data.reversed.toList();
+                        if (searchvalue != null && searchvalue!.isNotEmpty && searchvalue != "All") {
+                          data = data.where((lease) =>
+                          lease.type!.toLowerCase().contains(searchvalue!.toLowerCase()) ||
+                              lease.createdAt!.toLowerCase().contains(searchvalue!.toLowerCase())
+                          ).toList();
+                        }
+                        print("calling");
+                        if (_fromDateController.text.isNotEmpty && _toDateController.text.isNotEmpty) {
+                          try {
+                            DateTime fromDate = DateTime.parse(_fromDateController.text);
+                            DateTime toDate = DateTime.parse(_toDateController.text);
+                            print("From Date: $fromDate");
+                            print("To Date: $toDate");
+                            data = data.where((lease) {
+                              DateTime leaseDate = DateTime.parse(lease.entry!.first.date!);
+                              print("Lease Date: $leaseDate");
+                              return leaseDate.isAfter(fromDate) && leaseDate.isBefore(toDate.add(Duration(days: 1)));
+                            }).toList();
+                          } catch (e) {
 
+                            print("Date parsing error: $e");
+                          }
+                        }
+
+                       sortData(data);
+                        final totalPages = (data.length / itemsPerPage).ceil();
+                        final currentPageData = data
+                            .skip(currentPage * itemsPerPage)
+                            .take(itemsPerPage)
+                            .toList();
                         return SingleChildScrollView(
                           child: Column(
                             children: [
@@ -1552,7 +1634,41 @@ class _FinancialTableState extends State<FinancialTable> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Spacer(),
+                                      Expanded(
+                                        child: Material(
+                                          elevation: 3,
+                                          borderRadius: BorderRadius.circular(8),
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10),
+                                            height:
+                                            MediaQuery.of(context).size.width <
+                                                500
+                                                ? 48
+                                                : 50,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.circular(8),
+                                              border: Border.all(
+                                                  color: const Color(0xFF8A95A8)),
+                                            ),
+                                            child: TextField(
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  searchvalue = value;
+                                                });
+                                              },
+                                              decoration: const InputDecoration(
+                                                border: InputBorder.none,
+                                                hintText: "Search here...",
+                                                hintStyle: TextStyle(
+                                                    color: Color(0xFF8A95A8)),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 16),
                                       ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: blueColor,
@@ -1598,8 +1714,133 @@ class _FinancialTableState extends State<FinancialTable> {
                                             ],
                                           ),
                                         ),
-                                      )
+                                      ),
                                     ],
+                                  ),
+                                ),
+                              ),
+                              // SizedBox(height: 10),
+                              Container(
+                                // width: double.infinity,
+                                // decoration: BoxDecoration(
+                                //   border: Border.all(
+                                //     color: blueColor,
+                                //   ),
+                                //   borderRadius: BorderRadius.circular(10.0),
+                                // ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Form(
+                                    key: _formKey,
+                                    child: screenWidth > 500
+                                        ?
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text('From',
+                                                  style: TextStyle(
+                                                      color: Colors.grey[600],
+                                                      fontSize: 15,
+                                                      fontWeight: FontWeight.w600)),
+                                              SizedBox(height: 5),
+                                              TextFormField(
+                                                controller: _fromDateController,
+                                                readOnly: true,
+                                                onTap: () => _selectDate(context, _fromDateController),
+                                                decoration: InputDecoration(
+                                                  hintText: 'yyyy-mm-dd',
+                                                  suffixIcon: Icon(Icons.calendar_today),
+                                                  border: OutlineInputBorder(),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(width: 40),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text('To',
+                                                  style: TextStyle(
+                                                      color: Colors.grey[600],
+                                                      fontSize: 15,
+                                                      fontWeight: FontWeight.w600)),
+                                              SizedBox(height: 5),
+                                              TextFormField(
+                                                controller: _toDateController,
+                                                readOnly: true,
+                                                onTap: () => _selectDate(context, _toDateController),
+                                                decoration: InputDecoration(
+                                                  hintText: 'dd-mm-yyyy',
+                                                  suffixIcon: Icon(Icons.calendar_today),
+                                                  border: OutlineInputBorder(),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+
+
+                                      ],
+                                    )
+                                        : Column(
+                                      children: [
+                                        Row(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Container(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text('From',
+                                                        style: TextStyle(
+                                                            color: Colors.grey[600],
+                                                            fontSize: 15,
+                                                            fontWeight: FontWeight.w600)),
+                                                    SizedBox(height: 5),
+                                                    CustomDateField(
+                                                        hintText: 'dd-mm-yyyy',
+                                                        controller: _fromDateController),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 16,
+                                            ),
+                                            Expanded(
+                                              child: Container(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text('To',
+                                                        style: TextStyle(
+                                                            color: Colors.grey[600],
+                                                            fontSize: 15,
+                                                            fontWeight: FontWeight.w600)),
+                                                    SizedBox(height: 5),
+                                                    CustomDateField(
+                                                        hintText: 'dd-mm-yyyy',
+                                                        controller: _toDateController),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -1610,7 +1851,8 @@ class _FinancialTableState extends State<FinancialTable> {
                                 decoration: BoxDecoration(
                                     border: Border.all(
                                         color:
-                                            blueColor
+                                        Color.fromRGBO(
+                                            152, 162, 179, .5)
 
 
 )),
@@ -1618,7 +1860,8 @@ class _FinancialTableState extends State<FinancialTable> {
                                 //   border: Border.all(color: blueColor),
                                 // ),
                                 child: Column(
-                                  children: data.asMap().entries.map((entry) {
+                                  children:
+                                  currentPageData.asMap().entries.map((entry) {
                                     int index = entry.key;
                                     bool isExpanded = expandedIndex == index;
                                     Data data = entry.value;
@@ -2242,7 +2485,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                   setState(() {
                                                                     _leaseLedgerFuture =
                                                                         LeaseRepository()
-                                                                            .fetchLeaseLedger(widget.leaseId);
+                                                                            .fetchLeaseLedger(leaseId: widget.leaseId);
                                                                   });
                                                                 }
                                                                 // var check = await Navigator.push(
@@ -2373,7 +2616,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                   setState(() {
                                                                     _leaseLedgerFuture =
                                                                         LeaseRepository()
-                                                                            .fetchLeaseLedger(widget.leaseId);
+                                                                            .fetchLeaseLedger(leaseId: widget.leaseId);
                                                                   });
                                                                 }
                                                                 // var check = await Navigator.push(
@@ -2491,7 +2734,109 @@ class _FinancialTableState extends State<FinancialTable> {
                                   }).toList(),
                                 ),
                               ),
-                              const SizedBox(height: 20),
+                              SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Row(
+                                    children: [
+                                      // Text('Rows per page:'),
+                                      SizedBox(width: 10),
+                                      Material(
+                                        elevation: 3,
+                                        child: Container(
+                                          height: 40,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 12.0),
+                                          decoration: BoxDecoration(
+                                            border:
+                                            Border.all(color: Colors.grey),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton<int>(
+                                              value: itemsPerPage,
+                                              items: itemsPerPageOptions
+                                                  .map((int value) {
+                                                return DropdownMenuItem<int>(
+                                                  value: value,
+                                                  child: Text(value.toString()),
+                                                );
+                                              }).toList(),
+                                              onChanged: data.length >
+                                                  itemsPerPageOptions
+                                                      .first // Condition to check if dropdown should be enabled
+                                                  ? (newValue) {
+                                                setState(() {
+                                                  itemsPerPage = newValue!;
+                                                  currentPage =
+                                                  0; // Reset to first page when items per page change
+                                                });
+                                              }
+                                                  : null,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.circleChevronLeft,
+                                          color: currentPage == 0
+                                              ? Colors.grey
+                                              : blueColor,
+                                        ),
+                                        onPressed: currentPage == 0
+                                            ? null
+                                            : () {
+                                          setState(() {
+                                            currentPage--;
+                                          });
+                                        },
+                                      ),
+                                      // IconButton(
+                                      //   icon: Icon(Icons.arrow_back),
+                                      //   onPressed: currentPage > 0
+                                      //       ? () {
+                                      //     setState(() {
+                                      //       currentPage--;
+                                      //     });
+                                      //   }
+                                      //       : null,
+                                      // ),
+                                      Text(
+                                          'Page ${currentPage + 1} of $totalPages'),
+                                      // IconButton(
+                                      //   icon: Icon(Icons.arrow_forward),
+                                      //   onPressed: currentPage < totalPages - 1
+                                      //       ? () {
+                                      //     setState(() {
+                                      //       currentPage++;
+                                      //     });
+                                      //   }
+                                      //       : null,
+                                      // ),
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.circleChevronRight,
+                                          color: currentPage < totalPages - 1
+                                              ? blueColor
+                                              : Colors.grey,
+                                        ),
+                                        onPressed: currentPage < totalPages - 1
+                                            ? () {
+                                          setState(() {
+                                            currentPage++;
+                                          });
+                                        }
+                                            : null,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         );

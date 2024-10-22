@@ -66,7 +66,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     // TODO: implement initState
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
     futureLeasetenant = LeaseRepository.fetchLeaseTenants(widget.leaseId);
-    _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(widget.leaseId);
+    _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
     _tabController = TabController(length: 3, vsync: this);
     moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     if (widget.isredirectpayment != null && widget.isredirectpayment!) {
@@ -708,8 +708,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                           _leaseLedgerFuture =
                                                               LeaseRepository()
                                                                   .fetchLeaseLedger(
-                                                                      widget
-                                                                          .leaseId);
+                                                                  leaseId: widget.leaseId);
                                                         });
                                                       }
                                                     },
@@ -2614,7 +2613,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                       setState(
                                                                           () {
                                                                         _leaseLedgerFuture =
-                                                                            LeaseRepository().fetchLeaseLedger(widget.leaseId);
+                                                                            LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
                                                                       });
                                                                     }
                                                                   },
