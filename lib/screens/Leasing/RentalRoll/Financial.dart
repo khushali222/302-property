@@ -400,7 +400,8 @@ class _FinancialTableState extends State<FinancialTable> {
 
   reload_screen() {
     setState(() {
-      _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
+      _leaseLedgerFuture =
+          LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
     });
   }
 
@@ -608,7 +609,9 @@ class _FinancialTableState extends State<FinancialTable> {
   @override
   void initState() {
     super.initState();
-    _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId,);
+    _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(
+      leaseId: widget.leaseId,
+    );
     _expanded = List.generate(_pagedData.length, (_) => false);
     _fromDateController = TextEditingController(text: '');
     _toDateController = TextEditingController(text: '');
@@ -617,7 +620,6 @@ class _FinancialTableState extends State<FinancialTable> {
 
   @override
   void dispose() {
-
     _fromDateController.dispose();
     _toDateController.dispose();
     super.dispose();
@@ -637,7 +639,9 @@ class _FinancialTableState extends State<FinancialTable> {
       ),
       content: Column(
         children: <Widget>[
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           SizedBox(
             height: 45,
             child: TextField(
@@ -645,8 +649,7 @@ class _FinancialTableState extends State<FinancialTable> {
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Enter reason for deletion',
-                  contentPadding: EdgeInsets.only(top: 8,left: 15)
-              ),
+                  contentPadding: EdgeInsets.only(top: 8, left: 15)),
             ),
           ),
         ],
@@ -680,6 +683,7 @@ class _FinancialTableState extends State<FinancialTable> {
       ],
     ).show();
   }
+
   void _showAlertpayment(BuildContext context, String id) {
     TextEditingController reason = TextEditingController();
     Alert(
@@ -692,7 +696,9 @@ class _FinancialTableState extends State<FinancialTable> {
       ),
       content: Column(
         children: <Widget>[
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           SizedBox(
             height: 45,
             child: TextField(
@@ -700,8 +706,7 @@ class _FinancialTableState extends State<FinancialTable> {
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Enter reason for deletion',
-                  contentPadding: EdgeInsets.only(top: 8,left: 15)
-              ),
+                  contentPadding: EdgeInsets.only(top: 8, left: 15)),
             ),
           ),
         ],
@@ -735,6 +740,7 @@ class _FinancialTableState extends State<FinancialTable> {
       ],
     ).show();
   }
+
   List<Data?> _tableData = [];
   int _rowsPerPage = 10;
 
@@ -753,9 +759,8 @@ class _FinancialTableState extends State<FinancialTable> {
 
   void sortData(List<Data> data) {
     if (sorting1) {
-      data.sort((a, b) => ascending1
-          ? a.type!.compareTo(b.type!)
-          : b.type!.compareTo(a.type!));
+      data.sort((a, b) =>
+          ascending1 ? a.type!.compareTo(b.type!) : b.type!.compareTo(a.type!));
     } else if (sorting2) {
       data.sort((a, b) => ascending2
           ? a.balance!.compareTo(b.balance!)
@@ -820,8 +825,6 @@ class _FinancialTableState extends State<FinancialTable> {
       ),
     );
   }
-
-
 
   Widget _buildDataCell(String text) {
     return TableCell(
@@ -921,8 +924,7 @@ class _FinancialTableState extends State<FinancialTable> {
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
             size: 30,
-            color:
-                _currentPage == 0 ? grey :  blueColor,
+            color: _currentPage == 0 ? grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -942,10 +944,7 @@ class _FinancialTableState extends State<FinancialTable> {
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? grey
-                :  blueColor
-
-
-, // Change color based on availability
+                : blueColor, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -1398,11 +1397,13 @@ class _FinancialTableState extends State<FinancialTable> {
   late TextEditingController _fromDateController;
   late TextEditingController _toDateController;
 
-
   void _fetchData() {
     if (_fromDateController.text.isNotEmpty &&
         _toDateController.text.isNotEmpty) {
-      _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId,fromDate: _fromDateController.text,toDate: _toDateController.text);
+      _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(
+          leaseId: widget.leaseId,
+          fromDate: _fromDateController.text,
+          toDate: _toDateController.text);
     } else {
       _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger();
     }
@@ -1410,17 +1411,36 @@ class _FinancialTableState extends State<FinancialTable> {
   }
 
   void _onDateChanged() {
-   setState(() {
-     _fetchData();
-   });
+    setState(() {
+      _fetchData();
+    });
   }
 
-  Future<void> _selectfromDate(BuildContext context, TextEditingController controller) async {
+  Future<void> _selectfromDate(
+      BuildContext context, TextEditingController controller) async {
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: blueColor, // header background color
+              onPrimary: Colors.white, // header text color
+              onSurface: blueColor, // body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: blueColor, // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null) {
@@ -1432,39 +1452,63 @@ class _FinancialTableState extends State<FinancialTable> {
         //  _filterData();
         controller.text = picked.toLocal().toString().split(' ')[0];
         fdate = controller.text;
-
       });
     }
   }
-  Future<void> _selectendDate(BuildContext context, TextEditingController controller) async {
+
+  Future<void> _selectendDate(
+      BuildContext context, TextEditingController controller) async {
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: blueColor, // header background color
+              onPrimary: Colors.white, // header text color
+              onSurface: blueColor, // body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: blueColor, // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null) {
       setState(() {
-        edate =  picked.toString();
+        edate = picked.toString();
         // String formattedDate = DateFormat('dd-MM-yyyy').format(picked);
         // controller.text = formattedDate;
-      //  _filterData();
+        //  _filterData();
         controller.text = picked.toLocal().toString().split(' ')[0];
       });
     }
   }
+
   List<Data> allData = []; // Assume this is your complete dataset
   List<Data> filteredData = [];
   void _filterData() {
     // Parse the dates from the controllers
     try {
-      DateTime fromDate = DateFormat('dd-MM-yyyy').parse(_fromDateController.text);
-      DateTime toDate = DateFormat('dd-MM-yyyy').parse(_toDateController.text).add(Duration(days: 1)); // Include the end date
+      DateTime fromDate =
+          DateFormat('dd-MM-yyyy').parse(_fromDateController.text);
+      DateTime toDate = DateFormat('dd-MM-yyyy')
+          .parse(_toDateController.text)
+          .add(Duration(days: 1)); // Include the end date
 
       // Filter the data based on the selected date range
       filteredData = allData.where((data) {
-        DateTime leaseDate = DateFormat('dd-MM-yyyy').parse(data.entry!.first.date!); // Adjust according to your data structure
+        DateTime leaseDate = DateFormat('dd-MM-yyyy').parse(
+            data.entry!.first.date!); // Adjust according to your data structure
         return leaseDate.isAfter(fromDate) && leaseDate.isBefore(toDate);
       }).toList();
     } catch (e) {
@@ -1495,137 +1539,129 @@ class _FinancialTableState extends State<FinancialTable> {
               const SizedBox(
                 height: 10,
               ),
-
               Padding(
-                      padding: const EdgeInsets.only(right: 16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          if (!isFreePlan && widget.status == 'Active')
-                            Container(
-                                height: MediaQuery.of(context).size.width < 500
-                                    ? 36
-                                    : 45,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(width: 1),
-                                    borderRadius: BorderRadius.circular(10.0)),
-                                child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10.0)),
-                                        elevation: 0,
-                                        backgroundColor: Colors.white),
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => AddCard(
-                                                    leaseId: widget.leaseId,
-                                                  )));
-                                    },
-                                    child: Text(
-                                      'Add Cards',
-                                      style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 12
-                                              : 18,
-                                          color: blueColor),
-                                    ))),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Container(
-                              height: MediaQuery.of(context).size.width < 500
-                                  ? 36
-                                  : 45,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(width: 1),
-                                  borderRadius: BorderRadius.circular(10.0)),
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0)),
-                                      elevation: 0,
-                                      backgroundColor: Colors.white),
-                                  onPressed: () async {
-                                    final value = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => MakePayment(
-                                                  leaseId: widget.leaseId,
-                                                  tenantId: widget.tenantId,
-                                                )));
-                                    if (value == true) {
-                                      setState(() {
-                                        _leaseLedgerFuture = LeaseRepository()
-                                            .fetchLeaseLedger(leaseId: widget.leaseId);
-                                      });
-                                    }
-                                  },
-                                  child: Text(
-                                    'Make Payment',
-                                    style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 12
-                                                : 18,
-                                        color: blueColor),
-                                  ))),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          if (widget.status == 'Active')
-                          Container(
-                              height: MediaQuery.of(context).size.width < 500
-                                  ? 34
-                                  : 45,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(width: 1),
-                                  borderRadius: BorderRadius.circular(10.0)),
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0)),
-                                      elevation: 0,
-                                      backgroundColor: Colors.white),
-                                  onPressed: () async {
-                                    final value = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => enterCharge(
-                                                  leaseId: widget.leaseId,
-                                                )));
-                                    if (value == true) {
-                                      setState(() {
-                                        _leaseLedgerFuture = LeaseRepository()
-                                            .fetchLeaseLedger(leaseId: widget.leaseId);
-                                      });
-                                    }
-                                  },
-                                  child: Text(
-                                    'Enter Charge',
-                                    style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 12
-                                                : 18,
-                                        color: blueColor),
-                                  ))),
-                        ],
-                      ),
+                padding: const EdgeInsets.only(right: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    if (!isFreePlan && widget.status == 'Active')
+                      Container(
+                          height:
+                              MediaQuery.of(context).size.width < 500 ? 36 : 45,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(width: 1),
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(10.0)),
+                                  elevation: 0,
+                                  backgroundColor: Colors.white),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => AddCard(
+                                              leaseId: widget.leaseId,
+                                            )));
+                              },
+                              child: Text(
+                                'Add Cards',
+                                style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 12
+                                            : 18,
+                                    color: blueColor),
+                              ))),
+                    SizedBox(
+                      width: 5,
                     ),
-
+                    Container(
+                        height:
+                            MediaQuery.of(context).size.width < 500 ? 36 : 45,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(width: 1),
+                            borderRadius: BorderRadius.circular(10.0)),
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0)),
+                                elevation: 0,
+                                backgroundColor: Colors.white),
+                            onPressed: () async {
+                              final value = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MakePayment(
+                                            leaseId: widget.leaseId,
+                                            tenantId: widget.tenantId,
+                                          )));
+                              if (value == true) {
+                                setState(() {
+                                  _leaseLedgerFuture = LeaseRepository()
+                                      .fetchLeaseLedger(
+                                          leaseId: widget.leaseId);
+                                });
+                              }
+                            },
+                            child: Text(
+                              'Make Payment',
+                              style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 12
+                                          : 18,
+                                  color: blueColor),
+                            ))),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    if (widget.status == 'Active')
+                      Container(
+                          height:
+                              MediaQuery.of(context).size.width < 500 ? 34 : 45,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(width: 1),
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(10.0)),
+                                  elevation: 0,
+                                  backgroundColor: Colors.white),
+                              onPressed: () async {
+                                final value = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => enterCharge(
+                                              leaseId: widget.leaseId,
+                                            )));
+                                if (value == true) {
+                                  setState(() {
+                                    _leaseLedgerFuture = LeaseRepository()
+                                        .fetchLeaseLedger(
+                                            leaseId: widget.leaseId);
+                                  });
+                                }
+                              },
+                              child: Text(
+                                'Enter Charge',
+                                style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 12
+                                            : 18,
+                                    color: blueColor),
+                              ))),
+                  ],
+                ),
+              ),
               const SizedBox(
                 height: 6,
               ),
@@ -1643,16 +1679,48 @@ class _FinancialTableState extends State<FinancialTable> {
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (!snapshot.hasData) {
-                        return Center(child: Text('No data found'));
+                        return Container(
+                          height: MediaQuery.of(context).size.height * .5,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "assets/images/no_data.jpg",
+                                  height: 200,
+                                  width: 200,
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  "No Data Available",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor,
+                                      fontSize: 16),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
                       } else {
                         final leaseLedger = snapshot.data!;
                         var data = leaseLedger.data!.toList();
-                      //final data = data.reversed.toList();
-                        if (searchvalue != null && searchvalue!.isNotEmpty && searchvalue != "All") {
-                          data = data.where((lease) =>
-                          lease.type!.toLowerCase().contains(searchvalue!.toLowerCase()) ||
-                              lease.createdAt!.toLowerCase().contains(searchvalue!.toLowerCase())
-                          ).toList();
+                        //final data = data.reversed.toList();
+                        if (searchvalue != null &&
+                            searchvalue!.isNotEmpty &&
+                            searchvalue != "All") {
+                          data = data
+                              .where((lease) =>
+                                  lease.type!
+                                      .toLowerCase()
+                                      .contains(searchvalue!.toLowerCase()) ||
+                                  lease.createdAt!
+                                      .toLowerCase()
+                                      .contains(searchvalue!.toLowerCase()))
+                              .toList();
                         }
                         print("calling");
                         // if (_fromDateController.text.isNotEmpty && _toDateController.text.isNotEmpty) {
@@ -1672,28 +1740,34 @@ class _FinancialTableState extends State<FinancialTable> {
                         //   }
                         // }
 
-                        if (_fromDateController.text.isNotEmpty && _toDateController.text.isNotEmpty) {
+                        if (_fromDateController.text.isNotEmpty &&
+                            _toDateController.text.isNotEmpty) {
                           try {
                             // Use DateFormat to parse the dates
                             print(_fromDateController.text);
-                            DateTime fromDate = DateFormat('yyyy-MM-dd').parse(_fromDateController.text);
-                            DateTime toDate = DateFormat('yyyy-MM-dd').parse(_toDateController.text);
+                            DateTime fromDate = DateFormat('yyyy-MM-dd')
+                                .parse(_fromDateController.text);
+                            DateTime toDate = DateFormat('yyyy-MM-dd')
+                                .parse(_toDateController.text);
                             print("From Date: $fromDate");
                             print("To Date: $toDate");
 
                             if (fromDate.isAtSameMomentAs(toDate)) {
                               // If both dates are the same, only include leases with the same date
                               data = data.where((lease) {
-                                DateTime leaseDate = DateFormat('yyyy-MM-dd').parse(lease.entry!.first.date!);
+                                DateTime leaseDate = DateFormat('yyyy-MM-dd')
+                                    .parse(lease.entry!.first.date!);
                                 print("Lease Date: $leaseDate");
                                 return leaseDate.isAtSameMomentAs(fromDate);
                               }).toList();
                             } else {
                               // If dates are different, use the original condition
                               data = data.where((lease) {
-                                DateTime leaseDate = DateFormat('yyyy-MM-dd').parse(lease.entry!.first.date!);
+                                DateTime leaseDate = DateFormat('yyyy-MM-dd')
+                                    .parse(lease.entry!.first.date!);
                                 print("Lease Date: $leaseDate");
-                                return (leaseDate.isAfter(fromDate) && leaseDate.isBefore(toDate));
+                                return (leaseDate.isAfter(fromDate) &&
+                                    leaseDate.isBefore(toDate));
                               }).toList();
                             }
                           } catch (e) {
@@ -1701,7 +1775,7 @@ class _FinancialTableState extends State<FinancialTable> {
                           }
                         }
 
-                       sortData(data);
+                        sortData(data);
                         final totalPages = (data.length / itemsPerPage).ceil();
                         final currentPageData = data
                             .skip(currentPage * itemsPerPage)
@@ -1726,20 +1800,24 @@ class _FinancialTableState extends State<FinancialTable> {
                                       Expanded(
                                         child: Material(
                                           elevation: 3,
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                           child: Container(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 10),
-                                            height:
-                                            MediaQuery.of(context).size.width <
-                                                500
+                                            height: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
                                                 ? 48
                                                 : 50,
                                             decoration: BoxDecoration(
                                               color: Colors.white,
-                                              borderRadius: BorderRadius.circular(8),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                               border: Border.all(
-                                                  color: const Color(0xFF8A95A8)),
+                                                  color:
+                                                      const Color(0xFF8A95A8)),
                                             ),
                                             child: TextField(
                                               onChanged: (value) {
@@ -1762,7 +1840,8 @@ class _FinancialTableState extends State<FinancialTable> {
                                         height: 45,
                                         width: 110,
                                         decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(8.0)),
+                                            borderRadius:
+                                                BorderRadius.circular(8.0)),
                                         child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: blueColor,
@@ -1785,8 +1864,9 @@ class _FinancialTableState extends State<FinancialTable> {
                                                 // Export as CSV
                                               }
                                             },
-                                            itemBuilder: (BuildContext context) =>
-                                                <PopupMenuEntry<String>>[
+                                            itemBuilder:
+                                                (BuildContext context) =>
+                                                    <PopupMenuEntry<String>>[
                                               const PopupMenuItem<String>(
                                                 value: 'PDF',
                                                 child: Text('PDF'),
@@ -1803,12 +1883,20 @@ class _FinancialTableState extends State<FinancialTable> {
                                             child: Row(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                Text('Export',style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 15,
-                                                ),),
-                                                SizedBox(width: 5,),
-                                                Icon(Icons.arrow_drop_down,size: 25,),
+                                                Text(
+                                                  'Export',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 15,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 5,
+                                                ),
+                                                Icon(
+                                                  Icons.arrow_drop_down,
+                                                  size: 25,
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -1828,320 +1916,435 @@ class _FinancialTableState extends State<FinancialTable> {
                                 //   borderRadius: BorderRadius.circular(10.0),
                                 // ),
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5, horizontal: 5),
                                   child: Form(
                                     key: _formKey,
                                     child: screenWidth > 500
-                                        ?
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                        ? Row(
                                             children: [
-                                              Text('From',
-                                                  style: TextStyle(
-                                                      color: Colors.grey[600],
-                                                      fontSize: 15,
-                                                      fontWeight: FontWeight.w600)),
-                                              SizedBox(height: 5),
-                                              Container(
-
-                                                child: TextFormField(
-                                                  controller: _fromDateController,
-                                                  readOnly: true,
-                                                  onTap: () =>_selectfromDate(context, _fromDateController),
-                                                  decoration: InputDecoration(
-                                                    hintText: 'yyyy-mm-dd',
-                                                    suffixIcon: Icon(Icons.calendar_today),
-                                                    border: OutlineInputBorder(),
-                                                  ),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text('From',
+                                                        style: TextStyle(
+                                                            color: Colors
+                                                                .grey[600],
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600)),
+                                                    SizedBox(height: 5),
+                                                    Container(
+                                                      child: TextFormField(
+                                                        controller:
+                                                            _fromDateController,
+                                                        readOnly: true,
+                                                        onTap: () =>
+                                                            _selectfromDate(
+                                                                context,
+                                                                _fromDateController),
+                                                        decoration:
+                                                            InputDecoration(
+                                                          hintText:
+                                                              'yyyy-mm-dd',
+                                                          suffixIcon: Icon(Icons
+                                                              .calendar_today),
+                                                          border:
+                                                              OutlineInputBorder(),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(width: 40),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text('To',
+                                                        style: TextStyle(
+                                                            color: Colors
+                                                                .grey[600],
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600)),
+                                                    SizedBox(height: 5),
+                                                    TextFormField(
+                                                      controller:
+                                                          _toDateController,
+                                                      readOnly: true,
+                                                      onTap: () =>
+                                                          _selectendDate(
+                                                              context,
+                                                              _toDateController),
+                                                      decoration:
+                                                          InputDecoration(
+                                                        hintText: 'dd-mm-yyyy',
+                                                        suffixIcon: Icon(Icons
+                                                            .calendar_today),
+                                                        border:
+                                                            OutlineInputBorder(),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                             ],
-                                          ),
-                                        ),
-                                        SizedBox(width: 40),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text('To',
-                                                  style: TextStyle(
-                                                      color: Colors.grey[600],
-                                                      fontSize: 15,
-                                                      fontWeight: FontWeight.w600)),
-                                              SizedBox(height: 5),
-                                              TextFormField(
-                                                controller: _toDateController,
-                                                readOnly: true,
-                                                onTap: () => _selectendDate(context, _toDateController),
-                                                decoration: InputDecoration(
-                                                  hintText: 'dd-mm-yyyy',
-                                                  suffixIcon: Icon(Icons.calendar_today),
-                                                  border: OutlineInputBorder(),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-
-
-                                      ],
-                                    )
+                                          )
                                         : Column(
-                                      children: [
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Expanded(
-                                              child: Container(
+                                            children: [
+                                              Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Expanded(
+                                                    child: Container(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          // Text('From',
+                                                          //     style: TextStyle(
+                                                          //         color: blueColor,
+                                                          //         fontSize: 15,
+                                                          //         fontWeight: FontWeight.w600)),
+                                                          // SizedBox(height: 4),
 
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                                  children: [
-                                                    // Text('From',
-                                                    //     style: TextStyle(
-                                                    //         color: blueColor,
-                                                    //         fontSize: 15,
-                                                    //         fontWeight: FontWeight.w600)),
-                                                    // SizedBox(height: 4),
-
-                                                    Material(
-                                                      elevation: 2,
-                                                      borderRadius: BorderRadius.circular(8.0),
-                                                      child: Container(
-                                                        height: 55,
-                                                        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.5),
-                                                        decoration: BoxDecoration(
-                                                          color: Colors.white,
-                                                          borderRadius: BorderRadius.circular(8.0),
-                                                          boxShadow: [
-                                                            BoxShadow(
-                                                              color: Colors.black.withOpacity(0.2),
-                                                              offset: Offset(4, 4),
-                                                              blurRadius: 3,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        child:
-                                                        TextFormField(
-                                                          controller: _fromDateController,
-                                                          // initialValue: fdate,
-                                                          readOnly: true,
-                                                          onTap: () => _selectfromDate(context, _fromDateController),
-                                                          decoration: InputDecoration(
-                                                            // contentPadding: EdgeInsets.all(8.0),
-                                                            // contentPadding: EdgeInsets.symmetric(),
-                                                            suffixIconConstraints: BoxConstraints(
-                                                                maxWidth: 20,
-                                                                maxHeight: 20,
-                                                                minHeight: 20,
-                                                                minWidth: 20),
-                                                            hintStyle:
-                                                            TextStyle(fontSize: 15, color: Color(0xFFb0b6c3)),
-                                                            border: InputBorder.none,
-                                                            hintText: 'Frome date',
-                                                            suffixIcon: IconButton(
-                                                              padding: EdgeInsets.symmetric(vertical: 1),
-                                                              iconSize: 20,
-                                                              icon: Icon(Icons.calendar_today), onPressed: () {  },
-
-                                                            ),
-                                                          ),
-                                                        ),
-
-                                                      ),
-                                                    ),
-
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 16,
-                                            ),
-                                            Expanded(
-                                              child: Container(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                                  children: [
-                                                    // Text('To',
-                                                    //     style: TextStyle(
-                                                    //         color: blueColor,
-                                                    //         fontSize: 15,
-                                                    //         fontWeight: FontWeight.w600)),
-                                                    // SizedBox(height: 4),
-
-                                                    Material(
-                                                      elevation: 2,
-                                                      borderRadius: BorderRadius.circular(8.0),
-                                                      child: Container(
-                                                        height: 55,
-                                                        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.5),
-                                                        decoration: BoxDecoration(
-                                                          color: Colors.white,
-                                                          borderRadius: BorderRadius.circular(8.0),
-                                                          boxShadow: [
-                                                            BoxShadow(
-                                                              color: Colors.black.withOpacity(0.2),
-                                                              offset: Offset(4, 4),
-                                                              blurRadius: 3,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        child:
-                                                        TextFormField(
-                                                          controller: _toDateController,
-                                                          readOnly: true,
-
-                                                          onTap: () {
-
-                                                            _selectendDate(context, _toDateController);
-
-                                                          },
-                                                          decoration: InputDecoration(
-                                                            // contentPadding: EdgeInsets.all(8.0),
-                                                            // contentPadding: EdgeInsets.symmetric(),
-                                                            suffixIconConstraints: BoxConstraints(
-                                                                maxWidth: 20,
-                                                                maxHeight: 20,
-                                                                minHeight: 20,
-                                                                minWidth: 20),
-                                                            hintStyle:
-                                                            TextStyle(fontSize: 15, color: Color(0xFFb0b6c3)),
-                                                            border: InputBorder.none,
-                                                            hintText: 'To date',
-                                                            suffixIcon: IconButton(
-                                                              padding: EdgeInsets.symmetric(vertical: 1),
-                                                              iconSize: 20,
-                                                              icon: Icon(Icons.calendar_today), onPressed: () {  },
-
+                                                          Material(
+                                                            elevation: 2,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.0),
+                                                            child: Container(
+                                                              height: 55,
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          16.0,
+                                                                      vertical:
+                                                                          2.5),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .white,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8.0),
+                                                                boxShadow: [
+                                                                  BoxShadow(
+                                                                    color: Colors
+                                                                        .black
+                                                                        .withOpacity(
+                                                                            0.2),
+                                                                    offset:
+                                                                        Offset(
+                                                                            4,
+                                                                            4),
+                                                                    blurRadius:
+                                                                        3,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              child:
+                                                                  TextFormField(
+                                                                controller:
+                                                                    _fromDateController,
+                                                                // initialValue: fdate,
+                                                                readOnly: true,
+                                                                onTap: () =>
+                                                                    _selectfromDate(
+                                                                        context,
+                                                                        _fromDateController),
+                                                                decoration:
+                                                                    InputDecoration(
+                                                                  // contentPadding: EdgeInsets.all(8.0),
+                                                                  // contentPadding: EdgeInsets.symmetric(),
+                                                                  suffixIconConstraints: BoxConstraints(
+                                                                      maxWidth:
+                                                                          20,
+                                                                      maxHeight:
+                                                                          20,
+                                                                      minHeight:
+                                                                          20,
+                                                                      minWidth:
+                                                                          20),
+                                                                  hintStyle: TextStyle(
+                                                                      fontSize:
+                                                                          15,
+                                                                      color: Color(
+                                                                          0xFFb0b6c3)),
+                                                                  border:
+                                                                      InputBorder
+                                                                          .none,
+                                                                  hintText:
+                                                                      'From date',
+                                                                  suffixIcon:
+                                                                      IconButton(
+                                                                    padding: EdgeInsets
+                                                                        .symmetric(
+                                                                            vertical:
+                                                                                1),
+                                                                    iconSize:
+                                                                        20,
+                                                                    icon: Icon(Icons
+                                                                        .calendar_today),
+                                                                    onPressed:
+                                                                        () {},
+                                                                  ),
+                                                                ),
+                                                              ),
                                                             ),
                                                           ),
-                                                        ),
-
+                                                        ],
                                                       ),
                                                     ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 16,
+                                                  ),
+                                                  Expanded(
+                                                    child: Container(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          // Text('To',
+                                                          //     style: TextStyle(
+                                                          //         color: blueColor,
+                                                          //         fontSize: 15,
+                                                          //         fontWeight: FontWeight.w600)),
+                                                          // SizedBox(height: 4),
 
-                                      ],
-                                    ),
+                                                          Material(
+                                                            elevation: 2,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.0),
+                                                            child: Container(
+                                                              height: 55,
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          16.0,
+                                                                      vertical:
+                                                                          2.5),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .white,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8.0),
+                                                                boxShadow: [
+                                                                  BoxShadow(
+                                                                    color: Colors
+                                                                        .black
+                                                                        .withOpacity(
+                                                                            0.2),
+                                                                    offset:
+                                                                        Offset(
+                                                                            4,
+                                                                            4),
+                                                                    blurRadius:
+                                                                        3,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              child:
+                                                                  TextFormField(
+                                                                controller:
+                                                                    _toDateController,
+                                                                readOnly: true,
+                                                                onTap: () {
+                                                                  _selectendDate(
+                                                                      context,
+                                                                      _toDateController);
+                                                                },
+                                                                decoration:
+                                                                    InputDecoration(
+                                                                  // contentPadding: EdgeInsets.all(8.0),
+                                                                  // contentPadding: EdgeInsets.symmetric(),
+                                                                  suffixIconConstraints: BoxConstraints(
+                                                                      maxWidth:
+                                                                          20,
+                                                                      maxHeight:
+                                                                          20,
+                                                                      minHeight:
+                                                                          20,
+                                                                      minWidth:
+                                                                          20),
+                                                                  hintStyle: TextStyle(
+                                                                      fontSize:
+                                                                          15,
+                                                                      color: Color(
+                                                                          0xFFb0b6c3)),
+                                                                  border:
+                                                                      InputBorder
+                                                                          .none,
+                                                                  hintText:
+                                                                      'To date',
+                                                                  suffixIcon:
+                                                                      IconButton(
+                                                                    padding: EdgeInsets
+                                                                        .symmetric(
+                                                                            vertical:
+                                                                                1),
+                                                                    iconSize:
+                                                                        20,
+                                                                    icon: Icon(Icons
+                                                                        .calendar_today),
+                                                                    onPressed:
+                                                                        () {},
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                            ],
+                                          ),
                                   ),
                                 ),
                               ),
                               // SizedBox(height: 5),
-                              _buildHeaders(),
+                              if (data.isNotEmpty)
+                                _buildHeaders(),
                               const SizedBox(height: 20),
                               Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color:
-                                        Color.fromRGBO(
-                                            152, 162, 179, .5)
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Color.fromRGBO(
+                                              152, 162, 179, .5))),
+                                  // decoration: BoxDecoration(
+                                  //   border: Border.all(color: blueColor),
+                                  // ),
+                                  child: Column(
+                                    children: currentPageData
+                                        .asMap()
+                                        .entries
+                                        .map((entry) {
+                                      int index = entry.key;
+                                      bool isExpanded = expandedIndex == index;
+                                      Data data = entry.value;
+                                      double? surcharge = data?.surcharge;
+                                      double? totalAmount = data?.totalAmount;
 
-
-)),
-                                // decoration: BoxDecoration(
-                                //   border: Border.all(color: blueColor),
-                                // ),
-                                child: Column(
-                                  children:
-                                  currentPageData.asMap().entries.map((entry) {
-                                    int index = entry.key;
-                                    bool isExpanded = expandedIndex == index;
-                                    Data data = entry.value;
-                                    double? surcharge = data?.surcharge;
-                                    double? totalAmount = data?.totalAmount;
-
-                                    String percentage = (surcharge != null &&
-                                            totalAmount != null &&
-                                            totalAmount > 0)
-                                        ? ((surcharge /
-                                                        (totalAmount -
-                                                            surcharge)) *
-                                                    100)
-                                                .toStringAsFixed(2) +
-                                            "%"
-                                        : "N/A";
-                                    final uniqueEntries =
-                                        data.entry?.toSet().toList() ?? [];
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        color: index % 2 != 0
-                                            ? Colors.white
-                                            : blueColor.withOpacity(0.09),
-                                        border: Border.all(
-                                            color: Color.fromRGBO(
-                                                152, 162, 179, .5)),
-                                      ),
-                                      // decoration: BoxDecoration(
-                                      //   border: Border.all(color: blueColor),
-                                      // ),
-                                      child: Column(
-                                        children: <Widget>[
-                                          ListTile(
-                                            contentPadding: EdgeInsets.zero,
-                                            title: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(2.0),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: <Widget>[
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        if (expandedIndex ==
-                                                            index) {
-                                                          expandedIndex = null;
-                                                        } else {
-                                                          expandedIndex = index;
-                                                        }
-                                                      });
-                                                    },
-                                                    child: Container(
-                                                      margin:
-                                                          const EdgeInsets.only(
-                                                              left: 5),
-                                                      padding: !isExpanded
-                                                          ? const EdgeInsets
-                                                              .only(bottom: 10)
-                                                          : const EdgeInsets
-                                                              .only(top: 10),
-                                                      child: FaIcon(
-                                                        isExpanded
-                                                            ? FontAwesomeIcons
-                                                                .sortUp
-                                                            : FontAwesomeIcons
-                                                                .sortDown,
-                                                        size: 20,
-                                                        color: blueColor
-
-
-,
+                                      String percentage = (surcharge != null &&
+                                              totalAmount != null &&
+                                              totalAmount > 0)
+                                          ? ((surcharge /
+                                                          (totalAmount -
+                                                              surcharge)) *
+                                                      100)
+                                                  .toStringAsFixed(2) +
+                                              "%"
+                                          : "N/A";
+                                      final uniqueEntries =
+                                          data.entry?.toSet().toList() ?? [];
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          color: index % 2 != 0
+                                              ? Colors.white
+                                              : blueColor.withOpacity(0.09),
+                                          border: Border.all(
+                                              color: Color.fromRGBO(
+                                                  152, 162, 179, .5)),
+                                        ),
+                                        // decoration: BoxDecoration(
+                                        //   border: Border.all(color: blueColor),
+                                        // ),
+                                        child: Column(
+                                          children: <Widget>[
+                                            ListTile(
+                                              contentPadding: EdgeInsets.zero,
+                                              title: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(2.0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          if (expandedIndex ==
+                                                              index) {
+                                                            expandedIndex =
+                                                                null;
+                                                          } else {
+                                                            expandedIndex =
+                                                                index;
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        margin: const EdgeInsets
+                                                            .only(left: 5),
+                                                        padding: !isExpanded
+                                                            ? const EdgeInsets
+                                                                .only(
+                                                                bottom: 10)
+                                                            : const EdgeInsets
+                                                                .only(top: 10),
+                                                        child: FaIcon(
+                                                          isExpanded
+                                                              ? FontAwesomeIcons
+                                                                  .sortUp
+                                                              : FontAwesomeIcons
+                                                                  .sortDown,
+                                                          size: 20,
+                                                          color: blueColor,
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                  Expanded(
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: Text(
+                                                          ' ${data.type}' ?? "",
+                                                          style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .08,
+                                                    ),
+                                                    Expanded(
                                                       child: Text(
-                                                        ' ${data.type}' ?? "",
+                                                        ' \$${data.balance!.abs().toStringAsFixed(2)}',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -2150,186 +2353,240 @@ class _FinancialTableState extends State<FinancialTable> {
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
-                                                  SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .08,
-                                                  ),
-                                                  Expanded(
-                                                    child: Text(
-                                                      ' \$${data.balance!.abs().toStringAsFixed(2)}',
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 13,
+                                                    SizedBox(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .08,
+                                                    ),
+                                                    Expanded(
+                                                      child: Text(
+                                                        dateProvider
+                                                            .formatCurrentDate(
+                                                                '${data.entry!.first.date}'),
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                  SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .08,
-                                                  ),
-                                                  Expanded(
-                                                    child: Text(
-                                                      dateProvider.formatCurrentDate(
-                                                          '${data.entry!.first.date}'),
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 13,
-                                                      ),
+                                                    SizedBox(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .02,
                                                     ),
-                                                  ),
-                                                  SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .02,
-                                                  ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          if (isExpanded)
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8.0),
-                                              margin: EdgeInsets.only(
-                                                  bottom:
-                                                      (data.type != "Refund")
-                                                          ? 2
-                                                          : 20),
-                                              child: SingleChildScrollView(
-                                                child: Column(
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        FaIcon(
-                                                          isExpanded
-                                                              ? FontAwesomeIcons
-                                                                  .sortUp
-                                                              : FontAwesomeIcons
-                                                                  .sortDown,
-                                                          size: 30,
-                                                          color: Colors
-                                                              .transparent,
-                                                        ),
-                                                        Expanded(
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: <Widget>[
-                                                              Text.rich(
-                                                                TextSpan(
-                                                                  children: [
-                                                                    TextSpan(
-                                                                      text:
-                                                                          'Description : ',
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
+                                            if (isExpanded)
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8.0),
+                                                margin: EdgeInsets.only(
+                                                    bottom:
+                                                        (data.type != "Refund")
+                                                            ? 2
+                                                            : 20),
+                                                child: SingleChildScrollView(
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          FaIcon(
+                                                            isExpanded
+                                                                ? FontAwesomeIcons
+                                                                    .sortUp
+                                                                : FontAwesomeIcons
+                                                                    .sortDown,
+                                                            size: 30,
+                                                            color: Colors
+                                                                .transparent,
+                                                          ),
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: <Widget>[
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Description : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor), // Bold and black
+                                                                      ),
+                                                                      if (data.type !=
+                                                                          "Charge")
+                                                                        TextSpan(
+                                                                          text:
+                                                                              'Manual ${data.type} ${data.response} For ${data.paymenttype}',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey), // Light and grey
+                                                                        ),
+                                                                      if (data.type ==
+                                                                          "Charge")
+                                                                        TextSpan(
+                                                                          text:
+                                                                              '${data.entry?.first.memo}',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey), // Light and grey
+                                                                        ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 5,
+                                                                ),
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Amount : ',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
                                                                           color:
-                                                                              blueColor), // Bold and black
+                                                                              blueColor,
+                                                                        ),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text: data.type == "Refund" ||
+                                                                                data.type == "Charge"
+                                                                            ? '\$${data.totalAmount!.toStringAsFixed(2)}'
+                                                                            : ' - \$${data.totalAmount!.toStringAsFixed(2)}',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.w700,
+                                                                          color:
+                                                                              grey,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Tenant : ',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                          color:
+                                                                              blueColor,
+                                                                        ),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text: data.tenantData !=
+                                                                                null
+                                                                            ? '${data.tenantData["tenant_firstName"] ?? ""} ${data.tenantData["tenant_lastName"] ?? ""}'
+                                                                            : 'N/A',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.w700,
+                                                                          color:
+                                                                              grey,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      if (data.type ==
+                                                              "Payment" ||
+                                                          data.type == "Charge")
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  left: 10.0,
+                                                                  top: 10),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              FaIcon(
+                                                                isExpanded
+                                                                    ? FontAwesomeIcons
+                                                                        .sortUp
+                                                                    : FontAwesomeIcons
+                                                                        .sortDown,
+                                                                size: 20,
+                                                                color: Colors
+                                                                    .transparent,
+                                                              ),
+                                                              Expanded(
+                                                                flex: 4,
+                                                                child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: <Widget>[
+                                                                    Text.rich(
+                                                                      TextSpan(
+                                                                        children: [
+                                                                          TextSpan(
+                                                                            text:
+                                                                                'Account : ',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color: blueColor,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
                                                                     ),
-                                                                    if (data.type !=
-                                                                        "Charge")
-                                                                      TextSpan(
-                                                                        text:
-                                                                            'Manual ${data.type} ${data.response} For ${data.paymenttype}',
-                                                                        style: TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.w700,
-                                                                            color: grey), // Light and grey
-                                                                      ),
-                                                                    if (data.type ==
-                                                                        "Charge")
-                                                                      TextSpan(
-                                                                        text:
-                                                                            '${data.entry?.first.memo}',
-                                                                        style: TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.w700,
-                                                                            color: grey), // Light and grey
-                                                                      ),
                                                                   ],
                                                                 ),
                                                               ),
-                                                              SizedBox(
-                                                                height: 5,
-                                                              ),
-                                                              Text.rich(
-                                                                TextSpan(
-                                                                  children: [
-                                                                     TextSpan(
-                                                                      text:
-                                                                          'Amount : ',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
-                                                                        color: blueColor
-
-
-,
-                                                                      ),
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text: data.type == "Refund" ||
-                                                                              data.type == "Charge"
-                                                                          ? '\$${data.totalAmount!.toStringAsFixed(2)}'
-                                                                          : ' - \$${data.totalAmount!.toStringAsFixed(2)}',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.w700,
-                                                                        color:
-                                                                            grey,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                              Text.rich(
-                                                                TextSpan(
-                                                                  children: [
-                                                                     TextSpan(
-                                                                      text:
-                                                                          'Tenant : ',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
-                                                                        color: blueColor
-
-
-,
-                                                                      ),
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text: data.tenantData !=
-                                                                              null
-                                                                          ? '${data.tenantData["tenant_firstName"] ?? ""} ${data.tenantData["tenant_lastName"] ?? ""}'
-                                                                          : 'N/A',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.w700,
-                                                                        color:
-                                                                            grey,
+                                                              Expanded(
+                                                                flex: 2,
+                                                                child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: <Widget>[
+                                                                    Text.rich(
+                                                                      TextSpan(
+                                                                        children: [
+                                                                          TextSpan(
+                                                                            text:
+                                                                                '  Amount : ',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color: blueColor,
+                                                                            ),
+                                                                          ),
+                                                                        ],
                                                                       ),
                                                                     ),
                                                                   ],
@@ -2338,179 +2595,97 @@ class _FinancialTableState extends State<FinancialTable> {
                                                             ],
                                                           ),
                                                         ),
-                                                      ],
-                                                    ),
-                                                    if (data.type ==
-                                                            "Payment" ||
-                                                        data.type == "Charge")
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                left: 10.0,
-                                                                top: 10),
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            FaIcon(
-                                                              isExpanded
-                                                                  ? FontAwesomeIcons
-                                                                      .sortUp
-                                                                  : FontAwesomeIcons
-                                                                      .sortDown,
-                                                              size: 20,
-                                                              color: Colors
-                                                                  .transparent,
-                                                            ),
-                                                            Expanded(
-                                                              flex: 4,
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      if (data.type ==
+                                                              "Payment" ||
+                                                          data.type == "Charge")
+                                                        Column(
+                                                          children:
+                                                              uniqueEntries
+                                                                  .map((entry) {
+                                                            return Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      left:
+                                                                          10.0,
+                                                                      bottom:
+                                                                          10),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
                                                                         .start,
-                                                                children: <Widget>[
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                         TextSpan(
-                                                                          text:
-                                                                              'Account : ',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            color: blueColor
-
-
-,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    isExpanded
+                                                                        ? FontAwesomeIcons
+                                                                            .sortUp
+                                                                        : FontAwesomeIcons
+                                                                            .sortDown,
+                                                                    size: 20,
+                                                                    color: Colors
+                                                                        .transparent,
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 4,
+                                                                    child:
+                                                                        Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: <Widget>[
+                                                                        Text.rich(
+                                                                          TextSpan(
+                                                                            children: [
+                                                                              TextSpan(
+                                                                                text: '${entry.account ?? "N/A"}',
+                                                                                style: TextStyle(
+                                                                                  fontWeight: FontWeight.w700,
+                                                                                  color: grey,
+                                                                                ),
+                                                                              ),
+                                                                            ],
                                                                           ),
                                                                         ),
                                                                       ],
                                                                     ),
                                                                   ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 2,
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: <Widget>[
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                         TextSpan(
-                                                                          text:
-                                                                              '  Amount : ',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            color: blueColor
-
-
-,
+                                                                  SizedBox(
+                                                                    width: 15,
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex: 2,
+                                                                    child:
+                                                                        Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: <Widget>[
+                                                                        Text.rich(
+                                                                          TextSpan(
+                                                                            children: [
+                                                                              TextSpan(
+                                                                                text: ' \$ ${entry.amount ?? "N/A"}',
+                                                                                style: TextStyle(
+                                                                                  fontWeight: FontWeight.w700,
+                                                                                  color: grey,
+                                                                                ),
+                                                                              ),
+                                                                            ],
                                                                           ),
                                                                         ),
+                                                                        // Add additional fields if needed
                                                                       ],
                                                                     ),
                                                                   ),
                                                                 ],
                                                               ),
-                                                            ),
-                                                          ],
+                                                            );
+                                                          }).toList(),
                                                         ),
-                                                      ),
-                                                    SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    if (data.type ==
-                                                            "Payment" ||
-                                                        data.type == "Charge")
-                                                      Column(
-                                                        children: uniqueEntries
-                                                            .map((entry) {
-                                                          return Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    left: 10.0,
-                                                                    bottom: 10),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                FaIcon(
-                                                                  isExpanded
-                                                                      ? FontAwesomeIcons
-                                                                          .sortUp
-                                                                      : FontAwesomeIcons
-                                                                          .sortDown,
-                                                                  size: 20,
-                                                                  color: Colors
-                                                                      .transparent,
-                                                                ),
-                                                                Expanded(
-                                                                  flex: 4,
-                                                                  child: Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    children: <Widget>[
-                                                                      Text.rich(
-                                                                        TextSpan(
-                                                                          children: [
-                                                                            TextSpan(
-                                                                              text: '${entry.account ?? "N/A"}',
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w700,
-                                                                                color: grey,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 15,
-                                                                ),
-                                                                Expanded(
-                                                                  flex: 2,
-                                                                  child: Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    children: <Widget>[
-                                                                      Text.rich(
-                                                                        TextSpan(
-                                                                          children: [
-                                                                            TextSpan(
-                                                                              text: ' \$ ${entry.amount ?? "N/A"}',
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w700,
-                                                                                color: grey,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                      // Add additional fields if needed
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          );
-                                                        }).toList(),
-                                                      ),
-                                                    /* if (data.paymenttype ==
+                                                      /* if (data.paymenttype ==
                                                         "Card" &&  data.type == "Payment")
                                                       Padding(
                                                         padding:
@@ -2590,449 +2765,510 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           ],
                                                         ),
                                                       ),*/
-                                                    if (data.type != "Refund" &&
-                                                        data.type != "Charge"  &&  (data.paymenttype =="Card" || data.paymenttype =="ACH"))
-                                                      Row(
-                                                        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          // SizedBox(width: 5,),
-                                                          Expanded(
-                                                            child:
-                                                                GestureDetector(
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  _amountController
-                                                                      .text = (data
-                                                                              .totalAmount! -
-                                                                          data.surcharge!)
-                                                                      .toString();
-                                                                  _dateController
-                                                                      .text = formatDate(DateTime
-                                                                          .now()
-                                                                      .toString());
-                                                                });
-                                                                _showRefundDialog(
-                                                                    context,
-                                                                    data);
-                                                                // Navigator.of(context)
-                                                                //     .push(MaterialPageRoute(builder: (context) => Workorder_summery(workorder_id: workorder.workOrderId,)));
-                                                              },
-                                                              child: Container(
-                                                                height: 40,
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]),
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    SizedBox(
-                                                                      width: 5,
-                                                                    ),
-                                                                    Icon(Icons
-                                                                        .wallet),
-                                                                    // FaIcon(
-                                                                    //   FontAwesomeIcons.trashCan,
-                                                                    //   size: 15,
-                                                                    //   color:blueColor,
-                                                                    // ),
-                                                                    SizedBox(
-                                                                      width: 8,
-                                                                    ),
-                                                                    Text(
-                                                                      "Refund",
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                              12,
-                                                                          color:
-                                                                              blueColor,
-                                                                          fontWeight:
-                                                                              FontWeight.bold),
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    if (data.type == "Charge")
-                                                      Row(
-                                                        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          Expanded(
-                                                            child:
-                                                                GestureDetector(
-                                                              onTap: () async {
-                                                                final value = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => enterCharge(
-                                                                              leaseId: widget.leaseId,
-                                                                              chargeid: data.chargeId,
-                                                                            )));
-                                                                if (value ==
-                                                                    true) {
+                                                      if (data.type != "Refund" &&
+                                                          data.type !=
+                                                              "Charge" &&
+                                                          (data.paymenttype ==
+                                                                  "Card" ||
+                                                              data.paymenttype ==
+                                                                  "ACH"))
+                                                        Row(
+                                                          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            // SizedBox(width: 5,),
+                                                            Expanded(
+                                                              child:
+                                                                  GestureDetector(
+                                                                onTap: () {
                                                                   setState(() {
-                                                                    _leaseLedgerFuture =
-                                                                        LeaseRepository()
-                                                                            .fetchLeaseLedger(leaseId: widget.leaseId);
+                                                                    _amountController
+                                                                        .text = (data.totalAmount! -
+                                                                            data.surcharge!)
+                                                                        .toString();
+                                                                    _dateController
+                                                                        .text = formatDate(DateTime
+                                                                            .now()
+                                                                        .toString());
                                                                   });
-                                                                }
-                                                                // var check = await Navigator.push(
-                                                                //   context,
-                                                                //   MaterialPageRoute(
-                                                                //     builder: (context) => Edit_properties(
-                                                                //       properties: rentals,
-                                                                //       rentalId: rentals.rentalId!,
-                                                                //     ),
-                                                                //   ),
-                                                                // );
-                                                                // if (check == true) {
-                                                                //   setState(() {
-                                                                //     futureRentalOwners = PropertiesRepository().fetchProperties();
-                                                                //
-                                                                //   });
-                                                                //   // Update State
-                                                                // }
-                                                              },
-                                                              child: Container(
-                                                                height: 40,
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]), // color:Colors.grey[100],
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .edit,
-                                                                      size: 15,
-                                                                      color:
-                                                                          blueColor,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 10,
-                                                                    ),
-                                                                    Text(
-                                                                      "Edit",
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              blueColor,
-                                                                          fontWeight:
-                                                                              FontWeight.bold),
-                                                                    ),
-                                                                  ],
+                                                                  _showRefundDialog(
+                                                                      context,
+                                                                      data);
+                                                                  // Navigator.of(context)
+                                                                  //     .push(MaterialPageRoute(builder: (context) => Workorder_summery(workorder_id: workorder.workOrderId,)));
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                  height: 40,
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors
+                                                                              .grey[
+                                                                          350]),
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width:
+                                                                            5,
+                                                                      ),
+                                                                      Icon(Icons
+                                                                          .wallet),
+                                                                      // FaIcon(
+                                                                      //   FontAwesomeIcons.trashCan,
+                                                                      //   size: 15,
+                                                                      //   color:blueColor,
+                                                                      // ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            8,
+                                                                      ),
+                                                                      Text(
+                                                                        "Refund",
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                12,
+                                                                            color:
+                                                                                blueColor,
+                                                                            fontWeight:
+                                                                                FontWeight.bold),
+                                                                      )
+                                                                    ],
+                                                                  ),
                                                                 ),
                                                               ),
                                                             ),
-                                                          ),
-                                                          SizedBox(
-                                                            width: 5,
-                                                          ),
-                                                          Expanded(
-                                                            child:
-                                                                GestureDetector(
-                                                              onTap: () {
-                                                                _showAlert(
-                                                                    context,
-                                                                    data.chargeId!);
-                                                                //   _showAlert(context, rentals.rentalId!);
-                                                              },
-                                                              child: Container(
-                                                                height: 40,
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]),
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .trashCan,
-                                                                      size: 15,
-                                                                      color:
-                                                                          blueColor,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 10,
-                                                                    ),
-                                                                    Text(
-                                                                      "Delete",
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              blueColor,
-                                                                          fontWeight:
-                                                                              FontWeight.bold),
-                                                                    )
-                                                                  ],
+                                                          ],
+                                                        ),
+                                                      if (data.type == "Charge")
+                                                        Row(
+                                                          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            Expanded(
+                                                              child:
+                                                                  GestureDetector(
+                                                                onTap:
+                                                                    () async {
+                                                                  final value = await Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => enterCharge(
+                                                                                leaseId: widget.leaseId,
+                                                                                chargeid: data.chargeId,
+                                                                              )));
+                                                                  if (value ==
+                                                                      true) {
+                                                                    setState(
+                                                                        () {
+                                                                      _leaseLedgerFuture =
+                                                                          LeaseRepository()
+                                                                              .fetchLeaseLedger(leaseId: widget.leaseId);
+                                                                    });
+                                                                  }
+                                                                  // var check = await Navigator.push(
+                                                                  //   context,
+                                                                  //   MaterialPageRoute(
+                                                                  //     builder: (context) => Edit_properties(
+                                                                  //       properties: rentals,
+                                                                  //       rentalId: rentals.rentalId!,
+                                                                  //     ),
+                                                                  //   ),
+                                                                  // );
+                                                                  // if (check == true) {
+                                                                  //   setState(() {
+                                                                  //     futureRentalOwners = PropertiesRepository().fetchProperties();
+                                                                  //
+                                                                  //   });
+                                                                  //   // Update State
+                                                                  // }
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                  height: 40,
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors
+                                                                              .grey[
+                                                                          350]), // color:Colors.grey[100],
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      FaIcon(
+                                                                        FontAwesomeIcons
+                                                                            .edit,
+                                                                        size:
+                                                                            15,
+                                                                        color:
+                                                                            blueColor,
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            10,
+                                                                      ),
+                                                                      Text(
+                                                                        "Edit",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                blueColor,
+                                                                            fontWeight:
+                                                                                FontWeight.bold),
+                                                                      ),
+                                                                    ],
+                                                                  ),
                                                                 ),
                                                               ),
                                                             ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    if (data.type == "Payment" &&  (data.paymenttype !="Card" && data.paymenttype !="ACH"))
-                                                      Row(
-                                                        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          Expanded(
-                                                            child:
-                                                            GestureDetector(
-                                                              onTap: () async {
-                                                                final value = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => EditMakePayment(
-                                                                          leaseId: widget.leaseId,
-                                                                          tenantId: data.tenantData["tenant_id"],
-                                                                          isEdit: true,
-                                                                          data: data,
-
-                                                                        )));
-                                                                if (value ==
-                                                                    true) {
-                                                                  setState(() {
-                                                                    _leaseLedgerFuture =
-                                                                        LeaseRepository()
-                                                                            .fetchLeaseLedger(leaseId: widget.leaseId);
-                                                                  });
-                                                                }
-                                                                // var check = await Navigator.push(
-                                                                //   context,
-                                                                //   MaterialPageRoute(
-                                                                //     builder: (context) => Edit_properties(
-                                                                //       properties: rentals,
-                                                                //       rentalId: rentals.rentalId!,
-                                                                //     ),
-                                                                //   ),
-                                                                // );
-                                                                // if (check == true) {
-                                                                //   setState(() {
-                                                                //     futureRentalOwners = PropertiesRepository().fetchProperties();
-                                                                //
-                                                                //   });
-                                                                //   // Update State
-                                                                // }
-                                                              },
-                                                              child: Container(
-                                                                height: 40,
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                        .grey[
-                                                                    350]), // color:Colors.grey[100],
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                                  crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .edit,
-                                                                      size: 15,
-                                                                      color:
-                                                                      blueColor,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 10,
-                                                                    ),
-                                                                    Text(
-                                                                      "Edit",
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                          blueColor,
-                                                                          fontWeight:
-                                                                          FontWeight.bold),
-                                                                    ),
-                                                                  ],
+                                                            SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                            Expanded(
+                                                              child:
+                                                                  GestureDetector(
+                                                                onTap: () {
+                                                                  _showAlert(
+                                                                      context,
+                                                                      data.chargeId!);
+                                                                  //   _showAlert(context, rentals.rentalId!);
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                  height: 40,
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors
+                                                                              .grey[
+                                                                          350]),
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      FaIcon(
+                                                                        FontAwesomeIcons
+                                                                            .trashCan,
+                                                                        size:
+                                                                            15,
+                                                                        color:
+                                                                            blueColor,
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            10,
+                                                                      ),
+                                                                      Text(
+                                                                        "Delete",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                blueColor,
+                                                                            fontWeight:
+                                                                                FontWeight.bold),
+                                                                      )
+                                                                    ],
+                                                                  ),
                                                                 ),
                                                               ),
                                                             ),
-                                                          ),
-                                                          SizedBox(
-                                                            width: 5,
-                                                          ),
-                                                          Expanded(
-                                                            child:
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                _showAlertpayment(
-                                                                    context,
-                                                                    data.paymentId!);
-                                                                //   _showAlert(context, rentals.rentalId!);
-                                                              },
-                                                              child: Container(
-                                                                height: 40,
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                        .grey[
-                                                                    350]),
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                                  crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .trashCan,
-                                                                      size: 15,
-                                                                      color:
-                                                                      blueColor,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 10,
-                                                                    ),
-                                                                    Text(
-                                                                      "Delete",
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                          blueColor,
-                                                                          fontWeight:
-                                                                          FontWeight.bold),
-                                                                    )
-                                                                  ],
+                                                          ],
+                                                        ),
+                                                      if (data.type ==
+                                                              "Payment" &&
+                                                          (data.paymenttype !=
+                                                                  "Card" &&
+                                                              data.paymenttype !=
+                                                                  "ACH"))
+                                                        Row(
+                                                          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            Expanded(
+                                                              child:
+                                                                  GestureDetector(
+                                                                onTap:
+                                                                    () async {
+                                                                  final value = await Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => EditMakePayment(
+                                                                                leaseId: widget.leaseId,
+                                                                                tenantId: data.tenantData["tenant_id"],
+                                                                                isEdit: true,
+                                                                                data: data,
+                                                                              )));
+                                                                  if (value ==
+                                                                      true) {
+                                                                    setState(
+                                                                        () {
+                                                                      _leaseLedgerFuture =
+                                                                          LeaseRepository()
+                                                                              .fetchLeaseLedger(leaseId: widget.leaseId);
+                                                                    });
+                                                                  }
+                                                                  // var check = await Navigator.push(
+                                                                  //   context,
+                                                                  //   MaterialPageRoute(
+                                                                  //     builder: (context) => Edit_properties(
+                                                                  //       properties: rentals,
+                                                                  //       rentalId: rentals.rentalId!,
+                                                                  //     ),
+                                                                  //   ),
+                                                                  // );
+                                                                  // if (check == true) {
+                                                                  //   setState(() {
+                                                                  //     futureRentalOwners = PropertiesRepository().fetchProperties();
+                                                                  //
+                                                                  //   });
+                                                                  //   // Update State
+                                                                  // }
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                  height: 40,
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors
+                                                                              .grey[
+                                                                          350]), // color:Colors.grey[100],
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      FaIcon(
+                                                                        FontAwesomeIcons
+                                                                            .edit,
+                                                                        size:
+                                                                            15,
+                                                                        color:
+                                                                            blueColor,
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            10,
+                                                                      ),
+                                                                      Text(
+                                                                        "Edit",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                blueColor,
+                                                                            fontWeight:
+                                                                                FontWeight.bold),
+                                                                      ),
+                                                                    ],
+                                                                  ),
                                                                 ),
                                                               ),
                                                             ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                  ],
+                                                            SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                            Expanded(
+                                                              child:
+                                                                  GestureDetector(
+                                                                onTap: () {
+                                                                  _showAlertpayment(
+                                                                      context,
+                                                                      data.paymentId!);
+                                                                  //   _showAlert(context, rentals.rentalId!);
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                  height: 40,
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors
+                                                                              .grey[
+                                                                          350]),
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      FaIcon(
+                                                                        FontAwesomeIcons
+                                                                            .trashCan,
+                                                                        size:
+                                                                            15,
+                                                                        color:
+                                                                            blueColor,
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            10,
+                                                                      ),
+                                                                      Text(
+                                                                        "Delete",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                blueColor,
+                                                                            fontWeight:
+                                                                                FontWeight.bold),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                        ],
-                                      ),
-                                    );
-                                  }).toList(),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
                                 ),
-                              ),
+                              if (data.isEmpty)
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * .5,
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          "assets/images/no_data.jpg",
+                                          height: 200,
+                                          width: 200,
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text(
+                                          "No Data Available",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor,
+                                              fontSize: 16),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               SizedBox(height: 20),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Row(
-                                    children: [
-                                      // Text('Rows per page:'),
-                                      SizedBox(width: 10),
-                                      Material(
-                                        elevation: 3,
-                                        child: Container(
-                                          height: 40,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 12.0),
-                                          decoration: BoxDecoration(
-                                            border:
-                                            Border.all(color: Colors.grey),
-                                          ),
-                                          child: DropdownButtonHideUnderline(
-                                            child: DropdownButton<int>(
-                                              value: itemsPerPage,
-                                              items: itemsPerPageOptions
-                                                  .map((int value) {
-                                                return DropdownMenuItem<int>(
-                                                  value: value,
-                                                  child: Text(value.toString()),
-                                                );
-                                              }).toList(),
-                                              onChanged: data.length >
-                                                  itemsPerPageOptions
-                                                      .first // Condition to check if dropdown should be enabled
-                                                  ? (newValue) {
-                                                setState(() {
-                                                  itemsPerPage = newValue!;
-                                                  currentPage =
-                                                  0; // Reset to first page when items per page change
-                                                });
-                                              }
-                                                  : null,
+                              if (data.isNotEmpty)
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        // Text('Rows per page:'),
+                                        SizedBox(width: 10),
+                                        Material(
+                                          elevation: 3,
+                                          child: Container(
+                                            height: 40,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.grey),
+                                            ),
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<int>(
+                                                value: itemsPerPage,
+                                                items: itemsPerPageOptions
+                                                    .map((int value) {
+                                                  return DropdownMenuItem<int>(
+                                                    value: value,
+                                                    child:
+                                                        Text(value.toString()),
+                                                  );
+                                                }).toList(),
+                                                onChanged: data.length >
+                                                        itemsPerPageOptions
+                                                            .first // Condition to check if dropdown should be enabled
+                                                    ? (newValue) {
+                                                        setState(() {
+                                                          itemsPerPage =
+                                                              newValue!;
+                                                          currentPage =
+                                                              0; // Reset to first page when items per page change
+                                                        });
+                                                      }
+                                                    : null,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        icon: FaIcon(
-                                          FontAwesomeIcons.circleChevronLeft,
-                                          color: currentPage == 0
-                                              ? Colors.grey
-                                              : blueColor,
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronLeft,
+                                            color: currentPage == 0
+                                                ? Colors.grey
+                                                : blueColor,
+                                          ),
+                                          onPressed: currentPage == 0
+                                              ? null
+                                              : () {
+                                                  setState(() {
+                                                    currentPage--;
+                                                  });
+                                                },
                                         ),
-                                        onPressed: currentPage == 0
-                                            ? null
-                                            : () {
-                                          setState(() {
-                                            currentPage--;
-                                          });
-                                        },
-                                      ),
-                                      // IconButton(
-                                      //   icon: Icon(Icons.arrow_back),
-                                      //   onPressed: currentPage > 0
-                                      //       ? () {
-                                      //     setState(() {
-                                      //       currentPage--;
-                                      //     });
-                                      //   }
-                                      //       : null,
-                                      // ),
-                                      Text(
-                                          'Page ${currentPage + 1} of $totalPages'),
-                                      // IconButton(
-                                      //   icon: Icon(Icons.arrow_forward),
-                                      //   onPressed: currentPage < totalPages - 1
-                                      //       ? () {
-                                      //     setState(() {
-                                      //       currentPage++;
-                                      //     });
-                                      //   }
-                                      //       : null,
-                                      // ),
-                                      IconButton(
-                                        icon: FaIcon(
-                                          FontAwesomeIcons.circleChevronRight,
-                                          color: currentPage < totalPages - 1
-                                              ? blueColor
-                                              : Colors.grey,
+                                        // IconButton(
+                                        //   icon: Icon(Icons.arrow_back),
+                                        //   onPressed: currentPage > 0
+                                        //       ? () {
+                                        //     setState(() {
+                                        //       currentPage--;
+                                        //     });
+                                        //   }
+                                        //       : null,
+                                        // ),
+                                        Text(
+                                            'Page ${currentPage + 1} of $totalPages'),
+                                        // IconButton(
+                                        //   icon: Icon(Icons.arrow_forward),
+                                        //   onPressed: currentPage < totalPages - 1
+                                        //       ? () {
+                                        //     setState(() {
+                                        //       currentPage++;
+                                        //     });
+                                        //   }
+                                        //       : null,
+                                        // ),
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronRight,
+                                            color: currentPage < totalPages - 1
+                                                ? blueColor
+                                                : Colors.grey,
+                                          ),
+                                          onPressed:
+                                              currentPage < totalPages - 1
+                                                  ? () {
+                                                      setState(() {
+                                                        currentPage++;
+                                                      });
+                                                    }
+                                                  : null,
                                         ),
-                                        onPressed: currentPage < totalPages - 1
-                                            ? () {
-                                          setState(() {
-                                            currentPage++;
-                                          });
-                                        }
-                                            : null,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                             ],
                           ),
                         );
@@ -3122,21 +3358,12 @@ class _FinancialTableState extends State<FinancialTable> {
                                               TableRow(
                                                 decoration: BoxDecoration(
                                                   border: Border(
-                                                    left:  BorderSide(
-                                                        color: blueColor
-
-
-),
-                                                    right:  BorderSide(
-                                                        color: blueColor
-
-
-),
-                                                    top:  BorderSide(
-                                                        color: blueColor
-
-
-),
+                                                    left: BorderSide(
+                                                        color: blueColor),
+                                                    right: BorderSide(
+                                                        color: blueColor),
+                                                    top: BorderSide(
+                                                        color: blueColor),
                                                     bottom: i ==
                                                             _pagedData.length -
                                                                 1
@@ -3294,27 +3521,11 @@ class _FinancialTableState extends State<FinancialTable> {
                                       TableRow(
                                         decoration: BoxDecoration(
                                           border: Border(
-                                            left:  BorderSide(
-                                                color: blueColor
-
-
-),
-                                            right:  BorderSide(
-                                                color: blueColor
-
-
-),
-                                            top:  BorderSide(
-                                                color: blueColor
-
-
-),
+                                            left: BorderSide(color: blueColor),
+                                            right: BorderSide(color: blueColor),
+                                            top: BorderSide(color: blueColor),
                                             bottom: i == _pagedData.length - 1
-                                                ?  BorderSide(
-                                                    color: blueColor
-
-
-)
+                                                ? BorderSide(color: blueColor)
                                                 : BorderSide.none,
                                           ),
                                         ),
@@ -3387,19 +3598,13 @@ class _FinancialTableState extends State<FinancialTable> {
                                           decoration: BoxDecoration(
                                             border: Border(
                                               left: BorderSide(
-                                                color: blueColor
-
-
-,
+                                                color: blueColor,
                                                 width: 1.0,
                                               ),
                                               bottom:
                                                   (i == _pagedData.length - 1)
                                                       ? BorderSide(
-                                                          color:blueColor
-
-
-,
+                                                          color: blueColor,
                                                           width: 1.0,
                                                         )
                                                       : BorderSide.none,

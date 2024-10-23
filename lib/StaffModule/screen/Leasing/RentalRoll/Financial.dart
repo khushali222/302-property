@@ -1394,6 +1394,38 @@ class _FinancialTableState extends State<FinancialTable> {
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
+      builder: (BuildContext context,
+          Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme:
+            ColorScheme.light(
+              primary: blueColor
+
+
+              , // header background color
+              onPrimary: Colors
+                  .white, // header text color
+              onSurface: blueColor
+
+
+              , // body text color
+            ),
+            textButtonTheme:
+            TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor:
+                blueColor
+
+
+                , // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null) {
@@ -1415,6 +1447,38 @@ class _FinancialTableState extends State<FinancialTable> {
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
+      builder: (BuildContext context,
+          Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme:
+            ColorScheme.light(
+              primary: blueColor
+
+
+              , // header background color
+              onPrimary: Colors
+                  .white, // header text color
+              onSurface: blueColor
+
+
+              , // body text color
+            ),
+            textButtonTheme:
+            TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor:
+                blueColor
+
+
+                , // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null) {
@@ -1899,7 +1963,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                             hintStyle:
                                                             TextStyle(fontSize: 15, color: Color(0xFFb0b6c3)),
                                                             border: InputBorder.none,
-                                                            hintText: 'Frome date',
+                                                            hintText: 'From date',
                                                             suffixIcon: IconButton(
                                                               padding: EdgeInsets.symmetric(vertical: 1),
                                                               iconSize: 20,
@@ -1998,6 +2062,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                 ),
                               ),
                               SizedBox(height: 10),
+                              if (data.isNotEmpty)
                               _buildHeaders(),
                               const SizedBox(height: 20),
                               Container(
@@ -2690,7 +2755,40 @@ class _FinancialTableState extends State<FinancialTable> {
                                   }).toList(),
                                 ),
                               ),
+
+                              if (data.isEmpty)
+                                Container(
+                                  height:
+                                  MediaQuery.of(context).size.height * .5,
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          "assets/images/no_data.jpg",
+                                          height: 200,
+                                          width: 200,
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text(
+                                          "No Data Available",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor,
+                                              fontSize: 16),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+
                               SizedBox(height: 20),
+                              if (data.isNotEmpty)
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
