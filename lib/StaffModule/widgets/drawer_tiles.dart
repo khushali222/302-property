@@ -16,6 +16,7 @@ import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.d
 
 import '../screen/dashboard.dart';
 import '../screen/profile.dart';
+import '../screen/upcoming_renewal/upcoming_renewal.dart';
 
 
 
@@ -72,7 +73,8 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Work Order": (context) => Workorder_table(),
     "Rent Roll": (context) => Lease_table(),
     "Applicants": (context) => Applicants_table(),
-    "Vendor": (context) => Vendor_table(),
+    //"Vendor": (context) => Vendor_table(),
+    "Upcoming renewal":(context)=> Upcomingrenewal()
     // "Work Order": (context) => Cardpayment(leaseId: '',),
   };
   // if (isActive != true) {

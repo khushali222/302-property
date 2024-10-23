@@ -80,10 +80,13 @@ class _Login_ScreenState extends State<Login_Screen> {
     });
   }
 
-  void selectCompany(String company, String role) {
+  void selectCompany(String company, String role,String admin_id) {
     _selectedCompany = company;
-    selectedrole = role; // Set role when selecting company
+    selectedrole = role;
+    adminId = admin_id;
+    // Set role when selecting company
     print(selectedrole);
+    print(admin_id);
     print(selectedCompany);
     setState(() {});
   }
@@ -120,8 +123,9 @@ class _Login_ScreenState extends State<Login_Screen> {
             _hasMultipleCompanies = true;
             _companies = roles
                 .map<Map<String, String>>((role) =>
-                    {'company': role['company_name'], 'role': role['role']})
+                    {'company': role['company_name'], 'role': role['role'],'admin_id': role['admin_id'],})
                 .toList();
+            print("roles $roles");
             _isEmailSubmitted = true;
           });
         } else {
@@ -479,8 +483,13 @@ class _Login_ScreenState extends State<Login_Screen> {
                           SingleSelectionButtons(
                             buttonOptions: companies,
                             onSelected: (index) {
+                              setState(() {
+                                print(companies[index]);
+                                adminId = companies[index]['admin_id'];
+                                print(adminId);
+                              });
                               selectCompany(companies[index]["company"]!,
-                                  companies[index]["role"]!);
+                                  companies[index]["role"]!,companies[index]["admin_id"]!);
                             },
                           ),
                         ],
@@ -1022,8 +1031,12 @@ class _Login_ScreenState extends State<Login_Screen> {
                           SingleSelectionButtons(
                             buttonOptions: companies,
                             onSelected: (index) {
+                              setState(() {
+                                adminId = companies[index]['admin_id'];
+                              });
+                              print(adminId);
                               selectCompany(companies[index]["company"]!,
-                                  companies[index]["role"]!);
+                                  companies[index]["role"]!,companies[index]["admin_id"]!);
                             },
                           ),
                         ],

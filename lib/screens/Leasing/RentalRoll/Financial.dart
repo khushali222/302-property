@@ -1678,22 +1678,21 @@ class _FinancialTableState extends State<FinancialTable> {
                             print(_fromDateController.text);
                             DateTime fromDate = DateFormat('yyyy-MM-dd').parse(_fromDateController.text);
                             DateTime toDate = DateFormat('yyyy-MM-dd').parse(_toDateController.text);
-                            print("From Date: $fromDate");
-                            print("To Date: $toDate");
+                          
 
                             if (fromDate.isAtSameMomentAs(toDate)) {
                               // If both dates are the same, only include leases with the same date
                               data = data.where((lease) {
                                 DateTime leaseDate = DateFormat('yyyy-MM-dd').parse(lease.entry!.first.date!);
-                                print("Lease Date: $leaseDate");
+                               
                                 return leaseDate.isAtSameMomentAs(fromDate);
                               }).toList();
                             } else {
                               // If dates are different, use the original condition
                               data = data.where((lease) {
                                 DateTime leaseDate = DateFormat('yyyy-MM-dd').parse(lease.entry!.first.date!);
-                                print("Lease Date: $leaseDate");
-                                return (leaseDate.isAfter(fromDate) && leaseDate.isBefore(toDate));
+                              
+                                return (leaseDate.isAfter(fromDate.subtract(Duration(days: 1))) && leaseDate.isBefore(toDate.add(Duration(days: 1))));
                               }).toList();
                             }
                           } catch (e) {
