@@ -610,7 +610,17 @@ class _FinancialTableState extends State<FinancialTable> {
     super.initState();
     _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId,);
     _expanded = List.generate(_pagedData.length, (_) => false);
+    _fromDateController = TextEditingController(text: '01-01-2023');
+    _toDateController = TextEditingController(text: '31-12-2023');
+    filteredData = allData;
+  }
 
+  @override
+  void dispose() {
+
+    _fromDateController.dispose();
+    _toDateController.dispose();
+    super.dispose();
   }
 
   void handleEdit(Data? ledge) async {}
@@ -727,6 +737,9 @@ class _FinancialTableState extends State<FinancialTable> {
   }
   List<Data?> _tableData = [];
   int _rowsPerPage = 10;
+
+  String fdate = "";
+  String edate = "";
   int _currentPage = 0;
   int? _sortColumnIndex;
   bool _sortAscending = true;
@@ -1382,8 +1395,8 @@ class _FinancialTableState extends State<FinancialTable> {
 
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _fromDateController = TextEditingController();
-  final TextEditingController _toDateController = TextEditingController();
+  late TextEditingController _fromDateController;
+  late TextEditingController _toDateController;
 
 
   void _fetchData() {
@@ -1402,7 +1415,7 @@ class _FinancialTableState extends State<FinancialTable> {
    });
   }
 
-  Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
+  Future<void> _selectfromDate(BuildContext context, TextEditingController controller) async {
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -1412,10 +1425,57 @@ class _FinancialTableState extends State<FinancialTable> {
 
     if (picked != null) {
       setState(() {
-        controller.text = picked.toLocal().toString().split(' ')[0]; // Format as yyyy-mm-dd
+        // String formattedDate = DateFormat('dd-MM-yyyy').format(picked);
+        // controller.text = formattedDate;
+        print(picked);
+
+        //  _filterData();
+        controller.text = picked.toLocal().toString().split(' ')[0];
+        fdate = controller.text;
+
       });
     }
   }
+  Future<void> _selectendDate(BuildContext context, TextEditingController controller) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null) {
+      setState(() {
+        edate =  picked.toString();
+        // String formattedDate = DateFormat('dd-MM-yyyy').format(picked);
+        // controller.text = formattedDate;
+      //  _filterData();
+        controller.text = picked.toLocal().toString().split(' ')[0];
+      });
+    }
+  }
+  List<Data> allData = []; // Assume this is your complete dataset
+  List<Data> filteredData = [];
+  void _filterData() {
+    // Parse the dates from the controllers
+    try {
+      DateTime fromDate = DateFormat('dd-MM-yyyy').parse(_fromDateController.text);
+      DateTime toDate = DateFormat('dd-MM-yyyy').parse(_toDateController.text).add(Duration(days: 1)); // Include the end date
+
+      // Filter the data based on the selected date range
+      filteredData = allData.where((data) {
+        DateTime leaseDate = DateFormat('dd-MM-yyyy').parse(data.entry!.first.date!); // Adjust according to your data structure
+        return leaseDate.isAfter(fromDate) && leaseDate.isBefore(toDate);
+      }).toList();
+    } catch (e) {
+      print("Date parsing error: $e");
+      // Optionally, show an error message to the user
+    }
+
+    // Refresh the UI
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -1595,19 +1655,37 @@ class _FinancialTableState extends State<FinancialTable> {
                           ).toList();
                         }
                         print("calling");
+                        // if (_fromDateController.text.isNotEmpty && _toDateController.text.isNotEmpty) {
+                        //   try {
+                        //     DateTime fromDate = DateTime.parse(_fromDateController.text);
+                        //     DateTime toDate = DateTime.parse(_toDateController.text);
+                        //     print("From Date: $fromDate");
+                        //     print("To Date: $toDate");
+                        //     data = data.where((lease) {
+                        //       DateTime leaseDate = DateTime.parse(lease.entry!.first.date!);
+                        //       print("Lease Date: $leaseDate");
+                        //       return leaseDate.isAfter(fromDate) && leaseDate.isBefore(toDate.add(Duration(days: 1)));
+                        //     }).toList();
+                        //   } catch (e) {
+                        //
+                        //     print("Date parsing error: $e");
+                        //   }
+                        // }
+
                         if (_fromDateController.text.isNotEmpty && _toDateController.text.isNotEmpty) {
                           try {
-                            DateTime fromDate = DateTime.parse(_fromDateController.text);
-                            DateTime toDate = DateTime.parse(_toDateController.text);
+                            // Use DateFormat to parse the dates
+                            DateTime fromDate = DateFormat('dd-MM-yyyy').parse(_fromDateController.text);
+                            DateTime toDate = DateFormat('dd-MM-yyyy').parse(_toDateController.text);
                             print("From Date: $fromDate");
                             print("To Date: $toDate");
+
                             data = data.where((lease) {
-                              DateTime leaseDate = DateTime.parse(lease.entry!.first.date!);
+                              DateTime leaseDate = DateFormat('dd-MM-yyyy').parse(lease.entry!.first.date!);
                               print("Lease Date: $leaseDate");
                               return leaseDate.isAfter(fromDate) && leaseDate.isBefore(toDate.add(Duration(days: 1)));
                             }).toList();
                           } catch (e) {
-
                             print("Date parsing error: $e");
                           }
                         }
@@ -1618,6 +1696,7 @@ class _FinancialTableState extends State<FinancialTable> {
                             .skip(currentPage * itemsPerPage)
                             .take(itemsPerPage)
                             .toList();
+
                         return SingleChildScrollView(
                           child: Column(
                             children: [
@@ -1749,7 +1828,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                               TextFormField(
                                                 controller: _fromDateController,
                                                 readOnly: true,
-                                                onTap: () => _selectDate(context, _fromDateController),
+                                                onTap: () =>_selectfromDate(context, _fromDateController),
                                                 decoration: InputDecoration(
                                                   hintText: 'yyyy-mm-dd',
                                                   suffixIcon: Icon(Icons.calendar_today),
@@ -1773,7 +1852,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                               TextFormField(
                                                 controller: _toDateController,
                                                 readOnly: true,
-                                                onTap: () => _selectDate(context, _toDateController),
+                                                onTap: () => _selectendDate(context, _toDateController),
                                                 decoration: InputDecoration(
                                                   hintText: 'dd-mm-yyyy',
                                                   suffixIcon: Icon(Icons.calendar_today),
@@ -1804,9 +1883,17 @@ class _FinancialTableState extends State<FinancialTable> {
                                                             fontSize: 15,
                                                             fontWeight: FontWeight.w600)),
                                                     SizedBox(height: 5),
-                                                    CustomDateField(
+                                                    TextFormField(
+                                                     // controller: _toDateController,
+                                                      initialValue: fdate,
+                                                      readOnly: true,
+                                                      onTap: () => _selectfromDate(context, _fromDateController),
+                                                      decoration: InputDecoration(
                                                         hintText: 'dd-mm-yyyy',
-                                                        controller: _fromDateController),
+                                                        suffixIcon: Icon(Icons.calendar_today),
+                                                        border: OutlineInputBorder(),
+                                                      ),
+                                                    ),
                                                   ],
                                                 ),
                                               ),
@@ -1826,9 +1913,21 @@ class _FinancialTableState extends State<FinancialTable> {
                                                             fontSize: 15,
                                                             fontWeight: FontWeight.w600)),
                                                     SizedBox(height: 5),
-                                                    CustomDateField(
+                                                    TextFormField(
+                                                      //controller: _toDateController,
+                                                      readOnly: true,
+                                                      initialValue: edate,
+                                                      onTap: () {
+
+                                                        _selectendDate(context, _toDateController);
+
+                                                        },
+                                                      decoration: InputDecoration(
                                                         hintText: 'dd-mm-yyyy',
-                                                        controller: _toDateController),
+                                                        suffixIcon: Icon(Icons.calendar_today),
+                                                        border: OutlineInputBorder(),
+                                                      ),
+                                                    ),
                                                   ],
                                                 ),
                                               ),
