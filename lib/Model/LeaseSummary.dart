@@ -32,7 +32,7 @@ class Data {
   String? endDate;
   String? moveout_date;
   String? moveout_notice_given_date;
-
+  bool? is_renewing;
   List<Tenant>? tenantData;
   String? rentalAddress;
   String? rentalImage;
@@ -108,6 +108,8 @@ class Data {
     rentalOwnerPhoneNumber = json['rentalOwner_phoneNumber'];
     moveout_notice_given_date = json['moveout_notice_given_date'];
     moveout_date = json['moveout_date'];
+    is_renewing = json['is_renewing'];
+
 
     amount = json['amount'];
     date = json['date'];

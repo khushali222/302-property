@@ -204,6 +204,7 @@ class _RenewleaseState extends State<Renewlease> {
         ];
 
         for (var item in jsonResponse) {
+
           String chargeType = item['charge_type'];
           String account = item['account'];
 
@@ -224,6 +225,7 @@ class _RenewleaseState extends State<Renewlease> {
         });
       }
     } catch (e) {
+      print(e);
       setState(() {
         hasError = true;
         isLoading = false;

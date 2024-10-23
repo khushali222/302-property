@@ -181,7 +181,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           width: 25,
                         ),
                       Text(
-                          '${determineStatus(snapshot.data!.data?.startDate, snapshot.data!.data?.endDate)}',
+                          '${determineStatus(snapshot.data!.data?.startDate, snapshot.data!.data?.endDate)} ${snapshot.data!.data!.renewLeases != null && snapshot.data!.data!.renewLeases!.length>0 ? " - Renewed" :""}',
                           style: TextStyle(
                               color: _getStatusColor(determineStatus(
                                   snapshot.data!.data?.startDate,
@@ -794,48 +794,51 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       fontSize: 18),
                                 ),
                                 Spacer(),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => Renewlease(
-                                                  leaseId: widget.leaseId,
-                                                  lease: leasesummery,
-                                                  startdate: leasesummery.data!.startDate,
-                                                  enddate: leasesummery.data!.endDate,
-                                                  leasetype: leasesummery.data!.leaseType,
-                                              rentamount: leasesummery.data!.amount.toString(),
-                                                )));
-                                  },
-                                  child: Container(
-                                      height:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 35
-                                              : 45,
-                                      width: MediaQuery.of(context).size.width <
-                                              500
-                                          ? 120
-                                          : 165,
-                                      decoration: BoxDecoration(
-                                          color: blueColor,
-                                          borderRadius:
-                                              BorderRadius.circular(5.0)),
-                                      child: Center(
-                                        child: Text(
-                                          'Renew Lease',
-                                          style: TextStyle(
-                                              fontSize: MediaQuery.of(context)
-                                                          .size
-                                                          .width <
-                                                      500
-                                                  ? 14
-                                                  : 18,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white),
-                                        ),
-                                      )),
+                                Visibility(
+                                  visible: leasesummery.data!.is_renewing ?? true,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => Renewlease(
+                                                    leaseId: widget.leaseId,
+                                                    lease: leasesummery,
+                                                    startdate: leasesummery.data!.startDate,
+                                                    enddate: leasesummery.data!.endDate,
+                                                    leasetype: leasesummery.data!.leaseType,
+                                                rentamount: leasesummery.data!.amount.toString(),
+                                                  )));
+                                    },
+                                    child: Container(
+                                        height:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 35
+                                                : 45,
+                                        width: MediaQuery.of(context).size.width <
+                                                500
+                                            ? 120
+                                            : 165,
+                                        decoration: BoxDecoration(
+                                            color: blueColor,
+                                            borderRadius:
+                                                BorderRadius.circular(5.0)),
+                                        child: Center(
+                                          child: Text(
+                                            'Renew Lease',
+                                            style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                            .size
+                                                            .width <
+                                                        500
+                                                    ? 14
+                                                    : 18,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white),
+                                          ),
+                                        )),
+                                  ),
                                 ),
                               ],
                             ),

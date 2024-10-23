@@ -2324,6 +2324,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                     ],
                                                                   ),
                                                                 ),
+                                                                if(workOrder.entries.length > 0)
                                                                 Padding(
                                                                   padding:
                                                                       const EdgeInsets
@@ -2395,9 +2396,11 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                     ],
                                                                   ),
                                                                 ),
+                                                                if(workOrder.entries.length > 0)
                                                                 SizedBox(
                                                                   height: 5,
                                                                 ),
+
                                                                 Column(
                                                                   children: workOrder
                                                                       .entries
@@ -2483,6 +2486,56 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                 SizedBox(
                                                                   height: 5,
                                                                 ),
+                                                                if(workOrder.entries.length == 0)
+                                                                  Padding(
+                                                                    padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                        0.0,
+                                                                        top:
+                                                                        10),
+                                                                    child: Row(
+                                                                      mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                      children: [
+                                                                        FaIcon(
+                                                                          isExpanded
+                                                                              ? FontAwesomeIcons.sortUp
+                                                                              : FontAwesomeIcons.sortDown,
+                                                                          size:
+                                                                          0,
+                                                                          color: Colors
+                                                                              .transparent,
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 4,
+                                                                          child:
+                                                                          Column(
+                                                                            crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                            children: <Widget>[
+                                                                              Text.rich(
+                                                                                TextSpan(
+                                                                                  children: [
+                                                                                    TextSpan(
+                                                                                      text: 'Void(Reason: ${workOrder.reason})',
+                                                                                      style: TextStyle(
+                                                                                        fontWeight: FontWeight.bold,
+                                                                                        color: blueColor,
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+
+                                                                      ],
+                                                                    ),
+                                                                  ),
                                                                 // if (workOrder
                                                                 //         .paymentType ==
                                                                 //     "Card")

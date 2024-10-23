@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -15,6 +16,7 @@ class Transaction {
   final String cctype;
    String? surcharge;
 
+String? reason;
   var totalAmount;
   final List<Entry> entries;
 
@@ -30,6 +32,7 @@ class Transaction {
     required this.cctype,
      this.surcharge,
     required this.entries,
+    this.reason
   });
 }
 class Entry {
@@ -42,7 +45,9 @@ class Entry {
   });
 }
 List<Transaction> parseTransactions(List<dynamic> jsonData) {
+
   return jsonData.map((json) {
+   log(json.toString());
     return Transaction(
       property: json['rental_data'] != null ? json['rental_data']['rental_adress'] : 'N/A',
       tenantFirstName: json['tenant_data'] != null ? json['tenant_data']['tenant_firstName'] : 'N/A',
@@ -53,13 +58,16 @@ List<Transaction> parseTransactions(List<dynamic> jsonData) {
       ccNumber: json['cc_number'] ?? 'N/A',
       totalAmount: json['total_amount'],
       cctype: json['cc_type']??"",
+        reason: json['reason']??"",
       surcharge:  json['surcharge'] == null ?  "0" : json['surcharge'].toString() ,
-      entries: (json['entry'] as List<dynamic>).map((entry) {
+      entries: json['entry'] != null
+          ? (json['entry'] as List<dynamic>).map((entry) {
         return Entry(
           description: entry['account'],
           amount: entry['amount'],
         );
-      }).toList(),
+      }).toList()
+          : [],
     );
   }).toList();
 }
