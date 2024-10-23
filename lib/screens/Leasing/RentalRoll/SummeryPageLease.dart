@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Recurring_payment.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/RenewLease.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'package:three_zero_two_property/Model/tenants.dart';
@@ -65,7 +66,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     // TODO: implement initState
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
     futureLeasetenant = LeaseRepository.fetchLeaseTenants(widget.leaseId);
-    _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(widget.leaseId);
+    _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
     _tabController = TabController(length: 3, vsync: this);
     moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     if (widget.isredirectpayment != null && widget.isredirectpayment!) {
@@ -522,7 +523,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
               Padding(
                 padding: const EdgeInsets.only(
                     left: 10.0, right: 10.0, bottom: 10.0),
-                child: FutureBuilder<LeaseLedger?>(
+                child:
+                FutureBuilder<LeaseLedger?>(
                   future: _leaseLedgerFuture,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -541,7 +543,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
 
                       //final data = leaseLedger.data!.toList();
                       return SingleChildScrollView(
-                        child: Column(
+                        child:
+                        Column(
                           children: [
                             Padding(
                               padding:
@@ -705,8 +708,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                           _leaseLedgerFuture =
                                                               LeaseRepository()
                                                                   .fetchLeaseLedger(
-                                                                      widget
-                                                                          .leaseId);
+                                                                  leaseId: widget.leaseId);
                                                         });
                                                       }
                                                     },
@@ -726,25 +728,86 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
 ),
                                                     ))),
                                             SizedBox(width: 15),
-                                            GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    print("hello");
-                                                    if (_tabController !=
-                                                        null) {
-                                                      _tabController!
-                                                          .animateTo(1);
-                                                    }
-                                                  });
-                                                },
-                                                child: Text(
-                                                  "Lease Ledger",
-                                                  style: TextStyle(
-                                                    color: blueColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 15,
-                                                  ),
-                                                )),
+                                            // GestureDetector(
+                                            //     onTap: () {
+                                            //       setState(() {
+                                            //         print("hello");
+                                            //         if (_tabController !=
+                                            //             null) {
+                                            //           _tabController!
+                                            //               .animateTo(1);
+                                            //         }
+                                            //       });
+                                            //     },
+                                            //     child: Text(
+                                            //       "Lease Ledger",
+                                            //       style: TextStyle(
+                                            //         color: blueColor,
+                                            //         fontWeight: FontWeight.bold,
+                                            //         fontSize: 15,
+                                            //       ),
+                                            //     )),
+                                            Expanded(
+                                              child: Container(
+                                                  height: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                      500
+                                                      ? 45
+                                                      : 45,
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      border: Border.all(
+                                                          width: 1,
+                                                          color: blueColor
+                                              
+                                              
+                                                      ),
+                                                      borderRadius:
+                                                      BorderRadius.circular(
+                                                          5.0)),
+                                                  child: ElevatedButton(
+                                                      style: ElevatedButton.styleFrom(
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                              BorderRadius.circular(5.0)),
+                                                          elevation: 0,
+                                                          backgroundColor: Colors.white),
+                                                      onPressed: () async {
+                                                        final value =
+                                                        await Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                    RecurringPayment(leaseId: widget.leaseId,)
+                                                            ));
+                                                        // if (value == true) {
+                                                        //   setState(() {
+                                                        //     _leaseLedgerFuture =
+                                                        //         LeaseRepository()
+                                                        //             .fetchLeaseLedger(
+                                                        //             widget
+                                                        //                 .leaseId);
+                                                        //   });
+                                                        // }
+                                                      },
+                                                      child: Text(
+                                                        'Configure Recurring Payment',
+                                                        style: TextStyle(
+                                                            fontSize: MediaQuery.of(
+                                                                context)
+                                                                .size
+                                                                .width <
+                                                                500
+                                                                ? 14
+                                                                : 18,
+                                                            color: blueColor
+                                              
+                                              
+                                                        ),
+                                                      ))),
+                                            ),
                                           ],
                                         ),
                                       ],
@@ -2553,7 +2616,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                       setState(
                                                                           () {
                                                                         _leaseLedgerFuture =
-                                                                            LeaseRepository().fetchLeaseLedger(widget.leaseId);
+                                                                            LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
                                                                       });
                                                                     }
                                                                   },

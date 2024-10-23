@@ -13,8 +13,11 @@ import '../model/LeaseSummary.dart';
 import '../model/edit_lease.dart';
 import '../model/get_lease.dart';
 import '../model/lease.dart';
+import 'ExpiringLeaseTable.dart';
 
 class LeaseRepository {
+
+  String baseUrl = '$Api_url/api/payment/charges_payments';
   // Future<void> postLease(Lease lease) async {
   //
   //   final response = await http.post(
@@ -513,27 +516,85 @@ class LeaseRepository {
       throw Exception('Error fetching lease data: $e');
     }*/
   }
-  Future<LeaseLedger?> fetchLeaseLedger(String leaseId) async {
+  // Future<LeaseLedger?> fetchLeaseLedger(String leaseId) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? token = prefs.getString('token');
+  //   String? id = prefs.getString("adminId");
+  //   final response = await http.get(
+  //     Uri.parse('$Api_url/api/payment/charges_payments/$leaseId'),
+  //     headers: {
+  //       "authorization": "CRM $token",
+  //       "id": "CRM $id",
+  //     },
+  //   );
+  //   print('$Api_url/api/payment/charges_payments/$leaseId');
+  //  // print(response.body);
+  //  // print(leaseId);
+  //   //print($id);
+  //   if (response.statusCode == 200) {
+  //     return LeaseLedger.fromJson(json.decode(response.body));
+  //   } else {
+  //     throw Exception('Failed to load lease ledger');
+  //   }
+  // }
+  // Future<LeaseLedger?> fetchLeaseLedger({String? leaseId,String? fromDate, String? toDate}) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? token = prefs.getString('token');
+  //   String? id = prefs.getString("adminId");
+  //   final response = await http.get(
+  //     Uri.parse('$Api_url/api/payment/charges_payments/$leaseId'),
+  //     headers: {
+  //       "authorization": "CRM $token",
+  //       "id": "CRM $id",
+  //     },
+  //   );
+  //   print('$Api_url/api/payment/charges_payments/$leaseId');
+  //   // print(response.body);
+  //   // print(leaseId);
+  //   //print($id);
+  //   if (response.statusCode == 200) {
+  //     return LeaseLedger.fromJson(json.decode(response.body));
+  //   } else {
+  //     throw Exception('Failed to load lease ledger');
+  //   }
+  // }
+  Future<LeaseLedger?> fetchLeaseLedger(
+      {String? fromDate, String? toDate,String? leaseId}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    String? id = prefs.getString("adminId");
-    final response = await http.get(
-      Uri.parse('$Api_url/api/payment/charges_payments/$leaseId'),
-      headers: {
+
+    String url = '$baseUrl/$leaseId';
+    if (fromDate != null && toDate != null) {
+      url += '?from_date=$fromDate&to_date=$toDate';
+    }
+   print(' lease url $url');
+    try {
+      print('entry');
+      final response = await http.get(Uri.parse(url), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
-      },
-    );
-    print('$Api_url/api/payment/charges_payments/$leaseId');
-   // print(response.body);
-   // print(leaseId);
-    //print($id);
-    if (response.statusCode == 200) {
-      return LeaseLedger.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Failed to load lease ledger');
+        "id": "CRM $adminId",
+      });
+
+      if (response.statusCode == 200) {
+        print('response.body ${response.body}');
+        final parsedJson = jsonDecode(response.body);
+        print('parsedJson: $parsedJson');
+        final report = LeaseLedger.fromJson(parsedJson);
+        print('parsed ReportExpiringLeaseTable: ${report.data}');
+          return report;
+      } else {
+        throw ServerException(response.statusCode,
+            'Failed to load data. Status code: ${response.statusCode}');
+      }
+    } on http.ClientException {
+      throw NetworkException(
+          'Failed to connect to the server. Please check your internet connection.');
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
     }
   }
+
   Future<int> postCharge(Charge charge) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -610,4 +671,5 @@ class LeaseRepository {
 
     return response.statusCode;
   }
+
 }

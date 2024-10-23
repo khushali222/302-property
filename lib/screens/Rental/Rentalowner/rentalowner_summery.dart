@@ -53,7 +53,7 @@ class _ResponsiveRentalSummaryState extends State<ResponsiveRentalSummary> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _connectivityResult ==ConnectivityResult.none ?
+      body: _connectivityResult !=ConnectivityResult.none ?
       LayoutBuilder(
         builder: (context, constraints) {
           if (constraints.maxWidth > 500) {

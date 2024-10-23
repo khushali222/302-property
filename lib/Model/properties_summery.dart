@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
+
 // class ApiResponse {
 //   final int statusCode;
 //   final List<TenantData> data;
@@ -686,6 +688,7 @@ class TenantData {
   bool? recurring;
   final List<dynamic>? rentalImages;
   final EmergencyContact? emergencyContact;
+  final TextEditingController? controller;
 
   TenantData({
     this.id,
@@ -730,7 +733,8 @@ class TenantData {
     this.rentalSqft,
     this.rentalImages,
     this.emergencyContact,
-    this.recurring
+    this.recurring,
+    this.controller,
   });
 
   factory TenantData.fromJson(Map<String, dynamic> json) {

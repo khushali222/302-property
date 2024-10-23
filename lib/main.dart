@@ -146,8 +146,10 @@ void main() {
           ChangeNotifierProvider(
             create: (context) => ProfileProvider(),
           ),
-          ChangeNotifierProvider(create: (_) => DateProvider()),
-          ChangeNotifierProvider(create: (_) => DropdownProvider()),
+          ChangeNotifierProvider(
+              create: (_) => DateProvider()),
+          ChangeNotifierProvider(
+              create: (_) => DropdownProvider()),
           ChangeNotifierProvider(create: (_) => CheckConnection()),
           ChangeNotifierProvider(create: (_) => ThemeProvider()),
 
@@ -169,8 +171,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: "Poppins",
         iconTheme:  IconThemeData(color: blueColor),
-        // colorScheme: ColorScheme.fromSeed(
-        //     seedColor: blueColor),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: blueColor),
         useMaterial3: false,
 
       ),
