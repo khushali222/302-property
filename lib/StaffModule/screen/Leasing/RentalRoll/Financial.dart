@@ -674,6 +674,15 @@ class _FinancialTableState extends State<FinancialTable> {
     super.initState();
     _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(widget.leaseId);
     _expanded = List.generate(_pagedData.length, (_) => false);
+    _fromDateController = TextEditingController(text: '');
+    _toDateController = TextEditingController(text: '');
+  }
+  @override
+  void dispose() {
+
+    _fromDateController.dispose();
+    _toDateController.dispose();
+    super.dispose();
   }
   // @override
   // void initState() {
@@ -1371,8 +1380,72 @@ class _FinancialTableState extends State<FinancialTable> {
     );
   }
 
+
+  final _formKey = GlobalKey<FormState>();
+
+  late TextEditingController _fromDateController;
+  late TextEditingController _toDateController;
+  String fdate = "";
+  String edate = "";
+
+  Future<void> _selectfromDate(BuildContext context, TextEditingController controller) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null) {
+      setState(() {
+        // String formattedDate = DateFormat('dd-MM-yyyy').format(picked);
+        // controller.text = formattedDate;
+        print(picked);
+
+        //  _filterData();
+        controller.text = picked.toLocal().toString().split(' ')[0];
+        fdate = controller.text;
+
+      });
+    }
+  }
+  Future<void> _selectendDate(BuildContext context, TextEditingController controller) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null) {
+      setState(() {
+        edate =  picked.toString();
+        // String formattedDate = DateFormat('dd-MM-yyyy').format(picked);
+        // controller.text = formattedDate;
+        //  _filterData();
+        controller.text = picked.toLocal().toString().split(' ')[0];
+      });
+    }
+  }
+
+  void sortData(List<Data> data) {
+    if (sorting1) {
+      data.sort((a, b) => ascending1
+          ? a.type!.compareTo(b.type!)
+          : b.type!.compareTo(a.type!));
+    } else if (sorting2) {
+      data.sort((a, b) => ascending2
+          ? a.balance!.compareTo(b.balance!)
+          : b.balance!.compareTo(a.balance!));
+    } else if (sorting3) {
+      data.sort((a, b) => ascending3
+          ? a.createdAt!.compareTo(b.createdAt!)
+          : b.createdAt!.compareTo(a.createdAt!));
+    }
+  }
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     final dateProvider = Provider.of<DateProvider>(context);
     bool isFreePlan = Provider.of<checkPlanPurchaseProiver>(context)
             .checkplanpurchaseModel
@@ -1532,7 +1605,66 @@ class _FinancialTableState extends State<FinancialTable> {
                         return Center(child: Text('No data found'));
                       } else {
                         final leaseLedger = snapshot.data!;
-                        final data = leaseLedger.data!.toList();
+                        var data = leaseLedger.data!.toList();;
+                        if (searchvalue != null && searchvalue!.isNotEmpty && searchvalue != "All") {
+                          data = data.where((lease) =>
+                          lease.type!.toLowerCase().contains(searchvalue!.toLowerCase()) ||
+                              lease.createdAt!.toLowerCase().contains(searchvalue!.toLowerCase())
+                          ).toList();
+                        }
+                        print("calling");
+                        // if (_fromDateController.text.isNotEmpty && _toDateController.text.isNotEmpty) {
+                        //   try {
+                        //     DateTime fromDate = DateTime.parse(_fromDateController.text);
+                        //     DateTime toDate = DateTime.parse(_toDateController.text);
+                        //     print("From Date: $fromDate");
+                        //     print("To Date: $toDate");
+                        //     data = data.where((lease) {
+                        //       DateTime leaseDate = DateTime.parse(lease.entry!.first.date!);
+                        //       print("Lease Date: $leaseDate");
+                        //       return leaseDate.isAfter(fromDate) && leaseDate.isBefore(toDate.add(Duration(days: 1)));
+                        //     }).toList();
+                        //   } catch (e) {
+                        //
+                        //     print("Date parsing error: $e");
+                        //   }
+                        // }
+
+                        if (_fromDateController.text.isNotEmpty && _toDateController.text.isNotEmpty) {
+                          try {
+                            // Use DateFormat to parse the dates
+                            print(_fromDateController.text);
+                            DateTime fromDate = DateFormat('yyyy-MM-dd').parse(_fromDateController.text);
+                            DateTime toDate = DateFormat('yyyy-MM-dd').parse(_toDateController.text);
+                            print("From Date: $fromDate");
+                            print("To Date: $toDate");
+
+                            if (fromDate.isAtSameMomentAs(toDate)) {
+                              // If both dates are the same, only include leases with the same date
+                              data = data.where((lease) {
+                                DateTime leaseDate = DateFormat('yyyy-MM-dd').parse(lease.entry!.first.date!);
+                                print("Lease Date: $leaseDate");
+                                return leaseDate.isAtSameMomentAs(fromDate);
+                              }).toList();
+                            } else {
+                              // If dates are different, use the original condition
+                              data = data.where((lease) {
+                                DateTime leaseDate = DateFormat('yyyy-MM-dd').parse(lease.entry!.first.date!);
+                                print("Lease Date: $leaseDate");
+                                return (leaseDate.isAfter(fromDate) && leaseDate.isBefore(toDate));
+                              }).toList();
+                            }
+                          } catch (e) {
+                            print("Date parsing error: $e");
+                          }
+                        }
+
+                        sortData(data);
+                        final totalPages = (data.length / itemsPerPage).ceil();
+                        final currentPageData = data
+                            .skip(currentPage * itemsPerPage)
+                            .take(itemsPerPage)
+                            .toList();
                         return SingleChildScrollView(
                           child: Column(
                             children: [
@@ -1546,56 +1678,322 @@ class _FinancialTableState extends State<FinancialTable> {
                                       horizontal: 5.0, vertical: 5),
                                   child: Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Spacer(),
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: blueColor,
+                                      Expanded(
+                                        child: Material(
+                                          elevation: 3,
+                                          borderRadius: BorderRadius.circular(8),
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10),
+                                            height:
+                                            MediaQuery.of(context).size.width <
+                                                500
+                                                ? 48
+                                                : 50,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.circular(8),
+                                              border: Border.all(
+                                                  color: const Color(0xFF8A95A8)),
+                                            ),
+                                            child: TextField(
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  searchvalue = value;
+                                                });
+                                              },
+                                              decoration: const InputDecoration(
+                                                border: InputBorder.none,
+                                                hintText: "Search here...",
+                                                hintStyle: TextStyle(
+                                                    color: Color(0xFF8A95A8)),
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                        onPressed: () {},
-                                        child: PopupMenuButton<String>(
-                                          onSelected: (value) async {
-                                            // Add your export logic here based on the selected value
-                                            if (value == 'PDF') {
-                                              print('pdf');
-                                              generateWorkOrderPdf(data);
-                                              // Export as PDF
-                                            } else if (value == 'XLSX') {
-                                              print('XLSX');
-                                              generateWorkOrderExcel(data);
-                                              // Export as XLSX
-                                            } else if (value == 'CSV') {
-                                              print('CSV');
-                                              generateWorkOrderCsv(data);
-                                              // Export as CSV
-                                            }
-                                          },
-                                          itemBuilder: (BuildContext context) =>
-                                              <PopupMenuEntry<String>>[
-                                            const PopupMenuItem<String>(
-                                              value: 'PDF',
-                                              child: Text('PDF'),
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Container(
+                                        height: 45,
+                                        width: 110,
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(8.0)),
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: blueColor,
+                                          ),
+                                          onPressed: () {},
+                                          child: PopupMenuButton<String>(
+                                            onSelected: (value) async {
+                                              // Add your export logic here based on the selected value
+                                              if (value == 'PDF') {
+                                                print('pdf');
+                                                generateWorkOrderPdf(data);
+                                                // Export as PDF
+                                              } else if (value == 'XLSX') {
+                                                print('XLSX');
+                                                generateWorkOrderExcel(data);
+                                                // Export as XLSX
+                                              } else if (value == 'CSV') {
+                                                print('CSV');
+                                                generateWorkOrderCsv(data);
+                                                // Export as CSV
+                                              }
+                                            },
+                                            itemBuilder: (BuildContext context) =>
+                                            <PopupMenuEntry<String>>[
+                                              const PopupMenuItem<String>(
+                                                value: 'PDF',
+                                                child: Text('PDF'),
+                                              ),
+                                              const PopupMenuItem<String>(
+                                                value: 'XLSX',
+                                                child: Text('XLSX'),
+                                              ),
+                                              const PopupMenuItem<String>(
+                                                value: 'CSV',
+                                                child: Text('CSV'),
+                                              ),
+                                            ],
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text('Export',style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15,
+                                                ),),
+                                                SizedBox(width: 5,),
+                                                Icon(Icons.arrow_drop_down,size: 25,),
+                                              ],
                                             ),
-                                            const PopupMenuItem<String>(
-                                              value: 'XLSX',
-                                              child: Text('XLSX'),
-                                            ),
-                                            const PopupMenuItem<String>(
-                                              value: 'CSV',
-                                              child: Text('CSV'),
-                                            ),
-                                          ],
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              // SizedBox(height: 10),
+                              Container(
+                                // width: double.infinity,
+                                // decoration: BoxDecoration(
+                                //   border: Border.all(
+                                //     color: blueColor,
+                                //   ),
+                                //   borderRadius: BorderRadius.circular(10.0),
+                                // ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+                                  child: Form(
+                                    key: _formKey,
+                                    child: screenWidth > 500
+                                        ?
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              Text('Export'),
-                                              Icon(Icons.arrow_drop_down),
+                                              Text('From',
+                                                  style: TextStyle(
+                                                      color: Colors.grey[600],
+                                                      fontSize: 15,
+                                                      fontWeight: FontWeight.w600)),
+                                              SizedBox(height: 5),
+                                              Container(
+
+                                                child: TextFormField(
+                                                  controller: _fromDateController,
+                                                  readOnly: true,
+                                                  onTap: () =>_selectfromDate(context, _fromDateController),
+                                                  decoration: InputDecoration(
+                                                    hintText: 'yyyy-mm-dd',
+                                                    suffixIcon: Icon(Icons.calendar_today),
+                                                    border: OutlineInputBorder(),
+                                                  ),
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),
-                                      )
-                                    ],
+                                        SizedBox(width: 40),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text('To',
+                                                  style: TextStyle(
+                                                      color: Colors.grey[600],
+                                                      fontSize: 15,
+                                                      fontWeight: FontWeight.w600)),
+                                              SizedBox(height: 5),
+                                              TextFormField(
+                                                controller: _toDateController,
+                                                readOnly: true,
+                                                onTap: () => _selectendDate(context, _toDateController),
+                                                decoration: InputDecoration(
+                                                  hintText: 'dd-mm-yyyy',
+                                                  suffixIcon: Icon(Icons.calendar_today),
+                                                  border: OutlineInputBorder(),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+
+
+                                      ],
+                                    )
+                                        : Column(
+                                      children: [
+                                        Row(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Container(
+
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: [
+                                                    // Text('From',
+                                                    //     style: TextStyle(
+                                                    //         color: blueColor,
+                                                    //         fontSize: 15,
+                                                    //         fontWeight: FontWeight.w600)),
+                                                    // SizedBox(height: 4),
+
+                                                    Material(
+                                                      elevation: 2,
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                      child: Container(
+                                                        height: 55,
+                                                        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.5),
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius: BorderRadius.circular(8.0),
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                              color: Colors.black.withOpacity(0.2),
+                                                              offset: Offset(4, 4),
+                                                              blurRadius: 3,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        child:
+                                                        TextFormField(
+                                                          controller: _fromDateController,
+                                                          // initialValue: fdate,
+                                                          readOnly: true,
+                                                          onTap: () => _selectfromDate(context, _fromDateController),
+                                                          decoration: InputDecoration(
+                                                            // contentPadding: EdgeInsets.all(8.0),
+                                                            // contentPadding: EdgeInsets.symmetric(),
+                                                            suffixIconConstraints: BoxConstraints(
+                                                                maxWidth: 20,
+                                                                maxHeight: 20,
+                                                                minHeight: 20,
+                                                                minWidth: 20),
+                                                            hintStyle:
+                                                            TextStyle(fontSize: 15, color: Color(0xFFb0b6c3)),
+                                                            border: InputBorder.none,
+                                                            hintText: 'Frome date',
+                                                            suffixIcon: IconButton(
+                                                              padding: EdgeInsets.symmetric(vertical: 1),
+                                                              iconSize: 20,
+                                                              icon: Icon(Icons.calendar_today), onPressed: () {  },
+
+                                                            ),
+                                                          ),
+                                                        ),
+
+                                                      ),
+                                                    ),
+
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 16,
+                                            ),
+                                            Expanded(
+                                              child: Container(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: [
+                                                    // Text('To',
+                                                    //     style: TextStyle(
+                                                    //         color: blueColor,
+                                                    //         fontSize: 15,
+                                                    //         fontWeight: FontWeight.w600)),
+                                                    // SizedBox(height: 4),
+
+                                                    Material(
+                                                      elevation: 2,
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                      child: Container(
+                                                        height: 55,
+                                                        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.5),
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius: BorderRadius.circular(8.0),
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                              color: Colors.black.withOpacity(0.2),
+                                                              offset: Offset(4, 4),
+                                                              blurRadius: 3,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        child:
+                                                        TextFormField(
+                                                          controller: _toDateController,
+                                                          readOnly: true,
+
+                                                          onTap: () {
+
+                                                            _selectendDate(context, _toDateController);
+
+                                                          },
+                                                          decoration: InputDecoration(
+                                                            // contentPadding: EdgeInsets.all(8.0),
+                                                            // contentPadding: EdgeInsets.symmetric(),
+                                                            suffixIconConstraints: BoxConstraints(
+                                                                maxWidth: 20,
+                                                                maxHeight: 20,
+                                                                minHeight: 20,
+                                                                minWidth: 20),
+                                                            hintStyle:
+                                                            TextStyle(fontSize: 15, color: Color(0xFFb0b6c3)),
+                                                            border: InputBorder.none,
+                                                            hintText: 'To date',
+                                                            suffixIcon: IconButton(
+                                                              padding: EdgeInsets.symmetric(vertical: 1),
+                                                              iconSize: 20,
+                                                              icon: Icon(Icons.calendar_today), onPressed: () {  },
+
+                                                            ),
+                                                          ),
+                                                        ),
+
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -1606,7 +2004,8 @@ class _FinancialTableState extends State<FinancialTable> {
                                 decoration: BoxDecoration(
                                     border: Border.all(
                                         color:
-                                            blueColor
+                                        Color.fromRGBO(
+                                            152, 162, 179, .5)
 
 
 )),
@@ -1614,7 +2013,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                 //   border: Border.all(color: blueColor),
                                 // ),
                                 child: Column(
-                                  children: data.asMap().entries.map((entry) {
+                                  children: currentPageData.asMap().entries.map((entry) {
                                     int index = entry.key;
                                     bool isExpanded = expandedIndex == index;
                                     Data data = entry.value;
@@ -2291,7 +2690,109 @@ class _FinancialTableState extends State<FinancialTable> {
                                   }).toList(),
                                 ),
                               ),
-                              const SizedBox(height: 20),
+                              SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Row(
+                                    children: [
+                                      // Text('Rows per page:'),
+                                      SizedBox(width: 10),
+                                      Material(
+                                        elevation: 3,
+                                        child: Container(
+                                          height: 40,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 12.0),
+                                          decoration: BoxDecoration(
+                                            border:
+                                            Border.all(color: Colors.grey),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton<int>(
+                                              value: itemsPerPage,
+                                              items: itemsPerPageOptions
+                                                  .map((int value) {
+                                                return DropdownMenuItem<int>(
+                                                  value: value,
+                                                  child: Text(value.toString()),
+                                                );
+                                              }).toList(),
+                                              onChanged: data.length >
+                                                  itemsPerPageOptions
+                                                      .first // Condition to check if dropdown should be enabled
+                                                  ? (newValue) {
+                                                setState(() {
+                                                  itemsPerPage = newValue!;
+                                                  currentPage =
+                                                  0; // Reset to first page when items per page change
+                                                });
+                                              }
+                                                  : null,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.circleChevronLeft,
+                                          color: currentPage == 0
+                                              ? Colors.grey
+                                              : blueColor,
+                                        ),
+                                        onPressed: currentPage == 0
+                                            ? null
+                                            : () {
+                                          setState(() {
+                                            currentPage--;
+                                          });
+                                        },
+                                      ),
+                                      // IconButton(
+                                      //   icon: Icon(Icons.arrow_back),
+                                      //   onPressed: currentPage > 0
+                                      //       ? () {
+                                      //     setState(() {
+                                      //       currentPage--;
+                                      //     });
+                                      //   }
+                                      //       : null,
+                                      // ),
+                                      Text(
+                                          'Page ${currentPage + 1} of $totalPages'),
+                                      // IconButton(
+                                      //   icon: Icon(Icons.arrow_forward),
+                                      //   onPressed: currentPage < totalPages - 1
+                                      //       ? () {
+                                      //     setState(() {
+                                      //       currentPage++;
+                                      //     });
+                                      //   }
+                                      //       : null,
+                                      // ),
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.circleChevronRight,
+                                          color: currentPage < totalPages - 1
+                                              ? blueColor
+                                              : Colors.grey,
+                                        ),
+                                        onPressed: currentPage < totalPages - 1
+                                            ? () {
+                                          setState(() {
+                                            currentPage++;
+                                          });
+                                        }
+                                            : null,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         );

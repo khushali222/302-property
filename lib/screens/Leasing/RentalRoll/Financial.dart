@@ -1714,7 +1714,6 @@ class _FinancialTableState extends State<FinancialTable> {
                               const SizedBox(
                                 height: 6,
                               ),
-
                               Expanded(
                                 flex: 0,
                                 child: Padding(
@@ -1759,49 +1758,59 @@ class _FinancialTableState extends State<FinancialTable> {
                                         ),
                                       ),
                                       const SizedBox(width: 16),
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: blueColor,
-                                        ),
-                                        onPressed: () {},
-                                        child: PopupMenuButton<String>(
-                                          onSelected: (value) async {
-                                            // Add your export logic here based on the selected value
-                                            if (value == 'PDF') {
-                                              print('pdf');
-                                              generateWorkOrderPdf(data);
-                                              // Export as PDF
-                                            } else if (value == 'XLSX') {
-                                              print('XLSX');
-                                              generateWorkOrderExcel(data);
-                                              // Export as XLSX
-                                            } else if (value == 'CSV') {
-                                              print('CSV');
-                                              generateWorkOrderCsv(data);
-                                              // Export as CSV
-                                            }
-                                          },
-                                          itemBuilder: (BuildContext context) =>
-                                              <PopupMenuEntry<String>>[
-                                            const PopupMenuItem<String>(
-                                              value: 'PDF',
-                                              child: Text('PDF'),
-                                            ),
-                                            const PopupMenuItem<String>(
-                                              value: 'XLSX',
-                                              child: Text('XLSX'),
-                                            ),
-                                            const PopupMenuItem<String>(
-                                              value: 'CSV',
-                                              child: Text('CSV'),
-                                            ),
-                                          ],
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text('Export'),
-                                              Icon(Icons.arrow_drop_down),
+                                      Container(
+                                        height: 45,
+                                        width: 110,
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(8.0)),
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: blueColor,
+                                          ),
+                                          onPressed: () {},
+                                          child: PopupMenuButton<String>(
+                                            onSelected: (value) async {
+                                              // Add your export logic here based on the selected value
+                                              if (value == 'PDF') {
+                                                print('pdf');
+                                                generateWorkOrderPdf(data);
+                                                // Export as PDF
+                                              } else if (value == 'XLSX') {
+                                                print('XLSX');
+                                                generateWorkOrderExcel(data);
+                                                // Export as XLSX
+                                              } else if (value == 'CSV') {
+                                                print('CSV');
+                                                generateWorkOrderCsv(data);
+                                                // Export as CSV
+                                              }
+                                            },
+                                            itemBuilder: (BuildContext context) =>
+                                                <PopupMenuEntry<String>>[
+                                              const PopupMenuItem<String>(
+                                                value: 'PDF',
+                                                child: Text('PDF'),
+                                              ),
+                                              const PopupMenuItem<String>(
+                                                value: 'XLSX',
+                                                child: Text('XLSX'),
+                                              ),
+                                              const PopupMenuItem<String>(
+                                                value: 'CSV',
+                                                child: Text('CSV'),
+                                              ),
                                             ],
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text('Export',style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15,
+                                                ),),
+                                                SizedBox(width: 5,),
+                                                Icon(Icons.arrow_drop_down,size: 25,),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -1819,7 +1828,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                 //   borderRadius: BorderRadius.circular(10.0),
                                 // ),
                                 child: Padding(
-                                  padding: const EdgeInsets.all(10.0),
+                                  padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
                                   child: Form(
                                     key: _formKey,
                                     child: screenWidth > 500
@@ -1836,14 +1845,17 @@ class _FinancialTableState extends State<FinancialTable> {
                                                       fontSize: 15,
                                                       fontWeight: FontWeight.w600)),
                                               SizedBox(height: 5),
-                                              TextFormField(
-                                                controller: _fromDateController,
-                                                readOnly: true,
-                                                onTap: () =>_selectfromDate(context, _fromDateController),
-                                                decoration: InputDecoration(
-                                                  hintText: 'yyyy-mm-dd',
-                                                  suffixIcon: Icon(Icons.calendar_today),
-                                                  border: OutlineInputBorder(),
+                                              Container(
+
+                                                child: TextFormField(
+                                                  controller: _fromDateController,
+                                                  readOnly: true,
+                                                  onTap: () =>_selectfromDate(context, _fromDateController),
+                                                  decoration: InputDecoration(
+                                                    hintText: 'yyyy-mm-dd',
+                                                    suffixIcon: Icon(Icons.calendar_today),
+                                                    border: OutlineInputBorder(),
+                                                  ),
                                                 ),
                                               ),
                                             ],
@@ -1884,27 +1896,65 @@ class _FinancialTableState extends State<FinancialTable> {
                                           children: [
                                             Expanded(
                                               child: Container(
+
                                                 child: Column(
                                                   crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                                   children: [
-                                                    Text('From',
-                                                        style: TextStyle(
-                                                            color: Colors.grey[600],
-                                                            fontSize: 15,
-                                                            fontWeight: FontWeight.w600)),
-                                                    SizedBox(height: 5),
-                                                    TextFormField(
-                                                      controller: _fromDateController,
-                                                     // initialValue: fdate,
-                                                      readOnly: true,
-                                                      onTap: () => _selectfromDate(context, _fromDateController),
-                                                      decoration: InputDecoration(
-                                                        hintText: 'dd-mm-yyyy',
-                                                        suffixIcon: Icon(Icons.calendar_today),
-                                                        border: OutlineInputBorder(),
+                                                    // Text('From',
+                                                    //     style: TextStyle(
+                                                    //         color: blueColor,
+                                                    //         fontSize: 15,
+                                                    //         fontWeight: FontWeight.w600)),
+                                                    // SizedBox(height: 4),
+
+                                                    Material(
+                                                      elevation: 2,
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                      child: Container(
+                                                        height: 55,
+                                                        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.5),
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius: BorderRadius.circular(8.0),
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                              color: Colors.black.withOpacity(0.2),
+                                                              offset: Offset(4, 4),
+                                                              blurRadius: 3,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        child:
+                                                        TextFormField(
+                                                          controller: _fromDateController,
+                                                          // initialValue: fdate,
+                                                          readOnly: true,
+                                                          onTap: () => _selectfromDate(context, _fromDateController),
+                                                          decoration: InputDecoration(
+                                                            // contentPadding: EdgeInsets.all(8.0),
+                                                            // contentPadding: EdgeInsets.symmetric(),
+                                                            suffixIconConstraints: BoxConstraints(
+                                                                maxWidth: 20,
+                                                                maxHeight: 20,
+                                                                minHeight: 20,
+                                                                minWidth: 20),
+                                                            hintStyle:
+                                                            TextStyle(fontSize: 15, color: Color(0xFFb0b6c3)),
+                                                            border: InputBorder.none,
+                                                            hintText: 'Frome date',
+                                                            suffixIcon: IconButton(
+                                                              padding: EdgeInsets.symmetric(vertical: 1),
+                                                              iconSize: 20,
+                                                              icon: Icon(Icons.calendar_today), onPressed: () {  },
+
+                                                            ),
+                                                          ),
+                                                        ),
+
                                                       ),
                                                     ),
+
                                                   ],
                                                 ),
                                               ),
@@ -1918,25 +1968,61 @@ class _FinancialTableState extends State<FinancialTable> {
                                                   crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                                   children: [
-                                                    Text('To',
-                                                        style: TextStyle(
-                                                            color: Colors.grey[600],
-                                                            fontSize: 15,
-                                                            fontWeight: FontWeight.w600)),
-                                                    SizedBox(height: 5),
-                                                    TextFormField(
-                                                      controller: _toDateController,
-                                                      readOnly: true,
+                                                    // Text('To',
+                                                    //     style: TextStyle(
+                                                    //         color: blueColor,
+                                                    //         fontSize: 15,
+                                                    //         fontWeight: FontWeight.w600)),
+                                                    // SizedBox(height: 4),
 
-                                                      onTap: () {
+                                                    Material(
+                                                      elevation: 2,
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                      child: Container(
+                                                        height: 55,
+                                                        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.5),
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius: BorderRadius.circular(8.0),
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                              color: Colors.black.withOpacity(0.2),
+                                                              offset: Offset(4, 4),
+                                                              blurRadius: 3,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        child:
+                                                        TextFormField(
+                                                          controller: _toDateController,
+                                                          readOnly: true,
 
-                                                        _selectendDate(context, _toDateController);
+                                                          onTap: () {
 
-                                                        },
-                                                      decoration: InputDecoration(
-                                                        hintText: 'dd-mm-yyyy',
-                                                        suffixIcon: Icon(Icons.calendar_today),
-                                                        border: OutlineInputBorder(),
+                                                            _selectendDate(context, _toDateController);
+
+                                                          },
+                                                          decoration: InputDecoration(
+                                                            // contentPadding: EdgeInsets.all(8.0),
+                                                            // contentPadding: EdgeInsets.symmetric(),
+                                                            suffixIconConstraints: BoxConstraints(
+                                                                maxWidth: 20,
+                                                                maxHeight: 20,
+                                                                minHeight: 20,
+                                                                minWidth: 20),
+                                                            hintStyle:
+                                                            TextStyle(fontSize: 15, color: Color(0xFFb0b6c3)),
+                                                            border: InputBorder.none,
+                                                            hintText: 'To date',
+                                                            suffixIcon: IconButton(
+                                                              padding: EdgeInsets.symmetric(vertical: 1),
+                                                              iconSize: 20,
+                                                              icon: Icon(Icons.calendar_today), onPressed: () {  },
+
+                                                            ),
+                                                          ),
+                                                        ),
+
                                                       ),
                                                     ),
                                                   ],
@@ -1954,7 +2040,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 10),
+                              // SizedBox(height: 5),
                               _buildHeaders(),
                               const SizedBox(height: 20),
                               Container(
