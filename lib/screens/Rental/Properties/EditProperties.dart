@@ -195,6 +195,26 @@ class _Edit_propertiesState extends State<Edit_properties> {
     });
   }
 
+   String? initialAddress;
+   String? initialCity;
+   String? initialState;
+   String? initialCountry;
+   String? initialPostalCode;
+   String? initialFirstName;
+   String? initialCompanyName;
+   String? initialPrimaryEmail;
+   String? initialAlternativeEmail;
+   String? initialPhoneNumber;
+   String? initialHomeNumber;
+   String? initialBuisinessNumber;
+   String? initialRentalOwnerId;
+  String?   initialrentalOwnercity;
+      String?  initialrentalOwnerstate;
+  String? initialrentalOwnerAddress;
+      String? initialrentalOwnerpostalCode;
+  String? initialrentalOwnercountry;
+   String? initialselectedpropertytype;
+   String? initialselectedselectedStaff;
   @override
   void initState() {
     super.initState();
@@ -207,7 +227,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
     addPropertyGroup();
     fetchOwners();
-
     Ownersdetails = RentalOwner(
         rentalOwnerId: widget.properties.rentalOwnerId,
         rentalOwnerName: widget.properties.rentalOwnerData?.rentalOwnerName,
@@ -311,6 +330,32 @@ class _Edit_propertiesState extends State<Edit_properties> {
         // print(selectedStaffmember);
         Provider.of<OwnerDetailsProvider>(context, listen: false)
             .setOwnerDetails(Ownersdetails!);
+
+        initialAddress = fetchedDetails.rentalAddress!;
+        initialselectedpropertytype = fetchedDetails.propertyTypeData?.propertyType;
+        initialselectedpropertytype = fetchedDetails.propertyTypeData?.propertySubType;
+        initialselectedselectedStaff = (fetchedDetails.staffMemberId!.isEmpty
+            ? null
+            : fetchedDetails.staffMemberId ?? null)!;
+        initialCity = fetchedDetails.rentalCity!;
+        initialState = fetchedDetails.rentalState!;
+        initialPostalCode = fetchedDetails.rentalPostcode!;
+        initialCountry = fetchedDetails.rentalCountry ?? 'N/A';
+        initialFirstName = fetchedDetails.rentalOwnerData!.rentalOwnerName!;
+        initialCompanyName =
+            fetchedDetails.rentalOwnerData!.rentalOwnerCompanyName!;
+        initialPrimaryEmail = fetchedDetails.rentalOwnerData!.rentalOwnerPrimaryEmail!;
+        initialAlternativeEmail = fetchedDetails.rentalOwnerData!.rentalOwnerAlternativeEmail!;
+        initialHomeNumber = fetchedDetails.rentalOwnerData!.rentalOwnerHomeNumber!;
+        initialBuisinessNumber = fetchedDetails.rentalOwnerData!.rentalOwnerBuisinessNumber!;
+        initialrentalOwnerAddress = fetchedDetails.rentalOwnerData!.Address!;
+        initialrentalOwnercity = fetchedDetails.rentalOwnerData!.city!;
+        initialrentalOwnerstate = fetchedDetails.rentalOwnerData!.state!;
+        initialrentalOwnercountry = fetchedDetails.rentalOwnerData!.country!;
+        initialrentalOwnerpostalCode = fetchedDetails.rentalOwnerData!.postalCode!;
+        initialPhoneNumber =
+            fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber!;
+
 
         // _selectedProperty = fetchedDetails.rentalId; // Uncomment and update based on your use case
       });
@@ -489,7 +534,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                     borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
                   ),
                   contentPadding:
-                  EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                 ),
               ),
             ),
@@ -536,8 +581,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           () {}); // Rebuild the widget after selecting the image
                     });
                   },
-                  child:
-                  Image.asset(
+                  child: Image.asset(
                     'assets/images/addimage.png',
                     height: 40,
                     width: 40,
@@ -899,7 +943,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                             //         .size
                                             //         .height *
                                             //     .05,
-                                            height:50,
+                                            height: 50,
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
@@ -1266,7 +1310,9 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                   child: Container(width: MediaQuery.of(context).size.width < 500 ? 90 : 90, height: MediaQuery.of(context).size.width < 500 ? 40 : 40, color: Colors.white, child: Center(child: Text("Cancel"))),
                                                                                 ),
                                                                               ),
-                                                                              SizedBox(width: 2,),
+                                                                              SizedBox(
+                                                                                width: 2,
+                                                                              ),
                                                                             ],
                                                                           ),
                                                                           SizedBox(
@@ -1521,8 +1567,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                             });
                                           },
                                           controller: address,
-                                          cursorColor:
-                                              blueColor,
+                                          cursorColor: blueColor,
                                           decoration: InputDecoration(
                                             enabledBorder: addresserror
                                                 ? OutlineInputBorder(
@@ -1645,10 +1690,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     cityerror = false;
                                                   });
                                                 },
-                                                cursorColor: blueColor
-
-
-,
+                                                cursorColor: blueColor,
                                                 decoration: InputDecoration(
                                                   enabledBorder: cityerror
                                                       ? OutlineInputBorder(
@@ -1758,10 +1800,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     stateerror = false;
                                                   });
                                                 },
-                                                cursorColor: blueColor
-
-
-,
+                                                cursorColor: blueColor,
                                                 decoration: InputDecoration(
                                                   enabledBorder: stateerror
                                                       ? OutlineInputBorder(
@@ -1880,13 +1919,9 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                 onChanged: (value) {
                                                   setState(() {
                                                     countryerror = false;
-
                                                   });
                                                 },
-                                                cursorColor: blueColor
-
-
-,
+                                                cursorColor: blueColor,
                                                 decoration: InputDecoration(
                                                   enabledBorder: countryerror
                                                       ? OutlineInputBorder(
@@ -2001,10 +2036,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     .numberWithOptions(
                                                         signed: true,
                                                         decimal: true),
-                                                cursorColor: blueColor
-
-
-,
+                                                cursorColor: blueColor,
                                                 decoration: InputDecoration(
                                                   enabledBorder: postalcodeerror
                                                       ? OutlineInputBorder(
@@ -2250,10 +2282,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     border: TableBorder(
                                                       horizontalInside:
                                                           BorderSide(
-                                                        color: blueColor
-
-
-,
+                                                        color: blueColor,
                                                         width: 1.0,
                                                       ),
                                                     ),
@@ -2591,10 +2620,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                   Text(
                                                                     "New Staff Member",
                                                                     style: TextStyle(
-                                                                        color: blueColor
-
-
-,
+                                                                        color:
+                                                                            blueColor,
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .bold,
@@ -3336,10 +3363,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                             BoxDecoration(
                                                                           borderRadius:
                                                                               BorderRadius.circular(5.0),
-                                                                          color: blueColor
-
-
-,
+                                                                          color:
+                                                                              blueColor,
                                                                           boxShadow: [
                                                                             BoxShadow(
                                                                               color: Colors.grey,
@@ -3420,7 +3445,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                           //         .size
                                           //         .height *
                                           //     .05,
-                                          height:50,
+                                          height: 50,
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
@@ -3532,8 +3557,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
-                        border:
-                            Border.all(color: blueColor),
+                        border: Border.all(color: blueColor),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.only(
@@ -3632,11 +3656,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         // borderRadius: BorderRadius.circular(3),
-                                        borderRadius:
-                                            BorderRadius.circular(8),
-                                        border: Border.all(
-                                            color:
-                                                blueColor),
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(color: blueColor),
                                         boxShadow: [
                                           BoxShadow(
                                             color: Colors.grey,
@@ -3649,8 +3670,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                         child: Text(
                                           "Add another unit",
                                           style: TextStyle(
-                                              color:
-                                                  blueColor,
+                                              color: blueColor,
                                               // fontWeight: FontWeight.bold,
                                               fontSize: 14),
                                         ),
@@ -3674,8 +3694,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
-                        border:
-                            Border.all(color: blueColor),
+                        border: Border.all(color: blueColor),
                       ),
                       child: Padding(
                           padding: const EdgeInsets.only(
@@ -3874,10 +3893,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                           child: Text(
                                             "Add another unit",
                                             style: TextStyle(
-                                                color: blueColor
-
-
-,
+                                                color: blueColor,
                                                 // fontWeight: FontWeight.bold,
                                                 fontSize: 14),
                                           ),
@@ -3899,299 +3915,627 @@ class _Edit_propertiesState extends State<Edit_properties> {
                 SizedBox(height: 5),
                 Row(
                   children: [
-                   // SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+                    // SizedBox(width: MediaQuery.of(context).size.width * 0.01),
                     GestureDetector(
+//                       onTap: () async {
+//                         print("calling");
+//                         if (selectedProperty == null) {
+//                           setState(() {
+//                             showError = true;
+//                           });
+//                         } else {
+//                           setState(() {
+//                             showError = false;
+//                           });
+//                         }
+//                         if (address.text.isEmpty) {
+//                           setState(() {
+//                             addresserror = true;
+//                             addressmessage = "required";
+//                           });
+//                         } else {
+//                           setState(() {
+//                             addresserror = false;
+//                           });
+//                         }
+//                         if (city.text.isEmpty) {
+//                           setState(() {
+//                             cityerror = true;
+//                             citymessage = "required";
+//                           });
+//                         } else {
+//                           setState(() {
+//                             cityerror = false;
+//                           });
+//                         }
+//                         if (state.text.isEmpty) {
+//                           setState(() {
+//                             stateerror = true;
+//                             statemessage = "required";
+//                           });
+//                         } else {
+//                           setState(() {
+//                             stateerror = false;
+//                           });
+//                         }
+//                         if (country.text.isEmpty) {
+//                           setState(() {
+//                             countryerror = true;
+//                             countrymessage = "required";
+//                           });
+//                         } else {
+//                           setState(() {
+//                             countryerror = false;
+//                           });
+//                         }
+//                         if (postalcode.text.isEmpty) {
+//                           setState(() {
+//                             postalcodeerror = true;
+//                             postalcodemessage = "required";
+//                           });
+//                         } else {
+//                           setState(() {
+//                             postalcodeerror = false;
+//                           });
+//                         }
+//                         if (Ownersdetails == null) {
+//                           setState(() {
+//                             hasError = true;
+//                             postalcodemessage = "required";
+//                           });
+//                         } else {
+//                           setState(() {
+//                             hasError = false;
+//                           });
+//                           // print(selectedpropertytypedata!.propertyId);
+//                           // print('hiii${widget.properties.propertyId}');
+//                           // print('staff${widget.properties.staffMemberId}');
+//                           SharedPreferences prefs =
+//                               await SharedPreferences.getInstance();
+//                           String? id = prefs.getString("adminId");
+//                           Rental rentals = Rental(
+//                             rentalId: widget.rentalId,
+//                             adminId: id,
+//                             propertyId: widget.properties.propertyId,
+//                             // propertyId: selectedpropertytypedata!.propertyId,
+//                             address: address.text,
+//                             city: city.text,
+//                             state: state.text,
+//                             country: country.text,
+//                             postcode: postalcode.text,
+//                             // staffMemberId: sid,
+//                             staffMemberId: widget.properties.staffMemberId,
+//                           );
+//                           List<Unit> units = [];
+//                           if (propertyGroupControllers.isNotEmpty) {
+//                             List<TextEditingController> firstControllers =
+//                                 propertyGroupControllers[0];
+//                             bool isFirstBlank = firstControllers
+//                                 .every((controller) => controller.text.isEmpty);
+//                             //1714547540497
+//                             //1709188861753
+//                             if (isFirstBlank) {
+//                               propertyGroupControllers.removeAt(0);
+//                             }
+//                           }
+//                           if (selectedpropertytype == 'Commercial' &&
+//                               selectedIsMultiUnit == true) {
+//                             for (int i = 0;
+//                                 i < propertyGroupControllers.length;
+//                                 i++) {
+//                               if (units.length <= i) {
+//                                 units.add(Unit());
+//                               }
+//                               List<TextEditingController> controllers =
+//                                   propertyGroupControllers[i];
+//                               units[i].unit = controllers[0].text;
+//                               units[i].address = controllers[1].text;
+//                               units[i].sqft = controllers[2].text;
+//                               units[i].Image = propertyGroupImagenames[i];
+//                               //      units[i].bath = controllers[3].text;
+//                               //     units[i].bed = controllers[4].text;
+//
+// //                                  units[i].unit = controllers[0].text;
+//                             }
+//                           } else if (selectedpropertytype == 'Residential' &&
+//                               selectedIsMultiUnit == true) {
+//                             for (int i = 0;
+//                                 i < propertyGroupControllers.length;
+//                                 i++) {
+//                               if (units.length <= i) {
+//                                 units.add(Unit());
+//                               }
+//                               List<TextEditingController> controllers =
+//                                   propertyGroupControllers[i];
+//                               units[i].unit = controllers[0].text;
+//                               units[i].address = controllers[1].text;
+//                               units[i].sqft = controllers[2].text;
+//                               units[i].bath = controllers[3].text;
+//                               units[i].bed = controllers[4].text;
+//                               units[i].Image = propertyGroupImagenames[i];
+// //                                  units[i].unit = controllers[0].text;
+//                             }
+//                           } else if (selectedpropertytype == 'Residential') {
+//                             for (int i = 0;
+//                                 i < propertyGroupControllers.length;
+//                                 i++) {
+//                               if (units.length <= i) {
+//                                 units.add(Unit());
+//                               }
+//                               List<TextEditingController> controllers =
+//                                   propertyGroupControllers[i];
+//                               // print(controllers.length);
+//                               units[i].sqft = controllers[0].text;
+//                               units[i].bath = controllers[1].text;
+//                               units[i].bed = controllers[2].text;
+//                               units[i].Image = propertyGroupImagenames[i];
+// //                                  units[i].unit = controllers[0].text;
+//                             }
+//                           } else if (selectedpropertytype == 'Commercial') {
+//                             for (int i = 0;
+//                                 i < propertyGroupControllers.length;
+//                                 i++) {
+//                               if (units.length <= i) {
+//                                 units.add(Unit());
+//                               }
+//                               List<TextEditingController> controllers =
+//                                   propertyGroupControllers[i];
+//                               units[i].sqft = controllers[0].text;
+//                               units[i].Image = propertyGroupImagenames[i];
+//                               //units[i].address = controllers[1].text;
+//                               //units[i].sqft = controllers[2].text;
+// //                                  units[i].unit = controllers[0].text;
+//                             }
+//                           }
+//
+//                           RentalOwners owners = RentalOwners(
+//                             adminId: id,
+//                             firstName: firstname.text,
+//                             companyName: comname.text,
+//                             primaryEmail: primaryemail.text,
+//                             phoneNumber: phonenum.text,
+//                             city: city2.text,
+//                             state: state2.text,
+//                             country: county2.text,
+//                             postalCode: code2.text,
+//                           );
+//                           RentalRequest rentalrequest = RentalRequest(
+//                               rentalOwner: owners,
+//                               rental: rentals,
+//                               units: units);
+//                           final updatedOwner = RentalOwner(
+//                             rentalOwnerName: firstnameController.text,
+//                             rentalOwnerCompanyName: comnameController.text,
+//                             rentalOwnerPrimaryEmail:
+//                                 primaryemailController.text,
+//                             rentalOwnerPhoneNumber: phonenumController.text,
+//                             city: cityController.text,
+//                             state: stateController.text,
+//                             country: countyController.text,
+//                             postalCode: codeController.text,
+//                           );
+//                           RentalOwner? ownerDetails =
+//                               context.read<OwnerDetailsProvider>().ownerDetails;
+//
+//                           String processorId = context
+//                                   .read<OwnerDetailsProvider>()
+//                                   .selectedprocessorlist ??
+//                               "";
+//
+//                           List<Map<String, String>> processorIds =
+//                               ownerDetails!.processorList!.map((processor) {
+//                             return {
+//                               'processor_id': processor.processorId ?? "",
+//                             };
+//                           }).toList();
+//
+//                           //Provider.of<OwnerDetailsProvider>(context, listen: false).setOwnerDetails(updatedOwner);
+//                           print(ownerDetails.rentalOwnerId);
+//                           Rentals properties = Rentals(
+//                               adminId: id,
+//                               rentalOwnerData: RentalOwnerData(
+//                                   adminId: widget.properties.adminId,
+//                                   rentalOwnerId: ownerDetails.rentalOwnerId,
+//                                   rentalOwnerName: updatedOwner.rentalOwnerName,
+//                                   rentalOwnerCompanyName:
+//                                       updatedOwner.rentalOwnerCompanyName,
+//                                   rentalOwnerPrimaryEmail:
+//                                       updatedOwner.rentalOwnerPrimaryEmail,
+//                                   rentalOwnerPhoneNumber:
+//                                       updatedOwner.rentalOwnerPhoneNumber,
+//                                   rentalOwnerHomeNumber:
+//                                       updatedOwner.rentalOwnerHomeNumber,
+//                                   rentalOwnerBuisinessNumber:
+//                                       updatedOwner.rentalOwnerBusinessNumber,
+//                                   city: updatedOwner.city,
+//                                   state: updatedOwner.state,
+//                                   country: updatedOwner.country,
+//                                   postalCode: updatedOwner.postalCode,
+//                                   processorList: processorIds),
+//                               rentalId: widget.rentalId,
+//                               propertyId: widget.properties.propertyId,
+//                               rentalAddress: address.text,
+//                               rentalOwnerId: ownerDetails.rentalOwnerId,
+//                               rentalCity: city.text,
+//                               rentalState: state.text,
+//                               rentalCountry: country.text,
+//                               rentalPostcode: postalcode.text,
+//                               staffMemberId: sid,
+//                               processor_id: processorId);
+//
+//                           await Future.wait([
+//                             PropertiesRepository()
+//                                 .updateRental1(properties)
+//                                 .then((value) {
+//                               setState(() {
+//                                 widget.properties.rentalOwnerData =
+//                                     RentalOwnerData(
+//                                   adminId: widget.properties.adminId,
+//                                   rentalOwnerId:
+//                                       widget.properties.rentalOwnerId,
+//                                   rentalOwnerName: updatedOwner.rentalOwnerName,
+//                                   rentalOwnerCompanyName:
+//                                       updatedOwner.rentalOwnerCompanyName,
+//                                   rentalOwnerPrimaryEmail:
+//                                       updatedOwner.rentalOwnerPrimaryEmail,
+//                                   rentalOwnerPhoneNumber:
+//                                       updatedOwner.rentalOwnerPhoneNumber,
+//                                   rentalOwnerAlternativeEmail:
+//                                       updatedOwner.rentalOwnerAlternateEmail,
+//                                   rentalOwnerBuisinessNumber:
+//                                       updatedOwner.rentalOwnerBusinessNumber,
+//                                   rentalOwnerHomeNumber:
+//                                       updatedOwner.rentalOwnerHomeNumber,
+//                                   city: updatedOwner.city,
+//                                   state: updatedOwner.state,
+//                                   country: updatedOwner.country,
+//                                   postalCode: updatedOwner.postalCode,
+//                                 );
+//                                 widget.properties.rentalAddress = address.text;
+//                                 widget.properties.propertyTypeData
+//                                     ?.propertyType = selectedpropertytype;
+//                                 widget.properties.propertyTypeData
+//                                     ?.propertySubType = selectedpropertytype;
+//                                 isLoading = false;
+//                                 widget.properties.staffMemberId;
+//                               });
+//                             }).catchError((e) {
+//                               setState(() {
+//                                 isLoading = false;
+//                               });
+//                             })
+//                           ]);
+//                           Navigator.of(context).pop(true);
+//                         }
+//                         // print(selectedValue);
+//                       },
                       onTap: () async {
                         print("calling");
+
+                        // Validate selected property
                         if (selectedProperty == null) {
                           setState(() {
                             showError = true;
                           });
+                          return; // Exit if no property is selected
                         } else {
                           setState(() {
                             showError = false;
                           });
                         }
+
+                        // Validate form fields
                         if (address.text.isEmpty) {
                           setState(() {
                             addresserror = true;
                             addressmessage = "required";
                           });
+                          return; // Exit if address is empty
                         } else {
                           setState(() {
                             addresserror = false;
                           });
                         }
+
                         if (city.text.isEmpty) {
                           setState(() {
                             cityerror = true;
                             citymessage = "required";
                           });
+                          return; // Exit if city is empty
                         } else {
                           setState(() {
                             cityerror = false;
                           });
                         }
+
                         if (state.text.isEmpty) {
                           setState(() {
                             stateerror = true;
                             statemessage = "required";
                           });
+                          return; // Exit if state is empty
                         } else {
                           setState(() {
                             stateerror = false;
                           });
                         }
+
                         if (country.text.isEmpty) {
                           setState(() {
                             countryerror = true;
                             countrymessage = "required";
                           });
+                          return; // Exit if country is empty
                         } else {
                           setState(() {
                             countryerror = false;
                           });
                         }
+
                         if (postalcode.text.isEmpty) {
                           setState(() {
                             postalcodeerror = true;
                             postalcodemessage = "required";
                           });
+                          return; // Exit if postal code is empty
                         } else {
                           setState(() {
                             postalcodeerror = false;
                           });
                         }
+
                         if (Ownersdetails == null) {
                           setState(() {
                             hasError = true;
                             postalcodemessage = "required";
                           });
+                          return; // Exit if owner details are not provided
                         } else {
                           setState(() {
                             hasError = false;
                           });
-                          // print(selectedpropertytypedata!.propertyId);
-                          // print('hiii${widget.properties.propertyId}');
-                          // print('staff${widget.properties.staffMemberId}');
-                          SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-                          String? id = prefs.getString("adminId");
-                          Rental rentals = Rental(
-                            rentalId: widget.rentalId,
-                            adminId: id,
-                            propertyId: widget.properties.propertyId,
-                            // propertyId: selectedpropertytypedata!.propertyId,
-                            address: address.text,
-                            city: city.text,
-                            state: state.text,
-                            country: country.text,
-                            postcode: postalcode.text,
-                            // staffMemberId: sid,
-                            staffMemberId: widget.properties.staffMemberId,
-                          );
-                          List<Unit> units = [];
-                          if (propertyGroupControllers.isNotEmpty) {
-                            List<TextEditingController> firstControllers =
-                                propertyGroupControllers[0];
-                            bool isFirstBlank = firstControllers
-                                .every((controller) => controller.text.isEmpty);
-                            //1714547540497
-                            //1709188861753
-                            if (isFirstBlank) {
-                              propertyGroupControllers.removeAt(0);
-                            }
-                          }
-                          if (selectedpropertytype == 'Commercial' &&
-                              selectedIsMultiUnit == true) {
-                            for (int i = 0;
-                                i < propertyGroupControllers.length;
-                                i++) {
-                              if (units.length <= i) {
-                                units.add(Unit());
-                              }
-                              List<TextEditingController> controllers =
-                                  propertyGroupControllers[i];
-                              units[i].unit = controllers[0].text;
-                              units[i].address = controllers[1].text;
-                              units[i].sqft = controllers[2].text;
-                              units[i].Image = propertyGroupImagenames[i];
-                              //      units[i].bath = controllers[3].text;
-                              //     units[i].bed = controllers[4].text;
-
-//                                  units[i].unit = controllers[0].text;
-                            }
-                          } else if (selectedpropertytype == 'Residential' &&
-                              selectedIsMultiUnit == true) {
-                            for (int i = 0;
-                                i < propertyGroupControllers.length;
-                                i++) {
-                              if (units.length <= i) {
-                                units.add(Unit());
-                              }
-                              List<TextEditingController> controllers =
-                                  propertyGroupControllers[i];
-                              units[i].unit = controllers[0].text;
-                              units[i].address = controllers[1].text;
-                              units[i].sqft = controllers[2].text;
-                              units[i].bath = controllers[3].text;
-                              units[i].bed = controllers[4].text;
-                              units[i].Image = propertyGroupImagenames[i];
-//                                  units[i].unit = controllers[0].text;
-                            }
-                          } else if (selectedpropertytype == 'Residential') {
-                            for (int i = 0;
-                                i < propertyGroupControllers.length;
-                                i++) {
-                              if (units.length <= i) {
-                                units.add(Unit());
-                              }
-                              List<TextEditingController> controllers =
-                                  propertyGroupControllers[i];
-                              // print(controllers.length);
-                              units[i].sqft = controllers[0].text;
-                              units[i].bath = controllers[1].text;
-                              units[i].bed = controllers[2].text;
-                              units[i].Image = propertyGroupImagenames[i];
-//                                  units[i].unit = controllers[0].text;
-                            }
-                          } else if (selectedpropertytype == 'Commercial') {
-                            for (int i = 0;
-                                i < propertyGroupControllers.length;
-                                i++) {
-                              if (units.length <= i) {
-                                units.add(Unit());
-                              }
-                              List<TextEditingController> controllers =
-                                  propertyGroupControllers[i];
-                              units[i].sqft = controllers[0].text;
-                              units[i].Image = propertyGroupImagenames[i];
-                              //units[i].address = controllers[1].text;
-                              //units[i].sqft = controllers[2].text;
-//                                  units[i].unit = controllers[0].text;
-                            }
-                          }
-
-                          RentalOwners owners = RentalOwners(
-                            adminId: id,
-                            firstName: firstname.text,
-                            companyName: comname.text,
-                            primaryEmail: primaryemail.text,
-                            phoneNumber: phonenum.text,
-                            city: city2.text,
-                            state: state2.text,
-                            country: county2.text,
-                            postalCode: code2.text,
-                          );
-                          RentalRequest rentalrequest = RentalRequest(
-                              rentalOwner: owners,
-                              rental: rentals,
-                              units: units);
-                          final updatedOwner = RentalOwner(
-                            rentalOwnerName: firstnameController.text,
-                            rentalOwnerCompanyName: comnameController.text,
-                            rentalOwnerPrimaryEmail:
-                                primaryemailController.text,
-                            rentalOwnerPhoneNumber: phonenumController.text,
-                            city: cityController.text,
-                            state: stateController.text,
-                            country: countyController.text,
-                            postalCode: codeController.text,
-                          );
-                          RentalOwner? ownerDetails =
-                              context.read<OwnerDetailsProvider>().ownerDetails;
-
-                          String processorId = context
-                                  .read<OwnerDetailsProvider>()
-                                  .selectedprocessorlist ??
-                              "";
-
-                          List<Map<String, String>> processorIds =
-                              ownerDetails!.processorList!.map((processor) {
-                            return {
-                              'processor_id': processor.processorId ?? "",
-                            };
-                          }).toList();
-
-                          //Provider.of<OwnerDetailsProvider>(context, listen: false).setOwnerDetails(updatedOwner);
-                          print(ownerDetails.rentalOwnerId);
-                          Rentals properties = Rentals(
-                              adminId: id,
-                              rentalOwnerData: RentalOwnerData(
-                                  adminId: widget.properties.adminId,
-                                  rentalOwnerId: ownerDetails.rentalOwnerId,
-                                  rentalOwnerName: updatedOwner.rentalOwnerName,
-                                  rentalOwnerCompanyName:
-                                      updatedOwner.rentalOwnerCompanyName,
-                                  rentalOwnerPrimaryEmail:
-                                      updatedOwner.rentalOwnerPrimaryEmail,
-                                  rentalOwnerPhoneNumber:
-                                      updatedOwner.rentalOwnerPhoneNumber,
-                                  rentalOwnerHomeNumber:
-                                      updatedOwner.rentalOwnerHomeNumber,
-                                  rentalOwnerBuisinessNumber:
-                                      updatedOwner.rentalOwnerBusinessNumber,
-                                  city: updatedOwner.city,
-                                  state: updatedOwner.state,
-                                  country: updatedOwner.country,
-                                  postalCode: updatedOwner.postalCode,
-                                  processorList: processorIds),
-                              rentalId: widget.rentalId,
-                              propertyId: widget.properties.propertyId,
-                              rentalAddress: address.text,
-                              rentalOwnerId: ownerDetails.rentalOwnerId,
-                              rentalCity: city.text,
-                              rentalState: state.text,
-                              rentalCountry: country.text,
-                              rentalPostcode: postalcode.text,
-                              staffMemberId: sid,
-                              processor_id: processorId);
-
-                          await Future.wait([
-                            PropertiesRepository()
-                                .updateRental1(properties)
-                                .then((value) {
-                              setState(() {
-                                widget.properties.rentalOwnerData =
-                                    RentalOwnerData(
-                                  adminId: widget.properties.adminId,
-                                  rentalOwnerId:
-                                      widget.properties.rentalOwnerId,
-                                  rentalOwnerName: updatedOwner.rentalOwnerName,
-                                  rentalOwnerCompanyName:
-                                      updatedOwner.rentalOwnerCompanyName,
-                                  rentalOwnerPrimaryEmail:
-                                      updatedOwner.rentalOwnerPrimaryEmail,
-                                  rentalOwnerPhoneNumber:
-                                      updatedOwner.rentalOwnerPhoneNumber,
-                                  rentalOwnerAlternativeEmail:
-                                      updatedOwner.rentalOwnerAlternateEmail,
-                                  rentalOwnerBuisinessNumber:
-                                      updatedOwner.rentalOwnerBusinessNumber,
-                                  rentalOwnerHomeNumber:
-                                      updatedOwner.rentalOwnerHomeNumber,
-                                  city: updatedOwner.city,
-                                  state: updatedOwner.state,
-                                  country: updatedOwner.country,
-                                  postalCode: updatedOwner.postalCode,
-                                );
-                                widget.properties.rentalAddress = address.text;
-                                widget.properties.propertyTypeData
-                                    ?.propertyType = selectedpropertytype;
-                                widget.properties.propertyTypeData
-                                    ?.propertySubType = selectedpropertytype;
-                                isLoading = false;
-                                widget.properties.staffMemberId;
-                              });
-                            }).catchError((e) {
-                              setState(() {
-                                isLoading = false;
-                              });
-                            })
-                          ]);
-                          Navigator.of(context).pop(true);
                         }
-                        // print(selectedValue);
+
+                        // Check for changes
+                        bool hasChanges = address.text != initialAddress ||
+                            city.text != initialCity ||
+                            state.text != initialState ||
+                            country.text != initialCountry ||
+                            postalcode.text != initialPostalCode ||
+                            firstname.text != initialFirstName ||
+                            comname.text != initialCompanyName ||
+                            primaryemail.text != initialPrimaryEmail ||
+                            alternativeemail.text != initialAlternativeEmail ||
+                            phonenum.text != initialPhoneNumber ||
+                            homenum.text != initialHomeNumber ||
+                            businessnum.text != initialBuisinessNumber ||
+                            state2.text != initialrentalOwnerAddress ||
+                            city2.text != initialrentalOwnercity ||
+                            state2.text != initialrentalOwnerstate ||
+                            county2.text != initialrentalOwnercountry ||
+                            code2.text != initialrentalOwnerpostalCode ||
+                            selectedpropertytype != initialselectedpropertytype ||
+                            selectedpropertytype != initialselectedpropertytype ||
+                            selectedStaff != initialselectedselectedStaff ;
+
+                        if (!hasChanges) {
+                          // Show message if no changes detected
+                          print("No changes detected");
+                          Navigator.pop(context,false);
+                          return; // Exit if no changes
+                        }
+
+                        // Proceed with form submission
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        String? id = prefs.getString("adminId");
+
+                        Rental rentals = Rental(
+                          rentalId: widget.rentalId,
+                          adminId: id,
+                          propertyId: widget.properties.propertyId,
+                          address: address.text,
+                          city: city.text,
+                          state: state.text,
+                          country: country.text,
+                          postcode: postalcode.text,
+                          staffMemberId: widget.properties.staffMemberId,
+                        );
+
+                        List<Unit> units = [];
+                        if (propertyGroupControllers.isNotEmpty) {
+                          List<TextEditingController> firstControllers =
+                              propertyGroupControllers[0];
+                          bool isFirstBlank = firstControllers
+                              .every((controller) => controller.text.isEmpty);
+                          if (isFirstBlank) {
+                            propertyGroupControllers.removeAt(0);
+                          }
+                        }
+
+                        // Prepare units based on property type
+                        if (selectedpropertytype == 'Commercial' &&
+                            selectedIsMultiUnit == true) {
+                          for (int i = 0;
+                              i < propertyGroupControllers.length;
+                              i++) {
+                            if (units.length <= i) {
+                              units.add(Unit());
+                            }
+                            List<TextEditingController> controllers =
+                                propertyGroupControllers[i];
+                            units[i].unit = controllers[0].text;
+                            units[i].address = controllers[1].text;
+                            units[i].sqft = controllers[2].text;
+                            units[i].Image = propertyGroupImagenames[i];
+                          }
+                        } else if (selectedpropertytype == 'Residential' &&
+                            selectedIsMultiUnit == true) {
+                          for (int i = 0;
+                              i < propertyGroupControllers.length;
+                              i++) {
+                            if (units.length <= i) {
+                              units.add(Unit());
+                            }
+                            List<TextEditingController> controllers =
+                                propertyGroupControllers[i];
+                            units[i].unit = controllers[0].text;
+                            units[i].address = controllers[1].text;
+                            units[i].sqft = controllers[2].text;
+                            units[i].bath = controllers[3].text;
+                            units[i].bed = controllers[4].text;
+                            units[i].Image = propertyGroupImagenames[i];
+                          }
+                        } else if (selectedpropertytype == 'Residential') {
+                          for (int i = 0;
+                              i < propertyGroupControllers.length;
+                              i++) {
+                            if (units.length <= i) {
+                              units.add(Unit());
+                            }
+                            List<TextEditingController> controllers =
+                                propertyGroupControllers[i];
+                            units[i].sqft = controllers[0].text;
+                            units[i].bath = controllers[1].text;
+                            units[i].bed = controllers[2].text;
+                            units[i].Image = propertyGroupImagenames[i];
+                          }
+                        } else if (selectedpropertytype == 'Commercial') {
+                          for (int i = 0;
+                              i < propertyGroupControllers.length;
+                              i++) {
+                            if (units.length <= i) {
+                              units.add(Unit());
+                            }
+                            List<TextEditingController> controllers =
+                                propertyGroupControllers[i];
+                            units[i].sqft = controllers[0].text;
+                            units[i].Image = propertyGroupImagenames[i];
+                          }
+                        }
+
+                        RentalOwners owners = RentalOwners(
+                          adminId: id,
+                          firstName: firstname.text,
+                          companyName: comname.text,
+                          primaryEmail: primaryemail.text,
+                          phoneNumber: phonenum.text,
+                          city: city2.text,
+                          state: state2.text,
+                          country: county2.text,
+                          postalCode: code2.text,
+                        );
+
+                        RentalRequest rentalrequest = RentalRequest(
+                          rentalOwner: owners,
+                          rental: rentals,
+                          units: units,
+                        );
+
+                        final updatedOwner = RentalOwner(
+                          rentalOwnerName: firstnameController.text,
+                          rentalOwnerCompanyName: comnameController.text,
+                          rentalOwnerPrimaryEmail: primaryemailController.text,
+                          rentalOwnerPhoneNumber: phonenumController.text,
+                          city: cityController.text,
+                          state: stateController.text,
+                          country: countyController.text,
+                          postalCode: codeController.text,
+                        );
+
+                        RentalOwner? ownerDetails =
+                            context.read<OwnerDetailsProvider>().ownerDetails;
+
+                        String processorId = context
+                                .read<OwnerDetailsProvider>()
+                                .selectedprocessorlist ??
+                            "";
+
+                        List<Map<String, String>> processorIds =
+                            ownerDetails!.processorList!.map((processor) {
+                          return {
+                            'processor_id': processor.processorId ?? "",
+                          };
+                        }).toList();
+
+                        Rentals properties = Rentals(
+                          adminId: id,
+                          rentalOwnerData: RentalOwnerData(
+                            adminId: widget.properties.adminId,
+                            rentalOwnerId: ownerDetails.rentalOwnerId,
+                            rentalOwnerName: updatedOwner.rentalOwnerName,
+                            rentalOwnerCompanyName:
+                                updatedOwner.rentalOwnerCompanyName,
+                            rentalOwnerPrimaryEmail:
+                                updatedOwner.rentalOwnerPrimaryEmail,
+                            rentalOwnerPhoneNumber:
+                                updatedOwner.rentalOwnerPhoneNumber,
+                            rentalOwnerHomeNumber:
+                                updatedOwner.rentalOwnerHomeNumber,
+                            rentalOwnerBuisinessNumber:
+                                updatedOwner.rentalOwnerBusinessNumber,
+                            city: updatedOwner.city,
+                            state: updatedOwner.state,
+                            country: updatedOwner.country,
+                            postalCode: updatedOwner.postalCode,
+                            processorList: processorIds,
+                          ),
+                          rentalId: widget.rentalId,
+                          propertyId: widget.properties.propertyId,
+                          rentalAddress: address.text,
+                          rentalOwnerId: ownerDetails.rentalOwnerId,
+                          rentalCity: city.text,
+                          rentalState: state.text,
+                          rentalCountry: country.text,
+                          rentalPostcode: postalcode.text,
+                          staffMemberId: sid,
+                          processor_id: processorId,
+                        );
+
+                        await Future.wait([
+                          PropertiesRepository()
+                              .updateRental1(properties)
+                              .then((value) {
+                            setState(() {
+                              widget.properties.rentalOwnerData =
+                                  RentalOwnerData(
+                                adminId: widget.properties.adminId,
+                                rentalOwnerId: widget.properties.rentalOwnerId,
+                                rentalOwnerName: updatedOwner.rentalOwnerName,
+                                rentalOwnerCompanyName:
+                                    updatedOwner.rentalOwnerCompanyName,
+                                rentalOwnerPrimaryEmail:
+                                    updatedOwner.rentalOwnerPrimaryEmail,
+                                rentalOwnerPhoneNumber:
+                                    updatedOwner.rentalOwnerPhoneNumber,
+                                rentalOwnerAlternativeEmail:
+                                    updatedOwner.rentalOwnerAlternateEmail,
+                                rentalOwnerBuisinessNumber:
+                                    updatedOwner.rentalOwnerBusinessNumber,
+                                rentalOwnerHomeNumber:
+                                    updatedOwner.rentalOwnerHomeNumber,
+                                city: updatedOwner.city,
+                                state: updatedOwner.state,
+                                country: updatedOwner.country,
+                                postalCode: updatedOwner.postalCode,
+                              );
+                              widget.properties.rentalAddress = address.text;
+                              widget.properties.propertyTypeData?.propertyType =
+                                  selectedpropertytype;
+                              widget.properties.propertyTypeData
+                                  ?.propertySubType = selectedpropertytype;
+                              isLoading = false;
+                              widget.properties.staffMemberId;
+                            });
+                          }).catchError((e) {
+                            setState(() {
+                              isLoading = false;
+                            });
+                          }),
+                        ]);
+
+                        Navigator.of(context).pop(true);
                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
@@ -4231,7 +4575,13 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           // displayPropertyData();
                           Navigator.pop(context);
                         },
-                        child: Text("Cancel",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: blueColor),)),
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: blueColor),
+                        )),
                   ],
                 ),
                 Column(
@@ -4406,8 +4756,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                       Positioned.fill(
                                         child: TextField(
                                           controller: group.controller,
-                                          cursorColor:
-                                              blueColor,
+                                          cursorColor: blueColor,
                                           decoration: InputDecoration(
                                             border: InputBorder.none,
                                             contentPadding: EdgeInsets.only(
