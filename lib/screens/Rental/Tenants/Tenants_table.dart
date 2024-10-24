@@ -1080,7 +1080,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                   child: Text(
                                                     // '${widget.data.createdAt}',
 
-                                                    '${ dateProvider.formatCurrentDate(tenants.createdAt!) ?? ''}',
+                                                    '${ dateProvider.formatCurrentDate(tenants.createdAt ??DateTime.now().toString()) ?? ''}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:

@@ -400,7 +400,8 @@ class _FinancialTableState extends State<FinancialTable> {
 
   reload_screen() {
     setState(() {
-      _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
+      _leaseLedgerFuture =
+          LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
     });
   }
 
@@ -608,7 +609,9 @@ class _FinancialTableState extends State<FinancialTable> {
   @override
   void initState() {
     super.initState();
-    _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId,);
+    _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(
+      leaseId: widget.leaseId,
+    );
     _expanded = List.generate(_pagedData.length, (_) => false);
     _fromDateController = TextEditingController(text: '');
     _toDateController = TextEditingController(text: '');
@@ -617,7 +620,6 @@ class _FinancialTableState extends State<FinancialTable> {
 
   @override
   void dispose() {
-
     _fromDateController.dispose();
     _toDateController.dispose();
     super.dispose();
@@ -637,7 +639,9 @@ class _FinancialTableState extends State<FinancialTable> {
       ),
       content: Column(
         children: <Widget>[
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           SizedBox(
             height: 45,
             child: TextField(
@@ -645,8 +649,7 @@ class _FinancialTableState extends State<FinancialTable> {
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Enter reason for deletion',
-                  contentPadding: EdgeInsets.only(top: 8,left: 15)
-              ),
+                  contentPadding: EdgeInsets.only(top: 8, left: 15)),
             ),
           ),
         ],
@@ -680,6 +683,7 @@ class _FinancialTableState extends State<FinancialTable> {
       ],
     ).show();
   }
+
   void _showAlertpayment(BuildContext context, String id) {
     TextEditingController reason = TextEditingController();
     Alert(
@@ -692,7 +696,9 @@ class _FinancialTableState extends State<FinancialTable> {
       ),
       content: Column(
         children: <Widget>[
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           SizedBox(
             height: 45,
             child: TextField(
@@ -700,8 +706,7 @@ class _FinancialTableState extends State<FinancialTable> {
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Enter reason for deletion',
-                  contentPadding: EdgeInsets.only(top: 8,left: 15)
-              ),
+                  contentPadding: EdgeInsets.only(top: 8, left: 15)),
             ),
           ),
         ],
@@ -735,6 +740,7 @@ class _FinancialTableState extends State<FinancialTable> {
       ],
     ).show();
   }
+
   List<Data?> _tableData = [];
   int _rowsPerPage = 10;
 
@@ -753,9 +759,8 @@ class _FinancialTableState extends State<FinancialTable> {
 
   void sortData(List<Data> data) {
     if (sorting1) {
-      data.sort((a, b) => ascending1
-          ? a.type!.compareTo(b.type!)
-          : b.type!.compareTo(a.type!));
+      data.sort((a, b) =>
+          ascending1 ? a.type!.compareTo(b.type!) : b.type!.compareTo(a.type!));
     } else if (sorting2) {
       data.sort((a, b) => ascending2
           ? a.balance!.compareTo(b.balance!)
@@ -820,8 +825,6 @@ class _FinancialTableState extends State<FinancialTable> {
       ),
     );
   }
-
-
 
   Widget _buildDataCell(String text) {
     return TableCell(
@@ -921,8 +924,7 @@ class _FinancialTableState extends State<FinancialTable> {
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
             size: 30,
-            color:
-                _currentPage == 0 ? grey :  blueColor,
+            color: _currentPage == 0 ? grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -942,10 +944,7 @@ class _FinancialTableState extends State<FinancialTable> {
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? grey
-                :  blueColor
-
-
-, // Change color based on availability
+                : blueColor, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -1398,11 +1397,13 @@ class _FinancialTableState extends State<FinancialTable> {
   late TextEditingController _fromDateController;
   late TextEditingController _toDateController;
 
-
   void _fetchData() {
     if (_fromDateController.text.isNotEmpty &&
         _toDateController.text.isNotEmpty) {
-      _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId,fromDate: _fromDateController.text,toDate: _toDateController.text);
+      _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(
+          leaseId: widget.leaseId,
+          fromDate: _fromDateController.text,
+          toDate: _toDateController.text);
     } else {
       _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger();
     }
@@ -1410,17 +1411,37 @@ class _FinancialTableState extends State<FinancialTable> {
   }
 
   void _onDateChanged() {
-   setState(() {
-     _fetchData();
-   });
+    setState(() {
+      _fetchData();
+    });
   }
 
-  Future<void> _selectfromDate(BuildContext context, TextEditingController controller) async {
+  Future<void> _selectfromDate(
+      BuildContext context, TextEditingController controller) async {
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
+      locale: const Locale('en', 'US'),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: blueColor, // header background color
+              onPrimary: Colors.white, // header text color
+              onSurface: blueColor, // body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: blueColor, // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null) {
@@ -1432,39 +1453,64 @@ class _FinancialTableState extends State<FinancialTable> {
         //  _filterData();
         controller.text = picked.toLocal().toString().split(' ')[0];
         fdate = controller.text;
-
       });
     }
   }
-  Future<void> _selectendDate(BuildContext context, TextEditingController controller) async {
+
+  Future<void> _selectendDate(
+      BuildContext context, TextEditingController controller) async {
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
+      locale: const Locale('en', 'US'),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: blueColor, // header background color
+              onPrimary: Colors.white, // header text color
+              onSurface: blueColor, // body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: blueColor, // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null) {
       setState(() {
-        edate =  picked.toString();
+        edate = picked.toString();
         // String formattedDate = DateFormat('dd-MM-yyyy').format(picked);
         // controller.text = formattedDate;
-      //  _filterData();
+        //  _filterData();
         controller.text = picked.toLocal().toString().split(' ')[0];
       });
     }
   }
+
   List<Data> allData = []; // Assume this is your complete dataset
   List<Data> filteredData = [];
   void _filterData() {
     // Parse the dates from the controllers
     try {
-      DateTime fromDate = DateFormat('dd-MM-yyyy').parse(_fromDateController.text);
-      DateTime toDate = DateFormat('dd-MM-yyyy').parse(_toDateController.text).add(Duration(days: 1)); // Include the end date
+      DateTime fromDate =
+          DateFormat('dd-MM-yyyy').parse(_fromDateController.text);
+      DateTime toDate = DateFormat('dd-MM-yyyy')
+          .parse(_toDateController.text)
+          .add(Duration(days: 1)); // Include the end date
 
       // Filter the data based on the selected date range
       filteredData = allData.where((data) {
-        DateTime leaseDate = DateFormat('dd-MM-yyyy').parse(data.entry!.first.date!); // Adjust according to your data structure
+        DateTime leaseDate = DateFormat('dd-MM-yyyy').parse(
+            data.entry!.first.date!); // Adjust according to your data structure
         return leaseDate.isAfter(fromDate) && leaseDate.isBefore(toDate);
       }).toList();
     } catch (e) {
@@ -1486,146 +1532,136 @@ class _FinancialTableState extends State<FinancialTable> {
             ?.planDetail
             ?.planName ==
         'Free Plan';
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Container(
+    return Container(
         child: SingleChildScrollView(
           child: Column(
             children: [
               const SizedBox(
                 height: 10,
               ),
-
               Padding(
-                      padding: const EdgeInsets.only(right: 16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          if (!isFreePlan && widget.status == 'Active')
-                            Container(
-                                height: MediaQuery.of(context).size.width < 500
-                                    ? 36
-                                    : 45,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(width: 1),
-                                    borderRadius: BorderRadius.circular(10.0)),
-                                child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10.0)),
-                                        elevation: 0,
-                                        backgroundColor: Colors.white),
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => AddCard(
-                                                    leaseId: widget.leaseId,
-                                                  )));
-                                    },
-                                    child: Text(
-                                      'Add Cards',
-                                      style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 12
-                                              : 18,
-                                          color: blueColor),
-                                    ))),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Container(
-                              height: MediaQuery.of(context).size.width < 500
-                                  ? 36
-                                  : 45,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(width: 1),
-                                  borderRadius: BorderRadius.circular(10.0)),
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0)),
-                                      elevation: 0,
-                                      backgroundColor: Colors.white),
-                                  onPressed: () async {
-                                    final value = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => MakePayment(
-                                                  leaseId: widget.leaseId,
-                                                  tenantId: widget.tenantId,
-                                                )));
-                                    if (value == true) {
-                                      setState(() {
-                                        _leaseLedgerFuture = LeaseRepository()
-                                            .fetchLeaseLedger(leaseId: widget.leaseId);
-                                      });
-                                    }
-                                  },
-                                  child: Text(
-                                    'Make Payment',
-                                    style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 12
-                                                : 18,
-                                        color: blueColor),
-                                  ))),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          if (widget.status == 'Active')
-                          Container(
-                              height: MediaQuery.of(context).size.width < 500
-                                  ? 34
-                                  : 45,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(width: 1),
-                                  borderRadius: BorderRadius.circular(10.0)),
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0)),
-                                      elevation: 0,
-                                      backgroundColor: Colors.white),
-                                  onPressed: () async {
-                                    final value = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => enterCharge(
-                                                  leaseId: widget.leaseId,
-                                                )));
-                                    if (value == true) {
-                                      setState(() {
-                                        _leaseLedgerFuture = LeaseRepository()
-                                            .fetchLeaseLedger(leaseId: widget.leaseId);
-                                      });
-                                    }
-                                  },
-                                  child: Text(
-                                    'Enter Charge',
-                                    style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 12
-                                                : 18,
-                                        color: blueColor),
-                                  ))),
-                        ],
-                      ),
+                padding: const EdgeInsets.only(right: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    if (!isFreePlan && widget.status == 'Active')
+                      Container(
+                          height:
+                              MediaQuery.of(context).size.width < 500 ? 36 : 45,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(width: 1),
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(10.0)),
+                                  elevation: 0,
+                                  backgroundColor: Colors.white),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => AddCard(
+                                              leaseId: widget.leaseId,
+                                            )));
+                              },
+                              child: Text(
+                                'Add Cards',
+                                style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 12
+                                            : 18,
+                                    color: blueColor),
+                              ))),
+                    SizedBox(
+                      width: 5,
                     ),
-
+                    Container(
+                        height:
+                            MediaQuery.of(context).size.width < 500 ? 36 : 45,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(width: 1),
+                            borderRadius: BorderRadius.circular(10.0)),
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0)),
+                                elevation: 0,
+                                backgroundColor: Colors.white),
+                            onPressed: () async {
+                              final value = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MakePayment(
+                                            leaseId: widget.leaseId,
+                                            tenantId: widget.tenantId,
+                                          )));
+                              if (value == true) {
+                                setState(() {
+                                  _leaseLedgerFuture = LeaseRepository()
+                                      .fetchLeaseLedger(
+                                          leaseId: widget.leaseId);
+                                });
+                              }
+                            },
+                            child: Text(
+                              'Make Payment',
+                              style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 12
+                                          : 18,
+                                  color: blueColor),
+                            ))),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    if (widget.status == 'Active')
+                      Container(
+                          height:
+                              MediaQuery.of(context).size.width < 500 ? 34 : 45,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(width: 1),
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(10.0)),
+                                  elevation: 0,
+                                  backgroundColor: Colors.white),
+                              onPressed: () async {
+                                final value = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => enterCharge(
+                                              leaseId: widget.leaseId,
+                                            )));
+                                if (value == true) {
+                                  setState(() {
+                                    _leaseLedgerFuture = LeaseRepository()
+                                        .fetchLeaseLedger(
+                                            leaseId: widget.leaseId);
+                                  });
+                                }
+                              },
+                              child: Text(
+                                'Enter Charge',
+                                style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 12
+                                            : 18,
+                                    color: blueColor),
+                              ))),
+                  ],
+                ),
+              ),
               const SizedBox(
                 height: 6,
               ),
@@ -1647,12 +1683,19 @@ class _FinancialTableState extends State<FinancialTable> {
                       } else {
                         final leaseLedger = snapshot.data!;
                         var data = leaseLedger.data!.toList();
-                      //final data = data.reversed.toList();
-                        if (searchvalue != null && searchvalue!.isNotEmpty && searchvalue != "All") {
-                          data = data.where((lease) =>
-                          lease.type!.toLowerCase().contains(searchvalue!.toLowerCase()) ||
-                              lease.createdAt!.toLowerCase().contains(searchvalue!.toLowerCase())
-                          ).toList();
+                        //final data = data.reversed.toList();
+                        if (searchvalue != null &&
+                            searchvalue!.isNotEmpty &&
+                            searchvalue != "All") {
+                          data = data
+                              .where((lease) =>
+                                  lease.type!
+                                      .toLowerCase()
+                                      .contains(searchvalue!.toLowerCase()) ||
+                                  lease.createdAt!
+                                      .toLowerCase()
+                                      .contains(searchvalue!.toLowerCase()))
+                              .toList();
                         }
                         print("calling");
                         // if (_fromDateController.text.isNotEmpty && _toDateController.text.isNotEmpty) {
@@ -1672,27 +1715,34 @@ class _FinancialTableState extends State<FinancialTable> {
                         //   }
                         // }
 
-                        if (_fromDateController.text.isNotEmpty && _toDateController.text.isNotEmpty) {
+                        if (_fromDateController.text.isNotEmpty &&
+                            _toDateController.text.isNotEmpty) {
                           try {
                             // Use DateFormat to parse the dates
                             print(_fromDateController.text);
-                            DateTime fromDate = DateFormat('yyyy-MM-dd').parse(_fromDateController.text);
-                            DateTime toDate = DateFormat('yyyy-MM-dd').parse(_toDateController.text);
-                          
+                            DateTime fromDate = DateFormat('yyyy-MM-dd')
+                                .parse(_fromDateController.text);
+                            DateTime toDate = DateFormat('yyyy-MM-dd')
+                                .parse(_toDateController.text);
 
                             if (fromDate.isAtSameMomentAs(toDate)) {
                               // If both dates are the same, only include leases with the same date
                               data = data.where((lease) {
-                                DateTime leaseDate = DateFormat('yyyy-MM-dd').parse(lease.entry!.first.date!);
-                               
+                                DateTime leaseDate = DateFormat('yyyy-MM-dd')
+                                    .parse(lease.entry!.first.date!);
+
                                 return leaseDate.isAtSameMomentAs(fromDate);
                               }).toList();
                             } else {
                               // If dates are different, use the original condition
                               data = data.where((lease) {
-                                DateTime leaseDate = DateFormat('yyyy-MM-dd').parse(lease.entry!.first.date!);
-                              
-                                return (leaseDate.isAfter(fromDate.subtract(Duration(days: 1))) && leaseDate.isBefore(toDate.add(Duration(days: 1))));
+                                DateTime leaseDate = DateFormat('yyyy-MM-dd')
+                                    .parse(lease.entry!.first.date!);
+
+                                return (leaseDate.isAfter(
+                                        fromDate.subtract(Duration(days: 1))) &&
+                                    leaseDate.isBefore(
+                                        toDate.add(Duration(days: 1))));
                               }).toList();
                             }
                           } catch (e) {
@@ -1700,7 +1750,7 @@ class _FinancialTableState extends State<FinancialTable> {
                           }
                         }
 
-                       sortData(data);
+                        sortData(data);
                         final totalPages = (data.length / itemsPerPage).ceil();
                         final currentPageData = data
                             .skip(currentPage * itemsPerPage)
@@ -1713,7 +1763,6 @@ class _FinancialTableState extends State<FinancialTable> {
                               const SizedBox(
                                 height: 6,
                               ),
-
                               Expanded(
                                 flex: 0,
                                 child: Padding(
@@ -1726,20 +1775,24 @@ class _FinancialTableState extends State<FinancialTable> {
                                       Expanded(
                                         child: Material(
                                           elevation: 3,
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                           child: Container(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 10),
-                                            height:
-                                            MediaQuery.of(context).size.width <
-                                                500
+                                            height: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
                                                 ? 48
                                                 : 50,
                                             decoration: BoxDecoration(
                                               color: Colors.white,
-                                              borderRadius: BorderRadius.circular(8),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                               border: Border.all(
-                                                  color: const Color(0xFF8A95A8)),
+                                                  color:
+                                                      const Color(0xFF8A95A8)),
                                             ),
                                             child: TextField(
                                               onChanged: (value) {
@@ -1758,49 +1811,69 @@ class _FinancialTableState extends State<FinancialTable> {
                                         ),
                                       ),
                                       const SizedBox(width: 16),
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: blueColor,
-                                        ),
-                                        onPressed: () {},
-                                        child: PopupMenuButton<String>(
-                                          onSelected: (value) async {
-                                            // Add your export logic here based on the selected value
-                                            if (value == 'PDF') {
-                                              print('pdf');
-                                              generateWorkOrderPdf(data);
-                                              // Export as PDF
-                                            } else if (value == 'XLSX') {
-                                              print('XLSX');
-                                              generateWorkOrderExcel(data);
-                                              // Export as XLSX
-                                            } else if (value == 'CSV') {
-                                              print('CSV');
-                                              generateWorkOrderCsv(data);
-                                              // Export as CSV
-                                            }
-                                          },
-                                          itemBuilder: (BuildContext context) =>
-                                              <PopupMenuEntry<String>>[
-                                            const PopupMenuItem<String>(
-                                              value: 'PDF',
-                                              child: Text('PDF'),
-                                            ),
-                                            const PopupMenuItem<String>(
-                                              value: 'XLSX',
-                                              child: Text('XLSX'),
-                                            ),
-                                            const PopupMenuItem<String>(
-                                              value: 'CSV',
-                                              child: Text('CSV'),
-                                            ),
-                                          ],
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text('Export'),
-                                              Icon(Icons.arrow_drop_down),
+                                      Container(
+                                        height: 45,
+                                        width: 110,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0)),
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: blueColor,
+                                          ),
+                                          onPressed: () {},
+                                          child: PopupMenuButton<String>(
+                                            onSelected: (value) async {
+                                              // Add your export logic here based on the selected value
+                                              if (value == 'PDF') {
+                                                print('pdf');
+                                                generateWorkOrderPdf(data);
+                                                // Export as PDF
+                                              } else if (value == 'XLSX') {
+                                                print('XLSX');
+                                                generateWorkOrderExcel(data);
+                                                // Export as XLSX
+                                              } else if (value == 'CSV') {
+                                                print('CSV');
+                                                generateWorkOrderCsv(data);
+                                                // Export as CSV
+                                              }
+                                            },
+                                            itemBuilder:
+                                                (BuildContext context) =>
+                                                    <PopupMenuEntry<String>>[
+                                              const PopupMenuItem<String>(
+                                                value: 'PDF',
+                                                child: Text('PDF'),
+                                              ),
+                                              const PopupMenuItem<String>(
+                                                value: 'XLSX',
+                                                child: Text('XLSX'),
+                                              ),
+                                              const PopupMenuItem<String>(
+                                                value: 'CSV',
+                                                child: Text('CSV'),
+                                              ),
                                             ],
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  'Export',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 15,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 5,
+                                                ),
+                                                Icon(
+                                                  Icons.arrow_drop_down,
+                                                  size: 25,
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -1818,159 +1891,362 @@ class _FinancialTableState extends State<FinancialTable> {
                                 //   borderRadius: BorderRadius.circular(10.0),
                                 // ),
                                 child: Padding(
-                                  padding: const EdgeInsets.all(10.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5, horizontal: 5),
                                   child: Form(
                                     key: _formKey,
                                     child: screenWidth > 500
-                                        ?
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                        ? Row(
                                             children: [
-                                              Text('From',
-                                                  style: TextStyle(
-                                                      color: Colors.grey[600],
-                                                      fontSize: 15,
-                                                      fontWeight: FontWeight.w600)),
-                                              SizedBox(height: 5),
-                                              TextFormField(
-                                                controller: _fromDateController,
-                                                readOnly: true,
-                                                onTap: () =>_selectfromDate(context, _fromDateController),
-                                                decoration: InputDecoration(
-                                                  hintText: 'yyyy-mm-dd',
-                                                  suffixIcon: Icon(Icons.calendar_today),
-                                                  border: OutlineInputBorder(),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(width: 40),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text('To',
-                                                  style: TextStyle(
-                                                      color: Colors.grey[600],
-                                                      fontSize: 15,
-                                                      fontWeight: FontWeight.w600)),
-                                              SizedBox(height: 5),
-                                              TextFormField(
-                                                controller: _toDateController,
-                                                readOnly: true,
-                                                onTap: () => _selectendDate(context, _toDateController),
-                                                decoration: InputDecoration(
-                                                  hintText: 'dd-mm-yyyy',
-                                                  suffixIcon: Icon(Icons.calendar_today),
-                                                  border: OutlineInputBorder(),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-
-
-                                      ],
-                                    )
-                                        : Column(
-                                      children: [
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Expanded(
-                                              child: Container(
+                                              Expanded(
                                                 child: Column(
                                                   crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Text('From',
                                                         style: TextStyle(
-                                                            color: Colors.grey[600],
+                                                            color: Colors
+                                                                .grey[600],
                                                             fontSize: 15,
-                                                            fontWeight: FontWeight.w600)),
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600)),
                                                     SizedBox(height: 5),
-                                                    TextFormField(
-                                                      controller: _fromDateController,
-                                                     // initialValue: fdate,
-                                                      readOnly: true,
-                                                      onTap: () => _selectfromDate(context, _fromDateController),
-                                                      decoration: InputDecoration(
-                                                        hintText: 'dd-mm-yyyy',
-                                                        suffixIcon: Icon(Icons.calendar_today),
-                                                        border: OutlineInputBorder(),
+                                                    Container(
+                                                      child: TextFormField(
+                                                        controller:
+                                                            _fromDateController,
+                                                        readOnly: true,
+                                                        onTap: () =>
+                                                            _selectfromDate(
+                                                                context,
+                                                                _fromDateController),
+                                                        decoration:
+                                                            InputDecoration(
+                                                          hintText:
+                                                              'yyyy-mm-dd',
+                                                          suffixIcon: Icon(Icons
+                                                              .calendar_today),
+                                                          border:
+                                                              OutlineInputBorder(),
+                                                        ),
                                                       ),
                                                     ),
                                                   ],
                                                 ),
                                               ),
-                                            ),
-                                            SizedBox(
-                                              width: 16,
-                                            ),
-                                            Expanded(
-                                              child: Container(
+                                              SizedBox(width: 40),
+                                              Expanded(
                                                 child: Column(
                                                   crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Text('To',
                                                         style: TextStyle(
-                                                            color: Colors.grey[600],
+                                                            color: Colors
+                                                                .grey[600],
                                                             fontSize: 15,
-                                                            fontWeight: FontWeight.w600)),
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600)),
                                                     SizedBox(height: 5),
                                                     TextFormField(
-                                                      controller: _toDateController,
+                                                      controller:
+                                                          _toDateController,
                                                       readOnly: true,
-
-                                                      onTap: () {
-
-                                                        _selectendDate(context, _toDateController);
-
-                                                        },
-                                                      decoration: InputDecoration(
+                                                      onTap: () =>
+                                                          _selectendDate(
+                                                              context,
+                                                              _toDateController),
+                                                      decoration:
+                                                          InputDecoration(
                                                         hintText: 'dd-mm-yyyy',
-                                                        suffixIcon: Icon(Icons.calendar_today),
-                                                        border: OutlineInputBorder(),
+                                                        suffixIcon: Icon(Icons
+                                                            .calendar_today),
+                                                        border:
+                                                            OutlineInputBorder(),
                                                       ),
                                                     ),
                                                   ],
                                                 ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          )
+                                        : Column(
+                                            children: [
+                                              Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Expanded(
+                                                    child: Container(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          // Text('From',
+                                                          //     style: TextStyle(
+                                                          //         color: blueColor,
+                                                          //         fontSize: 15,
+                                                          //         fontWeight: FontWeight.w600)),
+                                                          // SizedBox(height: 4),
+
+                                                          Material(
+                                                            elevation: 2,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.0),
+                                                            child: Container(
+                                                              height: 55,
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          16.0,
+                                                                      vertical:
+                                                                          2.5),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .white,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8.0),
+                                                                boxShadow: [
+                                                                  BoxShadow(
+                                                                    color: Colors
+                                                                        .black
+                                                                        .withOpacity(
+                                                                            0.2),
+                                                                    offset:
+                                                                        Offset(
+                                                                            4,
+                                                                            4),
+                                                                    blurRadius:
+                                                                        3,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              child:
+                                                                  TextFormField(
+                                                                controller:
+                                                                    _fromDateController,
+                                                                // initialValue: fdate,
+                                                                readOnly: true,
+                                                                onTap: () =>
+                                                                    _selectfromDate(
+                                                                        context,
+                                                                        _fromDateController),
+                                                                decoration:
+                                                                    InputDecoration(
+                                                                  // contentPadding: EdgeInsets.all(8.0),
+                                                                  // contentPadding: EdgeInsets.symmetric(),
+                                                                  suffixIconConstraints: BoxConstraints(
+                                                                      maxWidth:
+                                                                          20,
+                                                                      maxHeight:
+                                                                          20,
+                                                                      minHeight:
+                                                                          20,
+                                                                      minWidth:
+                                                                          20),
+                                                                  hintStyle: TextStyle(
+                                                                      fontSize:
+                                                                          15,
+                                                                      color: Color(
+                                                                          0xFFb0b6c3)),
+                                                                  border:
+                                                                      InputBorder
+                                                                          .none,
+                                                                  hintText:
+                                                                      'From date',
+                                                                  suffixIcon:
+                                                                      IconButton(
+                                                                    padding: EdgeInsets
+                                                                        .symmetric(
+                                                                            vertical:
+                                                                                1),
+                                                                    iconSize:
+                                                                        20,
+                                                                    icon: Icon(Icons
+                                                                        .calendar_today),
+                                                                    onPressed:
+                                                                        () {},
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 16,
+                                                  ),
+                                                  Expanded(
+                                                    child: Container(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          // Text('To',
+                                                          //     style: TextStyle(
+                                                          //         color: blueColor,
+                                                          //         fontSize: 15,
+                                                          //         fontWeight: FontWeight.w600)),
+                                                          // SizedBox(height: 4),
+
+                                                          Material(
+                                                            elevation: 2,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.0),
+                                                            child: Container(
+                                                              height: 55,
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          16.0,
+                                                                      vertical:
+                                                                          2.5),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .white,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8.0),
+                                                                boxShadow: [
+                                                                  BoxShadow(
+                                                                    color: Colors
+                                                                        .black
+                                                                        .withOpacity(
+                                                                            0.2),
+                                                                    offset:
+                                                                        Offset(
+                                                                            4,
+                                                                            4),
+                                                                    blurRadius:
+                                                                        3,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              child:
+                                                                  TextFormField(
+                                                                controller:
+                                                                    _toDateController,
+                                                                readOnly: true,
+                                                                onTap: () {
+                                                                  _selectendDate(
+                                                                      context,
+                                                                      _toDateController);
+                                                                },
+                                                                decoration:
+                                                                    InputDecoration(
+                                                                  // contentPadding: EdgeInsets.all(8.0),
+                                                                  // contentPadding: EdgeInsets.symmetric(),
+                                                                  suffixIconConstraints: BoxConstraints(
+                                                                      maxWidth:
+                                                                          20,
+                                                                      maxHeight:
+                                                                          20,
+                                                                      minHeight:
+                                                                          20,
+                                                                      minWidth:
+                                                                          20),
+                                                                  hintStyle: TextStyle(
+                                                                      fontSize:
+                                                                          15,
+                                                                      color: Color(
+                                                                          0xFFb0b6c3)),
+                                                                  border:
+                                                                      InputBorder
+                                                                          .none,
+                                                                  hintText:
+                                                                      'To date',
+                                                                  suffixIcon:
+                                                                      IconButton(
+                                                                    padding: EdgeInsets
+                                                                        .symmetric(
+                                                                            vertical:
+                                                                                1),
+                                                                    iconSize:
+                                                                        20,
+                                                                    icon: Icon(Icons
+                                                                        .calendar_today),
+                                                                    onPressed:
+                                                                        () {},
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                            ],
+                                          ),
+                                  ),
+                                ),
+                              ),
+                              if (currentPageData.length == 0)
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * .3,
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          "assets/images/no_data.jpg",
+                                          height: 200,
+                                          width: 200,
                                         ),
                                         SizedBox(
                                           height: 10,
                                         ),
-
+                                        Text(
+                                          "No Data Available",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor,
+                                              fontSize: 16),
+                                        )
                                       ],
                                     ),
                                   ),
                                 ),
-                              ),
-                              SizedBox(height: 10),
-                              _buildHeaders(),
+                              // SizedBox(height: 5),
+                              if (currentPageData.length > 0) _buildHeaders(),
                               const SizedBox(height: 20),
                               Container(
                                 decoration: BoxDecoration(
                                     border: Border.all(
                                         color:
-                                        Color.fromRGBO(
-                                            152, 162, 179, .5)
-
-
-)),
+                                            Color.fromRGBO(152, 162, 179, .5))),
                                 // decoration: BoxDecoration(
                                 //   border: Border.all(color: blueColor),
                                 // ),
                                 child: Column(
-                                  children:
-                                  currentPageData.asMap().entries.map((entry) {
+                                  children: currentPageData
+                                      .asMap()
+                                      .entries
+                                      .map((entry) {
                                     int index = entry.key;
                                     bool isExpanded = expandedIndex == index;
                                     Data data = entry.value;
@@ -2041,10 +2317,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                             : FontAwesomeIcons
                                                                 .sortDown,
                                                         size: 20,
-                                                        color: blueColor
-
-
-,
+                                                        color: blueColor,
                                                       ),
                                                     ),
                                                   ),
@@ -2091,8 +2364,9 @@ class _FinancialTableState extends State<FinancialTable> {
                                                   ),
                                                   Expanded(
                                                     child: Text(
-                                                      dateProvider.formatCurrentDate(
-                                                          '${data.entry!.first.date}'),
+                                                      dateProvider
+                                                          .formatCurrentDate(
+                                                              '${data.entry!.first.date}'),
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
@@ -2187,17 +2461,15 @@ class _FinancialTableState extends State<FinancialTable> {
                                                               Text.rich(
                                                                 TextSpan(
                                                                   children: [
-                                                                     TextSpan(
+                                                                    TextSpan(
                                                                       text:
                                                                           'Amount : ',
                                                                       style:
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: blueColor
-
-
-,
+                                                                        color:
+                                                                            blueColor,
                                                                       ),
                                                                     ),
                                                                     TextSpan(
@@ -2219,17 +2491,15 @@ class _FinancialTableState extends State<FinancialTable> {
                                                               Text.rich(
                                                                 TextSpan(
                                                                   children: [
-                                                                     TextSpan(
+                                                                    TextSpan(
                                                                       text:
                                                                           'Tenant : ',
                                                                       style:
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: blueColor
-
-
-,
+                                                                        color:
+                                                                            blueColor,
                                                                       ),
                                                                     ),
                                                                     TextSpan(
@@ -2287,17 +2557,15 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                   Text.rich(
                                                                     TextSpan(
                                                                       children: [
-                                                                         TextSpan(
+                                                                        TextSpan(
                                                                           text:
                                                                               'Account : ',
                                                                           style:
                                                                               TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.bold,
-                                                                            color: blueColor
-
-
-,
+                                                                            color:
+                                                                                blueColor,
                                                                           ),
                                                                         ),
                                                                       ],
@@ -2316,17 +2584,15 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                   Text.rich(
                                                                     TextSpan(
                                                                       children: [
-                                                                         TextSpan(
+                                                                        TextSpan(
                                                                           text:
                                                                               '  Amount : ',
                                                                           style:
                                                                               TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.bold,
-                                                                            color: blueColor
-
-
-,
+                                                                            color:
+                                                                                blueColor,
                                                                           ),
                                                                         ),
                                                                       ],
@@ -2504,7 +2770,11 @@ class _FinancialTableState extends State<FinancialTable> {
                                                         ),
                                                       ),*/
                                                     if (data.type != "Refund" &&
-                                                        data.type != "Charge"  &&  (data.paymenttype =="Card" || data.paymenttype =="ACH"))
+                                                        data.type != "Charge" &&
+                                                        (data.paymenttype ==
+                                                                "Card" ||
+                                                            data.paymenttype ==
+                                                                "ACH"))
                                                       Row(
                                                         //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                         children: [
@@ -2593,8 +2863,9 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                     true) {
                                                                   setState(() {
                                                                     _leaseLedgerFuture =
-                                                                        LeaseRepository()
-                                                                            .fetchLeaseLedger(leaseId: widget.leaseId);
+                                                                        LeaseRepository().fetchLeaseLedger(
+                                                                            leaseId:
+                                                                                widget.leaseId);
                                                                   });
                                                                 }
                                                                 // var check = await Navigator.push(
@@ -2702,30 +2973,35 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           ),
                                                         ],
                                                       ),
-                                                    if (data.type == "Payment" &&  (data.paymenttype !="Card" && data.paymenttype !="ACH"))
+                                                    if (data.type ==
+                                                            "Payment" &&
+                                                        (data.paymenttype !=
+                                                                "Card" &&
+                                                            data.paymenttype !=
+                                                                "ACH"))
                                                       Row(
                                                         //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                         children: [
                                                           Expanded(
                                                             child:
-                                                            GestureDetector(
+                                                                GestureDetector(
                                                               onTap: () async {
                                                                 final value = await Navigator.push(
                                                                     context,
                                                                     MaterialPageRoute(
                                                                         builder: (context) => EditMakePayment(
-                                                                          leaseId: widget.leaseId,
-                                                                          tenantId: data.tenantData["tenant_id"],
-                                                                          isEdit: true,
-                                                                          data: data,
-
-                                                                        )));
+                                                                              leaseId: widget.leaseId,
+                                                                              tenantId: data.tenantData["tenant_id"],
+                                                                              isEdit: true,
+                                                                              data: data,
+                                                                            )));
                                                                 if (value ==
                                                                     true) {
                                                                   setState(() {
                                                                     _leaseLedgerFuture =
-                                                                        LeaseRepository()
-                                                                            .fetchLeaseLedger(leaseId: widget.leaseId);
+                                                                        LeaseRepository().fetchLeaseLedger(
+                                                                            leaseId:
+                                                                                widget.leaseId);
                                                                   });
                                                                 }
                                                                 // var check = await Navigator.push(
@@ -2749,22 +3025,22 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                 height: 40,
                                                                 decoration: BoxDecoration(
                                                                     color: Colors
-                                                                        .grey[
-                                                                    350]), // color:Colors.grey[100],
+                                                                            .grey[
+                                                                        350]), // color:Colors.grey[100],
                                                                 child: Row(
                                                                   mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
+                                                                      MainAxisAlignment
+                                                                          .center,
                                                                   crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
+                                                                      CrossAxisAlignment
+                                                                          .center,
                                                                   children: [
                                                                     FaIcon(
                                                                       FontAwesomeIcons
                                                                           .edit,
                                                                       size: 15,
                                                                       color:
-                                                                      blueColor,
+                                                                          blueColor,
                                                                     ),
                                                                     SizedBox(
                                                                       width: 10,
@@ -2773,9 +3049,9 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                       "Edit",
                                                                       style: TextStyle(
                                                                           color:
-                                                                          blueColor,
+                                                                              blueColor,
                                                                           fontWeight:
-                                                                          FontWeight.bold),
+                                                                              FontWeight.bold),
                                                                     ),
                                                                   ],
                                                                 ),
@@ -2787,7 +3063,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           ),
                                                           Expanded(
                                                             child:
-                                                            GestureDetector(
+                                                                GestureDetector(
                                                               onTap: () {
                                                                 _showAlertpayment(
                                                                     context,
@@ -2798,22 +3074,22 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                 height: 40,
                                                                 decoration: BoxDecoration(
                                                                     color: Colors
-                                                                        .grey[
-                                                                    350]),
+                                                                            .grey[
+                                                                        350]),
                                                                 child: Row(
                                                                   mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
+                                                                      MainAxisAlignment
+                                                                          .center,
                                                                   crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
+                                                                      CrossAxisAlignment
+                                                                          .center,
                                                                   children: [
                                                                     FaIcon(
                                                                       FontAwesomeIcons
                                                                           .trashCan,
                                                                       size: 15,
                                                                       color:
-                                                                      blueColor,
+                                                                          blueColor,
                                                                     ),
                                                                     SizedBox(
                                                                       width: 10,
@@ -2822,9 +3098,9 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                       "Delete",
                                                                       style: TextStyle(
                                                                           color:
-                                                                          blueColor,
+                                                                              blueColor,
                                                                           fontWeight:
-                                                                          FontWeight.bold),
+                                                                              FontWeight.bold),
                                                                     )
                                                                   ],
                                                                 ),
@@ -2844,108 +3120,112 @@ class _FinancialTableState extends State<FinancialTable> {
                                 ),
                               ),
                               SizedBox(height: 20),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Row(
-                                    children: [
-                                      // Text('Rows per page:'),
-                                      SizedBox(width: 10),
-                                      Material(
-                                        elevation: 3,
-                                        child: Container(
-                                          height: 40,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 12.0),
-                                          decoration: BoxDecoration(
-                                            border:
-                                            Border.all(color: Colors.grey),
-                                          ),
-                                          child: DropdownButtonHideUnderline(
-                                            child: DropdownButton<int>(
-                                              value: itemsPerPage,
-                                              items: itemsPerPageOptions
-                                                  .map((int value) {
-                                                return DropdownMenuItem<int>(
-                                                  value: value,
-                                                  child: Text(value.toString()),
-                                                );
-                                              }).toList(),
-                                              onChanged: data.length >
-                                                  itemsPerPageOptions
-                                                      .first // Condition to check if dropdown should be enabled
-                                                  ? (newValue) {
-                                                setState(() {
-                                                  itemsPerPage = newValue!;
-                                                  currentPage =
-                                                  0; // Reset to first page when items per page change
-                                                });
-                                              }
-                                                  : null,
+                              if (currentPageData.length > 0)
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        // Text('Rows per page:'),
+                                        SizedBox(width: 10),
+                                        Material(
+                                          elevation: 3,
+                                          child: Container(
+                                            height: 40,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.grey),
+                                            ),
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<int>(
+                                                value: itemsPerPage,
+                                                items: itemsPerPageOptions
+                                                    .map((int value) {
+                                                  return DropdownMenuItem<int>(
+                                                    value: value,
+                                                    child:
+                                                        Text(value.toString()),
+                                                  );
+                                                }).toList(),
+                                                onChanged: data.length >
+                                                        itemsPerPageOptions
+                                                            .first // Condition to check if dropdown should be enabled
+                                                    ? (newValue) {
+                                                        setState(() {
+                                                          itemsPerPage =
+                                                              newValue!;
+                                                          currentPage =
+                                                              0; // Reset to first page when items per page change
+                                                        });
+                                                      }
+                                                    : null,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        icon: FaIcon(
-                                          FontAwesomeIcons.circleChevronLeft,
-                                          color: currentPage == 0
-                                              ? Colors.grey
-                                              : blueColor,
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronLeft,
+                                            color: currentPage == 0
+                                                ? Colors.grey
+                                                : blueColor,
+                                          ),
+                                          onPressed: currentPage == 0
+                                              ? null
+                                              : () {
+                                                  setState(() {
+                                                    currentPage--;
+                                                  });
+                                                },
                                         ),
-                                        onPressed: currentPage == 0
-                                            ? null
-                                            : () {
-                                          setState(() {
-                                            currentPage--;
-                                          });
-                                        },
-                                      ),
-                                      // IconButton(
-                                      //   icon: Icon(Icons.arrow_back),
-                                      //   onPressed: currentPage > 0
-                                      //       ? () {
-                                      //     setState(() {
-                                      //       currentPage--;
-                                      //     });
-                                      //   }
-                                      //       : null,
-                                      // ),
-                                      Text(
-                                          'Page ${currentPage + 1} of $totalPages'),
-                                      // IconButton(
-                                      //   icon: Icon(Icons.arrow_forward),
-                                      //   onPressed: currentPage < totalPages - 1
-                                      //       ? () {
-                                      //     setState(() {
-                                      //       currentPage++;
-                                      //     });
-                                      //   }
-                                      //       : null,
-                                      // ),
-                                      IconButton(
-                                        icon: FaIcon(
-                                          FontAwesomeIcons.circleChevronRight,
-                                          color: currentPage < totalPages - 1
-                                              ? blueColor
-                                              : Colors.grey,
+                                        // IconButton(
+                                        //   icon: Icon(Icons.arrow_back),
+                                        //   onPressed: currentPage > 0
+                                        //       ? () {
+                                        //     setState(() {
+                                        //       currentPage--;
+                                        //     });
+                                        //   }
+                                        //       : null,
+                                        // ),
+                                        Text(
+                                            'Page ${currentPage + 1} of $totalPages'),
+                                        // IconButton(
+                                        //   icon: Icon(Icons.arrow_forward),
+                                        //   onPressed: currentPage < totalPages - 1
+                                        //       ? () {
+                                        //     setState(() {
+                                        //       currentPage++;
+                                        //     });
+                                        //   }
+                                        //       : null,
+                                        // ),
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronRight,
+                                            color: currentPage < totalPages - 1
+                                                ? blueColor
+                                                : Colors.grey,
+                                          ),
+                                          onPressed:
+                                              currentPage < totalPages - 1
+                                                  ? () {
+                                                      setState(() {
+                                                        currentPage++;
+                                                      });
+                                                    }
+                                                  : null,
                                         ),
-                                        onPressed: currentPage < totalPages - 1
-                                            ? () {
-                                          setState(() {
-                                            currentPage++;
-                                          });
-                                        }
-                                            : null,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                             ],
                           ),
                         );
@@ -3035,21 +3315,12 @@ class _FinancialTableState extends State<FinancialTable> {
                                               TableRow(
                                                 decoration: BoxDecoration(
                                                   border: Border(
-                                                    left:  BorderSide(
-                                                        color: blueColor
-
-
-),
-                                                    right:  BorderSide(
-                                                        color: blueColor
-
-
-),
-                                                    top:  BorderSide(
-                                                        color: blueColor
-
-
-),
+                                                    left: BorderSide(
+                                                        color: blueColor),
+                                                    right: BorderSide(
+                                                        color: blueColor),
+                                                    top: BorderSide(
+                                                        color: blueColor),
                                                     bottom: i ==
                                                             _pagedData.length -
                                                                 1
@@ -3207,27 +3478,11 @@ class _FinancialTableState extends State<FinancialTable> {
                                       TableRow(
                                         decoration: BoxDecoration(
                                           border: Border(
-                                            left:  BorderSide(
-                                                color: blueColor
-
-
-),
-                                            right:  BorderSide(
-                                                color: blueColor
-
-
-),
-                                            top:  BorderSide(
-                                                color: blueColor
-
-
-),
+                                            left: BorderSide(color: blueColor),
+                                            right: BorderSide(color: blueColor),
+                                            top: BorderSide(color: blueColor),
                                             bottom: i == _pagedData.length - 1
-                                                ?  BorderSide(
-                                                    color: blueColor
-
-
-)
+                                                ? BorderSide(color: blueColor)
                                                 : BorderSide.none,
                                           ),
                                         ),
@@ -3300,19 +3555,13 @@ class _FinancialTableState extends State<FinancialTable> {
                                           decoration: BoxDecoration(
                                             border: Border(
                                               left: BorderSide(
-                                                color: blueColor
-
-
-,
+                                                color: blueColor,
                                                 width: 1.0,
                                               ),
                                               bottom:
                                                   (i == _pagedData.length - 1)
                                                       ? BorderSide(
-                                                          color:blueColor
-
-
-,
+                                                          color: blueColor,
                                                           width: 1.0,
                                                         )
                                                       : BorderSide.none,
@@ -3447,7 +3696,7 @@ class _FinancialTableState extends State<FinancialTable> {
             ],
           ),
         ),
-      ),
+
     );
   }
 
