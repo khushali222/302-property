@@ -10,6 +10,7 @@ import 'package:three_zero_two_property/screens/Profile/Profile_screen.dart';
 import 'package:three_zero_two_property/screens/Login/login_screen.dart';
 import 'package:three_zero_two_property/screens/Plans/plan_screen.dart';
 import 'package:three_zero_two_property/screens/Profile/Settings_screen.dart';
+import 'package:three_zero_two_property/screens/activity/activity_table.dart';
 
 import '../constant/constant.dart';
 import '../screens/notifications/notifications.dart';
@@ -183,6 +184,29 @@ class widget_302 {
                               builder: (context) =>
                               const UserPermissionScreen()));
                         }
+                      },
+                    ),
+                    PopupMenuItem(
+                      child:  Row(
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.clipboardList,
+                            size: 20,
+                            color:blueColor,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text("Activity", style: TextStyle(
+                              color: blueColor
+                          ),),
+                        ],
+                      ),
+                      onTap: () {
+                    //    if (isSettingPageActive != true) {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ActivityTable()));
+                      //  }
                       },
                     ),
                     PopupMenuItem(
