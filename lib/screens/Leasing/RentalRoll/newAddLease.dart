@@ -1871,7 +1871,8 @@ class _addLease3State extends State<addLease3>
                                                         ),
                                                       ),
                                                       child: Center(
-                                                        child: Padding(
+                                                        child:
+                                                        Padding(
                                                           padding:
                                                               const EdgeInsets
                                                                   .only(

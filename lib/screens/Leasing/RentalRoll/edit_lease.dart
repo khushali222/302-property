@@ -160,6 +160,18 @@ class _Edit_leaseState extends State<Edit_lease>
 
         log(formDataRecurringList.toList().toString());
       }
+
+     //
+
+        if (fetchedDetails.one_charge_data != null &&
+          fetchedDetails.one_charge_data!.isNotEmpty) {
+        initialOneTimeList = fetchedDetails.one_charge_data!.map((item) {
+          if (item is Map) {
+            return item.map((key, value) => MapEntry(key.toString(), value.toString()));
+          }
+          return <String, String>{};
+        }).toList();
+      }
     });
 
     _loadUnits(renderId);
@@ -172,6 +184,8 @@ class _Edit_leaseState extends State<Edit_lease>
     //}
   }
 
+  List<Map<String, String>> properties = [];
+
   TextEditingController rentShareControllers = TextEditingController();
 //first container variable
   List<Tenant> selectedTenants = [];
@@ -182,7 +196,8 @@ class _Edit_leaseState extends State<Edit_lease>
   List<Tenant> filteredTenants = [];
   List<bool> selected = [];
   bool _isLoading = true;
-  List<Map<String, String>> properties = [];
+  List<Map<String, dynamic>> initialRecurringList = [];
+  List<Map<String, dynamic>> initialOneTimeList = [];
   List<Map<String, String>> units = [];
   String? _selectedProperty;
   String? _selectedUnit;
@@ -4135,7 +4150,37 @@ class _Edit_leaseState extends State<Edit_lease>
                                             startDateController.text != initialStartDate ||
                                             endDateController.text != initialEndDate ||
                                             _selectedLeaseType != initialSelectedLeaseType ||
-                                            _selectedRent != initialSelectedRent;
+                                            _selectedRent != initialSelectedRent ;
+
+                                            // formDataRecurringList.any((entry) {
+                                            //   final initialEntry = initialRecurringList.map((data)
+                                            //   {
+                                            //     return Entry(
+                                            //       entry_id: data['entry_id'] ?? "",
+                                            //       account: data['account'] ?? '',
+                                            //       amount: double.tryParse(data['amount'] ?? '0.0') ?? 0.0,
+                                            //       chargeType: data['charge_type'] ?? '',
+                                            //       date: data['date'] ?? '',
+                                            //       isRepeatable: data['is_repeatable']?.toLowerCase() == 'true',
+                                            //       memo: data['memo'] ?? '',
+                                            //       rentCycle: data['rent_cycle'],
+                                            //       tenantId: data['tenant_id'],
+                                            //     );
+                                            //   }).toList();
+                                            //
+                                            // }) ||
+                                            // formDataOneTimeList.any((entry) {
+                                            //   final initialEntry = initialOneTimeList.firstWhere(
+                                            //         (e) => e['entry_id'] == entry['entry_id'],
+                                            //     orElse: () => {},
+                                            //   );
+                                            //   return initialEntry.isNotEmpty && (
+                                            //       entry['amount'] != initialEntry['amount'] ||
+                                            //           entry['memo'] != initialEntry['memo']
+                                            //   );
+                                            // });
+
+
 
                                         if (!hasChanges) {
                                          Navigator.pop(context,false);
@@ -4155,7 +4200,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                         log(mergedFormDataList.toString());
 
                                         // Create charge entries from the merged list
-                                        List<Entry> chargeEntries = mergedFormDataList.map((data) {
+                                        List<Entry> chargeEntries = mergedFormDataList.map((data)
+                                        {
                                           return Entry(
                                             entry_id: data['entry_id'] ?? "",
                                             account: data['account'] ?? '',
@@ -6343,7 +6389,8 @@ class _AddTenantState extends State<AddTenant> {
               height: 10,
             ),
             isChecked
-                ? Column(
+                ?
+            Column(
               children: [
                 SizedBox(height: 10.0),
                 Container(
@@ -7604,4 +7651,6 @@ class _CustomDropdownState extends State<CustomDropdown> {
       },
     );
   }
+
+
 }
