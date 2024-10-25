@@ -259,6 +259,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
         provider.setOwnerDetails(Ownersdetails!);
       }
     });
+    isEditable = false;
     // print(widget.rentalId);
     fetchDetails1(widget.rentalId);
   }
@@ -332,8 +333,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
             .setOwnerDetails(Ownersdetails!);
 
         initialAddress = fetchedDetails.rentalAddress!;
-        initialselectedpropertytype = fetchedDetails.propertyTypeData?.propertyType;
-        initialselectedpropertytype = fetchedDetails.propertyTypeData?.propertySubType;
         initialselectedselectedStaff = (fetchedDetails.staffMemberId!.isEmpty
             ? null
             : fetchedDetails.staffMemberId ?? null)!;
@@ -769,6 +768,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
   }
 
   bool showError = false;
+  bool isEditable = false;
   @override
   Widget build(BuildContext context) {
     // // print(selectedIsMultiUnit);
@@ -984,7 +984,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     color: Color(0xFF8A95A8),
                                                   ),
                                                 ),
-                                                onChanged: (String? newValue) {
+                                                onChanged: isEditable ? (String? newValue){
                                                   if (newValue ==
                                                       'Edit_properties') {
                                                     // Prevent the dropdown from changing the selected item
@@ -1375,7 +1375,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     addPropertyGroup();
                                                     propertyTypeError = false;
                                                   }
-                                                },
+                                                }: null,
                                                 items: [
                                                   ...groupedProperties.entries
                                                       .expand((entry) {
@@ -4209,6 +4209,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
 //                         }
 //                         // print(selectedValue);
 //                       },
+
                       onTap: () async {
                         print("calling");
 
@@ -4303,21 +4304,20 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             state.text != initialState ||
                             country.text != initialCountry ||
                             postalcode.text != initialPostalCode ||
-                            firstname.text != initialFirstName ||
-                            comname.text != initialCompanyName ||
-                            primaryemail.text != initialPrimaryEmail ||
-                            alternativeemail.text != initialAlternativeEmail ||
-                            phonenum.text != initialPhoneNumber ||
-                            homenum.text != initialHomeNumber ||
-                            businessnum.text != initialBuisinessNumber ||
-                            state2.text != initialrentalOwnerAddress ||
-                            city2.text != initialrentalOwnercity ||
-                            state2.text != initialrentalOwnerstate ||
-                            county2.text != initialrentalOwnercountry ||
-                            code2.text != initialrentalOwnerpostalCode ||
-                            selectedpropertytype != initialselectedpropertytype ||
-                            selectedpropertytype != initialselectedpropertytype ||
-                            selectedStaff != initialselectedselectedStaff ;
+                            firstname.text != Ownersdetails?.rentalOwnerName ||
+                            comname.text != Ownersdetails?.rentalOwnerCompanyName ||
+                            primaryemail.text != Ownersdetails?.rentalOwnerPrimaryEmail ||
+                            alternativeemail.text != Ownersdetails?.rentalOwnerAlternateEmail ||
+                            phonenum.text != Ownersdetails?.rentalOwnerPhoneNumber ||
+                            homenum.text != Ownersdetails?.rentalOwnerHomeNumber ||
+                            businessnum.text != Ownersdetails?.rentalOwnerBusinessNumber ||
+                            street2.text != Ownersdetails?.streetAddress ||
+                            city2.text != Ownersdetails?.city ||
+                            state2.text != Ownersdetails?.state ||
+                            county2.text != Ownersdetails?.country ||
+                            code2.text != Ownersdetails?.postalCode||
+                           selectedStaff != widget.properties.staffMemberId;
+                            // selectedStaff != initialselectedselectedStaff ;
 
                         if (!hasChanges) {
                           // Show message if no changes detected
@@ -4489,7 +4489,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           rentalState: state.text,
                           rentalCountry: country.text,
                           rentalPostcode: postalcode.text,
-                          staffMemberId: sid,
+                          staffMemberId: selectedStaff,
                           processor_id: processorId,
                         );
 

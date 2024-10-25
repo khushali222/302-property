@@ -1,40 +1,34 @@
 import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
-import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/repository/tenants.dart';
-import 'package:three_zero_two_property/screens/Rental/Tenants/AdminTenantInsurance/AdminTenantInsuranceTable.dart';
-import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
-import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
-import 'package:three_zero_two_property/widgets/titleBar.dart';
-import '../../../Model/tenants.dart';
-import '../../../constant/constant.dart';
-
-import '../../../provider/dateProvider.dart';
-import '../../../widgets/drawer_tiles.dart';
 import 'package:http/http.dart' as http;
+import '../../../Model/upcoming_renewal.dart';
+import '../../../constant/constant.dart';
+import '../../../repository/upcoming_renewal_repo.dart';
+import '../../../widgets/CustomTableShimmer.dart';
+import '../../widgets/appbar.dart';
+import '../../widgets/custom_drawer.dart';
+import '../../../widgets/titleBar.dart';
+import '../Leasing/RentalRoll/RenewLease.dart';
 
-import 'Tenant_summary.dart';
-import 'edit_tenants.dart';
-import '../../../widgets/custom_drawer.dart';
 
-class Tenants_table extends StatefulWidget {
+class Upcomingrenewal extends StatefulWidget {
+  const Upcomingrenewal({super.key});
+
   @override
-  _Tenants_tableState createState() => _Tenants_tableState();
+  State<Upcomingrenewal> createState() => _UpcomingrenewalState();
 }
 
-class _Tenants_tableState extends State<Tenants_table> {
+class _UpcomingrenewalState extends State<Upcomingrenewal> {
   int totalrecords = 0;
-  late Future<List<Tenant>> futureTenants;
+  late Future<List<upcoming_renewal>> futureLeaseRenewal;
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
   bool sortAscending = true;
@@ -47,23 +41,18 @@ class _Tenants_tableState extends State<Tenants_table> {
     100,
   ]; // Options for items per page
 
-  void sortData(List<Tenant> data) {
+  void sortData(List<upcoming_renewal> data) {
     if (sorting1) {
       data.sort((a, b) => ascending1
-          ? a.tenantFirstName!.compareTo(b.tenantFirstName!)
-          : b.tenantFirstName!.compareTo(a.tenantFirstName!));
-    } else if (sorting2) {
-      data.sort((a, b) => ascending2
           ? a.rentalAddress!.compareTo(b.rentalAddress!)
           : b.rentalAddress!.compareTo(a.rentalAddress!));
     } else if (sorting3) {
       data.sort((a, b) => ascending3
-          ? a.tenantPhoneNumber!.compareTo(b.tenantPhoneNumber!)
-          : b.tenantPhoneNumber!.compareTo(a.tenantPhoneNumber!));
+          ? a.remainingDays!.compareTo(b.remainingDays!)
+          : b.remainingDays!.compareTo(a.remainingDays!));
     }
   }
 
-  String? selectedRole;
   int? expandedIndex;
   Set<int> expandedIndices = {};
   late bool isExpanded;
@@ -85,6 +74,12 @@ class _Tenants_tableState extends State<Tenants_table> {
       ),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
+        // leading: Container(
+        //   child: Icon(
+        //     Icons.expand_less,
+        //     color: Colors.transparent,
+        //   ),
+        // ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -95,7 +90,7 @@ class _Tenants_tableState extends State<Tenants_table> {
               ),
             ),
             Expanded(
-              flex: 3,
+              flex: 4,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -120,11 +115,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Name ",
-                            textAlign: TextAlign.center,
+                        ? Text("Property ",
                             style: TextStyle(color: Colors.white))
-                        : Text("Name",
-                            textAlign: TextAlign.center,
+                        : Text("Property",
                             style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
@@ -150,7 +143,7 @@ class _Tenants_tableState extends State<Tenants_table> {
               ),
             ),
             Expanded(
-              flex: 3,
+              flex: 4,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -174,31 +167,14 @@ class _Tenants_tableState extends State<Tenants_table> {
                 },
                 child: Row(
                   children: [
-                    Text("Phone", style: TextStyle(color: Colors.white)),
+                    Text("Tenant", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
-                    ascending2
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
                   ],
                 ),
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -223,10 +199,25 @@ class _Tenants_tableState extends State<Tenants_table> {
                 },
                 child: Row(
                   children: [
-                    Text("Created At",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 14)),
+                    Text("Days", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
+                    ascending3
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -238,8 +229,9 @@ class _Tenants_tableState extends State<Tenants_table> {
   }
 
   final List<String> items = ['Residential', "Commercial", "All"];
-  ConnectivityResult? _connectivityResult ;
+  String? selectedValue;
   String searchvalue = "";
+  ConnectivityResult? _connectivityResult ;
   @override
   void initState() {
     super.initState();
@@ -250,10 +242,9 @@ class _Tenants_tableState extends State<Tenants_table> {
       });
     });
     checkInternet();
-    futureTenants = TenantsRepository().fetchTenants();
-    fetchtenantsadded();
-    fetchCompany();
+    futureLeaseRenewal = Upcoming_renewal_repo().fetchupcomingrenewal();
   }
+
   void checkInternet()async{
 
     var connectiondata;
@@ -263,56 +254,12 @@ class _Tenants_tableState extends State<Tenants_table> {
     });
 
   }
-  void handleEdit(Tenant tenants) async {
-    //Handle edit action
-    print('Edit ${tenants.tenantId}');
-    //
-    // final result = await Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (context) => EditTenants(
-    //            tenants: tenants,
-    //         )));
-    var check = await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => EditTenants(
-                  tenants: tenants,
-                  tenantId: '',
-                )));
-    if (check == true) {
-      setState(() {});
-    }
-    /* if (result == true) {
-      setState(() {
-        futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-      });
-    }*/
-  }
-
-  void _showDeleteAlert(BuildContext context, String id) {
-    TextEditingController reason = TextEditingController();
+  void _showAlert(BuildContext context, String id) {
     Alert(
       context: context,
       type: AlertType.warning,
       title: "Are you sure?",
-      desc: "Once deleted, you will not be able to recover this Tenants!",
-      content: Column(
-        children: <Widget>[
-          SizedBox(height: 10,),
-          SizedBox(
-            height: 45,
-            child: TextField(
-              controller: reason,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter reason for deletion',
-                  contentPadding: EdgeInsets.only(top: 8,left: 15)
-              ),
-            ),
-          ),
-        ],
-      ),
+      desc: "You will not be able to renew this lease!",
       style: AlertStyle(
         backgroundColor: Colors.white,
       ),
@@ -327,39 +274,26 @@ class _Tenants_tableState extends State<Tenants_table> {
         ),
         DialogButton(
           child: Text(
-            "Delete",
+            "Confirm",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            if(reason.text.isEmpty){
-              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
-            }
-           else {
-              await TenantsRepository().deleteTenant(
-                  tenantId: id,
-                  companyName: companyName,
-                  tenantEmail: '',
-                  reason: reason.text);
-              setState(() {
-                futureTenants = TenantsRepository().fetchTenants();
-              });
-              fetchtenantsadded();
-              Navigator.pop(context);
-            }
+            updatenotrenewallease(id);
+            Navigator.pop(context);
           },
           color: Colors.red,
-        ),
+        )
       ],
     ).show();
   }
 
-  List<Tenant> _tableData = [];
+  List<upcoming_renewal> _tableData = [];
   int _rowsPerPage = 10;
   int _currentPage = 0;
   int? _sortColumnIndex;
   bool _sortAscending = true;
 
-  List<Tenant> get _pagedData {
+  List<upcoming_renewal> get _pagedData {
     int startIndex = _currentPage * _rowsPerPage;
     int endIndex = startIndex + _rowsPerPage;
     return _tableData.sublist(startIndex,
@@ -373,8 +307,8 @@ class _Tenants_tableState extends State<Tenants_table> {
     });
   }
 
-  void _sort<T>(Comparable<T> Function(Tenant d) getField, int columnIndex,
-      bool ascending) {
+  void _sort<T>(Comparable<T> Function(upcoming_renewal d) getField,
+      int columnIndex, bool ascending) {
     setState(() {
       _sortColumnIndex = columnIndex;
       _sortAscending = ascending;
@@ -387,15 +321,39 @@ class _Tenants_tableState extends State<Tenants_table> {
     });
   }
 
-  void handleDelete(Tenant tenants) {
-    _showDeleteAlert(context, tenants.tenantId!);
-
-    // Handle delete action
-    print('Delete ${tenants.tenantId}');
-  }
-
+  // Widget _buildHeader<T>(String text, int columnIndex,
+  //     Comparable<T> Function(propertytype d)? getField) {
+  //   return Container(
+  //     height: 70,
+  //     // color: Colors.blue,
+  //     child: TableCell(
+  //       child: InkWell(
+  //         onTap: getField != null
+  //             ? () {
+  //                 _sort(getField, columnIndex, !_sortAscending);
+  //               }
+  //             : null,
+  //         child: Padding(
+  //           padding: const EdgeInsets.all(14.0),
+  //           child: Row(
+  //             children: [
+  //               SizedBox(width: 10),
+  //               Text(text,
+  //                   style:
+  //                       TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+  //               if (_sortColumnIndex == columnIndex)
+  //                 Icon(_sortAscending
+  //                     ? Icons.arrow_drop_down_outlined
+  //                     : Icons.arrow_drop_up_outlined),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
   Widget _buildHeader<T>(String text, int columnIndex,
-      Comparable<T> Function(Tenant d)? getField) {
+      Comparable<T> Function(upcoming_renewal d)? getField) {
     return TableCell(
       child: InkWell(
         onTap: getField != null
@@ -421,26 +379,70 @@ class _Tenants_tableState extends State<Tenants_table> {
     );
   }
 
-  Widget _buildDataCell(String text, Tenant tenants) {
+  // Widget _buildDataCell(String text) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(5.0),
+  //     child: Container(
+  //       height: 50,
+  //       // color: Colors.blue,
+  //       child: TableCell(
+  //         child: Padding(
+  //           padding: const EdgeInsets.all(10.0),
+  //           child: Center(child: Text(text, style: TextStyle(fontSize: 18))),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+  Widget _buildDataCell(String text) {
     return TableCell(
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ResponsiveTenantSummary(
-                      tenants: tenants, tenantId: tenants.tenantId!)));
-        },
-        child: Padding(
-          padding: const EdgeInsets.only(top: 20.0, left: 16),
-          child: Text(text.isEmpty ? "N/A" : text,
-              style: const TextStyle(fontSize: 18)),
-        ),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0, left: 16),
+        child: Text(text, style: const TextStyle(fontSize: 18)),
       ),
     );
   }
 
-  Widget _buildActionsCell(Tenant data) {
+  // Widget _buildActionsCell(propertytype data) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(5.0),
+  //     child: Container(
+  //       height: 50,
+  //       // color: Colors.blue,
+  //       child: TableCell(
+  //         child: Row(
+  //           children: [
+  //             SizedBox(
+  //               width: 20,
+  //             ),
+  //             InkWell(
+  //               onTap: () {
+  //                 handleEdit(data);
+  //               },
+  //               child: FaIcon(
+  //                 FontAwesomeIcons.edit,
+  //                 size: 30,
+  //               ),
+  //             ),
+  //             SizedBox(
+  //               width: 15,
+  //             ),
+  //             InkWell(
+  //               onTap: () {
+  //                 handleDelete(data);
+  //               },
+  //               child: FaIcon(
+  //                 FontAwesomeIcons.trashCan,
+  //                 size: 30,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+  Widget _buildActionsCell(upcoming_renewal data) {
     return TableCell(
       child: Padding(
         padding: const EdgeInsets.all(5.0),
@@ -453,9 +455,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                 width: 20,
               ),
               InkWell(
-                onTap: () {
-                  handleEdit(data);
-                },
+                onTap: () {},
                 child: const FaIcon(
                   FontAwesomeIcons.edit,
                   size: 30,
@@ -465,9 +465,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                 width: 15,
               ),
               InkWell(
-                onTap: () {
-                  handleDelete(data);
-                },
+                onTap: () {},
                 child: const FaIcon(
                   FontAwesomeIcons.trashCan,
                   size: 30,
@@ -566,110 +564,17 @@ class _Tenants_tableState extends State<Tenants_table> {
     );
   }
 
-  int rentalCount = 0;
-  int propertyCountLimit = 0;
-  Future<void> fetchtenantsadded() async {
-    print("calling");
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
-    String? token = prefs.getString('token');
-    final response = await http.get(
-      Uri.parse('${Api_url}/api/tenant/limitation/$id'),
-      headers: {
-        "authorization": "CRM $token",
-        "id": "CRM $id",
-      },
-    );
-    final jsonData = json.decode(response.body);
-    print(jsonData);
-    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
-      print(rentalCount);
-      print(propertyCountLimit);
-      setState(() {
-        rentalCount = jsonData['rentalCount'];
-        print(rentalCount);
-        propertyCountLimit = jsonData['propertyCountLimit'];
-        print(propertyCountLimit);
-      });
-    } else {
-      throw Exception('Failed to load data');
-    }
-  }
-
-  void _showAlertforLimit(BuildContext context) {
-    Alert(
-      context: context,
-      type: AlertType.warning,
-      title: "Plan Limitation",
-      desc:
-          "The limit for adding tenants according to the plan has been reached.",
-      style: AlertStyle(
-          backgroundColor: Color.fromRGBO(255, 255, 255, 1),
-          descStyle: TextStyle(fontSize: 14)
-          //  overlayColor: Colors.black.withOpacity(.8)
-          ),
-      buttons: [
-        DialogButton(
-          child: Text(
-            "OK",
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          onPressed: () => Navigator.pop(context),
-          color: blueColor,
-        ),
-        /* DialogButton(
-          child: Text(
-            "Delete",
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          onPressed: () async {
-             var data = PropertiesRepository().DeleteProperties(id: id);
-
-            setState(() {
-              futureRentalOwners = PropertiesRepository().fetchProperties();
-              //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-            });
-            Navigator.pop(context);
-          },
-          color: Colors.red,
-        )*/
-      ],
-    ).show();
-  }
-
   final _scrollController = ScrollController();
-
-  String companyName = '';
-  Future<void> fetchCompany() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? adminId = prefs.getString("adminId");
-
-    if (adminId != null) {
-      try {
-        String fetchedCompanyName =
-            await TenantsRepository().fetchCompanyName(adminId);
-        setState(() {
-          companyName = fetchedCompanyName;
-        });
-      } catch (e) {
-        print('Failed to fetch company name: $e');
-        // Handle error state, e.g., show error message to user
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "Tenants",
+        currentpage: "Upcoming renewal",
         dropdown: true,
       ),
-      body: _connectivityResult !=ConnectivityResult.none ?
-      SingleChildScrollView(
+      body:_connectivityResult !=ConnectivityResult.none ? SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(
@@ -679,86 +584,33 @@ class _Tenants_tableState extends State<Tenants_table> {
             Padding(
               padding: const EdgeInsets.only(left: 0, right: 0),
               child: Row(
-                // mainAxisAlignment: MainAxisAlignment.end,
+                //mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: titleBar(
-                      width: MediaQuery.of(context).size.width * .65,
-                      title: 'Tenants',
+                      width: MediaQuery.of(context).size.width * .91,
+                      title: 'Upcoming Renewal',
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () async {
-                      if (rentalCount < propertyCountLimit) {
-                        final result = await Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => AddTenant()));
-                        if (result == true) {
-                          setState(() {
-                            futureTenants = TenantsRepository().fetchTenants();
-                            //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                          });
-                          fetchtenantsadded();
-                        }
-                      } else {
-                        _showAlertforLimit(context);
-                      }
-                    },
-                    child: Container(
-                      height: (MediaQuery.of(context).size.width < 500)
-                          ? 50
-                          : MediaQuery.of(context).size.width * 0.05,
-                      // height:  MediaQuery.of(context).size.width * 0.07,
-                      // height:  40,
-                      width: (MediaQuery.of(context).size.width < 500)
-                          ? MediaQuery.of(context).size.width * 0.25
-                          : MediaQuery.of(context).size.width * 0.2,
-                      decoration: BoxDecoration(
-                        color: blueColor,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "+ Add",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                    MediaQuery.of(context).size.width < 500
-                                        ? 16
-                                        : 20,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 6),
-                  if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 22),
                 ],
               ),
             ),
             SizedBox(height: 10),
-
+            //search
             Padding(
               padding: const EdgeInsets.only(left: 11, right: 11),
               child: Row(
                 children: [
                   if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 2),
+                    SizedBox(width: 1),
                   if (MediaQuery.of(context).size.width > 500)
                     SizedBox(width: 24),
                   Material(
-                    elevation: 3,
+                    elevation: 2,
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
                       // height: 40,
                       height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
                       width: MediaQuery.of(context).size.width < 500
@@ -776,7 +628,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                               style: TextStyle(
                                   fontSize:
                                       MediaQuery.of(context).size.width < 500
-                                          ? 12
+                                          ? 15
                                           : 14),
                               // onChanged: (value) {
                               //   setState(() {
@@ -791,83 +643,33 @@ class _Tenants_tableState extends State<Tenants_table> {
                               },
                               cursorColor: blueColor,
                               decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Search here...",
-                                hintStyle: TextStyle(
-                                    // fontWeight: FontWeight.bold,
-                                    color: Color(0xFF8A95A8),
+                                  border: InputBorder.none,
+                                  hintText: "Search here...",
+                                  hintStyle: TextStyle(
                                     fontSize:
                                         MediaQuery.of(context).size.width < 500
                                             ? 14
-                                            : 18),
-                                contentPadding: (EdgeInsets.only(
-                                    left: 8, bottom: 10, top: 5)),
-                              ),
+                                            : 18,
+                                    // fontWeight: FontWeight.bold,
+                                    color: Color(0xFF8A95A8),
+                                  ),
+                                  contentPadding: EdgeInsets.only(
+                                      left: 5, bottom: 12, top: 5)),
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                  Spacer(),
-                  // Expanded(
-                  //   child: Container(
-                  //     child: Text(
-                  //       'Added : ${rentalCount.toString()} Total: ${propertyCountLimit.toString()}',
-                  //       style: TextStyle(
-                  //         fontWeight: FontWeight.bold,
-                  //         color: Color(0xFF8A95A8),
-                  //         fontSize:
-                  //             MediaQuery.of(context).size.width < 500 ? 13 : 21,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Container(
-                        child: Text(
-                          'Added : ${rentalCount.toString()}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF8A95A8),
-                            fontSize:
-                            MediaQuery.of(context).size.width < 500 ? 14 : 21,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Container(
-                        child: Text(
-                          'Total : ${propertyCountLimit.toString()}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF8A95A8),
-                            fontSize:
-                            MediaQuery.of(context).size.width < 500 ? 14 : 21,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 8),
-                  if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 25),
                 ],
               ),
             ),
             if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
             if (MediaQuery.of(context).size.width < 500)
-              //for phone
               Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: FutureBuilder<List<Tenant>>(
-                  future: futureTenants,
+                child: FutureBuilder<List<upcoming_renewal>>(
+                  future: futureLeaseRenewal,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return ColabShimmerLoadingWidget();
@@ -902,28 +704,27 @@ class _Tenants_tableState extends State<Tenants_table> {
                       );
                     } else {
                       var data = snapshot.data!;
-                      if (searchvalue == null || searchvalue!.isEmpty) {
+                      /* if (selectedValue == null && searchvalue!.isEmpty) {
                         data = snapshot.data!;
-                      } else if (searchvalue == "All") {
+                      } else if (selectedValue == "All") {
                         data = snapshot.data!;
                       } else if (searchvalue!.isNotEmpty) {
                         data = snapshot.data!
-                            .where((rentals) =>
-                                rentals.tenantFirstName!
-                                    .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()) ||
-                                rentals.tenantLastName!
-                                    .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()))
+                            .where((property) =>
+                        property.propertyType!
+                            .toLowerCase()
+                            .contains(searchvalue!.toLowerCase()) ||
+                            property.propertysubType!
+                                .toLowerCase()
+                                .contains(searchvalue!.toLowerCase()))
                             .toList();
                       } else {
                         data = snapshot.data!
-                            .where((rentals) =>
-                                rentals.tenantFirstName == searchvalue)
+                            .where((property) =>
+                        property.propertyType == selectedValue)
                             .toList();
-                      }
+                      }*/
                       sortData(data);
-                      data = data.reversed.toList();
                       final totalPages = (data.length / itemsPerPage).ceil();
                       final currentPageData = data
                           .skip(currentPage * itemsPerPage)
@@ -952,7 +753,10 @@ class _Tenants_tableState extends State<Tenants_table> {
                                     .map((entry) {
                                   int index = entry.key;
                                   bool isExpanded = expandedIndex == index;
-                                  Tenant tenants = entry.value;
+                                  upcoming_renewal Propertytype = entry.value;
+                                  print(Propertytype.tenantNames);
+                                  String tenants =
+                                      Propertytype.tenantNames!.join(" , ");
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
                                     decoration: BoxDecoration(
@@ -1004,7 +808,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                   },
                                                   child: Container(
                                                     margin: EdgeInsets.only(
-                                                        left: 5),
+                                                        left: 5, right: 5),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
                                                             bottom: 10)
@@ -1023,7 +827,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  flex: 3,
+                                                  flex: 4,
                                                   child: InkWell(
                                                     onTap: () {
                                                       setState(() {
@@ -1035,18 +839,13 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                         }
                                                       });
                                                     },
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              10.0),
-                                                      child: Text(
-                                                        '${tenants.tenantFirstName ?? ''} ${tenants.tenantLastName ?? ''}',
-                                                        style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 13,
-                                                        ),
+                                                    child: Text(
+                                                      ' ${Propertytype.rentalAddress}',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
                                                       ),
                                                     ),
                                                   ),
@@ -1056,11 +855,11 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .02),
+                                                            .03),
                                                 Expanded(
-                                                  flex: 3,
+                                                  flex: 4,
                                                   child: Text(
-                                                    '${tenants.tenantPhoneNumber}',
+                                                    '${tenants}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -1074,17 +873,24 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .00),
+                                                            .03),
                                                 Expanded(
-                                                  flex: 2,
-                                                  child: Text(
-                                                    // '${widget.data.createdAt}',
-                                                    '${dateProvider.formatCurrentDate(tenants.createdAt ??DateTime.now().toString()) ?? ''}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
+                                                  flex: 3,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 10.0),
+                                                    child: Text(
+                                                      // '${widget.data.createdAt}',
+                                                      formatDate(
+                                                          '${Propertytype.remainingDays}'),
+
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -1107,89 +913,6 @@ class _Tenants_tableState extends State<Tenants_table> {
                                               child: Column(
                                                 children: [
                                                   Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      FaIcon(
-                                                        isExpanded
-                                                            ? FontAwesomeIcons
-                                                                .sortUp
-                                                            : FontAwesomeIcons
-                                                                .sortDown,
-                                                        size: 50,
-                                                        color:
-                                                            Colors.transparent,
-                                                      ),
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: <Widget>[
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Email: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        '${tenants.tenantEmail}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color:
-                                                                            grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: 5,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Rental Adress: ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color:
-                                                                            blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        '${tenants.rentalAddress!.isEmpty ? "N/A" : tenants.rentalAddress}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color:
-                                                                            grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                    height: 20,
-                                                  ),
-                                                  Row(
                                                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
                                                       Expanded(
@@ -1200,9 +923,12 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                     context,
                                                                     MaterialPageRoute(
                                                                         builder: (context) =>
-                                                                            EditTenants(
-                                                                              tenants: tenants,
-                                                                              tenantId: '',
+                                                                            Renewlease(
+                                                                              leaseId: Propertytype.leaseId!,
+                                                                              leasetype: Propertytype.leaseType,
+                                                                              rentamount: Propertytype.leaseAmount.toString(),
+                                                                              enddate: Propertytype.endDate,
+                                                                              startdate: Propertytype.startDate,
                                                                             )));
                                                             if (check == true) {
                                                               setState(() {});
@@ -1233,7 +959,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                   width: 10,
                                                                 ),
                                                                 Text(
-                                                                  "Edit",
+                                                                  "Renew lease",
                                                                   style: TextStyle(
                                                                       color:
                                                                           blueColor,
@@ -1252,10 +978,12 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                       Expanded(
                                                         child: GestureDetector(
                                                           onTap: () {
-                                                            _showDeleteAlert(
+                                                            print("calling");
+
+                                                              _showAlert(
                                                                 context,
-                                                                tenants
-                                                                    .tenantId!);
+                                                                Propertytype
+                                                                    .leaseId!);
                                                           },
                                                           child: Container(
                                                             height: 40,
@@ -1283,67 +1011,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                   width: 10,
                                                                 ),
                                                                 Text(
-                                                                  "Delete",
+                                                                  "Not Renewing",
                                                                   style: TextStyle(
-                                                                      color:
-                                                                          blueColor,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder: (context) => ResponsiveTenantSummary(
-                                                                        tenants:
-                                                                            tenants,
-                                                                        tenantId:
-                                                                            tenants.tenantId!)));
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                SizedBox(
-                                                                  width: 5,
-                                                                ),
-                                                                Image.asset(
-                                                                    'assets/icons/view.png',color: blueColor,),
-                                                                // FaIcon(
-                                                                //   FontAwesomeIcons.trashCan,
-                                                                //   size: 15,
-                                                                //   color:blueColor,
-                                                                // ),
-                                                                SizedBox(
-                                                                  width: 8,
-                                                                ),
-                                                                Text(
-                                                                  "View Summery",
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          11,
                                                                       color:
                                                                           blueColor,
                                                                       fontWeight:
@@ -1478,10 +1147,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                   },
                 ),
               ),
-            if (MediaQuery.of(context).size.width > 500)
-              //for teblet
-              FutureBuilder<List<Tenant>>(
-                future: futureTenants,
+            /* if (MediaQuery.of(context).size.width > 500)
+              FutureBuilder<List<propertytype>>(
+                future: futurePropertyTypes,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return ShimmerTabletTable();
@@ -1515,25 +1183,27 @@ class _Tenants_tableState extends State<Tenants_table> {
                       ),
                     );
                   } else {
-                    List<Tenant>? filteredData = [];
                     _tableData = snapshot.data!;
-                    if (selectedRole == null && searchvalue == "") {
-                      filteredData = snapshot.data;
-                    } else if (selectedRole == "All") {
-                      filteredData = snapshot.data;
+                    if (selectedValue == null && searchvalue.isEmpty) {
+                      _tableData = snapshot.data!;
+                    } else if (selectedValue == "All") {
+                      _tableData = snapshot.data!;
                     } else if (searchvalue.isNotEmpty) {
-                      filteredData = snapshot.data!
-                          .where((rentals) =>
-                              rentals.tenantFirstName!
-                                  .toLowerCase()
-                                  .contains(searchvalue.toLowerCase()) ||
-                              rentals.tenantLastName!
-                                  .toLowerCase()
-                                  .contains(searchvalue.toLowerCase()))
+                      _tableData = snapshot.data!
+                          .where((property) =>
+                      property.propertyType!
+                          .toLowerCase()
+                          .contains(searchvalue.toLowerCase()) ||
+                          property.propertysubType!
+                              .toLowerCase()
+                              .contains(searchvalue.toLowerCase()))
+                          .toList();
+                    } else {
+                      _tableData = snapshot.data!
+                          .where((property) =>
+                      property.propertyType == selectedValue)
                           .toList();
                     }
-                    _tableData = _tableData.reversed.toList();
-                    _tableData = filteredData!;
                     totalrecords = _tableData.length;
                     return SingleChildScrollView(
                       child: Column(
@@ -1541,141 +1211,123 @@ class _Tenants_tableState extends State<Tenants_table> {
                           Container(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 20.0, vertical: 5),
+                                  horizontal: 24.0, vertical: 5),
                               child: Column(
                                 children: [
                                   SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 20, right: 20),
-                                      child: Container(
-                                        // width: MediaQuery.of(context).size.width *
-                                        //     .91,
-                                        child: Table(
-                                          defaultColumnWidth:
-                                              IntrinsicColumnWidth(),
-                                          children: [
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          .91,
+                                      child: Table(
+                                        defaultColumnWidth:
+                                        IntrinsicColumnWidth(),
+                                        children: [
+                                          TableRow(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                // color: blueColor
+                                              ),
+                                            ),
+                                            children: [
+                                              // TableCell(child: Text('yash')),
+                                              // TableCell(child: Text('yash')),
+                                              // TableCell(child: Text('yash')),
+                                              // TableCell(child: Text('yash')),
+                                              // TableCell(child: Text('yash')),
+                                              _buildHeader(
+                                                  'Main Type',
+                                                  0,
+                                                      (property) =>
+                                                  property.propertyType!),
+                                              _buildHeader(
+                                                  'Subtype',
+                                                  1,
+                                                      (property) => property
+                                                      .propertysubType!),
+                                              _buildHeader(
+                                                  'Created At', 2, null),
+                                              _buildHeader(
+                                                  'Updated At', 3, null),
+                                              _buildHeader('Actions', 4, null),
+                                            ],
+                                          ),
+                                          TableRow(
+                                            decoration: BoxDecoration(
+                                              border: Border.symmetric(
+                                                  horizontal: BorderSide.none),
+                                            ),
+                                            children: List.generate(
+                                                5,
+                                                    (index) => TableCell(
+                                                    child:
+                                                    Container(height: 20))),
+                                          ),
+                                          for (var i = 0;
+                                          i < _pagedData.length;
+                                          i++)
                                             TableRow(
                                               decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    // color: blueColor
-                                                    ),
+                                                border: Border(
+                                                  left: BorderSide(
+                                                      color: blueColor
+
+
+),
+                                                  right: BorderSide(
+                                                      color: blueColor
+
+
+),
+                                                  top: BorderSide(
+                                                      color: blueColor
+
+
+),
+                                                  bottom: i ==
+                                                      _pagedData.length - 1
+                                                      ? BorderSide(
+                                                      color: blueColor
+
+
+)
+                                                      : BorderSide.none,
+                                                ),
                                               ),
                                               children: [
-                                                // _buildHeader(
-                                                //     'Tenant Name',
-                                                //     0,
-                                                //     (tenants) =>
-                                                //         tenants.tenantFirstName! ) ,
-                                                _buildHeader(
-                                                    'Tenant Name',
-                                                    0,
-                                                    (tenants) =>
-                                                        '${tenants.tenantFirstName ?? ''} ${tenants.tenantLastName ?? ''}'
-                                                            .trim()),
-                                                _buildHeader(
-                                                    'Property',
-                                                    1,
-                                                    (tenants) =>
-                                                        tenants.rentalAddress!),
-                                                _buildHeader(
-                                                    'Phone',
-                                                    2,
-                                                    (tenants) => tenants
-                                                        .tenantPhoneNumber!),
-                                                _buildHeader(
-                                                    'Email',
-                                                    3,
-                                                    (tenants) => tenants
-                                                        .tenantAlternativeEmail!),
-                                                _buildHeader(
-                                                    'Created At',
-                                                    4,
-                                                    (tenants) =>
-                                                        tenants.createdAt!),
-                                                _buildHeader(
-                                                    'Actions', 5, null),
+                                                // TableCell(child: Text('yash')),
+                                                // TableCell(child: Text('yash')),
+                                                // TableCell(child: Text('yash')),
+                                                // TableCell(child: Text('yash')),
+                                                // TableCell(child: Text('yash')),
+                                                // Text(
+                                                //     '${_pagedData[i].propertyType!}'),
+                                                // Text(
+                                                //     '${_pagedData[i].propertysubType!}'),
+                                                // Text(
+                                                //     '${formatDate(_pagedData[i].createdAt!)}'),
+                                                // Text(
+                                                //     '${formatDate(_pagedData[i].updatedAt!)}'),
+                                                _buildDataCell(_pagedData[i]
+                                                    .propertyType!),
+
+                                                _buildDataCell(_pagedData[i]
+                                                    .propertysubType!),
+
+                                                _buildDataCell(
+                                                  formatDate(
+                                                      _pagedData[i].createdAt!),
+                                                ),
+
+                                                _buildDataCell(
+                                                  formatDate(
+                                                      _pagedData[i].updatedAt!),
+                                                ),
+                                                _buildActionsCell(
+                                                    _pagedData[i]),
                                               ],
                                             ),
-                                            TableRow(
-                                              decoration: BoxDecoration(
-                                                border: Border.symmetric(
-                                                    horizontal:
-                                                        BorderSide.none),
-                                              ),
-                                              children: List.generate(
-                                                  6,
-                                                  (index) => TableCell(
-                                                      child: Container(
-                                                          height: 20))),
-                                            ),
-                                            for (var i = 0;
-                                                i < _pagedData.length;
-                                                i++)
-                                              TableRow(
-                                                decoration: BoxDecoration(
-                                                  border: Border(
-                                                    left: BorderSide(
-                                                        color: blueColor
-
-
-),
-                                                    right: BorderSide(
-                                                        color: blueColor
-
-
-),
-                                                    top: BorderSide(
-                                                        color: blueColor
-
-
-),
-                                                    bottom: i ==
-                                                            _pagedData.length -
-                                                                1
-                                                        ? BorderSide(
-                                                            color:
-                                                                Color.fromRGBO(
-                                                                    21,
-                                                                    43,
-                                                                    81,
-                                                                    1))
-                                                        : BorderSide.none,
-                                                  ),
-                                                ),
-                                                children: [
-                                                  _buildDataCell(
-                                                      '${_pagedData[i].tenantFirstName ?? ''} ${_pagedData[i].tenantLastName ?? ''}'
-                                                          .trim(),
-                                                      _pagedData[i]),
-                                                  _buildDataCell(
-                                                      _pagedData[i]
-                                                              .rentalAddress! ??
-                                                          '',
-                                                      _pagedData[i]),
-                                                  // _buildDataCell(''),
-                                                  _buildDataCell(
-                                                      _pagedData[i]
-                                                          .tenantPhoneNumber!
-                                                          .toString(),
-                                                      _pagedData[i]),
-                                                  _buildDataCell(
-                                                      _pagedData[i]
-                                                          .tenantAlternativeEmail!
-                                                          .toString(),
-                                                      _pagedData[i]),
-                                                  _buildDataCell(
-                                                      _pagedData[i]
-                                                          .createdAt!
-                                                          .toString(),
-                                                      _pagedData[i]),
-                                                  _buildActionsCell(
-                                                      _pagedData[i]),
-                                                ],
-                                              ),
-                                          ],
-                                        ),
+                                        ],
                                       ),
                                     ),
                                   ),
@@ -1691,7 +1343,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                     );
                   }
                 },
-              ),
+              ),*/
           ],
         ),
       ):SizedBox(
@@ -1720,5 +1372,38 @@ class _Tenants_tableState extends State<Tenants_table> {
         ),
       ),
     );
+  }
+
+  Future<void> updatenotrenewallease(String leaseid) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String adminId = prefs.getString('adminId') ?? '';
+      String? token = prefs.getString('token');
+      print(token);
+      // print('lease ${widget.leaseId}');
+      String? id = prefs.getString("adminId");
+      final response = await http.put(
+        Uri.parse('$Api_url/api/leases/update_not_renewing/$leaseid'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          'Content-Type': 'application/json',
+        },
+      );
+      print(response.body);
+      if (response.statusCode == 200) {
+        /*   Fluttertoast.showToast(msg: "Lease Renewal Successfully");
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>SummeryPageLease(leaseId: widget.leaseId,)));
+          */
+        Fluttertoast.showToast(msg: "Lease will not renew");
+        setState(() {
+          futureLeaseRenewal = Upcoming_renewal_repo().fetchupcomingrenewal();
+        });
+      } else {
+        Fluttertoast.showToast(msg: "Renewal Lease not success");
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }

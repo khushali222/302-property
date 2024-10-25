@@ -151,7 +151,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
   late Future<List<Staffmembers>> futureStaffMembers;
   String? selectedStaffmember;
-
+  bool showError = false;
   Future<List<propertytype>>? futureProperties;
   String? selectedProperty;
   Future<List<RentalOwners>>? futureRentalOwner;
@@ -208,6 +208,27 @@ class _Edit_propertiesState extends State<Edit_properties> {
     });
   }
 
+  String? initialAddress;
+  String? initialCity;
+  String? initialState;
+  String? initialCountry;
+  String? initialPostalCode;
+  String? initialFirstName;
+  String? initialCompanyName;
+  String? initialPrimaryEmail;
+  String? initialAlternativeEmail;
+  String? initialPhoneNumber;
+  String? initialHomeNumber;
+  String? initialBuisinessNumber;
+  String? initialRentalOwnerId;
+  String?   initialrentalOwnercity;
+  String?  initialrentalOwnerstate;
+  String? initialrentalOwnerAddress;
+  String? initialrentalOwnerpostalCode;
+  String? initialrentalOwnercountry;
+  String? initialselectedpropertytype;
+  String? initialselectedselectedStaff;
+
   @override
   void initState() {
     super.initState();
@@ -252,6 +273,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
       }
     });
     print(widget.rentalId);
+    isEditable = false;
     fetchDetails1(widget.rentalId);
   }
 
@@ -259,14 +281,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
     try {
       Rentals fetchedDetails =
       await Properies_summery_Repo().fetchrentalDetails(rentalId);
-      print(fetchedDetails);
-      print(rentalId);
-      print(fetchedDetails.rentalCountry);
-      print(fetchedDetails.rentalOwnerData?.rentalOwnerName);
-      print(fetchedDetails.staffMemberData?.staffmemberName);
+
       await Future.delayed(const Duration(seconds: 1));
       setState(() {
-        print(fetchedDetails.rentalAddress);
+        // print(fetchedDetails.rentalAddress);
         // selectedpropertytype = fetchedDetails.propertyTypeData?.propertyType;
         selectedpropertytype = fetchedDetails.propertyTypeData?.propertyType;
         selectedpropertytype = fetchedDetails.propertyTypeData?.propertySubType;
@@ -274,56 +292,87 @@ class _Edit_propertiesState extends State<Edit_properties> {
         city.text = fetchedDetails.rentalCity!;
         state.text = fetchedDetails.rentalState!;
         postalcode.text = fetchedDetails.rentalPostcode!;
-        country.text = fetchedDetails.rentalCountry!;
+        // country.text = fetchedDetails.rentalCountry!;
+        country.text = fetchedDetails.rentalCountry ?? 'N/A';
         selectedProperty = fetchedDetails.propertyTypeData!.propertySubType;
         Ownersdetails = RentalOwner(
             rentalOwnerId: fetchedDetails.rentalOwnerId,
             rentalOwnerPhoneNumber:
             fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber,
-            rentalOwnerName:
-            fetchedDetails.rentalOwnerData!.rentalOwnerName,
-
-            rentalOwnerHomeNumber: fetchedDetails.rentalOwnerData?.rentalOwnerHomeNumber,
-            rentalOwnerBusinessNumber: fetchedDetails.rentalOwnerData?.rentalOwnerBuisinessNumber,
-            rentalOwnerAlternateEmail: fetchedDetails.rentalOwnerData?.rentalOwnerAlternativeEmail,
-            rentalOwnerPrimaryEmail: fetchedDetails.rentalOwnerData?.rentalOwnerPrimaryEmail,
-            rentalOwnerCompanyName: fetchedDetails.rentalOwnerData?.rentalOwnerCompanyName,
+            rentalOwnerName: fetchedDetails.rentalOwnerData!.rentalOwnerName,
+            rentalOwnerHomeNumber:
+            fetchedDetails.rentalOwnerData?.rentalOwnerHomeNumber,
+            rentalOwnerBusinessNumber:
+            fetchedDetails.rentalOwnerData?.rentalOwnerBuisinessNumber,
+            rentalOwnerAlternateEmail:
+            fetchedDetails.rentalOwnerData?.rentalOwnerAlternativeEmail,
+            rentalOwnerPrimaryEmail:
+            fetchedDetails.rentalOwnerData?.rentalOwnerPrimaryEmail,
+            rentalOwnerCompanyName:
+            fetchedDetails.rentalOwnerData?.rentalOwnerCompanyName,
             city: fetchedDetails.rentalOwnerData?.city,
             state: fetchedDetails.rentalOwnerData?.state,
             streetAddress: fetchedDetails.rentalOwnerData?.Address,
             postalCode: fetchedDetails.rentalOwnerData?.postalCode,
             country: fetchedDetails.rentalOwnerData?.country,
-            processorList:fetchedDetails.rentalOwnerData?.processorList?.map((item) {
+            processorList:
+            fetchedDetails.rentalOwnerData?.processorList?.map((item) {
               return ProcessorList.fromJson(item as Map<String, dynamic>);
-            }).toList()
-        );
+            }).toList());
         firstname.text = fetchedDetails.rentalOwnerData!.rentalOwnerName!;
         comname.text = fetchedDetails.rentalOwnerData!.rentalOwnerCompanyName!;
         primaryemail.text =
         fetchedDetails.rentalOwnerData!.rentalOwnerPrimaryEmail!;
         alternativeemail.text =
         fetchedDetails.rentalOwnerData!.rentalOwnerAlternativeEmail!;
-        print(alternativeemail);
+        // print(alternativeemail);
         phonenum.text = fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber!;
-        print(phonenum);
+        // print(phonenum);
         homenum.text = fetchedDetails.rentalOwnerData!.rentalOwnerHomeNumber!;
-        print(homenum);
+        // print(homenum);
         businessnum.text =
         fetchedDetails.rentalOwnerData!.rentalOwnerBuisinessNumber!;
-        print(widget.properties.rentalOwnerData!.rentalOwnerBuisinessNumber);
+        // print(widget.properties.rentalOwnerData!.rentalOwnerBuisinessNumber);
         street2.text = fetchedDetails.rentalOwnerData!.Address!;
         city2.text = fetchedDetails.rentalOwnerData!.city!;
         state2.text = fetchedDetails.rentalOwnerData!.state!;
         county2.text = fetchedDetails.rentalOwnerData!.country!;
         code2.text = fetchedDetails.rentalOwnerData!.postalCode!;
-        selectedStaff =  fetchedDetails.staffMemberId!.isEmpty ? null : fetchedDetails.staffMemberId ?? null;
-        print(selectedStaffmember);
-        Provider.of<OwnerDetailsProvider>(context,listen: false).setOwnerDetails(Ownersdetails!);
+        selectedStaff = fetchedDetails.staffMemberId!.isEmpty
+            ? null
+            : fetchedDetails.staffMemberId ?? null;
+        // print(selectedStaffmember);
+        Provider.of<OwnerDetailsProvider>(context, listen: false)
+            .setOwnerDetails(Ownersdetails!);
+
+        initialAddress = fetchedDetails.rentalAddress!;
+        initialselectedselectedStaff = (fetchedDetails.staffMemberId!.isEmpty
+            ? null
+            : fetchedDetails.staffMemberId ?? null)!;
+        initialCity = fetchedDetails.rentalCity!;
+        initialState = fetchedDetails.rentalState!;
+        initialPostalCode = fetchedDetails.rentalPostcode!;
+        initialCountry = fetchedDetails.rentalCountry ?? 'N/A';
+        initialFirstName = fetchedDetails.rentalOwnerData!.rentalOwnerName!;
+        initialCompanyName =
+        fetchedDetails.rentalOwnerData!.rentalOwnerCompanyName!;
+        initialPrimaryEmail = fetchedDetails.rentalOwnerData!.rentalOwnerPrimaryEmail!;
+        initialAlternativeEmail = fetchedDetails.rentalOwnerData!.rentalOwnerAlternativeEmail!;
+        initialHomeNumber = fetchedDetails.rentalOwnerData!.rentalOwnerHomeNumber!;
+        initialBuisinessNumber = fetchedDetails.rentalOwnerData!.rentalOwnerBuisinessNumber!;
+        initialrentalOwnerAddress = fetchedDetails.rentalOwnerData!.Address!;
+        initialrentalOwnercity = fetchedDetails.rentalOwnerData!.city!;
+        initialrentalOwnerstate = fetchedDetails.rentalOwnerData!.state!;
+        initialrentalOwnercountry = fetchedDetails.rentalOwnerData!.country!;
+        initialrentalOwnerpostalCode = fetchedDetails.rentalOwnerData!.postalCode!;
+        initialPhoneNumber =
+        fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber!;
+
 
         // _selectedProperty = fetchedDetails.rentalId; // Uncomment and update based on your use case
       });
     } catch (e) {
-      print('Failed to fetch property details: $e');
+      // print('Failed to fetch property details: $e');
     }
   }
 
@@ -762,6 +811,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
     );
   }
 
+  bool isEditable = false;
+
   @override
   Widget build(BuildContext context) {
     // print(selectedIsMultiUnit);
@@ -906,154 +957,166 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                     Map<String, List<propertytype>>
                                     groupedProperties =
                                     groupPropertiesByType(snapshot.data!);
-                                    return Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Container(
-                                        // height:
-                                        // MediaQuery.of(context).size.height *
-                                        //     .05,
-                                        height: 50,
-                                        width:
-                                        MediaQuery.of(context).size.width *
-                                            .6,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: Color(0xFF8A95A8),
-                                          ),
-                                          borderRadius:
-                                          BorderRadius.circular(10),
-                                        ),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<String>(
-                                            value: selectedProperty,
-                                            hint: Text(
-                                              'Add Property Type',
-                                              style: TextStyle(
-                                                fontSize:  MediaQuery.of(context).size.width < 500 ? 15 : 18,
+
+                                    return Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Container(
+                                            // height: MediaQuery.of(context)
+                                            //         .size
+                                            //         .height *
+                                            //     .05,
+                                            height: 50,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                                .6,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
                                                 color: Color(0xFF8A95A8),
                                               ),
+                                              borderRadius:
+                                              BorderRadius.circular(10),
                                             ),
-                                            onChanged: (String? newValue) {
-                                              if (newValue ==
-                                                  'Edit_properties') {
-                                                // Prevent the dropdown from changing the selected item
-                                                setState(() {
-                                                  selectedProperty = null;
-                                                });
-                                                // Show the dialog
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    bool isChecked =
-                                                    false; // Moved isChecked inside the StatefulBuilder
-                                                    return StatefulBuilder(
-                                                      builder:
-                                                          (BuildContext context,
-                                                          StateSetter
-                                                          setState) {
-                                                        return AlertDialog(
-                                                          backgroundColor:
-                                                          Colors.white,
-                                                          surfaceTintColor:
-                                                          Colors.white,
-                                                          // title: Text(
-                                                          //   "Add Rental Owner",
-                                                          //   style: TextStyle(
-                                                          //       fontWeight:
-                                                          //           FontWeight
-                                                          //               .bold,
-                                                          //       color: Color
-                                                          //           .fromRGBO(
-                                                          //               21,
-                                                          //               43,
-                                                          //               81,
-                                                          //               1),
-                                                          //       fontSize: 15),
-                                                          // ),
-                                                          content:
-                                                          SingleChildScrollView(
-                                                            child: Column(
-                                                              children: [
-                                                                Container(
-                                                                  // height: MediaQuery.of(context).size.height * .43,
-                                                                  width: MediaQuery.of(context).size.width * .99,
-                                                                  decoration: BoxDecoration(
-                                                                      color: Colors.white,
-                                                                      borderRadius: BorderRadius.circular(10),
-                                                                      border: Border.all(
-                                                                        color: blueColor,
-                                                                      )),
-                                                                  child: Column(
-                                                                    children: [
-                                                                      SizedBox(
-                                                                        height: 20,
-                                                                      ),
-                                                                      Row(
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<String>(
+                                                value: groupedProperties
+                                                    .isNotEmpty
+                                                    ? (groupedProperties.entries
+                                                    .expand((entry) =>
+                                                    entry.value.map(
+                                                            (item) => item
+                                                            .propertysubType))
+                                                    .contains(
+                                                    selectedProperty)
+                                                    ? selectedProperty
+                                                    : null)
+                                                    : null,
+                                                hint: Text(
+                                                  'Add Property Type',
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                        500
+                                                        ? 15
+                                                        : 18,
+                                                    color: Color(0xFF8A95A8),
+                                                  ),
+                                                ),
+                                                onChanged: isEditable ? (String? newValue){
+                                                  if (newValue ==
+                                                      'Edit_properties') {
+                                                    // Prevent the dropdown from changing the selected item
+                                                    setState(() {
+                                                      selectedProperty = null;
+                                                    });
+                                                    // Show the dialog
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                      context) {
+                                                        bool isChecked =
+                                                        false; // Moved isChecked inside the StatefulBuilder
+                                                        return StatefulBuilder(
+                                                          builder: (BuildContext
+                                                          context,
+                                                              StateSetter
+                                                              setState) {
+                                                            return AlertDialog(
+                                                              backgroundColor:
+                                                              Colors.white,
+                                                              surfaceTintColor:
+                                                              Colors.white,
+                                                              content:
+                                                              SingleChildScrollView(
+                                                                child: Column(
+                                                                  children: [
+                                                                    Container(
+                                                                      // height: MediaQuery.of(context).size.height * .43,
+                                                                      width: MediaQuery.of(context)
+                                                                          .size
+                                                                          .width *
+                                                                          .99,
+                                                                      decoration: BoxDecoration(
+                                                                          color: Colors.white,
+                                                                          borderRadius: BorderRadius.circular(10),
+                                                                          border: Border.all(
+                                                                            color: Color.fromRGBO(
+                                                                                21,
+                                                                                43,
+                                                                                81,
+                                                                                1),
+                                                                          )),
+                                                                      child:
+                                                                      Column(
                                                                         children: [
                                                                           SizedBox(
-                                                                            width: 15,
+                                                                            height:
+                                                                            20,
                                                                           ),
-                                                                          Text(
-                                                                            "New Property Type",
-                                                                            style: TextStyle(
-                                                                                fontWeight: FontWeight.bold,
-                                                                                color: blueColor,
-                                                                                fontSize:  MediaQuery.of(context).size.width < 500 ? 17 : 22),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                      SizedBox(
-                                                                        height: 10,
-                                                                      ),
-                                                                      Row(
-                                                                        children: [
-                                                                          SizedBox(
-                                                                            width: 15,
-                                                                          ),
-                                                                          Text(
-                                                                            "Property Type*",
-                                                                            style: TextStyle(
-                                                                                color: Colors.grey,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :18),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                      SizedBox(
-                                                                        height: 10,
-                                                                      ),
-                                                                      Row(
-                                                                        children: [
-                                                                          SizedBox(
-                                                                            width: 15,
-                                                                          ),
-                                                                          DropdownButtonHideUnderline(
-                                                                            child: DropdownButton2<String>(
-                                                                              isExpanded: true,
-                                                                              hint: const Row(
-                                                                                children: [
-                                                                                  SizedBox(
-                                                                                    width: 4,
-                                                                                  ),
-                                                                                  Expanded(
-                                                                                    child: Text(
-                                                                                      'Type',
-                                                                                      style: TextStyle(
-                                                                                        fontSize: 14,
-                                                                                        fontWeight: FontWeight.bold,
-                                                                                        color: Colors.black,
-                                                                                      ),
-                                                                                      overflow: TextOverflow.ellipsis,
-                                                                                    ),
-                                                                                  ),
-                                                                                ],
+                                                                          Row(
+                                                                            children: [
+                                                                              SizedBox(
+                                                                                width: 15,
                                                                               ),
-                                                                              items: items
-                                                                                  .map(
-                                                                                      (String item) => DropdownMenuItem<String>(
+                                                                              Text(
+                                                                                "New Property Type",
+                                                                                style: TextStyle(fontWeight: FontWeight.bold, color: blueColor, fontSize: MediaQuery.of(context).size.width < 500 ? 17 : 22),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          SizedBox(
+                                                                            height:
+                                                                            10,
+                                                                          ),
+                                                                          Row(
+                                                                            children: [
+                                                                              SizedBox(
+                                                                                width: 15,
+                                                                              ),
+                                                                              Text(
+                                                                                "Property Type*",
+                                                                                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 18),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          SizedBox(
+                                                                            height:
+                                                                            10,
+                                                                          ),
+                                                                          Row(
+                                                                            children: [
+                                                                              SizedBox(
+                                                                                width: 15,
+                                                                              ),
+                                                                              DropdownButtonHideUnderline(
+                                                                                child: DropdownButton2<String>(
+                                                                                  isExpanded: true,
+                                                                                  hint: const Row(
+                                                                                    children: [
+                                                                                      SizedBox(
+                                                                                        width: 4,
+                                                                                      ),
+                                                                                      Expanded(
+                                                                                        child: Text(
+                                                                                          'Type',
+                                                                                          style: TextStyle(
+                                                                                            fontSize: 14,
+                                                                                            fontWeight: FontWeight.bold,
+                                                                                            color: Colors.black,
+                                                                                          ),
+                                                                                          overflow: TextOverflow.ellipsis,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                  items: items
+                                                                                      .map((String item) => DropdownMenuItem<String>(
                                                                                     value: item,
                                                                                     child: Text(
                                                                                       item,
@@ -1065,357 +1128,366 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                       overflow: TextOverflow.ellipsis,
                                                                                     ),
                                                                                   ))
-                                                                                  .toList(),
-                                                                              value: selectedValue,
-                                                                              onChanged: (value) {
-                                                                                setState(() {
-                                                                                  selectedValue = value;
-                                                                                });
-                                                                              },
-                                                                              buttonStyleData: ButtonStyleData(
-                                                                                height: 50,
-                                                                                width: 160,
-                                                                                padding:
-                                                                                const EdgeInsets.only(left: 14, right: 14),
-                                                                                decoration: BoxDecoration(
-                                                                                  borderRadius: BorderRadius.circular(10),
-                                                                                  border: Border.all(
-                                                                                    color: Colors.black26,
-                                                                                  ),
-                                                                                  color: Colors.white,
-                                                                                ),
-                                                                                elevation: 3,
-                                                                              ),
-                                                                              dropdownStyleData: DropdownStyleData(
-                                                                                maxHeight: 200,
-                                                                                width: 200,
-                                                                                decoration: BoxDecoration(
-                                                                                  borderRadius: BorderRadius.circular(14),
-                                                                                  //color: Colors.redAccent,
-                                                                                ),
-                                                                                offset: const Offset(-20, 0),
-                                                                                scrollbarTheme: ScrollbarThemeData(
-                                                                                  radius: const Radius.circular(40),
-                                                                                  thickness: MaterialStateProperty.all(6),
-                                                                                  thumbVisibility:
-                                                                                  MaterialStateProperty.all(true),
-                                                                                ),
-                                                                              ),
-                                                                              menuItemStyleData: const MenuItemStyleData(
-                                                                                height: 40,
-                                                                                padding: EdgeInsets.only(left: 14, right: 14),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                      SizedBox(
-                                                                        height: 20,
-                                                                      ),
-                                                                      Row(
-                                                                        children: [
-                                                                          SizedBox(
-                                                                            width: 15,
-                                                                          ),
-                                                                          Text(
-                                                                            "Property SubType*",
-                                                                            style: TextStyle(
-                                                                                color: Colors.grey,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :18),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                      SizedBox(
-                                                                        height: 10,
-                                                                      ),
-                                                                      Row(
-                                                                        children: [
-                                                                          SizedBox(
-                                                                            width: 15,
-                                                                          ),
-                                                                          Material(
-                                                                            elevation: 2,
-                                                                            borderRadius: BorderRadius.circular(10),
-                                                                            child: Container(
-                                                                              width:  MediaQuery.of(context).size.width < 500 ? 160 : 160,
-                                                                              padding: EdgeInsets.only(left: 10),
-                                                                              decoration: BoxDecoration(
-                                                                                color: Colors.white,
-                                                                                borderRadius: BorderRadius.circular(10),
-                                                                              ),
-                                                                              child: TextFormField(
-                                                                                controller: subtype,
-                                                                                decoration: InputDecoration(
-                                                                                    border: InputBorder.none,
-                                                                                    hintText: "Townhome"),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                      SizedBox(
-                                                                        height: 20,
-                                                                      ),
-                                                                      Row(
-                                                                        children: [
-                                                                          if (MediaQuery.of(context).size.width < 500)
-                                                                            SizedBox(
-                                                                                width: MediaQuery.of(context).size.width * 0.05),
-                                                                          if (MediaQuery.of(context).size.width > 500)
-                                                                            SizedBox(
-                                                                                width: MediaQuery.of(context).size.width * 0.02),
-                                                                          Container(
-                                                                            height: MediaQuery.of(context).size.height * 0.02,
-                                                                            width: MediaQuery.of(context).size.height * 0.02,
-                                                                            decoration: BoxDecoration(
-                                                                              color: Colors.white,
-                                                                              borderRadius: BorderRadius.circular(5),
-                                                                            ),
-                                                                            child: Checkbox(
-                                                                              activeColor: isChecked
-                                                                                  ? blueColor
-                                                                                  : Colors.white,
-                                                                              checkColor: Colors.white,
-                                                                              value:
-                                                                              isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
-                                                                              onChanged: (value) {
-                                                                                setState(() {
-                                                                                  isChecked = value ??
-                                                                                      false; // ensure value is not null
-                                                                                });
-                                                                              },
-                                                                            ),
-                                                                          ),
-                                                                          SizedBox(
-                                                                              width: MediaQuery.of(context).size.width * 0.02),
-                                                                          Text(
-                                                                            "Multi unit",
-                                                                            style: TextStyle(
-                                                                              fontSize:
-                                                                              MediaQuery.of(context).size.width < 500 ? 15 :18,
-                                                                              color: Colors.grey,
-                                                                            ),
-                                                                          ),
-                                                                          SizedBox(
-                                                                              width: MediaQuery.of(context).size.width * 0.05),
-                                                                        ],
-                                                                      ),
-                                                                      SizedBox(
-                                                                        height: 20,
-                                                                      ),
-                                                                      Row(
-                                                                        children: [
-                                                                          if (MediaQuery.of(context).size.width < 500)
-                                                                            SizedBox(
-                                                                                width: MediaQuery.of(context).size.width * 0.05),
-                                                                          if (MediaQuery.of(context).size.width > 500)
-                                                                            SizedBox(
-                                                                                width: MediaQuery.of(context).size.width * 0.02),
-                                                                          GestureDetector(
-                                                                            onTap: () async {
-                                                                              if (selectedValue == null ||
-                                                                                  subtype.text.isEmpty) {
-                                                                                setState(() {
-                                                                                  iserror = true;
-                                                                                });
-                                                                              } else {
-                                                                                setState(() {
-                                                                                  isLoading = true;
-                                                                                  iserror = false;
-                                                                                });
-                                                                                SharedPreferences prefs =
-                                                                                await SharedPreferences.getInstance();
-                                                                                String? id = prefs.getString("adminId");
-                                                                                PropertyTypeRepository()
-                                                                                    .addPropertyType(
-                                                                                  adminId: id!,
-                                                                                  propertyType: selectedValue,
-                                                                                  propertySubType: subtype.text,
-                                                                                  isMultiUnit: isChecked,
-                                                                                )
-                                                                                    .then((value) {
-                                                                                  setState(() {
-                                                                                    isLoading = false;
-                                                                                  });
-                                                                                  Navigator.pop(context, true);
-                                                                                }).catchError((e) {
-                                                                                  setState(() {
-                                                                                    isLoading = false;
-                                                                                  });
-                                                                                });
-                                                                              }
-                                                                              print(selectedValue);
-                                                                            },
-                                                                            child: ClipRRect(
-                                                                              borderRadius: BorderRadius.circular(5.0),
-                                                                              child: Container(
-                                                                                height:  MediaQuery.of(context).size.width < 500 ? 40 :45,
-                                                                                width: MediaQuery.of(context).size.width < 500 ? 140 : 165,
-                                                                                decoration: BoxDecoration(
-                                                                                  borderRadius: BorderRadius.circular(5.0),
-                                                                                  color: blueColor,
-                                                                                  boxShadow: [
-                                                                                    BoxShadow(
-                                                                                      color: Colors.grey,
-                                                                                      offset: Offset(0.0, 1.0), //(x,y)
-                                                                                      blurRadius: 6.0,
+                                                                                      .toList(),
+                                                                                  value: selectedValue,
+                                                                                  onChanged: (value) {
+                                                                                    setState(() {
+                                                                                      selectedValue = value;
+                                                                                    });
+                                                                                  },
+                                                                                  buttonStyleData: ButtonStyleData(
+                                                                                    height: 50,
+                                                                                    width: 160,
+                                                                                    padding: const EdgeInsets.only(left: 14, right: 14),
+                                                                                    decoration: BoxDecoration(
+                                                                                      borderRadius: BorderRadius.circular(10),
+                                                                                      border: Border.all(
+                                                                                        color: Colors.black26,
+                                                                                      ),
+                                                                                      color: Colors.white,
                                                                                     ),
-                                                                                  ],
-                                                                                ),
-                                                                                child: Center(
-                                                                                  child: isLoading
-                                                                                      ? SpinKitFadingCircle(
-                                                                                    color: Colors.white,
-                                                                                    size: 25.0,
-                                                                                  )
-                                                                                      : Text(
-                                                                                    "Add Property Type",
-                                                                                    style: TextStyle(
-                                                                                        color: Colors.white,
-                                                                                        fontWeight: FontWeight.bold,
-                                                                                        fontSize:  MediaQuery.of(context).size.width < 500 ? 13 :15.5),
+                                                                                    elevation: 3,
+                                                                                  ),
+                                                                                  dropdownStyleData: DropdownStyleData(
+                                                                                    maxHeight: 200,
+                                                                                    width: 200,
+                                                                                    decoration: BoxDecoration(
+                                                                                      borderRadius: BorderRadius.circular(14),
+                                                                                      //color: Colors.redAccent,
+                                                                                    ),
+                                                                                    offset: const Offset(-20, 0),
+                                                                                    scrollbarTheme: ScrollbarThemeData(
+                                                                                      radius: const Radius.circular(40),
+                                                                                      thickness: MaterialStateProperty.all(6),
+                                                                                      thumbVisibility: MaterialStateProperty.all(true),
+                                                                                    ),
+                                                                                  ),
+                                                                                  menuItemStyleData: const MenuItemStyleData(
+                                                                                    height: 40,
+                                                                                    padding: EdgeInsets.only(left: 14, right: 14),
                                                                                   ),
                                                                                 ),
                                                                               ),
-                                                                            ),
-                                                                          ),
-                                                                          Spacer(),
-                                                                          InkWell(
-                                                                            onTap: () {
-                                                                              Navigator.pop(context);
-                                                                            },
-                                                                            child: Material(
-                                                                              elevation: 2,
-                                                                              child: Container(
-                                                                                  width:  MediaQuery.of(context).size.width < 500 ? 80 : 100,
-                                                                                  height:  MediaQuery.of(context).size.width < 500 ? 40 :40,
-                                                                                  color: Colors.white,
-                                                                                  child: Center(child: Text("Cancel"))),
-                                                                            ),
+                                                                            ],
                                                                           ),
                                                                           SizedBox(
-                                                                            width: 3,
+                                                                            height:
+                                                                            20,
+                                                                          ),
+                                                                          Row(
+                                                                            children: [
+                                                                              SizedBox(
+                                                                                width: 15,
+                                                                              ),
+                                                                              Text(
+                                                                                "Property SubType*",
+                                                                                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 18),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          SizedBox(
+                                                                            height:
+                                                                            10,
+                                                                          ),
+                                                                          Row(
+                                                                            children: [
+                                                                              SizedBox(
+                                                                                width: 15,
+                                                                              ),
+                                                                              Material(
+                                                                                elevation: 2,
+                                                                                borderRadius: BorderRadius.circular(10),
+                                                                                child: Container(
+                                                                                  width: MediaQuery.of(context).size.width < 500 ? 160 : 160,
+                                                                                  padding: EdgeInsets.only(left: 10),
+                                                                                  decoration: BoxDecoration(
+                                                                                    color: Colors.white,
+                                                                                    borderRadius: BorderRadius.circular(10),
+                                                                                  ),
+                                                                                  child: TextFormField(
+                                                                                    controller: subtype,
+                                                                                    decoration: InputDecoration(border: InputBorder.none, hintText: "Townhome"),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          SizedBox(
+                                                                            height:
+                                                                            20,
+                                                                          ),
+                                                                          Row(
+                                                                            children: [
+                                                                              if (MediaQuery.of(context).size.width < 500)
+                                                                                SizedBox(width: MediaQuery.of(context).size.width * 0.05),
+                                                                              if (MediaQuery.of(context).size.width > 500)
+                                                                                SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+                                                                              Container(
+                                                                                height: MediaQuery.of(context).size.height * 0.02,
+                                                                                width: MediaQuery.of(context).size.height * 0.02,
+                                                                                decoration: BoxDecoration(
+                                                                                  color: Colors.white,
+                                                                                  borderRadius: BorderRadius.circular(5),
+                                                                                ),
+                                                                                child: Checkbox(
+                                                                                  activeColor: isChecked ? blueColor : Colors.white,
+                                                                                  checkColor: Colors.white,
+                                                                                  value: isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
+                                                                                  onChanged: (value) {
+                                                                                    setState(() {
+                                                                                      isChecked = value ?? false; // ensure value is not null
+                                                                                    });
+                                                                                  },
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+                                                                              Text(
+                                                                                "Multi unit",
+                                                                                style: TextStyle(
+                                                                                  fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 18,
+                                                                                  color: Colors.grey,
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(width: MediaQuery.of(context).size.width * 0.05),
+                                                                            ],
+                                                                          ),
+                                                                          SizedBox(
+                                                                            height:
+                                                                            20,
+                                                                          ),
+                                                                          Row(
+                                                                            children: [
+                                                                              if (MediaQuery.of(context).size.width < 500)
+                                                                                SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+                                                                              if (MediaQuery.of(context).size.width > 500)
+                                                                                SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+                                                                              GestureDetector(
+                                                                                onTap: () async {
+                                                                                  if (selectedValue == null || subtype.text.isEmpty) {
+                                                                                    setState(() {
+                                                                                      iserror = true;
+                                                                                    });
+                                                                                  } else {
+                                                                                    setState(() {
+                                                                                      isLoading = true;
+                                                                                      iserror = false;
+                                                                                    });
+                                                                                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                                                                                    String? id = prefs.getString("adminId");
+                                                                                    PropertyTypeRepository()
+                                                                                        .addPropertyType(
+                                                                                      adminId: id!,
+                                                                                      propertyType: selectedValue,
+                                                                                      propertySubType: subtype.text,
+                                                                                      isMultiUnit: isChecked,
+                                                                                    )
+                                                                                        .then((value) {
+                                                                                      setState(() {
+                                                                                        isLoading = false;
+                                                                                      });
+                                                                                      Navigator.pop(context, true);
+                                                                                    }).catchError((e) {
+                                                                                      setState(() {
+                                                                                        isLoading = false;
+                                                                                      });
+                                                                                    });
+                                                                                  }
+                                                                                  // print(selectedValue);
+                                                                                },
+                                                                                child: ClipRRect(
+                                                                                  borderRadius: BorderRadius.circular(5.0),
+                                                                                  child: Container(
+                                                                                    height: MediaQuery.of(context).size.width < 500 ? 40 : 45,
+                                                                                    width: MediaQuery.of(context).size.width < 500 ? 125 : 165,
+                                                                                    decoration: BoxDecoration(
+                                                                                      borderRadius: BorderRadius.circular(5.0),
+                                                                                      color: blueColor,
+                                                                                      boxShadow: [
+                                                                                        BoxShadow(
+                                                                                          color: Colors.grey,
+                                                                                          offset: Offset(0.0, 1.0), //(x,y)
+                                                                                          blurRadius: 6.0,
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                    child: Center(
+                                                                                      child: isLoading
+                                                                                          ? SpinKitFadingCircle(
+                                                                                        color: Colors.white,
+                                                                                        size: 25.0,
+                                                                                      )
+                                                                                          : Text(
+                                                                                        "Add Property Type",
+                                                                                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 15.5),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              Spacer(),
+                                                                              InkWell(
+                                                                                onTap: () {
+                                                                                  Navigator.pop(context);
+                                                                                },
+                                                                                child: Material(
+                                                                                  elevation: 2,
+                                                                                  child: Container(width: MediaQuery.of(context).size.width < 500 ? 90 : 90, height: MediaQuery.of(context).size.width < 500 ? 40 : 40, color: Colors.white, child: Center(child: Text("Cancel"))),
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(
+                                                                                width: 2,
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          SizedBox(
+                                                                            height:
+                                                                            10,
+                                                                          ),
+                                                                          if (iserror)
+                                                                            Text(
+                                                                              "Please fill in all fields correctly.",
+                                                                              style: TextStyle(color: Colors.redAccent),
+                                                                            ),
+                                                                          SizedBox(
+                                                                            height:
+                                                                            10,
                                                                           ),
                                                                         ],
                                                                       ),
-                                                                      SizedBox(
-                                                                        height: 10,
-                                                                      ),
-                                                                      if (iserror)
-                                                                        Text(
-                                                                          "Please fill in all fields correctly.",
-                                                                          style: TextStyle(color: Colors.redAccent),
-                                                                        ),
-                                                                      SizedBox(
-                                                                        height: 10,
-                                                                      ),
-                                                                    ],
-                                                                  ),
+                                                                    ),
+                                                                  ],
                                                                 ),
-                                                              ],
-                                                            ),
-                                                          ),
+                                                              ),
+                                                            );
+                                                          },
                                                         );
                                                       },
                                                     );
-                                                  },
-                                                );
-                                              } else {
-                                                setState(() {
-                                                  print(snapshot.data!
-                                                      .where((element) =>
-                                                  element
-                                                      .propertysubType ==
-                                                      newValue)
-                                                      .first
-                                                      .isMultiunit);
-                                                  // selectedIsMultiUnit = snapshot.data!.where((element) => element.isMultiunit == newValue ).first;
-                                                  selectedpropertytypedata =
-                                                      snapshot.data!
+                                                  } else {
+                                                    setState(() {
+                                                      print(snapshot.data!
                                                           .where((element) =>
                                                       element
                                                           .propertysubType ==
                                                           newValue)
-                                                          .first;
-                                                  print(selectedProperty);
-                                                  selectedProperty = newValue;
-                                                  propertyGroups = [];
-                                                  // Call the method here
-                                                  selectedpropertytype =
+                                                          .first
+                                                          .isMultiunit);
+                                                      // selectedIsMultiUnit = snapshot.data!.where((element) => element.isMultiunit == newValue ).first;
+                                                      selectedpropertytypedata =
+                                                          snapshot.data!
+                                                              .where((element) =>
+                                                          element
+                                                              .propertysubType ==
+                                                              newValue)
+                                                              .first;
+                                                      // print(selectedProperty);
+                                                      selectedProperty =
+                                                          newValue;
+                                                      propertyGroups = [];
+                                                      // Call the method here
+                                                      selectedpropertytype =
+                                                          selectedpropertytypedata!
+                                                              .propertyType;
+                                                      selectedIsMultiUnit =
                                                       selectedpropertytypedata!
-                                                          .propertyType;
-                                                  selectedIsMultiUnit =
-                                                  selectedpropertytypedata!
-                                                      .isMultiunit!;
-                                                });
-                                                propertyGroups.clear();
-                                                addPropertyGroup();
-                                                propertyTypeError = false;
-                                              }
-                                            },
-                                            items: [
-                                              ...groupedProperties.entries
-                                                  .expand((entry) {
-                                                return [
-                                                  DropdownMenuItem<String>(
-                                                    enabled: false,
-                                                    child: Text(
-                                                      entry.key,
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                          FontWeight.bold,
-                                                          color:blueColor
-
-
-),
-                                                    ),
-                                                  ),
-                                                  ...entry.value.map((item) {
-                                                    return DropdownMenuItem<
-                                                        String>(
-                                                      value:
-                                                      item.propertysubType,
-                                                      child: Padding(
-                                                        padding:
-                                                        const EdgeInsets
-                                                            .only(
-                                                            left: 16.0),
+                                                          .isMultiunit!;
+                                                    });
+                                                    showError =
+                                                        selectedProperty ==
+                                                            null;
+                                                    propertyGroups.clear();
+                                                    addPropertyGroup();
+                                                    propertyTypeError = false;
+                                                  }
+                                                }: null,
+                                                items: [
+                                                  ...groupedProperties.entries
+                                                      .expand((entry) {
+                                                    return [
+                                                      DropdownMenuItem<String>(
+                                                        enabled: false,
                                                         child: Text(
-                                                          item.propertysubType ??
-                                                              '',
+                                                          entry.key,
                                                           style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontWeight:
-                                                            FontWeight.w400,
-                                                          ),
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                  21,
+                                                                  43,
+                                                                  81,
+                                                                  1)),
                                                         ),
                                                       ),
-                                                    );
+                                                      ...entry.value
+                                                          .map((item) {
+                                                        return DropdownMenuItem<
+                                                            String>(
+                                                          value: item
+                                                              .propertysubType,
+                                                          child: Padding(
+                                                            padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 16.0),
+                                                            child: Text(
+                                                              item.propertysubType ??
+                                                                  '',
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .w400,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                    ];
                                                   }).toList(),
-                                                ];
-                                              }).toList(),
-                                              DropdownMenuItem<String>(
-                                                value: 'Edit_properties',
-                                                child: Row(
-                                                  children: [
-                                                    Icon(Icons.add,
-                                                        size:
-                                                        15), // Adjusted icon size
-                                                    SizedBox(width: 6),
-                                                    Text('Add New properties',
-                                                        style: TextStyle(
-                                                            fontSize:
-                                                            16 //MediaQuery.of(context).size.width * .03
-                                                        )), // Adjusted text size
-                                                  ],
-                                                ),
+                                                  DropdownMenuItem<String>(
+                                                    value: 'Edit_properties',
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(Icons.add,
+                                                            size:
+                                                            15), // Adjusted icon size
+                                                        SizedBox(width: 6),
+                                                        Text(
+                                                            'Add New properties',
+                                                            style: TextStyle(
+                                                                fontSize:
+                                                                16 //MediaQuery.of(context).size.width * .03
+                                                            )), // Adjusted text size
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                                isExpanded: true,
                                               ),
-                                            ],
-                                            isExpanded: true,
+                                            ),
                                           ),
                                         ),
-                                      ),
+                                        SizedBox(
+                                          height: 8,
+                                        ),
+                                        if (showError)
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Please select a property type.',
+                                                style: TextStyle(
+                                                    color: Colors.red),
+                                              ),
+                                            ],
+                                          ),
+                                      ],
                                     );
                                   }
                                 },
@@ -3835,262 +3907,589 @@ class _Edit_propertiesState extends State<Edit_properties> {
                   children: [
                     //SizedBox(width: MediaQuery.of(context).size.width * 0.01),
                     GestureDetector(
+//                       onTap: () async {
+//                         if (address.text.isEmpty) {
+//                           setState(() {
+//                             addresserror = true;
+//                             addressmessage = "required";
+//                           });
+//                         } else {
+//                           setState(() {
+//                             addresserror = false;
+//                           });
+//                         }
+//                         if (city.text.isEmpty) {
+//                           setState(() {
+//                             cityerror = true;
+//                             citymessage = "required";
+//                           });
+//                         } else {
+//                           setState(() {
+//                             cityerror = false;
+//                           });
+//                         }
+//                         if (state.text.isEmpty) {
+//                           setState(() {
+//                             stateerror = true;
+//                             statemessage = "required";
+//                           });
+//                         } else {
+//                           setState(() {
+//                             stateerror = false;
+//                           });
+//                         }
+//                         if (country.text.isEmpty) {
+//                           setState(() {
+//                             countryerror = true;
+//                             countrymessage = "required";
+//                           });
+//                         } else {
+//                           setState(() {
+//                             countryerror = false;
+//                           });
+//                         }
+//                         if (postalcode.text.isEmpty) {
+//                           setState(() {
+//                             postalcodeerror = true;
+//                             postalcodemessage = "required";
+//                           });
+//                         } else {
+//                           setState(() {
+//                             postalcodeerror = false;
+//                           });
+//                         }
+//                         if (Ownersdetails == null) {
+//                           setState(() {
+//                             hasError = true;
+//                             postalcodemessage = "required";
+//                           });
+//                         } else {
+//                           setState(() {
+//                             hasError = false;
+//                           });
+//                           // print(selectedpropertytypedata!.propertyId);
+//                           print('hiii${widget.properties.propertyId}');
+//                           print('staff${widget.properties.staffMemberId}');
+//                           SharedPreferences prefs =
+//                           await SharedPreferences.getInstance();
+//                           String? id = prefs.getString("adminId");
+//                           Rental rentals = Rental(
+//                             rentalId: widget.rentalId,
+//                             adminId: id,
+//                             propertyId: widget.properties.propertyId,
+//                             // propertyId: selectedpropertytypedata!.propertyId,
+//                             address: address.text,
+//                             city: city.text,
+//                             state: state.text,
+//                             country: country.text,
+//                             postcode: postalcode.text,
+//                             // staffMemberId: sid,
+//                             staffMemberId: widget.properties.staffMemberId,
+//                           );
+//                           List<Unit> units = [];
+//                           if (propertyGroupControllers.isNotEmpty) {
+//                             List<TextEditingController> firstControllers =
+//                             propertyGroupControllers[0];
+//                             bool isFirstBlank = firstControllers
+//                                 .every((controller) => controller.text.isEmpty);
+//                             //1714547540497
+//                             //1709188861753
+//                             if (isFirstBlank) {
+//                               propertyGroupControllers.removeAt(0);
+//                             }
+//                           }
+//                           if (selectedpropertytype == 'Commercial' &&
+//                               selectedIsMultiUnit == true) {
+//                             for (int i = 0;
+//                             i < propertyGroupControllers.length;
+//                             i++) {
+//                               if (units.length <= i) {
+//                                 units.add(Unit());
+//                               }
+//                               List<TextEditingController> controllers =
+//                               propertyGroupControllers[i];
+//                               units[i].unit = controllers[0].text;
+//                               units[i].address = controllers[1].text;
+//                               units[i].sqft = controllers[2].text;
+//                               units[i].Image = propertyGroupImagenames[i];
+//                               //      units[i].bath = controllers[3].text;
+//                               //     units[i].bed = controllers[4].text;
+//
+// //                                  units[i].unit = controllers[0].text;
+//                             }
+//                           } else if (selectedpropertytype == 'Residential' &&
+//                               selectedIsMultiUnit == true) {
+//                             for (int i = 0;
+//                             i < propertyGroupControllers.length;
+//                             i++) {
+//                               if (units.length <= i) {
+//                                 units.add(Unit());
+//                               }
+//                               List<TextEditingController> controllers =
+//                               propertyGroupControllers[i];
+//                               units[i].unit = controllers[0].text;
+//                               units[i].address = controllers[1].text;
+//                               units[i].sqft = controllers[2].text;
+//                               units[i].bath = controllers[3].text;
+//                               units[i].bed = controllers[4].text;
+//                               units[i].Image = propertyGroupImagenames[i];
+// //                                  units[i].unit = controllers[0].text;
+//                             }
+//                           } else if (selectedpropertytype == 'Residential') {
+//                             for (int i = 0;
+//                             i < propertyGroupControllers.length;
+//                             i++) {
+//                               if (units.length <= i) {
+//                                 units.add(Unit());
+//                               }
+//                               List<TextEditingController> controllers =
+//                               propertyGroupControllers[i];
+//                               print(controllers.length);
+//                               units[i].sqft = controllers[0].text;
+//                               units[i].bath = controllers[1].text;
+//                               units[i].bed = controllers[2].text;
+//                               units[i].Image = propertyGroupImagenames[i];
+// //                                  units[i].unit = controllers[0].text;
+//                             }
+//                           } else if (selectedpropertytype == 'Commercial') {
+//                             for (int i = 0;
+//                             i < propertyGroupControllers.length;
+//                             i++) {
+//                               if (units.length <= i) {
+//                                 units.add(Unit());
+//                               }
+//                               List<TextEditingController> controllers =
+//                               propertyGroupControllers[i];
+//                               units[i].sqft = controllers[0].text;
+//                               units[i].Image = propertyGroupImagenames[i];
+//                               //units[i].address = controllers[1].text;
+//                               //units[i].sqft = controllers[2].text;
+// //                                  units[i].unit = controllers[0].text;
+//                             }
+//                           }
+//                           RentalOwners owners = RentalOwners(
+//                             adminId: id,
+//                             firstName: firstname.text,
+//                             companyName: comname.text,
+//                             primaryEmail: primaryemail.text,
+//                             phoneNumber: phonenum.text,
+//                             city: city2.text,
+//                             state: state2.text,
+//                             country: county2.text,
+//                             postalCode: code2.text,
+//                           );
+//                           RentalRequest rentalrequest = RentalRequest(
+//                               rentalOwner: owners,
+//                               rental: rentals,
+//                               units: units);
+//                           final updatedOwner = RentalOwner(
+//                             rentalOwnerName: firstnameController.text,
+//                             rentalOwnerCompanyName: comnameController.text,
+//                             rentalOwnerPrimaryEmail: primaryemailController.text,
+//                             rentalOwnerPhoneNumber: phonenumController.text,
+//                             city: cityController.text,
+//                             state: stateController.text,
+//                             country: countyController.text,
+//                             postalCode: codeController.text,
+//                           );
+//                           RentalOwner? ownerDetails = context.read<OwnerDetailsProvider>().ownerDetails;
+//
+//                           String processorId = context.read<OwnerDetailsProvider>().selectedprocessorlist ?? "";
+//
+//                           List<Map<String, String>> processorIds = ownerDetails!.processorList!.map((processor) {
+//                             return {
+//                               'processor_id': processor.processorId ?? "",
+//                             };
+//                           }).toList();
+//
+//                           //Provider.of<OwnerDetailsProvider>(context, listen: false).setOwnerDetails(updatedOwner);
+//
+//                           Rentals properties = Rentals(
+//                               adminId: id,
+//                               rentalOwnerData: RentalOwnerData(
+//                                   adminId: widget.properties.adminId,
+//                                   rentalOwnerId: widget.properties.rentalOwnerId,
+//                                   rentalOwnerName: updatedOwner.rentalOwnerName,
+//                                   rentalOwnerCompanyName: updatedOwner.rentalOwnerCompanyName,
+//                                   rentalOwnerPrimaryEmail: updatedOwner.rentalOwnerPrimaryEmail,
+//                                   rentalOwnerPhoneNumber: updatedOwner.rentalOwnerPhoneNumber,
+//                                   city: updatedOwner.city,
+//                                   state: updatedOwner.state,
+//                                   country: updatedOwner.country,
+//                                   postalCode: updatedOwner.postalCode,
+//                                   processorList: processorIds
+//                               ),
+//                               rentalId: widget.rentalId,
+//                               propertyId: widget.properties.propertyId,
+//                               rentalAddress: address.text,
+//                               rentalCity: city.text,
+//                               rentalState: state.text,
+//                               rentalCountry: country.text,
+//                               rentalPostcode: postalcode.text,
+//                               staffMemberId: sid,
+//                               processor_id:processorId
+//                           );
+//                           PropertiesRepository()
+//                               .updateRental1(properties)
+//                               .then((value) {
+//                             setState(() {
+//                               widget.properties.rentalOwnerData = RentalOwnerData(
+//                                 adminId: widget.properties.adminId,
+//                                 rentalOwnerId: widget.properties.rentalOwnerId,
+//                                 rentalOwnerName: updatedOwner.rentalOwnerName,
+//                                 rentalOwnerCompanyName: updatedOwner.rentalOwnerCompanyName,
+//                                 rentalOwnerPrimaryEmail: updatedOwner.rentalOwnerPrimaryEmail,
+//                                 rentalOwnerPhoneNumber: updatedOwner.rentalOwnerPhoneNumber,
+//                                 rentalOwnerAlternativeEmail: updatedOwner.rentalOwnerAlternateEmail,
+//                                 rentalOwnerBuisinessNumber: updatedOwner.rentalOwnerBusinessNumber,
+//                                 rentalOwnerHomeNumber: updatedOwner.rentalOwnerHomeNumber,
+//                                 city: updatedOwner.city,
+//                                 state: updatedOwner.state,
+//                                 country: updatedOwner.country,
+//                                 postalCode: updatedOwner.postalCode,
+//                               );
+//                               widget.properties.rentalAddress = address.text;
+//                               widget.properties.propertyTypeData?.propertyType =
+//                                   selectedpropertytype;
+//                               widget.properties.propertyTypeData
+//                                   ?.propertySubType = selectedpropertytype;
+//                               isLoading = false;
+//                             });
+//                             Navigator.of(context).pop(true);
+//                           }).catchError((e) {
+//                             setState(() {
+//                               isLoading = false;
+//                             });
+//                           });
+//                         }
+//                         print(selectedValue);
+//                       },
                       onTap: () async {
+                        print("calling");
+
+                        // Validate selected property
+                        if (selectedProperty == null) {
+                          setState(() {
+                            showError = true;
+                          });
+                          return; // Exit if no property is selected
+                        } else {
+                          setState(() {
+                            showError = false;
+                          });
+                        }
+
+                        // Validate form fields
                         if (address.text.isEmpty) {
                           setState(() {
                             addresserror = true;
                             addressmessage = "required";
                           });
+                          return; // Exit if address is empty
                         } else {
                           setState(() {
                             addresserror = false;
                           });
                         }
+
                         if (city.text.isEmpty) {
                           setState(() {
                             cityerror = true;
                             citymessage = "required";
                           });
+                          return; // Exit if city is empty
                         } else {
                           setState(() {
                             cityerror = false;
                           });
                         }
+
                         if (state.text.isEmpty) {
                           setState(() {
                             stateerror = true;
                             statemessage = "required";
                           });
+                          return; // Exit if state is empty
                         } else {
                           setState(() {
                             stateerror = false;
                           });
                         }
+
                         if (country.text.isEmpty) {
                           setState(() {
                             countryerror = true;
                             countrymessage = "required";
                           });
+                          return; // Exit if country is empty
                         } else {
                           setState(() {
                             countryerror = false;
                           });
                         }
+
                         if (postalcode.text.isEmpty) {
                           setState(() {
                             postalcodeerror = true;
                             postalcodemessage = "required";
                           });
+                          return; // Exit if postal code is empty
                         } else {
                           setState(() {
                             postalcodeerror = false;
                           });
                         }
+
                         if (Ownersdetails == null) {
                           setState(() {
                             hasError = true;
                             postalcodemessage = "required";
                           });
+                          return; // Exit if owner details are not provided
                         } else {
                           setState(() {
                             hasError = false;
                           });
-                          // print(selectedpropertytypedata!.propertyId);
-                          print('hiii${widget.properties.propertyId}');
-                          print('staff${widget.properties.staffMemberId}');
-                          SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                          String? id = prefs.getString("adminId");
-                          Rental rentals = Rental(
-                            rentalId: widget.rentalId,
-                            adminId: id,
-                            propertyId: widget.properties.propertyId,
-                            // propertyId: selectedpropertytypedata!.propertyId,
-                            address: address.text,
-                            city: city.text,
-                            state: state.text,
-                            country: country.text,
-                            postcode: postalcode.text,
-                            // staffMemberId: sid,
-                            staffMemberId: widget.properties.staffMemberId,
-                          );
-                          List<Unit> units = [];
-                          if (propertyGroupControllers.isNotEmpty) {
-                            List<TextEditingController> firstControllers =
-                            propertyGroupControllers[0];
-                            bool isFirstBlank = firstControllers
-                                .every((controller) => controller.text.isEmpty);
-                            //1714547540497
-                            //1709188861753
-                            if (isFirstBlank) {
-                              propertyGroupControllers.removeAt(0);
-                            }
+                        }
+
+                        // Check for changes
+                        bool hasChanges = address.text != initialAddress ||
+                            city.text != initialCity ||
+                            state.text != initialState ||
+                            country.text != initialCountry ||
+                            postalcode.text != initialPostalCode ||
+                            firstname.text != Ownersdetails?.rentalOwnerName ||
+                            comname.text != Ownersdetails?.rentalOwnerCompanyName ||
+                            primaryemail.text != Ownersdetails?.rentalOwnerPrimaryEmail ||
+                            alternativeemail.text != Ownersdetails?.rentalOwnerAlternateEmail ||
+                            phonenum.text != Ownersdetails?.rentalOwnerPhoneNumber ||
+                            homenum.text != Ownersdetails?.rentalOwnerHomeNumber ||
+                            businessnum.text != Ownersdetails?.rentalOwnerBusinessNumber ||
+                            street2.text != Ownersdetails?.streetAddress ||
+                            city2.text != Ownersdetails?.city ||
+                            state2.text != Ownersdetails?.state ||
+                            county2.text != Ownersdetails?.country ||
+                            code2.text != Ownersdetails?.postalCode||
+                            selectedStaff != widget.properties.staffMemberId;
+                        // selectedStaff != initialselectedselectedStaff ;
+
+                        if (!hasChanges) {
+                          // Show message if no changes detected
+                          print("No changes detected");
+                          Navigator.pop(context,false);
+                          return; // Exit if no changes
+                        }
+
+                        // Proceed with form submission
+                        SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                        String? id = prefs.getString("adminId");
+
+                        Rental rentals = Rental(
+                          rentalId: widget.rentalId,
+                          adminId: id,
+                          propertyId: widget.properties.propertyId,
+                          address: address.text,
+                          city: city.text,
+                          state: state.text,
+                          country: country.text,
+                          postcode: postalcode.text,
+                          staffMemberId: widget.properties.staffMemberId,
+                        );
+
+                        List<Unit> units = [];
+                        if (propertyGroupControllers.isNotEmpty) {
+                          List<TextEditingController> firstControllers =
+                          propertyGroupControllers[0];
+                          bool isFirstBlank = firstControllers
+                              .every((controller) => controller.text.isEmpty);
+                          if (isFirstBlank) {
+                            propertyGroupControllers.removeAt(0);
                           }
-                          if (selectedpropertytype == 'Commercial' &&
-                              selectedIsMultiUnit == true) {
-                            for (int i = 0;
-                            i < propertyGroupControllers.length;
-                            i++) {
-                              if (units.length <= i) {
-                                units.add(Unit());
-                              }
-                              List<TextEditingController> controllers =
-                              propertyGroupControllers[i];
-                              units[i].unit = controllers[0].text;
-                              units[i].address = controllers[1].text;
-                              units[i].sqft = controllers[2].text;
-                              units[i].Image = propertyGroupImagenames[i];
-                              //      units[i].bath = controllers[3].text;
-                              //     units[i].bed = controllers[4].text;
+                        }
 
-//                                  units[i].unit = controllers[0].text;
+                        // Prepare units based on property type
+                        if (selectedpropertytype == 'Commercial' &&
+                            selectedIsMultiUnit == true) {
+                          for (int i = 0;
+                          i < propertyGroupControllers.length;
+                          i++) {
+                            if (units.length <= i) {
+                              units.add(Unit());
                             }
-                          } else if (selectedpropertytype == 'Residential' &&
-                              selectedIsMultiUnit == true) {
-                            for (int i = 0;
-                            i < propertyGroupControllers.length;
-                            i++) {
-                              if (units.length <= i) {
-                                units.add(Unit());
-                              }
-                              List<TextEditingController> controllers =
-                              propertyGroupControllers[i];
-                              units[i].unit = controllers[0].text;
-                              units[i].address = controllers[1].text;
-                              units[i].sqft = controllers[2].text;
-                              units[i].bath = controllers[3].text;
-                              units[i].bed = controllers[4].text;
-                              units[i].Image = propertyGroupImagenames[i];
-//                                  units[i].unit = controllers[0].text;
-                            }
-                          } else if (selectedpropertytype == 'Residential') {
-                            for (int i = 0;
-                            i < propertyGroupControllers.length;
-                            i++) {
-                              if (units.length <= i) {
-                                units.add(Unit());
-                              }
-                              List<TextEditingController> controllers =
-                              propertyGroupControllers[i];
-                              print(controllers.length);
-                              units[i].sqft = controllers[0].text;
-                              units[i].bath = controllers[1].text;
-                              units[i].bed = controllers[2].text;
-                              units[i].Image = propertyGroupImagenames[i];
-//                                  units[i].unit = controllers[0].text;
-                            }
-                          } else if (selectedpropertytype == 'Commercial') {
-                            for (int i = 0;
-                            i < propertyGroupControllers.length;
-                            i++) {
-                              if (units.length <= i) {
-                                units.add(Unit());
-                              }
-                              List<TextEditingController> controllers =
-                              propertyGroupControllers[i];
-                              units[i].sqft = controllers[0].text;
-                              units[i].Image = propertyGroupImagenames[i];
-                              //units[i].address = controllers[1].text;
-                              //units[i].sqft = controllers[2].text;
-//                                  units[i].unit = controllers[0].text;
-                            }
+                            List<TextEditingController> controllers =
+                            propertyGroupControllers[i];
+                            units[i].unit = controllers[0].text;
+                            units[i].address = controllers[1].text;
+                            units[i].sqft = controllers[2].text;
+                            units[i].Image = propertyGroupImagenames[i];
                           }
-                          RentalOwners owners = RentalOwners(
-                            adminId: id,
-                            firstName: firstname.text,
-                            companyName: comname.text,
-                            primaryEmail: primaryemail.text,
-                            phoneNumber: phonenum.text,
-                            city: city2.text,
-                            state: state2.text,
-                            country: county2.text,
-                            postalCode: code2.text,
-                          );
-                          RentalRequest rentalrequest = RentalRequest(
-                              rentalOwner: owners,
-                              rental: rentals,
-                              units: units);
-                          final updatedOwner = RentalOwner(
-                            rentalOwnerName: firstnameController.text,
-                            rentalOwnerCompanyName: comnameController.text,
-                            rentalOwnerPrimaryEmail: primaryemailController.text,
-                            rentalOwnerPhoneNumber: phonenumController.text,
-                            city: cityController.text,
-                            state: stateController.text,
-                            country: countyController.text,
-                            postalCode: codeController.text,
-                          );
-                          RentalOwner? ownerDetails = context.read<OwnerDetailsProvider>().ownerDetails;
+                        } else if (selectedpropertytype == 'Residential' &&
+                            selectedIsMultiUnit == true) {
+                          for (int i = 0;
+                          i < propertyGroupControllers.length;
+                          i++) {
+                            if (units.length <= i) {
+                              units.add(Unit());
+                            }
+                            List<TextEditingController> controllers =
+                            propertyGroupControllers[i];
+                            units[i].unit = controllers[0].text;
+                            units[i].address = controllers[1].text;
+                            units[i].sqft = controllers[2].text;
+                            units[i].bath = controllers[3].text;
+                            units[i].bed = controllers[4].text;
+                            units[i].Image = propertyGroupImagenames[i];
+                          }
+                        } else if (selectedpropertytype == 'Residential') {
+                          for (int i = 0;
+                          i < propertyGroupControllers.length;
+                          i++) {
+                            if (units.length <= i) {
+                              units.add(Unit());
+                            }
+                            List<TextEditingController> controllers =
+                            propertyGroupControllers[i];
+                            units[i].sqft = controllers[0].text;
+                            units[i].bath = controllers[1].text;
+                            units[i].bed = controllers[2].text;
+                            units[i].Image = propertyGroupImagenames[i];
+                          }
+                        } else if (selectedpropertytype == 'Commercial') {
+                          for (int i = 0;
+                          i < propertyGroupControllers.length;
+                          i++) {
+                            if (units.length <= i) {
+                              units.add(Unit());
+                            }
+                            List<TextEditingController> controllers =
+                            propertyGroupControllers[i];
+                            units[i].sqft = controllers[0].text;
+                            units[i].Image = propertyGroupImagenames[i];
+                          }
+                        }
 
-                          String processorId = context.read<OwnerDetailsProvider>().selectedprocessorlist ?? "";
+                        RentalOwners owners = RentalOwners(
+                          adminId: id,
+                          firstName: firstname.text,
+                          companyName: comname.text,
+                          primaryEmail: primaryemail.text,
+                          phoneNumber: phonenum.text,
+                          city: city2.text,
+                          state: state2.text,
+                          country: county2.text,
+                          postalCode: code2.text,
+                        );
 
-                          List<Map<String, String>> processorIds = ownerDetails!.processorList!.map((processor) {
-                            return {
-                              'processor_id': processor.processorId ?? "",
-                            };
-                          }).toList();
+                        RentalRequest rentalrequest = RentalRequest(
+                          rentalOwner: owners,
+                          rental: rentals,
+                          units: units,
+                        );
 
-                          //Provider.of<OwnerDetailsProvider>(context, listen: false).setOwnerDetails(updatedOwner);
+                        final updatedOwner = RentalOwner(
+                          rentalOwnerName: firstnameController.text,
+                          rentalOwnerCompanyName: comnameController.text,
+                          rentalOwnerPrimaryEmail: primaryemailController.text,
+                          rentalOwnerPhoneNumber: phonenumController.text,
+                          city: cityController.text,
+                          state: stateController.text,
+                          country: countyController.text,
+                          postalCode: codeController.text,
+                        );
 
-                          Rentals properties = Rentals(
-                              adminId: id,
-                              rentalOwnerData: RentalOwnerData(
-                                  adminId: widget.properties.adminId,
-                                  rentalOwnerId: widget.properties.rentalOwnerId,
-                                  rentalOwnerName: updatedOwner.rentalOwnerName,
-                                  rentalOwnerCompanyName: updatedOwner.rentalOwnerCompanyName,
-                                  rentalOwnerPrimaryEmail: updatedOwner.rentalOwnerPrimaryEmail,
-                                  rentalOwnerPhoneNumber: updatedOwner.rentalOwnerPhoneNumber,
-                                  city: updatedOwner.city,
-                                  state: updatedOwner.state,
-                                  country: updatedOwner.country,
-                                  postalCode: updatedOwner.postalCode,
-                                  processorList: processorIds
-                              ),
-                              rentalId: widget.rentalId,
-                              propertyId: widget.properties.propertyId,
-                              rentalAddress: address.text,
-                              rentalCity: city.text,
-                              rentalState: state.text,
-                              rentalCountry: country.text,
-                              rentalPostcode: postalcode.text,
-                              staffMemberId: sid,
-                              processor_id:processorId
-                          );
+                        RentalOwner? ownerDetails =
+                            context.read<OwnerDetailsProvider>().ownerDetails;
+
+                        String processorId = context
+                            .read<OwnerDetailsProvider>()
+                            .selectedprocessorlist ??
+                            "";
+
+                        List<Map<String, String>> processorIds =
+                        ownerDetails!.processorList!.map((processor) {
+                          return {
+                            'processor_id': processor.processorId ?? "",
+                          };
+                        }).toList();
+
+                        Rentals properties = Rentals(
+                          adminId: id,
+                          rentalOwnerData: RentalOwnerData(
+                            adminId: widget.properties.adminId,
+                            rentalOwnerId: ownerDetails.rentalOwnerId,
+                            rentalOwnerName: updatedOwner.rentalOwnerName,
+                            rentalOwnerCompanyName:
+                            updatedOwner.rentalOwnerCompanyName,
+                            rentalOwnerPrimaryEmail:
+                            updatedOwner.rentalOwnerPrimaryEmail,
+                            rentalOwnerPhoneNumber:
+                            updatedOwner.rentalOwnerPhoneNumber,
+                            rentalOwnerHomeNumber:
+                            updatedOwner.rentalOwnerHomeNumber,
+                            rentalOwnerBuisinessNumber:
+                            updatedOwner.rentalOwnerBusinessNumber,
+                            city: updatedOwner.city,
+                            state: updatedOwner.state,
+                            country: updatedOwner.country,
+                            postalCode: updatedOwner.postalCode,
+                            processorList: processorIds,
+                          ),
+                          rentalId: widget.rentalId,
+                          propertyId: widget.properties.propertyId,
+                          rentalAddress: address.text,
+                          rentalOwnerId: ownerDetails.rentalOwnerId,
+                          rentalCity: city.text,
+                          rentalState: state.text,
+                          rentalCountry: country.text,
+                          rentalPostcode: postalcode.text,
+                          staffMemberId: selectedStaff,
+                          processor_id: processorId,
+                        );
+
+                        await Future.wait([
                           PropertiesRepository()
                               .updateRental1(properties)
                               .then((value) {
                             setState(() {
-                              widget.properties.rentalOwnerData = RentalOwnerData(
-                                adminId: widget.properties.adminId,
-                                rentalOwnerId: widget.properties.rentalOwnerId,
-                                rentalOwnerName: updatedOwner.rentalOwnerName,
-                                rentalOwnerCompanyName: updatedOwner.rentalOwnerCompanyName,
-                                rentalOwnerPrimaryEmail: updatedOwner.rentalOwnerPrimaryEmail,
-                                rentalOwnerPhoneNumber: updatedOwner.rentalOwnerPhoneNumber,
-                                rentalOwnerAlternativeEmail: updatedOwner.rentalOwnerAlternateEmail,
-                                rentalOwnerBuisinessNumber: updatedOwner.rentalOwnerBusinessNumber,
-                                rentalOwnerHomeNumber: updatedOwner.rentalOwnerHomeNumber,
-                                city: updatedOwner.city,
-                                state: updatedOwner.state,
-                                country: updatedOwner.country,
-                                postalCode: updatedOwner.postalCode,
-                              );
+                              widget.properties.rentalOwnerData =
+                                  RentalOwnerData(
+                                    adminId: widget.properties.adminId,
+                                    rentalOwnerId: widget.properties.rentalOwnerId,
+                                    rentalOwnerName: updatedOwner.rentalOwnerName,
+                                    rentalOwnerCompanyName:
+                                    updatedOwner.rentalOwnerCompanyName,
+                                    rentalOwnerPrimaryEmail:
+                                    updatedOwner.rentalOwnerPrimaryEmail,
+                                    rentalOwnerPhoneNumber:
+                                    updatedOwner.rentalOwnerPhoneNumber,
+                                    rentalOwnerAlternativeEmail:
+                                    updatedOwner.rentalOwnerAlternateEmail,
+                                    rentalOwnerBuisinessNumber:
+                                    updatedOwner.rentalOwnerBusinessNumber,
+                                    rentalOwnerHomeNumber:
+                                    updatedOwner.rentalOwnerHomeNumber,
+                                    city: updatedOwner.city,
+                                    state: updatedOwner.state,
+                                    country: updatedOwner.country,
+                                    postalCode: updatedOwner.postalCode,
+                                  );
                               widget.properties.rentalAddress = address.text;
                               widget.properties.propertyTypeData?.propertyType =
                                   selectedpropertytype;
                               widget.properties.propertyTypeData
                                   ?.propertySubType = selectedpropertytype;
                               isLoading = false;
+                              widget.properties.staffMemberId;
                             });
-                            Navigator.of(context).pop(true);
                           }).catchError((e) {
                             setState(() {
                               isLoading = false;
                             });
-                          });
-                        }
-                        print(selectedValue);
+                          }),
+                        ]);
+
+                        Navigator.of(context).pop(true);
                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),

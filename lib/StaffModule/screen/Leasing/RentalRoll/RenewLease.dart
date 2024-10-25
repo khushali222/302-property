@@ -1,18 +1,30 @@
+import 'dart:convert';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:keyboard_actions/keyboard_actions_config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/StaffModule/repository/lease.dart';
 import '../../../../model/LeaseSummary.dart';
 import '../../../../constant/constant.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
+import 'package:http/http.dart' as http;
+import 'SummeryPageLease.dart';
 
 class Renewlease extends StatefulWidget {
-  LeaseSummary lease;
+  LeaseSummary? lease;
   String leaseId;
-  Renewlease({super.key, required this.leaseId, required this.lease});
+  String? startdate;
+  String? enddate;
+  String? leasetype;
+  String? rentamount;
+  Renewlease({super.key, required this.leaseId,  this.lease,this.rentamount,this.startdate,this.enddate,this.leasetype});
 
   @override
   State<Renewlease> createState() => _RenewleaseState();
@@ -28,13 +40,43 @@ class _RenewleaseState extends State<Renewlease> {
     // TODO: implement initState
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
     // _tabController = TabController(length: 3, vsync: this);
-    _selectedLeaseType = widget.lease.data?.leaseType;
-    startDateController.text = widget.lease.data!.startDate ?? "";
-    endDateController.text = widget.lease.data!.endDate ?? "";
-    rent.text = widget.lease.data!.amount.toString();
+    _selectedLeaseType = widget.leasetype;
+    startDateController.text = widget.enddate ?? "";
+    DateTime endDate = formatDates(widget.enddate!);
+    DateTime startDate = endDate;
+    DateTime newEndDate = DateTime(endDate.year, endDate.month + 1, endDate.day);
+
+    startDateController.text = DateFormat('yyyy-MM-dd').format(startDate);
+    endDateController.text = DateFormat('yyyy-MM-dd').format(newEndDate);
+    rent.text = widget.rentamount ??"";
+    fetchDropdownData();
     super.initState();
   }
+  DateTime formatDates(String dateTime) {
+    List<String> dateFormats = [
+      'yyyy-MM-dd',
+      'yyyy-M-d',
+      'dd-MM-yyyy',
+      'd-M-yyyy',
+      'M/d/yyyy',
+      'MM/dd/yyyy',
+      'M/d/yyyy, h:mm:ss a',
+      'M/d/yyyy, h:mm a'
+    ];
 
+    DateTime? parsedDate;
+
+    for (String format in dateFormats) {
+      try {
+        parsedDate = DateFormat(format).parse(dateTime);
+        break;
+      } catch (e) {
+        continue;
+      }
+    }
+
+    return parsedDate!;
+  }
   TextEditingController rent = TextEditingController();
   final TextEditingController startDateController = TextEditingController();
   DateTime? _startDate;
@@ -48,6 +90,179 @@ class _RenewleaseState extends State<Renewlease> {
     'Fixed w/rollover',
     'At-will(month to month)',
   ];
+
+  bool hasError = false;
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+      keyboardBarColor: Colors.grey[200],
+      nextFocus: true,
+      actions: [
+        KeyboardActionsItem(
+          focusNode: _nodeText1,
+        ),
+      ],
+    );
+  }
+  List<FocusNode> focusNodes = [];
+  Map<String, List<String>> categorizedData = {};
+  final FocusNode _nodeText1 = FocusNode();
+  List<Map<String, dynamic>> rows = [];
+  double totalAmount = 0.0;
+  void addRow() {
+    setState(() {
+      rows.add({
+        'account': null,
+        'charge_type': null,
+        'amount': "",
+
+      });
+      focusNodes.add(FocusNode());
+    });
+  }
+
+  void deleteRow(int index) {
+    setState(() {
+
+      if(rows[index]['amount'].runtimeType == String)
+      {
+        totalAmount -= double.tryParse(rows[index]['amount']) ??0.0;
+      }
+      else{
+        totalAmount -= rows[index]['amount'];
+      }
+
+      rows.removeAt(index);
+      focusNodes.removeAt(index);
+    });
+
+    validateAmounts();
+  }
+
+  void updateAmount(int index, String value) {
+    setState(() {
+      double amount = double.tryParse(value) ?? 0.0;
+
+      if(rows[index]['amount'].runtimeType == String)
+      {
+        totalAmount -= double.tryParse(rows[index]['amount']) ??0.0;
+      }
+      else{
+        totalAmount -= rows[index]['amount'];
+      }
+
+      rows[index]['amount'] = amount;
+      totalAmount += amount;
+    });
+    validateAmounts();
+  }
+  final TextEditingController Amount = TextEditingController();
+  String? validationMessage;
+  void validateAmounts() {
+    double enteredAmount = double.tryParse(Amount.text) ?? 0.0;
+    print(enteredAmount);
+    print(totalAmount);
+    if (enteredAmount != totalAmount) {
+      setState(() {
+        validationMessage =
+        "The charge's amount must match the total applied to balance. The difference is ${(enteredAmount - totalAmount).abs().toStringAsFixed(2)}";
+      });
+    } else {
+      setState(() {
+        validationMessage = null;
+      });
+    }
+  }
+  Future<void> fetchDropdownData() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String adminId = prefs.getString('adminId') ?? '';
+      String? token = prefs.getString('token');
+      print(token);
+      print('lease drop ${widget.leaseId}');
+      String? id = prefs.getString("staff_id");
+      final response = await http.get(
+        Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
+      print('lease drop ${response.body}');
+      if (response.statusCode == 200) {
+        List<dynamic> jsonResponse = json.decode(response.body)['data'];
+        Map<String, List<String>> fetchedData = {};
+        // Adding static items to the "LIABILITY ACCOUNT" category
+        fetchedData["Liability Account"] = [
+          "Late Fee Income",
+          "Pre-payments",
+          "Security Deposit",
+          'Rent Income'
+        ];
+
+        for (var item in jsonResponse) {
+
+          String chargeType = item['charge_type'];
+          String account = item['account'];
+
+          if (!fetchedData.containsKey(chargeType)) {
+            fetchedData[chargeType] = [];
+          }
+          fetchedData[chargeType]!.add(account);
+        }
+
+        setState(() {
+          categorizedData = fetchedData;
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          hasError = true;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print(e);
+      setState(() {
+        hasError = true;
+        isLoading = false;
+      });
+    }
+  }
+  Future<void> updatenewrenewallease(Map<String,dynamic> renewlease) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String adminId = prefs.getString('adminId') ?? '';
+      String? token = prefs.getString('token');
+      print(token);
+      print('lease ${widget.leaseId}');
+      String? id = prefs.getString("staff_id");
+      final response = await http.post(
+          Uri.parse('$Api_url/api/leases/renew_lease'),
+          headers: {
+            "authorization": "CRM $token",
+            "id": "CRM $id",
+            'Content-Type': 'application/json',
+          },
+          body: json.encode(renewlease)
+      );
+      print(response.body);
+      if(response.statusCode == 200){
+        Fluttertoast.showToast(msg: "Lease Renewal Successfully");
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>SummeryPageLease(leaseId: widget.leaseId,)));
+
+      }
+      else{
+        Fluttertoast.showToast(msg: "Renewal Lease not success");
+      }
+
+
+    } catch (e) {
+      print(e);
+
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,11 +316,13 @@ class _RenewleaseState extends State<Renewlease> {
               future: futureLeaseSummary,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: SpinKitSpinningLines(
-                      color: blueColor,
-                      size: 55.0,
-                    ),
+                  return  Container(
+                    padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * .35),
+                    child: Center(
+                        child: SpinKitFadingCircle(
+                          color: blueColor,
+                          size: 40.0,
+                        )),
                   );
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
@@ -159,7 +376,7 @@ class _RenewleaseState extends State<Renewlease> {
                                       child: Column(
                                         // crossAxisAlignment: CrossAxisAlignment.center,
                                         mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        MainAxisAlignment.center,
                                         children: [
                                           Row(
                                             children: [
@@ -186,80 +403,80 @@ class _RenewleaseState extends State<Renewlease> {
                                         TableRow(children: [
                                           TableCell(
                                               child: Padding(
-                                            padding: const EdgeInsets.all(12.0),
-                                            child: Text(
-                                              'Lease Type',
-                                              style: TextStyle(
-                                                  color:
+                                                padding: const EdgeInsets.all(12.0),
+                                                child: Text(
+                                                  'Lease Type',
+                                                  style: TextStyle(
+                                                      color:
                                                       const Color(0xFF8A95A8),
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16),
-                                            ),
-                                          )),
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 16),
+                                                ),
+                                              )),
                                           TableCell(
                                               child: Padding(
-                                            padding:
+                                                padding:
                                                 const EdgeInsets.only(top: 12),
-                                            child: Text(
-                                              '${leasesummery.data?.leaseType}',
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: blueColor),
-                                            ),
-                                          )),
+                                                child: Text(
+                                                  '${leasesummery.data?.leaseType}',
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: blueColor),
+                                                ),
+                                              )),
                                         ]),
                                         TableRow(children: [
                                           TableCell(
                                               child: Padding(
-                                            padding: const EdgeInsets.all(12.0),
-                                            child: Text(
-                                              'Start - End ',
-                                              style: TextStyle(
-                                                  color:
+                                                padding: const EdgeInsets.all(12.0),
+                                                child: Text(
+                                                  'Start - End ',
+                                                  style: TextStyle(
+                                                      color:
                                                       const Color(0xFF8A95A8),
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16),
-                                            ),
-                                          )),
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 16),
+                                                ),
+                                              )),
                                           TableCell(
                                               child: Padding(
-                                            padding:
+                                                padding:
                                                 const EdgeInsets.only(top: 12),
-                                            child: Text(
-                                              '${leasesummery.data?.startDate} to ${leasesummery.data?.endDate}',
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: blueColor),
-                                            ),
-                                          )),
+                                                child: Text(
+                                                  '${leasesummery.data?.startDate} to ${leasesummery.data?.endDate}',
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: blueColor),
+                                                ),
+                                              )),
                                         ]),
                                         TableRow(children: [
                                           TableCell(
                                               child: Padding(
-                                            padding: const EdgeInsets.all(12.0),
-                                            child: Text(
-                                              'Rent',
-                                              style: TextStyle(
-                                                  color:
+                                                padding: const EdgeInsets.all(12.0),
+                                                child: Text(
+                                                  'Rent',
+                                                  style: TextStyle(
+                                                      color:
                                                       const Color(0xFF8A95A8),
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16),
-                                            ),
-                                          )),
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 16),
+                                                ),
+                                              )),
                                           TableCell(
                                               child: Padding(
-                                            padding:
+                                                padding:
                                                 const EdgeInsets.only(top: 12),
-                                            child: Text(
-                                              '${leasesummery.data?.amount}',
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: blueColor),
-                                            ),
-                                          )),
+                                                child: Text(
+                                                  '${leasesummery.data?.amount}',
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: blueColor),
+                                                ),
+                                              )),
                                         ]),
                                       ],
                                     ),
@@ -295,7 +512,7 @@ class _RenewleaseState extends State<Renewlease> {
                                       child: Column(
                                         // crossAxisAlignment: CrossAxisAlignment.center,
                                         mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        MainAxisAlignment.center,
                                         children: [
                                           Row(
                                             children: [
@@ -346,11 +563,11 @@ class _RenewleaseState extends State<Renewlease> {
                                                 (FormFieldState<String> state) {
                                               return Column(
                                                 crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                                CrossAxisAlignment.start,
                                                 children: [
                                                   DropdownButtonHideUnderline(
                                                     child:
-                                                        DropdownButton2<String>(
+                                                    DropdownButton2<String>(
                                                       isExpanded: true,
                                                       hint: const Row(
                                                         children: [
@@ -363,14 +580,14 @@ class _RenewleaseState extends State<Renewlease> {
                                                               style: TextStyle(
                                                                 fontSize: 14,
                                                                 fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
+                                                                FontWeight
+                                                                    .bold,
                                                                 color: Colors
                                                                     .black,
                                                               ),
                                                               overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
+                                                              TextOverflow
+                                                                  .ellipsis,
                                                             ),
                                                           ),
                                                         ],
@@ -378,26 +595,26 @@ class _RenewleaseState extends State<Renewlease> {
                                                       items: leaseTypeitems
                                                           .map(
                                                             (String item) =>
-                                                                DropdownMenuItem<
-                                                                    String>(
+                                                            DropdownMenuItem<
+                                                                String>(
                                                               value: item,
                                                               child: Text(
                                                                 item,
                                                                 style:
-                                                                    const TextStyle(
+                                                                const TextStyle(
                                                                   fontSize: 14,
                                                                   fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
+                                                                  FontWeight
+                                                                      .bold,
                                                                   color: Colors
                                                                       .black,
                                                                 ),
                                                                 overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                               ),
                                                             ),
-                                                          )
+                                                      )
                                                           .toList(),
                                                       value: _selectedLeaseType,
                                                       onChanged: (value) {
@@ -411,65 +628,65 @@ class _RenewleaseState extends State<Renewlease> {
                                                         state.reset();
                                                       },
                                                       buttonStyleData:
-                                                          ButtonStyleData(
+                                                      ButtonStyleData(
                                                         height: 50,
                                                         padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                left: 14,
-                                                                right: 14),
+                                                        const EdgeInsets
+                                                            .only(
+                                                            left: 14,
+                                                            right: 14),
                                                         decoration:
-                                                            BoxDecoration(
+                                                        BoxDecoration(
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(6),
+                                                          BorderRadius
+                                                              .circular(6),
                                                           border: Border.all(
                                                             color:
-                                                                Colors.black26,
+                                                            Colors.black26,
                                                           ),
                                                           color: Colors.white,
                                                         ),
                                                         elevation: 3,
                                                       ),
                                                       dropdownStyleData:
-                                                          DropdownStyleData(
+                                                      DropdownStyleData(
                                                         maxHeight: 200,
                                                         width: 200,
                                                         decoration:
-                                                            BoxDecoration(
+                                                        BoxDecoration(
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(14),
+                                                          BorderRadius
+                                                              .circular(14),
                                                         ),
                                                         offset: const Offset(
                                                             -20, 0),
                                                         scrollbarTheme:
-                                                            ScrollbarThemeData(
+                                                        ScrollbarThemeData(
                                                           radius: const Radius
                                                               .circular(40),
                                                           thickness:
-                                                              MaterialStateProperty
-                                                                  .all(6),
+                                                          MaterialStateProperty
+                                                              .all(6),
                                                           thumbVisibility:
-                                                              MaterialStateProperty
-                                                                  .all(true),
+                                                          MaterialStateProperty
+                                                              .all(true),
                                                         ),
                                                       ),
                                                       menuItemStyleData:
-                                                          const MenuItemStyleData(
+                                                      const MenuItemStyleData(
                                                         height: 40,
                                                         padding:
-                                                            EdgeInsets.only(
-                                                                left: 14,
-                                                                right: 14),
+                                                        EdgeInsets.only(
+                                                            left: 14,
+                                                            right: 14),
                                                       ),
                                                     ),
                                                   ),
                                                   if (state.hasError)
                                                     Padding(
                                                       padding:
-                                                          const EdgeInsets.only(
-                                                              left: 14, top: 8),
+                                                      const EdgeInsets.only(
+                                                          left: 14, top: 8),
                                                       child: Text(
                                                         state.errorText!,
                                                         style: const TextStyle(
@@ -517,7 +734,7 @@ class _RenewleaseState extends State<Renewlease> {
                                       child: CustomTextField(
                                         onTap: () async {
                                           DateTime? pickedDate =
-                                              await showDatePicker(
+                                          await showDatePicker(
                                             context: context,
                                             initialDate: DateTime.now(),
                                             firstDate: DateTime(2000),
@@ -527,9 +744,9 @@ class _RenewleaseState extends State<Renewlease> {
                                                 Widget? child) {
                                               return Theme(
                                                 data:
-                                                    ThemeData.light().copyWith(
+                                                ThemeData.light().copyWith(
                                                   colorScheme:
-                                                      const ColorScheme.light(
+                                                  const ColorScheme.light(
                                                     primary: Color.fromRGBO(
                                                         21,
                                                         43,
@@ -544,10 +761,10 @@ class _RenewleaseState extends State<Renewlease> {
                                                         1), // body text color
                                                   ),
                                                   textButtonTheme:
-                                                      TextButtonThemeData(
+                                                  TextButtonThemeData(
                                                     style: TextButton.styleFrom(
                                                       foregroundColor:
-                                                          Colors.white,
+                                                      Colors.white,
                                                       backgroundColor: const Color
                                                           .fromRGBO(21, 43, 83,
                                                           1), // button text color
@@ -617,7 +834,7 @@ class _RenewleaseState extends State<Renewlease> {
                                       child: CustomTextField(
                                         onTap: () async {
                                           DateTime? pickedDate =
-                                              await showDatePicker(
+                                          await showDatePicker(
                                             context: context,
                                             initialDate: DateTime.now(),
                                             firstDate: DateTime(2000),
@@ -627,9 +844,9 @@ class _RenewleaseState extends State<Renewlease> {
                                                 Widget? child) {
                                               return Theme(
                                                 data:
-                                                    ThemeData.light().copyWith(
+                                                ThemeData.light().copyWith(
                                                   colorScheme:
-                                                      const ColorScheme.light(
+                                                  const ColorScheme.light(
                                                     primary: Color.fromRGBO(
                                                         21,
                                                         43,
@@ -644,10 +861,10 @@ class _RenewleaseState extends State<Renewlease> {
                                                         1), // body text color
                                                   ),
                                                   textButtonTheme:
-                                                      TextButtonThemeData(
+                                                  TextButtonThemeData(
                                                     style: TextButton.styleFrom(
                                                       foregroundColor:
-                                                          Colors.white,
+                                                      Colors.white,
                                                       backgroundColor: const Color
                                                           .fromRGBO(21, 43, 83,
                                                           1), // button text color
@@ -709,6 +926,272 @@ class _RenewleaseState extends State<Renewlease> {
                                       hintText: 'Enter rent',
                                       controller: rent,
                                     ),
+
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    isLoading
+                                        ? const Center(
+                                      child: SpinKitFadingCircle(
+                                        color: Colors.black,
+                                        size: 50.0,
+                                      ),
+                                    )
+                                        : hasError
+                                        ? const Center(child: Text('Failed to load data'))
+                                        : Table(
+                                      border: TableBorder.all(width: 1),
+                                      columnWidths: const {
+                                        0: FlexColumnWidth(2),
+                                        1: FlexColumnWidth(2),
+                                        2: FlexColumnWidth(1),
+                                      },
+                                      children: [
+                                        TableRow(children: [
+                                          Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: Center(
+                                              child: Text('Account',
+                                                  style: TextStyle(
+                                                      color:
+                                                      blueColor,
+                                                      fontWeight: FontWeight.bold)),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: Center(
+                                              child: Text('Amount',
+                                                  style: TextStyle(
+                                                      color:
+                                                      blueColor,
+                                                      fontWeight: FontWeight.bold)),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.all(5.0),
+                                            child: Center(
+                                              child: Text('Actions',
+                                                  style: TextStyle(
+                                                      color:
+                                                      blueColor,
+                                                      fontWeight: FontWeight.bold)),
+                                            ),
+                                          ),
+                                        ]),
+                                        ...rows.asMap().entries.map((entry) {
+                                          int index = entry.key;
+                                          Map<String, dynamic> row = entry.value;
+                                          return TableRow(children: [
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: DropdownButtonHideUnderline(
+                                                child: DropdownButton2<String>(
+                                                  isExpanded: true,
+                                                  style: TextStyle(fontSize: 14),
+                                                  value: row['account'],
+                                                  items: [
+                                                    ...categorizedData.entries
+                                                        .expand((entry) {
+                                                      return [
+                                                        DropdownMenuItem<String>(
+                                                          enabled: false,
+                                                          child: Text(
+                                                            entry.key,
+                                                            style: const TextStyle(
+                                                              fontWeight:
+                                                              FontWeight.bold,
+                                                              color: Color.fromRGBO(
+                                                                  21, 43, 81, 1),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        ...entry.value.map((item) {
+                                                          return DropdownMenuItem<
+                                                              String>(
+                                                            value: item,
+                                                            child: Padding(
+                                                              padding:
+                                                              const EdgeInsets.only(
+                                                                  left: 0.0),
+                                                              child: Text(
+                                                                item,
+                                                                style: const TextStyle(
+                                                                  color: Colors.black,
+                                                                  fontWeight:
+                                                                  FontWeight.w400,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }).toList(),
+                                                      ];
+                                                    }).toList(),
+                                                  ],
+                                                  onChanged: (value) {
+                                                    String? chargeType;
+                                                    for (var entry
+                                                    in categorizedData.entries) {
+                                                      if (entry.value.contains(value)) {
+                                                        chargeType = entry.key;
+                                                        break;
+                                                      }
+                                                    }
+
+                                                    setState(() {
+                                                      rows[index]['account'] = value;
+                                                      rows[index]['charge_type'] =
+                                                          chargeType;
+                                                    });
+                                                  },
+                                                  buttonStyleData: ButtonStyleData(
+                                                    height: 50,
+                                                    width: 220,
+                                                    padding: const EdgeInsets.only(
+                                                        left: 8, right: 5),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                      BorderRadius.circular(6),
+                                                      color: Colors.white,
+                                                    ),
+                                                    elevation: 2,
+                                                  ),
+                                                  iconStyleData: const IconStyleData(
+                                                    icon: Icon(Icons.arrow_drop_down),
+                                                    iconSize: 24,
+                                                    iconEnabledColor: Color(0xFFb0b6c3),
+                                                    iconDisabledColor: Colors.grey,
+                                                  ),
+                                                  dropdownStyleData: DropdownStyleData(
+                                                    width: 250,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                      BorderRadius.circular(6),
+                                                      color: Colors.white,
+                                                    ),
+                                                    scrollbarTheme: ScrollbarThemeData(
+                                                      radius: const Radius.circular(6),
+                                                      thickness:
+                                                      MaterialStateProperty.all(6),
+                                                      thumbVisibility:
+                                                      MaterialStateProperty.all(
+                                                          true),
+                                                    ),
+                                                  ),
+                                                  hint: const Text('Select an account'),
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              margin: EdgeInsets.only(top: 5),
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: SizedBox(
+                                                  height: 50,
+                                                  child: KeyboardActions(
+                                                    config: _buildConfig(context),
+                                                    child: TextFormField(
+                                                      initialValue: widget.leaseId !=
+                                                          null
+                                                          ? rows[index]["amount"]
+                                                          .toString()
+                                                          : "0", // Make sure 0 is a string,
+                                                      focusNode: focusNodes[index],
+                                                      keyboardType:
+                                                      TextInputType.number,
+                                                      onChanged: (value) =>
+                                                          updateAmount(index, value),
+                                                      decoration: const InputDecoration(
+                                                          border: OutlineInputBorder(),
+                                                          hintText: 'Enter amount',
+                                                          hintStyle:
+                                                          TextStyle(fontSize: 14),
+                                                          contentPadding:
+                                                          EdgeInsets.only(
+                                                              top: 7, left: 7)),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: IconButton(
+                                                icon: const Icon(Icons.delete,
+                                                    color: Colors.red),
+                                                onPressed: () => deleteRow(index),
+                                              ),
+                                            ),
+                                          ]);
+                                        }).toList(),
+                                        TableRow(children: [
+                                          const Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: Text('Total',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold)),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                                '\$${totalAmount.toStringAsFixed(2)}'),
+                                          ),
+                                          const SizedBox.shrink(),
+                                        ]),
+                                        TableRow(children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                left:
+                                                MediaQuery.of(context).size.width <
+                                                    500
+                                                    ? 16
+                                                    : 70,
+                                                right:
+                                                MediaQuery.of(context).size.width <
+                                                    500
+                                                    ? 16
+                                                    : 70,
+                                                top: 10,
+                                                bottom: 10),
+                                            child: Container(
+                                              height: 40,
+                                              width: 100,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  border: Border.all(width: 1),
+                                                  borderRadius:
+                                                  BorderRadius.circular(5.0)),
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                    shape: RoundedRectangleBorder(
+                                                        borderRadius:
+                                                        BorderRadius.circular(
+                                                            5.0)),
+                                                    elevation: 0,
+                                                    backgroundColor: Colors.white),
+                                                onPressed: addRow,
+                                                child: Text(
+                                                  'Add Row',
+                                                  style: TextStyle(
+                                                    fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                        500
+                                                        ? 14
+                                                        : 18,
+                                                    color:
+                                                    blueColor,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox.shrink(),
+                                          const SizedBox.shrink(),
+                                        ]),
+                                      ],
+                                    ),
+
                                   ],
                                 ),
                               ),
@@ -720,28 +1203,64 @@ class _RenewleaseState extends State<Renewlease> {
                           Row(
                             children: [
                               GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+
+                                  List<Map<String,dynamic>> entries = rows.map((element){
+                                    return {
+                                      "account":element["account"],
+                                      "amount":element["amount"],
+                                      "charge_type":element["charge_type"],
+                                      "memo":element["memo"]
+                                    };
+                                  }).toList();
+
+                                  Map<String,dynamic> charge = {
+                                    "lease_id":widget.leaseId,
+                                    "admin_id":leasesummery.data!.adminId,
+                                    "is_leaseAdded": true,
+                                    "type": "Charge",
+                                    "total_amount": totalAmount,
+                                    "entry" : entries
+                                  };
+
+
+                                  Map<String,dynamic> leasedata = {
+                                    "lease_id":widget.leaseId,
+                                    "admin_id":leasesummery.data!.adminId,
+                                    "lease_type":leasesummery.data!.leaseType,
+                                    "start_date": startDateController.text,
+                                    "end_date":endDateController.text,
+                                    "amount":rent.text,    // new amount
+                                    "lease_amount" :widget.rentamount,
+                                    "charge":charge
+
+                                  };
+                                  updatenewrenewallease(leasedata);
+
+
+
+                                },
                                 child: Container(
                                     height:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 40
-                                            : 45,
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 40
+                                        : 45,
                                     width:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 90
-                                            : 150,
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 90
+                                        : 150,
                                     decoration: BoxDecoration(
                                         color: blueColor,
                                         borderRadius:
-                                            BorderRadius.circular(5.0)),
+                                        BorderRadius.circular(5.0)),
                                     child: Center(
                                       child: Text(
                                         'Ok',
                                         style: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
+                                                .size
+                                                .width <
+                                                500
                                                 ? 16
                                                 : 18,
                                             fontWeight: FontWeight.bold,
@@ -755,25 +1274,25 @@ class _RenewleaseState extends State<Renewlease> {
                                 },
                                 child: Container(
                                     height:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 35
-                                            : 45,
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 35
+                                        : 45,
                                     width:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 120
-                                            : 165,
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 120
+                                        : 165,
                                     decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius:
-                                            BorderRadius.circular(5.0)),
+                                        BorderRadius.circular(5.0)),
                                     child: Center(
                                       child: Text(
                                         'Cancel',
                                         style: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
+                                                .size
+                                                .width <
+                                                500
                                                 ? 16
                                                 : 18,
                                             fontWeight: FontWeight.bold,
@@ -795,4 +1314,6 @@ class _RenewleaseState extends State<Renewlease> {
       ),
     );
   }
+
+
 }

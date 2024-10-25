@@ -1530,9 +1530,7 @@ class _FinancialTableState extends State<FinancialTable> {
             ?.planDetail
             ?.planName ==
         'Free Plan';
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Container(
+    return Container(
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -1884,18 +1882,26 @@ class _FinancialTableState extends State<FinancialTable> {
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 Text(
+                                                  
                                                   'Export',
+                                                  
                                                   style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 15,
-                                                  ),
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 15,
+                                                    ),
+                                                
                                                 ),
                                                 SizedBox(
+                                                  
                                                   width: 5,
+                                                
                                                 ),
                                                 Icon(
+                                                  
                                                   Icons.arrow_drop_down,
+                                                  
                                                   size: 25,
+                                                
                                                 ),
                                               ],
                                             ),
@@ -2228,7 +2234,7 @@ class _FinancialTableState extends State<FinancialTable> {
                               ),
                               // SizedBox(height: 5),
                               if (data.isNotEmpty)
-                                _buildHeaders(),
+                                if (currentPageData.length > 0) _buildHeaders(),
                               const SizedBox(height: 20),
                               Container(
                                   decoration: BoxDecoration(
@@ -3739,7 +3745,7 @@ class _FinancialTableState extends State<FinancialTable> {
             ],
           ),
         ),
-      ),
+
     );
   }
 

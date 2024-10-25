@@ -113,6 +113,17 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     fetchWorkordersDetails(widget.workorderId);
     partsAndLabor.clear();
   }
+  String? initialSubject;
+  String? initialPerform;
+  String? initialVendorNote;
+  String? initialDate;
+  String? initialSelectedPropertyId;
+  String? initialSelectedUnitId;
+  String? initialSelectedCategory;
+  String? initialSelectedStatus;
+  String? initialSelectedVendorId;
+  String? initialSelectedStaffId;
+
 
   Future<void> fetchWorkordersDetails(String workorderId) async {
     //try {
@@ -143,6 +154,17 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           return '$fileName'; // Adjust the path as needed
         }).toList();
       }
+
+      initialSubject = fetchedDetails.workSubject;
+      initialPerform = fetchedDetails.workPerformed;
+      initialVendorNote = fetchedDetails.vendorNotes;
+      initialDate = fetchedDetails.date;
+      initialSelectedPropertyId = fetchedDetails.rentalId;
+      initialSelectedUnitId = fetchedDetails.unitId;
+      initialSelectedCategory = fetchedDetails.workCategory;
+      initialSelectedStatus = fetchedDetails.status;
+      initialSelectedVendorId = fetchedDetails.vendorId.toString();
+      initialSelectedStaffId = fetchedDetails.staffmemberId;
 
       //_imageUrls = fetchedDetails.workOrderImages ?? [];
       subject.text = fetchedDetails.workSubject!;
@@ -2314,6 +2336,30 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       setState(() {
         isLoading = true;
       });
+
+      // Check if any fields have changed
+      bool hasChanges = subject.text != initialSubject ||
+          perform.text != initialPerform ||
+          vendornote.text != initialVendorNote ||
+          _dateController.text != initialDate ||
+          _selectedPropertyId != initialSelectedPropertyId ||
+          _selectedUnitId != initialSelectedUnitId ||
+          _selectedCategory != initialSelectedCategory ||
+          _selectedStatus != initialSelectedStatus ||
+          _selectedvendorsId != initialSelectedVendorId ||
+          _selectedstaffId != initialSelectedStaffId;
+
+      if (!hasChanges) {
+        print("no changes");
+
+        setState(() {
+          isLoading = false;
+        });
+        Navigator.pop(context,false);
+        return; // Exit the method
+      }
+
+      // Proceed with API call
       String? finalVendorId = _selectedvendorsId ?? vendorId;
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
@@ -2332,36 +2378,32 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           "amount": double.tryParse(part['totalController'].text) ?? 0.0,
         };
       }).toList();
-      WorkOrderRepository()
-          .EditWorkOrder(
-        adminId: id,
-        workOrderid: widget.workorderId,
-        workSubject: subject.text,
-        staffMemberName: _selectedstaffId,
-        workCategory: _selectedCategory,
-        workPerformed: perform.text,
-        status: _selectedStatus,
-        rentalAddress: properties[_selectedPropertyId],
-        rentalUnit: units[_selectedUnitId],
-        tenant: tenantId,
-        rentalid: rentalId,
-        unitid: unitId,
-        workOrderImages: _imageUrls,
-        //vendorId: vendorId,
-        vendorId: finalVendorId,
-        vendorNotes: vendornote.text,
-        priority: _selectedOption,
-        isBillable: isChecked,
-        workChargeTo: isChecked == 'Tenants',
-        date: _dateController.text,
-        entry: _selectedEntry == 'yes',
-        parts: parts,
-      )
-          .then((value) {
-        print('vendors ${vendorId}');
-        setState(() {
-          widget.property?.workSubject = subject.text;
-        });
+
+      try {
+        await WorkOrderRepository().EditWorkOrder(
+          adminId: id,
+          workOrderid: widget.workorderId,
+          workSubject: subject.text,
+          staffMemberName: _selectedstaffId,
+          workCategory: _selectedCategory,
+          workPerformed: perform.text,
+          status: _selectedStatus,
+          rentalAddress: properties[_selectedPropertyId],
+          rentalUnit: units[_selectedUnitId],
+          tenant: tenantId,
+          rentalid: rentalId,
+          unitid: unitId,
+          workOrderImages: _imageUrls,
+          vendorId: finalVendorId,
+          vendorNotes: vendornote.text,
+          priority: _selectedOption,
+          isBillable: isChecked,
+          workChargeTo: isChecked == 'Tenants',
+          date: _dateController.text,
+          entry: _selectedEntry == 'Yes',
+          parts: parts,
+        );
+
         // Success
         Fluttertoast.showToast(
           msg: "Work order updated successfully",
@@ -2372,10 +2414,10 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           textColor: Colors.white,
           fontSize: 16.0,
         );
+
         Navigator.pop(context, true);
-      }).catchError((e) {
+      } catch (e) {
         // Error
-        print('vendors ${vendorId}');
         Fluttertoast.showToast(
           msg: "Failed to edit work order: $e",
           toastLength: Toast.LENGTH_SHORT,
@@ -2386,12 +2428,12 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           fontSize: 16.0,
         );
         print(e);
-      }).whenComplete(() {
+      } finally {
         // Final cleanup
         setState(() {
           isLoading = false;
         });
-      });
+      }
     } else {
       setState(() {
         formValid = false;

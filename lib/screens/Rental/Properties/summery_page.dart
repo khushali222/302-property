@@ -127,7 +127,7 @@ class _Summery_pageState extends State<Summery_page>
       });
     });
     checkInternet();
-
+    _fetchData();
     futureUnitsummery =
         Properies_summery_Repo().fetchunit(widget.properties.rentalId!);
 
@@ -138,7 +138,7 @@ class _Summery_pageState extends State<Summery_page>
     // futuresummery = Properies_summery_Repo().fetchPropertiessummery(widget.properties.rentalId!);
     _tabController = TabController(length: 4, vsync: this);
     // street3.text = widget.unit!.rentalunitadress!;
-    _fetchData();
+
     // moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     futurerentalowners = PropertiesRepository().fetchProperties();
     displayDate = DateFormat('dd/MM/yyyy').format(DateTime.parse(moveOutDate));
@@ -1322,6 +1322,10 @@ class _Summery_pageState extends State<Summery_page>
     );
   }
 
+  late List<unit_properties> unitList;
+  late List<TenantData> propertyList;
+  late List<propertiesworkData> workOrderList;
+
   Widget _buildDataCellrent(String text) {
     return TableCell(
       child: Padding(
@@ -1333,6 +1337,7 @@ class _Summery_pageState extends State<Summery_page>
       ),
     );
   }
+
 
   Widget _buildPaginationControlsrent() {
     int numorpages = 1;
@@ -1430,184 +1435,268 @@ class _Summery_pageState extends State<Summery_page>
         dropdown: true,
       ),
       body: _connectivityResult != ConnectivityResult.none
-          ? Column(
-              children: <Widget>[
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  children: [
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    SizedBox(
-                      width:
-                          MediaQuery.of(context).size.width > 500 ? 200 : 170,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 1),
-                        child: Text(
-                          '${widget.properties?.rentalAddress}',
-                          maxLines: 5, // Set maximum number of lines
-                          overflow: TextOverflow
-                              .ellipsis, // Handle overflow with ellipsis
-                          style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width < 500
-                                ? 13
-                                : 18,
-                            color: blueColor,
-                            fontWeight: FontWeight.bold,
+          ? SingleChildScrollView(
+            child: Column(
+                children: <Widget>[
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      SizedBox(
+                        width:
+                            MediaQuery.of(context).size.width > 500 ? 200 : 170,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 1),
+                          child: Text(
+                            '${widget.properties?.rentalAddress}',
+                            maxLines: 5, // Set maximum number of lines
+                            overflow: TextOverflow
+                                .ellipsis, // Handle overflow with ellipsis
+                            style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.width < 500
+                                  ? 13
+                                  : 18,
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    // Text('${widget.properties.rentalAddress}',
-                    //     style: TextStyle(
-                    //       color: blueColor,
-                    //       fontWeight: FontWeight.bold,
-                    //       fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 20,
-                    //     )),
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Text('${widget.properties.propertyTypeData?.propertyType}',
-                        style: TextStyle(
-                          color: Color(0xFF8A95A8),
-                          fontWeight: FontWeight.bold,
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 13 : 20,
-                        )),
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 10),
-                  height: 60,
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: blueColor),
-                    // color: Colors.blue,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: TabBar(
-                    controller: _tabController,
-                    dividerColor: Colors.transparent,
-                    indicatorWeight: 5,
-                    labelStyle: TextStyle(
-                      fontSize:
-                          MediaQuery.of(context).size.width < 500 ? 14 : 20,
-                      // fontWeight: FontWeight.bold,
-                    ),
-                    //indicatorPadding: EdgeInsets.symmetric(horizontal: 1),
-                    indicatorColor: blueColor,
-                    labelColor: blueColor,
-                    unselectedLabelColor: blueColor,
-                    tabs: [
-                      Tab(
-                        text: 'Summary',
-                      ),
-                      Tab(
-                        text: 'Units',
-                      ),
-                      StatefulBuilder(
-                        builder: (BuildContext context,
-                            void Function(void Function()) setState) {
-                          return Tab(text: 'Tenant');
-                        },
-                      ),
-                      StatefulBuilder(
-                        builder: (BuildContext context,
-                            void Function(void Function()) setState) {
-                          return Tab(text: 'Work');
-                        },
-                      ),
-                      // Consumer<WorkOrderCountProvider>(
-                      //   builder: (context, provider, child) {
-                      //     return Tab(text: 'Work(${provider.isChecked ? provider.count : provider.count})');
-                      //   },
-                      // ),
+                      // Text('${widget.properties.rentalAddress}',
+                      //     style: TextStyle(
+                      //       color: blueColor,
+                      //       fontWeight: FontWeight.bold,
+                      //       fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 20,
+                      //     )),
                     ],
                   ),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   children: [
-                  //     SizedBox(width: 2,),
-                  //     Expanded(
-                  //       child: Container(
-                  //         height: 43,
-                  //         decoration: BoxDecoration(
-                  //           color: blueColor,
-                  //           borderRadius: BorderRadius.circular(5),
-                  //         ),
-                  //           child: Center(child: Text("Summary",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
-                  //     ),
-                  //     SizedBox(width: 5,),
-                  //     Expanded(
-                  //       child: Container( height: 43,
-                  //           decoration: BoxDecoration(
-                  //               color: blueColor,
-                  //             borderRadius: BorderRadius.circular(5),
-                  //           ),
-                  //           child: Center(child: Text("Unit",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
-                  //     ),
-                  //     SizedBox(width: 5,),
-                  //     Expanded(
-                  //       child: Container(
-                  //           height: 43,
-                  //           decoration: BoxDecoration(
-                  //               color: blueColor,
-                  //             borderRadius: BorderRadius.circular(5),
-                  //           ),
-                  //           child: Center(child: Text("Tenats",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
-                  //     ),
-                  //     SizedBox(width: 5,),
-                  //     Expanded(
-                  //       child: Container(
-                  //           height: 43,
-                  //           decoration: BoxDecoration(
-                  //               color: blueColor,
-                  //             borderRadius: BorderRadius.circular(5),
-                  //           ),
-                  //           child: Center(child: Text("Workorder",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
-                  //     ),
-                  //     SizedBox(width: 2,),
-                  //   ],
-                  // ),
-                ),
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
                     children: [
-                      Summary_page(),
-                      // showdetails
-                      //     ? unitScreen(properties: widget.properties
-                      //         //properties: widget.properties,
-                      //       //  unit: unit,
-                      //       )
-                      //     : Unit_page(),
-                      // showdetails ? unitScreen1(context, unit!) : Unit_page(context),
-                      showdetails
-                          ? unitScreen1(context, unit!)
-                          : Unit_page(context),
-
-                      // unitScreen(),
-                      // Center(child: Text('Content of Tab 2')),
-                      //  Container(color:Colors.blue),
-                      Tenants(context),
-                      Workorder(context),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Text('${widget.properties.propertyTypeData?.propertyType}',
+                          style: TextStyle(
+                            color: Color(0xFF8A95A8),
+                            fontWeight: FontWeight.bold,
+                            fontSize:
+                                MediaQuery.of(context).size.width < 500 ? 13 : 20,
+                          )),
                     ],
                   ),
-                ),
-              ],
-            )
+                  const SizedBox(
+                    height: 20,
+                  ),
+                /*  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    height: 60,
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: blueColor),
+                      // color: Colors.blue,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: TabBar(
+                      controller: _tabController,
+                      dividerColor: Colors.transparent,
+                      indicatorWeight: 5,
+                      labelStyle: TextStyle(
+                        fontSize:
+                            MediaQuery.of(context).size.width < 500 ? 14 : 20,
+                        // fontWeight: FontWeight.bold,
+                      ),
+                      //indicatorPadding: EdgeInsets.symmetric(horizontal: 1),
+                      indicatorColor: blueColor,
+                      labelColor: blueColor,
+                      unselectedLabelColor: blueColor,
+                      tabs: [
+                        Tab(
+                          text: 'Summary',
+                        ),
+                        Tab(
+                          text: 'Units',
+                        ),
+                        StatefulBuilder(
+                          builder: (BuildContext context,
+                              void Function(void Function()) setState) {
+                            return Tab(text: 'Tenant');
+                          },
+                        ),
+                        StatefulBuilder(
+                          builder: (BuildContext context,
+                              void Function(void Function()) setState) {
+                            return Tab(text: 'Work');
+                          },
+                        ),
+                        // Consumer<WorkOrderCountProvider>(
+                        //   builder: (context, provider, child) {
+                        //     return Tab(text: 'Work(${provider.isChecked ? provider.count : provider.count})');
+                        //   },
+                        // ),
+                      ],
+                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //   children: [
+                    //     SizedBox(width: 2,),
+                    //     Expanded(
+                    //       child: Container(
+                    //         height: 43,
+                    //         decoration: BoxDecoration(
+                    //           color: blueColor,
+                    //           borderRadius: BorderRadius.circular(5),
+                    //         ),
+                    //           child: Center(child: Text("Summary",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
+                    //     ),
+                    //     SizedBox(width: 5,),
+                    //     Expanded(
+                    //       child: Container( height: 43,
+                    //           decoration: BoxDecoration(
+                    //               color: blueColor,
+                    //             borderRadius: BorderRadius.circular(5),
+                    //           ),
+                    //           child: Center(child: Text("Unit",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
+                    //     ),
+                    //     SizedBox(width: 5,),
+                    //     Expanded(
+                    //       child: Container(
+                    //           height: 43,
+                    //           decoration: BoxDecoration(
+                    //               color: blueColor,
+                    //             borderRadius: BorderRadius.circular(5),
+                    //           ),
+                    //           child: Center(child: Text("Tenats",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
+                    //     ),
+                    //     SizedBox(width: 5,),
+                    //     Expanded(
+                    //       child: Container(
+                    //           height: 43,
+                    //           decoration: BoxDecoration(
+                    //               color: blueColor,
+                    //             borderRadius: BorderRadius.circular(5),
+                    //           ),
+                    //           child: Center(child: Text("Workorder",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),))),
+                    //     ),
+                    //     SizedBox(width: 2,),
+                    //   ],
+                    // ),
+                  ),*/
+
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    height: 60,
+                    margin: EdgeInsets.symmetric(vertical: 5,horizontal: 15),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: blueColor)
+                        ,borderRadius: BorderRadius.circular(5)
+                    ),
+                    // color: Colors.red,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedIndex = 0;
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: _selectedIndex == 0 ? blueColor : Colors.white,
+                                  borderRadius: BorderRadius.circular(5)
+                              ),
+                              child: Center(child: Text("Summary",style: TextStyle(color:  _selectedIndex != 0 ? blueColor : Colors.white,),)),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedIndex = 1;
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: _selectedIndex == 1 ? blueColor : Colors.white,
+                                  borderRadius: BorderRadius.circular(5)
+                              ),
+
+                              child: Center(child: Text("Unit(${unitCount})",style: TextStyle(color:  _selectedIndex != 1 ? blueColor : Colors.white,))),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedIndex = 2;
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: _selectedIndex == 2 ? blueColor : Colors.white,
+                                  borderRadius: BorderRadius.circular(5)
+                              ),
+                              child: Center(child: Text("Tenant($tenentCount)",style: TextStyle(color:  _selectedIndex != 2 ? blueColor : Colors.white,))),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedIndex = 3;
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: _selectedIndex == 3 ? blueColor : Colors.white,
+                                  borderRadius: BorderRadius.circular(5)
+                              ),
+                              child: Center(child: Text("Workorder\n($count)",textAlign: TextAlign.center,style: TextStyle(color:  _selectedIndex != 3 ? blueColor : Colors.white,))),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  _buildTabContent(context),
+                 /* Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        Summary_page(),
+                        // showdetails
+                        //     ? unitScreen(properties: widget.properties
+                        //         //properties: widget.properties,
+                        //       //  unit: unit,
+                        //       )
+                        //     : Unit_page(),
+                        // showdetails ? unitScreen1(context, unit!) : Unit_page(context),
+                        showdetails
+                            ? unitScreen1(context, unit!)
+                            : Unit_page(context),
+
+                        // unitScreen(),
+                        // Center(child: Text('Content of Tab 2')),
+                        //  Container(color:Colors.blue),
+                        Tenants(context),
+                        Workorder(context),
+                      ],
+                    ),
+                  ),*/
+                ],
+              ),
+          )
           : SizedBox(
               width: double.infinity,
               child: Column(
@@ -1633,7 +1722,22 @@ class _Summery_pageState extends State<Summery_page>
             ),
     );
   }
-
+  Widget _buildTabContent( BuildContext context) {
+    switch (_selectedIndex) {
+      case 0:
+        return Summary_page();
+      case 1:
+        return showdetails
+        ? unitScreen1(context, unit!)
+            : Unit_page(context);
+      case 2:
+        return Tenants(context);
+      case 3:
+        return  Workorder(context);
+      default:
+        return Container(); // Fallback for safety
+    }
+  }
   Summary_page() {
     print("$image_url${widget.properties.rentalImage}");
     return Container(

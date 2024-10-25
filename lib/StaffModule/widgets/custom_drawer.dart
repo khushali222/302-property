@@ -142,7 +142,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
           ),
 
-          buildDropdownListTile(
+              buildDropdownListTile(
                 context,
                 FaIcon(
                   FontAwesomeIcons.thumbsUp,
@@ -150,27 +150,30 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   color: blueColor,
                 ),
                 "Leasing",
+                ["Rent Roll", "Applicants","Upcoming renewal"],
                 [
-                  if (permissions.leaseView ?? false) "Rent Roll",
-                  if (permissions.applicantView ?? false) "Applicants",
-                ],
-                [
-                  if (permissions.leaseView ?? false)
-                    FaIcon(
-                      FontAwesomeIcons.wallet,
-                      size: 20,
-                      color: widget.currentpage == "Rent Roll"
-                          ? Colors.white
-                          : blueColor,
-                    ), // Icon for Rent Roll
-                  if (permissions.applicantView ?? false)
-                    FaIcon(
-                      FontAwesomeIcons.addressCard,
-                      size: 20,
-                      color: widget.currentpage == "Applicants"
-                          ? Colors.white
-                          : blueColor,
-                    ),  // Icon for RentalOwner
+                  FaIcon(FontAwesomeIcons.wallet, size: 20,  color: widget.currentpage == "Rent Roll"
+                      ? Colors.white
+                      : blueColor,), // Icon for Properties
+                  FaIcon(FontAwesomeIcons.addressCard, size: 20,  color: widget.currentpage == "Applicants"
+                      ? Colors.white
+                      : blueColor,),
+
+                  widget.currentpage == "Upcoming renewal" ? SvgPicture.asset(
+                    "assets/images/upcoming white.svg",
+                    fit: BoxFit.cover,
+                    height: 27,
+                    width: 27,
+                  ) : SvgPicture.asset(
+                    "assets/images/upcoming renewal.svg",
+                    fit: BoxFit.cover,
+                    height: 27,
+                    width: 27,
+                    color: blueColor,
+                  ),
+                  FaIcon(FontAwesomeIcons.wallet, size: 20,  color: widget.currentpage == "Upcoming renewal"
+                      ? Colors.white
+                      : blueColor,), // Icon for RentalOwner
                   //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
                 ],
                 selectedSubtopic: !widget.dropdown ? null : widget.currentpage,

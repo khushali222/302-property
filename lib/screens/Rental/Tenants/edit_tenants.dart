@@ -1021,7 +1021,8 @@ class _EditTenantsState extends State<EditTenants> {
                                 bool hasChanges =
                                     firstName.text != initialFirstName ||
                                         lastName.text != initialLastName ||
-                                        phoneNumber.text != initialPhoneNumber ||
+                                        phoneNumber.text !=
+                                            initialPhoneNumber ||
                                         workNumber.text != initialWorkNumber ||
                                         email.text != initialEmail ||
                                         alterEmail.text != initialAlterEmail ||
@@ -1029,7 +1030,8 @@ class _EditTenantsState extends State<EditTenants> {
                                         dob.text != initialDob ||
                                         taxPayerId.text != initialTaxPayerId ||
                                         comments.text != initialComments ||
-                                        contactName.text != initialContactName ||
+                                        contactName.text !=
+                                            initialContactName ||
                                         relationToTenant.text !=
                                             initialRelationToTenant ||
                                         emergencyEmail.text !=
@@ -1051,7 +1053,7 @@ class _EditTenantsState extends State<EditTenants> {
 
                                 // Proceed with API call
                                 SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
+                                    await SharedPreferences.getInstance();
                                 String? adminId = prefs.getString("adminId");
 
                                 if (adminId != null) {
@@ -1074,14 +1076,15 @@ class _EditTenantsState extends State<EditTenants> {
                                       comments: comments.text,
                                       emergencyContactName: contactName.text,
                                       emergencyContactRelation:
-                                      relationToTenant.text,
-                                      emergencyContactEmail: emergencyEmail.text,
+                                          relationToTenant.text,
+                                      emergencyContactEmail:
+                                          emergencyEmail.text,
                                       emergencyContactPhoneNumber:
-                                      emergencyPhoneNumber.text,
+                                          emergencyPhoneNumber.text,
                                       companyName: companyName,
                                       overRideFee: overrideFee.text,
                                       enableOverRideFee:
-                                      enableOverrideFee.toString(),
+                                          enableOverrideFee.toString(),
                                     );
                                     Fluttertoast.showToast(
                                         msg: "Tenant updated successfully");
@@ -1103,16 +1106,17 @@ class _EditTenantsState extends State<EditTenants> {
                                           passWord.text;
                                       widget.tenants.tenantBirthDate =
                                           _dateController.text;
-                                      widget.tenants.taxPayerId = taxPayerId.text;
+                                      widget.tenants.taxPayerId =
+                                          taxPayerId.text;
                                       widget.tenants.comments = comments.text;
                                       widget.tenants.emergencyContact?.name =
                                           contactName.text;
-                                      widget.tenants.emergencyContact?.relation =
-                                          relationToTenant.text;
+                                      widget.tenants.emergencyContact
+                                          ?.relation = relationToTenant.text;
                                       widget.tenants.emergencyContact?.email =
                                           emergencyEmail.text;
                                       widget.tenants.emergencyContact
-                                          ?.phoneNumber =
+                                              ?.phoneNumber =
                                           emergencyPhoneNumber.text;
                                     });
                                     Navigator.of(context).pop(true);
@@ -1791,134 +1795,140 @@ class _EditTenantsState extends State<EditTenants> {
                               ),
                             ),
                             onPressed: () async {
-                              bool isFormValid = true;
+                              if (_formkey.currentState!.validate()) {
+                                bool isFormValid = true;
 
-                              // Validate each field and update the state accordingly
-                              if (firstName.text.isEmpty) {
-                                setState(() {
-                                  isFormValid = false;
-                                });
-                              }
-
-                              if (lastName.text.isEmpty) {
-                                setState(() {
-                                  isFormValid = false;
-                                });
-                              }
-
-                              if (email.text.isEmpty ||
-                                  !isValidEmail(email.text)) {
-                                setState(() {
-                                  isFormValid = false;
-                                });
-                              }
-
-                              // Check for changes
-                              bool hasChanges =
-                                  firstName.text != initialFirstName ||
-                                      lastName.text != initialLastName ||
-                                      phoneNumber.text != initialPhoneNumber ||
-                                      workNumber.text != initialWorkNumber ||
-                                      email.text != initialEmail ||
-                                      alterEmail.text != initialAlterEmail ||
-                                      passWord.text != initialPassword ||
-                                      dob.text != initialDob ||
-                                      taxPayerId.text != initialTaxPayerId ||
-                                      comments.text != initialComments ||
-                                      contactName.text != initialContactName ||
-                                      relationToTenant.text !=
-                                          initialRelationToTenant ||
-                                      emergencyEmail.text !=
-                                          initialEmergencyEmail ||
-                                      emergencyPhoneNumber.text !=
-                                          initialEmergencyPhoneNumber;
-
-                              if (!hasChanges) {
-                                print(
-                                    "No changes made, API call not necessary.");
-                                Navigator.of(context)
-                                    .pop(false); // Optionally navigate back
-                                return;
-                              }
-
-                              if (!isFormValid) {
-                                return; // Exit early if the form is not valid
-                              }
-
-                              // Proceed with API call
-                              SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-                              String? adminId = prefs.getString("adminId");
-
-                              if (adminId != null) {
-                                try {
+                                // Validate each field and update the state accordingly
+                                if (firstName.text.isEmpty) {
                                   setState(() {
-                                    isLoading = true;
+                                    isFormValid = false;
                                   });
-                                  await TenantsRepository().editTenant(
-                                    tenantId: widget.tenants.tenantId ?? "",
-                                    adminId: adminId,
-                                    tenantFirstName: firstName.text,
-                                    tenantLastName: lastName.text,
-                                    tenantPhoneNumber: phoneNumber.text,
-                                    tenantAlternativeNumber: workNumber.text,
-                                    tenantEmail: email.text,
-                                    tenantAlternativeEmail: alterEmail.text,
-                                    tenantPassword: passWord.text,
-                                    tenantBirthDate: _dateController.text,
-                                    taxPayerId: taxPayerId.text,
-                                    comments: comments.text,
-                                    emergencyContactName: contactName.text,
-                                    emergencyContactRelation:
-                                        relationToTenant.text,
-                                    emergencyContactEmail: emergencyEmail.text,
-                                    emergencyContactPhoneNumber:
-                                        emergencyPhoneNumber.text,
-                                    companyName: companyName,
-                                    overRideFee: overrideFee.text,
-                                    enableOverRideFee:
-                                        enableOverrideFee.toString(),
-                                  );
-                                  Fluttertoast.showToast(
-                                      msg: "Tenant updated successfully");
+                                }
+
+                                if (lastName.text.isEmpty) {
                                   setState(() {
-                                    isLoading = false;
-                                    errorMessage = null;
-                                    widget.tenants.tenantFirstName =
-                                        firstName.text;
-                                    widget.tenants.tenantLastName =
-                                        lastName.text;
-                                    widget.tenants.tenantPhoneNumber =
-                                        phoneNumber.text;
-                                    widget.tenants.tenantAlternativeNumber =
-                                        workNumber.text;
-                                    widget.tenants.tenantAlternativeEmail =
-                                        alterEmail.text;
-                                    widget.tenants.tenantEmail = email.text;
-                                    widget.tenants.tenantPassword =
-                                        passWord.text;
-                                    widget.tenants.tenantBirthDate =
-                                        _dateController.text;
-                                    widget.tenants.taxPayerId = taxPayerId.text;
-                                    widget.tenants.comments = comments.text;
-                                    widget.tenants.emergencyContact?.name =
-                                        contactName.text;
-                                    widget.tenants.emergencyContact?.relation =
-                                        relationToTenant.text;
-                                    widget.tenants.emergencyContact?.email =
-                                        emergencyEmail.text;
-                                    widget.tenants.emergencyContact
-                                            ?.phoneNumber =
-                                        emergencyPhoneNumber.text;
+                                    isFormValid = false;
                                   });
-                                  Navigator.of(context).pop(true);
-                                } catch (e) {
-                                  Fluttertoast.showToast(
-                                      msg: "Failed to update tenant");
+                                }
+
+                                if (email.text.isEmpty ||
+                                    !isValidEmail(email.text)) {
                                   setState(() {
-                                    isLoading = false;
+                                    isFormValid = false;
                                   });
-                                  print(e.toString());
+                                }
+
+                                // Check for changes
+                                bool hasChanges =
+                                    firstName.text != initialFirstName ||
+                                        lastName.text != initialLastName ||
+                                        phoneNumber.text !=
+                                            initialPhoneNumber ||
+                                        workNumber.text != initialWorkNumber ||
+                                        email.text != initialEmail ||
+                                        alterEmail.text != initialAlterEmail ||
+                                        passWord.text != initialPassword ||
+                                        dob.text != initialDob ||
+                                        taxPayerId.text != initialTaxPayerId ||
+                                        comments.text != initialComments ||
+                                        contactName.text !=
+                                            initialContactName ||
+                                        relationToTenant.text !=
+                                            initialRelationToTenant ||
+                                        emergencyEmail.text !=
+                                            initialEmergencyEmail ||
+                                        emergencyPhoneNumber.text !=
+                                            initialEmergencyPhoneNumber;
+
+                                if (!hasChanges) {
+                                  print(
+                                      "No changes made, API call not necessary.");
+                                  Navigator.of(context)
+                                      .pop(false); // Optionally navigate back
+                                  return;
+                                }
+
+                                if (!isFormValid) {
+                                  return;
+                                }
+
+                                // Proceed with API call
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                String? adminId = prefs.getString("adminId");
+
+                                if (adminId != null) {
+                                  try {
+                                    setState(() {
+                                      isLoading = true;
+                                    });
+                                    await TenantsRepository().editTenant(
+                                      tenantId: widget.tenants.tenantId ?? "",
+                                      adminId: adminId,
+                                      tenantFirstName: firstName.text,
+                                      tenantLastName: lastName.text,
+                                      tenantPhoneNumber: phoneNumber.text,
+                                      tenantAlternativeNumber: workNumber.text,
+                                      tenantEmail: email.text,
+                                      tenantAlternativeEmail: alterEmail.text,
+                                      tenantPassword: passWord.text,
+                                      tenantBirthDate: _dateController.text,
+                                      taxPayerId: taxPayerId.text,
+                                      comments: comments.text,
+                                      emergencyContactName: contactName.text,
+                                      emergencyContactRelation:
+                                          relationToTenant.text,
+                                      emergencyContactEmail:
+                                          emergencyEmail.text,
+                                      emergencyContactPhoneNumber:
+                                          emergencyPhoneNumber.text,
+                                      companyName: companyName,
+                                      overRideFee: overrideFee.text,
+                                      enableOverRideFee:
+                                          enableOverrideFee.toString(),
+                                    );
+                                    Fluttertoast.showToast(
+                                        msg: "Tenant updated successfully");
+                                    setState(() {
+                                      isLoading = false;
+                                      errorMessage = null;
+                                      widget.tenants.tenantFirstName =
+                                          firstName.text;
+                                      widget.tenants.tenantLastName =
+                                          lastName.text;
+                                      widget.tenants.tenantPhoneNumber =
+                                          phoneNumber.text;
+                                      widget.tenants.tenantAlternativeNumber =
+                                          workNumber.text;
+                                      widget.tenants.tenantAlternativeEmail =
+                                          alterEmail.text;
+                                      widget.tenants.tenantEmail = email.text;
+                                      widget.tenants.tenantPassword =
+                                          passWord.text;
+                                      widget.tenants.tenantBirthDate =
+                                          _dateController.text;
+                                      widget.tenants.taxPayerId =
+                                          taxPayerId.text;
+                                      widget.tenants.comments = comments.text;
+                                      widget.tenants.emergencyContact?.name =
+                                          contactName.text;
+                                      widget.tenants.emergencyContact
+                                          ?.relation = relationToTenant.text;
+                                      widget.tenants.emergencyContact?.email =
+                                          emergencyEmail.text;
+                                      widget.tenants.emergencyContact
+                                              ?.phoneNumber =
+                                          emergencyPhoneNumber.text;
+                                    });
+                                    Navigator.of(context).pop(true);
+                                  } catch (e) {
+                                    Fluttertoast.showToast(
+                                        msg: "Failed to update tenant");
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                    print(e.toString());
+                                  }
                                 }
                               } else {
                                 setState(() {

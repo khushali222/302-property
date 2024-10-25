@@ -568,6 +568,20 @@ class _Lease_tableState extends State<Lease_table> {
     ).show();
   }
 
+  String daydifference(String enddate){
+    DateTime edate =  DateFormat('yyyy-MM-dd').parse(enddate);
+
+    if(edate.difference(DateTime.now()).inDays >= 0 ){
+      return edate.difference(DateTime.now()).inDays.toString();
+    }else{
+      return "Expired";
+    }
+
+
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -1054,9 +1068,9 @@ class _Lease_tableState extends State<Lease_table> {
                                                                       .amount!.toStringAsFixed(2).toString()),),
                                                             _buildTableRow(
                                                                 'Remaining Days:',
-                                                                _getDisplayValue(lease
-                                                                    .remainingDays
-                                                                    .toString()),
+                                                                _getDisplayValue(
+                                                                    daydifference(
+                                                                     lease.endDate!)),
                                                                 'Rent Start :',
                                                                '${ dateProvider.formatCurrentDate(lease.rentDueDate!)}')
 
