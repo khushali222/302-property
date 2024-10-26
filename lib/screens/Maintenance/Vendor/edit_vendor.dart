@@ -26,6 +26,10 @@ class edit_vendor extends StatefulWidget {
 }
 
 class _edit_vendorState extends State<edit_vendor> {
+  String? initialVendorName;
+  String? initialPhoneNumber;
+  String? initialEmail;
+  String? initialPassword;
   Future<void> _fetchVendor() async {
     setState(() {
       isLoading = true;
@@ -33,6 +37,10 @@ class _edit_vendorState extends State<edit_vendor> {
 
     try {
       final vendor = await vendorRepository.getVendor(widget.vender_id!);
+      initialVendorName = vendor.vendorName;
+      initialPhoneNumber = vendor.vendorPhoneNumber;
+      initialEmail = vendor.vendorEmail;
+      initialPassword = vendor.vendorPassword;
 
       firstName.text = vendor.vendorName!;
       phoneNumber.text = vendor.vendorPhoneNumber!;
@@ -308,23 +316,90 @@ class _edit_vendorState extends State<edit_vendor> {
                                     ),
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            blueColor,
+                                        backgroundColor: blueColor,
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(8.0),
                                         ),
                                       ),
                                       onPressed: () async {
-                                        setState(() {
-                                          formValid = true;
-                                        });
-                                        if (_formkey.currentState!.validate()) {
-                                          setState(() {
-                                            formValid = false;
-                                          });
+                                        bool isFormValid = true;
 
-                                          await addTenant();
+                                        // Validate each field and update the state accordingly
+                                        if (firstName.text.isEmpty) {
+                                          setState(() {
+                                            isFormValid = false;
+                                          });
+                                        }
+
+                                        if (phoneNumber.text.isEmpty) {
+                                          setState(() {
+                                            isFormValid = false;
+                                          });
+                                        }
+
+                                        if (email.text.isEmpty) {
+                                          setState(() {
+                                            isFormValid = false;
+                                          });
+                                        }
+
+                                        // Check for changes
+                                        bool hasChanges = firstName.text !=
+                                                initialVendorName ||
+                                            phoneNumber.text !=
+                                                initialPhoneNumber ||
+                                            email.text != initialEmail ||
+                                            passWord.text != initialPassword;
+
+                                        if (!hasChanges) {
+                                          print(
+                                              "No changes made, API call not necessary.");
+                                          Navigator.of(context).pop(
+                                              false); // Optionally navigate back
+                                          return;
+                                        }
+
+                                        if (!isFormValid) {
+                                          return; // Exit early if the form is not valid
+                                        }
+
+                                        // Proceed with API call
+                                        setState(() {
+                                          isLoading = true; // Start loading
+                                        });
+
+                                        SharedPreferences prefs =
+                                            await SharedPreferences
+                                                .getInstance();
+                                        String adminId =
+                                            prefs.getString("adminId")!;
+
+                                        final vendor = Vendor(
+                                          adminId: adminId,
+                                          vendorName: firstName.text,
+                                          vendorPhoneNumber: phoneNumber.text,
+                                          vendorEmail: email.text,
+                                          vendorPassword: passWord.text,
+                                        );
+
+                                        final success = await vendorRepository
+                                            .update_vendor(
+                                                vendor, widget.vender_id!);
+                                        setState(() {
+                                          isLoading = false; // Stop loading
+                                        });
+
+                                        if (success) {
+                                          Fluttertoast.showToast(
+                                              msg:
+                                                  "Vendor Edited successfully");
+                                          Navigator.of(context).pop(true);
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                                  content: Text(
+                                                      'Failed to edit vendor')));
                                         }
                                       },
                                       child: isLoading
@@ -603,25 +678,107 @@ class _edit_vendorState extends State<edit_vendor> {
                                   ),
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          blueColor,
+                                      backgroundColor: blueColor,
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(8.0),
                                       ),
                                     ),
                                     onPressed: () async {
-                                      setState(() {
-                                        formValid = true;
-                                      });
                                       if (_formkey.currentState!.validate()) {
+                                        bool isFormValid = true;
+
+                                        // Validate each field and update the state accordingly
+                                        if (firstName.text.isEmpty) {
+                                          setState(() {
+                                            isFormValid = false;
+                                          });
+                                        }
+
+                                        if (phoneNumber.text.isEmpty) {
+                                          setState(() {
+                                            isFormValid = false;
+                                          });
+                                        }
+
+                                        if (email.text.isEmpty) {
+                                          setState(() {
+                                            isFormValid = false;
+                                          });
+                                        }
+
+                                        // Check for changes
+                                        bool hasChanges = firstName.text !=
+                                                initialVendorName ||
+                                            phoneNumber.text !=
+                                                initialPhoneNumber ||
+                                            email.text != initialEmail ||
+                                            passWord.text != initialPassword;
+
+                                        if (!hasChanges) {
+                                          print(
+                                              "No changes made, API call not necessary.");
+                                          Navigator.of(context).pop(
+                                              false); // Optionally navigate back
+                                          return;
+                                        }
+
+                                        if (!isFormValid) {
+                                          return; // Exit early if the form is not valid
+                                        }
+
+                                        // Proceed with API call
                                         setState(() {
-                                          formValid = false;
+                                          isLoading = true; // Start loading
                                         });
 
-                                        await addTenant();
+                                        SharedPreferences prefs =
+                                            await SharedPreferences
+                                                .getInstance();
+                                        String adminId =
+                                            prefs.getString("adminId")!;
+
+                                        final vendor = Vendor(
+                                          adminId: adminId,
+                                          vendorName: firstName.text,
+                                          vendorPhoneNumber: phoneNumber.text,
+                                          vendorEmail: email.text,
+                                          vendorPassword: passWord.text,
+                                        );
+
+                                        final success = await vendorRepository
+                                            .update_vendor(
+                                                vendor, widget.vender_id!);
+                                        setState(() {
+                                          isLoading = false; // Stop loading
+                                        });
+
+                                        if (success) {
+                                          Fluttertoast.showToast(
+                                              msg:
+                                                  "Vendor Edited successfully");
+                                          Navigator.of(context).pop(true);
+                                        }
+                                      } else {
+                                        print("Failed to edit vendor");
+                                        // ScaffoldMessenger.of(context)
+                                        //     .showSnackBar(SnackBar(
+                                        //         content: Text(
+                                        //             'Failed to edit vendor')));
                                       }
                                     },
+                                    // onPressed: () async {
+                                    //   setState(() {
+                                    //     formValid = true;
+                                    //   });
+                                    //   if (_formkey.currentState!.validate()) {
+                                    //     setState(() {
+                                    //       formValid = false;
+                                    //     });
+                                    //
+                                    //     await addTenant();
+                                    //   }
+                                    // },
                                     child: isLoading
                                         ? Center(
                                             child: SpinKitFadingCircle(
@@ -938,8 +1095,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                 _errorMessage = 'Please ${widget.hintText}';
               });
               return '';
-            }
-            else if (widget.email != null) {
+            } else if (widget.email != null) {
               if (!EmailValidator.validate(widget.controller!.text)) {
                 setState(() {
                   _errorMessage = "Email is not valid";

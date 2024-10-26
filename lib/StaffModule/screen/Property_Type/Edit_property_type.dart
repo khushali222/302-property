@@ -27,6 +27,9 @@ class _Edit_property_typeState extends State<Edit_property_type> {
     'Residential',
     "Commercial",
   ];
+  String? initialPropertyType;
+  String? initialPropertySubType;
+  bool? initialIsMultiUnit;
   @override
   void initState() {
     // TODO: implement initState
@@ -34,6 +37,10 @@ class _Edit_property_typeState extends State<Edit_property_type> {
     selectedValue = widget.property.propertyType;
     subtype.text = widget.property.propertysubType!;
     isChecked = widget.property.isMultiunit!;
+
+    initialPropertyType = widget.property.propertyType;
+    initialPropertySubType = widget.property.propertysubType!;
+    initialIsMultiUnit = widget.property.isMultiunit!;
   }
 
   bool isLoading = false;
@@ -303,12 +310,17 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                 width: MediaQuery.of(context).size.width * 0.02),
                           GestureDetector(
                             onTap: () async {
+                              bool hasChanges =
+                                  selectedValue != initialPropertyType ||
+                                      subtype.text != initialPropertySubType ||
+                                      isChecked != initialIsMultiUnit;
+
                               if (selectedValue == null ||
                                   subtype.text.isEmpty) {
                                 setState(() {
                                   iserror = true;
                                 });
-                              } else {
+                              } else if (hasChanges) {
                                 setState(() {
                                   isLoading = true;
                                   iserror = false;
@@ -341,6 +353,10 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                     isLoading = false;
                                   });
                                 });
+                              } else {
+                                print(
+                                    "No changes made, API call not necessary.");
+                                Navigator.of(context).pop(false);
                               }
                               print(selectedValue);
                             },

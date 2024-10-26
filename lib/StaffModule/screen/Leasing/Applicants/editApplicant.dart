@@ -33,6 +33,13 @@ class EditApplicant extends StatefulWidget {
 }
 
 class _EditApplicantState extends State<EditApplicant> {
+  String? initialFirstName;
+  String? initialLastName;
+  String? initialEmail;
+  String? initialMobileNumber;
+  String? initialHomeNumber;
+  String? initialBusinessNumber;
+  String? initialTelephoneNumber;
   @override
   void initState() {
     // TODO: implement initState
@@ -51,6 +58,16 @@ class _EditApplicantState extends State<EditApplicant> {
     telePhoneNumber.text = widget.applicant.applicantTelephoneNumber == null
         ? ''
         : widget.applicant.applicantTelephoneNumber!.toString();
+
+    initialFirstName = widget.applicant.applicantFirstName;
+    initialLastName = widget.applicant.applicantLastName;
+    initialEmail = widget.applicant.applicantEmail;
+    initialMobileNumber = widget.applicant.applicantPhoneNumber?.toString();
+    initialHomeNumber = widget.applicant.applicantHomeNumber?.toString();
+    initialBusinessNumber =
+        widget.applicant.applicantBusinessNumber?.toString();
+    initialTelephoneNumber =
+        widget.applicant.applicantTelephoneNumber?.toString();
 
     super.initState();
   }
@@ -363,94 +380,129 @@ class _EditApplicantState extends State<EditApplicant> {
                         ),
                         onPressed: () async {
                           if (_formkey.currentState!.validate()) {
-                            setState(() {
-                              isLoading = true;
-                              errorMessage = null;
-                            });
+                            bool isFormValid = true;
+
+                            // Validate each field and update the state accordingly
+                            if (firstName.text.isEmpty) {
+                              setState(() {
+                                isFormValid = false;
+                              });
+                            }
+
+                            if (lastName.text.isEmpty) {
+                              setState(() {
+                                isFormValid = false;
+                              });
+                            }
+
+                            if (email.text.isEmpty) {
+                              setState(() {
+                                isFormValid = false;
+                              });
+                            }
+
+                            // Check for changes
+                            bool hasChanges = firstName.text !=
+                                initialFirstName ||
+                                lastName.text != initialLastName ||
+                                email.text != initialEmail ||
+                                mobileNumber.text != initialMobileNumber ||
+                                homeNumber.text != initialHomeNumber ||
+                                bussinessNumber.text != initialBusinessNumber ||
+                                telePhoneNumber.text != initialTelephoneNumber;
+
+                            if (!hasChanges) {
+                              print("No changes made, API call not necessary.");
+                              Navigator.of(context)
+                                  .pop(false); // Optionally navigate back
+                              return;
+                            }
+
+                            if (!isFormValid) {
+                              return; // Exit early if the form is not valid
+                            }
+
+                            // Proceed with API call
                             SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
+                            await SharedPreferences.getInstance();
                             String? adminId = prefs.getString("adminId");
-                            print(firstName.text);
-                            print(lastName.text);
-                            print(email.text);
-                            print(mobileNumber.text);
-                            print(homeNumber.text);
-                            print(telePhoneNumber.text);
-                            print(bussinessNumber.text);
-                            print(_selectedProperty.toString());
-                            print(_selectedUnit.toString());
 
-                            try {
-                              // Create the applicant data map
-                              Map<String, dynamic> applicantData = {
-                                "admin_id": adminId,
-                                "applicant_firstName": firstName.text.isNotEmpty
-                                    ? firstName.text
-                                    : 'N/A',
-                                "applicant_lastName": lastName.text.isNotEmpty
-                                    ? lastName.text
-                                    : 'N/A',
-                                "applicant_email":
-                                    email.text.isNotEmpty ? email.text : 'N/A',
-                                "applicant_phoneNumber":
-                                    mobileNumber.text.isNotEmpty
-                                        ? mobileNumber.text
-                                        : 'N/A',
-                                "applicant_homeNumber":
-                                    homeNumber.text.isNotEmpty
-                                        ? homeNumber.text
-                                        : 'N/A',
-                                "applicant_telephoneNumber":
-                                    telePhoneNumber.text.isNotEmpty
-                                        ? telePhoneNumber.text
-                                        : 'N/A',
-                                "applicant_businessNumber":
-                                    bussinessNumber.text.isNotEmpty
-                                        ? bussinessNumber.text
-                                        : 'N/A',
-                              };
+                            if (adminId != null) {
+                              try {
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                // Create the applicant data map
+                                Map<String, dynamic> applicantData = {
+                                  "applicant_firstName":
+                                  firstName.text.isNotEmpty
+                                      ? firstName.text
+                                      : 'N/A',
+                                  "applicant_lastName": lastName.text.isNotEmpty
+                                      ? lastName.text
+                                      : 'N/A',
+                                  "applicant_email": email.text.isNotEmpty
+                                      ? email.text
+                                      : 'N/A',
+                                  "applicant_phoneNumber":
+                                  mobileNumber.text.isNotEmpty
+                                      ? mobileNumber.text
+                                      : 'N/A',
+                                  "applicant_homeNumber":
+                                  homeNumber.text.isNotEmpty
+                                      ? homeNumber.text
+                                      : 'N/A',
+                                  "applicant_telephoneNumber":
+                                  telePhoneNumber.text.isNotEmpty
+                                      ? telePhoneNumber.text
+                                      : 'N/A',
+                                  "applicant_businessNumber":
+                                  bussinessNumber.text.isNotEmpty
+                                      ? bussinessNumber.text
+                                      : 'N/A',
+                                };
 
-                              // Make the API call using updateApplicants
-                              final response =
-                                  await ApplicantRepository.updateApplicants(
-                                applicantId: widget.applicantId,
-                                applicantData: applicantData,
+                                // Make the API call using updateApplicants
+                                final response =
+                                await ApplicantRepository.updateApplicants(
+                                  applicantId: widget.applicantId,
+                                  applicantData: applicantData,
+                                );
 
-                              );
-
-                              Fluttertoast.showToast(
-                                  msg: "Applicant updated successfully");
-                              Navigator.of(context).pop(true);
-                              setState(() {
-
-                                widget.applicant.applicant!.applicantFirstName =
-                                    firstName.text;
-                                widget.applicant.applicant!.applicantLastName =
-                                    lastName.text;
-                                widget.applicant.applicant!
-                                    .applicantPhoneNumber = mobileNumber.text;
-                                widget.applicant.applicant!
-                                    .applicantHomeNumber = homeNumber.text;
-                                widget.applicant.applicant!
-                                    .applicantBusinessNumber = bussinessNumber.text;
-                                widget.applicant.applicant!
-                                    .applicantTelephoneNumber = telePhoneNumber.text;
-                                widget.applicant.applicant!.applicantEmail =
-                                    email.text;
-                                isLoading = false;
-                              });
-
-                            } catch (e) {
-                              setState(() {
-                                isLoading = false;
-                              });
+                                Fluttertoast.showToast(
+                                    msg: "Applicant updated successfully");
+                                Navigator.of(context).pop(true);
+                                setState(() {
+                                  widget.applicant.applicant!
+                                      .applicantFirstName = firstName.text;
+                                  widget.applicant.applicant!
+                                      .applicantLastName = lastName.text;
+                                  widget.applicant.applicant!
+                                      .applicantPhoneNumber = mobileNumber.text;
+                                  widget.applicant.applicant!
+                                      .applicantHomeNumber = homeNumber.text;
+                                  widget.applicant.applicant!
+                                      .applicantBusinessNumber =
+                                      bussinessNumber.text;
+                                  widget.applicant.applicant!
+                                      .applicantTelephoneNumber =
+                                      telePhoneNumber.text;
+                                  widget.applicant.applicant!.applicantEmail =
+                                      email.text;
+                                  isLoading = false;
+                                });
+                              } catch (e) {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                              }
                             }
                           } else {
                             setState(() {
                               isLoading = false;
                               errorMessage = "Admin ID not found";
                             });
-                            Fluttertoast.showToast(msg: "Admin ID not found");
+                            //  Fluttertoast.showToast(msg: "Admin ID not found");
                           }
                         },
                         child: isLoading

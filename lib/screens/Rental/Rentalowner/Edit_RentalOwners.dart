@@ -81,6 +81,23 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
   bool isLoading = false;
   Map<int, TextEditingController> _controllers = {};
 
+  String? initialName;
+  String? initialCompanyName;
+  String? initialPrimaryEmail;
+  String? initialAlternativeEmail;
+  String? initialPhoneNumber;
+  String? initialHomeNumber;
+  String? initialOfficeNumber;
+  String? initialStreetAddress;
+  String? initialCity;
+  String? initialState;
+  String? initialCountry;
+  String? initialPostalCode;
+  String? initialTaxId;
+  String? initialTaxType;
+  String? initialStartDate;
+  String? initialEndDate;
+
   @override
   void initState() {
     super.initState();
@@ -115,6 +132,22 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     } else {
       _controllers[0] = TextEditingController();
     }
+    initialName = widget.rentalOwner.rentalOwnername;
+    initialCompanyName = widget.rentalOwner.rentalOwnerCompanyName;
+    initialPrimaryEmail = widget.rentalOwner.rentalOwnerPrimaryEmail;
+    initialAlternativeEmail = widget.rentalOwner.rentalOwnerAlternateEmail;
+    initialPhoneNumber = widget.rentalOwner.rentalOwnerPhoneNumber;
+    initialHomeNumber = widget.rentalOwner.rentalOwnerHomeNumber;
+    initialOfficeNumber = widget.rentalOwner.rentalOwnerBusinessNumber;
+    initialStreetAddress = widget.rentalOwner.streetAddress;
+    initialCity = widget.rentalOwner.city;
+    initialState = widget.rentalOwner.state;
+    initialCountry = widget.rentalOwner.country;
+    initialPostalCode = widget.rentalOwner.postalCode;
+    initialTaxId = widget.rentalOwner.texpayerId;
+    initialTaxType = widget.rentalOwner.textIdentityType;
+    initialStartDate = widget.rentalOwner.startDate;
+    initialEndDate = widget.rentalOwner.endDate;
   }
 
   // Add a text field
@@ -2780,11 +2813,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                           ],
                         ),
                       ),
-
-
-
-
-
                     ],
                   ),
                 ),
@@ -2831,194 +2859,61 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     });
                   }
 
-               /*   if (startdateController.text.isEmpty) {
-                    setState(() {
-                      startdatederror = true;
-                      startdatemessage = "required";
-                      isFormValid = false;
-                    });
-                  } else {
-                    setState(() {
-                      startdatederror = false;
-                    });
-                  }
-
-                  if (enddateController.text.isEmpty) {
-                    setState(() {
-                      enddatederror = true;
-                      enddatemessage = "required";
-                      isFormValid = false;
-                    });
-                  } else {
-                    setState(() {
-                      enddatederror = false;
-                    });
-                  }*/
-
                   if (primaryemail.text.isEmpty) {
                     setState(() {
                       primaryemailerror = true;
                       primaryemailmessage = "required";
                       isFormValid = false;
                     });
-                  }else if (!EmailValidator.validate(primaryemail.text)) {
+                  } else if (!EmailValidator.validate(primaryemail.text)) {
                     setState(() {
                       primaryemailerror = true;
                       primaryemailmessage = "Email is not valid";
                     });
-                  }
-                  else {
+                  } else {
                     setState(() {
                       primaryemailerror = false;
                     });
                   }
 
-                 /* if (alternativeemail.text.isEmpty) {
-                    setState(() {
-                      alternativeerror = true;
-                      alternativemessage = "required";
-                      isFormValid = false;
-                    });
-                  } else {
-                    setState(() {
-                      alternativeerror = false;
-                    });
-                  }
-*/
-                  if (phonenum.text.isEmpty) {
-                    setState(() {
-                      phonenumerror = true;
-                      phonenummessage = "required";
-                      isFormValid = false;
-                    });
-                  } else {
-                    setState(() {
-                      phonenumerror = false;
-                    });
-                  }
+                  // Validate other fields similarly...
 
-              /*    if (homenum.text.isEmpty) {
-                    setState(() {
-                      homenumerror = true;
-                      homenummessage = "required";
-                      isFormValid = false;
-                    });
-                  } else {
-                    setState(() {
-                      homenumerror = false;
-                    });
-                  }
+                  // Check for changes
+                  bool hasChanges = name.text != initialName ||
+                      comname.text != initialCompanyName ||
+                      primaryemail.text != initialPrimaryEmail ||
+                      alternativeemail.text != initialAlternativeEmail ||
+                      phonenum.text != initialPhoneNumber ||
+                      homenum.text != initialHomeNumber ||
+                      officenum.text != initialOfficeNumber ||
+                      street2.text != initialStreetAddress ||
+                      city2.text != initialCity ||
+                      state2.text != initialState ||
+                      county2.text != initialCountry ||
+                      code2.text != initialPostalCode ||
+                      taxid.text != initialTaxId ||
+                      taxtype.text != initialTaxType ||
+                      startdateController.text != initialStartDate ||
+                      enddateController.text != initialEndDate;
 
-                  if (officenum.text.isEmpty) {
-                    setState(() {
-                      officenumerror = true;
-                      officenummessage = "required";
-                      isFormValid = false;
-                    });
-                  } else {
-                    setState(() {
-                      officenumerror = false;
-                    });
+                  if (!hasChanges) {
+                    print("No changes made, API call not necessary.");
+                    Navigator.of(context).pop(false); // Optionally navigate back
+                    return;
                   }
-
-                  if (street2.text.isEmpty) {
-                    setState(() {
-                      street2error = true;
-                      street2message = "required";
-                      isFormValid = false;
-                    });
-                  } else {
-                    setState(() {
-                      street2error = false;
-                    });
-                  }
-
-                  if (city2.text.isEmpty) {
-                    setState(() {
-                      city2error = true;
-                      city2message = "required";
-                      isFormValid = false;
-                    });
-                  } else {
-                    setState(() {
-                      city2error = false;
-                    });
-                  }
-
-                  if (state2.text.isEmpty) {
-                    setState(() {
-                      state2error = true;
-                      state2message = "required";
-                      isFormValid = false;
-                    });
-                  } else {
-                    setState(() {
-                      state2error = false;
-                    });
-                  }
-
-                  if (county2.text.isEmpty) {
-                    setState(() {
-                      county2error = true;
-                      county2message = "required";
-                      isFormValid = false;
-                    });
-                  } else {
-                    setState(() {
-                      county2error = false;
-                    });
-                  }
-
-                  if (code2.text.isEmpty) {
-                    setState(() {
-                      code2error = true;
-                      code2message = "required";
-                      isFormValid = false;
-                    });
-                  } else {
-                    setState(() {
-                      code2error = false;
-                    });
-                  }
-
-                  if (taxtype.text.isEmpty) {
-                    setState(() {
-                      taxtypeerror = true;
-                      taxtypemessage = "required";
-                      isFormValid = false;
-                    });
-                  } else {
-                    setState(() {
-                      taxtypeerror = false;
-                    });
-                  }
-
-                  if (taxid.text.isEmpty) {
-                    setState(() {
-                      taxiderror = true;
-                      taxidmessage = "required";
-                      isFormValid = false;
-                    });
-                  } else {
-                    setState(() {
-                      taxiderror = false;
-                    });
-                  }*/
 
                   if (!isFormValid) {
                     return; // Exit early if the form is not valid
                   }
 
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
                   String? adminId = prefs.getString("adminId");
 
                   // Prepare the processor list
                   List<ProcessorList> processorList = [];
                   _controllers.forEach((key, controller) {
                     if (controller.text.isNotEmpty) {
-                      processorList
-                          .add(ProcessorList(processorId: controller.text));
+                      processorList.add(ProcessorList(processorId: controller.text));
                     }
                   });
 
@@ -3051,14 +2946,11 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                     setState(() {
                       widget.rentalOwner.rentalOwnername = name.text;
                       widget.rentalOwner.rentalOwnerCompanyName = comname.text;
-                      widget.rentalOwner.rentalOwnerPrimaryEmail =
-                          primaryemail.text;
-                      widget.rentalOwner.rentalOwnerAlternateEmail =
-                          alternativeemail.text;
+                      widget.rentalOwner.rentalOwnerPrimaryEmail = primaryemail.text;
+                      widget.rentalOwner.rentalOwnerAlternateEmail = alternativeemail.text;
                       widget.rentalOwner.rentalOwnerPhoneNumber = phonenum.text;
                       widget.rentalOwner.rentalOwnerHomeNumber = homenum.text;
-                      widget.rentalOwner.rentalOwnerBusinessNumber =
-                          officenum.text;
+                      widget.rentalOwner.rentalOwnerBusinessNumber = officenum.text;
                       widget.rentalOwner.startDate = startdateController.text;
                       widget.rentalOwner.endDate = enddateController.text;
                       widget.rentalOwner.texpayerId = taxid.text;
