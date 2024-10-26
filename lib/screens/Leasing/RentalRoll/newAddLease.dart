@@ -644,7 +644,7 @@ class _addLease3State extends State<addLease3>
         'comments': tenant.comments ?? '',
         'dob': tenant.tenantBirthDate ?? '',
         'taxPayerId': tenant.taxPayerId ?? '',
-        'emergencyContactName': tenant.emergencyContact!.name ?? '',
+        'emergencyContactName': tenant.emergencyContact?.name ?? '',
         'emergencyRelation': tenant.emergencyContact!.relation ?? '',
         'emergencyEmail': tenant.emergencyContact!.email ?? '',
         'emergencyPhoneNumber': tenant.emergencyContact!.phoneNumber ?? '',
@@ -5724,9 +5724,15 @@ class _AddTenantState extends State<AddTenant> {
                           ],
                           rows: filteredTenants.map((tenant) {
                             // Check if the tenant is temporarily selected
-                            final isSelected =
-                                selectedTenantsTemp.contains(tenant);
+                            // final isSelected =
+                            //     selectedTenantsTemp.contains(tenant);
+                            final matchingTenants =
+                                Provider.of<SelectedTenantsProvider>(context)
+                                    .selectedTenants;
 
+                            //  selectedTenantsTemp.addAll(matchingTenants);
+                            final isSelected = selectedTenantsTemp.any((element) => element.tenantId == tenant.tenantId);
+                            print(selectedTenantsTemp.length);
                             return DataRow(
                               cells: [
                                 DataCell(
@@ -5774,7 +5780,7 @@ class _AddTenantState extends State<AddTenant> {
                                   selectedTenantsProvider.addTenant(tenant);
                                 }
                                 // Clear the temporary list after adding
-                                selectedTenantsTemp.clear();
+                               // selectedTenantsTemp.clear();
                               });
                               Navigator.pop(
                                   context); // Close the dialog or screen after adding
@@ -6475,7 +6481,7 @@ class _AddCosignerState extends State<AddCosigner> {
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-                color:  blueColor,
+                 color:  blueColor,
                 border: Border.all(
                   color: blueColor,
                 ),

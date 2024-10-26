@@ -708,6 +708,9 @@ class _Edit_leaseState extends State<Edit_lease>
         'Weekly',
       ];
     }
+    if(_selectedRent != null && _selectedRent!.isNotEmpty){
+      _selectedRent = rentCycleitems.first;
+    }
     setState(() {
 
     });
