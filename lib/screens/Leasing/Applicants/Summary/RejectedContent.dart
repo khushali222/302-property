@@ -50,11 +50,14 @@ class _RejectedContentState extends State<RejectedContent> {
   @override
   Widget build(BuildContext context) {
     return isLoading
-          ? const Center(
-              child: SpinKitSpinningLines(
-              color: Colors.black,
-              size: 40.0,
-            ))
+          ? Padding(
+            padding: const EdgeInsets.only(top: 200),
+            child: const Center(
+                child: SpinKitSpinningLines(
+                color: Colors.black,
+                size: 40.0,
+              )),
+          )
           : applicantDetail != null
               ? LayoutBuilder(builder: (context, contraints) {
                   if (contraints.maxWidth > 600) {
@@ -301,7 +304,10 @@ class _RejectedContentState extends State<RejectedContent> {
                     ),
                   );
                 })
-              : const Center(child: Text('No details found'));
+              : Padding(
+                padding: const EdgeInsets.only(top: 200),
+                child: const Center(child: Text('No details found')),
+              );
 
   }
 }

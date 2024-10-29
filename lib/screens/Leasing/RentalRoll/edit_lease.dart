@@ -708,6 +708,7 @@ class _Edit_leaseState extends State<Edit_lease>
         'Weekly',
       ];
     }
+
     if(_selectedRent != null && _selectedRent!.isNotEmpty){
       _selectedRent = rentCycleitems.first;
     }
@@ -2021,15 +2022,17 @@ class _Edit_leaseState extends State<Edit_lease>
                                               ),
                                             ],
                                           ),
-                                          ...Provider.of<
-                                                      SelectedTenantsProvider>(
-                                                  context)
+                                          ...selectedTenantsProvider
                                               .selectedTenants
                                               .asMap()
                                               .entries
                                               .map((entry) {
                                             final index = entry.key;
                                             final tenant = entry.value;
+
+                                            print("Controller length:- ${Provider.of<
+                                                SelectedTenantsProvider>(context)
+                                                .rentShareControllers.length}  $index");
                                             final controller = Provider.of<
                                                         SelectedTenantsProvider>(
                                                     context)
@@ -6319,9 +6322,10 @@ class _AddTenantState extends State<AddTenant> {
           final exisitingtenant = Provider.of<SelectedTenantsProvider>(context,listen: false)
               .selectedTenants;
 
-
+          print("fetch tenant calling ");
         setState(() {
           selectedTenantsTemp = exisitingtenant;
+          selectedTenantsTempnew = selectedTenantsTemp;
         });
         } else {
           // Handle unexpected response structure
@@ -6342,6 +6346,7 @@ class _AddTenantState extends State<AddTenant> {
   }
 
   List<Tenant> selectedTenantsTemp = [];
+  List<Tenant> selectedTenantsTempnew = [];
   //
   // void filterOwners(String query) {
   //   setState(() {
@@ -6395,7 +6400,8 @@ class _AddTenantState extends State<AddTenant> {
                 ?
             Column(
               children: [
-                SizedBox(height: 10.0),
+                SizedBox(height: 16.0),
+                SizedBox(height: 16.0),
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
@@ -6407,16 +6413,18 @@ class _AddTenantState extends State<AddTenant> {
                       DataColumn(label: Text('Select')),
                     ],
                     rows: filteredTenants.map((tenant) {
-                      // Check if the tenant is temporarily selected
+                      /* final isSelected = Provider.of<SelectedTenantsProvider>(context)
+                                .selectedTenants
+                                .contains(tenant);*/
                       final matchingTenants =
                       Provider.of<SelectedTenantsProvider>(context)
-                          .selectedTenants;
-
-                    //  selectedTenantsTemp.addAll(matchingTenants);
-                      final isSelected = selectedTenantsTemp.any((element) => element.tenantId == tenant.tenantId);
-                      print(selectedTenantsTemp.length);
-
-
+                          .selectedTenants
+                          .where((test) =>
+                      test.tenantId == tenant.tenantId)
+                          .toList();
+                      print(matchingTenants);
+                      final isSelected =
+                      matchingTenants.length > 0 ? true : false;
                       return DataRow(
                         cells: [
                           DataCell(
@@ -6430,18 +6438,22 @@ class _AddTenantState extends State<AddTenant> {
                               child: Checkbox(
                                 value: isSelected,
                                 onChanged: (bool? value) {
-                                  setState(() {
-                                    if (value!) {
-                                      // Add tenant to temporary list
-                                      selectedTenantsTemp.add(tenant);
+                                  if (value!) {
+                                    selectedTenantsProvider
+                                        .addTenant(tenant);
+                                  } else {
+                                    selectedTenantsProvider
+                                        .removeTenant(tenant);
+                                  }
+                                  setState(() {});
+                                  /* if (value) {
+                                      selectedTenantsProvider.addTenant(tenant);
                                     } else {
-                                      // Remove tenant from temporary list
-                                      selectedTenantsTemp.remove(tenant);
-                                    }
-                                  });
+                                      selectedTenantsProvider.removeTenant(tenant);
+                                    }*/
                                 },
                                 activeColor:
-                                blueColor,
+                                Color.fromRGBO(21, 43, 81, 1),
                               ),
                             ),
                           ),
@@ -6452,32 +6464,21 @@ class _AddTenantState extends State<AddTenant> {
                 ),
                 SizedBox(height: 16.0),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      width: 2,
-                    ),
                     GestureDetector(
                       onTap: () {
-                        // When the Add button is clicked, update the provider with selected tenants
-                        setState(() {
-                          for (var tenant in selectedTenantsTemp) {
-                            selectedTenantsProvider.addTenant(tenant);
-                          }
-                          // Clear the temporary list after adding
-                          selectedTenantsTemp.clear();
-                        });
-                        Navigator.pop(
-                            context); // Close the dialog or screen after adding
+                        Navigator.pop(context);
                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
                         child: Container(
-                          height: 40.0,
-                          width: 90,
+                          height: 30.0,
+                          width: 80,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
-                            color:blueColor,
-                            boxShadow: const [
+                            color: Color.fromRGBO(21, 43, 81, 1),
+                            boxShadow: [
                               BoxShadow(
                                 color: Colors.grey,
                                 offset: Offset(0.0, 1.0), //(x,y)
@@ -6486,12 +6487,58 @@ class _AddTenantState extends State<AddTenant> {
                             ],
                           ),
                           child: Center(
-                            child: Text(
+                            child: isLoading
+                                ? SpinKitFadingCircle(
+                              color: Colors.white,
+                              size: 25.0,
+                            )
+                                : Text(
                               "Add",
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16),
+                                  fontSize: 12),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.03),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5.0),
+                        child: Container(
+                          height: 30.0,
+                          width: 80,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5.0),
+                            border: Border.all(color: blueColor),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey,
+                                offset: Offset(0.0, 1.0), //(x,y)
+                                blurRadius: 6.0,
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: isLoading
+                                ? SpinKitFadingCircle(
+                              color: Colors.white,
+                              size: 25.0,
+                            )
+                                : Text(
+                              "Cancel",
+                              style: TextStyle(
+                                  color:
+                                  Color.fromRGBO(21, 43, 81, 1),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12),
                             ),
                           ),
                         ),

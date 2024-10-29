@@ -17,14 +17,33 @@ class SelectedTenantsProvider extends ChangeNotifier {
   List<TextEditingController> get rentShareControllers => _rentShareControllers;
   String? get validationMessage => _validationMessage;
   void addTenant(Tenant tenant) {
+    print("Add Tenant is calling ");
     if (_selectedTenants.isEmpty) {
       // Set rent share to 100 for the first tenant
       _rentShareControllers.add(TextEditingController(text: '100'));
     } else {
       _rentShareControllers.add(TextEditingController());
     }
+    for(var i=0;i< _selectedTenants.length;i++){
+      print("Tenants ${_selectedTenants[i].tenantFirstName} ${_selectedTenants[i].tenantLastName} ${_selectedTenants[i].tenantId}");
+    }
+    // Check if the tenant is already in the selected tenants
+    if (_selectedTenants.any((existingTenant) => existingTenant.tenantLastName == tenant.tenantLastName)) {
+      print("Tenant ${tenant.tenantLastName} is already added.");
+      return; // Exit the method if the tenant is already added
+    }
+
+
+
+    print("add before length ${tenant.tenantLastName}");
     _selectedTenants.add(tenant);
+    print("add after length ${_selectedTenants.length}");
     notifyListeners();
+  }
+  void AddEditTenant(){
+    for(var i=0;i< _selectedTenants.length;i++){
+      print("Tenants ${_selectedTenants[i].tenantFirstName} ${_selectedTenants[i].tenantLastName} ${_selectedTenants[i].tenantId}");
+    }
   }
 
   void setTenants(List<Tenant> tenants) {
@@ -44,6 +63,9 @@ class SelectedTenantsProvider extends ChangeNotifier {
     }
   }
 
+  void clearonlyTenant(){
+    _selectedTenants.clear();
+  }
   void clearTenant() {
     _selectedTenants.clear();
     _rentShareControllers.forEach((controller) => controller.dispose()); // Dispose all controllers
