@@ -57,8 +57,8 @@ class _ChangepasswordState extends State<Changepassword> {
       final jsonData = json.decode(response.body);
       if (jsonData["message"] == "Password Updated Successfully") {
         print(jsonData);
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Login_Screen()));
+        // Navigator.push(
+        //     context, MaterialPageRoute(builder: (context) => Login_Screen()));
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Password updated successfully")),
         );

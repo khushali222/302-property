@@ -50,7 +50,7 @@ class _otp_verifyState extends State<otp_verify> {
         context,
         MaterialPageRoute(builder: (context) => Changepassword(email: widget.email,admin_id: widget.admin_id,role: widget.role,)),
       );
-    Fluttertoast.showToast(msg: "OTP sent successfully");
+    Fluttertoast.showToast(msg: "OTP verify successfully");
     } else {
       // Handle error case here, for example:
       showDialog(
