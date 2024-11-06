@@ -1248,10 +1248,12 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
+                                      width: MediaQuery.of(context).size.width * .6,
                                       child: Text(
                                         '${summery.workSubject}',
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold, color: blueColor),
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor),
                                       )),
                                   SizedBox(
                                     height: 10,
@@ -1287,6 +1289,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     height: 8,
                                   ),
                                   Container(
+                                      width: 180,
                                       child: Text(
                                         '${summery.workPerformed}',
                                         style: TextStyle(color: blueColor),
@@ -1418,11 +1421,25 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   SizedBox(
                                     height: 8,
                                   ),
-                                  Container(
-                                      child: Text(
-                                        '${summery.vendorNotes}',
-                                        style: TextStyle(color: blueColor),
-                                      )),
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width > 500
+                                        ? 200
+                                        : 150,
+                                    child: Text(
+                                      '${summery.vendorNotes}',
+                                      maxLines: 4, // Set maximum number of lines
+                                      overflow: TextOverflow
+                                          .ellipsis,
+                                      textAlign: TextAlign.justify,// Handle overflow with ellipsis
+                                      style: TextStyle(
+                                        fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 13
+                                            : 18,
+                                        color: blueColor,
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                               Spacer(),
@@ -1975,7 +1992,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
               ),
             );
           }
-          return SingleChildScrollView(
+        /*  return SingleChildScrollView(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Column(
@@ -2288,7 +2305,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       return PartWidget(part: part, total: 0.0);
                                     }).toList(),
                                   ),
-                                  /*  Column(
+                                  *//*  Column(
                                   children: summery.partsandchargeData!.map((part) {
                                     int partTotal = (part.partsPrice! * part.partsQuantity!);
                                     print(partTotal);
@@ -2296,7 +2313,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     print(grandTotal);
                                     return PartWidget(part: part, total:0.0);
                                   }).toList(),
-                                ),*/
+                                ),*//*
                                   // Divider(color: Colors.grey),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -2420,14 +2437,14 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     borderRadius: BorderRadius.vertical(
                                       top: Radius.circular(10),
                                     ),
-                                    /*   boxShadow: [
+                                    *//*   boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.5),
                                 spreadRadius: 1,
                                 blurRadius: 5,
                                 offset: Offset(0, 3), // changes position of shadow
                               ),
-                            ],*/
+                            ],*//*
                                   ),
                                   child: Material(
                                     elevation: 4,
@@ -2549,14 +2566,14 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     borderRadius: BorderRadius.vertical(
                                       top: Radius.circular(10),
                                     ),
-                                    /*   boxShadow: [
+                                    *//*   boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.5),
                                 spreadRadius: 1,
                                 blurRadius: 5,
                                 offset: Offset(0, 3), // changes position of shadow
                               ),
-                            ],*/
+                            ],*//*
                                   ),
                                   child: Material(
                                     elevation: 4,
@@ -2675,7 +2692,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                           "${summery.propertyData!.rental_image}"),
                                       errorWidget: (context, url, error) =>
                                           Icon(Icons.error),
-                                      /*  imageBuilder: (context, imageProvider) => Container(
+                                      *//*  imageBuilder: (context, imageProvider) => Container(
                                     width: 40.0,
                                     height: 40.0,
                                     decoration: BoxDecoration(
@@ -2685,7 +2702,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                         fit: BoxFit.cover,
                                       ),
                                     ),
-                                  ),*/
+                                  ),*//*
                                     ),
                                   ],
                                 ),
@@ -2711,7 +2728,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               ),
                             ],
                           )
-                          /*  ListTile(
+                          *//*  ListTile(
                           title: Text(
                             "Vendor",
                             style: TextStyle(
@@ -2731,7 +2748,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             ),
                           )
 
-                        ),*/
+                        ),*//*
                         ],
                       ),
                     ),
@@ -2742,7 +2759,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                 ],
               ),
             ),
-          );
+          );*/
         }
     );
   }
@@ -3242,6 +3259,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                       child: Column(
                         children: [
                           Row(
+
                             children: [
                               Container(
                                 height: 40,
@@ -3266,13 +3284,12 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
-                                      width:150,
-
+                                      width: 180,
                                       child: Text(
                                         '${summery.workSubject}',
-
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold, color: blueColor),
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor),
                                       )),
                                   SizedBox(
                                     height: 10,
@@ -3351,6 +3368,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     height: 8,
                                   ),
                                   Container(
+                                      width: 180,
                                       child: Text(
                                         '${summery.workPerformed}',
                                         style: TextStyle(color: blueColor),
@@ -3481,11 +3499,25 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   SizedBox(
                                     height: 8,
                                   ),
-                                  Container(
-                                      child: Text(
-                                        '${summery.vendorNotes}',
-                                        style: TextStyle(color: blueColor),
-                                      )),
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width > 500
+                                        ? 200
+                                        : 150,
+                                    child: Text(
+                                      '${summery.vendorNotes}',
+                                      maxLines: 4, // Set maximum number of lines
+                                      overflow: TextOverflow
+                                          .ellipsis,
+                                      textAlign: TextAlign.justify,// Handle overflow with ellipsis
+                                      style: TextStyle(
+                                        fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 13
+                                            : 18,
+                                        color: blueColor,
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                               Spacer(),

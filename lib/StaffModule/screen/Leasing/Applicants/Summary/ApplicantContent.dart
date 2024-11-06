@@ -199,11 +199,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
         future: futureApplicantDetails,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-                child: SpinKitSpinningLines(
-              color: blueColor,
-              size: 40.0,
-            ));
+            return Padding(
+              padding: const EdgeInsets.only(top: 200),
+              child: Center(
+                  child: SpinKitSpinningLines(
+                color: blueColor,
+                size: 40.0,
+              )),
+            );
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (snapshot.hasData) {
@@ -7069,7 +7072,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                         ),
             );
           } else {
-            return const Center(child: Text('No data available'));
+            return Padding(
+              padding:  EdgeInsets.only(top: 200),
+              child: const Center(child: Text('No data available')),
+            );
           }
         },
       ),

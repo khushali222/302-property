@@ -140,6 +140,11 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
         throw Exception('Failed to load data');
       }
     } catch (e) {
+      setState(() {
+        countList[2] = 0;
+        countList[3] = "--/--/----";
+        countList[4] = "--/--/----";
+      });
       print('Error fetching data: $e');
     } finally {
 
