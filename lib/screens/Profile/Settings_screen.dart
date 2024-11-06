@@ -1201,7 +1201,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 islatefee = false;
                                 DateTime now = DateTime.now();
                                   dateformateselect = dateProvider.dateformateselect;
-                                 dateformate1 = DateFormat('MM/dd/yyyy').format(now);
+                                 dateformate1 = DateFormat('MM-dd-yyyy').format(now);
                                  dateformate2 = DateFormat('yyyy-MM-dd').format(now);
                                  dateformate3 = DateFormat('yyyy-MMM-dd').format(now);
                                //dateformate1 = DateFormat('mm/dd/yyyy').parse(DateTime.now().toString()).toString();
@@ -1212,13 +1212,13 @@ class _TabBarExampleState extends State<TabBarExample> {
                               decoration: BoxDecoration(
                                 border: Border.all(
                                     color: blueColor),
-                                color:  !isdateformate
+                                color:  !isdateformate  
                                     ? Colors.white
                                     : blueColor,
                               ),
                               child: Center(
                                 child: Text(
-                                  "Date Formate",
+                                  "Date Format",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: isdateformate
@@ -3934,12 +3934,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                                         height: 20,width: 30,
                                         child: Radio(value: 0, groupValue: dateformateselect, onChanged: (value){
                                           setState(() {
-                                            dateProvider.updateDateFormat('MM/dd/yyyy',value);
+                                            dateProvider.updateDateFormat('MM-dd-yyyy',value);
                                             dateformateselect = value!;
                                           });
                                         })),
 
-                                      Text("MM/DD/YYYY",style: TextStyle(
+                                      Text("MM-DD-YYYY",style: TextStyle(
                                         fontSize: 16,
 
                                       ),)

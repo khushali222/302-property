@@ -57,13 +57,13 @@ class applicant_summery_details {
     print(applicantLastName);
     applicantEmail = json['applicant_email'];
     print(applicantEmail);
-    applicantPhoneNumber = json['applicant_phoneNumber'];
+    applicantPhoneNumber = json['applicant_phoneNumber'].toString();
     print(applicantPhoneNumber);
-    applicantHomeNumber = json['applicant_homeNumber'];
+    applicantHomeNumber = json['applicant_homeNumber'].toString();
     print(applicantHomeNumber);
-    applicantBusinessNumber = json['applicant_businessNumber'];
+    applicantBusinessNumber = json['applicant_businessNumber'].toString();
     print(applicantBusinessNumber);
-    applicantTelephoneNumber = json['applicant_telephoneNumber'];
+    applicantTelephoneNumber = json['applicant_telephoneNumber'].toString();
     print(applicantTelephoneNumber);
     if (json['applicant_checklist'] != null) {
       applicantChecklist = <String>[];

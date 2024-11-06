@@ -56,12 +56,43 @@ class _AddCardState extends State<AddCard> {
   String? selectedTenantId;
   int? customervaultid;
   List<BillingData> cardDetails = [];
-
+  Map<String,dynamic> profiledata = {};
   @override
   void initState() {
     super.initState();
-
+    fetchProfile();
     fetchTenants();
+  }
+  Future<void> fetchProfile() async {
+
+    //  String? token = prefs.getString('token');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("tenant_id");
+    String? admin_id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    final String apiUrl = "${Api_url}/api/tenant/tenant_profile/$id";
+    final response = await http.get(Uri.parse('$apiUrl'), headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    print('hello$apiUrl');
+    print(response.body);
+    final response_Data = jsonDecode(response.body);
+    if (response_Data["statusCode"] == 200) {
+      print("hello");
+      setState(() {
+        profiledata = response_Data["data"];
+        firstName.text = "${profiledata["tenant_firstName"]}";
+        lastName.text =  profiledata["tenant_lastName"];
+        email.text = profiledata["tenant_email"];
+        phoneNumber.text = profiledata["tenant_phoneNumber"];
+        address.text = profiledata['leaseData']['rental_adress'];
+
+      //  _isLoading = false;
+      });
+      // return profile.fromJson(jsonDecode(response.body)["data"]);
+    } else {
+
+      throw Exception('Failed to load profile');
+
+    }
   }
 
   Future<void> fetchTenants() async {
