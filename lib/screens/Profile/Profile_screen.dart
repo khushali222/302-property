@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -146,17 +147,21 @@ class _Profile_screenState extends State<Profile_screen> {
         print(jsonData);
         // Navigator.push(
         //     context, MaterialPageRoute(builder: (context) => Login_Screen()));
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Password updated successfully")),
-        );
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(content: Text("Password updated successfully")),
+        // );
+        Fluttertoast.showToast(
+            msg: 'Password updated successfully');
       } else {
         // Handle other successful responses or display an error message
       }
     } else {
       // Handle HTTP error responses
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to update password")),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text("Failed to update password")),
+      // );
+      Fluttertoast.showToast(
+          msg: 'Failed to update password');
     }
   }
 
@@ -942,11 +947,12 @@ class _Profile_screenState extends State<Profile_screen> {
                                         child: Row(
                                           children: [
                                             Container(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.05,
-                                              // width: MediaQuery.of(context).size.width * 0.2,
+                                              // height: MediaQuery.of(context)
+                                              //         .size
+                                              //         .height *
+                                              //     0.05,
+                                              height:40,
+                                               width: MediaQuery.of(context).size.width * 0.45,
                                               decoration: BoxDecoration(
                                                 color: blueColor,
                                                 borderRadius:
@@ -955,7 +961,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                               child: Center(
                                                 child: loading
                                                     ? SpinKitFadingCircle(
-                                                        color: Colors.black,
+                                                        color: Colors.white,
                                                         size: 40.0,
                                                       )
                                                     : Row(
@@ -963,9 +969,9 @@ class _Profile_screenState extends State<Profile_screen> {
                                                             MainAxisAlignment
                                                                 .center,
                                                         children: [
-                                                          SizedBox(
-                                                            width: 8,
-                                                          ),
+                                                          // SizedBox(
+                                                          //   width: 8,
+                                                          // ),
                                                           Text(
                                                             "Change password",
                                                             style: TextStyle(
@@ -982,9 +988,9 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                     ? 15
                                                                     : 20),
                                                           ),
-                                                          SizedBox(
-                                                            width: 8,
-                                                          ),
+                                                          // SizedBox(
+                                                          //   width: 8,
+                                                          // ),
                                                         ],
                                                       ),
                                               ),
