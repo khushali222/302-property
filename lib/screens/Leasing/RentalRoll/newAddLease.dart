@@ -5722,48 +5722,54 @@ class _AddTenantState extends State<AddTenant> {
                             DataColumn(label: Text('Tenant Name')),
                             DataColumn(label: Text('Select')),
                           ],
-                          rows: filteredTenants.map((tenant) {
-                            // Check if the tenant is temporarily selected
-                            // final isSelected =
-                            //     selectedTenantsTemp.contains(tenant);
-                            final matchingTenants =
-                                Provider.of<SelectedTenantsProvider>(context)
-                                    .selectedTenants;
-
-                            //  selectedTenantsTemp.addAll(matchingTenants);
-                            final isSelected = selectedTenantsTemp.any((element) => element.tenantId == tenant.tenantId);
-                            print(selectedTenantsTemp.length);
-                            return DataRow(
-                              cells: [
-                                DataCell(
-                                  Text(
-                                      '${tenant.tenantFirstName} ${tenant.tenantLastName}'),
-                                ),
-                                DataCell(
-                                  SizedBox(
-                                    height: 24,
-                                    width: 24,
-                                    child: Checkbox(
-                                      value: isSelected,
-                                      onChanged: (bool? value) {
-                                        setState(() {
+                            rows: filteredTenants.map((tenant) {
+                              /* final isSelected = Provider.of<SelectedTenantsProvider>(context)
+                                .selectedTenants
+                                .contains(tenant);*/
+                              final matchingTenants =
+                              Provider.of<SelectedTenantsProvider>(context)
+                                  .selectedTenants
+                                  .where((test) =>
+                              test.tenantId == tenant.tenantId)
+                                  .toList();
+                              print(matchingTenants);
+                              final isSelected =
+                              matchingTenants.length > 0 ? true : false;
+                              return DataRow(
+                                cells: [
+                                  DataCell(
+                                    Text(
+                                        '${tenant.tenantFirstName} ${tenant.tenantLastName}'),
+                                  ),
+                                  DataCell(
+                                    SizedBox(
+                                      height: 24,
+                                      width: 24,
+                                      child: Checkbox(
+                                        value: isSelected,
+                                        onChanged: (bool? value) {
                                           if (value!) {
-                                            // Add tenant to temporary list
-                                            selectedTenantsTemp.add(tenant);
+                                            selectedTenantsProvider
+                                                .addTenant(tenant);
                                           } else {
-                                            // Remove tenant from temporary list
-                                            selectedTenantsTemp.remove(tenant);
+                                            selectedTenantsProvider
+                                                .removeTenant(tenant);
                                           }
-                                        });
-                                      },
-                                      activeColor:
-                                          blueColor,
+                                          setState(() {});
+                                          /* if (value) {
+                                      selectedTenantsProvider.addTenant(tenant);
+                                    } else {
+                                      selectedTenantsProvider.removeTenant(tenant);
+                                    }*/
+                                        },
+                                        activeColor:
+                                        Color.fromRGBO(21, 43, 81, 1),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            );
-                          }).toList(),
+                                ],
+                              );
+                            }).toList(),
                         ),
                       ),
                       SizedBox(height: 16.0),
