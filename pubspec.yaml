@@ -158,6 +158,10 @@ flutter:
      - family: mulish
        fonts:
          - asset: assets/font/Mulish-ExtraLight.ttf
+     - family: Roboto
+       fonts:
+         - asset: assets/font/Roboto-Bold.ttf
+
      - family: Poppins
        fonts:
          - asset: assets/font/poppins.ttf
