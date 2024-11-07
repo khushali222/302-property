@@ -1550,7 +1550,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   future: _futureReport,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Column(
+                      return  Column(
                         children: [
                           Expanded(
                             flex: 0,
@@ -1560,155 +1560,11 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                 right: 5.0,
                               ),
                               child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                // mainAxisAlignment:
+                                // MainAxisAlignment.spaceBetween,
                                 children: [
                                   Container(
-                                   width: MediaQuery.of(context).size.width * .3,
-                                    child: TextFormField(
-                                      controller: selectdate,
-                                      onTap: () {
-                                        _pickDate(context);
-                                      },
-                                      readOnly: true,
-                                      textInputAction: TextInputAction.next,
-                                      textAlignVertical:
-                                      TextAlignVertical.center,
-                                      decoration: InputDecoration(
-                                        contentPadding:
-                                        const EdgeInsets.symmetric(
-                                            vertical: 10,
-                                            horizontal: 10), //Imp Line
-                                        isDense: true,
-                                        hintText: "Select Date",
-                                        border: OutlineInputBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(5),
-                                            borderSide: const BorderSide(
-                                              width: 0.5,
-                                            )),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 43,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        border: Border.all(color: Colors.grey)),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton<String>(
-                                        value: chargetype,
-                                        padding:
-                                        EdgeInsets.symmetric(horizontal: 5),
-                                        hint: Text(
-                                          "Charge Type",
-                                          style: TextStyle(fontSize: 14),
-                                        ),
-                                        items: const [
-                                          DropdownMenuItem<String>(
-                                            value: 'Card',
-                                            child: Text('Card'),
-                                          ),
-                                          DropdownMenuItem<String>(
-                                            value: 'ACH',
-                                            child: Text('ACH'),
-                                          ),
-                                          DropdownMenuItem<String>(
-                                            value: 'Check',
-                                            child: Text('Check'),
-                                          ),
-                                          DropdownMenuItem<String>(
-                                            value: 'All',
-                                            child: Text('All'),
-                                          ),
-                                        ],
-                                        onChanged: (value) {
-                                          setState(() {
-                                            chargetype = value;
-                                          });
-                                          // Handle the selected charge type
-                                          print(value);
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 43,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: blueColor,
-                                      ),
-                                      onPressed: () {},
-                                      child: PopupMenuButton<String>(
-                                        onSelected: (value) async {
-                                          // Add your export logic here based on the selected value
-                                          if (value == 'PDF') {
-                                            print('pdf');
-                                           // generateWorkOrderPdf(data);
-                                            // Export as PDF
-                                          } else if (value == 'XLSX') {
-                                            print('XLSX');
-                                          //  generateWorkOrderExcel(data);
-                                            // Export as XLSX
-                                          } else if (value == 'CSV') {
-                                            print('CSV');
-                                         //   generateWorkOrderCsv(data);
-                                            // Export as CSV
-                                          }
-                                        },
-                                        itemBuilder: (BuildContext context) =>
-                                        <PopupMenuEntry<String>>[
-                                          const PopupMenuItem<String>(
-                                            value: 'PDF',
-                                            child: Text('PDF'),
-                                          ),
-                                          const PopupMenuItem<String>(
-                                            value: 'XLSX',
-                                            child: Text('XLSX'),
-                                          ),
-                                          const PopupMenuItem<String>(
-                                            value: 'CSV',
-                                            child: Text('CSV'),
-                                          ),
-                                        ],
-                                        child: Row(
-                                          //mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text('Export'),
-                                            Icon(Icons.arrow_drop_down),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ColabShimmerLoadingWidget(),
-                          ),
-                        ],
-                      );
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Column(
-                        children: [
-                          Expanded(
-                            flex: 0,
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                left: 5.0,
-                                right: 5.0,
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(
-                                   width: MediaQuery.of(context).size.width * .3,
+                                    width: MediaQuery.of(context).size.width * .3,
                                     child: TextFormField(
                                       controller: selectdate,
                                       onTap: () {
@@ -1734,6 +1590,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                       ),
                                     ),
                                   ),
+                                  SizedBox(width: 10,),
                                   Container(
                                     height: 43,
                                     decoration: BoxDecoration(
@@ -1776,52 +1633,394 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(
-                                   // width: 100,
-                                    height: 43,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: blueColor,
+                                  Visibility(
+                                    visible: false,
+                                    child: SizedBox(
+                                      // width: 100,
+                                      height: 43,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: blueColor,
+                                        ),
+                                        onPressed: () {},
+                                        child: PopupMenuButton<String>(
+                                          onSelected: (value) async {
+                                            // Add your export logic here based on the selected value
+                                            if (value == 'PDF') {
+                                              print('pdf');
+                                              //  generateWorkOrderPdf(data);
+                                              // Export as PDF
+                                            } else if (value == 'XLSX') {
+                                              print('XLSX');
+                                              //  generateWorkOrderExcel(data);
+                                              // Export as XLSX
+                                            } else if (value == 'CSV') {
+                                              print('CSV');
+                                              //   generateWorkOrderCsv(data);
+                                              // Export as CSV
+                                            }
+                                          },
+                                          itemBuilder: (BuildContext context) =>
+                                          <PopupMenuEntry<String>>[
+                                            const PopupMenuItem<String>(
+                                              value: 'PDF',
+                                              child: Text('PDF'),
+                                            ),
+                                            const PopupMenuItem<String>(
+                                              value: 'XLSX',
+                                              child: Text('XLSX'),
+                                            ),
+                                            const PopupMenuItem<String>(
+                                              value: 'CSV',
+                                              child: Text('CSV'),
+                                            ),
+                                          ],
+                                          child: Row(
+                                            //mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text('Export'),
+                                              Icon(Icons.arrow_drop_down),
+                                            ],
+                                          ),
+                                        ),
                                       ),
-                                      onPressed: () {},
-                                      child: PopupMenuButton<String>(
-                                        onSelected: (value) async {
-                                          // Add your export logic here based on the selected value
-                                          if (value == 'PDF') {
-                                            print('pdf');
-                                          //  generateWorkOrderPdf(data);
-                                            // Export as PDF
-                                          } else if (value == 'XLSX') {
-                                            print('XLSX');
-                                          //  generateWorkOrderExcel(data);
-                                            // Export as XLSX
-                                          } else if (value == 'CSV') {
-                                            print('CSV');
-                                         //   generateWorkOrderCsv(data);
-                                            // Export as CSV
-                                          }
-                                        },
-                                        itemBuilder: (BuildContext context) =>
-                                        <PopupMenuEntry<String>>[
-                                          const PopupMenuItem<String>(
-                                            value: 'PDF',
-                                            child: Text('PDF'),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          Container(
+                            height: MediaQuery.of(context).size.height * .5,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "No Data Available",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                    else if (snapshot.hasError) {
+                      return  Column(
+                        children: [
+                          Expanded(
+                            flex: 0,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 5.0,
+                                right: 5.0,
+                              ),
+                              child: Row(
+                                // mainAxisAlignment:
+                                // MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    width: MediaQuery.of(context).size.width * .3,
+                                    child: TextFormField(
+                                      controller: selectdate,
+                                      onTap: () {
+                                        _pickDate(context);
+                                      },
+                                      readOnly: true,
+                                      textInputAction: TextInputAction.next,
+                                      textAlignVertical:
+                                      TextAlignVertical.center,
+                                      decoration: InputDecoration(
+                                        contentPadding:
+                                        const EdgeInsets.symmetric(
+                                            vertical: 10,
+                                            horizontal: 10), //Imp Line
+                                        isDense: true,
+                                        hintText: "Select Datee",
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(5),
+                                            borderSide: const BorderSide(
+                                              width: 0.5,
+                                            )),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 10,),
+                                  Container(
+                                    height: 43,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(color: Colors.grey)),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<String>(
+                                        value: chargetype,
+                                        padding:
+                                        EdgeInsets.symmetric(horizontal: 5),
+                                        hint: Text(
+                                          "Charge Type",
+                                          style: TextStyle(fontSize: 14),
+                                        ),
+                                        items: const [
+                                          DropdownMenuItem<String>(
+                                            value: 'Card',
+                                            child: Text('Card'),
                                           ),
-                                          const PopupMenuItem<String>(
-                                            value: 'XLSX',
-                                            child: Text('XLSX'),
+                                          DropdownMenuItem<String>(
+                                            value: 'ACH',
+                                            child: Text('ACH'),
                                           ),
-                                          const PopupMenuItem<String>(
-                                            value: 'CSV',
-                                            child: Text('CSV'),
+                                          DropdownMenuItem<String>(
+                                            value: 'Check',
+                                            child: Text('Check'),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: 'All',
+                                            child: Text('All'),
                                           ),
                                         ],
-                                        child: Row(
-                                          //mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text('Export'),
-                                            Icon(Icons.arrow_drop_down),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            chargetype = value;
+                                          });
+                                          // Handle the selected charge type
+                                          print(value);
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: false,
+                                    child: SizedBox(
+                                      // width: 100,
+                                      height: 43,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: blueColor,
+                                        ),
+                                        onPressed: () {},
+                                        child: PopupMenuButton<String>(
+                                          onSelected: (value) async {
+                                            // Add your export logic here based on the selected value
+                                            if (value == 'PDF') {
+                                              print('pdf');
+                                              //  generateWorkOrderPdf(data);
+                                              // Export as PDF
+                                            } else if (value == 'XLSX') {
+                                              print('XLSX');
+                                              //  generateWorkOrderExcel(data);
+                                              // Export as XLSX
+                                            } else if (value == 'CSV') {
+                                              print('CSV');
+                                              //   generateWorkOrderCsv(data);
+                                              // Export as CSV
+                                            }
+                                          },
+                                          itemBuilder: (BuildContext context) =>
+                                          <PopupMenuEntry<String>>[
+                                            const PopupMenuItem<String>(
+                                              value: 'PDF',
+                                              child: Text('PDF'),
+                                            ),
+                                            const PopupMenuItem<String>(
+                                              value: 'XLSX',
+                                              child: Text('XLSX'),
+                                            ),
+                                            const PopupMenuItem<String>(
+                                              value: 'CSV',
+                                              child: Text('CSV'),
+                                            ),
                                           ],
+                                          child: Row(
+                                            //mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text('Export'),
+                                              Icon(Icons.arrow_drop_down),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          Container(
+                            height: MediaQuery.of(context).size.height * .5,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "No Data Available",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return  Column(
+                        children: [
+                          Expanded(
+                            flex: 0,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 5.0,
+                                right: 5.0,
+                              ),
+                              child: Row(
+                                // mainAxisAlignment:
+                                // MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    width: MediaQuery.of(context).size.width * .3,
+                                    child: TextFormField(
+                                      controller: selectdate,
+                                      onTap: () {
+                                        _pickDate(context);
+                                      },
+                                      readOnly: true,
+                                      textInputAction: TextInputAction.next,
+                                      textAlignVertical:
+                                      TextAlignVertical.center,
+                                      decoration: InputDecoration(
+                                        contentPadding:
+                                        const EdgeInsets.symmetric(
+                                            vertical: 10,
+                                            horizontal: 10), //Imp Line
+                                        isDense: true,
+                                        hintText: "Select Datee",
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(5),
+                                            borderSide: const BorderSide(
+                                              width: 0.5,
+                                            )),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 10,),
+                                  Container(
+                                    height: 43,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(color: Colors.grey)),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<String>(
+                                        value: chargetype,
+                                        padding:
+                                        EdgeInsets.symmetric(horizontal: 5),
+                                        hint: Text(
+                                          "Charge Type",
+                                          style: TextStyle(fontSize: 14),
+                                        ),
+                                        items: const [
+                                          DropdownMenuItem<String>(
+                                            value: 'Card',
+                                            child: Text('Card'),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: 'ACH',
+                                            child: Text('ACH'),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: 'Check',
+                                            child: Text('Check'),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: 'All',
+                                            child: Text('All'),
+                                          ),
+                                        ],
+                                        onChanged: (value) {
+                                          setState(() {
+                                            chargetype = value;
+                                          });
+                                          // Handle the selected charge type
+                                          print(value);
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: false,
+                                    child: SizedBox(
+                                      // width: 100,
+                                      height: 43,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: blueColor,
+                                        ),
+                                        onPressed: () {},
+                                        child: PopupMenuButton<String>(
+                                          onSelected: (value) async {
+                                            // Add your export logic here based on the selected value
+                                            if (value == 'PDF') {
+                                              print('pdf');
+                                              //  generateWorkOrderPdf(data);
+                                              // Export as PDF
+                                            } else if (value == 'XLSX') {
+                                              print('XLSX');
+                                              //  generateWorkOrderExcel(data);
+                                              // Export as XLSX
+                                            } else if (value == 'CSV') {
+                                              print('CSV');
+                                              //   generateWorkOrderCsv(data);
+                                              // Export as CSV
+                                            }
+                                          },
+                                          itemBuilder: (BuildContext context) =>
+                                          <PopupMenuEntry<String>>[
+                                            const PopupMenuItem<String>(
+                                              value: 'PDF',
+                                              child: Text('PDF'),
+                                            ),
+                                            const PopupMenuItem<String>(
+                                              value: 'XLSX',
+                                              child: Text('XLSX'),
+                                            ),
+                                            const PopupMenuItem<String>(
+                                              value: 'CSV',
+                                              child: Text('CSV'),
+                                            ),
+                                          ],
+                                          child: Row(
+                                            //mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text('Export'),
+                                              Icon(Icons.arrow_drop_down),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),

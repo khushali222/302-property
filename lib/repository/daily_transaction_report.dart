@@ -87,8 +87,8 @@ class DailyTrasactionReport{
       },
     );
     print(response.body);
-
-    if (response.statusCode == 200) {
+    var jsoncode = jsonDecode(response.body);
+    if (response.statusCode == 200 && jsoncode["statusCode"] == 200) {
       final List<dynamic> jsonData = json.decode(response.body)["data"];
       return parseTransactions(jsonData);
     } else {
