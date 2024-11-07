@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,13 +33,15 @@ import 'addcard/AddCard.dart';
 import 'addcard/CardModel.dart';
 import '../../../widgets/custom_drawer.dart';
 import '../../../model/LeaseLedgerModel.dart';
+
 class MakePayment extends StatefulWidget {
   final String leaseId;
   final String tenantId;
   bool? isEdit;
   Data? data;
 
-   MakePayment({required this.leaseId, required this.tenantId,this.isEdit,this.data});
+  MakePayment(
+      {required this.leaseId, required this.tenantId, this.isEdit, this.data});
 
   @override
   State<MakePayment> createState() => _MakePaymentState();
@@ -66,6 +69,7 @@ class _MakePaymentState extends State<MakePayment> {
   double? surchargecount = 0.0;
   double? finaltotal;
   String tenantname = "";
+  bool isChecked = false;
   Future<void> fetchSurchargeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
@@ -105,14 +109,16 @@ class _MakePaymentState extends State<MakePayment> {
   @override
   void initState() {
     super.initState();
-    if(widget.isEdit != null)
-      editpayment();
+    if (widget.isEdit != null) editpayment();
     fetchTenants();
     fetchCompany();
     fetchDropdownData();
     fetchSurcharge();
     //totalAmount = chargeAmount + surchargeIncluded;
     // amountController.addListener(_updateTotalAmount);
+    DateTime today = DateTime.now();
+    _startDate.text = DateFormat('dd-MM-yyyy').format(today);
+
   }
 
   void _updateTotalAmount() {
@@ -121,47 +127,47 @@ class _MakePaymentState extends State<MakePayment> {
     });
   }
 
-  editpayment(){
+  editpayment() {
     Data c_data = widget.data!;
     setState(() {
       selectedTenantId = widget.tenantId;
-      tenantname = "${c_data.tenantData["tenant_firstName"]} ${c_data.tenantData["tenant_lastName"]}";
+      tenantname =
+          "${c_data.tenantData["tenant_firstName"]} ${c_data.tenantData["tenant_lastName"]}";
       _startDate.text = c_data.entry!.first.date!;
       amountController.text = c_data.totalAmount.toString();
       _selectedPaymentMethod = c_data.paymenttype;
 
       print('charge details ${charges!.length}');
-        rows = c_data.entry?.map((entry) {
-          return {
-            'entry_id': entry.entryId,
-            'account': entry.account,
-            'amount': 0.0,
-            'charge_amount': entry.amount,
-            'memo': entry.memo,
-            'date': entry.date,
-            'charge_type': entry.chargeType,
-            'newfield': false,
-          };
-        }).toList() ??
-            [];
-        for (var i = 0; i < c_data.entry!.length; i++) {
-          if (i == 0) {
-            charges_balances[0] = c_data.entry![i].amount!.toDouble();
-          } else {
-            charges_balances.add(c_data.entry![i].amount!.toDouble());
-          }
+      rows = c_data.entry?.map((entry) {
+            return {
+              'entry_id': entry.entryId,
+              'account': entry.account,
+              'amount': 0.0,
+              'charge_amount': entry.amount,
+              'memo': entry.memo,
+              'date': entry.date,
+              'charge_type': entry.chargeType,
+              'newfield': false,
+            };
+          }).toList() ??
+          [];
+      for (var i = 0; i < c_data.entry!.length; i++) {
+        if (i == 0) {
+          charges_balances[0] = c_data.entry![i].amount!.toDouble();
+        } else {
+          charges_balances.add(c_data.entry![i].amount!.toDouble());
         }
-        print("rows length:- ${rows!.length}");
-        /*  print(rows.first['account']);
+      }
+      print("rows length:- ${rows!.length}");
+      /*  print(rows.first['account']);
         print(rows.first['charge_amount']);
         print(rows.first['charge_amount']);*/
-        controllers = rows.map((row) {
-          return TextEditingController(text: row["charge_amount"].toString());
-        }).toList();
-        print(rows);
-        totalAmount = c_data.totalAmount!;
-        isLoading = false;
-
+      controllers = rows.map((row) {
+        return TextEditingController(text: row["charge_amount"].toString());
+      }).toList();
+      print(rows);
+      totalAmount = c_data.totalAmount!;
+      isLoading = false;
     });
     AddFields();
   }
@@ -799,6 +805,44 @@ class _MakePaymentState extends State<MakePayment> {
     ).show();
   }
 
+  void resetFields() {
+
+    // _startDate.clear();
+
+    amountController.clear();
+    Memo.clear();
+    checknumber.clear();
+    bankrountingnum.clear();
+    accountnum.clear();
+    achname.clear();
+    reference.clear();
+
+    fetchChargesForSelectedTenant(selectedTenantId!);
+
+    // selectedTenantId = null;
+    _selectedPaymentMethod = null;
+    selectedAccount = null;
+    _selectedHoldertype = null;
+    selectedcardindex = null;
+
+
+    totalAmount = 0.0;
+    validationMessage = null;
+    _uploadedFileNames.clear();
+    _pdfFiles.clear();
+
+
+    // rows.clear();
+    // charges_balances = [0.0];
+    for (var controller in controllers) {
+      controller.clear(); // Dispose of each controller
+    }
+    // controllers.clear();
+    // Optionally, you can also reset the isChecked variable if needed
+    isChecked = false;
+
+  }
+
   String? _errorText;
   @override
   Widget build(BuildContext context) {
@@ -834,7 +878,7 @@ class _MakePaymentState extends State<MakePayment> {
                   //Same as `blurRadius` i guess
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5.0),
-                    color:blueColor,
+                    color: blueColor,
                     boxShadow: const [
                       BoxShadow(
                         color: Colors.grey,
@@ -866,7 +910,7 @@ class _MakePaymentState extends State<MakePayment> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                       border: Border.all(
-                        color:  blueColor,
+                        color: blueColor,
                       ),
                       borderRadius: BorderRadius.circular(10.0)),
                   child: Column(
@@ -1254,10 +1298,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                           foregroundColor:
                                                               Colors.white,
                                                           backgroundColor:
-                                                               blueColor
-
-
-, // button text color
+                                                              blueColor, // button text color
                                                         ),
                                                       ),
                                                     ),
@@ -1581,35 +1622,26 @@ class _MakePaymentState extends State<MakePayment> {
                                                 dataRowHeight: 75,
                                                 horizontalMargin: 0.0,
                                                 columnSpacing: 40.0,
-                                                columns:  [
+                                                columns: [
                                                   DataColumn(
                                                     label: Text(
                                                       'Select',
                                                       style: TextStyle(
-                                                          color:blueColor
-
-
-),
+                                                          color: blueColor),
                                                     ),
                                                   ),
                                                   DataColumn(
                                                     label: Text(
                                                       'Card Number',
                                                       style: TextStyle(
-                                                          color:blueColor
-
-
-),
+                                                          color: blueColor),
                                                     ),
                                                   ),
                                                   DataColumn(
                                                     label: Text(
                                                       'Card Type',
                                                       style: TextStyle(
-                                                          color:blueColor
-
-
-),
+                                                          color: blueColor),
                                                     ),
                                                   ),
                                                 ],
@@ -1693,12 +1725,9 @@ class _MakePaymentState extends State<MakePayment> {
                                                     ),
                                                     DataCell(Text(
                                                       item.ccNumber!,
-                                                      style:  TextStyle(
+                                                      style: TextStyle(
                                                           fontSize: 13,
-                                                          color:blueColor
-
-
-),
+                                                          color: blueColor),
                                                     )),
                                                     DataCell(Column(
                                                       mainAxisAlignment:
@@ -1740,11 +1769,8 @@ class _MakePaymentState extends State<MakePayment> {
                                               // ignore: unrelated_type_equality_checks
                                               Text(
                                                 '${cardDetails[selectedcardindex!].binResult} card transactions will charge $surCharge%',
-                                                style:  TextStyle(
-                                                    color: blueColor
-
-
-,
+                                                style: TextStyle(
+                                                    color: blueColor,
                                                     fontSize: 14,
                                                     fontWeight:
                                                         FontWeight.w500),
@@ -1798,10 +1824,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           5.0),
-                                                  color: blueColor
-
-
-,
+                                                  color: blueColor,
                                                   boxShadow: [
                                                     const BoxShadow(
                                                       color: Colors.grey,
@@ -2779,7 +2802,7 @@ class _MakePaymentState extends State<MakePayment> {
                               2: FlexColumnWidth(2),
                             },
                             children: [
-                               TableRow(children: [
+                              TableRow(children: [
                                 Padding(
                                   padding: EdgeInsets.all(8.0),
                                   child: Text('Account',
@@ -2854,12 +2877,9 @@ class _MakePaymentState extends State<MakePayment> {
                                                 enabled: false,
                                                 child: Text(
                                                   entry.key,
-                                                  style:  TextStyle(
+                                                  style: TextStyle(
                                                     fontWeight: FontWeight.bold,
-                                                    color: blueColor
-
-
-,
+                                                    color: blueColor,
                                                   ),
                                                 ),
                                               ),
@@ -3154,10 +3174,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 ),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor:  blueColor
-
-
-,
+                                    backgroundColor: blueColor,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),
@@ -3291,8 +3308,302 @@ class _MakePaymentState extends State<MakePayment> {
                             SharedPreferences prefs =
                                 await SharedPreferences.getInstance();
                             String? id = prefs.getString('adminId');
+                            // if (isChecked) {
+                            //   resetFields(); // Reset fields if the checkbox is checked
+                            //   return; // Exit early to prevent payment processing
+                            // }
                             if ((_formKey.currentState?.validate() ?? false) &&
-                                validationMessage == null) {
+                                validationMessage == null)
+                              if (isChecked) {
+                              setState(() {
+                                _isLoading = true; // Show loading indicator
+                              });
+
+                              rows = rows
+                                  .asMap()
+                                  .map((index, entry) {
+                                    return MapEntry(
+                                      index,
+                                      {
+                                        ...entry,
+                                        'date': reverseFormatDate(_startDate
+                                            .text), // Set the date to the desired date
+                                        'balance': charges_balances[
+                                            index], // Add balance from charges_balances list
+                                      },
+                                    );
+                                  })
+                                  .values
+                                  .toList();
+                              setState(() {
+                                _isLoading = true;
+                              });
+                              if (_selectedPaymentMethod == null) {
+                                Fluttertoast.showToast(
+                                    msg: "Please select the payment method");
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                              } else if (_selectedPaymentMethod == "Card") {
+                                print("adminId ${id}");
+                                print(
+                                    "adminId ${cardDetails[selectedcardindex!].company}");
+                                if (processor_id == "zzz") {
+                                  showFailedPaymentAlert(context);
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                } else {
+                                  List<Map<String, String>> filteredTenants =
+                                      tenants.where((tenant) {
+                                    return tenant['tenant_id'] ==
+                                        selectedTenantId;
+                                  }).toList();
+                                  Map<String, String> selectedTenant =
+                                      filteredTenants.first;
+                                  await PaymentService()
+                                      .makePaymentforcard(
+                                          adminId: id ?? "",
+                                          firstName:
+                                              selectedTenant["first_name"]!,
+                                          lastName:
+                                              selectedTenant["last_name"]!,
+                                          emailName: selectedTenant["email"]!,
+                                          customerVaultId:
+                                              cardDetails[selectedcardindex!]
+                                                  .customerVaultId!,
+                                          billingId:
+                                              cardDetails[selectedcardindex!]
+                                                  .billingId!,
+                                          surcharge:
+                                              "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100)}",
+                                          amount:
+                                              "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text)}",
+                                          tenantId: selectedTenantId!,
+                                          date: _startDate.text,
+                                          address1:
+                                              cardDetails[selectedcardindex!]
+                                                  .address_1!,
+                                          processorId: "",
+                                          leaseid: widget.leaseId,
+                                          company_name: companyName,
+                                          entries: rows,
+                                          tenantname: tenantname,
+                                          future_Date: futuredate!,
+                                          uploadedFile: _uploadedFileNames)
+                                      .then((value) {
+                                    Fluttertoast.showToast(msg: "$value");
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                   // Navigator.pop(context, true);
+                                  }).catchError((e) {
+                                    print(e
+                                        .toString()
+                                        .split("Exception")[1]
+                                        .toString()
+                                        .trimLeft());
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                    Alert(
+                                      context: context,
+                                      type: AlertType.warning,
+                                      title: "Payment Failed!",
+                                      desc:
+                                          "${e.toString().split('Exception:')[1].toString().trimLeft()}",
+                                      style: AlertStyle(
+                                        backgroundColor: Colors.white,
+                                        //  overlayColor: Colors.black.withOpacity(.8)
+                                      ),
+                                      buttons: [
+                                        DialogButton(
+                                          child: Text(
+                                            "Ok",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18),
+                                          ),
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          color: blueColor,
+                                        ),
+                                      ],
+                                    ).show();
+                                  });
+                                }
+                              } else if (_selectedPaymentMethod == "ACH") {
+                                List<Map<String, String>> filteredTenants =
+                                    tenants.where((tenant) {
+                                  return tenant['tenant_id'] ==
+                                      selectedTenantId;
+                                }).toList();
+                                Map<String, String> selectedTenant =
+                                    filteredTenants.first;
+                                await PaymentService()
+                                    .makePaymentforach(
+                                        adminId: id ?? "",
+                                        firstName:
+                                            selectedTenant["first_name"]!,
+                                        lastName: selectedTenant["last_name"]!,
+                                        emailName: selectedTenant["email"]!,
+                                        surcharge: "$surchargecount",
+                                        amount:
+                                            "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text)}",
+                                        tenantId: selectedTenantId!,
+                                        date: _startDate.text,
+                                        address1: "",
+                                        processorId: "",
+                                        leaseid: widget.leaseId,
+                                        company_name: companyName,
+                                        entries: rows,
+                                        future_Date: futuredate!,
+                                        account_type: selectedAccount!,
+                                        account_holder_type:
+                                            _selectedHoldertype!,
+                                        checkaccount: accountnum.text,
+                                        checkaba: bankrountingnum.text,
+                                        tenantname: tenantname,
+                                        checkname: achname.text,
+                                        uploadedFile: _uploadedFileNames)
+                                    .then((value) {
+                                  Fluttertoast.showToast(msg: "$value");
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                 // Navigator.pop(context, true);
+                                }).catchError((e) {
+                                  print(e
+                                      .toString()
+                                      .split("Exception")[1]
+                                      .toString()
+                                      .trimLeft());
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  Alert(
+                                    context: context,
+                                    type: AlertType.warning,
+                                    title: "Payment Failed!",
+                                    desc:
+                                        "${e.toString().split('Exception:')[1].toString().trimLeft()}",
+                                    style: AlertStyle(
+                                      backgroundColor: Colors.white,
+                                      //  overlayColor: Colors.black.withOpacity(.8)
+                                    ),
+                                    buttons: [
+                                      DialogButton(
+                                        child: Text(
+                                          "Ok",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18),
+                                        ),
+                                        onPressed: () => Navigator.pop(context),
+                                        color: blueColor,
+                                      ),
+                                    ],
+                                  ).show();
+                                });
+                              } else if (_selectedPaymentMethod == "Check" ||
+                                  _selectedPaymentMethod == "Money Order" ||
+                                  _selectedPaymentMethod ==
+                                      "Cashier 's Check") {
+                                List<Map<String, String>> filteredTenants =
+                                    tenants.where((tenant) {
+                                  return tenant['tenant_id'] ==
+                                      selectedTenantId;
+                                }).toList();
+                                Map<String, String> selectedTenant =
+                                    filteredTenants.first;
+                                await PaymentService()
+                                    .makePaymentfornormal(
+                                  adminId: id ?? "",
+                                  firstName: selectedTenant["first_name"]!,
+                                  lastName: selectedTenant["last_name"]!,
+                                  emailName: selectedTenant["email"]!,
+                                  surcharge:
+                                      "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100)}",
+                                  amount:
+                                      "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text)}",
+                                  tenantId: selectedTenantId!,
+                                  date: _startDate.text,
+                                  address1: "",
+                                  processorId: "",
+                                  leaseid: widget.leaseId,
+                                  company_name: companyName,
+                                  entries: rows,
+                                  future_Date: true,
+                                  Check_number: checknumber.text,
+                                  Check: true,
+                                  uploadedFile: _uploadedFileNames,
+                                  payment_method: _selectedPaymentMethod!,
+                                )
+                                    .then((value) {
+                                  Fluttertoast.showToast(msg: "$value");
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                 // Navigator.pop(context, true);
+                                }).catchError((e) {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  Fluttertoast.showToast(
+                                      msg: "Payment failed $e");
+                                });
+                              } else if (_selectedPaymentMethod == "Cash" ||
+                                  _selectedPaymentMethod == "Manual") {
+                                List<Map<String, String>> filteredTenants =
+                                    tenants.where((tenant) {
+                                  return tenant['tenant_id'] ==
+                                      selectedTenantId;
+                                }).toList();
+                                Map<String, String> selectedTenant =
+                                    filteredTenants.first;
+                                await PaymentService()
+                                    .makePaymentfornormal(
+                                  adminId: id ?? "",
+                                  firstName: selectedTenant["first_name"]!,
+                                  lastName: selectedTenant["last_name"]!,
+                                  emailName: selectedTenant["email"]!,
+                                  surcharge:
+                                      "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100)}",
+                                  amount:
+                                      "${(double.parse(amountController.text) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text)}",
+                                  tenantId: selectedTenantId!,
+                                  date: _startDate.text,
+                                  address1: "",
+                                  processorId: "",
+                                  leaseid: widget.leaseId,
+                                  company_name: companyName,
+                                  entries: rows,
+                                  future_Date: true,
+                                  Check_number: "",
+                                  payment_method: _selectedPaymentMethod!,
+                                  Check: false,
+                                  uploadedFile: _uploadedFileNames,
+                                )
+                                    .then((value) {
+                                  Fluttertoast.showToast(msg: "$value");
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                 // Navigator.pop(context, true);
+                                }).catchError((e) {
+                                  print(e);
+                                  Fluttertoast.showToast(msg: e);
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  Fluttertoast.showToast(
+                                      msg: "Payment failed $e");
+                                });
+                              }
+                                 resetFields();
+                              //print(_selectedPaymentMethod);
+                            }
+                            else {
                               rows = rows
                                   .asMap()
                                   .map((index, entry) {
@@ -3628,6 +3939,41 @@ class _MakePaymentState extends State<MakePayment> {
                 ],
               ),
             ),
+            SizedBox(
+              height: 10,
+            ),
+            //checked
+            Row(
+              children: [
+                SizedBox(
+                  width: 18,
+                ),
+                SizedBox(
+                  width: 24.0, // Standard width for checkbox
+                  height: 24.0,
+                  child: Checkbox(
+                    value: isChecked,
+                    onChanged: (value) {
+                      setState(() {
+                        isChecked = value ?? false;
+                      });
+                    },
+                    activeColor: isChecked ? blueColor : Colors.black,
+                  ),
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(
+                  "Make Another Payment",
+                  style:
+                      TextStyle(color: blueColor, fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+            SizedBox(
+              height: 30,
+            ),
           ],
         ),
       ),
@@ -3642,7 +3988,7 @@ class _MakePaymentState extends State<MakePayment> {
       decoration: BoxDecoration(
         color: Colors.grey[200],
         border: Border.all(
-          color:  blueColor,
+          color: blueColor,
         ),
         borderRadius: BorderRadius.circular(8.0),
       ),
@@ -3656,7 +4002,7 @@ class _MakePaymentState extends State<MakePayment> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color:  blueColor,
+                color: blueColor,
               ),
             ),
             Text(
