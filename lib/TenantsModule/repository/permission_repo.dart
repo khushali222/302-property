@@ -26,6 +26,10 @@ class PermissionService {
     if (response.statusCode == 200) {
       log(response.body);
       final json = jsonDecode(response.body);
+
+      if(json['data'] == null){
+        return UserPermissions(propertyView: false, financialView: false, financialAdd: false, financialEdit: false, workorderView: false, workorderAdd: false, workorderEdit: false, documentsView: false, documentsAdd: false, documentsEdit: false);
+      }
       return UserPermissions.fromJson(json['data']['tenant_permission']);
     } else {
       throw Exception('Failed to load permissions');
