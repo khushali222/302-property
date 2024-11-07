@@ -113,7 +113,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                 future: futureLeaseSummary,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 350),
                       child: SpinKitSpinningLines(
                         color: blueColor,
                         size: 55.0,
