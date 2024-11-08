@@ -920,11 +920,11 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   children: [
                     width < 400
                         ? Text(
-                            "Tenant\n Name",
+                            "Property",
                             style: TextStyle(color: Colors.white),
                             textAlign: TextAlign.center,
                           )
-                        : Text("Tenant\nName",
+                        : Text("Property",
                             style: TextStyle(color: Colors.white),
                             textAlign: TextAlign.center),
                     // Text("Property", style: TextStyle(color: Colors.white)),
@@ -957,7 +957,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                 },
                 child: Row(
                   children: [
-                    Text("Property", style: TextStyle(color: Colors.white)),
+                    Text("Type", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     /*   ascending2
                         ? Padding(
@@ -1006,7 +1006,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                 child: Row(
                   children: [
                     Text(
-                      "Transaction \nType",
+                      "Total",
                       style: TextStyle(color: Colors.white),
                       textAlign: TextAlign.center,
                     ),
@@ -2019,7 +2019,27 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                           if (data.length > 0)
                             Column(
                               children: [
-                                SizedBox(height: 10),
+                                SizedBox(height: 20),
+                                Row(
+                                  children: [
+                                    SizedBox(width: 5),
+                                    Text("Grand Total",style: TextStyle(
+                                      color: Color.fromRGBO(50, 75, 119, 1),
+                                      fontSize: 17,
+                                      fontWeight :FontWeight.bold,
+                                      fontFamily:'Poppins',
+                                    ),),
+                                    Spacer(),
+                                    Text("\$${snapshot.data?.first.totalAmount}",style: TextStyle(
+                                      color: Color.fromRGBO(50, 75, 119, 1),
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily:'Poppins',
+                                    ),),
+                                    SizedBox(width: 10),
+                                  ],
+                                ),
+                                SizedBox(height: 8),
                                 _buildHeaders(),
                                 SizedBox(height: 10),
                                 Container(
@@ -2099,30 +2119,40 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                       ),
                                                     ),
                                                     Expanded(
-                                                      child: Text(
-                                                        '${workOrder.tenantFirstName} ${workOrder.tenantLastName}',
-                                                        style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 13,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .04),
-                                                    Expanded(
-                                                      child: Text(
-                                                        '${workOrder.property ?? '-'}',
-                                                        style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 13,
+                                                      child:
+                                                      Text.rich(
+                                                        TextSpan(
+                                                          children: [
+                                                            TextSpan(
+                                                              text:
+                                                              '${workOrder.property}',
+                                                              style: TextStyle(
+                                                                color:
+                                                                blueColor,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold,
+                                                                fontSize: 13,
+                                                              ),
+                                                            ),
+                                                            if (workOrder
+                                                                .tenantFirstName
+                                                                ?.isNotEmpty ??
+                                                                false)
+                                                              TextSpan(
+                                                                text:
+                                                                "\n${workOrder.tenantFirstName} ${workOrder.tenantLastName}",
+                                                                style:
+                                                                TextStyle(
+                                                                  color: Colors
+                                                                      .lightBlue, // Light blue color for tenant names
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                                  fontSize: 11,
+                                                                ),
+                                                              ),
+                                                          ],
                                                         ),
                                                       ),
                                                     ),
@@ -2135,6 +2165,23 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                     Expanded(
                                                       child: Text(
                                                         '${workOrder.paymentType ?? '-'}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .04),
+                                                    Expanded(
+                                                      child: Text(
+                                                        ' \$${workOrder.totalAmount ?? '-'}',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -2275,6 +2322,31 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                 SizedBox(
                                                                   height: 5,
                                                                 ),
+                                                                // SizedBox(
+                                                                //   height: 5,
+                                                                // ),
+                                                                // Text.rich(
+                                                                //   TextSpan(
+                                                                //     children: [
+                                                                //       TextSpan(
+                                                                //         text:
+                                                                //             'Total Amount: ',
+                                                                //         style: TextStyle(
+                                                                //             fontWeight:
+                                                                //                 FontWeight.bold,
+                                                                //             color: blueColor), // Bold and black
+                                                                //       ),
+                                                                //       TextSpan(
+                                                                //         text:
+                                                                //             '\$${workOrder.totalAmount}',
+                                                                //         style: TextStyle(
+                                                                //             fontWeight:
+                                                                //                 FontWeight.w700,
+                                                                //             color: grey), // Light and grey
+                                                                //       ),
+                                                                //     ],
+                                                                //   ),
+                                                                // ),
                                                                 SizedBox(
                                                                   height: 5,
                                                                 ),
@@ -2283,20 +2355,13 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                     children: [
                                                                       TextSpan(
                                                                         text:
-                                                                            'Total Amount: ',
+                                                                        'Details : ',
                                                                         style: TextStyle(
                                                                             fontWeight:
-                                                                                FontWeight.bold,
+                                                                            FontWeight.bold,
                                                                             color: blueColor), // Bold and black
                                                                       ),
-                                                                      TextSpan(
-                                                                        text:
-                                                                            '\$${workOrder.totalAmount}',
-                                                                        style: TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.w700,
-                                                                            color: grey), // Light and grey
-                                                                      ),
+
                                                                     ],
                                                                   ),
                                                                 ),

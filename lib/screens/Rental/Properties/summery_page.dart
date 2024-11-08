@@ -1924,7 +1924,7 @@ class _Summery_pageState extends State<Summery_page>
                             Row(
                               children: [
                                 SizedBox(
-                                  width: 10,
+                                  width: 7,
                                 ),
                                 Text(
                                   '${widget.properties.rentalCity},',
@@ -9590,7 +9590,7 @@ class _Summery_pageState extends State<Summery_page>
                             height: 5,
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 12),
+                            padding: const EdgeInsets.only(left: 8),
                             child: Text(
                               maxLines: 4,
                               '${widget.properties?.rentalCity} ${widget.properties?.rentalState}',

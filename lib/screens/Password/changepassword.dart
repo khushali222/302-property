@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/screens/Login/login_screen.dart';
 
@@ -57,19 +58,23 @@ class _ChangepasswordState extends State<Changepassword> {
       final jsonData = json.decode(response.body);
       if (jsonData["message"] == "Password Updated Successfully") {
         print(jsonData);
-        // Navigator.push(
-        //     context, MaterialPageRoute(builder: (context) => Login_Screen()));
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Password updated successfully")),
-        );
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Login_Screen()));
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(content: Text("Password updated successfully")),
+        // );
+        Fluttertoast.showToast(
+            msg: 'Password updated successfully');
       } else {
         // Handle other successful responses or display an error message
       }
     } else {
       // Handle HTTP error responses
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to update password")),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text("Failed to update password")),
+      // );
+      Fluttertoast.showToast(
+          msg: 'Failed to update password');
     }
   }
 
@@ -349,7 +354,7 @@ class _ChangepasswordState extends State<Changepassword> {
                     child: Center(
                       child: loading
                           ? SpinKitFadingCircle(
-                              color: Colors.black,
+                              color: Colors.white,
                               size: 40.0,
                             )
                           : Row(
