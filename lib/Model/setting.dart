@@ -10,6 +10,7 @@ class Setting1 {
   int surchargePercentDebit;
   int surchargePercentACH;
   double surchargeFlatACH;
+  String? surcharge_account;
 
   Setting1({
     required this.id,
@@ -23,6 +24,7 @@ class Setting1 {
     required this.surchargePercentDebit,
     required this.surchargePercentACH,
     required this.surchargeFlatACH,
+    this.surcharge_account
   });
 
   factory Setting1.fromJson(Map<String, dynamic> json) {
@@ -37,6 +39,7 @@ class Setting1 {
       v: json['__v'],
       surchargePercentDebit: json['surcharge_percent_debit'] ?? 0.0,
       surchargePercentACH: json['surcharge_percent_ACH'] ?? 0.0,
+        surcharge_account:json['surcharge_account'],
       surchargeFlatACH: json['surcharge_flat_ACH'] != null
           ? json['surcharge_flat_ACH'].toDouble()
           : 0.0,
