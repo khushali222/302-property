@@ -118,7 +118,7 @@ class _MakePaymentState extends State<MakePayment> {
     // amountController.addListener(_updateTotalAmount);
     DateTime today = DateTime.now();
     _startDate.text = DateFormat('dd-MM-yyyy').format(today);
-
+     //selectedTenantId = widget.tenantId;
   }
 
   void _updateTotalAmount() {
@@ -206,10 +206,15 @@ class _MakePaymentState extends State<MakePayment> {
           'overridefee': '${tenant['override_fee']}',
         });
       }
+
       setState(() {
         tenants = fetchedTenants;
+        if (tenants.length == 1) {
+          selectedTenantId = tenants.first['tenant_id'];
+        }
         processor_id = data["processor_id"] ?? "";
       });
+      print(' fetch teant ${fetchedTenants.length}');
     } else {
       throw Exception('Failed to load tenants');
     }
