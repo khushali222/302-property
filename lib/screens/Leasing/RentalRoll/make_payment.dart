@@ -208,6 +208,9 @@ class _MakePaymentState extends State<MakePayment> {
       }
       setState(() {
         tenants = fetchedTenants;
+        if(tenants.length == 1){
+          selectedTenantId = tenants.first["tenant_id"];
+        }
         processor_id = data["processor_id"] ?? "";
       });
     } else {
