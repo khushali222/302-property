@@ -1591,6 +1591,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                 elevation: 0,
                                 backgroundColor: Colors.white),
                             onPressed: () async {
+
                               final value = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -1602,7 +1603,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                 setState(() {
                                   _leaseLedgerFuture = LeaseRepository()
                                       .fetchLeaseLedger(
-                                          leaseId: widget.leaseId);
+                                      leaseId: widget.leaseId);
                                 });
                               }
                             },

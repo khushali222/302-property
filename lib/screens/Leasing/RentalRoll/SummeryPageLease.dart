@@ -114,7 +114,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Padding(
-                      padding: const EdgeInsets.only(top: 350),
+                      padding: const EdgeInsets.only(top: 30),
                       child: SpinKitSpinningLines(
                         color: blueColor,
                         size: 55.0,
