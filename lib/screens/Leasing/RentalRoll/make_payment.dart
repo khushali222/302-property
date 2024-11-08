@@ -211,6 +211,7 @@ class _MakePaymentState extends State<MakePayment> {
         tenants = fetchedTenants;
         if (tenants.length == 1) {
           selectedTenantId = tenants.first['tenant_id'];
+          fetchChargesForSelectedTenant(selectedTenantId!);
         }
         processor_id = data["processor_id"] ?? "";
       });
@@ -751,7 +752,7 @@ class _MakePaymentState extends State<MakePayment> {
       var jsonResponse = jsonDecode(response.body);
 
       // Accessing the first element in the 'data' list
-      var surchargeData = jsonResponse['data'][0];
+      var surchargeData = jsonResponse['data'][0] ?? "";
       if (_selectedPaymentMethod == "Card") {
         if (cardDetails[selectedcardindex!].binResult == "CREDIT") {
           setState(() {
