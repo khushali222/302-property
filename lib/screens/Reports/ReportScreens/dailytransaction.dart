@@ -2578,7 +2578,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                 //     ],
                                                                 //   ),
                                                                 // ),
-
+                                                                if(workOrder.entries.length > 0)
                                                                 Text.rich(
                                                                   TextSpan(
                                                                     children: [
