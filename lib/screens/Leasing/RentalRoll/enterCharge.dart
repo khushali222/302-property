@@ -535,7 +535,7 @@ class _enterChargeState extends State<enterCharge> {
                         //Same as `blurRadius` i guess
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5.0),
-                          color:blueColor,
+                          color: blueColor,
                           boxShadow: const [
                             BoxShadow(
                               color: Colors.grey,
@@ -1079,14 +1079,13 @@ class _enterChargeState extends State<enterCharge> {
                                 2: FlexColumnWidth(1),
                               },
                               children: [
-                                 TableRow(children: [
+                                TableRow(children: [
                                   Padding(
                                     padding: EdgeInsets.all(8.0),
                                     child: Center(
                                       child: Text('Account',
                                           style: TextStyle(
-                                              color:
-                                                  blueColor,
+                                              color: blueColor,
                                               fontWeight: FontWeight.bold)),
                                     ),
                                   ),
@@ -1095,8 +1094,7 @@ class _enterChargeState extends State<enterCharge> {
                                     child: Center(
                                       child: Text('Amount',
                                           style: TextStyle(
-                                              color:
-                                                  blueColor,
+                                              color: blueColor,
                                               fontWeight: FontWeight.bold)),
                                     ),
                                   ),
@@ -1105,8 +1103,7 @@ class _enterChargeState extends State<enterCharge> {
                                     child: Center(
                                       child: Text('Actions',
                                           style: TextStyle(
-                                              color:
-                                                  blueColor,
+                                              color: blueColor,
                                               fontWeight: FontWeight.bold)),
                                     ),
                                   ),
@@ -1115,7 +1112,6 @@ class _enterChargeState extends State<enterCharge> {
                                   int index = entry.key;
                                   Map<String, dynamic> row = entry.value;
                                   return TableRow(children: [
-
                                     // Padding(
                                     //   padding: const EdgeInsets.all(8.0),
                                     //   child: DropdownButtonHideUnderline(
@@ -1236,48 +1232,62 @@ class _enterChargeState extends State<enterCharge> {
                                           builder:
                                               (FormFieldState<String> state) {
                                             String? selectedAccount =
-                                            row['account'];
+                                                row['account'];
 
                                             // List of all dropdown items, including missing ones
                                             Map<String, List<String>>
-                                            categorizedDataCopy =
-                                            Map.from(categorizedData);
+                                                categorizedDataCopy =
+                                                Map.from(categorizedData);
 
                                             // Ensure the selected value is present in the list
                                             if (selectedAccount != null &&
                                                 !categorizedData.values
                                                     .expand((list) => list)
                                                     .contains(
-                                                    selectedAccount)) {
+                                                        selectedAccount)) {
                                               if (categorizedDataCopy[
-                                              'Other'] ==
+                                                      'Other'] ==
                                                   null) {
                                                 categorizedDataCopy['Other'] =
-                                                [];
+                                                    [];
                                               }
                                               categorizedDataCopy['Other']!
                                                   .add(selectedAccount);
                                             }
                                             print(row);
-                                            if(row['charge_type'] == "Rent"){
-
-                                            }
+                                            if (row['charge_type'] == "Rent") {}
                                             List<String> liabilityAccounts = [
                                               "Late Fee Income",
                                               "Pre-payments",
                                               "Security Deposit",
                                               'Rent Income'
                                             ];
-                                            print("${row['account']}_${row['charge_type']}");
-                                            print(categorizedDataCopy.values.expand((v) => v).contains(row['account']));
+                                            print(
+                                                "${row['account']}_${row['charge_type']}");
+                                            print(categorizedDataCopy.values
+                                                .expand((v) => v)
+                                                .contains(row['account']));
                                             print(categorizedDataCopy.values);
                                             return Column(
                                               crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                                  CrossAxisAlignment.start,
                                               children: [
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
                                                 DropdownButton2<String>(
                                                   isExpanded: true,
-                                                  value: liabilityAccounts.contains(row['account']) ? "${row['account']}_Liability Account" : "${row['account']}_${row['charge_type']}",
+                                                  //  value: liabilityAccounts.contains(row['account']) ? "${row['account']}_Liability Account" : "${row['account']}_${row['charge_type']}",
+                                                  value: (row['account'] !=
+                                                              null &&
+                                                          row['charge_type'] !=
+                                                              null)
+                                                      ? (liabilityAccounts
+                                                              .contains(row[
+                                                                  'account'])
+                                                          ? "${row['account']}_Liability Account"
+                                                          : "${row['account']}_${row['charge_type']}")
+                                                      : null,
                                                   items: [
                                                     ...categorizedDataCopy
                                                         .entries
@@ -1289,16 +1299,16 @@ class _enterChargeState extends State<enterCharge> {
                                                           child: Text(
                                                             entry.key,
                                                             style:
-                                                            const TextStyle(
+                                                                const TextStyle(
                                                               fontWeight:
-                                                              FontWeight
-                                                                  .bold,
+                                                                  FontWeight
+                                                                      .bold,
                                                               color: Color
                                                                   .fromRGBO(
-                                                                  21,
-                                                                  43,
-                                                                  81,
-                                                                  1),
+                                                                      21,
+                                                                      43,
+                                                                      81,
+                                                                      1),
                                                             ),
                                                           ),
                                                         ),
@@ -1306,22 +1316,23 @@ class _enterChargeState extends State<enterCharge> {
                                                             .map((item) {
                                                           return DropdownMenuItem<
                                                               String>(
-                                                            value: "${item}_${entry.key}",
+                                                            value:
+                                                                "${item}_${entry.key}",
                                                             child: Padding(
                                                               padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left:
-                                                                  16.0),
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      left:
+                                                                          10,bottom: 1),
                                                               child: Text(
                                                                 item,
                                                                 style:
-                                                                const TextStyle(
+                                                                    const TextStyle(
                                                                   color: Colors
                                                                       .black,
                                                                   fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
+                                                                      FontWeight
+                                                                          .w400,
                                                                 ),
                                                               ),
                                                             ),
@@ -1329,28 +1340,31 @@ class _enterChargeState extends State<enterCharge> {
                                                         }).toList(),
                                                       ];
                                                     }).toList(),
-
                                                   ],
                                                   onChanged: (value) {
                                                     dynamic? chargeType;
                                                     for (var entry
-                                                    in categorizedData
-                                                        .entries) {
+                                                        in categorizedData
+                                                            .entries) {
                                                       if (entry.value
                                                           .contains(value)) {
-                                                        chargeType =
-                                                            entry.key;
+                                                        chargeType = entry.key;
                                                         break;
                                                       }
                                                     }
                                                     setState(() {
-                                                      final parts = value!.split('_');
-                                                      final chargeType = parts[0];
-                                                      final selectedValue = parts.sublist(1).join('_');
+                                                      final parts =
+                                                          value!.split('_');
+                                                      final chargeType =
+                                                          parts[0];
+                                                      final selectedValue =
+                                                          parts
+                                                              .sublist(1)
+                                                              .join('_');
                                                       rows[index]['account'] =
                                                           chargeType;
-                                                      rows[index][
-                                                      'charge_type'] =
+                                                      rows[index]
+                                                              ['charge_type'] =
                                                           selectedValue;
                                                       state.didChange(
                                                           value); // Update the FormField state
@@ -1358,62 +1372,65 @@ class _enterChargeState extends State<enterCharge> {
                                                     state.reset();
                                                   },
                                                   buttonStyleData:
-                                                  ButtonStyleData(
+                                                      ButtonStyleData(
                                                     height: 45,
                                                     // width: 220,
                                                     padding:
-                                                    const EdgeInsets.only(
-                                                        left: 0,
-                                                        right: 14),
+                                                        const EdgeInsets.only(
+                                                            left: 0, right: 14),
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                      BorderRadius
-                                                          .circular(6),
+                                                          BorderRadius.circular(
+                                                              6),
                                                       color: Colors.white,
                                                     ),
                                                     elevation: 2,
                                                   ),
                                                   iconStyleData:
-                                                  const IconStyleData(
-                                                    icon: Icon(Icons
-                                                        .arrow_drop_down),
+                                                      const IconStyleData(
+                                                    icon: Icon(
+                                                        Icons.arrow_drop_down),
                                                     iconSize: 24,
                                                     iconEnabledColor:
-                                                    Color(0xFFb0b6c3),
+                                                        Color(0xFFb0b6c3),
                                                     iconDisabledColor:
-                                                    Colors.grey,
+                                                        Colors.grey,
                                                   ),
                                                   dropdownStyleData:
-                                                  DropdownStyleData(
+                                                      DropdownStyleData(
                                                     width: 250,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                      BorderRadius
-                                                          .circular(6),
+                                                          BorderRadius.circular(
+                                                              6),
                                                       color: Colors.white,
                                                     ),
                                                     scrollbarTheme:
-                                                    ScrollbarThemeData(
-                                                      radius: const Radius
-                                                          .circular(6),
+                                                        ScrollbarThemeData(
+                                                      radius:
+                                                          const Radius.circular(
+                                                              6),
                                                       thickness:
-                                                      MaterialStateProperty
-                                                          .all(6),
+                                                          MaterialStateProperty
+                                                              .all(6),
                                                       thumbVisibility:
-                                                      MaterialStateProperty
-                                                          .all(true),
+                                                          MaterialStateProperty
+                                                              .all(true),
                                                     ),
                                                   ),
-                                                  hint: const Text(
-                                                      'Select an account'),
+                                                  hint:  Padding(
+                                                    padding: const EdgeInsets.only(left: 7,right: 5,bottom: 2),
+                                                    child: Text(
+                                                        'Select an account'),
+                                                  ),
                                                 ),
                                                 if (state
                                                     .hasError) // Display the validation error
                                                   Padding(
                                                     padding:
-                                                    const EdgeInsets.only(
-                                                        left: 16.0,
-                                                        top: 5.0),
+                                                        const EdgeInsets.only(
+                                                            left: 16.0,
+                                                            top: 5.0),
                                                     child: Text(
                                                       state.errorText ?? '',
                                                       style: const TextStyle(
@@ -1524,8 +1541,7 @@ class _enterChargeState extends State<enterCharge> {
                                                     500
                                                 ? 16
                                                 : 18,
-                                            color:
-                                                blueColor,
+                                            color: blueColor,
                                           ),
                                         ),
                                       ),
@@ -1553,7 +1569,7 @@ class _enterChargeState extends State<enterCharge> {
                     width: double.infinity,
                     decoration: BoxDecoration(
                         border: Border.all(
-                          color:  blueColor,
+                          color: blueColor,
                         ),
                         borderRadius: BorderRadius.circular(10.0)),
                     child: Padding(
@@ -1565,14 +1581,11 @@ class _enterChargeState extends State<enterCharge> {
                           const SizedBox(
                             height: 10,
                           ),
-                           Text('Upload Files',
+                          Text('Upload Files',
                               style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  color: blueColor
-
-
-)),
+                                  color: blueColor)),
                           const SizedBox(
                             height: 20,
                           ),
@@ -1584,10 +1597,7 @@ class _enterChargeState extends State<enterCharge> {
                             ),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor:  blueColor
-
-
-,
+                                backgroundColor: blueColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
