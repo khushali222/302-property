@@ -65,6 +65,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
     });
     checkInternet();
     fetchRentalOwners();
+    fetchpdfrentalowner(); // this for pdf
     fetchReport();
   }
 
@@ -1227,6 +1228,30 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
     String? token = prefs.getString('token');
     final response = await http
         .get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'), headers: {
+      "authorization": "CRM $token",
+      "id": "CRM $id",
+    });
+    final jsonData = json.decode(response.body);
+    print(jsonData);
+    if (response.statusCode == 200) {
+      setState(() {
+        rentalowners = (jsonDecode(response.body) as List)
+            .map((e) => e as Map<String, dynamic>)!
+            .toList();
+      });
+      log(rentalowners.toString());
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  Future<void> fetchpdfrentalowner() async {
+    print("calling");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    final response = await http
+        .get(Uri.parse('${Api_url}/api/rental_owner/todayspaymentrentalownerpdf/$id'), headers: {
       "authorization": "CRM $token",
       "id": "CRM $id",
     });

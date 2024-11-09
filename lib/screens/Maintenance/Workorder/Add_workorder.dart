@@ -99,7 +99,6 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
   @override
   void initState() {
     // TODO: implement initState
-
     super.initState();
     _loadProperties();
     _loadVendor();
