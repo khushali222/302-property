@@ -130,7 +130,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       amountController.text = c_data.totalAmount.toString();
       _selectedPaymentMethod = c_data.paymenttype;
       if(_selectedPaymentMethod != "Cash")
-        checknumber.text = c_data!.check_number!;
+        checknumber.text = c_data!.check_number ?? "";
       reference.text = c_data!.reference ?? "";
 
       print('charge details ${charges!.length}');
