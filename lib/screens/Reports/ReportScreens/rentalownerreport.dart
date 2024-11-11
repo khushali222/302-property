@@ -1393,9 +1393,6 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                           expandedRowIndex == rowIndex;
                                       RentalOwnerReport rental = entry.value;
 
-                                      print(' account ${rental.payments.first.entry.first.account}');
-                                      print(' amount ${rental.payments.first.entry.first.amount}');
-                                      print(' charge ${rental.payments.first.entry.first.chargeType}');
                                       return Container(
                                         // decoration: BoxDecoration(
                                         //   border: Border.all(color: blueColor),

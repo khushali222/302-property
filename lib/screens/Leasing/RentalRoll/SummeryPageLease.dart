@@ -114,7 +114,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Padding(
-                      padding: const EdgeInsets.only(top: 30),
+                      padding: const EdgeInsets.only(top: 300),
                       child: SpinKitSpinningLines(
                         color: blueColor,
                         size: 55.0,
@@ -637,7 +637,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 padding: const EdgeInsets.only(
                                                     top: 12),
                                                 child: Text(
-                                                  '\$ ${leaseLedger.data?.first.balance!.toStringAsFixed(2)}',
+                                                  leaseLedger.data != null && leaseLedger.data!.isNotEmpty && leaseLedger.data!.first.balance != null
+                                                      ? leaseLedger.data!.first.balance!.toStringAsFixed(2)
+                                                      : 'N/A',
                                                   style: TextStyle(
                                                       fontSize: 15,
                                                       fontWeight:

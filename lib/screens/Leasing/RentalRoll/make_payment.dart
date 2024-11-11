@@ -153,9 +153,9 @@ class _MakePaymentState extends State<MakePayment> {
           [];
       for (var i = 0; i < c_data.entry!.length; i++) {
         if (i == 0) {
-          charges_balances[0] = c_data.entry![i].amount!.toDouble();
+          charges_balances[0] = c_data.entry![i].amount!.ceil().toDouble();
         } else {
-          charges_balances.add(c_data.entry![i].amount!.toDouble());
+          charges_balances.add(c_data.entry![i].amount!.ceil().toDouble());
         }
       }
       print("rows length:- ${rows!.length}");
@@ -209,8 +209,8 @@ class _MakePaymentState extends State<MakePayment> {
 
       setState(() {
         tenants = fetchedTenants;
-        if (tenants.length == 1) {
-          selectedTenantId = tenants.first['tenant_id'];
+        if(tenants.length == 1){
+          selectedTenantId = tenants.first["tenant_id"];
           fetchChargesForSelectedTenant(selectedTenantId!);
         }
         processor_id = data["processor_id"] ?? "";
@@ -247,6 +247,7 @@ class _MakePaymentState extends State<MakePayment> {
       );
       if (response.statusCode == 200) {
         List<dynamic> jsonResponse = json.decode(response.body)['data'];
+        print("accounts data $jsonResponse");
         Map<String, List<String>> fetchedData = {};
         // Adding static items to the "LIABILITY ACCOUNT" category
         fetchedData["Liability Account"] = [
@@ -266,6 +267,7 @@ class _MakePaymentState extends State<MakePayment> {
         }
         setState(() {
           categorizedData = fetchedData;
+          print(categorizedData);
           isLoading = false;
         });
       } else {
@@ -473,9 +475,15 @@ class _MakePaymentState extends State<MakePayment> {
             [];
         for (var i = 0; i < filteredCharges!.length; i++) {
           if (i == 0) {
-            charges_balances[0] = filteredCharges[i].chargeAmount!.toDouble();
+            double chargeAmount = filteredCharges[i].chargeAmount!.toDouble();
+            String formattedChargeAmount = chargeAmount.toStringAsFixed(2);
+            charges_balances[0] = double.parse(formattedChargeAmount);
+            //charges_balances[0] = filteredCharges[i].chargeAmount!.toDouble();
           } else {
-            charges_balances.add(filteredCharges[i].chargeAmount!.toDouble());
+            double chargeAmount = filteredCharges[i].chargeAmount!.toDouble();
+            String formattedChargeAmount = chargeAmount.toStringAsFixed(2);
+            //charges_balances[0] = double.parse(formattedChargeAmount);
+            charges_balances.add( double.parse(formattedChargeAmount));
           }
         }
         print("rows length:- ${rows!.length}");
@@ -2568,13 +2576,26 @@ class _MakePaymentState extends State<MakePayment> {
                                                 categorizedDataCopy['Other']!
                                                     .add(selectedAccount);
                                               }
+                                              print(row);
+                                              if(row['charge_type'] == "Rent"){
+
+                                              }
+                                              List<String> liabilityAccounts = [
+                                                "Late Fee Income",
+                                                "Pre-payments",
+                                                "Security Deposit",
+                                                'Rent Income'
+                                              ];
+                                              print("${row['account']}_${row['charge_type']}");
+                                             print(categorizedDataCopy.values.expand((v) => v).contains(row['account']));
+                                              print(categorizedDataCopy.values);
                                               return Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   DropdownButton2<String>(
                                                     isExpanded: true,
-                                                    value: row['account'],
+                                                    value: liabilityAccounts.contains(row['account']) ? "${row['account']}_Liability Account" : "${row['account']}_${row['charge_type']}",
                                                     items: [
                                                       ...categorizedDataCopy
                                                           .entries
@@ -2603,7 +2624,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                               .map((item) {
                                                             return DropdownMenuItem<
                                                                 String>(
-                                                              value: item,
+                                                              value: "${item}_${entry.key}",
                                                               child: Padding(
                                                                 padding:
                                                                     const EdgeInsets
@@ -2626,6 +2647,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                           }).toList(),
                                                         ];
                                                       }).toList(),
+
                                                     ],
                                                     onChanged: (value) {
                                                       dynamic? chargeType;
@@ -2640,11 +2662,14 @@ class _MakePaymentState extends State<MakePayment> {
                                                         }
                                                       }
                                                       setState(() {
+                                                        final parts = value!.split('_');
+                                                        final chargeType = parts[0];
+                                                        final selectedValue = parts.sublist(1).join('_');
                                                         rows[index]['account'] =
-                                                            value;
+                                                            chargeType;
                                                         rows[index][
                                                                 'charge_type'] =
-                                                            chargeType;
+                                                            selectedValue;
                                                         state.didChange(
                                                             value); // Update the FormField state
                                                       });
@@ -2778,8 +2803,8 @@ class _MakePaymentState extends State<MakePayment> {
                                                             FontWeight.bold)),
                                                 SizedBox(width: 12.0),
                                                 Text(
-                                                    charges_balances[index]
-                                                        .toString(),
+                                                    charges_balances[index].toStringAsFixed(2)
+                                                        ,
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold)),

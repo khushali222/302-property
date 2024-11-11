@@ -1218,6 +1218,8 @@ class _enterChargeState extends State<enterCharge> {
                                     //     ),
                                     //   ),
                                     // ),
+
+
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: DropdownButtonHideUnderline(
@@ -1234,6 +1236,9 @@ class _enterChargeState extends State<enterCharge> {
                                             String? selectedAccount =
                                                 row['account'];
 
+
+                                            String? selectedCharge =
+                                            row['charge_type'];
                                             // List of all dropdown items, including missing ones
                                             Map<String, List<String>>
                                                 categorizedDataCopy =
@@ -1254,93 +1259,128 @@ class _enterChargeState extends State<enterCharge> {
                                               categorizedDataCopy['Other']!
                                                   .add(selectedAccount);
                                             }
-                                            print(row);
-                                            if (row['charge_type'] == "Rent") {}
+
+
                                             List<String> liabilityAccounts = [
                                               "Late Fee Income",
                                               "Pre-payments",
                                               "Security Deposit",
                                               'Rent Income'
                                             ];
-                                            print(
-                                                "${row['account']}_${row['charge_type']}");
-                                            print(categorizedDataCopy.values
-                                                .expand((v) => v)
-                                                .contains(row['account']));
-                                            print(categorizedDataCopy.values);
+                                            String? surchargetype;
+                                            if (selectedCharge == "Surcharge") {
+                                              for (var entry in categorizedData.entries) {
+                                                if (entry.value.contains(selectedAccount)) {
+                                                  print("Account found: $selectedAccount in category: ${entry.key}");
+                                                  surchargetype = entry.key;
+                                                  break;
+                                                }
+                                              }
+                                            }
+                                            bool nosurcharge= false;
+                                            if (row["charge_type"] == "Surcharge") {
+                                              print("Surcharge calling");
+
+                                              for (var entry in categorizedData.entries) {
+                                                if (entry.value.contains(row['account'])) {
+                                                  print("Account found: ${row['account']} in category: ${entry.key}");
+                                                  surchargetype = entry.key;
+                                                }
+                                              }
+                                              if(surchargetype == ""){
+                                                nosurcharge = true;
+                                              }
+
+                                            }
+
+                                            // Prepare the dropdown items
+                                            List<DropdownMenuItem<String>>
+                                                dropdownItems = [
+                                              ...categorizedDataCopy.entries
+                                                  .expand((entry) {
+                                                return [
+                                                  DropdownMenuItem<String>(
+                                                    enabled: false,
+                                                    child: Text(
+                                                      entry.key,
+                                                      style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Color.fromRGBO(
+                                                            21, 43, 81, 1),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  ...entry.value.map((item) {
+                                                    return DropdownMenuItem<
+                                                        String>(
+                                                      value:
+                                                          "${item}_${entry.key}",
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 10,
+                                                                bottom: 1),
+                                                        child: Text(
+                                                          item,
+                                                          style:
+                                                              const TextStyle(
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                ];
+                                              }).toList(),
+                                              if (row['account'] != null && !categorizedData.values.expand((v) => v).contains(row['account']))
+                                                        DropdownMenuItem<String>(
+                                                          value:"${row['account']}_${row['charge_type']}",
+                                                          child: Padding(
+                                                            padding: const EdgeInsets.only(left: 0.0),
+                                                            child: Text(
+                                                              row['account']!,
+                                                              style: const TextStyle(
+                                                                color: Colors.black,
+                                                                fontWeight: FontWeight.w400,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                            ];
+
+
                                             return Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                SizedBox(
-                                                  height: 5,
-                                                ),
+                                                SizedBox(height: 5),
                                                 DropdownButton2<String>(
                                                   isExpanded: true,
-                                                  //  value: liabilityAccounts.contains(row['account']) ? "${row['account']}_Liability Account" : "${row['account']}_${row['charge_type']}",
-                                                  value: (row['account'] !=
-                                                              null &&
-                                                          row['charge_type'] !=
-                                                              null)
-                                                      ? (liabilityAccounts
-                                                              .contains(row[
-                                                                  'account'])
-                                                          ? "${row['account']}_Liability Account"
-                                                          : "${row['account']}_${row['charge_type']}")
+                                                  // value: (row['account'] !=
+                                                  //             null &&
+                                                  //         row['charge_type'] !=
+                                                  //             null)
+                                                  //     ? (liabilityAccounts
+                                                  //             .contains(row[
+                                                  //                 'account'])
+                                                  //         ? "${row['account']}_Liability Account"
+                                                  //         : "${row['account']}_${row['charge_type']}")
+                                                  //     : null,
+                                                 // value: row['account'] != null ? liabilityAccounts.contains(row['account']) ?
+                                                 //  "${row['account']}_Liability Account" : row['charge_type'] == "Surcharge" ?
+                                                 //  "${row['account']}_$surchargetype" :  "${row['account']}_${row['charge_type']}":null,
+                                                  value: row['account'] != null
+                                                      ? (liabilityAccounts.contains(row['account'])
+                                                      ? "${row['account']}_Liability Account"
+                                                      : (row['charge_type'] == "Surcharge" && surchargetype != null
+                                                      ? "${row['account']}_$surchargetype"
+                                                      : "${row['account']}_${row['charge_type']}"))
                                                       : null,
-                                                  items: [
-                                                    ...categorizedDataCopy
-                                                        .entries
-                                                        .expand((entry) {
-                                                      return [
-                                                        DropdownMenuItem<
-                                                            String>(
-                                                          enabled: false,
-                                                          child: Text(
-                                                            entry.key,
-                                                            style:
-                                                                const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      21,
-                                                                      43,
-                                                                      81,
-                                                                      1),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        ...entry.value
-                                                            .map((item) {
-                                                          return DropdownMenuItem<
-                                                              String>(
-                                                            value:
-                                                                "${item}_${entry.key}",
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      left:
-                                                                          10,bottom: 1),
-                                                              child: Text(
-                                                                item,
-                                                                style:
-                                                                    const TextStyle(
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          );
-                                                        }).toList(),
-                                                      ];
-                                                    }).toList(),
-                                                  ],
+                                                  items: dropdownItems,
                                                   onChanged: (value) {
                                                     dynamic? chargeType;
                                                     for (var entry
@@ -1355,14 +1395,14 @@ class _enterChargeState extends State<enterCharge> {
                                                     setState(() {
                                                       final parts =
                                                           value!.split('_');
-                                                      final chargeType =
+                                                      final selectedChargeType =
                                                           parts[0];
                                                       final selectedValue =
                                                           parts
                                                               .sublist(1)
                                                               .join('_');
                                                       rows[index]['account'] =
-                                                          chargeType;
+                                                          selectedChargeType;
                                                       rows[index]
                                                               ['charge_type'] =
                                                           selectedValue;
@@ -1374,7 +1414,6 @@ class _enterChargeState extends State<enterCharge> {
                                                   buttonStyleData:
                                                       ButtonStyleData(
                                                     height: 45,
-                                                    // width: 220,
                                                     padding:
                                                         const EdgeInsets.only(
                                                             left: 0, right: 14),
@@ -1418,8 +1457,12 @@ class _enterChargeState extends State<enterCharge> {
                                                               .all(true),
                                                     ),
                                                   ),
-                                                  hint:  Padding(
-                                                    padding: const EdgeInsets.only(left: 7,right: 5,bottom: 2),
+                                                  hint: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 7,
+                                                            right: 5,
+                                                            bottom: 2),
                                                     child: Text(
                                                         'Select an account'),
                                                   ),
@@ -1445,6 +1488,8 @@ class _enterChargeState extends State<enterCharge> {
                                         ),
                                       ),
                                     ),
+
+
                                     Container(
                                       margin: EdgeInsets.only(top: 5),
                                       child: Padding(

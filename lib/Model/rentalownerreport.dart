@@ -16,10 +16,7 @@ class RentalOwnerReport {
       rentalOwnerId: json['rentalowner_id'] ?? '',
       rentalOwnerName: json['rentalOwner_name'] ?? '',
       // Check the type of amount and convert to double if it's an int
-      subTotal: json['sub_total'] is int
-          ? (json['sub_total'] as int).toDouble()
-          : (json['sub_total'] ?? 0.0) as double,
-
+      subTotal: json['sub_total'] is String ? double.parse(json['sub_total']) : (json['sub_total'] is int) ? (json['sub_total'] as int).toDouble():(json['sub_total'] ?? 0.0) as double,
       payments: (json['payments'] as List<dynamic>?)
           ?.map((paymentJson) => Payment.fromJson(paymentJson))
           .toList() ??
@@ -34,6 +31,21 @@ class RentalOwnerReport {
       'sub_total': subTotal,
       'payments': payments.map((payment) => payment.toJson()).toList(),
     };
+  }
+  static double _parseSubTotal(dynamic subTotal) {
+    print(subTotal.runtimeType);
+    if (subTotal is int) {
+      return subTotal.toDouble();
+    } else if (subTotal is double) {
+      return subTotal;
+    } else if (subTotal is String) {
+      print("String callling");
+      // Try to parse the string to double
+      final parsedValue = double.parse(subTotal);
+      print(parsedValue.runtimeType);
+      return parsedValue ; // Return 0.0 if parsing fails
+    }
+    return 0.0; // Default case if it's null or an unexpected type
   }
 }
 
@@ -96,7 +108,7 @@ class Payment {
       adminId: json['admin_id'] ?? '',
       leaseId: json['lease_id'] ?? '',
       tenantId: json['tenant_id'] ?? '',
-      surcharge: (json['surcharge'] as num?)?.toDouble() ?? 0.0,
+      surcharge: json['surcharge'] is String ? double.parse(json['surcharge']) : (json['surcharge'] as num?)?.toDouble() ?? 0.0,
       customerVaultId: json['customer_vault_id']?.toString() ?? '',
       billingId: json['billing_id']?.toString() ?? '',
       transactionId: json['transaction_id'] ?? 'N/A',
@@ -105,7 +117,7 @@ class Payment {
           ?.map((entryJson) => Entry.fromJson(entryJson))
           .toList() ??
           [],
-      totalAmount: (json['total_amount'] as num?)?.toDouble() ?? 0.0,
+      totalAmount:json['total_amount'] is String ? double.parse(json['total_amount']) : (json['total_amount'] as num?)?.toDouble() ?? 0.0,
       paymentType: json['payment_type'] ?? '',
       type: json['type'] ?? '',
       paymentAttachment: List<dynamic>.from(json['payment_attachment'] ?? []),
@@ -167,7 +179,9 @@ class Entry {
     return Entry(
       account: json['account'] ?? '',
       // Check the type of amount and convert to double if it's an int
-      amount: json['amount'] is int
+      amount:
+      json['amount'] is String ? double.parse(json['amount']) :
+      json['amount'] is int
           ? (json['amount'] as int).toDouble()
           : (json['amount'] ?? 0.0) as double,
       chargeType: json['charge_type'] ?? '',

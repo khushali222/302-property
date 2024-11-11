@@ -1924,7 +1924,7 @@ class _Summery_pageState extends State<Summery_page>
                             Row(
                               children: [
                                 SizedBox(
-                                  width: 7,
+                                  width: 11,
                                 ),
                                 Text(
                                   '${widget.properties.rentalCity},',
@@ -1953,10 +1953,10 @@ class _Summery_pageState extends State<Summery_page>
                             Row(
                               children: [
                                 SizedBox(
-                                  width: 10,
+                                  width: 8,
                                 ),
                                 Text(
-                                  '${widget.properties.rentalCountry},',
+                                  '${widget.properties.rentalCountry}',
                                   style: TextStyle(
                                     color: blueColor,
                                     fontSize:
@@ -5548,7 +5548,7 @@ class _Summery_pageState extends State<Summery_page>
                                         ),
                                         Padding(
                                           padding:
-                                              const EdgeInsets.only(left: 16),
+                                              const EdgeInsets.only(left: 14),
                                           child: Text(
                                             '${widget.properties?.rentalCountry} ${widget.properties?.rentalPostcode}',
                                             style: TextStyle(
