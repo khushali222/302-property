@@ -1142,7 +1142,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                               ),
                                             ],
                                           ),
-                                          items: leaseTypeitems
+                                          items:[ ...leaseTypeitems
                                               .map(
                                                 (String item) =>
                                                     DropdownMenuItem<String>(
@@ -1161,6 +1161,21 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 ),
                                               )
                                               .toList(),
+                                            if(_selectedLeaseType !=  null && !leaseTypeitems.contains(_selectedLeaseType))
+                                            DropdownMenuItem<String>(
+                                              value: _selectedLeaseType,
+                                              child: Text(
+                                                _selectedLeaseType!,
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                  color: Colors.black,
+                                                ),
+                                                overflow:
+                                                TextOverflow.ellipsis,
+                                              ),
+                                            ),],
                                           value: _selectedLeaseType,
                                           onChanged: (value) {
                                             // Update the FormField state

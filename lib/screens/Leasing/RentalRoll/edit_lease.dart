@@ -1180,25 +1180,44 @@ class _Edit_leaseState extends State<Edit_lease>
                                               ),
                                             ],
                                           ),
-                                          items: leaseTypeitems
-                                              .map(
-                                                (String item) =>
-                                                    DropdownMenuItem<String>(
-                                                  value: item,
-                                                  child: Text(
-                                                    item,
-                                                    style: const TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black,
+                                          items:
+                                          [
+                                            ...leaseTypeitems
+                                                .map(
+                                                  (String item) =>
+                                                  DropdownMenuItem<String>(
+                                                    value: item,
+                                                    child: Text(
+                                                      item,
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                        FontWeight.bold,
+                                                        color: Colors.black,
+                                                      ),
+                                                      overflow:
+                                                      TextOverflow.ellipsis,
                                                     ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
                                                   ),
+                                            )
+                                                .toList() ,
+
+                                            if(_selectedLeaseType !=  null && !leaseTypeitems.contains(_selectedLeaseType))
+                                              DropdownMenuItem<String>(
+                                                value: _selectedLeaseType,
+                                                child: Text(
+                                                  _selectedLeaseType!,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                    FontWeight.bold,
+                                                    color: Colors.black,
+                                                  ),
+                                                  overflow:
+                                                  TextOverflow.ellipsis,
                                                 ),
-                                              )
-                                              .toList(),
+                                              ),
+                                          ],
                                           value: _selectedLeaseType,
                                           onChanged: (value) {
                                             // Update the FormField state

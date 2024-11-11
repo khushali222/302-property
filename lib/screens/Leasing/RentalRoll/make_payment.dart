@@ -212,6 +212,7 @@ class _MakePaymentState extends State<MakePayment> {
         if(tenants.length == 1){
           selectedTenantId = tenants.first["tenant_id"];
           fetchChargesForSelectedTenant(selectedTenantId!);
+           fetchcreditcard(selectedTenantId!);
         }
         processor_id = data["processor_id"] ?? "";
       });
