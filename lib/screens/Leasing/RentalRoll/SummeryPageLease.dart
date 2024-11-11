@@ -637,7 +637,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 padding: const EdgeInsets.only(
                                                     top: 12),
                                                 child: Text(
-                                                  '\$ ${leaseLedger.data?.first.balance!.toStringAsFixed(2)}',
+                                                  '\$ ${leaseLedger.data!.length > 0?leaseLedger.data?.first.balance!.toStringAsFixed(2):0.0}',
                                                   style: TextStyle(
                                                       fontSize: 15,
                                                       fontWeight:
@@ -2477,7 +2477,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                               12),
                                                                       child:
                                                                           Text(
-                                                                        '\$ ${leaseLedger.data?.first.balance!.toStringAsFixed(2)}',
+                                                                        '\$ ${leaseLedger.data!.length > 0?leaseLedger.data?.first.balance!.toStringAsFixed(2):0.0}',
                                                                         style: TextStyle(
                                                                             fontSize:
                                                                                 15,

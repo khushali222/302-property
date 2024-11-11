@@ -1679,7 +1679,7 @@ class _FinancialTableState extends State<FinancialTable> {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (!snapshot.hasData) {
                         return Container(
-                          height: MediaQuery.of(context).size.height * .5,
+                          height: MediaQuery.of(context).size.height * .2,
                           child: Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -3142,7 +3142,7 @@ class _FinancialTableState extends State<FinancialTable> {
                               if (data.isEmpty)
                                 Container(
                                   height:
-                                      MediaQuery.of(context).size.height * .5,
+                                      MediaQuery.of(context).size.height * .3,
                                   child: Center(
                                     child: Column(
                                       mainAxisAlignment:
