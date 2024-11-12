@@ -1844,7 +1844,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                "Postal Code",
+                                                "Zip Code",
                                                 style: TextStyle(
                                                   color: Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold,
@@ -1915,7 +1915,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                               EdgeInsets.all(
                                                                   14),
                                                           hintText:
-                                                              "Enter postal code",
+                                                              "Enter zip code",
                                                           hintStyle: TextStyle(
                                                             color: Color(
                                                                 0xFF8A95A8),

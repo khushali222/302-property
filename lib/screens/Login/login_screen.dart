@@ -179,7 +179,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                   // Welcome
                   Center(
                     child: Text(
-                      "Welcome to 302 Rentals",
+                      "Welcome to CRM",
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -728,7 +728,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                   // Welcome
                   Center(
                     child: Text(
-                      "Welcome to 302 Rentals",
+                      "Welcome to CRM",
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,

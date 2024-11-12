@@ -6380,7 +6380,7 @@ class _AddCosignerState extends State<AddCosigner> {
                 const SizedBox(
                   height: 10,
                 ),
-                const Text('Postal code',
+                const Text('Zip code',
                     style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
@@ -6390,11 +6390,11 @@ class _AddCosignerState extends State<AddCosigner> {
                 ),
                 CustomTextField(
                   keyboardType: TextInputType.number,
-                  hintText: 'Enter postal code',
+                  hintText: 'Enter zip code',
                   controller: postalCode,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'please enter postal code';
+                      return 'please enter zip code';
                     }
                     return null;
                   },

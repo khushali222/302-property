@@ -1881,7 +1881,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "Postal Code",
+                                        "Zip Code",
                                         style: TextStyle(
                                           color: Color(0xFF8A95A8),
                                           fontWeight: FontWeight.bold,
@@ -1946,7 +1946,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                   border: InputBorder.none,
                                                   contentPadding:
                                                       EdgeInsets.all(14),
-                                                  hintText: "Enter postal code",
+                                                  hintText: "Enter zip code",
                                                   hintStyle: TextStyle(
                                                     color: Color(0xFF8A95A8),
                                                     fontSize:

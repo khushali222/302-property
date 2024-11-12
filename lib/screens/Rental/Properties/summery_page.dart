@@ -1425,6 +1425,23 @@ class _Summery_pageState extends State<Summery_page>
   bool isMovedOut = false;
   int _selectedIndex = 0;
 
+  String formatPhoneNumber(String phoneNumber) {
+    if (phoneNumber == null || phoneNumber.isEmpty) {
+      return "N/A"; // Return "N/A" if the phone number is null or empty
+    }
+    // Remove any non-digit characters
+    final digitsOnly = phoneNumber.replaceAll(RegExp(r'\D'), '');
+
+    // Check if the number has the right length (10 digits for US phone numbers)
+    if (digitsOnly.length == 10) {
+      return '(${digitsOnly.substring(0, 3)}) ${digitsOnly.substring(3, 6)}-${digitsOnly.substring(6)}';
+    } else {
+      return phoneNumber; // Return original if not valid
+    }
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1902,7 +1919,7 @@ class _Summery_pageState extends State<Summery_page>
                             SizedBox(
                               width: MediaQuery.of(context).size.width > 500
                                   ? 200
-                                  : 150,
+                                  : 160,
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 10),
                                 child: Text(
@@ -1921,63 +1938,63 @@ class _Summery_pageState extends State<Summery_page>
                               ),
                             ),
                             SizedBox(height: 5),
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 11,
-                                ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width > 500
+                                  ? 200
+                                  : 173,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child:
                                 Text(
-                                  '${widget.properties.rentalCity},',
+                                  [
+                                    widget.properties.rentalCity,
+                                    widget.properties.rentalState,
+                                    widget.properties.rentalCountry,
+                                    widget.properties.rentalPostcode,
+                                  ]
+                                      .where((element) => element != null && element.isNotEmpty) // Filter out null or empty elements
+                                      .map((element) => element!) // Ensure non-null elements
+                                      .join(' , '),
                                   style: TextStyle(
                                     color: blueColor,
                                     fontSize:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 13
-                                            : 18,
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 13
+                                        : 18,
                                   ),
+                                  maxLines: 6,
                                 ),
-                                SizedBox(width: 3),
-                                Text(
-                                  '${widget.properties.rentalState},',
-                                  style: TextStyle(
-                                    color: blueColor,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 13
-                                            : 18,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                             SizedBox(height: 5),
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 8,
-                                ),
-                                Text(
-                                  '${widget.properties.rentalCountry}',
-                                  style: TextStyle(
-                                    color: blueColor,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 13
-                                            : 18,
-                                  ),
-                                ),
-                                SizedBox(width: 3),
-                                Text(
-                                  '${widget.properties.rentalPostcode}',
-                                  style: TextStyle(
-                                    color: blueColor,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 13
-                                            : 18,
-                                  ),
-                                ),
-                              ],
-                            ),
+                            // Row(
+                            //   children: [
+                            //     SizedBox(
+                            //       width: 10,
+                            //     ),
+                            //     Text(
+                            //       '${widget.properties.rentalCountry},',
+                            //       style: TextStyle(
+                            //         color: blueColor,
+                            //         fontSize:
+                            //             MediaQuery.of(context).size.width < 500
+                            //                 ? 13
+                            //                 : 18,
+                            //       ),
+                            //     ),
+                            //     SizedBox(width: 3),
+                            //     Text(
+                            //       '${widget.properties.rentalPostcode}',
+                            //       style: TextStyle(
+                            //         color: blueColor,
+                            //         fontSize:
+                            //             MediaQuery.of(context).size.width < 500
+                            //                 ? 13
+                            //                 : 18,
+                            //       ),
+                            //     ),
+                            //   ],
+                            // ),
                           ],
                         ),
                       ],
@@ -2220,7 +2237,8 @@ class _Summery_pageState extends State<Summery_page>
                                                             .08),
                                                 Expanded(
                                                   child: Text(
-                                                    '${(rentals.rentalOwnerData?.rentalOwnerPhoneNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerPhoneNumber}',
+                                                    formatPhoneNumber(rentals.rentalOwnerData?.rentalOwnerPhoneNumber ?? "N/A"),
+                                                   //'${(rentals.rentalOwnerData?.rentalOwnerPhoneNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerPhoneNumber}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -2322,7 +2340,8 @@ class _Summery_pageState extends State<Summery_page>
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${(rentals.rentalOwnerData?.rentalOwnerHomeNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerHomeNumber}',
+                                                                    formatPhoneNumber(rentals.rentalOwnerData?.rentalOwnerHomeNumber ?? "N/A"),
+                                                                        //'${(rentals.rentalOwnerData?.rentalOwnerHomeNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerHomeNumber}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -2355,7 +2374,8 @@ class _Summery_pageState extends State<Summery_page>
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${(rentals.rentalOwnerData?.rentalOwnerBuisinessNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerBuisinessNumber}',
+                                                                    formatPhoneNumber(rentals.rentalOwnerData?.rentalOwnerBuisinessNumber ?? "N/A"),
+                                                                        //'${(rentals.rentalOwnerData?.rentalOwnerBuisinessNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerBuisinessNumber}',
                                                                     style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight
@@ -9589,35 +9609,63 @@ class _Summery_pageState extends State<Summery_page>
                           SizedBox(
                             height: 5,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8),
-                            child: Text(
-                              maxLines: 4,
-                              '${widget.properties?.rentalCity} ${widget.properties?.rentalState}',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 13
-                                          : 18,
-                                  color: Colors.grey[800]),
-                            ),
-                          ),
                           SizedBox(
-                            height: 5,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 12),
-                            child: Text(
-                              '${widget.properties?.rentalCountry} ${widget.properties?.rentalPostcode}',
-                              style: TextStyle(
+                            width: MediaQuery.of(context).size.width > 500
+                                ? 200
+                                : 160,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 12),
+                              child:
+                              Text(
+                                [
+                                  widget.properties.rentalCity,
+                                  widget.properties.rentalState,
+                                  widget.properties.rentalCountry,
+                                  widget.properties.rentalPostcode,
+                                ]
+                                    .where((element) => element != null && element.isNotEmpty) // Filter out null or empty elements
+                                    .map((element) => element!) // Ensure non-null elements
+                                    .join(' , '),
+                                style: TextStyle(
+                                  color: blueColor,
                                   fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 13
-                                          : 18,
-                                  color: Colors.grey[800]),
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 13
+                                      : 18,
+                                ),
+                                maxLines: 6,
+                              ),
                             ),
                           ),
+                          // Padding(
+                          //   padding: const EdgeInsets.only(left: 8),
+                          //   child: Text(
+                          //     maxLines: 4,
+                          //     '${widget.properties?.rentalCity} ${widget.properties?.rentalState}',
+                          //     overflow: TextOverflow.ellipsis,
+                          //     style: TextStyle(
+                          //         fontSize:
+                          //             MediaQuery.of(context).size.width < 500
+                          //                 ? 13
+                          //                 : 18,
+                          //         color: Colors.grey[800]),
+                          //   ),
+                          // ),
+                          // SizedBox(
+                          //   height: 5,
+                          // ),
+                          // Padding(
+                          //   padding: const EdgeInsets.only(left: 12),
+                          //   child: Text(
+                          //     '${widget.properties?.rentalCountry} ${widget.properties?.rentalPostcode}',
+                          //     style: TextStyle(
+                          //         fontSize:
+                          //             MediaQuery.of(context).size.width < 500
+                          //                 ? 13
+                          //                 : 18,
+                          //         color: Colors.grey[800]),
+                          //   ),
+                          // ),
                         ],
                       ),
                       Spacer(),

@@ -670,7 +670,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
       // Main row for the rental owner name
       tableData.add([
         pw.Text(owner.rentalOwnerName,
-            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10,)),
         '',
         '',
         '',
@@ -686,21 +686,22 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
           pw.Padding(
               child: pw.Text(
                 '${property.rentalData.rentalAddress ?? 'N/A'}',
-                style: pw.TextStyle(fontSize: 10),
+                style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold),
               ),
-              padding: pw.EdgeInsets.only(left: 15)), // Property Name
-          '${property.tenantData.tenantFirstName ?? 'N/A'} ${property.tenantData.tenantLastName ?? 'N/A'}', // Tenant Name
-          property.createdAt.toString(), // Payment Date
-          property.paymentType ?? '', // Payment Type
-          property.transactionId ?? '', // Transaction ID
-          property.paymentId ?? '', // References
-          property.ccType ?? '', // Card Type
-          property.ccNumber ?? '', // Card Number
+              padding: pw.EdgeInsets.only(left: 15)),
+          pw.Text( '${property.tenantData.tenantFirstName ?? 'N/A'} ${property.tenantData.tenantLastName ?? 'N/A'}', style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,),),// Property Name
+          // Tenant Name
+          pw.Text(property.createdAt.toString(), style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,),),// Payment Date
+          pw.Text(property.paymentType ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,),), // Payment Type
+          pw.Text(property.transactionId ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,),), // Transaction ID
+          pw.Text( property.paymentId ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,),), // References
+          pw.Text(property.ccType ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,),),// Card Type
+          pw.Text(property.ccNumber ?? '',  style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10,),),// Card Number
           pw.Align(
             alignment: pw.Alignment.centerRight,
             child: pw.Text(
               '\$${(property.totalAmount ?? 0.0).toStringAsFixed(2)}',
-              style: pw.TextStyle(fontSize: 10),
+              style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold),
               // Total Amount formatted to 2 decimal places
               // Align text to the right
             ),

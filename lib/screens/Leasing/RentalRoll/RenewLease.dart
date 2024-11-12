@@ -19,6 +19,7 @@ import '../../../widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 
 import 'SummeryPageLease.dart';
+import 'newAddLease.dart';
 
 class Renewlease extends StatefulWidget {
   LeaseSummary? lease;
@@ -36,7 +37,7 @@ class Renewlease extends StatefulWidget {
 class _RenewleaseState extends State<Renewlease> {
   List formDataRecurringList = [];
   late Future<LeaseSummary> futureLeaseSummary;
-
+  final GlobalKey<FormState> _subFormKey = GlobalKey<FormState>();
   TabController? _tabController;
   @override
   void initState() {
@@ -265,6 +266,30 @@ class _RenewleaseState extends State<Renewlease> {
 
     }
   }
+
+  String? _selectedAccountType;
+  String? _selectedFundType;
+  final TextEditingController _accountNameController = TextEditingController();
+  String? _selectedProperty;
+
+  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _memoController = TextEditingController();
+
+  final TextEditingController _notesController = TextEditingController();
+  bool _isInvalid = true;
+  List<String> items = []; // Example items
+
+  List<String> accountTypeItems = [
+    'Income',
+    'Non Operating Income ',
+  ]; // Example items
+  List<String> fundTypeItems = [
+    'Reverse',
+    'Operating',
+  ]; // Example items
+
+
+  List<String> accounts = [];
 
   @override
   Widget build(BuildContext context) {
@@ -1028,8 +1053,319 @@ class _RenewleaseState extends State<Renewlease> {
                                                             ),
                                                           );
                                                         }).toList(),
+
                                                       ];
+
                                                     }).toList(),
+                                                    DropdownMenuItem<String>(
+                                                      value: 'button_item',
+                                                      child: GestureDetector(
+                                                        onTap: (){
+                                                          showDialog(
+                                                            context: context,
+                                                            builder: (BuildContext context) {
+                                                              return StatefulBuilder(
+                                                                  builder: (context, setState) {
+                                                                    return
+                                                                      Dialog(
+                                                                        backgroundColor: Colors.white,
+                                                                        surfaceTintColor: Colors.white,
+                                                                        shape: RoundedRectangleBorder(
+                                                                            borderRadius:
+                                                                            BorderRadius.circular(10.0)),
+                                                                        child:
+                                                                        SingleChildScrollView(
+                                                                          child: Container(
+                                                                            // height: 450,
+                                                                            child:
+                                                                            Padding(
+                                                                              padding:
+                                                                              const EdgeInsets.all(16.0),
+                                                                              child: Form(
+                                                                                key: _subFormKey,
+                                                                                child: Column(
+                                                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                  children: [
+                                                                                    Text(
+                                                                                      'Add account',
+                                                                                      style: TextStyle(
+                                                                                        fontSize: 16,
+                                                                                        fontWeight:
+                                                                                        FontWeight.bold,
+                                                                                        color: blueColor,
+                                                                                      ),
+                                                                                    ),
+                                                                                    SizedBox(
+                                                                                      height: 20,
+                                                                                    ),
+                                                                                    Text(
+                                                                                      'Account Name *',
+                                                                                      style: TextStyle(
+                                                                                        fontSize: 14,
+                                                                                        fontWeight:
+                                                                                        FontWeight.bold,
+                                                                                        color: blueColor,
+                                                                                      ),
+                                                                                    ),
+                                                                                    const SizedBox(height: 5),
+                                                                                    CustomTextField(
+                                                                                      validator: (value) {
+                                                                                        if (value == null ||
+                                                                                            value.isEmpty) {
+                                                                                          return 'Please enter Account Name';
+                                                                                        }
+                                                                                        return null;
+                                                                                      },
+                                                                                      keyboardType:
+                                                                                      TextInputType.text,
+                                                                                      hintText:
+                                                                                      'Enter Account Name',
+                                                                                      controller:
+                                                                                      _accountNameController,
+                                                                                    ),
+                                                                                    const SizedBox(height: 10),
+                                                                                    Text(
+                                                                                      'Account Type',
+                                                                                      style: TextStyle(
+                                                                                        fontSize: 14,
+                                                                                        fontWeight:
+                                                                                        FontWeight.bold,
+                                                                                        color: blueColor,
+                                                                                      ),
+                                                                                    ),
+                                                                                    const SizedBox(height: 5),
+                                                                                    CustomDropdown(
+                                                                                      validator: (value) {
+                                                                                        if (_selectedAccountType == null ||
+                                                                                            _selectedAccountType!.isEmpty) {
+                                                                                          return 'Please select a Account Type';
+                                                                                        }
+                                                                                        return null;
+                                                                                      },
+                                                                                      labelText:
+                                                                                      'Select Account Type',
+                                                                                      items: accountTypeItems,
+                                                                                      selectedValue:
+                                                                                      _selectedAccountType,
+                                                                                      onChanged:
+                                                                                          (String? value) {
+                                                                                        setState(() {
+                                                                                          _selectedAccountType =
+                                                                                              value;
+                                                                                        });
+                                                                                      },
+                                                                                    ),
+                                                                                    const SizedBox(height: 10),
+                                                                                    Text(
+                                                                                      'Fund Type',
+                                                                                      style: TextStyle(
+                                                                                        fontSize: 14,
+                                                                                        fontWeight:
+                                                                                        FontWeight.bold,
+                                                                                        color: blueColor,
+                                                                                      ),
+                                                                                    ),
+                                                                                    const SizedBox(height: 5),
+                                                                                    CustomDropdown(
+                                                                                      validator: (value) {
+                                                                                        if (_selectedFundType == null ||
+                                                                                            _selectedFundType!.isEmpty) {
+                                                                                          return 'Please select a Fund Type';
+                                                                                        }
+                                                                                        return null;
+                                                                                      },
+                                                                                      labelText:
+                                                                                      'Select Fund Type',
+                                                                                      items: fundTypeItems,
+                                                                                      selectedValue:
+                                                                                      _selectedFundType,
+                                                                                      onChanged:
+                                                                                          (String? value) {
+                                                                                        setState(() {
+                                                                                          _selectedFundType =
+                                                                                              value;
+                                                                                        });
+                                                                                      },
+                                                                                    ),
+                                                                                    const SizedBox(height: 10),
+                                                                                    Text(
+                                                                                      'Notes',
+                                                                                      style: TextStyle(
+                                                                                        fontSize: 14,
+                                                                                        fontWeight:
+                                                                                        FontWeight.bold,
+                                                                                        color: blueColor,
+                                                                                      ),
+                                                                                    ),
+                                                                                    const SizedBox(height: 5),
+                                                                                    CustomTextField(
+                                                                                      validator: (value) {
+                                                                                        if (value == null ||
+                                                                                            value.isEmpty) {
+                                                                                          return 'Please enter Notes';
+                                                                                        }
+                                                                                        return null;
+                                                                                      },
+                                                                                      keyboardType:
+                                                                                      TextInputType.text,
+                                                                                      hintText: 'Enter Notes',
+                                                                                      controller:
+                                                                                      _notesController,
+                                                                                    ),
+                                                                                    const SizedBox(
+                                                                                      height: 20,
+                                                                                    ),
+                                                                                    RichText(
+                                                                                      text:  TextSpan(
+                                                                                        children: <TextSpan>[
+                                                                                          TextSpan(
+                                                                                            text:
+                                                                                            'We stores this information ',
+                                                                                            style: TextStyle(
+                                                                                              fontSize: 12,
+                                                                                              fontWeight:
+                                                                                              FontWeight
+                                                                                                  .bold,
+                                                                                              color:
+                                                                                              Colors.grey,
+                                                                                            ),
+                                                                                          ),
+                                                                                          TextSpan(
+                                                                                            text: ' Privately ',
+                                                                                            style: TextStyle(
+                                                                                              fontSize: 12,
+                                                                                              fontWeight:
+                                                                                              FontWeight
+                                                                                                  .bold,
+                                                                                              color: blueColor,
+                                                                                            ),
+                                                                                          ),
+                                                                                          TextSpan(
+                                                                                            text: ' and ',
+                                                                                            style: TextStyle(
+                                                                                              fontSize: 12,
+                                                                                              fontWeight:
+                                                                                              FontWeight
+                                                                                                  .normal,
+                                                                                              color:
+                                                                                              Colors.grey,
+                                                                                            ),
+                                                                                          ),
+                                                                                          TextSpan(
+                                                                                            text: ' Securely ',
+                                                                                            style: TextStyle(
+                                                                                              fontSize: 12,
+                                                                                              fontWeight:
+                                                                                              FontWeight
+                                                                                                  .bold,
+                                                                                              color: blueColor,
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                                    const SizedBox(
+                                                                                      height: 20,
+                                                                                    ),
+                                                                                    Row(
+                                                                                      mainAxisAlignment:
+                                                                                      MainAxisAlignment.end,
+                                                                                      children: [
+                                                                                        Container(
+                                                                                            height: 50,
+                                                                                            width: 90,
+                                                                                            decoration: BoxDecoration(
+                                                                                                borderRadius:
+                                                                                                BorderRadius
+                                                                                                    .circular(
+                                                                                                    8.0)),
+                                                                                            child:
+                                                                                            ElevatedButton(
+                                                                                                style: ElevatedButton.styleFrom(
+                                                                                                    backgroundColor:
+                                                                                                    blueColor,
+                                                                                                    shape: RoundedRectangleBorder(
+                                                                                                        borderRadius: BorderRadius.circular(
+                                                                                                            8.0))),
+                                                                                                onPressed:
+                                                                                                    () {
+                                                                                                  _submitSubForm(context);
+                                                                                                },
+                                                                                                child:
+                                                                                                const Text(
+                                                                                                  'Add',
+                                                                                                  style: TextStyle(
+                                                                                                      color:
+                                                                                                      Color(0xFFf7f8f9)),
+                                                                                                ))),
+                                                                                        const SizedBox(
+                                                                                          width: 10,
+                                                                                        ),
+                                                                                        Container(
+                                                                                            height: 50,
+                                                                                            width: 94,
+                                                                                            decoration: BoxDecoration(
+                                                                                                borderRadius:
+                                                                                                BorderRadius
+                                                                                                    .circular(
+                                                                                                    8.0)),
+                                                                                            child:
+                                                                                            ElevatedButton(
+                                                                                                style: ElevatedButton.styleFrom(
+                                                                                                    backgroundColor:
+                                                                                                    const Color(
+                                                                                                        0xFFffffff),
+                                                                                                    shape: RoundedRectangleBorder(
+                                                                                                        borderRadius: BorderRadius.circular(
+                                                                                                            8.0))),
+                                                                                                onPressed:
+                                                                                                    () {
+                                                                                                  setState(() {
+                                                                                                    Navigator.pop(
+                                                                                                        context);
+                                                                                                    _selectedProperty = null;
+                                                                                                  });
+                                                                                                  Navigator.pop(
+                                                                                                      context);
+
+                                                                                                },
+                                                                                                child:
+                                                                                                const Text(
+                                                                                                  'Cancel',
+                                                                                                  style: TextStyle(
+                                                                                                      color:
+                                                                                                      Color(0xFF748097)),
+                                                                                                )))
+                                                                                      ],
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      );
+
+                                                                  });
+                                                            },
+                                                          );
+                                                        },
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            const Text(
+                                                              '+ Add New Account',
+                                                              style: TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Colors.black,
+                                                                  fontWeight: FontWeight.w500),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
                                                   ],
                                                   onChanged: (value) {
                                                     String? chargeType;
@@ -1317,6 +1653,60 @@ class _RenewleaseState extends State<Renewlease> {
       ),
     );
   }
+  Future _submitSubForm(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String adminId = prefs.getString('adminId').toString();
+    print(adminId);
+    if (_subFormKey.currentState?.validate() ?? false) {
+      final formData = {
+        'admin_id': adminId,
+        'account': _accountNameController.text,
+        'account_type': _selectedAccountType ?? '',
+        'fund_type': _selectedFundType ?? '',
+        'notes': _notesController.text,
+        'charge_type': 'Recurring Charge',
+      };
 
+      print(formData);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString('adminId');
+      String? token = prefs.getString('token');
+      final response = await http.post(
+        Uri.parse('$Api_url/api/accounts/accounts'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          'Content-Type': 'application/json'
+        },
+        body: json.encode(formData),
+      );
+
+      if (response.statusCode == 200) {
+        //widget.onSave(formData);
+        final newAccountName = _accountNameController.text;
+        setState(() {
+          items.insert(items.length, newAccountName);
+          _selectedProperty = newAccountName;
+        });
+        _accountNameController.clear();
+        _selectedAccountType = null;
+        _selectedFundType = null;
+        _notesController.clear();
+        Navigator.of(context).pop();
+        print(response.body);
+        Fluttertoast.showToast(msg: 'Account Added Successfully');
+      } else {
+        // Handle error response
+        print(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to add account')),
+        );
+      }
+    } else {
+      setState(() {
+        _isInvalid = true;
+      });
+    }
+  }
 
 }

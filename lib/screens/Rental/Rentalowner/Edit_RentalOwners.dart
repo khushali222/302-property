@@ -2354,7 +2354,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                             width: 2,
                           ),
                           Text(
-                            "Postal Code",
+                            "Zip Code",
                             style: TextStyle(
                                 // color: Colors.grey,
                                 color: Color(0xFF8A95A8),
@@ -2401,7 +2401,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         cursorColor:
                                             blueColor,
                                         decoration: InputDecoration(
-                                          hintText: "Enter postal code",
+                                          hintText: "Enter zip code",
                                           hintStyle: TextStyle(
                                             fontSize: MediaQuery.of(context)
                                                         .size

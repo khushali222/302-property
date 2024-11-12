@@ -416,7 +416,7 @@ class _RentalownersSummeryForMobileState
                                   child: Padding(
                                 padding: const EdgeInsets.all(5.0),
                                 child: Text(
-                                  'Zip : ',
+                                  'Zip Code : ',
                                   style: TextStyle(
                                       color: blueColor,
                                       fontWeight: FontWeight.bold,
@@ -618,7 +618,7 @@ class _RentalownersSummeryForMobileState
                                   child: Padding(
                                 padding: const EdgeInsets.all(5.0),
                                 child: Text(
-                                  'Zip : ',
+                                  'Zip Code : ',
                                   style: TextStyle(
                                       color: blueColor,
                                       fontWeight: FontWeight.bold,
@@ -1265,7 +1265,7 @@ class _RentalownersSummeryForTabletState
                                             child: Padding(
                                           padding: EdgeInsets.all(12.0),
                                           child: Text(
-                                            'Zip',
+                                            'Zip Code ',
                                             style: TextStyle(
                                                 color: Color(0xFF8A95A8),
                                                 fontWeight: FontWeight.bold,
