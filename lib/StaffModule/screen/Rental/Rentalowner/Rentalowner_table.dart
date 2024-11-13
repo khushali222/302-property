@@ -787,7 +787,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                 Expanded(
                                                   flex: 3,
                                                   child: Text(
-                                                    '${rentals.rentalOwnerPhoneNumber}',
+                                                    formatPhoneNumber('${rentals.rentalOwnerPhoneNumber}'),
+                                                   // '${rentals.rentalOwnerPhoneNumber}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:

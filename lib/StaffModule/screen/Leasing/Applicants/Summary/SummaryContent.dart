@@ -814,7 +814,8 @@ class _SummaryContentState extends State<SummaryContent> {
                             width: 10,
                           ),
                           Text(
-                            "${widget.summery.applicantHomeNumber != null ? 'N/A' : widget.summery.applicantHomeNumber ?? "N/A"}",
+                            formatPhoneNumber('${widget.summery.applicantHomeNumber}'),
+                           // "${widget.summery.applicantHomeNumber != null ? 'N/A' : widget.summery.applicantHomeNumber ?? "N/A"}",
                             style:  TextStyle(
                               fontWeight: FontWeight.w500,
                               color: blueColor,
@@ -835,7 +836,8 @@ class _SummaryContentState extends State<SummaryContent> {
                             width: 10,
                           ),
                           Text(
-                            "${widget.summery.applicantBusinessNumber != null ? 'N/A' : widget.summery.applicantBusinessNumber ?? "N/A"}",
+                            formatPhoneNumber('${widget.summery.applicantBusinessNumber}'),
+                            //"${widget.summery.applicantBusinessNumber != null ? 'N/A' : widget.summery.applicantBusinessNumber ?? "N/A"}",
                             style:  TextStyle(
                               fontWeight: FontWeight.w500,
                               color: blueColor,
@@ -856,7 +858,8 @@ class _SummaryContentState extends State<SummaryContent> {
                             width: 10,
                           ),
                           Text(
-                            "${widget.summery.applicantPhoneNumber!.isEmpty ? 'N/A' : widget.summery.applicantPhoneNumber}",
+                            formatPhoneNumber('${widget.summery.applicantPhoneNumber}'),
+                            // "${widget.summery.applicantPhoneNumber!.isEmpty ? 'N/A' : widget.summery.applicantPhoneNumber}",
                             style:  TextStyle(
                               fontWeight: FontWeight.w500,
                               color: blueColor,

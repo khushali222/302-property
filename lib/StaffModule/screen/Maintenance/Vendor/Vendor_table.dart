@@ -975,7 +975,8 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                             .08),
                                                 Expanded(
                                                   child: Text(
-                                                    '${Propertytype.vendorPhoneNumber}',
+                                                    formatPhoneNumber('${Propertytype.vendorPhoneNumber}'),
+                                                    // '${Propertytype.vendorPhoneNumber}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:

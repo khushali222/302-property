@@ -1015,7 +1015,8 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                 Expanded(
                                                   flex: 3,
                                                   child: Text(
-                                                    '${applicant.applicantPhoneNumber}',
+                                                    formatPhoneNumber( '${applicant.applicantPhoneNumber}'),
+                                                    // '${applicant.applicantPhoneNumber}',
                                                     style:  TextStyle(
                                                       color: blueColor
 ,

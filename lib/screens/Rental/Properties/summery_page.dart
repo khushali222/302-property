@@ -1425,20 +1425,7 @@ class _Summery_pageState extends State<Summery_page>
   bool isMovedOut = false;
   int _selectedIndex = 0;
 
-  String formatPhoneNumber(String phoneNumber) {
-    if (phoneNumber == null || phoneNumber.isEmpty) {
-      return "N/A"; // Return "N/A" if the phone number is null or empty
-    }
-    // Remove any non-digit characters
-    final digitsOnly = phoneNumber.replaceAll(RegExp(r'\D'), '');
 
-    // Check if the number has the right length (10 digits for US phone numbers)
-    if (digitsOnly.length == 10) {
-      return '(${digitsOnly.substring(0, 3)}) ${digitsOnly.substring(3, 6)}-${digitsOnly.substring(6)}';
-    } else {
-      return phoneNumber; // Return original if not valid
-    }
-  }
 
 
 
@@ -3975,7 +3962,7 @@ class _Summery_pageState extends State<Summery_page>
             ),
             const SizedBox(width: 5),
             Text(
-              '${tenant.phoneNumber}',
+              formatPhoneNumber('${tenant.phoneNumber}',),
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
                 color: blueColor,

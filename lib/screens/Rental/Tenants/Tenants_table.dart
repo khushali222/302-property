@@ -1060,7 +1060,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                 Expanded(
                                                   flex: 3,
                                                   child: Text(
-                                                    '${tenants.tenantPhoneNumber}',
+                                                    formatPhoneNumber('${tenants.tenantPhoneNumber}'),
+                                                    // '${tenants.tenantPhoneNumber}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:

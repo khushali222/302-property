@@ -1028,7 +1028,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                     )),
                                     TableCell(
                                         child: Text(
-                                      '${(widget.tenants?.tenantPhoneNumber ?? '').isEmpty ? 'N/A' : widget.tenants?.tenantPhoneNumber}',
+                                      formatPhoneNumber(
+                                          '${widget.tenants?.tenantPhoneNumber}'),
+                                      //'${(widget.tenants?.tenantPhoneNumber ?? '').isEmpty ? 'N/A' : widget.tenants?.tenantPhoneNumber}',
                                       style: TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.bold,
@@ -1297,7 +1299,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                         child: Padding(
                                       padding: const EdgeInsets.only(top: 5),
                                       child: Text(
-                                        '${(widget.tenants?.emergencyContact?.phoneNumber ?? '').isEmpty ? 'N/A' : widget.tenants?.emergencyContact!.phoneNumber}',
+                                        formatPhoneNumber(
+                                            '${widget.tenants?.emergencyContact?.phoneNumber}'),
+                                        // '${(widget.tenants?.emergencyContact?.phoneNumber ?? '').isEmpty ? 'N/A' : widget.tenants?.emergencyContact!.phoneNumber}',
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
@@ -3220,7 +3224,9 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                           padding:
                                               const EdgeInsets.only(top: 12),
                                           child: Text(
-                                            '${(tenantsummery.first.tenantPhoneNumber ?? '').isEmpty ? 'N/A' : tenantsummery.first.tenantPhoneNumber}',
+                                            formatPhoneNumber(
+                                                '${tenantsummery.first.tenantPhoneNumber}'),
+                                            // '${(tenantsummery.first.tenantPhoneNumber ?? '').isEmpty ? 'N/A' : tenantsummery.first.tenantPhoneNumber}',
                                             style: TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.bold,
@@ -3540,7 +3546,8 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                         height: 4,
                                       ),
                                       Text(
-                                        '${(tenantsummery.first.emergencyContact!.phoneNumber ?? '').isEmpty ? 'N/A' : tenantsummery.first.emergencyContact!.phoneNumber}',
+                                          formatPhoneNumber('${tenantsummery.first.emergencyContact!.phoneNumber}'),
+                                       // '${(tenantsummery.first.emergencyContact!.phoneNumber ?? '').isEmpty ? 'N/A' : tenantsummery.first.emergencyContact!.phoneNumber}',
                                         style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,

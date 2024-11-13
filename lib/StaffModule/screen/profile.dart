@@ -163,7 +163,7 @@ class _Profile_screenState extends State<Profile_screen> {
                               children: [
                                 TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text("${profiledata['staffmember_name']}",style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
                                 TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text(profiledata['staffmember_designation'],style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text(profiledata['staffmember_phoneNumber'],style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
+                                TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text(formatPhoneNumber(profiledata['staffmember_phoneNumber']),style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
                                 TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text(profiledata['staffmember_email'],style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
                               ],
                             ),
@@ -202,7 +202,7 @@ class _Profile_screenState extends State<Profile_screen> {
                         children: [
                           buildWidget( 'Name',  profiledata['staffmember_name']),
                           buildWidget( 'Designation',  profiledata['staffmember_designation']),
-                          buildWidget( 'Phone Number',  profiledata['staffmember_phoneNumber']),
+                          buildWidget( 'Phone Number',  formatPhoneNumber(profiledata['staffmember_phoneNumber'])),
                           buildWidget( 'Email',  profiledata['staffmember_email']),
                         ],
                       ),

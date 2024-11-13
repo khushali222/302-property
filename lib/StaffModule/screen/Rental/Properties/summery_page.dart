@@ -3000,7 +3000,8 @@ startdateController.text = displayDate;
             ),
             const SizedBox(width: 5),
             Text(
-              '${tenant.phoneNumber}',
+              formatPhoneNumber( '${tenant.phoneNumber}'),
+
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
                 color: blueColor,

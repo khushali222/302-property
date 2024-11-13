@@ -2387,7 +2387,6 @@ class CustomTextField extends StatefulWidget {
     this.error_mess,
     this.optional = false,
     this.email,
-
     // Initialize onTap
   }) : super(key: key);
 
@@ -2398,11 +2397,11 @@ class CustomTextField extends StatefulWidget {
 class CustomTextFieldState extends State<CustomTextField> {
   String? _errorMessage;
   TextEditingController _textController =
-      TextEditingController(); // Add this line
+  TextEditingController(); // Add this line
   late FocusNode _focusNode;
   @override
   void dispose() {
-   // _textController.dispose(); // Dispose the controller when not needed anymore
+    //  _textController.dispose(); // Dispose the controller when not needed anymore
     super.dispose();
     _focusNode.dispose();
   }
@@ -2420,7 +2419,7 @@ class CustomTextFieldState extends State<CustomTextField> {
         KeyboardActionsItem(
           focusNode: _focusNode,
           toolbarButtons: [
-            (node) {
+                (node) {
               return GestureDetector(
                 onTap: () {
                   if (widget.onChanged2 != null) {
@@ -2452,34 +2451,36 @@ class CustomTextFieldState extends State<CustomTextField> {
       clipBehavior: Clip.none,
       children: <Widget>[
         FormField<String>(
-          validator: widget.optional!
+          validator:
+          widget.optional!
               ? null
-          : (value) {
-                  if (widget.controller!.text.isEmpty) {
-                    setState(() {
-                      if (widget.label == null)
-                        _errorMessage = 'Please ${widget.hintText}';
-                      else
-                        _errorMessage = 'Please ${widget.label}';
-                    });
-                    return '';
-                  }
-                  else if (widget.email != null) {
-                    if (!EmailValidator.validate(widget.controller!.text)) {
-                      setState(() {
-                        _errorMessage = "Email is not valid";
-                      });
-                      return '';
-                    }
-                  }
-                  else if (widget.amount_check != null &&
-                      double.parse(widget.controller!.text) >
-                          double.parse(widget.max_amount!))
-                    setState(() {
-                      _errorMessage = '${widget.error_mess}';
-                    });
-                  return null;
-                },
+              : (value) {
+            if (widget.controller!.text.isEmpty) {
+              setState(() {
+                if (widget.label == null)
+                  _errorMessage = 'Please ${widget.hintText}';
+                else
+                  _errorMessage = 'Please ${widget.label}';
+              });
+              return '';
+            }
+            else if (widget.email != null) {
+              if (!EmailValidator.validate(widget.controller!.text)) {
+                setState(() {
+                  _errorMessage = "Email is not valid";
+                });
+                return '';
+              }
+            }
+            else if (widget.amount_check != null &&
+                double.parse(widget.controller!.text) >
+                    double.parse(widget.max_amount!))
+              setState(() {
+                _errorMessage = '${widget.error_mess}';
+              });
+            return null;
+          },
+
           builder: (FormFieldState<String> state) {
             return Column(
               children: <Widget>[
@@ -2489,7 +2490,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                   child: Container(
                     height: 50,
                     padding:
-                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                    EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.0),
@@ -2525,15 +2526,14 @@ class CustomTextFieldState extends State<CustomTextField> {
                       },*/
                       onFieldSubmitted: widget.onChanged2,
                       onChanged: (value) {
-                        print("object calin $value");
+                        //  print("object calin $value");
                         if (value.isNotEmpty) {
                           setState(() {
                             _errorMessage = null;
                           });
                         }
-
-                        widget.onChanged!(value);
-                        print("callllll");
+                        if (widget.onChanged != null) widget.onChanged!(value);
+//print("callllll");
                       },
                       focusNode: _focusNode,
                       onTap: () {
@@ -2557,14 +2557,15 @@ class CustomTextFieldState extends State<CustomTextField> {
                       decoration: InputDecoration(
                         suffixIcon: widget.suffixIcon,
                         hintStyle:
-                            TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                        TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                         border: InputBorder.none,
                         hintText: widget.hintText,
                       ),
                     ),
                   ),
                 ),
-                if (state.hasError || widget.amount_check != null)
+                if (state.hasError && _errorMessage != null ||
+                    widget.amount_check != null)
                   SizedBox(height: 24),
                 // Reserve space for error message
               ],
@@ -2587,13 +2588,13 @@ class CustomTextFieldState extends State<CustomTextField> {
     );
     return shouldUseKeyboardActions
         ? SizedBox(
-            height: 60,
-            width: MediaQuery.of(context).size.width * .98,
-            child: KeyboardActions(
-              config: _buildConfig(context),
-              child: textfield,
-            ),
-          )
+      height: _errorMessage != null ? 75 : 60,
+      width: MediaQuery.of(context).size.width * .98,
+      child: KeyboardActions(
+        config: _buildConfig(context),
+        child: textfield,
+      ),
+    )
         : textfield;
   }
 }

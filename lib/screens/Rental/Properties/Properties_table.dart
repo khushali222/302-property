@@ -1076,9 +1076,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                     .rentalOwnerData
                                                                     ?.rentalOwnerName),
                                                                 'Phone Number:',
-                                                                _getDisplayValue(rentals
-                                                                    .rentalOwnerData
-                                                                    ?.rentalOwnerPhoneNumber)),
+                                                                _getDisplayValue(
+                                                                    formatPhoneNumber('${ rentals.rentalOwnerData?.rentalOwnerPhoneNumber}')
+                                                                //    rentals.rentalOwnerData?.rentalOwnerPhoneNumber
+                                                                )
+                                                            ),
                                                             _buildTableRow(
                                                                 'Rental Company Name:',
                                                                 _getDisplayValue(rentals

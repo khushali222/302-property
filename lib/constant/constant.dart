@@ -7,7 +7,7 @@ String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
 //String image_url = "http://192.168.182.128:4000/api/images/get-file/";
 
 //String Api_url = "http://192.168.39.1:4000";
-String Api_url = "http://192.168.1.25:4000";
+String Api_url = "http://192.168.1.15:4000";
 
 //String Api_url = "https://saas.cloudrentalmanager.com";
 
@@ -124,3 +124,18 @@ String getDisplayValue(String? value) {
 //Color grey = Color.fromRGBO(21, 43, 83, .5);
 //Color grey = Color.fromRGBO(21, 43, 83, .5);
 
+
+String formatPhoneNumber(String phoneNumber) {
+  if (phoneNumber == null || phoneNumber.isEmpty) {
+    return "N/A"; // Return "N/A" if the phone number is null or empty
+  }
+  // Remove any non-digit characters
+  final digitsOnly = phoneNumber.replaceAll(RegExp(r'\D'), '');
+
+  // Check if the number has the right length (10 digits for US phone numbers)
+  if (digitsOnly.length == 10) {
+    return '(${digitsOnly.substring(0, 3)}) ${digitsOnly.substring(3, 6)}-${digitsOnly.substring(6)}';
+  } else {
+    return phoneNumber; // Return original if not valid
+  }
+}
