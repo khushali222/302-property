@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -146,7 +148,62 @@ class _Workorder_summeryState extends State<Workorder_summery>
       );
     }
   }
+//for image
+  File? _image;
+  bool isLoading = false;
+  List<File> _images = [];
+  String? _uploadedFileName;
+  List<String> _uploadedFileNames = [];
+  Future<String?> uploadImage(File imageFile) async {
+    print(imageFile.path);
+    final String uploadUrl = '${image_upload_url}/api/images/upload';
+    var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(
+          uploadUrl,
+        ));
+    request.files
+        .add(await http.MultipartFile.fromPath('files', imageFile.path));
 
+    var response = await request.send();
+    var responseData = await http.Response.fromStream(response);
+    print(responseData.body);
+
+    var responseBody = json.decode(responseData.body);
+    if (responseBody['status'] == 'ok') {
+      List file = responseBody['files'];
+      return file.first["filename"];
+    } else {
+      throw Exception('Failed to upload file: ${responseBody['message']}');
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _image = File(image.path);
+        _images.add(File(image.path));
+      });
+      _uploadImage(File(image.path));
+    }
+  }
+
+  Future<void> _uploadImage(File imageFile) async {
+    try {
+      String? fileName = await uploadImage(imageFile);
+      setState(() {
+        _uploadedFileNames.add(fileName!);
+        _uploadedFileName = fileName;
+        _imageUrls.add(fileName!);
+      });
+    } catch (e) {
+      print('Image upload failed: $e');
+    }
+  }
+
+  List<String> _imageUrls = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -312,10 +369,13 @@ class _Workorder_summeryState extends State<Workorder_summery>
   }
 
   Summery_page(WorkOrderData_summery summery) {
+    print(' update image ${summery.workorderUpdates}');
     final dateProvider = Provider.of<DateProvider>(context);
     double grandTotal = 0;
+
     // applicantChecklist = List<String>.from(summery.applicantCheckedChecklist!);
     return LayoutBuilder(builder: (context, constraints) {
+
       if (constraints.maxWidth > 600) {
         return SingleChildScrollView(
           child: Container(
@@ -1273,6 +1333,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     'Work Order Is Updated',
                                     style: TextStyle(color: Colors.grey[500]),
                                   ),
+
                                 ],
                               ),
                             );
@@ -1288,6 +1349,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
           ),
         );
       } else {
+
         return SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 10),
@@ -1726,7 +1788,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '${update.statusUpdatedBy ?? ""} updated this work order (${dateProvider.formatCurrentDate('${update.date}') ?? "N/A"})',
+                                    '${update.statusUpdatedBy ?? ""} updated this work order (${'${update.date}'?? "N/A"})',
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: blueColor),
@@ -1736,6 +1798,146 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     'Work Order Is Updated',
                                     style: TextStyle(color: Colors.grey[500]),
                                   ),
+                                  if (update.workOrderUpdateimages != null && update.workOrderUpdateimages!.length > 0)
+                                    Column(
+                                      children: [
+                                        SizedBox(height: 10),
+                                        Wrap(
+                                          spacing: 10,
+                                          runSpacing: 10,
+                                          children: update.workOrderUpdateimages!.map((imageUrl) {
+                                            return GestureDetector(
+                                              onTap: () {
+                                                // Show the image in a dialog when tapped
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return Dialog(
+                                                      backgroundColor: Colors.transparent,
+                                                      child: Stack(
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment: MainAxisAlignment.end,
+                                                            children: [
+                                                              InkWell(
+                                                                  onTap:() {
+                                                                    Navigator.of(context).pop(); // Close the dialog
+                                                                  },
+                                                                  child: Icon(Icons.close, color: Colors.black,size: 30,)),
+                                                            ],
+                                                          ),
+                                                          Padding(
+                                                            padding: const EdgeInsets.all(27.0),
+                                                            child: Container(
+                                                              // width: MediaQuery.of(context).size.width,
+                                                            // height: MediaQuery.of(context).size.height,
+                                                              child: CachedNetworkImage(
+                                                                imageUrl: "$image_url$imageUrl",
+                                                                placeholder: (context, url) => Center(
+                                                                  child: CircularProgressIndicator(),
+                                                                ),
+                                                                errorWidget: (context, url, error) {
+                                                                  print(error);
+                                                                  return Center(child: Icon(Icons.error));
+                                                                },
+                                                                //fit: BoxFit.cover, // Adjust fit as needed
+                                                              ),
+                                                            ),
+                                                          ),
+
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              child: Container(
+                                                width: summery.workorderUpdates?.first.workOrderUpdateimages?.length == 1
+                                                    ? MediaQuery.of(context).size.width / 3
+                                                    : (MediaQuery.of(context).size.width / 3) - 10,
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                ),
+                                                child: ClipRRect(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  child: CachedNetworkImage(
+                                                    imageUrl: "$image_url$imageUrl",
+                                                    placeholder: (context, url) => Center(
+                                                      child: CircularProgressIndicator(),
+                                                    ),
+                                                    errorWidget: (context, url, error) {
+                                                      print(error);
+                                                      return Container();
+                                                    },
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ],
+                                    ),
+                                    // Column(
+                                    //   children: [
+                                    //     SizedBox(
+                                    //       height: 10,
+                                    //     ),
+                                    //     Wrap(
+                                    //       spacing: 10,
+                                    //       runSpacing: 10,
+                                    //       children: update.workOrderUpdateimages!
+                                    //           .map((imageUrl) {
+                                    //         return Container(
+                                    //           width:
+                                    //           summery.workorderUpdates?.first.workOrderUpdateimages?.length ==
+                                    //               1
+                                    //               ? MediaQuery.of(context)
+                                    //               .size
+                                    //               .width /
+                                    //               3
+                                    //               : (MediaQuery.of(context)
+                                    //               .size
+                                    //               .width /
+                                    //               3) -
+                                    //               10,
+                                    //           decoration: BoxDecoration(
+                                    //             borderRadius:
+                                    //             BorderRadius.circular(10),
+                                    //           ),
+                                    //           child: ClipRRect(
+                                    //             borderRadius:
+                                    //             BorderRadius.circular(10),
+                                    //             child: CachedNetworkImage(
+                                    //               imageUrl: "$image_url$imageUrl",
+                                    //               placeholder: (context, url) =>
+                                    //                   Center(
+                                    //                       child:
+                                    //                       CircularProgressIndicator()),
+                                    //               errorWidget:
+                                    //                   (context, url, error) {
+                                    //                 print(error);
+                                    //                 return Container();
+                                    //               },
+                                    //               fit: BoxFit.cover,
+                                    //             ),
+                                    //           ),
+                                    //         );
+                                    //       }).toList(),
+                                    //     ),
+                                    //   ],
+                                    // ),
+                                  if (summery.workorderUpdates?.first.workOrderUpdateimages == 0)
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "No Images Provided",
+                                          style: TextStyle(color: blueColor),
+                                        ),
+                                        // Text("(${summery.unitData!.unitName})"),
+                                      ],
+                                    ),
                                 ],
                               ),
                             );
@@ -3271,193 +3473,201 @@ class _Workorder_summeryState extends State<Workorder_summery>
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            'Update Work Order',
-            style: TextStyle(color: blueColor),
-          ),
-          content: Container(
-            width: double.maxFinite,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text('Status', style: TextStyle(color: blueColor)),
-                DropdownButtonHideUnderline(
-                  child: DropdownButtonFormField2<String>(
-                    decoration: InputDecoration(border: InputBorder.none),
-                    isExpanded: true,
-                    hint: const Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'Select Status',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFFb0b6c3),
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    items: ['New', 'In Progress', 'On Hold', 'Completed']
-                        .map((status) {
-                      return DropdownMenuItem<String>(
-                        value: status,
-                        child: Text(
-                          status,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black87,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    }).toList(),
-                    value: selectedStatus,
-                    onChanged: (value) {
-                      selectedStatus = value;
-                    },
-                    buttonStyleData: ButtonStyleData(
-                      height: 45,
-                      width: double.infinity,
-                      padding: const EdgeInsets.only(left: 14, right: 14),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
-                        color: Colors.white,
+        return  StatefulBuilder(
+          builder:
+              (BuildContext context, StateSetter setState) {
+            return  Dialog(
+              child: Container(
+                // width: double.maxFinite,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10,right: 10,top: 15,bottom: 10),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        'Update Work Order',
+                        style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,fontSize: 16),
                       ),
-                      elevation: 2,
-                    ),
-                    iconStyleData: const IconStyleData(
-                      icon: Icon(Icons.arrow_drop_down),
-                      iconSize: 24,
-                      iconEnabledColor: Color(0xFFb0b6c3),
-                      iconDisabledColor: Colors.grey,
-                    ),
-                    dropdownStyleData: DropdownStyleData(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
-                        color: Colors.white,
-                      ),
-                      scrollbarTheme: ScrollbarThemeData(
-                        radius: const Radius.circular(6),
-                        thickness: MaterialStateProperty.all(6),
-                        thumbVisibility: MaterialStateProperty.all(true),
-                      ),
-                    ),
-                    menuItemStyleData: const MenuItemStyleData(
-                      height: 40,
-                      padding: EdgeInsets.only(left: 14, right: 14),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select an option';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                Text('Due Date', style: TextStyle(color: blueColor)),
-                SizedBox(height: 8.0),
-                Material(
-                  elevation: 3,
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Container(
-                    height: 45,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: TextFormField(
-                      onTap: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2101),
-                          helpText: "Due Date",
-                          locale: const Locale('en', 'US'),
-                          builder: (BuildContext context, Widget? child) {
-                            return Theme(
-                              data: ThemeData.light().copyWith(
-                                colorScheme: const ColorScheme.light(
-                                  primary: Color.fromRGBO(
-                                      21, 43, 83, 1), // header background color
-                                  onPrimary: Colors.white, // header text color
-                                  onSurface: Color.fromRGBO(
-                                      21, 43, 83, 1), // body text color
-                                ),
-                                textButtonTheme: TextButtonThemeData(
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    backgroundColor: const Color.fromRGBO(
-                                        21, 43, 83, 1), // button text color
+                      SizedBox(height: 10.0),
+                      Text('Status', style: TextStyle(color: blueColor,fontWeight: FontWeight.bold)),
+                      DropdownButtonHideUnderline(
+                        child: DropdownButtonFormField2<String>(
+                          decoration: InputDecoration(border: InputBorder.none),
+                          isExpanded: true,
+                          hint: const Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'Select Status',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xFFb0b6c3),
                                   ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              child: child!,
+                            ],
+                          ),
+                          items: ['New', 'In Progress', 'On Hold', 'Completed']
+                              .map((status) {
+                            return DropdownMenuItem<String>(
+                              value: status,
+                              child: Text(
+                                status,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black87,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             );
+                          }).toList(),
+                          value: selectedStatus,
+                          onChanged: (value) {
+                            selectedStatus = value;
                           },
-                        );
-
-                        if (pickedDate != null) {
-                          String formattedDate =
-                              "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                          setState(() {
-                            selectedDate.text = formattedDate;
-                          });
-                        }
-                      },
-                      //  obscureText: widget.obscureText,
-                      readOnly: true,
-                      controller: selectedDate,
-                      decoration: InputDecoration(
-                        suffixIcon:
-                            Icon(Icons.calendar_today, color: blueColor),
-                        // hintStyle:
-                        // TextStyle(fontSize: 13, color: blueColor),
-                        border: InputBorder.none,
-                        hintText: "dd-mm-yyyy",
+                          buttonStyleData: ButtonStyleData(
+                            height: 45,
+                            width: double.infinity,
+                            padding: const EdgeInsets.only(left: 14, right: 14),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              color: Colors.white,
+                            ),
+                            elevation: 2,
+                          ),
+                          iconStyleData: const IconStyleData(
+                            icon: Icon(Icons.arrow_drop_down),
+                            iconSize: 24,
+                            iconEnabledColor: Color(0xFFb0b6c3),
+                            iconDisabledColor: Colors.grey,
+                          ),
+                          dropdownStyleData: DropdownStyleData(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              color: Colors.white,
+                            ),
+                            scrollbarTheme: ScrollbarThemeData(
+                              radius: const Radius.circular(6),
+                              thickness: MaterialStateProperty.all(6),
+                              thumbVisibility: MaterialStateProperty.all(true),
+                            ),
+                          ),
+                          menuItemStyleData: const MenuItemStyleData(
+                            height: 40,
+                            padding: EdgeInsets.only(left: 14, right: 14),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please select an option';
+                            }
+                            return null;
+                          },
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-                /* ElevatedButton(
-                  onPressed: () async {
-                    final DateTime? pickedDate = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2100),
-                    );
-                    if (pickedDate != null) {
-                      selectedDate = pickedDate;
-                    }
-                  },
-                  child: Text(selectedDate == null
-                      ? 'Select Date'
-                      : '${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}'),
-                ),*/
-                SizedBox(height: 16.0),
-                _isLoadingstaff
-                    ? const Center(
+                      Text('Due Date', style: TextStyle(color: blueColor,fontWeight: FontWeight.bold)),
+                      SizedBox(height: 8.0),
+                      Material(
+                        elevation: 3,
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Container(
+                          height: 45,
+                          padding:
+                          EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: TextFormField(
+                            onTap: () async {
+                              DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2101),
+                                helpText: "Due Date",
+                                locale: const Locale('en', 'US'),
+                                builder: (BuildContext context, Widget? child) {
+                                  return Theme(
+                                    data: ThemeData.light().copyWith(
+                                      colorScheme: const ColorScheme.light(
+                                        primary: Color.fromRGBO(
+                                            21, 43, 83, 1), // header background color
+                                        onPrimary: Colors.white, // header text color
+                                        onSurface: Color.fromRGBO(
+                                            21, 43, 83, 1), // body text color
+                                      ),
+                                      textButtonTheme: TextButtonThemeData(
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: Colors.white,
+                                          backgroundColor: const Color.fromRGBO(
+                                              21, 43, 83, 1), // button text color
+                                        ),
+                                      ),
+                                    ),
+                                    child: child!,
+                                  );
+                                },
+                              );
+
+                              if (pickedDate != null) {
+                                String formattedDate =
+                                    "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                setState(() {
+                                  selectedDate.text = formattedDate;
+                                });
+                              }
+                            },
+                            //  obscureText: widget.obscureText,
+                            readOnly: true,
+                            controller: selectedDate,
+                            decoration: InputDecoration(
+                              suffixIcon:
+                              Icon(Icons.calendar_today, color: blueColor),
+                              // hintStyle:
+                              // TextStyle(fontSize: 13, color: blueColor),
+                              border: InputBorder.none,
+                              hintText: "dd-mm-yyyy",
+                            ),
+                          ),
+                        ),
+                      ),
+                      /* ElevatedButton(
+                    onPressed: () async {
+                      final DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                      );
+                      if (pickedDate != null) {
+                        selectedDate = pickedDate;
+                      }
+                    },
+                    child: Text(selectedDate == null
+                        ? 'Select Date'
+                        : '${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}'),
+                  ),*/
+                      SizedBox(height: 16.0),
+                      Text('Assigned To', style: TextStyle(color: blueColor,fontWeight: FontWeight.bold)),
+                      SizedBox(height: 8.0),
+                      _isLoadingstaff
+                          ? const Center(
                         child: SpinKitFadingCircle(
                           color: Colors.black,
                           size: 50.0,
                         ),
                       )
-                    : Column(
+                          : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           DropdownButtonHideUnderline(
                             child: DropdownButtonFormField2<String>(
                               decoration:
-                                  InputDecoration(border: InputBorder.none),
+                              InputDecoration(border: InputBorder.none),
                               isExpanded: true,
                               hint: const Row(
                                 children: [
@@ -3494,7 +3704,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   // _selectedUnitId = null;
                                   _selectedstaffId = value;
                                   _selectedStaffs = staffs[
-                                      value]; // Store selected rental_adress
+                                  value]; // Store selected rental_adress
 
                                   //StaffId = value.toString();
                                   print('Selected Staffs: $_selectedStaffs');
@@ -3505,7 +3715,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 height: 45,
                                 width: 160,
                                 padding:
-                                    const EdgeInsets.only(left: 14, right: 14),
+                                const EdgeInsets.only(left: 14, right: 14),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(6),
                                   color: Colors.white,
@@ -3529,7 +3739,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   radius: const Radius.circular(6),
                                   thickness: MaterialStateProperty.all(6),
                                   thumbVisibility:
-                                      MaterialStateProperty.all(true),
+                                  MaterialStateProperty.all(true),
                                 ),
                               ),
                               menuItemStyleData: const MenuItemStyleData(
@@ -3546,112 +3756,241 @@ class _Workorder_summeryState extends State<Workorder_summery>
                           ),
                         ],
                       ),
-                SizedBox(height: 16.0),
-                Text('Message', style: TextStyle(color: blueColor)),
-                Material(
-                  elevation: 3,
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Container(
-                    height: 50,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.0),
-                      //border: Border.all(color: blueColor),
-                      // boxShadow: [
-                      //   BoxShadow(
-                      //     color: Colors.black.withOpacity(0.2),
-                      //     offset: Offset(4, 4),
-                      //     blurRadius: 3,
-                      //   ),
-                      // ],
-                    ),
-                    child: TextFormField(
-                      /*    onTap: ()async{
-                        final DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2100),
-                        );
-                        if (pickedDate != null) {
-                          selectedDate = pickedDate;
-                        }
-                      },*/
-                      //  obscureText: widget.obscureText,
-                      // readOnly: true,
-                      //keyboardType: widget.keyboardType,
-                      /* validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          state.validate();
-                        }
-                        return null;
-                      },*/
-                      controller: message,
-
-                      decoration: InputDecoration(
-                        //  suffixIcon: widget.suffixIcon,
-                        hintStyle: TextStyle(fontSize: 13, color: blueColor),
-                        border: InputBorder.none,
-                        //   hintText: widget.hintText,
+                      SizedBox(height: 8.0),
+                      Text('Photo ',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: blueColor)),
+                      SizedBox(
+                        height: 10,
                       ),
-                    ),
+                      SizedBox(height: 8.0),
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              _pickImage().then((_) {
+                                setState(
+                                        () {}); // Rebuild the widget after selecting the image
+                              });
+                            },
+                            child: Text(
+                              '+ Add',
+                              style: TextStyle(
+                                  color: Colors.green),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      _images.isNotEmpty
+                          ? Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              //color: Colors.blue,
+                              child: Wrap(
+                                spacing:
+                                8.0, // Horizontal spacing between items
+                                runSpacing:
+                                8.0, // Vertical spacing between rows
+                                children: List.generate(
+                                  _images.length,
+                                      (index) {
+                                    return Container(
+                                      // color: Colors.green,
+                                      width: 85,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment
+                                            .start,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment
+                                            .start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              SizedBox(
+                                                width:
+                                                60,
+                                              ),
+                                              GestureDetector(
+                                                onTap:
+                                                    () {
+                                                  setState(
+                                                          () {
+                                                        _images.removeAt(index);
+                                                      });
+                                                },
+                                                child:
+                                                Icon(
+                                                  Icons
+                                                      .close,
+                                                  color:
+                                                  Colors.grey,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment
+                                                .start,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment
+                                                .start,
+                                            children: [
+                                              Container(
+                                                // color:Colors.blue,
+                                                child: Image
+                                                    .file(
+                                                  _images[
+                                                  index],
+                                                  height:
+                                                  80,
+                                                  width:
+                                                  80,
+                                                  fit: BoxFit
+                                                      .cover,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                          : Center(
+                        child:
+                        Text("No images selected."),
+                      ),
+                      SizedBox(height: 16.0),
+                      Text('Message', style: TextStyle(color: blueColor,fontWeight: FontWeight.bold)),
+                      Material(
+                        elevation: 3,
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Container(
+                          height: 50,
+                          padding:
+                          EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8.0),
+                            //border: Border.all(color: blueColor),
+                            // boxShadow: [
+                            //   BoxShadow(
+                            //     color: Colors.black.withOpacity(0.2),
+                            //     offset: Offset(4, 4),
+                            //     blurRadius: 3,
+                            //   ),
+                            // ],
+                          ),
+                          child: TextFormField(
+                            /*    onTap: ()async{
+                          final DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2100),
+                          );
+                          if (pickedDate != null) {
+                            selectedDate = pickedDate;
+                          }
+                        },*/
+                            //  obscureText: widget.obscureText,
+                            // readOnly: true,
+                            //keyboardType: widget.keyboardType,
+                            /* validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            state.validate();
+                          }
+                          return null;
+                        },*/
+                            controller: message,
+
+                            decoration: InputDecoration(
+                              //  suffixIcon: widget.suffixIcon,
+                              hintStyle: TextStyle(fontSize: 13, color: blueColor),
+                              border: InputBorder.none,
+                              //   hintText: widget.hintText,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 16.0),
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(backgroundColor: blueColor),
+                            onPressed: () async {
+                              SharedPreferences prefs = await SharedPreferences.getInstance();
+                              String? firstName = prefs.getString("first_name");
+                              String? lastName = prefs.getString("last_name");
+                              Map<String, dynamic> values = {
+                                "date": selectedDate.text,
+                                "message": message.text,
+                                "status": selectedStatus,
+                                "statusUpdatedBy": "Admin",
+                                "staffmember_name": _selectedStaffs,
+                                "staffmember_id": _selectedstaffId,
+                                "workOrderUpdate_images":_uploadedFileNames!,
+
+                              };
+                              await WorkOrderRepository.updateworkorderSummary(
+                                  values, widget.workorder_id!)
+                                  .then((value) {
+                                setState(() {
+                                  futureworkorderSummary =
+                                      WorkOrderRepository.getworkorderSummary(
+                                          widget.workorder_id!);
+                                });
+                              });
+
+                              // Save the data and close the dialog
+                              /*  WorkorderUpdates update = WorkorderUpdates(
+                                              status: selectedStatus,
+                                              date: selectedDate,
+                                              message: message,
+                                            );*/
+                              // Here you can handle saving the update data
+                              // print('Status: ${update.status}');
+                              // print('Date: ${update.date}');
+                              // print('Message: ${update.message}');
+                              Navigator.of(context).pop(); // Close the dialog
+                            },
+                            child: Text('Save'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Close the dialog
+                            },
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(color: blueColor),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text(
-                'Cancel',
-                style: TextStyle(color: blueColor),
               ),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: blueColor),
-              onPressed: () async {
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                String? firstName = prefs.getString("first_name");
-                String? lastName = prefs.getString("last_name");
-                Map<String, dynamic> values = {
-                  "date": selectedDate.text,
-                  "message": message.text,
-                  "status": selectedStatus,
-                  "statusUpdatedBy": "Admin",
-                  "staffmember_name": _selectedStaffs,
-                  "staffmember_id": _selectedstaffId
-                };
-                await WorkOrderRepository.updateworkorderSummary(
-                        values, widget.workorder_id!)
-                    .then((value) {
-                  setState(() {
-                    futureworkorderSummary =
-                        WorkOrderRepository.getworkorderSummary(
-                            widget.workorder_id!);
-                  });
-                });
+            );
 
-                // Save the data and close the dialog
-                /*  WorkorderUpdates update = WorkorderUpdates(
-                  status: selectedStatus,
-                  date: selectedDate,
-                  message: message,
-                );*/
-                // Here you can handle saving the update data
-                // print('Status: ${update.status}');
-                // print('Date: ${update.date}');
-                // print('Message: ${update.message}');
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text('Save'),
-            ),
-          ],
+
+
+          },
         );
+
       },
     );
   }

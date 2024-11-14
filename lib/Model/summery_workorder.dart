@@ -174,6 +174,7 @@ class WorkorderUpdates {
   String? createdAt;
   String? updatedAt;
   String? statusUpdatedBy;
+  List<dynamic>? workOrderUpdateimages;
   String? id;
 
   WorkorderUpdates(
@@ -183,14 +184,17 @@ class WorkorderUpdates {
         this.createdAt,
         this.updatedAt,
         this.statusUpdatedBy,
+        this.workOrderUpdateimages,
         this.id});
 
   WorkorderUpdates.fromJson(Map<String, dynamic> json) {
+    print(' image as ${ json['workOrderUpdate_images']}');
     status = json['status'];
     date = json['date'];
     staffmemberName = json['staffmember_name'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
+    workOrderUpdateimages = json['workOrderUpdate_images'];
     statusUpdatedBy = json['statusUpdatedBy'];
     id = json['_id'];
   }
@@ -203,6 +207,7 @@ class WorkorderUpdates {
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
     data['statusUpdatedBy'] = this.statusUpdatedBy;
+    data['workOrderUpdate_images'] = this.workOrderUpdateimages;
     data['_id'] = this.id;
     return data;
   }

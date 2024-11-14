@@ -5951,7 +5951,8 @@ class _Summery_pageState extends State<Summery_page>
                             return StatefulBuilder(
                               builder:
                                   (BuildContext context, StateSetter setState) {
-                                return AlertDialog(
+                                return
+                                  AlertDialog(
                                   backgroundColor: Colors.white,
                                   surfaceTintColor: Colors.white,
                                   content: SingleChildScrollView(
