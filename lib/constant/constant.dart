@@ -8,9 +8,9 @@ String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
 //String image_url = "http://192.168.182.128:4000/api/images/get-file/";
 
 //String Api_url = "http://192.168.39.1:4000";
-//String Api_url = "http://192.168.1.21:4000";
+String Api_url = "http://192.168.1.15:4000";
 
-String Api_url = "https://saas.cloudrentalmanager.com";
+//String Api_url = "https://saas.cloudrentalmanager.com";
 
 String image_upload_url = "https://saas.cloudrentalmanager.com";
 
@@ -141,6 +141,77 @@ String formatPhoneNumber(String phoneNumber) {
   }
 }
 
-String? _password;
-String? _errorMessage;
+
+
+// void _checkPasswordStrength(String password) {
+//   final result = Zxcvbn().evaluate(password);
+//   setState(() {
+//     // Safely convert the score to an int, defaulting to 0 if null
+//     _score = result.score?.toInt() ?? 0;
+//     // Provide a default feedback message if the warning is null
+//     _feedback = (result.feedback.warning!.isNotEmpty ? result.feedback.warning : 'Password is strong!')!;
+//   });
+// }
+// bool _validatePassword(String password) {
+//   if (password.length < 8 || password.length > 16) {
+//     _errorMessage = 'Password must be between 8 and 16 characters.';
+//     return false;
+//   }
+//   if (!RegExp(r'[A-Z]').hasMatch(password)) {
+//     _errorMessage = 'Must contain at least one uppercase letter.';
+//     return false;
+//   }
+//   if (!RegExp(r'[a-z]').hasMatch(password)) {
+//     _errorMessage = 'Must contain at least one lowercase letter.';
+//     return false;
+//   }
+//   if (!RegExp(r'[0-9]').hasMatch(password)) {
+//     _errorMessage = 'Must contain at least one digit.';
+//     return false;
+//   }
+//   if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(password)) {
+//     _errorMessage = 'Must contain at least one special character.';
+//     return false;
+//   }
+//   var result = Zxcvbn().evaluate(password);
+//   print(result.score);
+//   if (result.score! < 3) {
+//     _errorMessage = 'Password is too weak.';
+//     return false;
+//   }
+//   if (RegExp(r'(\d)\1{2,}|\d{3,}|[A-Za-z]{3,}').hasMatch(password)) {
+//     _errorMessage = 'Avoid sequential or repeating patterns.';
+//     return false;
+//   }
+//   _errorMessage = null; // Reset error message if all checks pass
+//   return true;
+// }
+
+String? ValidatePassword(String password) {
+  if (password.length < 8 || password.length > 16) {
+    return 'Password must be between 8 and 16 characters.';
+  }
+  if (!RegExp(r'[A-Z]').hasMatch(password)) {
+    return 'Must contain at least one uppercase letter.';
+  }
+  if (!RegExp(r'[a-z]').hasMatch(password)) {
+    return 'Must contain at least one lowercase letter.';
+  }
+  if (!RegExp(r'[0-9]').hasMatch(password)) {
+    return 'Must contain at least one digit.';
+  }
+  if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(password)) {
+    return 'Must contain at least one special character.';
+  }
+
+  var result = Zxcvbn().evaluate(password);
+  if (result.score! < 3) {
+    return 'Password is too weak.';
+  }
+  if (RegExp(r'(\d)\1{2,}|\d{3,}|[A-Za-z]{3,}').hasMatch(password)) {
+    return 'Avoid sequential or repeating patterns.';
+  }
+
+  return null; // Indicate that the password is valid
+}
 

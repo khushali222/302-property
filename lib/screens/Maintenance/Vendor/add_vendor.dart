@@ -225,6 +225,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                         }
                                         return null;
                                       },
+                                      pass: true,
                                     ),
                                   ),
                                   SizedBox(
@@ -284,8 +285,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                       ),
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              blueColor,
+                                          backgroundColor: blueColor,
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(8.0),
@@ -526,6 +526,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                       }
                                       return null;
                                     },
+                                    pass: true,
                                   ),
                                 ),
                                 SizedBox(
@@ -568,7 +569,7 @@ class _Add_vendorState extends State<Add_vendor> {
                               ],
                             ),
                             SizedBox(
-                              height: 16,
+                              height: 35,
                             ),
                             Padding(
                               padding: const EdgeInsets.all(0.0),
@@ -583,8 +584,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                     ),
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            blueColor,
+                                        backgroundColor: blueColor,
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(8.0),
@@ -709,7 +709,8 @@ class CustomTextField extends StatefulWidget {
   final void Function()? onSuffixIconPressed;
   final void Function()? onTap;
   final bool readOnnly;
-   bool? optional;
+  bool? optional;
+  final bool? pass;
   final bool? email;
 
   CustomTextField({
@@ -727,7 +728,8 @@ class CustomTextField extends StatefulWidget {
     this.onChanged,
     this.optional,
     this.onChanged2,
-    this.email,// Initialize onTap
+    this.pass,
+    this.email, // Initialize onTap
   }) : super(key: key);
 
   @override
@@ -792,28 +794,39 @@ class CustomTextFieldState extends State<CustomTextField> {
       clipBehavior: Clip.none,
       children: <Widget>[
         FormField<String>(
-          validator: widget.optional !=null ? null:
-              (value) {
-            if (widget.controller!.text.isEmpty) {
-              setState(() {
-                _errorMessage = 'Please ${widget.hintText}';
-              });
-              return '';
-            }
-            else if (widget.email != null) {
-              if (!EmailValidator.validate(widget.controller!.text)) {
-                setState(() {
-                  _errorMessage = "Email is not valid";
-                });
-                return '';
-              }
-            }
-            setState(() {
-              _errorMessage = null;
-            });
+          validator: widget.optional != null
+              ? null
+              : (value) {
+                  if (widget.controller!.text.isEmpty) {
+                    setState(() {
+                      _errorMessage = 'Please ${widget.hintText}';
+                    });
+                    return '';
+                  }
+                  else if (widget.email != null) {
+                    if (!EmailValidator.validate(widget.controller!.text)) {
+                      setState(() {
+                        _errorMessage = "Email is not valid";
+                      });
+                      return '';
+                    }
+                  }
+                  else if (widget.pass != null) {
+                    String? validationMessage = ValidatePassword(widget.controller!.text);
+                    if (validationMessage != null) {
+                      setState(() {
+                        _errorMessage =
+                            validationMessage;
+                      });
+                      return '';
+                    }
+                  }
+                  setState(() {
+                    _errorMessage = null;
+                  });
 
-            return null;
-          },
+                  return null;
+                },
           builder: (FormFieldState<String> state) {
             return Column(
               children: <Widget>[
@@ -876,7 +889,9 @@ class CustomTextFieldState extends State<CustomTextField> {
     );
     return shouldUseKeyboardActions
         ? SizedBox(
-            height: 60,
+            // height: 60,
+            // width: MediaQuery.of(context).size.width * .98,
+            height: _errorMessage != null ? 75 : 60,
             width: MediaQuery.of(context).size.width * .98,
             child: KeyboardActions(
               config: _buildConfig(context),

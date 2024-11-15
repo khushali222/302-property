@@ -44,7 +44,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_stepindicator: ^0.1.7
   device_preview:
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons:
   email_validator: ^3.0.0
   http:
   fluttertoast: ^8.2.5
@@ -92,7 +92,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: "^0.13.1"
+
   flutter_lints: ^4.0.0
   custom_pop_up_menu: ^1.2.4
 flutter_native_splash:
@@ -109,7 +109,7 @@ flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
 
-  image_path: "assets/images/logo.jpg"
+  image_path: "assets/images/applogo.png"
 
 #  this is image
   min_sdk_android: 21 # android min sdk min:16, default 21

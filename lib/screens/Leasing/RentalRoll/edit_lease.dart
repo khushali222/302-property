@@ -6797,6 +6797,7 @@ class _AddTenantState extends State<AddTenant> {
                                 }
                                 return null;
                               },
+                              pass: true,
                             ),
                           ),
                           const SizedBox(

@@ -261,6 +261,7 @@ class _edit_vendorState extends State<edit_vendor> {
                                         }
                                         return null;
                                       },
+                                      pass: true,
                                     ),
                                   ),
                                   SizedBox(
@@ -557,6 +558,7 @@ class _edit_vendorState extends State<edit_vendor> {
                                       }
                                       return null;
                                     },
+                                    pass: true,
                                   ),
                                 ),
                                 SizedBox(
@@ -809,6 +811,7 @@ class CustomTextField extends StatefulWidget {
   final void Function()? onTap;
   final bool readOnnly;
   final bool? email;
+  final bool? pass;
 
   CustomTextField({
     Key? key,
@@ -825,6 +828,7 @@ class CustomTextField extends StatefulWidget {
     this.onChanged,
     this.onChanged2,
     this.email,
+    this.pass,
     // Initialize onTap
   }) : super(key: key);
 
@@ -896,6 +900,15 @@ class CustomTextFieldState extends State<CustomTextField> {
                 _errorMessage = 'Please ${widget.hintText}';
               });
               return '';
+            }else if (widget.pass != null) {
+              String? validationMessage = ValidatePassword(widget.controller!.text);
+              if (validationMessage != null) {
+                setState(() {
+                  _errorMessage =
+                      validationMessage;
+                });
+                return '';
+              }
             }
             else if (widget.email != null) {
               if (!EmailValidator.validate(widget.controller!.text)) {

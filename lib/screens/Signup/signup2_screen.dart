@@ -55,49 +55,7 @@ class _Signup2State extends State<Signup2> {
   int _score = 0; // Initialize score as an int
   String _feedback = '';
 
-  void _checkPasswordStrength(String password) {
-    final result = Zxcvbn().evaluate(password);
-    setState(() {
-      // Safely convert the score to an int, defaulting to 0 if null
-      _score = result.score?.toInt() ?? 0;
-      // Provide a default feedback message if the warning is null
-      _feedback = (result.feedback.warning!.isNotEmpty ? result.feedback.warning : 'Password is strong!')!;
-    });
-  }
-  bool _validatePassword(String password) {
-    if (password.length < 8 || password.length > 16) {
-      _errorMessage = 'Password must be between 8 and 16 characters.';
-      return false;
-    }
-    if (!RegExp(r'[A-Z]').hasMatch(password)) {
-      _errorMessage = 'Must contain at least one uppercase letter.';
-      return false;
-    }
-    if (!RegExp(r'[a-z]').hasMatch(password)) {
-      _errorMessage = 'Must contain at least one lowercase letter.';
-      return false;
-    }
-    if (!RegExp(r'[0-9]').hasMatch(password)) {
-      _errorMessage = 'Must contain at least one digit.';
-      return false;
-    }
-    if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(password)) {
-      _errorMessage = 'Must contain at least one special character.';
-      return false;
-    }
-    var result = Zxcvbn().evaluate(password);
-    print(result.score);
-    if (result.score! < 3) {
-      _errorMessage = 'Password is too weak.';
-      return false;
-    }
-    if (RegExp(r'(\d)\1{2,}|\d{3,}|[A-Za-z]{3,}').hasMatch(password)) {
-      _errorMessage = 'Avoid sequential or repeating patterns.';
-      return false;
-    }
-    _errorMessage = null; // Reset error message if all checks pass
-    return true;
-  }
+
 
 
   @override
@@ -616,37 +574,63 @@ class _Signup2State extends State<Signup2> {
                        phoneerror = false;
                      });
                    }
-                   if(password.text.isEmpty){
+                   // if(password.text.isEmpty){
+                   //   setState(() {
+                   //     passworderror = true;
+                   //     passwordmessage = "Password is required";
+                   //   });
+                   // }
+                   // else if(password.text.length < 8){
+                   //   setState(() {
+                   //     passworderror = true;
+                   //     passwordmessage = "Password must have 8 Characters";
+                   //   });
+                   // }
+                   // else if (!_validatePassword(password.text)) {
+                   //   setState(() {
+                   //     passworderror = true;
+                   //     passwordmessage = 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
+                   //     // _errorMessage
+                   //   });
+                   // }
+                   // // else if (!RegExp(r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$').hasMatch(password.text)) {
+                   // //  setState(() {
+                   // //    passworderror = true;
+                   // //    passwordmessage =  'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
+                   // //
+                   // //  });
+                   // //
+                   // // }
+                   // else {
+                   //   setState(() {
+                   //     passworderror = false;
+                   //   });
+                   // }
+                   if (password.text.isEmpty) {
                      setState(() {
                        passworderror = true;
                        passwordmessage = "Password is required";
                      });
-                   }
-                   else if(password.text.length < 8){
+                   } else if (password.text.length < 8) {
                      setState(() {
                        passworderror = true;
                        passwordmessage = "Password must have 8 Characters";
                      });
                    }
-                   else if (!_validatePassword(password.text)) {
-                     setState(() {
-                       passworderror = true;
-                       passwordmessage = 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
-                       // _errorMessage
-                     });
-                   }
-                   // else if (!RegExp(r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$').hasMatch(password.text)) {
-                   //  setState(() {
-                   //    passworderror = true;
-                   //    passwordmessage =  'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
-                   //
-                   //  });
-                   //
-                   // }
                    else {
-                     setState(() {
-                       passworderror = false;
-                     });
+                     String? validationMessage = ValidatePassword(password.text);
+
+                     if (validationMessage != null) {
+                       setState(() {
+                         passworderror = true;
+                         passwordmessage = validationMessage; // Use the dynamic message
+                       });
+                     }
+                     else {
+                       setState(() {
+                         passworderror = false; // No error
+                       });
+                     }
                    }
 
                    if(confirmpassword.text.isEmpty){
