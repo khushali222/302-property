@@ -16,6 +16,7 @@ import 'package:three_zero_two_property/screens/Password/changepassword.dart';
 
 import 'package:three_zero_two_property/screens/Signup/signup_screen.dart';
 import 'package:http/http.dart' as http;
+import 'package:zxcvbn/zxcvbn.dart';
 
 import '../../StaffModule/repository/staffpermission_provider.dart';
 import '../../StaffModule/screen/dashboard.dart';
@@ -1133,7 +1134,18 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 });
                               }
                             });
-                            if (selectedrole == "") {
+                            final zxcvbn = Zxcvbn();
+
+                            final result = zxcvbn.evaluate(password.text);
+
+                            print('Password: ${result.password}');
+                            print('Score: ${result.score}');
+                            print(result.guesses);
+                            print(result.calc_time);
+                            for (final suggestion in result.feedback.suggestions!) {
+                              print(suggestion);
+                            }
+                          /*  if (selectedrole == "") {
                               Fluttertoast.showToast(
                                   msg: "Please select the company");
                             } else if (emailerror == false &&
@@ -1142,7 +1154,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                               if (selectedrole != "admin")
                                 await checkCompany(selectedCompany);
                               // Save authentication status to SharedPreferences
-                            }
+                            }*/
                           },
                           child: Center(
                             child: Container(

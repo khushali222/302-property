@@ -108,9 +108,9 @@ flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
 
-  image_path: "assets/images/logoapp.jpg"
+  image_path: "assets/images/logo_crm.png"
 
-#  this is image3
+#  this is image
   min_sdk_android: 21 # android min sdk min:16, default 21
 
 
