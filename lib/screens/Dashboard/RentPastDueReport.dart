@@ -341,9 +341,9 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                   child: Row(
                     children: [
                       width < 400
-                          ? const Text("Rental Owner",
+                          ? const Text("Property",
                               style: TextStyle(color: Colors.white))
-                          : const Text("Rental Owner",
+                          : const Text("Property",
                               style: TextStyle(color: Colors.white)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
@@ -369,101 +369,103 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 ),
               ),
             ),
-            // Expanded(
-            //   child: GestureDetector(
-            //     onTap: () {
-            //       setState(() {
-            //         if (sorting2) {
-            //           sorting1 = false;
-            //           sorting2 = sorting2;
-            //           sorting3 = false;
-            //           ascending2 = sorting2 ? !ascending2 : true;
-            //           ascending1 = false;
-            //           ascending3 = false;
-            //         } else {
-            //           sorting1 = false;
-            //           sorting2 = !sorting2;
-            //           sorting3 = false;
-            //           ascending2 = sorting2 ? !ascending2 : true;
-            //           ascending1 = false;
-            //           ascending3 = false;
-            //         }
-            //         // Sorting logic here
-            //       });
-            //     },
-            //     child: Row(
-            //       children: [
-            //         Text("Address", style: TextStyle(color: Colors.white)),
-            //         SizedBox(width: 5),
-            //         ascending2
-            //             ? Padding(
-            //                 padding: const EdgeInsets.only(top: 7, left: 2),
-            //                 child: FaIcon(
-            //                   FontAwesomeIcons.sortUp,
-            //                   size: 20,
-            //                   color: Colors.white,
-            //                 ),
-            //               )
-            //             : Padding(
-            //                 padding: const EdgeInsets.only(bottom: 7, left: 2),
-            //                 child: FaIcon(
-            //                   FontAwesomeIcons.sortDown,
-            //                   size: 20,
-            //                   color: Colors.white,
-            //                 ),
-            //               ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
-            // Expanded(
-            //   child: GestureDetector(
-            //     onTap: () {
-            //       setState(() {
-            //         if (sorting3) {
-            //           sorting1 = false;
-            //           sorting2 = false;
-            //           sorting3 = sorting3;
-            //           ascending3 = sorting3 ? !ascending3 : true;
-            //           ascending2 = false;
-            //           ascending1 = false;
-            //         } else {
-            //           sorting1 = false;
-            //           sorting2 = false;
-            //           sorting3 = !sorting3;
-            //           ascending3 = sorting3 ? !ascending3 : true;
-            //           ascending2 = false;
-            //           ascending1 = false;
-            //         }
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    if (sorting2) {
+                      sorting1 = false;
+                      sorting2 = sorting2;
+                      sorting3 = false;
+                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending1 = false;
+                      ascending3 = false;
+                    } else {
+                      sorting1 = false;
+                      sorting2 = !sorting2;
+                      sorting3 = false;
+                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending1 = false;
+                      ascending3 = false;
+                    }
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    SizedBox(width: 8),
+                    Text("Tenant", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 5),
+                    ascending2
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    if (sorting3) {
+                      sorting1 = false;
+                      sorting2 = false;
+                      sorting3 = sorting3;
+                      ascending3 = sorting3 ? !ascending3 : true;
+                      ascending2 = false;
+                      ascending1 = false;
+                    } else {
+                      sorting1 = false;
+                      sorting2 = false;
+                      sorting3 = !sorting3;
+                      ascending3 = sorting3 ? !ascending3 : true;
+                      ascending2 = false;
+                      ascending1 = false;
+                    }
 
-            //         // Sorting logic here
-            //       });
-            //     },
-            //     child: Row(
-            //       children: [
-            //         Text("Work", style: TextStyle(color: Colors.white)),
-            //         SizedBox(width: 5),
-            //         ascending3
-            //             ? Padding(
-            //                 padding: const EdgeInsets.only(top: 7, left: 2),
-            //                 child: FaIcon(
-            //                   FontAwesomeIcons.sortUp,
-            //                   size: 20,
-            //                   color: Colors.white,
-            //                 ),
-            //               )
-            //             : Padding(
-            //                 padding: const EdgeInsets.only(bottom: 7, left: 2),
-            //                 child: FaIcon(
-            //                   FontAwesomeIcons.sortDown,
-            //                   size: 20,
-            //                   color: Colors.white,
-            //                 ),
-            //               ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
+                    // Sorting logic here
+                  });
+                },
+                child: Row(
+                  children: [
+                    SizedBox(width: 5),
+                    Text("Amount", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 5),
+                    ascending3
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -505,6 +507,43 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
 
   bool istenantDataLoading = false;
   bool customdate = false;
+
+  List<List<dynamic>> _generateTableData(RentPastDue rentalOwnerReport) {
+    final List<List<dynamic>> tableData = [];
+    double total = 0.0;
+
+    // Check if currentDueRentCharges is not null and has charges
+    if (rentalOwnerReport.currentDueRentCharges != null &&
+        rentalOwnerReport.currentDueRentCharges!.charges != null) {
+      for (var charge in rentalOwnerReport.dueRentCharges!.charges!) {
+        String rentalAddress = charge.rentalData?.address ?? "N/A";
+        String tenantName = charge.tenantData?.tenantfirstName ?? "N/A";
+        int amount = charge.total ?? 0;
+
+        // Log the values
+        print('Rental Address: $rentalAddress');
+        print('Tenant Name: $tenantName');
+        print('Amount: $amount');
+
+        // Add a row with the rental address, tenant name, and amount
+        tableData.add([
+          rentalAddress,
+          tenantName,
+          amount.toString(),
+        ]);
+
+        // Update the grand total
+        total += amount; // Add the amount to the total
+      }
+    }
+
+    // Update the grand total in the state
+    setState(() {
+      grandtotal += total; // Update the grand total
+    });
+
+    return tableData;
+  }
   Future<void> generateDelinquentTenantsPdf(
       RentPastDue? delinquentTenantsData) async {
     final GetAddressAdminPdfService service = GetAddressAdminPdfService();
@@ -622,9 +661,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                   'Property',
                   'Tenant',
                   'Amount',
-
                 ],
-                data: [_generateTableData(delinquentTenantsData!)],
+                data: _generateTableData(delinquentTenantsData!),
                 headerStyle: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold, color: PdfColors.white),
                 headerDecoration: pw.BoxDecoration(
@@ -684,45 +722,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
   //
   //   return tableData;
   // }
-  List<dynamic> _generateTableData(RentPastDue rentalOwnerReport) {
-    final List<dynamic> tableData = [];
-    double total = 0.0;
 
-    // Assuming rentalOwnerReport has the necessary properties
-    String rentalAddress = rentalOwnerReport.currentDueRentCharges?.charges?.first.rentalData?.address ?? "N/A";
-    String tenantName = rentalOwnerReport.currentDueRentCharges?.charges?.first.tenantData?.tenantfirstName ?? "N/A"; // Replace with actual property
-    int amount = rentalOwnerReport.currentDueRentCharges?.charges?.first.total ?? 0; // Replace with actual property
-
-    // Log the values instead of the widget
-    print('Rental Address: $rentalAddress');
-    print('Tenant Name: $tenantName');
-    print('Amount: $amount');
-
-
-    // Add a row with the rental address, tenant name, and amount
-    tableData.add([
-      pw.Text(
-        rentalAddress,
-        style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
-      ),
-      pw.Text(
-        tenantName,
-        style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
-      ),
-      pw.Text(
-        '\$${amount.toString()}',
-        style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
-      ),
-    ]);
-
-    // Update the grand total if needed
-    total += amount; // Add the amount to the total
-    setState(() {
-      grandtotal += total; // Update the grand total
-    });
-
-    return tableData;
-  }
 
   // Future<void> generateRentalOwnerReportExcel(
   //     List<RentPastDue> rentalOwnerReports) async {
@@ -1106,7 +1106,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
   TextEditingController fromDate = TextEditingController();
   TextEditingController toDate = TextEditingController();
   String? daterange;
-  String? chargeType;
+  String? chargeType = 'Charges';
   String? monthType;
   String? selectedrenatalownerid;
   @override
@@ -1124,7 +1124,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 children: [
                   const SizedBox(height: 16),
                   titleBar(
-                    title: 'Rental Owner Report',
+                    title: 'Rent Past Due Report',
                     width: MediaQuery.of(context).size.width * .91,
                   ),
                   if (MediaQuery.of(context).size.width > 500)
@@ -1150,9 +1150,6 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                   horizontal: 16.0, vertical: 5),
                               child: Column(
                                 children: [
-                                  SizedBox(
-                                    height: 5,
-                                  ),
                                   filters(data: rentPastDue),
                                   const SizedBox(height: 10),
 //call the table here base on condition like if selected is charge and and monttype is All call the chrge table
@@ -1319,16 +1316,10 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
   chargeTable(List<Charge> chargedata) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 0.0,),
         child: Column(
           children: [
-            SizedBox(
-              height: 5,
-            ),
-            //filters(data: rentPastDue),
-            const SizedBox(height: 10),
             _buildHeaders(),
-            const SizedBox(height: 20),
             Container(
               decoration: BoxDecoration(
                   border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
@@ -1386,12 +1377,12 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                           : FontAwesomeIcons.sortDown,
                                       size: 20,
                                       color:
-                                          isRowExpanded ? blueColor : blueColor,
+                                          isRowExpanded ? Colors.transparent : Colors.transparent,
                                     ),
                                   ),
                                 ),
                                 Expanded(
-                                  flex: 4,
+                                  flex: 3,
                                   child: GestureDetector(
                                     onTap: () {
                                       setState(() {
@@ -1422,7 +1413,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                 //         .width *
                                 //         .3),
                                 Expanded(
-                                  flex: 3,
+                                  flex: 4,
                                   child: Text(
                                     '${ item.tenantData != null ?  item.tenantData!.tenantfirstName : "N/A" ?? '-'} ${ item.tenantData != null ?  item.tenantData!.tenantlastName : "N/A" ?? '-'}',
                                     style: TextStyle(
@@ -1433,10 +1424,10 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                   ),
                                 ),
                                 SizedBox(
-                                  width: 5,
+                                  width: 9,
                                 ),
                                 Expanded(
-                                  flex: 3,
+                                  flex: 2,
                                   child: Text(
                                     '${item.total.toString() ?? '-'}',
                                     style: TextStyle(
@@ -1775,228 +1766,6 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
         SizedBox(
           height: 10,
         ),
-        // Padding(
-        //   padding: const EdgeInsets.symmetric(horizontal: 0.0),
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     children: [
-        //       Expanded(
-        //         child: Container(
-        //           height: 42,
-        //           //width: 160,
-        //           decoration: BoxDecoration(
-        //               borderRadius: BorderRadius.circular(5),
-        //               border: Border.all(color: Colors.grey)),
-        //           child: DropdownButtonHideUnderline(
-        //             child: DropdownButton<String>(
-        //               value: selectedrenatalownerid,
-        //               padding: EdgeInsets.symmetric(horizontal: 5),
-        //               hint: Text(
-        //                 "Rental Owner",
-        //                 style: TextStyle(fontSize: 14, color: Colors.black),
-        //               ),
-        //               items: rentalowners.map((property) {
-        //                 return DropdownMenuItem<String>(
-        //                   value: property['rentalowner_id'],
-        //                   child: Container(
-        //                     width: MediaQuery.of(context).size.width * .34,
-        //                     child: Text(
-        //                       property['rentalOwner_name']!,
-        //                       style: const TextStyle(
-        //                         fontSize: 14,
-        //                         fontWeight: FontWeight.w400,
-        //                         color: Colors.black87,
-        //                       ),
-        //                       overflow: TextOverflow.ellipsis,
-        //                     ),
-        //                   ),
-        //                 );
-        //               }).toList(),
-        //               onChanged: (value) {
-        //                 setState(() {
-        //                   selectedrenatalownerid = value;
-        //                   futurePastRentDue =
-        //                       fetchRentPastDueData(report: true);
-        //                 });
-        //                 // Handle the selected charge type
-        //                 print(value);
-        //               },
-        //             ),
-        //           ),
-        //         ),
-        //       ),
-        //       const SizedBox(width: 6),
-        //       // Expanded(
-        //       //   child: Container(
-        //       //     height: 42,
-        //       //     decoration: BoxDecoration(
-        //       //         borderRadius: BorderRadius.circular(5),
-        //       //         border: Border.all(color: Colors.grey)),
-        //       //     child: DropdownButtonHideUnderline(
-        //       //       child: DropdownButton<String>(
-        //       //         value: daterange,
-        //       //         padding: EdgeInsets.symmetric(horizontal: 5),
-        //       //         hint: Text(
-        //       //           "Date Range",
-        //       //           style: TextStyle(fontSize: 14, color: Colors.black),
-        //       //         ),
-        //       //         items: const [
-        //       //           DropdownMenuItem<String>(
-        //       //             value: 'Today',
-        //       //             child: Text('Today'),
-        //       //           ),
-        //       //           DropdownMenuItem<String>(
-        //       //             value: 'This Week',
-        //       //             child: Text('This Week'),
-        //       //           ),
-        //       //           DropdownMenuItem<String>(
-        //       //             value: 'This Month',
-        //       //             child: Text('This Month'),
-        //       //           ),
-        //       //           DropdownMenuItem<String>(
-        //       //             value: 'This Year',
-        //       //             child: Text('This Year'),
-        //       //           ),
-        //       //           DropdownMenuItem<String>(
-        //       //             value: 'Custom',
-        //       //             child: Text('Custom'),
-        //       //           ),
-        //       //         ],
-        //       //         onChanged: (value) {
-        //       //           setState(() async {
-        //       //             daterange = value;
-        //       //             if (value == "Today") {
-        //       //               customdate = false;
-        //       //               fromDate.text =
-        //       //                   formatDate(DateTime.now().toString());
-        //       //               toDate.text = formatDate(DateTime.now().toString());
-        //       //             } else if (value == "This Week") {
-        //       //               DateTime now = DateTime.now();
-        //       //               //  fromDate.text = formatDate(now.toString());
-        //       //               customdate = false;
-        //       //               fromDate.text = formatDate(now
-        //       //                   .subtract(Duration(days: now.weekday - 1))
-        //       //                   .toString());
-        //       //               toDate.text = formatDate(now
-        //       //                   .add(Duration(
-        //       //                   days: DateTime.daysPerWeek - now.weekday))
-        //       //                   .toString());
-        //       //             } else if (value == "This Month") {
-        //       //               customdate = false;
-        //       //               DateTime now = DateTime.now();
-        //       //               fromDate.text = formatDate(
-        //       //                   DateTime(now.year, now.month, 1).toString());
-        //       //               toDate.text = formatDate(
-        //       //                   DateTime(now.year, now.month + 1, 0)
-        //       //                       .toString());
-        //       //             } else if (value == "This Year") {
-        //       //               customdate = false;
-        //       //               DateTime now = DateTime.now();
-        //       //               fromDate.text =
-        //       //                   formatDate(DateTime(now.year, 1, 1).toString());
-        //       //               toDate.text = formatDate(
-        //       //                   DateTime(now.year, 12, 31).toString());
-        //       //             } else if (value == "Custom") {
-        //       //               customdate = true;
-        //       //             }
-        //       //             if (value != "Custom" && customdate == true) {
-        //       //               customdate = false;
-        //       //               fromDate.text = "";
-        //       //               toDate.text = "";
-        //       //             }
-        //       //             if (value != "Custom") {
-        //       //               SharedPreferences prefs = await SharedPreferences.getInstance();
-        //       //               String? id = prefs.getString("adminId");
-        //       //               String? token = prefs.getString('token');
-        //       //               futurePastRentDue =
-        //       //               fetchRentPastDueData(adminid:id ,report: true);
-        //       //
-        //       //             }
-        //       //           });
-        //       //           // Handle the selected charge type
-        //       //           print(value);
-        //       //         },
-        //       //       ),
-        //       //     ),
-        //       //   ),
-        //       // ),
-        //       const SizedBox(width: 6),
-        //     ],
-        //   ),
-        // ),
-        // const SizedBox(height: 10),
-        // Padding(
-        //   padding: const EdgeInsets.symmetric(horizontal: 0.0),
-        //   child: Row(
-        //     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     children: [
-        //       Expanded(
-        //         child: Container(
-        //           // width: 110,
-        //           child: TextFormField(
-        //             controller: fromDate,
-        //             // enabled: customdate,
-        //             onTap: customdate
-        //                 ? () {
-        //                     // _pickDate(context);
-        //                   }
-        //                 : null,
-        //             readOnly: true,
-        //             style: TextStyle(fontSize: 14, color: Colors.black),
-        //             textInputAction: TextInputAction.next,
-        //             textAlignVertical: TextAlignVertical.center,
-        //             decoration: InputDecoration(
-        //               contentPadding: const EdgeInsets.symmetric(
-        //                   vertical: 10, horizontal: 10), //Imp Line
-        //               isDense: true,
-        //
-        //               hintText: "From",
-        //
-        //               border: OutlineInputBorder(
-        //                   borderRadius: BorderRadius.circular(5),
-        //                   borderSide: const BorderSide(
-        //                     width: 1,
-        //                   )),
-        //             ),
-        //           ),
-        //         ),
-        //       ),
-        //       SizedBox(width: 10),
-        //       Expanded(
-        //         child: Container(
-        //           // width: 110,
-        //           child: TextFormField(
-        //             controller: toDate,
-        //             // enabled: customdate,
-        //             style: TextStyle(fontSize: 14, color: Colors.black),
-        //             onTap: customdate
-        //                 ? () {
-        //                     // _endDate(context);
-        //                   }
-        //                 : null,
-        //             readOnly: true,
-        //             textInputAction: TextInputAction.next,
-        //             textAlignVertical: TextAlignVertical.center,
-        //             decoration: InputDecoration(
-        //               contentPadding: const EdgeInsets.symmetric(
-        //                   vertical: 10, horizontal: 10), //Imp Line
-        //               isDense: true,
-        //               hintText: "To",
-        //
-        //               border: OutlineInputBorder(
-        //                   borderRadius: BorderRadius.circular(5),
-        //                   borderSide: const BorderSide(
-        //                     width: 0.5,
-        //                   )),
-        //             ),
-        //           ),
-        //         ),
-        //       ),
-        //       const SizedBox(width: 6),
-        //     ],
-        //   ),
-        // ),
-        // const SizedBox(height: 10),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 0.0),
           child: Row(
@@ -2040,66 +1809,6 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
               ),
               const SizedBox(width: 6),
               Expanded(
-                child: SizedBox(
-                  //  width: 100,
-                  height: 42,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: blueColor,
-                    ),
-                    onPressed: () {},
-                    child: PopupMenuButton<String>(
-                      onSelected: (value) async {
-                        // Export logic
-                        if (value == 'PDF' && data != null) {
-                          print('pdf');
-                          generateDelinquentTenantsPdf(data);
-                        } else if (value == 'XLSX' && data != null) {
-                          print('XLSX');
-                          //generateRentalOwnerReportExcel(data);
-                          //generateDelinquentTenantsExcel(data);
-                        } else if (value == 'CSV' && data != null) {
-                          print('CSV');
-                          //  generateRentalOwnerReportCsv(data);
-                          //  generateDelinquentTenantsCsv(data);
-                        }
-                      },
-                      itemBuilder: (BuildContext context) =>
-                          <PopupMenuEntry<String>>[
-                        const PopupMenuItem<String>(
-                            value: 'PDF', child: Text('PDF')),
-                        const PopupMenuItem<String>(
-                            value: 'XLSX', child: Text('XLSX')),
-                        const PopupMenuItem<String>(
-                            value: 'CSV', child: Text('CSV')),
-                      ],
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          istenantDataLoading
-                              ? const Center(
-                                  child: SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 21.0,
-                                  ),
-                                )
-                              : Text('Export'),
-                          Icon(Icons.arrow_drop_down),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
                 child: Container(
                   height: 42,
                   // width: 170,
@@ -2139,6 +1848,127 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                   ),
                 ),
               ),
+
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 0.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Material(
+                  elevation: 3,
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    // height: 40,
+                    height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                    width: MediaQuery.of(context).size.width < 500
+                        ? MediaQuery.of(context).size.width * .52
+                        : MediaQuery.of(context).size.width * .49,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        // border: Border.all(color: Colors.grey),
+                        border: Border.all(color: Color(0xFF8A95A8))),
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: TextField(
+                            style: TextStyle(
+                                fontSize:
+                                MediaQuery.of(context).size.width < 500
+                                    ? 12
+                                    : 14),
+                            // onChanged: (value) {
+                            //   setState(() {
+                            //     cvverror = false;
+                            //   });
+                            // },
+                            // controller: cvv,
+                            onChanged: (value) {
+                              setState(() {
+                                searchvalue = value;
+                              });
+                            },
+                            cursorColor: blueColor,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Search here...",
+                              hintStyle: TextStyle(
+                                 fontWeight: FontWeight.bold,
+                                  fontSize:
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 14
+                                      : 18),
+                              contentPadding: (EdgeInsets.only(
+                                  left: 5, bottom: 12, top: 5)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: SizedBox(
+                  //  width: 100,
+                  height: 42,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: blueColor,
+                    ),
+                    onPressed: () {},
+                    child: PopupMenuButton<String>(
+                      onSelected: (value) async {
+                        // Export logic
+                        if (value == 'PDF' && data != null) {
+                          print('pdf');
+                          generateDelinquentTenantsPdf(data);
+                        } else if (value == 'XLSX' && data != null) {
+                          print('XLSX');
+                          //generateRentalOwnerReportExcel(data);
+                          //generateDelinquentTenantsExcel(data);
+                        } else if (value == 'CSV' && data != null) {
+                          print('CSV');
+                          //  generateRentalOwnerReportCsv(data);
+                          //  generateDelinquentTenantsCsv(data);
+                        }
+                      },
+                      itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<String>>[
+                        const PopupMenuItem<String>(
+                            value: 'PDF', child: Text('PDF')),
+                        const PopupMenuItem<String>(
+                            value: 'XLSX', child: Text('XLSX')),
+                        const PopupMenuItem<String>(
+                            value: 'CSV', child: Text('CSV')),
+                      ],
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          istenantDataLoading
+                              ? const Center(
+                            child: SpinKitFadingCircle(
+                              color: Colors.white,
+                              size: 21.0,
+                            ),
+                          )
+                              : Text('Export'),
+                          Icon(Icons.arrow_drop_down),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              )
             ],
           ),
         ),
