@@ -835,7 +835,8 @@ class _applicant_summeryState extends State<applicant_summery>
                             width: 10,
                           ),
                           Text(
-                            "${summery.applicantHomeNumber}",
+                            formatPhoneNumber('${summery.applicantHomeNumber}'),
+                            // "${summery.applicantHomeNumber}",
                             style: const TextStyle(
                               fontWeight: FontWeight.w500,
                               color: Color.fromRGBO(138, 149, 168, 1),
@@ -856,7 +857,8 @@ class _applicant_summeryState extends State<applicant_summery>
                             width: 10,
                           ),
                           Text(
-                            "${summery.applicantBusinessNumber}",
+                            formatPhoneNumber('${summery.applicantBusinessNumber}'),
+                            // "${summery.applicantBusinessNumber}",
                             style: const TextStyle(
                               fontWeight: FontWeight.w500,
                               color: Color.fromRGBO(138, 149, 168, 1),
@@ -877,7 +879,8 @@ class _applicant_summeryState extends State<applicant_summery>
                             width: 10,
                           ),
                           Text(
-                            "${summery.applicantPhoneNumber}",
+                            formatPhoneNumber('${summery.applicantPhoneNumber}'),
+                            // "${summery.applicantPhoneNumber}",
                             style: const TextStyle(
                               fontWeight: FontWeight.w500,
                               color: Color.fromRGBO(138, 149, 168, 1),

@@ -44,7 +44,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_stepindicator: ^0.1.7
   device_preview:
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons:
   email_validator: ^3.0.0
   http:
   fluttertoast: ^8.2.5
@@ -78,20 +78,20 @@ dependencies:
   cached_network_image: ^3.3.1
   fl_chart:
   shimmer:
+  zxcvbn:
   pdf: ^3.11.0
   flutter_colorpicker:
   keyboard_actions:
   flutter_blurhash: ^0.6.0
   lottie: ^3.1.2
   connectivity_plus: ^5.0.2
-  zxcvbn: ^1.0.0
+
   # pdf:
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: "^0.13.1"
   flutter_lints: ^4.0.0
   custom_pop_up_menu: ^1.2.4
 flutter_native_splash:

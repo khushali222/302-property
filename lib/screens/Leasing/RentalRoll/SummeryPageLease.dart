@@ -2477,7 +2477,14 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                               12),
                                                                       child:
                                                                           Text(
-                                                                        '\$ ${leaseLedger.data!.length > 0?leaseLedger.data?.first.balance!.toStringAsFixed(2):0.0}',
+
+                                                                            leaseLedger.data != null && leaseLedger.data!.isNotEmpty && leaseLedger.data!.first.balance != null
+                                                                                ? leaseLedger.data!.first.balance!.toStringAsFixed(2)
+                                                                                : 'N/A',
+                                                                        // '\$ ${leaseLedger.data?.first.balance!.toStringAsFixed(2)}',
+
+                                                                       // '\$ ${leaseLedger.data!.length > 0?leaseLedger.data?.first.balance!.toStringAsFixed(2):0.0}',
+
                                                                         style: TextStyle(
                                                                             fontSize:
                                                                                 15,

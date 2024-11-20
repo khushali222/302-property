@@ -3599,7 +3599,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                   const SizedBox(
                                                                       width: 2),
                                                                   Text(
-                                                                    '${data.applicantPhoneNumber ?? 'N/A'}',
+                                                                    formatPhoneNumber('${data.applicantPhoneNumber}'),
+                                                                    // '${data.applicantPhoneNumber ?? 'N/A'}',
                                                                     style:
                                                                         const TextStyle(
                                                                       fontWeight:
@@ -3934,7 +3935,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 const SizedBox(
                                                                     width: 2),
                                                                 Text(
-                                                                  '${data.applicantPhoneNumber ?? 'N/A'}',
+                                                                  formatPhoneNumber('${data.applicantPhoneNumber}',),
+                                                                  // '${data.applicantPhoneNumber ?? 'N/A'}',
                                                                   style:
                                                                        TextStyle(
                                                                     fontWeight:
@@ -4282,7 +4284,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 height: 5,
                                                               ),
                                                               Text(
-                                                                '${data.rentalHistory!.rentalOwnerPhoneNumber ?? 'N/A'}',
+                                                                formatPhoneNumber('${data.rentalHistory!.rentalOwnerPhoneNumber}',),
+                                                                // '${data.rentalHistory!.rentalOwnerPhoneNumber ?? 'N/A'}',
                                                                 style:
                                                                     const TextStyle(
                                                                   fontWeight:
@@ -4683,7 +4686,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                             5,
                                                                       ),
                                                                       Text(
-                                                                        '${(data.rentalHistory?.rentalOwnerPhoneNumber ?? 'N/A').toString().isEmpty ? 'N/A' : 'N/A'}',
+                                                                        formatPhoneNumber( '${data.rentalHistory?.rentalOwnerPhoneNumber}'),
+                                                                        // '${(data.rentalHistory?.rentalOwnerPhoneNumber ?? 'N/A').toString().isEmpty ? 'N/A' : 'N/A'}',
                                                                         style:
                                                                              TextStyle(
                                                                           fontWeight:
@@ -5059,7 +5063,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                       height: 5,
                                                                     ),
                                                                     Text(
-                                                                      '${(data.rentalHistory?.rentalOwnerPhoneNumber ?? 'N/A').toString().isEmpty ? 'N/A' : 'N/A'}',
+                                                                      formatPhoneNumber( '${data.rentalHistory?.rentalOwnerPhoneNumber}'),
+                                                                     // '${(data.rentalHistory?.rentalOwnerPhoneNumber ?? 'N/A').toString().isEmpty ? 'N/A' : 'N/A'}',
                                                                       style:
                                                                            TextStyle(
                                                                         fontWeight:
@@ -5328,7 +5333,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     children: [
                                                       const SizedBox(width: 2),
                                                       Text(
-                                                        '${(data.emergencyContact?.phoneNumber ?? 'N/A').toString().isEmpty ? 'N/A' : data.emergencyContact!.phoneNumber}',
+                                                          formatPhoneNumber('${data.emergencyContact?.phoneNumber}'),
+                                                       // '${(data.emergencyContact?.phoneNumber ?? 'N/A').toString().isEmpty ? 'N/A' : data.emergencyContact!.phoneNumber}',
                                                         style:  TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
@@ -6057,7 +6063,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 height: 5,
                                                               ),
                                                               Text(
-                                                                '${(data.employment?.employmentPhoneNumber?.toString().isEmpty ?? true) ? 'N/A' : data.employment!.employmentPhoneNumber}',
+          formatPhoneNumber('${data.employment?.employmentPhoneNumber}'),
+                                                                // '${(data.employment?.employmentPhoneNumber?.toString().isEmpty ?? true) ? 'N/A' : data.employment!.employmentPhoneNumber}',
                                                                 style:
                                                                     const TextStyle(
                                                                   fontWeight:

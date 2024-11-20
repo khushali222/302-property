@@ -62,8 +62,7 @@ class _AddTenantState extends State<AddTenant> {
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor:
-                    blueColor, // button text color
+                backgroundColor: blueColor, // button text color
               ),
             ),
           ),
@@ -866,11 +865,7 @@ class _AddTenantState extends State<AddTenant> {
                                                   _validateInput();
                                                 },
                                                 controller: overrideFee,
-                                                cursorColor:
-                                                     blueColor
-
-
-,
+                                                cursorColor: blueColor,
                                               ),
                                             ),
                                           )
@@ -912,8 +907,7 @@ class _AddTenantState extends State<AddTenant> {
                                   ),
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          blueColor,
+                                      backgroundColor: blueColor,
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(8.0),
@@ -928,187 +922,186 @@ class _AddTenantState extends State<AddTenant> {
                                           formValid = false;
                                         });
 
-                                      await addTenant();
-                                    } else {
-                                      print('Form is invalid');
-                                    }
-                                  },
-                                  child: isLoading
-                                      ? Center(
-                                          child: SpinKitFadingCircle(
-                                            color: Colors.white,
-                                            size: 55.0,
+                                        await addTenant();
+                                      } else {
+                                        print('Form is invalid');
+                                      }
+                                    },
+                                    child: isLoading
+                                        ? Center(
+                                            child: SpinKitFadingCircle(
+                                              color: Colors.white,
+                                              size: 55.0,
+                                            ),
+                                          )
+                                        : Text(
+                                            'Add Tenant',
+                                            style: TextStyle(
+                                                color: Color(0xFFf7f8f9)),
                                           ),
-                                        )
-                                      : Text(
-                                          'Add Tenant',
-                                          style: TextStyle(
-                                              color: Color(0xFFf7f8f9)),
-                                        ),
+                                  ),
                                 ),
-                              ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              Container(
-                                  height: 50,
-                                  width: 120,
-                                  decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(8.0)),
-                                  child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                          backgroundColor: Color(0xFFffffff),
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      8.0))),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text(
-                                        'Cancel',
-                                        style: TextStyle(
-                                            color: Color(0xFF748097)),
-                                      )))
-                            ],
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Container(
+                                    height: 50,
+                                    width: 120,
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0)),
+                                    child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: Color(0xFFffffff),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        8.0))),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          'Cancel',
+                                          style: TextStyle(
+                                              color: Color(0xFF748097)),
+                                        )))
+                              ],
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                      ],
-                    ),
-                  );
-                } else {
-                  return SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: 25,
-                        ),
-                        titleBar(
-                          width: MediaQuery.of(context).size.width * .91,
-                          title: 'Add Tenant',
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Container(
-                            width: double.infinity,
-                            // height: !form_valid ? 860 : 830,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                border: Border.all(
-                                  color: Color.fromRGBO(21, 43, 103, 1),
-                                )),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('First Name *',
-                                      style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey)),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  CustomTextField(
-                                    keyboardType: TextInputType.text,
-                                    hintText: 'Enter first name',
-                                    controller: firstName,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'please enter the first name';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text('Last Name *',
-                                      style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey)),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  CustomTextField(
-                                    keyboardType: TextInputType.text,
-                                    hintText: 'Enter last name',
-                                    controller: lastName,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'please enter the last name';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text('Phone Number *',
-                                      style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey)),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  CustomTextField(
-                                    keyboardType: TextInputType.number,
-                                    hintText: 'Enter phone number',
-                                    controller: phoneNumber,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'please enter the phone number';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text('Work Number',
-                                      style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey)),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  CustomTextField(
-                                    keyboardType: TextInputType.number,
-                                    hintText: 'Enter work number',
-                                    controller: workNumber,
-                                    optional: true,
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text('Email *',
-                                      style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey)),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  CustomTextField(
-                                    keyboardType: TextInputType.emailAddress,
-                                    hintText: 'Enter Email',
-                                    controller: email,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'please enter email';
-                                      }
-                                      return null;
-                                    },
-
+                          SizedBox(
+                            height: 20,
+                          ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    return SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 25,
+                          ),
+                          titleBar(
+                            width: MediaQuery.of(context).size.width * .91,
+                            title: 'Add Tenant',
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Container(
+                              width: double.infinity,
+                              // height: !form_valid ? 860 : 830,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  border: Border.all(
+                                    color: Color.fromRGBO(21, 43, 103, 1),
+                                  )),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('First Name *',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey)),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    CustomTextField(
+                                      keyboardType: TextInputType.text,
+                                      hintText: 'Enter first name',
+                                      controller: firstName,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'please enter the first name';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text('Last Name *',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey)),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    CustomTextField(
+                                      keyboardType: TextInputType.text,
+                                      hintText: 'Enter last name',
+                                      controller: lastName,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'please enter the last name';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text('Phone Number *',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey)),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    CustomTextField(
+                                      keyboardType: TextInputType.number,
+                                      hintText: 'Enter phone number',
+                                      controller: phoneNumber,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'please enter the phone number';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text('Work Number',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey)),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    CustomTextField(
+                                      keyboardType: TextInputType.number,
+                                      hintText: 'Enter work number',
+                                      controller: workNumber,
+                                      optional: true,
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text('Email *',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey)),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    CustomTextField(
+                                      keyboardType: TextInputType.emailAddress,
+                                      hintText: 'Enter Email',
+                                      controller: email,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'please enter email';
+                                        }
+                                        return null;
+                                      },
                                     ),
                                     SizedBox(
                                       height: 10,
@@ -1456,8 +1449,7 @@ class _AddTenantState extends State<AddTenant> {
                                   ),
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          blueColor,
+                                      backgroundColor: blueColor,
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(8.0),
@@ -1644,7 +1636,7 @@ class _AddTenantState extends State<AddTenant> {
                               SizedBox(
                                 height: 10,
                               ),
-                              Text('Email abc*',
+                              Text('Email *',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
@@ -1688,7 +1680,7 @@ class _AddTenantState extends State<AddTenant> {
                               SizedBox(
                                 height: 10,
                               ),
-                              Text('Password *',
+                              Text('Password  abc*',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
@@ -1710,6 +1702,7 @@ class _AddTenantState extends State<AddTenant> {
                                         }
                                         return null;
                                       },
+                                      pass: true,
                                     ),
                                   ),
                                   SizedBox(
@@ -2087,10 +2080,7 @@ class _AddTenantState extends State<AddTenant> {
                                             _validateInput();
                                           },
                                           controller: overrideFee,
-                                          cursorColor: blueColor
-
-
-,
+                                          cursorColor: blueColor,
                                         ),
                                       ),
                                     )
@@ -2387,6 +2377,7 @@ class CustomTextField extends StatefulWidget {
   final String? error_mess;
   final bool? optional;
   final bool? email;
+  final bool? pass;
 
   CustomTextField({
     Key? key,
@@ -2408,6 +2399,7 @@ class CustomTextField extends StatefulWidget {
     this.error_mess,
     this.optional = false,
     this.email,
+    this.pass,
     // Initialize onTap
   }) : super(key: key);
 
@@ -2472,8 +2464,7 @@ class CustomTextFieldState extends State<CustomTextField> {
       clipBehavior: Clip.none,
       children: <Widget>[
         FormField<String>(
-          validator:
-          widget.optional!
+          validator: widget.optional!
               ? null
               : (value) {
                   if (widget.controller!.text.isEmpty) {
@@ -2484,15 +2475,34 @@ class CustomTextFieldState extends State<CustomTextField> {
                         _errorMessage = 'Please ${widget.label}';
                     });
                     return '';
-                  }
-                  else if (widget.email != null) {
+                  } else if (widget.email != null) {
                     if (!EmailValidator.validate(widget.controller!.text)) {
                       setState(() {
                         _errorMessage = "Email is not valid";
                       });
                       return '';
                     }
+                  }else if (widget.pass != null) {
+                    String? validationMessage = ValidatePassword(widget.controller!.text);
+                    if (validationMessage != null) {
+                      setState(() {
+                        _errorMessage =
+                            validationMessage;
+                      });
+                      return '';
+                    }
                   }
+                  // else if (widget.pass != null) {
+                  //   // Validate as password
+                  //   String? validationMessage = ValidatePassword(value ?? '');
+                  //   if (validationMessage != null) {
+                  //     setState(() {
+                  //       _errorMessage = validationMessage;
+                  //     });
+                  //     return ''; // Return empty string to indicate error
+                  //   }
+                  // }
+
                   else if (widget.amount_check != null &&
                       double.parse(widget.controller!.text) >
                           double.parse(widget.max_amount!))
@@ -2501,7 +2511,6 @@ class CustomTextFieldState extends State<CustomTextField> {
                     });
                   return null;
                 },
-
           builder: (FormFieldState<String> state) {
             return Column(
               children: <Widget>[
@@ -2574,6 +2583,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                         }
                         return null;
                       },
+
                       controller: widget.controller,
                       decoration: InputDecoration(
                         suffixIcon: widget.suffixIcon,
@@ -2619,4 +2629,3 @@ class CustomTextFieldState extends State<CustomTextField> {
         : textfield;
   }
 }
-

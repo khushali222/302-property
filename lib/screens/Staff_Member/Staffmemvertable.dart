@@ -884,7 +884,8 @@ class _StaffTableState extends State<StaffTable> {
                                                             .08),
                                                 Expanded(
                                                   child: Text(
-                                                    '${staffmembers.staffmemberPhoneNumber}',
+                                                    formatPhoneNumber('${staffmembers.staffmemberPhoneNumber}'),
+                                                    // '${staffmembers.staffmemberPhoneNumber}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:

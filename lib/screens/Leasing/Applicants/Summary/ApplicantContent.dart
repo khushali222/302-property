@@ -252,11 +252,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               color: blueColor,
                                               borderRadius:
                                                   BorderRadius.circular(4),
-                                              border: Border.all(
-                                                  color: blueColor
-
-
-),
+                                              border:
+                                                  Border.all(color: blueColor),
                                             ),
                                             child: const Padding(
                                               padding: EdgeInsets.all(8.0),
@@ -293,8 +290,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                       border: Border.all(
-                                        color:
-                                             blueColor,
+                                        color: blueColor,
                                       ),
                                       borderRadius:
                                           BorderRadius.circular(10.0)),
@@ -440,8 +436,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color:
-                                           blueColor,
+                                      color: blueColor,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
@@ -559,8 +554,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color:
-                                           blueColor,
+                                      color: blueColor,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
@@ -685,8 +679,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color:
-                                           blueColor,
+                                      color: blueColor,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
@@ -878,8 +871,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color:
-                                           blueColor,
+                                      color: blueColor,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
@@ -985,8 +977,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color:
-                                           blueColor,
+                                      color: blueColor,
                                     ),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
@@ -1504,10 +1495,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                 borderRadius:
                                                     BorderRadius.circular(4),
                                                 border: Border.all(
-                                                    color:  blueColor
-
-
-),
+                                                    color: blueColor),
                                               ),
                                               child: Padding(
                                                 padding:
@@ -1548,11 +1536,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                   borderRadius:
                                                       BorderRadius.circular(4),
                                                   border: Border.all(
-                                                      color:
-                                                          blueColor
-
-
-),
+                                                      color: blueColor),
                                                 ),
                                                 child: Padding(
                                                   padding:
@@ -1621,11 +1605,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.white,
                                             borderRadius:
                                                 BorderRadius.circular(4),
-                                            border: Border.all(
-                                                color:  blueColor
-
-
-),
+                                            border:
+                                                Border.all(color: blueColor),
                                           ),
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
@@ -1662,11 +1643,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             color: Colors.white,
                                             borderRadius:
                                                 BorderRadius.circular(4),
-                                            border: Border.all(
-                                                color:  blueColor
-
-
-),
+                                            border:
+                                                Border.all(color: blueColor),
                                           ),
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
@@ -1707,11 +1685,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               color: Colors.white,
                                               borderRadius:
                                                   BorderRadius.circular(10),
-                                              border: Border.all(
-                                                  color: blueColor
-
-
-),
+                                              border:
+                                                  Border.all(color: blueColor),
                                             ),
                                             child: Padding(
                                               padding: const EdgeInsets.only(
@@ -1812,13 +1787,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       const SizedBox(width: 2),
                                                       Text(
                                                         '${(data.applicantFirstName ?? '').isEmpty ? 'N/A' : data.applicantFirstName} ${(data.applicantLastName ?? '').isEmpty ? 'N/A' : data.applicantLastName}',
-                                                        style:  TextStyle(
+                                                        style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: blueColor
-
-
-,
+                                                          color: blueColor,
                                                         ),
                                                       ),
                                                       const SizedBox(width: 2),
@@ -1852,13 +1824,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       const SizedBox(width: 2),
                                                       Text(
                                                         '${(data.applicantFirstName ?? '').isEmpty ? 'N/A' : data.applicantFirstName}',
-                                                        style:  TextStyle(
+                                                        style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: blueColor
-
-
-,
+                                                          color: blueColor,
                                                         ),
                                                       ),
                                                       const SizedBox(width: 2),
@@ -1892,13 +1861,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       const SizedBox(width: 2),
                                                       Text(
                                                         '${(data.applicantCity ?? '').isEmpty ? 'N/A' : data.applicantCity}',
-                                                        style:  TextStyle(
+                                                        style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: blueColor
-
-
-,
+                                                          color: blueColor,
                                                         ),
                                                       ),
                                                       const SizedBox(width: 2),
@@ -2002,10 +1968,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                   border: Border.all(
-                                                    color:  blueColor
-
-
-,
+                                                    color: blueColor,
                                                   ),
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -2138,10 +2101,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                 border: Border.all(
-                                                  color:  blueColor
-
-
-,
+                                                  color: blueColor,
                                                 ),
                                                 borderRadius:
                                                     BorderRadius.circular(10.0),
@@ -2274,10 +2234,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                 border: Border.all(
-                                                  color:  blueColor
-
-
-,
+                                                  color: blueColor,
                                                 ),
                                                 borderRadius:
                                                     BorderRadius.circular(10.0),
@@ -2410,10 +2367,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                 border: Border.all(
-                                                  color:  blueColor
-
-
-,
+                                                  color: blueColor,
                                                 ),
                                                 borderRadius:
                                                     BorderRadius.circular(10.0),
@@ -2627,10 +2581,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                 border: Border.all(
-                                                  color:  blueColor
-
-
-,
+                                                  color: blueColor,
                                                 ),
                                                 borderRadius:
                                                     BorderRadius.circular(10.0),
@@ -2742,10 +2693,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                 border: Border.all(
-                                                  color:  blueColor
-
-
-,
+                                                  color: blueColor,
                                                 ),
                                                 borderRadius:
                                                     BorderRadius.circular(10.0),
@@ -3427,7 +3375,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                             const SizedBox(width: 2),
                                                                             Text(
                                                                               '${data.applicantFirstName} ${data.applicantLastName}',
-                                                                              style:  TextStyle(
+                                                                              style: TextStyle(
                                                                                 fontWeight: FontWeight.bold,
                                                                                 fontSize: 16,
                                                                                 color: blueColor,
@@ -3466,7 +3414,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                             const SizedBox(width: 2),
                                                                             Text(
                                                                               '${data.applicantCity ?? 'N/A'}',
-                                                                              style:  TextStyle(
+                                                                              style: TextStyle(
                                                                                 fontWeight: FontWeight.bold,
                                                                                 fontSize: 16,
                                                                                 color: blueColor,
@@ -3513,7 +3461,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                             const SizedBox(width: 2),
                                                                             Text(
                                                                               '${data.applicantStreetAddress ?? 'N/A'}',
-                                                                              style:  TextStyle(
+                                                                              style: TextStyle(
                                                                                 fontWeight: FontWeight.bold,
                                                                                 fontSize: 16,
                                                                                 color: blueColor,
@@ -3552,7 +3500,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                             const SizedBox(width: 2),
                                                                             Text(
                                                                               '${data.applicantEmail ?? 'N/A'}',
-                                                                              style:  TextStyle(
+                                                                              style: TextStyle(
                                                                                 fontWeight: FontWeight.bold,
                                                                                 fontSize: 16,
                                                                                 color: blueColor,
@@ -3599,7 +3547,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                   const SizedBox(
                                                                       width: 2),
                                                                   Text(
-                                                                    '${data.applicantPhoneNumber ?? 'N/A'}',
+                                                                    formatPhoneNumber(
+                                                                        '${data.applicantPhoneNumber}'),
+                                                                    //'${data.applicantPhoneNumber ?? 'N/A'}',
                                                                     style:
                                                                         const TextStyle(
                                                                       fontWeight:
@@ -3751,14 +3701,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 Text(
                                                                   '${data.applicantFirstName} ${data.applicantLastName}',
                                                                   style:
-                                                                       TextStyle(
+                                                                      TextStyle(
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
-                                                                    color: blueColor
-
-
-,
+                                                                    color:
+                                                                        blueColor,
                                                                   ),
                                                                 ),
                                                                 const SizedBox(
@@ -3797,14 +3745,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 Text(
                                                                   '${data.applicantCity ?? 'N/A'}',
                                                                   style:
-                                                                       TextStyle(
+                                                                      TextStyle(
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
-                                                                    color: blueColor
-
-
-,
+                                                                    color:
+                                                                        blueColor,
                                                                   ),
                                                                 ),
                                                                 const SizedBox(
@@ -3843,14 +3789,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 Text(
                                                                   '${data.applicantStreetAddress ?? 'N/A'}',
                                                                   style:
-                                                                       TextStyle(
+                                                                      TextStyle(
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
-                                                                    color: blueColor
-
-
-,
+                                                                    color:
+                                                                        blueColor,
                                                                   ),
                                                                 ),
                                                                 const SizedBox(
@@ -3890,14 +3834,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 Text(
                                                                   '${data.applicantEmail ?? 'N/A'}',
                                                                   style:
-                                                                       TextStyle(
+                                                                      TextStyle(
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
-                                                                    color: blueColor
-
-
-,
+                                                                    color:
+                                                                        blueColor,
                                                                   ),
                                                                 ),
                                                                 const SizedBox(
@@ -3934,16 +3876,16 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 const SizedBox(
                                                                     width: 2),
                                                                 Text(
-                                                                  '${data.applicantPhoneNumber ?? 'N/A'}',
+                                                                  formatPhoneNumber(
+                                                                      '${data.applicantPhoneNumber}'),
+                                                                  //  '${data.applicantPhoneNumber ?? 'N/A'}',
                                                                   style:
-                                                                       TextStyle(
+                                                                      TextStyle(
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
-                                                                    color: blueColor
-
-
-,
+                                                                    color:
+                                                                        blueColor,
                                                                   ),
                                                                 ),
                                                                 const SizedBox(
@@ -3979,11 +3921,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               color: Colors.white,
                                               borderRadius:
                                                   BorderRadius.circular(10),
-                                              border: Border.all(
-                                                  color: blueColor
-
-
-),
+                                              border:
+                                                  Border.all(color: blueColor),
                                             ),
                                             child: Padding(
                                               padding: const EdgeInsets.only(
@@ -4282,7 +4221,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 height: 5,
                                                               ),
                                                               Text(
-                                                                '${data.rentalHistory!.rentalOwnerPhoneNumber ?? 'N/A'}',
+                                                                formatPhoneNumber(
+                                                                    '${data.rentalHistory!.rentalOwnerPhoneNumber}'),
+                                                                // '${data.rentalHistory!.rentalOwnerPhoneNumber ?? 'N/A'}',
                                                                 style:
                                                                     const TextStyle(
                                                                   fontWeight:
@@ -4378,10 +4319,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                           BorderRadius.circular(
                                                               10),
                                                       border: Border.all(
-                                                          color: blueColor
-
-
-),
+                                                          color: blueColor),
                                                     ),
                                                     child: Padding(
                                                       padding:
@@ -4474,8 +4412,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               Expanded(
                                                                 child:
                                                                     Container(
-                                                                  child:
-                                                                       Column(
+                                                                  child: Column(
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .start,
@@ -4504,10 +4441,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: blueColor
-
-
-,
+                                                                          color:
+                                                                              blueColor,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -4517,8 +4452,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               Expanded(
                                                                 child:
                                                                     Container(
-                                                                  child:
-                                                                       Column(
+                                                                  child: Column(
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .start,
@@ -4547,10 +4481,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: blueColor
-
-
-,
+                                                                          color:
+                                                                              blueColor,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -4567,8 +4499,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               Expanded(
                                                                 child:
                                                                     Container(
-                                                                  child:
-                                                                       Column(
+                                                                  child: Column(
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .start,
@@ -4597,10 +4528,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: blueColor
-
-
-,
+                                                                          color:
+                                                                              blueColor,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -4610,8 +4539,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               Expanded(
                                                                 child:
                                                                     Container(
-                                                                  child:
-                                                                       Column(
+                                                                  child: Column(
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .start,
@@ -4640,10 +4568,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: blueColor
-
-
-,
+                                                                          color:
+                                                                              blueColor,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -4683,17 +4609,17 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                             5,
                                                                       ),
                                                                       Text(
-                                                                        '${(data.rentalHistory?.rentalOwnerPhoneNumber ?? 'N/A').toString().isEmpty ? 'N/A' : 'N/A'}',
+                                                                        formatPhoneNumber(
+                                                                            '${data.rentalHistory?.rentalOwnerPhoneNumber}'),
+                                                                        // '${(data.rentalHistory?.rentalOwnerPhoneNumber ?? 'N/A').toString().isEmpty ? 'N/A' : 'N/A'}',
                                                                         style:
-                                                                             TextStyle(
+                                                                            TextStyle(
                                                                           fontWeight:
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: blueColor
-
-
-,
+                                                                          color:
+                                                                              blueColor,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -4727,15 +4653,13 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                       Text(
                                                                         '${(data.rentalHistory?.rentalOwnerPrimaryEmail ?? 'N/A').isEmpty ? 'N/A' : 'N/A'}',
                                                                         style:
-                                                                             TextStyle(
+                                                                            TextStyle(
                                                                           fontWeight:
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: blueColor
-
-
-,
+                                                                          color:
+                                                                              blueColor,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -4836,7 +4760,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         const SizedBox(
                                                           height: 5,
                                                         ),
-                                                         Row(
+                                                        Row(
                                                           children: [
                                                             SizedBox(width: 2),
                                                             Text(
@@ -4845,10 +4769,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                color: blueColor
-
-
-,
+                                                                color:
+                                                                    blueColor,
                                                               ),
                                                             ),
                                                             SizedBox(width: 2),
@@ -4862,8 +4784,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                           children: [
                                                             Expanded(
                                                               child: Container(
-                                                                child:
-                                                                     Column(
+                                                                child: Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .start,
@@ -4890,10 +4811,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: blueColor
-
-
-,
+                                                                        color:
+                                                                            blueColor,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -4902,8 +4821,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                             ),
                                                             Expanded(
                                                               child: Container(
-                                                                child:
-                                                                     Column(
+                                                                child: Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .start,
@@ -4930,10 +4848,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: blueColor
-
-
-,
+                                                                        color:
+                                                                            blueColor,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -4949,8 +4865,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                           children: [
                                                             Expanded(
                                                               child: Container(
-                                                                child:
-                                                                     Column(
+                                                                child: Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .start,
@@ -4977,10 +4892,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: blueColor
-
-
-,
+                                                                        color:
+                                                                            blueColor,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -4989,8 +4902,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                             ),
                                                             Expanded(
                                                               child: Container(
-                                                                child:
-                                                                     Column(
+                                                                child: Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .start,
@@ -5017,10 +4929,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: blueColor
-
-
-,
+                                                                        color:
+                                                                            blueColor,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -5059,15 +4969,15 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                       height: 5,
                                                                     ),
                                                                     Text(
-                                                                      '${(data.rentalHistory?.rentalOwnerPhoneNumber ?? 'N/A').toString().isEmpty ? 'N/A' : 'N/A'}',
+                                                                      formatPhoneNumber(
+                                                                          '${data.rentalHistory?.rentalOwnerPhoneNumber}'),
+                                                                      //'${(data.rentalHistory?.rentalOwnerPhoneNumber ?? 'N/A').toString().isEmpty ? 'N/A' : 'N/A'}',
                                                                       style:
-                                                                           TextStyle(
+                                                                          TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: blueColor
-
-
-,
+                                                                        color:
+                                                                            blueColor,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -5100,13 +5010,11 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                     Text(
                                                                       '${(data.rentalHistory?.rentalOwnerPrimaryEmail ?? 'N/A').isEmpty ? 'N/A' : 'N/A'}',
                                                                       style:
-                                                                           TextStyle(
+                                                                          TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: blueColor
-
-
-,
+                                                                        color:
+                                                                            blueColor,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -5146,11 +5054,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               color: Colors.white,
                                               borderRadius:
                                                   BorderRadius.circular(10),
-                                              border: Border.all(
-                                                  color: blueColor
-
-
-),
+                                              border:
+                                                  Border.all(color: blueColor),
                                             ),
                                             child: Padding(
                                               padding: const EdgeInsets.only(
@@ -5209,13 +5114,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       const SizedBox(width: 2),
                                                       Text(
                                                         '${(data.emergencyContact?.firstName ?? 'N/A').isEmpty ? '' : data.emergencyContact!.firstName} ${(data.emergencyContact?.lastName ?? 'N/A').isEmpty ? 'N/A' : data.emergencyContact!.lastName}',
-                                                        style:  TextStyle(
+                                                        style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: blueColor
-
-
-,
+                                                          color: blueColor,
                                                         ),
                                                       ),
                                                       const SizedBox(width: 2),
@@ -5249,13 +5151,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       const SizedBox(width: 2),
                                                       Text(
                                                         '${(data.emergencyContact?.relationship ?? 'N/A').isEmpty ? 'N/A' : data.emergencyContact!.relationship}',
-                                                        style:  TextStyle(
+                                                        style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: blueColor
-
-
-,
+                                                          color: blueColor,
                                                         ),
                                                       ),
                                                       const SizedBox(width: 2),
@@ -5289,13 +5188,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       const SizedBox(width: 2),
                                                       Text(
                                                         '${(data.emergencyContact?.email ?? 'N/A').isEmpty ? 'N/A' : data.emergencyContact!.email}',
-                                                        style:  TextStyle(
+                                                        style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: blueColor
-
-
-,
+                                                          color: blueColor,
                                                         ),
                                                       ),
                                                       const SizedBox(width: 2),
@@ -5329,13 +5225,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       const SizedBox(width: 2),
                                                       Text(
                                                         '${(data.emergencyContact?.phoneNumber ?? 'N/A').toString().isEmpty ? 'N/A' : data.emergencyContact!.phoneNumber}',
-                                                        style:  TextStyle(
+                                                        style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: blueColor
-
-
-,
+                                                          color: blueColor,
                                                         ),
                                                       ),
                                                       const SizedBox(width: 2),
@@ -5378,10 +5271,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                           BorderRadius.circular(
                                                               10),
                                                       border: Border.all(
-                                                          color: blueColor
-
-
-),
+                                                          color: blueColor),
                                                     ),
                                                     child: Padding(
                                                       padding:
@@ -5443,7 +5333,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                     const SizedBox(
                                                                       height: 5,
                                                                     ),
-                                                                     Row(
+                                                                    Row(
                                                                       children: [
                                                                         SizedBox(
                                                                             width:
@@ -5456,10 +5346,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                                 FontWeight.bold,
                                                                             fontSize:
                                                                                 16,
-                                                                            color: blueColor
-
-
-,
+                                                                            color:
+                                                                                blueColor,
                                                                           ),
                                                                         ),
                                                                         SizedBox(
@@ -5494,7 +5382,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                     const SizedBox(
                                                                       height: 5,
                                                                     ),
-                                                                     Row(
+                                                                    Row(
                                                                       children: [
                                                                         SizedBox(
                                                                             width:
@@ -5507,10 +5395,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                                 FontWeight.bold,
                                                                             fontSize:
                                                                                 16,
-                                                                            color: blueColor
-
-
-,
+                                                                            color:
+                                                                                blueColor,
                                                                           ),
                                                                         ),
                                                                         SizedBox(
@@ -5530,7 +5416,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                             height: 18,
                                                           ),
                                                           // Tenant
-                                                           Row(
+                                                          Row(
                                                             children: [
                                                               Expanded(
                                                                 child: Column(
@@ -5566,10 +5452,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                                 FontWeight.bold,
                                                                             fontSize:
                                                                                 16,
-                                                                            color: blueColor
-
-
-,
+                                                                            color:
+                                                                                blueColor,
                                                                           ),
                                                                         ),
                                                                         SizedBox(
@@ -5618,10 +5502,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                                 FontWeight.bold,
                                                                             fontSize:
                                                                                 16,
-                                                                            color: blueColor
-
-
-,
+                                                                            color:
+                                                                                blueColor,
                                                                           ),
                                                                         ),
                                                                         SizedBox(
@@ -5726,7 +5608,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         const SizedBox(
                                                           height: 5,
                                                         ),
-                                                         Row(
+                                                        Row(
                                                           children: [
                                                             SizedBox(width: 2),
                                                             Text(
@@ -5735,10 +5617,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                color: blueColor
-
-
-,
+                                                                color:
+                                                                    blueColor,
                                                               ),
                                                             ),
                                                             SizedBox(width: 2),
@@ -5768,7 +5648,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         const SizedBox(
                                                           height: 5,
                                                         ),
-                                                         Row(
+                                                        Row(
                                                           children: [
                                                             SizedBox(width: 2),
                                                             Text(
@@ -5777,10 +5657,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                color: blueColor
-
-
-,
+                                                                color:
+                                                                    blueColor,
                                                               ),
                                                             ),
                                                             SizedBox(width: 2),
@@ -5810,7 +5688,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         const SizedBox(
                                                           height: 5,
                                                         ),
-                                                         Row(
+                                                        Row(
                                                           children: [
                                                             SizedBox(width: 2),
                                                             Text(
@@ -5819,10 +5697,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                color: blueColor
-
-
-,
+                                                                color:
+                                                                    blueColor,
                                                               ),
                                                             ),
                                                             SizedBox(width: 2),
@@ -5852,7 +5728,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         const SizedBox(
                                                           height: 5,
                                                         ),
-                                                         Row(
+                                                        Row(
                                                           children: [
                                                             SizedBox(width: 2),
                                                             Text(
@@ -5861,10 +5737,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                color: blueColor
-
-
-,
+                                                                color:
+                                                                    blueColor,
                                                               ),
                                                             ),
                                                             SizedBox(width: 2),
@@ -5900,11 +5774,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               color: Colors.white,
                                               borderRadius:
                                                   BorderRadius.circular(10),
-                                              border: Border.all(
-                                                  color: blueColor
-
-
-),
+                                              border:
+                                                  Border.all(color: blueColor),
                                             ),
                                             child: Padding(
                                               padding: const EdgeInsets.only(
@@ -6296,10 +6167,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                           BorderRadius.circular(
                                                               10),
                                                       border: Border.all(
-                                                          color: blueColor
-
-
-),
+                                                          color: blueColor),
                                                     ),
                                                     child: Padding(
                                                       padding:
@@ -6398,8 +6266,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               Expanded(
                                                                 child:
                                                                     Container(
-                                                                  child:
-                                                                       Column(
+                                                                  child: Column(
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .start,
@@ -6428,10 +6295,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: blueColor
-
-
-,
+                                                                          color:
+                                                                              blueColor,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -6441,8 +6306,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               Expanded(
                                                                 child:
                                                                     Container(
-                                                                  child:
-                                                                       Column(
+                                                                  child: Column(
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .start,
@@ -6471,10 +6335,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: blueColor
-
-
-,
+                                                                          color:
+                                                                              blueColor,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -6494,8 +6356,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               Expanded(
                                                                 child:
                                                                     Container(
-                                                                  child:
-                                                                       Column(
+                                                                  child: Column(
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .start,
@@ -6524,10 +6385,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: blueColor
-
-
-,
+                                                                          color:
+                                                                              blueColor,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -6537,8 +6396,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               Expanded(
                                                                 child:
                                                                     Container(
-                                                                  child:
-                                                                       Column(
+                                                                  child: Column(
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .start,
@@ -6567,10 +6425,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: blueColor
-
-
-,
+                                                                          color:
+                                                                              blueColor,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -6588,8 +6444,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               Expanded(
                                                                 child:
                                                                     Container(
-                                                                  child:
-                                                                       Column(
+                                                                  child: Column(
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .start,
@@ -6618,10 +6473,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: blueColor
-
-
-,
+                                                                          color:
+                                                                              blueColor,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -6631,8 +6484,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               Expanded(
                                                                 child:
                                                                     Container(
-                                                                  child:
-                                                                       Column(
+                                                                  child: Column(
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .start,
@@ -6661,10 +6513,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                               FontWeight.bold,
                                                                           fontSize:
                                                                               16,
-                                                                          color: blueColor
-
-
-,
+                                                                          color:
+                                                                              blueColor,
                                                                         ),
                                                                       ),
                                                                     ],
@@ -6769,7 +6619,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         const SizedBox(
                                                           height: 5,
                                                         ),
-                                                         Row(
+                                                        Row(
                                                           children: [
                                                             SizedBox(width: 2),
                                                             Text(
@@ -6778,10 +6628,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                color: blueColor
-
-
-,
+                                                                color:
+                                                                    blueColor,
                                                               ),
                                                             ),
                                                             SizedBox(width: 2),
@@ -6797,8 +6645,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                           children: [
                                                             Expanded(
                                                               child: Container(
-                                                                child:
-                                                                     Column(
+                                                                child: Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .start,
@@ -6825,10 +6672,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: blueColor
-
-
-,
+                                                                        color:
+                                                                            blueColor,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -6837,8 +6682,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                             ),
                                                             Expanded(
                                                               child: Container(
-                                                                child:
-                                                                     Column(
+                                                                child: Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .start,
@@ -6865,10 +6709,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: blueColor
-
-
-,
+                                                                        color:
+                                                                            blueColor,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -6887,8 +6729,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                           children: [
                                                             Expanded(
                                                               child: Container(
-                                                                child:
-                                                                     Column(
+                                                                child: Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .start,
@@ -6915,10 +6756,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: blueColor
-
-
-,
+                                                                        color:
+                                                                            blueColor,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -6927,8 +6766,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                             ),
                                                             Expanded(
                                                               child: Container(
-                                                                child:
-                                                                     Column(
+                                                                child: Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .start,
@@ -6955,10 +6793,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: blueColor
-
-
-,
+                                                                        color:
+                                                                            blueColor,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -6975,8 +6811,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                           children: [
                                                             Expanded(
                                                               child: Container(
-                                                                child:
-                                                                     Column(
+                                                                child: Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .start,
@@ -7003,10 +6838,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: blueColor
-
-
-,
+                                                                        color:
+                                                                            blueColor,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -7015,8 +6848,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                             ),
                                                             Expanded(
                                                               child: Container(
-                                                                child:
-                                                                     Column(
+                                                                child: Column(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .start,
@@ -7043,10 +6875,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.bold,
-                                                                        color: blueColor
-
-
-,
+                                                                        color:
+                                                                            blueColor,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -7072,7 +6902,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                         ),
             );
           } else {
-            return  Padding(
+            return Padding(
               padding: const EdgeInsets.only(top: 200),
               child: Center(child: Text('No data available')),
             );

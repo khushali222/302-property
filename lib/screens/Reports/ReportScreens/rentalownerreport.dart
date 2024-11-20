@@ -685,16 +685,59 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
           pw.Padding(
               child: pw.Text(
                 '${property.rentalData.rentalAddress ?? 'N/A'}',
-                style: pw.TextStyle(fontSize: 10),
+                style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold,),
               ),
               padding: pw.EdgeInsets.only(left: 15)), // Property Name
-          '${property.tenantData.tenantFirstName ?? 'N/A'} ${property.tenantData.tenantLastName ?? 'N/A'}', // Tenant Name
-          property.createdAt.toString(), // Payment Date
-          property.paymentType ?? '', // Payment Type
-          property.transactionId ?? '', // Transaction ID
-          property.paymentId ?? '', // References
-          property.ccType ?? '', // Card Type
-          property.ccNumber ?? '', // Card Number
+          pw.Text(
+            '${property.tenantData.tenantFirstName ?? 'N/A'} ${property.tenantData.tenantLastName ?? 'N/A'}',
+            style: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              fontSize: 10,
+            ),
+          ), // Property Name
+          // Tenant Name
+          pw.Text(
+            property.createdAt.toString(),
+            style: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              fontSize: 10,
+            ),
+          ), // Payment Date
+          pw.Text(
+            property.paymentType ?? '',
+            style: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              fontSize: 10,
+            ),
+          ), // Payment Type
+          pw.Text(
+            property.transactionId ?? '',
+            style: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              fontSize: 10,
+            ),
+          ), // Transaction ID
+          pw.Text(
+            property.paymentId ?? '',
+            style: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              fontSize: 10,
+            ),
+          ), // References
+          pw.Text(
+            property.ccType ?? '',
+            style: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              fontSize: 10,
+            ),
+          ), // Card Type
+          pw.Text(
+            property.ccNumber ?? '',
+            style: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              fontSize: 10,
+            ),
+          ), // Card Number
           pw.Align(
             alignment: pw.Alignment.centerRight,
             child: pw.Text(
@@ -1250,11 +1293,13 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response = await http
-        .get(Uri.parse('${Api_url}/api/rental_owner/todayspaymentrentalownerpdf/$id'), headers: {
-      "authorization": "CRM $token",
-      "id": "CRM $id",
-    });
+    final response = await http.get(
+        Uri.parse(
+            '${Api_url}/api/rental_owner/todayspaymentrentalownerpdf/$id'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        });
     final jsonData = json.decode(response.body);
     print(jsonData);
     if (response.statusCode == 200) {
@@ -1363,7 +1408,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                             .skip(currentPage * itemsPerPage)
                             .take(itemsPerPage)
                             .toList();
-               
+
                         return SingleChildScrollView(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
@@ -1480,7 +1525,9 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                         ),
                                                       ),
                                                     ),
-                                                     SizedBox(width: 20,),
+                                                    SizedBox(
+                                                      width: 20,
+                                                    ),
                                                     // SizedBox(
                                                     //     width:
                                                     //     MediaQuery.of(context)
@@ -1494,12 +1541,14 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
-                                                          FontWeight.bold,
+                                                              FontWeight.bold,
                                                           fontSize: 14,
                                                         ),
                                                       ),
                                                     ),
-                                                    SizedBox(width: 5,),
+                                                    SizedBox(
+                                                      width: 5,
+                                                    ),
                                                   ],
                                                 ),
                                               ),
@@ -1647,21 +1696,18 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                                               "${tenant.tenantData.tenantFirstName} ${tenant.tenantData.tenantLastName}"),
                                                                           'Transaction Id',
                                                                           _getDisplayValue(
-                                                                              tenant
-                                                                                  .transactionId)),
+                                                                              tenant.transactionId)),
                                                                       _buildTableRow(
                                                                           'Transaction Date:',
                                                                           _getDisplayValue(
-                                                                            dateProvider
-                                                                                .formatCurrentDate('${tenant.createdAt.toString()}'),
+                                                                            dateProvider.formatCurrentDate('${tenant.createdAt.toString()}'),
                                                                             // formatDate(tenant
                                                                             //     .createdAt
                                                                             //     .toString())
                                                                           ),
                                                                           'Transaction Type:',
                                                                           _getDisplayValue(
-                                                                              tenant
-                                                                                  .paymentType)),
+                                                                              tenant.paymentType)),
                                                                       _buildTableRow(
                                                                           'Payment Details:',
                                                                           _getDisplayValue(
@@ -1672,10 +1718,14 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                                     ],
                                                                   ),
                                                                 ),
-
                                                               ],
                                                             ),
-                                                            if(item.payments.first.entry.length > 0)
+                                                            if (item
+                                                                    .payments
+                                                                    .first
+                                                                    .entry
+                                                                    .length >
+                                                                0)
                                                               Row(
                                                                 children: [
                                                                   SizedBox(
@@ -1686,51 +1736,59 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                                       children: [
                                                                         TextSpan(
                                                                           text:
-                                                                          'Details Line : ',
+                                                                              'Details Line : ',
                                                                           style: TextStyle(
-                                                                              fontWeight:
-                                                                              FontWeight.bold,
+                                                                              fontWeight: FontWeight.bold,
                                                                               color: blueColor), // Bold and black
                                                                         ),
-
                                                                       ],
                                                                     ),
                                                                   ),
                                                                 ],
                                                               ),
-                                                            if(item.payments.first.entry.length > 0)
-                                                            SizedBox(
-                                                              height: 4,
-                                                            ),
-                                                            if(item.payments.first.entry.length > 0)
+                                                            if (item
+                                                                    .payments
+                                                                    .first
+                                                                    .entry
+                                                                    .length >
+                                                                0)
+                                                              SizedBox(
+                                                                height: 4,
+                                                              ),
+                                                            if (item
+                                                                    .payments
+                                                                    .first
+                                                                    .entry
+                                                                    .length >
+                                                                0)
                                                               Padding(
                                                                 padding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    left:
-                                                                    15,
-                                                                    top:
-                                                                    0),
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            15,
+                                                                        top: 0),
                                                                 child: Row(
                                                                   mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
+                                                                      MainAxisAlignment
+                                                                          .start,
                                                                   children: [
                                                                     FaIcon(
                                                                       isTenantExpanded
-                                                                          ? FontAwesomeIcons.sortUp
-                                                                          : FontAwesomeIcons.sortDown,
-                                                                      size:
-                                                                      20,
+                                                                          ? FontAwesomeIcons
+                                                                              .sortUp
+                                                                          : FontAwesomeIcons
+                                                                              .sortDown,
+                                                                      size: 20,
                                                                       color: Colors
                                                                           .transparent,
                                                                     ),
                                                                     Expanded(
                                                                       flex: 2,
                                                                       child:
-                                                                      Column(
+                                                                          Column(
                                                                         crossAxisAlignment:
-                                                                        CrossAxisAlignment.start,
+                                                                            CrossAxisAlignment.start,
                                                                         children: <Widget>[
                                                                           Text.rich(
                                                                             TextSpan(
@@ -1751,9 +1809,9 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                                     Expanded(
                                                                       flex: 2,
                                                                       child:
-                                                                      Column(
+                                                                          Column(
                                                                         crossAxisAlignment:
-                                                                        CrossAxisAlignment.start,
+                                                                            CrossAxisAlignment.start,
                                                                         children: <Widget>[
                                                                           Text.rich(
                                                                             TextSpan(
@@ -1775,85 +1833,87 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                                 ),
                                                               ),
                                                             Column(
-                                                              children: item.payments.first.entry.map(
-                                                                      (entry) {
-                                                                    return Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          left:
+                                                              children: item
+                                                                  .payments
+                                                                  .first
+                                                                  .entry
+                                                                  .map((entry) {
+                                                                return Padding(
+                                                                  padding: const EdgeInsets
+                                                                      .only(
+                                                                      left:
                                                                           15.0,
-                                                                          bottom:
+                                                                      bottom:
                                                                           0),
-                                                                      child:
-                                                                      Row(
-                                                                        mainAxisAlignment:
-                                                                        MainAxisAlignment.start,
-                                                                        children: [
-                                                                          FaIcon(
-                                                                            isTenantExpanded
-                                                                                ? FontAwesomeIcons.sortUp
-                                                                                : FontAwesomeIcons.sortDown,
-                                                                            size:
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      FaIcon(
+                                                                        isTenantExpanded
+                                                                            ? FontAwesomeIcons.sortUp
+                                                                            : FontAwesomeIcons.sortDown,
+                                                                        size:
                                                                             20,
-                                                                            color:
-                                                                            Colors.transparent,
-                                                                          ),
-                                                                          Expanded(
-                                                                            flex:
-                                                                            2,
-                                                                            child:
-                                                                            Column(
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              children: <Widget>[
-                                                                                Text.rich(
-                                                                                  TextSpan(
-                                                                                    children: [
-                                                                                      TextSpan(
-                                                                                        text: '${entry.account ?? "N/A"}',
-                                                                                        style: TextStyle(
-                                                                                          fontWeight: FontWeight.w700,
-                                                                                          color: grey,
-                                                                                        ),
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                          SizedBox(
-                                                                            width:
-                                                                            15,
-                                                                          ),
-                                                                          Expanded(
-                                                                            flex:
-                                                                            2,
-                                                                            child:
-                                                                            Column(
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              children: <Widget>[
-                                                                                Text.rich(
-                                                                                  TextSpan(
-                                                                                    children: [
-                                                                                      TextSpan(
-                                                                                        text: ' \$ ${entry.amount ?? "N/A"}',
-                                                                                        style: TextStyle(
-                                                                                          fontWeight: FontWeight.w700,
-                                                                                          color: grey,
-                                                                                        ),
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                                // Add additional fields if needed
-                                                                              ],
-                                                                            ),
-                                                                          ),
-
-                                                                        ],
+                                                                        color: Colors
+                                                                            .transparent,
                                                                       ),
-                                                                    );
-                                                                  }).toList(),
+                                                                      Expanded(
+                                                                        flex: 2,
+                                                                        child:
+                                                                            Column(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: <Widget>[
+                                                                            Text.rich(
+                                                                              TextSpan(
+                                                                                children: [
+                                                                                  TextSpan(
+                                                                                    text: '${entry.account ?? "N/A"}',
+                                                                                    style: TextStyle(
+                                                                                      fontWeight: FontWeight.w700,
+                                                                                      color: grey,
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            15,
+                                                                      ),
+                                                                      Expanded(
+                                                                        flex: 2,
+                                                                        child:
+                                                                            Column(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: <Widget>[
+                                                                            Text.rich(
+                                                                              TextSpan(
+                                                                                children: [
+                                                                                  TextSpan(
+                                                                                    text: ' \$ ${entry.amount ?? "N/A"}',
+                                                                                    style: TextStyle(
+                                                                                      fontWeight: FontWeight.w700,
+                                                                                      color: grey,
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                            // Add additional fields if needed
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                              }).toList(),
                                                             ),
                                                           ],
                                                         ),

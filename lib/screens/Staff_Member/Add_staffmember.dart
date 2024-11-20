@@ -181,8 +181,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                           });
                                         },
                                         controller: name,
-                                        cursorColor:
-                                            blueColor,
+                                        cursorColor: blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter staff member name",
                                           hintStyle: TextStyle(
@@ -219,7 +218,9 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                       nameerror
                           ? Row(
                               children: [
-                                Spacer(),
+                                SizedBox(
+                                  width: 2,
+                                ),
                                 Text(
                                   namemessage,
                                   style: TextStyle(
@@ -283,8 +284,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                           });
                                         },
                                         controller: designation,
-                                        cursorColor:
-                                            blueColor,
+                                        cursorColor: blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter designation",
                                           hintStyle: TextStyle(
@@ -321,7 +321,9 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                       designationerror
                           ? Row(
                               children: [
-                                Spacer(),
+                                SizedBox(
+                                  width: 2,
+                                ),
                                 Text(
                                   designationmessage,
                                   style: TextStyle(
@@ -389,8 +391,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                         keyboardType:
                                             TextInputType.numberWithOptions(
                                                 signed: true, decimal: true),
-                                        cursorColor:
-                                            blueColor,
+                                        cursorColor: blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter phone number",
                                           hintStyle: TextStyle(
@@ -427,7 +428,9 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                       phonenumbererror
                           ? Row(
                               children: [
-                                Spacer(),
+                                SizedBox(
+                                  width: 2,
+                                ),
                                 Text(
                                   phonenumbermessage,
                                   style: TextStyle(
@@ -493,8 +496,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                         keyboardType:
                                             TextInputType.emailAddress,
                                         controller: email,
-                                        cursorColor:
-                                            blueColor,
+                                        cursorColor: blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter email",
                                           hintStyle: TextStyle(
@@ -531,7 +533,9 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                       emailerror
                           ? Row(
                               children: [
-                                Spacer(),
+                                SizedBox(
+                                  width: 2,
+                                ),
                                 Text(
                                   emailmessage,
                                   style: TextStyle(
@@ -595,8 +599,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                           });
                                         },
                                         controller: password,
-                                        cursorColor:
-                                            blueColor,
+                                        cursorColor: blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter password",
                                           hintStyle: TextStyle(
@@ -633,14 +636,18 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                       passworderror
                           ? Row(
                               children: [
-                                Spacer(),
-                                Text(
-                                  passwordmessage,
-                                  style: TextStyle(
-                                    color: Colors.red,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            .037,
+                                SizedBox(
+                                  width: 2,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    passwordmessage,
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              .037,
+                                    ),
                                   ),
                                 ),
                                 SizedBox(
@@ -720,15 +727,44 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                               }
 
                               // Validate password
+                              // if (password.text.isEmpty) {
+                              //   setState(() {
+                              //     passworderror = true;
+                              //     passwordmessage = "Password is required";
+                              //   });
+                              // } else {
+                              //   setState(() {
+                              //     passworderror = false;
+                              //   });
+                              // }
+
                               if (password.text.isEmpty) {
                                 setState(() {
                                   passworderror = true;
                                   passwordmessage = "Password is required";
                                 });
-                              } else {
+                              } else if (password.text.length < 8) {
                                 setState(() {
-                                  passworderror = false;
+                                  passworderror = true;
+                                  passwordmessage =
+                                      "Password must have 8 Characters";
                                 });
+                              }
+                              else {
+                                String? validationMessage =
+                                    ValidatePassword(password.text);
+
+                                if (validationMessage != null) {
+                                  setState(() {
+                                    passworderror = true;
+                                    passwordmessage =
+                                        validationMessage; // Use the dynamic message
+                                  });
+                                } else {
+                                  setState(() {
+                                    passworderror = false; // No error
+                                  });
+                                }
                               }
 
                               // Now, only proceed if all fields are filled and valid

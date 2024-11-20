@@ -801,7 +801,8 @@ class _SummaryContentState extends State<SummaryContent> {
                             width: 10,
                           ),
                           Text(
-                            "${widget.summery.applicantPhoneNumber!.isEmpty ? 'N/A' : widget.summery.applicantPhoneNumber}",
+                           formatPhoneNumber('${widget.summery.applicantPhoneNumber!}'),
+                           // "${widget.summery.applicantPhoneNumber!.isEmpty ? 'N/A' : widget.summery.applicantPhoneNumber}",
                             style:  TextStyle(
                               fontWeight: FontWeight.w500,
                               color: blueColor,

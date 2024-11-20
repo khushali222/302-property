@@ -2003,6 +2003,7 @@ class CustomTextField extends StatefulWidget {
   final String? error_mess;
   final bool? optional;
   final bool? email;
+  final bool? pass;
 
   CustomTextField({
     Key? key,
@@ -2024,6 +2025,7 @@ class CustomTextField extends StatefulWidget {
     this.error_mess,
     this.optional = false,
     this.email,
+    this.pass,
     // Initialize onTap
   }) : super(key: key);
 
@@ -2099,7 +2101,17 @@ class CustomTextFieldState extends State<CustomTextField> {
                         _errorMessage = 'Please ${widget.label}';
                     });
                     return '';
-                  } else if (widget.email != null) {
+                  }else if (widget.pass != null) {
+                    String? validationMessage = ValidatePassword(widget.controller!.text);
+                    if (validationMessage != null) {
+                      setState(() {
+                        _errorMessage =
+                            validationMessage;
+                      });
+                      return '';
+                    }
+                  }
+                  else if (widget.email != null) {
                     if (!EmailValidator.validate(widget.controller!.text)) {
                       setState(() {
                         _errorMessage = "Email is not valid";

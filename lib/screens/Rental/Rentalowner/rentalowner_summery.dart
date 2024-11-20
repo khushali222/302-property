@@ -469,7 +469,7 @@ class _RentalownersSummeryForMobileState
                                   child: Padding(
                                 padding: const EdgeInsets.all(5.0),
                                 child: Text(
-                                  'Zip : ',
+                                  'Zip Code: ',
                                   style: TextStyle(
                                       color: blueColor,
                                       fontWeight: FontWeight.bold,
@@ -538,7 +538,8 @@ class _RentalownersSummeryForMobileState
                                   child: Padding(
                                 padding: const EdgeInsets.only(top: 12),
                                 child: Text(
-                                  '${(widget.rentalowners?.rentalOwnerPhoneNumber ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnerPhoneNumber}',
+                                  formatPhoneNumber('${widget.rentalowners?.rentalOwnerPhoneNumber}'),
+                                 // '${(widget.rentalowners?.rentalOwnerPhoneNumber ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnerPhoneNumber}',
                                   style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
@@ -562,7 +563,8 @@ class _RentalownersSummeryForMobileState
                                   child: Padding(
                                 padding: const EdgeInsets.only(top: 12),
                                 child: Text(
-                                  '${(widget.rentalowners?.rentalOwnerHomeNumber ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnerHomeNumber}',
+                                  formatPhoneNumber('${widget.rentalowners?.rentalOwnerHomeNumber}'),
+                                  //'${(widget.rentalowners?.rentalOwnerHomeNumber ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnerHomeNumber}',
                                   style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
@@ -586,7 +588,8 @@ class _RentalownersSummeryForMobileState
                                   child: Padding(
                                 padding: const EdgeInsets.only(top: 12),
                                 child: Text(
-                                  '${(widget.rentalowners?.rentalOwnerBusinessNumber ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnerBusinessNumber}',
+                                  formatPhoneNumber('${widget.rentalowners?.rentalOwnerBusinessNumber}'),
+                                  //'${(widget.rentalowners?.rentalOwnerBusinessNumber ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnerBusinessNumber}',
                                   style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
@@ -671,7 +674,7 @@ class _RentalownersSummeryForMobileState
                                   child: Padding(
                                 padding: const EdgeInsets.all(5.0),
                                 child: Text(
-                                  'Zip : ',
+                                  'Zip Code: ',
                                   style: TextStyle(
                                       color: blueColor,
                                       fontWeight: FontWeight.bold,
@@ -1294,7 +1297,7 @@ class _RentalownersSummeryForTabletState
                                             child: Padding(
                                           padding: EdgeInsets.all(12.0),
                                           child: Text(
-                                            'Zip',
+                                            'Zip Code',
                                             style: TextStyle(
                                                 color: Color(0xFF8A95A8),
                                                 fontWeight: FontWeight.bold,
@@ -1386,7 +1389,8 @@ class _RentalownersSummeryForTabletState
                                             padding:
                                                 const EdgeInsets.only(top: 12),
                                             child: Text(
-                                              '${(rentalownersummery.first.rentalOwnerPhoneNumber ?? '').isEmpty ? 'N/A' : rentalownersummery.first.rentalOwnerPhoneNumber}',
+                                              formatPhoneNumber('${rentalownersummery.first.rentalOwnerPhoneNumber}'),
+                                            //  '${(rentalownersummery.first.rentalOwnerPhoneNumber ?? '').isEmpty ? 'N/A' : rentalownersummery.first.rentalOwnerPhoneNumber}',
                                               style: TextStyle(
                                                   fontSize: 18,
                                                   fontWeight: FontWeight.bold,
@@ -1411,7 +1415,8 @@ class _RentalownersSummeryForTabletState
                                             padding:
                                                 const EdgeInsets.only(top: 12),
                                             child: Text(
-                                              '${(rentalownersummery.first.rentalOwnerHomeNumber ?? '').isEmpty ? 'N/A' : rentalownersummery.first.rentalOwnerHomeNumber}',
+                                              formatPhoneNumber('${rentalownersummery.first.rentalOwnerHomeNumber}'),
+                                              //'${(rentalownersummery.first.rentalOwnerHomeNumber ?? '').isEmpty ? 'N/A' : rentalownersummery.first.rentalOwnerHomeNumber}',
                                               style: TextStyle(
                                                   fontSize: 18,
                                                   fontWeight: FontWeight.bold,
@@ -1436,7 +1441,8 @@ class _RentalownersSummeryForTabletState
                                             padding:
                                                 const EdgeInsets.only(top: 12),
                                             child: Text(
-                                              '${(rentalownersummery.first.rentalOwnerBusinessNumber ?? '').isEmpty ? 'N/A' : rentalownersummery.first.rentalOwnerBusinessNumber}',
+                                              formatPhoneNumber('${rentalownersummery.first.rentalOwnerBusinessNumber}'),
+                                            //  '${(rentalownersummery.first.rentalOwnerBusinessNumber ?? '').isEmpty ? 'N/A' : rentalownersummery.first.rentalOwnerBusinessNumber}',
                                               style: TextStyle(
                                                   fontSize: 18,
                                                   fontWeight: FontWeight.bold,

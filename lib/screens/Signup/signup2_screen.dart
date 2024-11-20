@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zxcvbn/zxcvbn.dart';
 
 import '../../constant/constant.dart';
 import '../Dashboard/dashboard_one.dart';
@@ -50,6 +51,12 @@ class _Signup2State extends State<Signup2> {
     lastname.text = widget.lastname!;
     email.text = widget.email!;
   }
+  String? _errorMessage;
+  int _score = 0; // Initialize score as an int
+  String _feedback = '';
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -567,31 +574,65 @@ class _Signup2State extends State<Signup2> {
                        phoneerror = false;
                      });
                    }
-                   if(password.text.isEmpty){
+                   // if(password.text.isEmpty){
+                   //   setState(() {
+                   //     passworderror = true;
+                   //     passwordmessage = "Password is required";
+                   //   });
+                   // }
+                   // else if(password.text.length < 8){
+                   //   setState(() {
+                   //     passworderror = true;
+                   //     passwordmessage = "Password must have 8 Characters";
+                   //   });
+                   // }
+                   // else if (!_validatePassword(password.text)) {
+                   //   setState(() {
+                   //     passworderror = true;
+                   //     passwordmessage = 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
+                   //     // _errorMessage
+                   //   });
+                   // }
+                   // // else if (!RegExp(r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$').hasMatch(password.text)) {
+                   // //  setState(() {
+                   // //    passworderror = true;
+                   // //    passwordmessage =  'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
+                   // //
+                   // //  });
+                   // //
+                   // // }
+                   // else {
+                   //   setState(() {
+                   //     passworderror = false;
+                   //   });
+                   // }
+                   if (password.text.isEmpty) {
                      setState(() {
                        passworderror = true;
                        passwordmessage = "Password is required";
                      });
-                   }
-                   else if(password.text.length < 8){
+                   } else if (password.text.length < 8) {
                      setState(() {
                        passworderror = true;
                        passwordmessage = "Password must have 8 Characters";
                      });
                    }
-                   else if (!RegExp(r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$').hasMatch(password.text)) {
-                    setState(() {
-                      passworderror = true;
-                      passwordmessage =  'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
-
-                    });
-
-                   }
                    else {
-                     setState(() {
-                       passworderror = false;
-                     });
+                     String? validationMessage = ValidatePassword(password.text);
+
+                     if (validationMessage != null) {
+                       setState(() {
+                         passworderror = true;
+                         passwordmessage = validationMessage; // Use the dynamic message
+                       });
+                     }
+                     else {
+                       setState(() {
+                         passworderror = false; // No error
+                       });
+                     }
                    }
+
                    if(confirmpassword.text.isEmpty){
                      setState(() {
                        confirmpassworderror = true;
