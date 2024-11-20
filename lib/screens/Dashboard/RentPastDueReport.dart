@@ -1178,7 +1178,11 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     int totalPages = (chargedata.length / itemsPerPage).ceil();
 
     // Get the current page data
-    List<Transaction> currentPageData = chargedata.skip(currentPage * itemsPerPage).take(itemsPerPage).toList();
+    List<Transaction> currentPageData = chargedata
+        .skip(currentPage * itemsPerPage)
+        .take(itemsPerPage)
+        .toList();
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 0.0,),
@@ -1191,7 +1195,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
               decoration: BoxDecoration(
                   border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
               child: Column(
-                children: chargedata.asMap().entries.where((entry) {
+                children: currentPageData.asMap().entries.where((entry) {
                   // Filter the data based on the search input
                   Transaction item = entry.value;
                   String address = item.rentalData?.address?.toLowerCase() ?? '';
@@ -1405,7 +1409,6 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
       ),
     );
   }
-
 
   filters({List<Transaction>? data}) {
     return Column(
