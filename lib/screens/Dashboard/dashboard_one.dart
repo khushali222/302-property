@@ -17,6 +17,7 @@ import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/screens/Dashboard/RentPastDueReport.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/Applicants_table.dart';
 import 'package:three_zero_two_property/screens/Maintenance/Vendor/Vendor_table.dart';
 import 'package:three_zero_two_property/screens/Maintenance/Workorder/Workorder_table.dart';
@@ -5040,75 +5041,80 @@ class _DashboardState extends State<Dashboard> {
                             const SizedBox(
                               height: 10,
                             ),
-                            Container(
-                              height: 110,
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: width * .05),
-                              decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                    Radius.circular(15)),
-                              ),
-                              child: Material(
-                                elevation: 3,
-                                borderRadius:
-                                const BorderRadius.all(
-                                    Radius.circular(15)),
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                      flex: 4,
-                                      child: Container(
-                                        decoration:
-                                        const BoxDecoration(
-                                          color: Color.fromRGBO(
-                                              50, 75, 119, 1),
-                                          borderRadius:
-                                          BorderRadius.vertical(
-                                              top: Radius
-                                                  .circular(
-                                                  15)),
-                                        ),
-                                        child: const Center(
-                                            child: Text(
-                                              "Rent Past Due",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16,
-                                                  fontWeight:
-                                                  FontWeight.bold),
-                                            )),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 8,
-                                      child: Container(
+                            InkWell(
+                              onTap:(){
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>RentPastDueReports()));
+                              },
+                              child: Container(
+                                height: 110,
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: width * .05),
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(15)),
+                                ),
+                                child: Material(
+                                  elevation: 3,
+                                  borderRadius:
+                                  const BorderRadius.all(
+                                      Radius.circular(15)),
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        flex: 4,
+                                        child: Container(
                                           decoration:
                                           const BoxDecoration(
-                                            color: Colors.white,
+                                            color: Color.fromRGBO(
+                                                50, 75, 119, 1),
                                             borderRadius:
                                             BorderRadius.vertical(
-                                                bottom: Radius
+                                                top: Radius
                                                     .circular(
                                                     15)),
                                           ),
-                                          child: Center(
-                                            child: Text(
-                                              "\$${totalRentPastDue}",
-                                              style: const TextStyle(
-                                                  fontSize: 18,
-                                                  color: Color
-                                                      .fromRGBO(
-                                                      90,
-                                                      134,
-                                                      213,
-                                                      1),
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .bold),
+                                          child: const Center(
+                                              child: Text(
+                                                "Rent Past Due",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                    FontWeight.bold),
+                                              )),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 8,
+                                        child: Container(
+                                            decoration:
+                                            const BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                              BorderRadius.vertical(
+                                                  bottom: Radius
+                                                      .circular(
+                                                      15)),
                                             ),
-                                          )),
-                                    ),
-                                  ],
+                                            child: Center(
+                                              child: Text(
+                                                "\$${totalRentPastDue}",
+                                                style: const TextStyle(
+                                                    fontSize: 18,
+                                                    color: Color
+                                                        .fromRGBO(
+                                                        90,
+                                                        134,
+                                                        213,
+                                                        1),
+                                                    fontWeight:
+                                                    FontWeight
+                                                        .bold),
+                                              ),
+                                            )),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),

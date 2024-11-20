@@ -16,7 +16,6 @@ import 'package:three_zero_two_property/screens/Password/changepassword.dart';
 
 import 'package:three_zero_two_property/screens/Signup/signup_screen.dart';
 import 'package:http/http.dart' as http;
-import 'package:zxcvbn/zxcvbn.dart';
 
 import '../../StaffModule/repository/staffpermission_provider.dart';
 import '../../StaffModule/screen/dashboard.dart';
@@ -124,7 +123,7 @@ class _Login_ScreenState extends State<Login_Screen> {
             _hasMultipleCompanies = true;
             _companies = roles
                 .map<Map<String, String>>((role) =>
-                    {'company': role['company_name'], 'role': role['role'],'admin_id': role['admin_id'],})
+            {'company': role['company_name'], 'role': role['role'],'admin_id': role['admin_id'],})
                 .toList();
             print("roles $roles");
             _isEmailSubmitted = true;
@@ -240,12 +239,12 @@ class _Login_ScreenState extends State<Login_Screen> {
                                   decoration: InputDecoration(
                                     enabledBorder: emailerror
                                         ? OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            borderSide: BorderSide(
-                                                color: Colors
-                                                    .red), // Set border color here
-                                          )
+                                      borderRadius:
+                                      BorderRadius.circular(10),
+                                      borderSide: BorderSide(
+                                          color: Colors
+                                              .red), // Set border color here
+                                    )
                                         : InputBorder.none,
                                     border: InputBorder.none,
                                     contentPadding: EdgeInsets.all(14),
@@ -276,12 +275,12 @@ class _Login_ScreenState extends State<Login_Screen> {
                   ),
                   emailerror
                       ? Center(
-                          child: Text(
-                          emailmessage,
-                          style: TextStyle(
-                            color: Colors.red,
-                          ),
-                        ))
+                      child: Text(
+                        emailmessage,
+                        style: TextStyle(
+                          color: Colors.red,
+                        ),
+                      ))
                       : Container(),
 
                   SizedBox(
@@ -307,20 +306,20 @@ class _Login_ScreenState extends State<Login_Screen> {
                                     "Forgot password?",
                                     style: TextStyle(
                                         fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.02,
+                                        MediaQuery.of(context).size.width *
+                                            0.02,
                                         color: Colors.blue),
                                   ),
                                 ),
                                 SizedBox(
                                   width:
-                                      MediaQuery.of(context).size.width * 0.099,
+                                  MediaQuery.of(context).size.width * 0.099,
                                 ),
                               ],
                             ),
                             SizedBox(
                               height:
-                                  MediaQuery.of(context).size.height * 0.025,
+                              MediaQuery.of(context).size.height * 0.025,
                             ),
                           ],
                         ),
@@ -358,25 +357,25 @@ class _Login_ScreenState extends State<Login_Screen> {
                               child: Center(
                                 child: loading
                                     ? SpinKitFadingCircle(
-                                        color: Colors.white,
-                                        size: 40.0,
-                                      )
+                                  color: Colors.white,
+                                  size: 40.0,
+                                )
                                     : Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            "Submit",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.03),
-                                          ),
-                                        ],
-                                      ),
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Submit",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              0.03),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -418,12 +417,12 @@ class _Login_ScreenState extends State<Login_Screen> {
                                         decoration: InputDecoration(
                                           enabledBorder: passworderror
                                               ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  borderSide: BorderSide(
-                                                      color: Colors
-                                                          .red), // Set border color here
-                                                )
+                                            borderRadius:
+                                            BorderRadius.circular(10),
+                                            borderSide: BorderSide(
+                                                color: Colors
+                                                    .red), // Set border color here
+                                          )
                                               : InputBorder.none,
                                           border: InputBorder.none,
                                           contentPadding: EdgeInsets.all(14),
@@ -446,15 +445,15 @@ class _Login_ScreenState extends State<Login_Screen> {
                                             onTap: () {
                                               setState(() {
                                                 visiable_password =
-                                                    !visiable_password;
+                                                !visiable_password;
                                               });
                                             },
                                             child: Icon(
                                               visiable_password
                                                   ? Icons
-                                                      .remove_red_eye_outlined
+                                                  .remove_red_eye_outlined
                                                   : Icons
-                                                      .visibility_off_outlined,
+                                                  .visibility_off_outlined,
                                               color: Colors.grey[600],
                                             ),
                                           ),
@@ -472,10 +471,10 @@ class _Login_ScreenState extends State<Login_Screen> {
                         ),
                         passworderror
                             ? Center(
-                                child: Text(
-                                passwordmessage,
-                                style: TextStyle(color: Colors.red),
-                              ))
+                            child: Text(
+                              passwordmessage,
+                              style: TextStyle(color: Colors.red),
+                            ))
                             : Container(),
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.025,
@@ -514,8 +513,8 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 "Forgot password?",
                                 style: TextStyle(
                                     fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.02,
+                                    MediaQuery.of(context).size.width *
+                                        0.02,
                                     color: Colors.blue),
                               ),
                             ),
@@ -597,7 +596,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                           child: Center(
                             child: Container(
                               height:
-                                  MediaQuery.of(context).size.height * 0.045,
+                              MediaQuery.of(context).size.height * 0.045,
                               width: MediaQuery.of(context).size.width * 0.8,
                               decoration: BoxDecoration(
                                 color: Colors.black,
@@ -606,39 +605,39 @@ class _Login_ScreenState extends State<Login_Screen> {
                               child: Center(
                                 child: loading
                                     ? SpinKitFadingCircle(
-                                        color: Colors.white,
-                                        size: 40.0,
-                                      )
+                                  color: Colors.white,
+                                  size: 40.0,
+                                )
                                     : Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            "Login",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.03),
-                                          ),
-                                          SizedBox(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.015,
-                                          ),
-                                          Icon(
-                                            Icons.arrow_forward_ios_sharp,
-                                            color: Colors.white,
-                                            size: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.03,
-                                          ),
-                                        ],
-                                      ),
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Login",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              0.03),
+                                    ),
+                                    SizedBox(
+                                      height: MediaQuery.of(context)
+                                          .size
+                                          .width *
+                                          0.015,
+                                    ),
+                                    Icon(
+                                      Icons.arrow_forward_ios_sharp,
+                                      color: Colors.white,
+                                      size: MediaQuery.of(context)
+                                          .size
+                                          .width *
+                                          0.03,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -673,7 +672,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blue,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * 0.03),
+                                MediaQuery.of(context).size.width * 0.03),
                           ),
                         ),
                       ),
@@ -788,12 +787,12 @@ class _Login_ScreenState extends State<Login_Screen> {
                                   decoration: InputDecoration(
                                     enabledBorder: emailerror
                                         ? OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            borderSide: BorderSide(
-                                                color: Colors
-                                                    .red), // Set border color here
-                                          )
+                                      borderRadius:
+                                      BorderRadius.circular(10),
+                                      borderSide: BorderSide(
+                                          color: Colors
+                                              .red), // Set border color here
+                                    )
                                         : InputBorder.none,
                                     border: InputBorder.none,
                                     contentPadding: EdgeInsets.all(14),
@@ -824,12 +823,12 @@ class _Login_ScreenState extends State<Login_Screen> {
                   ),
                   emailerror
                       ? Center(
-                          child: Text(
-                          emailmessage,
-                          style: TextStyle(
-                            color: Colors.red,
-                          ),
-                        ))
+                      child: Text(
+                        emailmessage,
+                        style: TextStyle(
+                          color: Colors.red,
+                        ),
+                      ))
                       : Container(),
 
                   SizedBox(
@@ -855,20 +854,20 @@ class _Login_ScreenState extends State<Login_Screen> {
                                     "Forgot password?",
                                     style: TextStyle(
                                         fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.035,
+                                        MediaQuery.of(context).size.width *
+                                            0.035,
                                         color: Colors.blue),
                                   ),
                                 ),
                                 SizedBox(
                                   width:
-                                      MediaQuery.of(context).size.width * 0.099,
+                                  MediaQuery.of(context).size.width * 0.099,
                                 ),
                               ],
                             ),
                             SizedBox(
                               height:
-                                  MediaQuery.of(context).size.height * 0.025,
+                              MediaQuery.of(context).size.height * 0.025,
                             ),
                           ],
                         ),
@@ -906,25 +905,25 @@ class _Login_ScreenState extends State<Login_Screen> {
                               child: Center(
                                 child: loading
                                     ? SpinKitFadingCircle(
-                                        color: Colors.white,
-                                        size: 40.0,
-                                      )
+                                  color: Colors.white,
+                                  size: 40.0,
+                                )
                                     : Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            "Submit",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.045),
-                                          ),
-                                        ],
-                                      ),
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Submit",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              0.045),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -965,12 +964,12 @@ class _Login_ScreenState extends State<Login_Screen> {
                                         decoration: InputDecoration(
                                           enabledBorder: passworderror
                                               ? OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  borderSide: BorderSide(
-                                                      color: Colors
-                                                          .red), // Set border color here
-                                                )
+                                            borderRadius:
+                                            BorderRadius.circular(10),
+                                            borderSide: BorderSide(
+                                                color: Colors
+                                                    .red), // Set border color here
+                                          )
                                               : InputBorder.none,
                                           border: InputBorder.none,
                                           contentPadding: EdgeInsets.all(14),
@@ -993,16 +992,16 @@ class _Login_ScreenState extends State<Login_Screen> {
                                             onTap: () {
                                               setState(() {
                                                 visiable_password =
-                                                    !visiable_password;
+                                                !visiable_password;
 
                                               });
                                             },
                                             child: Icon(
                                               visiable_password
                                                   ? Icons
-                                                      .remove_red_eye_outlined
+                                                  .remove_red_eye_outlined
                                                   : Icons
-                                                      .visibility_off_outlined,
+                                                  .visibility_off_outlined,
                                               color: Colors.grey[600],
                                             ),
                                           ),
@@ -1020,10 +1019,10 @@ class _Login_ScreenState extends State<Login_Screen> {
                         ),
                         passworderror
                             ? Center(
-                                child: Text(
-                                passwordmessage,
-                                style: TextStyle(color: Colors.red),
-                              ))
+                            child: Text(
+                              passwordmessage,
+                              style: TextStyle(color: Colors.red),
+                            ))
                             : Container(),
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.025,
@@ -1064,8 +1063,8 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 "Forgot password?",
                                 style: TextStyle(
                                     fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.035,
+                                    MediaQuery.of(context).size.width *
+                                        0.035,
                                     color: Colors.blue),
                               ),
                             ),
@@ -1134,18 +1133,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 });
                               }
                             });
-                            final zxcvbn = Zxcvbn();
-
-                            final result = zxcvbn.evaluate(password.text);
-
-                            print('Password: ${result.password}');
-                            print('Score: ${result.score}');
-                            print(result.guesses);
-                            print(result.calc_time);
-                            for (final suggestion in result.feedback.suggestions!) {
-                              print(suggestion);
-                            }
-                          /*  if (selectedrole == "") {
+                            if (selectedrole == "") {
                               Fluttertoast.showToast(
                                   msg: "Please select the company");
                             } else if (emailerror == false &&
@@ -1154,7 +1142,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                               if (selectedrole != "admin")
                                 await checkCompany(selectedCompany);
                               // Save authentication status to SharedPreferences
-                            }*/
+                            }
                           },
                           child: Center(
                             child: Container(
@@ -1167,39 +1155,39 @@ class _Login_ScreenState extends State<Login_Screen> {
                               child: Center(
                                 child: loading
                                     ? SpinKitFadingCircle(
-                                        color: Colors.white,
-                                        size: 40.0,
-                                      )
+                                  color: Colors.white,
+                                  size: 40.0,
+                                )
                                     : Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            "Login",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.045),
-                                          ),
-                                          SizedBox(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.015,
-                                          ),
-                                          Icon(
-                                            Icons.arrow_forward_ios_sharp,
-                                            color: Colors.white,
-                                            size: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.045,
-                                          ),
-                                        ],
-                                      ),
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Login",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              0.045),
+                                    ),
+                                    SizedBox(
+                                      height: MediaQuery.of(context)
+                                          .size
+                                          .width *
+                                          0.015,
+                                    ),
+                                    Icon(
+                                      Icons.arrow_forward_ios_sharp,
+                                      color: Colors.white,
+                                      size: MediaQuery.of(context)
+                                          .size
+                                          .width *
+                                          0.045,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -1234,7 +1222,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blue,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * 0.037),
+                                MediaQuery.of(context).size.width * 0.037),
                           ),
                         ),
                       ),
@@ -1297,7 +1285,7 @@ class _Login_ScreenState extends State<Login_Screen> {
 
       // Access the expiration date
       var provider =
-          Provider.of<checkPlanPurchaseProiver>(context, listen: false);
+      Provider.of<checkPlanPurchaseProiver>(context, listen: false);
       var expirationDateString =
           provider.checkplanpurchaseModel?.data?.expirationDate;
 
@@ -1323,7 +1311,7 @@ class _Login_ScreenState extends State<Login_Screen> {
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  isPlanActive ? Dashboard() : PlanPurchaseCard()));
+              isPlanActive ? Dashboard() : PlanPurchaseCard()));
     } else {
       print('Failed to check token');
     }
@@ -1504,7 +1492,7 @@ class _Login_ScreenState extends State<Login_Screen> {
     print("${Api_url}/api/auth/login");
     // print({"email": email.text, "password": password.text,"admin_id":adminId,"company":company.text});
     final response =
-        await http.post(Uri.parse('${Api_url}/api/auth/login'), body: {
+    await http.post(Uri.parse('${Api_url}/api/auth/login'), body: {
       "email": email.text,
       "password": password.text,
       "admin_id": adminId,
@@ -1547,7 +1535,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       "admin_id": adminId
     });
     final response =
-        await http.post(Uri.parse('${Api_url}/api/auth/login'), body: {
+    await http.post(Uri.parse('${Api_url}/api/auth/login'), body: {
       "email": email.text,
       "password": password.text,
       "role": selectedrole,
@@ -1656,9 +1644,9 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                     foregroundColor:
-                        _selectedIndex == index ? Colors.white : blueColor,
+                    _selectedIndex == index ? Colors.white : blueColor,
                     backgroundColor:
-                        _selectedIndex == index ? blueColor : Colors.white,
+                    _selectedIndex == index ? blueColor : Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
@@ -1697,7 +1685,7 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                           ? Icons.check_circle
                           : Icons.radio_button_unchecked,
                       color:
-                          _selectedIndex == index ? Colors.white : Colors.grey,
+                      _selectedIndex == index ? Colors.white : Colors.grey,
                     ),
                     SizedBox(width: 5.0),
                     Column(
@@ -1728,9 +1716,9 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                   foregroundColor:
-                      _selectedIndex == index ? Colors.white : blueColor,
+                  _selectedIndex == index ? Colors.white : blueColor,
                   backgroundColor:
-                      _selectedIndex == index ? blueColor : Colors.white,
+                  _selectedIndex == index ? blueColor : Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
