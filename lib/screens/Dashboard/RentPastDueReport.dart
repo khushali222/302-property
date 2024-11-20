@@ -621,16 +621,10 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 headers: [
                   'Property',
                   'Tenant',
-                  'Date',
-                  'Pmt Type',
-                  'Txn ID',
-                  'Reference',
-                  'Crd Type',
-                  'Crd No',
-                  'Total',
+                  'Amount',
+
                 ],
-                data: _generateTableData(
-                    delinquentTenantsData as List<RentPastDue>),
+                data: [_generateTableData(delinquentTenantsData!)],
                 headerStyle: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold, color: PdfColors.white),
                 headerDecoration: pw.BoxDecoration(
@@ -662,30 +656,69 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     );
   }
 
-  List<List<dynamic>> _generateTableData(List<RentPastDue> rentalOwnerReports) {
-    final List<List<dynamic>> tableData = [];
+  // List<List<dynamic>> _generateTableData(List<RentPastDue> rentalOwnerReports) {
+  //   final List<List<dynamic>> tableData = [];
+  //   double total = 0.0;
+  //
+  //   for (var owner in rentalOwnerReports) {
+  //     // Main row for the rental owner name
+  //     tableData.add([
+  //       pw.Text(
+  //           owner.currentDueRentCharges?.charges?.first.rentalData?.address ??
+  //               "",
+  //           style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+  //       pw.Text(
+  //           owner.currentDueRentCharges?.charges?.first.rentalData?.address ??
+  //               "",
+  //           style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+  //       pw.Text(
+  //           owner.currentDueRentCharges?.charges?.first.rentalData?.address ??
+  //               "",
+  //           style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+  //     ]);
+  //   }
+  //
+  //   setState(() {
+  //     grandtotal = total;
+  //   });
+  //
+  //   return tableData;
+  // }
+  List<dynamic> _generateTableData(RentPastDue rentalOwnerReport) {
+    final List<dynamic> tableData = [];
     double total = 0.0;
 
-    for (var owner in rentalOwnerReports) {
-      // Main row for the rental owner name
-      tableData.add([
-        pw.Text(
-            owner.currentDueRentCharges?.charges?.first.rentalData?.address ??
-                "",
-            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-        pw.Text(
-            owner.currentDueRentCharges?.charges?.first.rentalData?.address ??
-                "",
-            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-        pw.Text(
-            owner.currentDueRentCharges?.charges?.first.rentalData?.address ??
-                "",
-            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-      ]);
-    }
+    // Assuming rentalOwnerReport has the necessary properties
+    String rentalAddress = rentalOwnerReport.currentDueRentCharges?.charges?.first.rentalData?.address ?? "N/A";
+    String tenantName = rentalOwnerReport.currentDueRentCharges?.charges?.first.tenantData?.tenantfirstName ?? "N/A"; // Replace with actual property
+    int amount = rentalOwnerReport.currentDueRentCharges?.charges?.first.total ?? 0; // Replace with actual property
 
+    // Log the values instead of the widget
+    print('Rental Address: $rentalAddress');
+    print('Tenant Name: $tenantName');
+    print('Amount: $amount');
+
+
+    // Add a row with the rental address, tenant name, and amount
+    tableData.add([
+      pw.Text(
+        rentalAddress,
+        style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
+      ),
+      pw.Text(
+        tenantName,
+        style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
+      ),
+      pw.Text(
+        '\$${amount.toString()}',
+        style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
+      ),
+    ]);
+
+    // Update the grand total if needed
+    total += amount; // Add the amount to the total
     setState(() {
-      grandtotal = total;
+      grandtotal += total; // Update the grand total
     });
 
     return tableData;
