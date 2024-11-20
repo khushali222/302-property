@@ -701,144 +701,86 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     return tableData;
   }
 
-  // Future<void> generateRentalOwnerReportExcel(
-  //     List<RentPastDue> rentalOwnerReports) async {
-  //   final syncXlsx.Workbook workbook = syncXlsx.Workbook();
-  //   final syncXlsx.Worksheet sheet = workbook.worksheets[0];
-  //
-  //   sheet.getRangeByName('A1:I1').columnWidth = 20;
-  //
-  //   final List<String> headers = [
-  //     'Property',
-  //     'Tenant',
-  //     'Date',
-  //     'Pmt Type',
-  //     'Txn ID',
-  //     'Reference',
-  //     'Crd Type',
-  //     'Crd No',
-  //     'Total',
-  //   ];
-  //
-  //   final syncXlsx.Style headerCellStyle =
-  //   workbook.styles.add('headerCellStyle');
-  //   headerCellStyle.bold = true;
-  //   headerCellStyle.backColor = '#5A86D5';
-  //   headerCellStyle.fontColor = '#FFFFFF';
-  //   headerCellStyle.fontSize = 16;
-  //   headerCellStyle.hAlign = syncXlsx.HAlignType.center;
-  //
-  //   final syncXlsx.Style currencyCellStyle =
-  //   workbook.styles.add('currencyCellStyle');
-  //   currencyCellStyle.numberFormat = '\$#,##0.00'; // Currency format
-  //   currencyCellStyle.hAlign = syncXlsx.HAlignType.right; // Right-align amounts
-  //
-  //   final syncXlsx.Style boldAmountStyle =
-  //   workbook.styles.add('boldAmountStyle');
-  //   boldAmountStyle.bold = true;
-  //   boldAmountStyle.numberFormat = '\$#,##0.00';
-  //   boldAmountStyle.hAlign = syncXlsx.HAlignType.right;
-  //   final syncXlsx.Style AmountTitleStyle =
-  //   workbook.styles.add('AmountTitleStyle');
-  //   boldAmountStyle.bold = true;
-  //   boldAmountStyle.numberFormat = '\$#,##0.00';
-  //
-  //   for (int i = 0; i < headers.length; i++) {
-  //     final cell = sheet.getRangeByIndex(1, i + 1);
-  //     cell.setText(headers[i]);
-  //     cell.cellStyle = headerCellStyle;
-  //   }
-  //
-  //   int rowIndex = 2;
-  //   double grandTotal = 0.0;
-  //
-  //   for (var owner in rentalOwnerReports) {
-  //     final rentalOwnerCell = sheet.getRangeByIndex(rowIndex, 1);
-  //     rentalOwnerCell.setText(owner.rentalOwnerName ?? '');
-  //     rentalOwnerCell.cellStyle.bold = true;
-  //     sheet.getRangeByName('A$rowIndex:I$rowIndex').merge();
-  //     rowIndex++;
-  //
-  //     for (var property in owner.payments) {
-  //       sheet
-  //           .getRangeByIndex(rowIndex, 1)
-  //           .setText(property.rentalData.rentalAddress ?? 'N/A');
-  //       sheet.getRangeByIndex(rowIndex, 2).setText(
-  //           '${property.tenantData.tenantFirstName ?? 'N/A'} ${property.tenantData.tenantLastName ?? 'N/A'}');
-  //       sheet
-  //           .getRangeByIndex(rowIndex, 3)
-  //           .setText(property.createdAt.toString());
-  //       sheet.getRangeByIndex(rowIndex, 4).setText(property.paymentType ?? '');
-  //       sheet
-  //           .getRangeByIndex(rowIndex, 5)
-  //           .setText(property.transactionId ?? '');
-  //       sheet.getRangeByIndex(rowIndex, 6).setText(property.paymentId ?? '');
-  //       sheet.getRangeByIndex(rowIndex, 7).setText(property.ccType ?? '');
-  //       sheet.getRangeByIndex(rowIndex, 8).setText(property.ccNumber ?? '');
-  //       sheet
-  //           .getRangeByIndex(rowIndex, 9)
-  //           .setNumber(property.totalAmount ?? 0.0);
-  //       sheet.getRangeByIndex(rowIndex, 9).cellStyle = currencyCellStyle;
-  //       rowIndex++;
-  //
-  //       for (var payment in property.entry) {
-  //         sheet.getRangeByIndex(rowIndex, 1).setText(payment.account ?? 'N/A');
-  //         sheet.getRangeByIndex(rowIndex, 9).setNumber(payment.amount);
-  //         sheet.getRangeByIndex(rowIndex, 9).cellStyle = currencyCellStyle;
-  //         rowIndex++;
-  //       }
-  //
-  //       // if (property.surcharge != 0.0) {
-  //       //   sheet.getRangeByIndex(rowIndex, 1).setText('Surcharge');
-  //       //   sheet.getRangeByIndex(rowIndex, 9).setNumber(property.surcharge);
-  //       //   sheet.getRangeByIndex(rowIndex, 9).cellStyle = currencyCellStyle;
-  //       //   rowIndex++;
-  //       // }
-  //     }
-  //
-  //     sheet
-  //         .getRangeByIndex(rowIndex, 1)
-  //         .setText('Subtotal - ${owner.rentalOwnerName}');
-  //     sheet.getRangeByIndex(rowIndex, 1).cellStyle.bold = true;
-  //     sheet.getRangeByIndex(rowIndex, 9).setNumber(owner.subTotal ?? 0.0);
-  //     sheet.getRangeByIndex(rowIndex, 9).cellStyle = boldAmountStyle;
-  //     sheet.getRangeByName('A$rowIndex:H$rowIndex').merge();
-  //     rowIndex++;
-  //
-  //     grandTotal += owner.subTotal ?? 0.0;
-  //   }
-  //
-  //   sheet.getRangeByIndex(rowIndex, 1).setText('Grand Total');
-  //   sheet.getRangeByIndex(rowIndex, 1).cellStyle.bold = true;
-  //   sheet.getRangeByIndex(rowIndex, 9).setNumber(grandTotal);
-  //   sheet.getRangeByIndex(rowIndex, 9).cellStyle = boldAmountStyle;
-  //   sheet.getRangeByName('A$rowIndex:H$rowIndex').merge();
-  //
-  //   final List<int> bytes = workbook.saveAsStream();
-  //   workbook.dispose();
-  //
-  //   final DateTime now = DateTime.now();
-  //   final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
-  //   final String fileName = 'RentalOwnerReport_$formattedDate.xlsx';
-  //
-  //   final Directory directory = Platform.isIOS
-  //       ? await getApplicationDocumentsDirectory()
-  //       : Directory('/storage/emulated/0/Download');
-  //
-  //   final path = '${directory.path}/$fileName';
-  //
-  //   // Create directory if it doesn't exist (for Android)
-  //   if (!await directory.exists() && !Platform.isIOS) {
-  //     await directory.create(recursive: true);
-  //   }
-  //
-  //   final File file = File(path);
-  //   await file.writeAsBytes(bytes, flush: true);
-  //   Fluttertoast.showToast(
-  //     msg: 'Excel file saved to $path',
-  //   );
-  // }
-  //
+  Future<void> generateDelinquentTenantsExcel(
+      List<Transaction> delinquentTenantsData, double grandTotal) async {
+    // Create a new workbook
+    final syncXlsx.Workbook workbook = syncXlsx.Workbook();
+    final syncXlsx.Worksheet sheet = workbook.worksheets[0];
+
+    // Set column widths
+    sheet.getRangeByName('A1:C1').columnWidth = 20;
+
+    // Define headers
+    final List<String> headers = ['Property', 'Tenant', 'Total'];
+
+    // Header style
+    final syncXlsx.Style headerCellStyle = workbook.styles.add('HeaderCellStyle');
+    headerCellStyle.bold = true;
+    headerCellStyle.backColor = '#5A86D5';
+    headerCellStyle.fontColor = '#FFFFFF';
+    headerCellStyle.fontSize = 12;
+    headerCellStyle.hAlign = syncXlsx.HAlignType.center;
+
+    // Currency style for amounts
+    final syncXlsx.Style currencyCellStyle =
+    workbook.styles.add('CurrencyCellStyle');
+    currencyCellStyle.numberFormat = '\$#,##0.00'; // Currency format
+    currencyCellStyle.hAlign = syncXlsx.HAlignType.right; // Right-align amounts
+
+    // Add headers to the Excel sheet
+    for (int i = 0; i < headers.length; i++) {
+      final cell = sheet.getRangeByIndex(1, i + 1);
+      cell.setText(headers[i]);
+      cell.cellStyle = headerCellStyle;
+    }
+
+    // Populate rows with delinquent tenant data
+    int rowIndex = 2; // Start from row 2 (below headers)
+    for (var tenant in delinquentTenantsData) {
+      sheet.getRangeByIndex(rowIndex, 1).setText(tenant.rentalData != null? tenant.rentalData!.address! : "N/A" ??  'N/A');
+      sheet.getRangeByIndex(rowIndex, 2).setText(tenant.tenantData != null? tenant.tenantData!.tenantfirstName! : "N/A" ??"");
+      sheet.getRangeByIndex(rowIndex, 3).setNumber(tenant.total!.toDouble() ?? 0.0);
+      sheet.getRangeByIndex(rowIndex, 3).cellStyle = currencyCellStyle;
+      grandTotal += tenant.total!.toDouble();
+
+
+      rowIndex++;
+    }
+
+    // Add Grand Total row
+    sheet.getRangeByIndex(rowIndex, 2).setText('Grand Total');
+    sheet.getRangeByIndex(rowIndex, 2).cellStyle.bold = true;
+    sheet.getRangeByIndex(rowIndex, 3).setNumber(grandTotal);
+    sheet.getRangeByIndex(rowIndex, 3).cellStyle = currencyCellStyle;
+    sheet.getRangeByIndex(rowIndex, 3).cellStyle.bold = true;
+
+    // Save the workbook
+    final List<int> bytes = workbook.saveAsStream();
+    workbook.dispose();
+
+    // Save to file
+    final DateTime now = DateTime.now();
+    final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
+    final String fileName = 'DelinquentTenants_$formattedDate.xlsx';
+
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Download');
+
+    final path = '${directory.path}/$fileName';
+
+    if (!await directory.exists() && !Platform.isIOS) {
+      await directory.create(recursive: true);
+    }
+
+    final File file = File(path);
+    await file.writeAsBytes(bytes, flush: true);
+
+    Fluttertoast.showToast(
+      msg: 'Excel file saved to $path',
+    );
+  }
+
   // Future<void> generateRentalOwnerReportCsv(
   //     List<RentPastDue> rentalOwnerReports) async {
   //   // Define headers for CSV
@@ -977,84 +919,52 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
   //   );
   // }
 
-  // Future<void> _pickDate(BuildContext context) async {
-  //   DateTime? _selectedDate;
-  //   DateTime? picked = await showDatePicker(
-  //     context: context,
-  //     initialDate: _selectedDate ?? DateTime.now(),
-  //     firstDate: DateTime(2000),
-  //     lastDate: DateTime(2101),
-  //     builder: (BuildContext context, Widget? child) {
-  //       return Theme(
-  //         data: ThemeData.light().copyWith(
-  //           primaryColor: blueColor,
-  //           colorScheme: ColorScheme.light(
-  //             primary: blueColor,
-  //           ),
-  //           buttonTheme: ButtonThemeData(
-  //             textTheme: ButtonTextTheme.primary,
-  //           ),
-  //         ),
-  //         child: child!,
-  //       );
-  //     },
-  //   );
-  //   if (picked != null) {
-  //     setState(() {
-  //       _selectedDate = picked;
-  //
-  //       fromDate.text = DateFormat('yyyy-MM-dd')
-  //           .parse(picked.toString())
-  //           .toString()
-  //           .split(" ")[0];
-  //       fromDate.text = formatDate(fromDate.text);
-  //       _futureRentersInsurance =
-  //           fetchDelinquentTenantsData(fromDate.text, toDate.text);
-  //     });
-  //
-  //     // Notify the FormField state of the change
-  //   }
-  // }
-  //
-  // Future<void> _endDate(BuildContext context) async {
-  //   DateTime? _selectedDate;
-  //   DateTime? picked = await showDatePicker(
-  //     context: context,
-  //     initialDate: _selectedDate ?? DateTime.now(),
-  //     firstDate: DateTime(2000),
-  //     lastDate: DateTime(2101),
-  //     builder: (BuildContext context, Widget? child) {
-  //       return Theme(
-  //         data: ThemeData.light().copyWith(
-  //           primaryColor: blueColor,
-  //           colorScheme: ColorScheme.light(
-  //             primary: blueColor,
-  //           ),
-  //           buttonTheme: ButtonThemeData(
-  //             textTheme: ButtonTextTheme.primary,
-  //           ),
-  //         ),
-  //         child: child!,
-  //       );
-  //     },
-  //   );
-  //   if (picked != null) {
-  //     setState(() {
-  //       _selectedDate = picked;
-  //
-  //       toDate.text = DateFormat('yyyy-MM-dd')
-  //           .parse(picked.toString())
-  //           .toString()
-  //           .split(" ")[0];
-  //       toDate.text = formatDate(toDate.text);
-  //       _futureRentersInsurance =
-  //           fetchDelinquentTenantsData(fromDate.text, toDate.text);
-  //     });
-  //
-  //     // Notify the FormField state of the change
-  //   }
-  // }
+  Future<void> generateDelinquentTenantsCsv(
+      List<Transaction> delinquentTenantsData, double grandTotal) async {
+    // Define headers
+    final List<List<String>> csvData = [
+      ['Property', 'Tenant', 'Total'] // CSV headers
+    ];
 
+    // Populate rows with delinquent tenant data
+    for (var tenant in delinquentTenantsData) {
+      csvData.add([
+        tenant.rentalData?.address ?? 'N/A',
+        tenant.tenantData?.tenantfirstName ?? 'N/A',
+        "\$${tenant.total?.toStringAsFixed(2)}" ?? '0.00',
+      ]);
+
+      grandTotal += tenant.total?.toDouble() ?? 0.0;
+    }
+
+    // Add Grand Total row
+    csvData.add(['', 'Grand Total', "\$${grandTotal.toStringAsFixed(2)}"]);
+
+    // Convert data to CSV format
+    final String csvString = const ListToCsvConverter().convert(csvData);
+
+    // Save CSV file
+    final DateTime now = DateTime.now();
+    final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
+    final String fileName = 'DelinquentTenants_$formattedDate.csv';
+
+    final Directory directory = Platform.isIOS
+        ? await getApplicationDocumentsDirectory()
+        : Directory('/storage/emulated/0/Download');
+
+    final String path = '${directory.path}/$fileName';
+
+    if (!await directory.exists() && !Platform.isIOS) {
+      await directory.create(recursive: true);
+    }
+
+    final File file = File(path);
+    await file.writeAsString(csvString);
+
+    Fluttertoast.showToast(
+      msg: 'CSV file saved to $path',
+    );
+  }
   List<Map<String, dynamic>> rentalowners = [];
   Future<void> fetchRentalOwners() async {
     print("calling");
@@ -1119,6 +1029,76 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                           print(
                               'snap data ${snapshot.data!.dueRentCharges!.charges!.length}');
                           var rentPastDue = snapshot.data!;
+                          List<Transaction> filteredCharges = [];
+
+                          // Debugging: Print the rental data and tenant data
+                          rentPastDue.dueRentCharges?.charges?.forEach((charge) {
+                            print('Rental Data: ${charge.rentalData}');
+                            print('Tenant Data: ${charge.tenantData}');
+                          });
+                          if (chargeType == 'Charges' && (monthType == 'All' || monthType == null)) {
+                            filteredCharges = snapshot
+                                .data!.dueRentCharges!.charges!
+                                .where((charge) {
+                              var address = charge.rentalData?.address;
+                              var tenantName = charge.tenantData?.tenantfirstName;
+                              print('Searching in Address: $address and Tenant Name: $tenantName');
+                              return (address != null && address.contains(searchvalue)) ||
+                                  (tenantName != null && tenantName.contains(searchvalue));
+                            }).toList();
+                          } else if (chargeType == 'Charges' && monthType == 'Current Month') {
+                            filteredCharges = snapshot
+                                .data!.currentDueRentCharges!.charges!
+                                .where((charge) {
+                              var address = charge.rentalData?.address;
+                              var tenantName = charge.tenantData?.tenantfirstName;
+                              print('Searching in Address: $address and Tenant Name: $tenantName');
+                              return (address != null && address.contains(searchvalue)) ||
+                                  (tenantName != null && tenantName.contains(searchvalue));
+                            }).toList();
+                          } else if (chargeType == 'Charges' && monthType == 'Last Month') {
+                            filteredCharges = snapshot
+                                .data!.lastDueRentCharges!.charges!
+                                .where((charge) {
+                              var address = charge.rentalData?.address;
+                              var tenantName = charge.tenantData?.tenantfirstName;
+                              print('Searching in Address: $address and Tenant Name: $tenantName');
+                              return (address != null && address.contains(searchvalue)) ||
+                                  (tenantName != null && tenantName.contains(searchvalue));
+                            }).toList();
+                          } else if (chargeType == "Payment" && monthType == "Current Month") {
+                            filteredCharges = snapshot
+                                .data!.currentPayments!.payments!
+                                .where((payment) {
+                              var address = payment.rentalData?.address;
+                              var tenantName = payment.tenantData?.tenantfirstName;
+                              print('Searching in Address: $address and Tenant Name: $tenantName');
+                              return (address != null && address.contains(searchvalue)) ||
+                                  (tenantName != null && tenantName.contains(searchvalue));
+                            }).toList();
+                          } else if (chargeType == "Payment" && monthType == null) {
+                            filteredCharges = snapshot
+                                .data!.currentPayments!.payments!
+                                .where((payment) {
+                              var address = payment.rentalData?.address;
+                              var tenantName = payment.tenantData?.tenantfirstName;
+                              print('Searching in Address: $address and Tenant Name: $tenantName');
+                              return (address != null && address.contains(searchvalue)) ||
+                                  (tenantName != null && tenantName.contains(searchvalue));
+                            }).toList();
+                          } else if (chargeType == "Payment" && monthType == "Last Month") {
+                            filteredCharges = snapshot
+                                .data!.lastPayments!.payments!
+                                .where((payment) {
+                              var address = payment.rentalData?.address;
+                              var tenantName = payment.tenantData?.tenantfirstName;
+                              print('Searching in Address: $address and Tenant Name: $tenantName');
+                              return (address != null && address.contains(searchvalue)) ||
+                                  (tenantName != null && tenantName.contains(searchvalue));
+                            }).toList();
+                          } else {
+                            filteredCharges = []; // Default to an empty list if no conditions match
+                          }
 
 
                           return SingleChildScrollView(
@@ -1194,6 +1174,11 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
 
 
   chargeTable(List<Transaction> chargedata) {
+
+    int totalPages = (chargedata.length / itemsPerPage).ceil();
+
+    // Get the current page data
+    List<Transaction> currentPageData = chargedata.skip(currentPage * itemsPerPage).take(itemsPerPage).toList();
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 0.0,),
@@ -1206,7 +1191,12 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
               decoration: BoxDecoration(
                   border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
               child: Column(
-                children: chargedata.asMap().entries.map((entry) {
+                children: chargedata.asMap().entries.where((entry) {
+                  // Filter the data based on the search input
+                  Transaction item = entry.value;
+                  String address = item.rentalData?.address?.toLowerCase() ?? '';
+                  return address.contains(searchvalue);
+                }).map((entry) {
                   int rowIndex = entry.key;
                   Transaction item = entry.value;
                   bool isRowExpanded = expandedRowIndex == rowIndex;
@@ -1331,7 +1321,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
               ),
             ),
             const SizedBox(height: 20),
-            /* Row(
+             Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       Row(
@@ -1409,7 +1399,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                         ],
                                       ),
                                     ],
-                                  ),*/
+                                  ),
           ],
         ),
       ),
@@ -1588,10 +1578,12 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                           generateDelinquentTenantsPdf(data);
                         } else if (value == 'XLSX' && data != null) {
                           print('XLSX');
+                          generateDelinquentTenantsExcel(data,0);
                           //generateRentalOwnerReportExcel(data);
                           //generateDelinquentTenantsExcel(data);
                         } else if (value == 'CSV' && data != null) {
                           print('CSV');
+                          generateDelinquentTenantsCsv(data,0.0);
                           //  generateRentalOwnerReportCsv(data);
                           //  generateDelinquentTenantsCsv(data);
                         }
