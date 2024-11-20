@@ -508,44 +508,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
   bool istenantDataLoading = false;
   bool customdate = false;
 
-  List<List<dynamic>> _generateTableData(RentPastDue rentalOwnerReport) {
-    final List<List<dynamic>> tableData = [];
-    double total = 0.0;
-
-    // Check if currentDueRentCharges is not null and has charges
-    if (rentalOwnerReport.currentDueRentCharges != null &&
-        rentalOwnerReport.currentDueRentCharges!.charges != null) {
-      for (var charge in rentalOwnerReport.dueRentCharges!.charges!) {
-        String rentalAddress = charge.rentalData?.address ?? "N/A";
-        String tenantName = charge.tenantData?.tenantfirstName ?? "N/A";
-        int amount = charge.total ?? 0;
-
-        // Log the values
-        print('Rental Address: $rentalAddress');
-        print('Tenant Name: $tenantName');
-        print('Amount: $amount');
-
-        // Add a row with the rental address, tenant name, and amount
-        tableData.add([
-          rentalAddress,
-          tenantName,
-          amount.toString(),
-        ]);
-
-        // Update the grand total
-        total += amount; // Add the amount to the total
-      }
-    }
-
-    // Update the grand total in the state
-    setState(() {
-      grandtotal += total; // Update the grand total
-    });
-
-    return tableData;
-  }
   Future<void> generateDelinquentTenantsPdf(
-      RentPastDue? delinquentTenantsData) async {
+      List<Transaction>? delinquentTenantsData) async {
     final GetAddressAdminPdfService service = GetAddressAdminPdfService();
     profile? profileData;
 
@@ -593,7 +557,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 mainAxisAlignment: pw.MainAxisAlignment.center,
                 children: [
                   pw.Text(
-                    'Rental Owner Reports',
+                    'Rent Past Due Report',
                     style: pw.TextStyle(
                       fontSize: 18,
                       fontWeight: pw.FontWeight.bold,
@@ -660,9 +624,15 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 headers: [
                   'Property',
                   'Tenant',
-                  'Amount',
+                  pw.Align(
+                    alignment: pw.Alignment.centerRight,
+                    child: pw.Text('Amount',
+                      style: pw.TextStyle(
+                          color: PdfColors.white),),
+                  ),
                 ],
-                data: _generateTableData(delinquentTenantsData!),
+                data: _generateTableData(
+                    delinquentTenantsData as List<Transaction>),
                 headerStyle: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold, color: PdfColors.white),
                 headerDecoration: pw.BoxDecoration(
@@ -694,35 +664,42 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     );
   }
 
-  // List<List<dynamic>> _generateTableData(List<RentPastDue> rentalOwnerReports) {
-  //   final List<List<dynamic>> tableData = [];
-  //   double total = 0.0;
-  //
-  //   for (var owner in rentalOwnerReports) {
-  //     // Main row for the rental owner name
-  //     tableData.add([
-  //       pw.Text(
-  //           owner.currentDueRentCharges?.charges?.first.rentalData?.address ??
-  //               "",
-  //           style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-  //       pw.Text(
-  //           owner.currentDueRentCharges?.charges?.first.rentalData?.address ??
-  //               "",
-  //           style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-  //       pw.Text(
-  //           owner.currentDueRentCharges?.charges?.first.rentalData?.address ??
-  //               "",
-  //           style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-  //     ]);
-  //   }
-  //
-  //   setState(() {
-  //     grandtotal = total;
-  //   });
-  //
-  //   return tableData;
-  // }
+  List<List<dynamic>> _generateTableData(List<Transaction> rentalOwnerReports) {
+    final List<List<dynamic>> tableData = [];
+    double total = 0.0;
 
+    for (var owner in rentalOwnerReports) {
+      // Main row for the rental owner name
+      tableData.add([
+        pw.Text(
+            owner.rentalData != null? owner.rentalData!.address! : "N/A" ??
+                "",
+            style: pw.TextStyle( fontSize: 12)),
+        pw.Text(
+          (owner.tenantData != null
+              ? '${owner.tenantData!.tenantfirstName ?? ""} ${owner.tenantData!.tenantlastName ?? ""}'
+              : "N/A"),
+          style: pw.TextStyle(fontSize: 12),
+        ),
+        pw.Align(
+          alignment: pw.Alignment.centerRight,
+          child:pw.Text(
+              '\$${owner.total?.toStringAsFixed(2) ?? "0.00"}',
+              style: pw.TextStyle( fontSize: 12)),
+        ),
+
+      ]);
+
+      total += owner.total!.toDouble();
+
+    }
+
+    setState(() {
+      grandtotal = total;
+    });
+
+    return tableData;
+  }
 
   // Future<void> generateRentalOwnerReportExcel(
   //     List<RentPastDue> rentalOwnerReports) async {
@@ -1106,7 +1083,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
   TextEditingController fromDate = TextEditingController();
   TextEditingController toDate = TextEditingController();
   String? daterange;
-  String? chargeType = 'Charges';
+  String? chargeType ="Charges";
   String? monthType;
   String? selectedrenatalownerid;
   @override
@@ -1147,13 +1124,12 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                           return SingleChildScrollView(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0, vertical: 5),
+                                  horizontal: 16.0,),
                               child: Column(
                                 children: [
-                                  filters(data: rentPastDue),
-                                  const SizedBox(height: 10),
+                                //  filters(data: rentPastDue),
 //call the table here base on condition like if selected is charge and and monttype is All call the chrge table
-                                  const SizedBox(height: 20),
+                                  const SizedBox(height: 15),
                                   if (chargeType == 'Charges' &&
                                       monthType == 'All' || chargeType == 'Charges' && monthType == null)
                                     chargeTable(snapshot
@@ -1169,10 +1145,12 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                     chargeTable(snapshot
                                         .data!.lastDueRentCharges!.charges!)
                                   else if(chargeType == "Payment" && monthType =="Current Month")
-                                    paymentTable(snapshot.data!.currentPayments!.payments!)
+                                        chargeTable(snapshot.data!.currentPayments!.payments!)
+                                      else if(chargeType == "Payment" && monthType == null)
+                                          chargeTable(snapshot.data!.currentPayments!.payments!)
 
                                       else if(chargeType == "Payment" && monthType =="Last Month")
-                                          paymentTable(snapshot.data!.lastPayments!.payments!)
+                                          chargeTable(snapshot.data!.lastPayments!.payments!)
                                 ],
                               ),
                             ),
@@ -1213,112 +1191,16 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     );
   }
 
-  String _getDisplayValue(String? value) {
-    // Return 'N/A' if the value is null or empty, otherwise return the value
-    return (value == null || value.trim().isEmpty) ? 'N/A' : value;
-  }
 
-  TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel,
-      String rightValue) {
-    return TableRow(
-      children: [
-        TableCell(
-          child: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  leftLabel,
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
-                ),
-                SizedBox(height: 4.0), // Space between label and value
-                Text(
-                  leftValue,
-                  style: TextStyle(color: grey),
-                ),
-              ],
-            ),
-          ),
-        ),
-        TableCell(
-          child: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  rightLabel,
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
-                ),
-                SizedBox(height: 4.0), // Space between label and value
-                Text(
-                  rightValue,
-                  style: TextStyle(color: grey),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 
-  List<TableRow> _buildExpandableRows(
-      int rowIndex, DelinquentTenantsData item) {
-    return [
-      TableRow(
-        decoration: BoxDecoration(
-          border: Border(
-            left: BorderSide(color: blueColor),
-            right: BorderSide(color: blueColor),
-            top: BorderSide(color: blueColor),
-            bottom: item.tenants!.isEmpty
-                ? BorderSide(color: blueColor)
-                : BorderSide.none,
-          ),
-        ),
-        children: [
-          _buildDataCell(item.rentalAddress ?? '-'),
-          _buildDataCell(''),
-          _buildDataCell(''),
-          _buildDataCell(''),
-          _buildDataCell(''),
-        ],
-      ),
-      for (var tenantEntry in item.tenants!.asMap().entries)
-        TableRow(
-          decoration: BoxDecoration(
-            border: Border(
-              left: BorderSide(color: blueColor),
-              right: BorderSide(color: blueColor),
-              bottom: tenantEntry.key == item.tenants!.length - 1
-                  ? BorderSide(color: blueColor)
-                  : BorderSide.none,
-            ),
-          ),
-          children: [
-            _buildDataCell('${item.tenants!.first.unitDetails ?? '-'}'),
-            _buildDataCell('${tenantEntry.value.tenantName ?? '-'}'),
-            _buildDataCell(
-                '${tenantEntry.value.pdfDelinquentTenantsData!.last30Days ?? '-'}'),
-            _buildDataCell(
-                ' ${tenantEntry.value.pdfDelinquentTenantsData!.last30Days ?? '-'}\n'),
-            _buildDataCell(
-                ' ${tenantEntry.value.pdfDelinquentTenantsData!.last30Days ?? '-'}\n'),
-          ],
-        ),
-    ];
-  }
-
-  chargeTable(List<Charge> chargedata) {
+  chargeTable(List<Transaction> chargedata) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 0.0,),
         child: Column(
           children: [
+            filters(data: chargedata),
+            const SizedBox(height: 10),
             _buildHeaders(),
             Container(
               decoration: BoxDecoration(
@@ -1326,7 +1208,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
               child: Column(
                 children: chargedata.asMap().entries.map((entry) {
                   int rowIndex = entry.key;
-                  Charge item = entry.value;
+                  Transaction item = entry.value;
                   bool isRowExpanded = expandedRowIndex == rowIndex;
 
                   print(item.rentalData.toString());
@@ -1533,239 +1415,11 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
       ),
     );
   }
-  paymentTable(List<Payment> chargedata) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 5),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 5,
-            ),
-            //filters(data: rentPastDue),
-            const SizedBox(height: 10),
-            _buildHeaders(),
-            const SizedBox(height: 20),
-            Container(
-              decoration: BoxDecoration(
-                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
-              child: Column(
-                children: chargedata.asMap().entries.map((entry) {
-                  int rowIndex = entry.key;
-                  Payment item = entry.value;
-                  bool isRowExpanded = expandedRowIndex == rowIndex;
 
-                  print(item.rentalData.toString());
-                  //show the charge data
-                  //  Charge rental = entry.value;
-                  //for the payment data
-                  // Payment rental = entry.value;
-                  return Container(
-                    // decoration: BoxDecoration(
-                    //   border: Border.all(color: blueColor),
-                    // ),
-                    decoration: BoxDecoration(
-                      color: rowIndex % 2 != 0
-                          ? Colors.white
-                          : blueColor.withOpacity(0.09),
-                      border:
-                      Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          title: Padding(
-                            padding: const EdgeInsets.all(2.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      if (expandedRowIndex == rowIndex) {
-                                        expandedRowIndex = null;
-                                      } else {
-                                        expandedRowIndex = rowIndex;
-                                      }
-                                    });
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.only(
-                                        left: 5, right: 5),
-                                    padding: !isRowExpanded
-                                        ? const EdgeInsets.only(bottom: 10)
-                                        : const EdgeInsets.only(top: 10),
-                                    child: FaIcon(
-                                      isRowExpanded
-                                          ? FontAwesomeIcons.sortUp
-                                          : FontAwesomeIcons.sortDown,
-                                      size: 20,
-                                      color:
-                                      isRowExpanded ? blueColor : blueColor,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 4,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        if (expandedRowIndex == rowIndex) {
-                                          expandedRowIndex = null;
-                                        } else {
-                                          expandedRowIndex = rowIndex;
-                                        }
-                                      });
-                                    },
-                                    child: Text(
-                                      '${item.rentalData != null ? item.rentalData!.address:"N/A" ?? '-'} ',
-                                      style: TextStyle(
-                                        color: blueColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 20,
-                                ),
-                                // SizedBox(
-                                //     width:
-                                //     MediaQuery.of(context)
-                                //         .size
-                                //         .width *
-                                //         .3),
-                                Expanded(
-                                  flex: 3,
-                                  child: Text(
-                                    '${ item.tenantData != null ?  item.tenantData!.tenantfirstName : "N/A" ?? '-'} ${ item.tenantData != null ?  item.tenantData!.tenantlastName : "N/A" ?? '-'}',
-                                    style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Expanded(
-                                  flex: 3,
-                                  child: Text(
-                                    '${item.total.toString() ?? '-'}',
-                                    style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
 
-                      ],
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            /* Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          const SizedBox(width: 10),
-                                          Material(
-                                            elevation: 3,
-                                            child: Container(
-                                              height: 40,
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 12.0),
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Colors.grey),
-                                              ),
-                                              child: DropdownButtonHideUnderline(
-                                                child: DropdownButton<int>(
-                                                  value: itemsPerPage,
-                                                  items: itemsPerPageOptions
-                                                      .map((int value) {
-                                                    return DropdownMenuItem<int>(
-                                                      value: value,
-                                                      child:
-                                                      Text(value.toString()),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: (newValue) {
-                                                    setState(() {
-                                                      itemsPerPage = newValue!;
-                                                      currentPage =
-                                                      0; // Reset to first page when items per page change
-                                                    });
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons.circleChevronLeft,
-                                              color: currentPage == 0
-                                                  ? Colors.grey
-                                                  : blueColor,
-                                            ),
-                                            onPressed: currentPage == 0
-                                                ? null
-                                                : () {
-                                              setState(() {
-                                                currentPage--;
-                                              });
-                                            },
-                                          ),
-                                          Text(
-                                              'Page ${currentPage + 1} of $totalPages'),
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons.circleChevronRight,
-                                              color: currentPage < totalPages - 1
-                                                  ? blueColor
-                                                  : Colors.grey,
-                                            ),
-                                            onPressed:
-                                            currentPage < totalPages - 1
-                                                ? () {
-                                              setState(() {
-                                                currentPage++;
-                                              });
-                                            }
-                                                : null,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),*/
-          ],
-        ),
-      ),
-    );
-  }
-
-  filters({RentPastDue? data}) {
+  filters({List<Transaction>? data}) {
     return Column(
       children: [
-        SizedBox(
-          height: 10,
-        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 0.0),
           child: Row(

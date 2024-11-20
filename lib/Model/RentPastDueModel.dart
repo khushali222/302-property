@@ -494,7 +494,7 @@ class RentPastDue {
 }
 
 class CurrentDueRentCharges {
-  final List<Charge>? charges;
+  final List<Transaction>? charges;
   final int? total;
 
   CurrentDueRentCharges({this.charges, this.total});
@@ -503,7 +503,7 @@ class CurrentDueRentCharges {
     if (json == null) return CurrentDueRentCharges();
     return CurrentDueRentCharges(
       charges: (json['charges'] as List?)
-          ?.map((e) => Charge.fromJson(e as Map<String, dynamic>?))
+          ?.map((e) => Transaction.fromJson(e as Map<String, dynamic>?))
           .toList(),
       total: json['total'] as int?,
     );
@@ -511,7 +511,7 @@ class CurrentDueRentCharges {
 }
 
 class LastDueRentCharges {
-  final List<Charge>? charges;
+  final List<Transaction>? charges;
   final int? total;
 
   LastDueRentCharges({this.charges, this.total});
@@ -520,7 +520,7 @@ class LastDueRentCharges {
     if (json == null) return LastDueRentCharges();
     return LastDueRentCharges(
       charges: (json['charges'] as List?)
-          ?.map((e) => Charge.fromJson(e as Map<String, dynamic>?))
+          ?.map((e) => Transaction.fromJson(e as Map<String, dynamic>?))
           .toList(),
       total: json['total'] as int?,
     );
@@ -528,7 +528,7 @@ class LastDueRentCharges {
 }
 
 class DueRentCharges {
-  final List<Charge>? charges;
+  final List<Transaction>? charges;
   final int? total;
 
   DueRentCharges({this.charges, this.total});
@@ -538,7 +538,7 @@ class DueRentCharges {
     if (json == null) return DueRentCharges();
     return DueRentCharges(
       charges: (json['charges'] as List?)
-          ?.map((e) => Charge.fromJson(e as Map<String, dynamic>?))
+          ?.map((e) => Transaction.fromJson(e as Map<String, dynamic>?))
           .toList(),
       total: json['total'] as int?,
     );
@@ -656,7 +656,7 @@ class Entry {
 }
 
 class CurrentPayments {
-  final List<Payment>? payments;
+  final List<Transaction>? payments;
   final int? total;
 
   CurrentPayments({this.payments, this.total});
@@ -665,7 +665,7 @@ class CurrentPayments {
     if (json == null) return CurrentPayments();
     return CurrentPayments(
       payments: (json['payments'] as List?)
-          ?.map((e) => Payment.fromJson(e as Map<String, dynamic>?))
+          ?.map((e) => Transaction.fromJson(e as Map<String, dynamic>?))
           .toList(),
       total: json['total'] as int?,
     );
@@ -673,7 +673,7 @@ class CurrentPayments {
 }
 
 class LastPayments {
-  final List<Payment>? payments;
+  final List<Transaction>? payments;
   final int? total;
 
   LastPayments({this.payments, this.total});
@@ -682,24 +682,24 @@ class LastPayments {
     if (json == null) return LastPayments();
     return LastPayments(
       payments: (json['payments'] as List?)
-          ?.map((e) => Payment.fromJson(e as Map<String, dynamic>?))
+          ?.map((e) => Transaction.fromJson(e as Map<String, dynamic>?))
           .toList(),
       total: json['total'] as int?,
     );
   }
 }
 
-class Payment {
+class Transaction {
   final String? paymentId;
   final int? total;
   final RentalData? rentalData;
   final TenantData? tenantData;
-  Payment({this.paymentId, this.total,this.rentalData,
+  Transaction({this.paymentId, this.total,this.rentalData,
     this.tenantData,});
 
-  factory Payment.fromJson(Map<String, dynamic>? json) {
-    if (json == null) return Payment();
-    return Payment(
+  factory Transaction.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return Transaction();
+    return Transaction(
       paymentId: json['payment_id'] as String?,
       total: json['total'] as int?,
       rentalData: json['rental_data'] != null
