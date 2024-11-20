@@ -465,7 +465,7 @@ class RentPastDue {
   });
 
   factory RentPastDue.fromJson(Map<String, dynamic>? json) {
-    print(json);
+    print(json!['dueRentCharges']);
     if (json == null) return RentPastDue();
     return RentPastDue(
       currentMonthRentDue: json['currentMonthRentDue'] as int?,
@@ -563,6 +563,8 @@ class Charge {
   });
 
   factory Charge.fromJson(Map<String, dynamic>? json) {
+
+    print("json onject $json");
     if (json == null) return Charge();
     return Charge(
       leaseId: json['lease_id'] as String?,
