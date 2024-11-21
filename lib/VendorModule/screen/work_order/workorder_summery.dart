@@ -240,8 +240,15 @@ class _Workorder_summeryState extends State<Workorder_summery>
                 width: 20,
               ),
               GestureDetector(
-                onTap: () {
-                 Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Edit_Workorder(workorderId: widget.workorder_id!,)));
+                onTap: () async{
+                var getback = await  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Edit_Workorder(workorderId: widget.workorder_id!,)));
+                if(getback == true){
+                  setState(() {
+
+                  });
+
+                }
+
                 },
                 child: Material(
                   elevation: 3,

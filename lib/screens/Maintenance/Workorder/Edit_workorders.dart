@@ -467,7 +467,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     'Other Interest Expenses',
     'Postage and Delivery',
     'Repairs',
-    'Other Expenses',
+
   ];
 
   List<Map<String, dynamic>> rows = [];

@@ -2632,10 +2632,25 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
     'No',
   ];
   String? _selectedStatus = "New";
-  final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed' ,'Closed'];
+  final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed','Pending','Closed'];
   final List<String> _account = [
-    'Advertizing',
-    'Association fees',
+    'Advertising',
+    'Association Fees',
+    'Bank Fees',
+    'Auto and Travel',
+    'Cleaning and Maintenance',
+    'Commissions',
+    'Depreciation Expense',
+    'Insurance',
+    'Legal and Professional Fees',
+    'Licenses and Permits',
+    'Management Fees',
+    'Mortgage Interest',
+    'Other Expenses',
+    'Other Interest Expenses',
+    'Postage and Delivery',
+    'Repairs',
+
   ];
   List<Map<String, dynamic>> rows = [];
   bool _showTextField = false;

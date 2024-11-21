@@ -127,7 +127,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
           fetchedDetails.vendorId!.isEmpty ? null : fetchedDetails.vendorId;
       _selectedstaffId = fetchedDetails.staffmemberId;
       _selectedtenantId =
-          fetchedDetails.tenantId!.isEmpty ? null : fetchedDetails.tenantId;
+           fetchedDetails.tenantId == null ? null : fetchedDetails.tenantId;
       _selectedEntry = entryAllowedString;
 
       partsAndLabor =
@@ -408,7 +408,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
     'Other Expenses',
     'Postage and Delivery',
     'Repairs',
-    'Other Expenses'
+
   ];
   List<Map<String, dynamic>> rows = [];
   bool _showTextField = false;
@@ -2624,7 +2624,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                       ),
                                                     );
                                                   }).toList(),
-                                                  value: _selectedUnitId,
+                                                  value: _selectedUnitId!.isEmpty ? null : _selectedUnitId,
                                                   onChanged:
                                                       null /*(value) {
                                         setState(() {
@@ -2692,13 +2692,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                     padding: EdgeInsets.only(
                                                         left: 14, right: 14),
                                                   ),
-                                                  validator: (value) {
-                                                    if (value == null ||
-                                                        value.isEmpty) {
-                                                      return 'Please select an option';
-                                                    }
-                                                    return null;
-                                                  },
+
                                                 ),
                                               )
                                             : Container(),
@@ -3740,11 +3734,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         status: _selectedStatus,
         rentalAddress: properties[_selectedPropertyId],
         rentalUnit: units[_selectedUnitId],
-        tenant: tenantId,
+        tenant: _selectedtenantId,
         rentalid: rentalId,
         unitid: unitId,
         workOrderImages: [],
-        vendorId: vendorId,
+        vendorId: _selectedvendorsId,
         vendorNotes: vendornote.text,
         priority: _selectedOption,
         isBillable: isChecked,
