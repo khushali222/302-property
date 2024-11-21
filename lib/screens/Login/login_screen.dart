@@ -1427,7 +1427,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       await Provider.of<PermissionProvider>(context, listen: false)
           .fetchPermissions();
       prefs.setString('first_name', firstname.first);
-      prefs.setString('last_name', firstname[1]);
+      prefs.setString('last_name', firstname.length > 1 ? firstname[1]: "");
       prefs.setString('companyName', selectedCompany!);
       prefs.setString("role", "Vendor");
       print(jsonData["vendor_firstName"]);
