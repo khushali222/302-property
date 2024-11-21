@@ -3746,8 +3746,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         date: _dateController.text,
         entry: _selectedEntry == 'yes',
         parts: parts,
-      )
-          .then((value) {
+      ).then((value) {
         setState(() {
           widget.property?.workSubject = subject.text;
         });
@@ -3762,6 +3761,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
           fontSize: 16.0,
         );
         Navigator.pop(context, true);
+
       }).catchError((e) {
         // Error
         Fluttertoast.showToast(

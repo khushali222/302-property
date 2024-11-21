@@ -244,7 +244,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                 var getback = await  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Edit_Workorder(workorderId: widget.workorder_id!,)));
                 if(getback == true){
                   setState(() {
-
+                    futureworkorderSummary =
+                        WorkOrderRepository.getworkorderSummary(widget.workorder_id!);
                   });
 
                 }

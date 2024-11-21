@@ -59,6 +59,17 @@ class _RenewleaseState extends State<Renewlease> {
     fetchDropdownData();
     super.initState();
 
+    // bool isLeaseRenewed = widget.lease.data.startDate. != null && widget.renewLeases!.isNotEmpty;
+    //
+    // // Set the start date based on lease status
+    // if (isLeaseRenewed) {
+    //   // If the lease is renewed, set the start date to the formatted end date
+    //   startDateController.text = DateFormat('yyyy-MM-dd').format(endDate);
+    // } else {
+    //   // If the lease is expired, set the start date to the current date
+    //   startDateController.text = formatDate(DateTime.now().toString());
+    // }
+
   }
   void _refreshAccounts() {
     setState(() {

@@ -42,7 +42,8 @@ import '../../../repository/rentalownerreport.dart';
 import '../../../widgets/custom_drawer.dart';
 
 class RentPastDueReports extends StatefulWidget {
-  const RentPastDueReports({super.key});
+  bool? isRentdue;
+  RentPastDueReports({super.key, this.isRentdue});
 
   @override
   State<RentPastDueReports> createState() => _RentPastDueReportsState();
@@ -71,6 +72,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     fetchReport();
     futurePastRentDue =
         AdminBalanceRepository().fetchAdminBalance(report: true);
+    chargeType = widget.isRentdue == true ? "Payment" : "Charges";
   }
 
   void checkInternet() async {
@@ -626,9 +628,10 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                   'Tenant',
                   pw.Align(
                     alignment: pw.Alignment.centerRight,
-                    child: pw.Text('Amount',
-                      style: pw.TextStyle(
-                          color: PdfColors.white),),
+                    child: pw.Text(
+                      'Amount',
+                      style: pw.TextStyle(color: PdfColors.white),
+                    ),
                   ),
                 ],
                 data: _generateTableData(
@@ -672,9 +675,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
       // Main row for the rental owner name
       tableData.add([
         pw.Text(
-            owner.rentalData != null? owner.rentalData!.address! : "N/A" ??
-                "",
-            style: pw.TextStyle( fontSize: 12)),
+            owner.rentalData != null ? owner.rentalData!.address! : "N/A" ?? "",
+            style: pw.TextStyle(fontSize: 12)),
         pw.Text(
           (owner.tenantData != null
               ? '${owner.tenantData!.tenantfirstName ?? ""} ${owner.tenantData!.tenantlastName ?? ""}'
@@ -683,15 +685,12 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
         ),
         pw.Align(
           alignment: pw.Alignment.centerRight,
-          child:pw.Text(
-              '\$${owner.total?.toStringAsFixed(2) ?? "0.00"}',
-              style: pw.TextStyle( fontSize: 12)),
+          child: pw.Text('\$${owner.total?.toStringAsFixed(2) ?? "0.00"}',
+              style: pw.TextStyle(fontSize: 12)),
         ),
-
       ]);
 
       total += owner.total!.toDouble();
-
     }
 
     setState(() {
@@ -714,7 +713,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     final List<String> headers = ['Property', 'Tenant', 'Total'];
 
     // Header style
-    final syncXlsx.Style headerCellStyle = workbook.styles.add('HeaderCellStyle');
+    final syncXlsx.Style headerCellStyle =
+        workbook.styles.add('HeaderCellStyle');
     headerCellStyle.bold = true;
     headerCellStyle.backColor = '#5A86D5';
     headerCellStyle.fontColor = '#FFFFFF';
@@ -723,7 +723,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
 
     // Currency style for amounts
     final syncXlsx.Style currencyCellStyle =
-    workbook.styles.add('CurrencyCellStyle');
+        workbook.styles.add('CurrencyCellStyle');
     currencyCellStyle.numberFormat = '\$#,##0.00'; // Currency format
     currencyCellStyle.hAlign = syncXlsx.HAlignType.right; // Right-align amounts
 
@@ -737,12 +737,17 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     // Populate rows with delinquent tenant data
     int rowIndex = 2; // Start from row 2 (below headers)
     for (var tenant in delinquentTenantsData) {
-      sheet.getRangeByIndex(rowIndex, 1).setText(tenant.rentalData != null? tenant.rentalData!.address! : "N/A" ??  'N/A');
-      sheet.getRangeByIndex(rowIndex, 2).setText(tenant.tenantData != null? tenant.tenantData!.tenantfirstName! : "N/A" ??"");
-      sheet.getRangeByIndex(rowIndex, 3).setNumber(tenant.total!.toDouble() ?? 0.0);
+      sheet.getRangeByIndex(rowIndex, 1).setText(tenant.rentalData != null
+          ? tenant.rentalData!.address!
+          : "N/A" ?? 'N/A');
+      sheet.getRangeByIndex(rowIndex, 2).setText(tenant.tenantData != null
+          ? tenant.tenantData!.tenantfirstName!
+          : "N/A" ?? "");
+      sheet
+          .getRangeByIndex(rowIndex, 3)
+          .setNumber(tenant.total!.toDouble() ?? 0.0);
       sheet.getRangeByIndex(rowIndex, 3).cellStyle = currencyCellStyle;
       grandTotal += tenant.total!.toDouble();
-
 
       rowIndex++;
     }
@@ -965,6 +970,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
       msg: 'CSV file saved to $path',
     );
   }
+
   List<Map<String, dynamic>> rentalowners = [];
   Future<void> fetchRentalOwners() async {
     print("calling");
@@ -993,7 +999,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
   TextEditingController fromDate = TextEditingController();
   TextEditingController toDate = TextEditingController();
   String? daterange;
-  String? chargeType ="Charges";
+  String? chargeType ;
+
   String? monthType;
   String? selectedrenatalownerid;
   @override
@@ -1032,90 +1039,124 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                           List<Transaction> filteredCharges = [];
 
                           // Debugging: Print the rental data and tenant data
-                          rentPastDue.dueRentCharges?.charges?.forEach((charge) {
+                          rentPastDue.dueRentCharges?.charges
+                              ?.forEach((charge) {
                             print('Rental Data: ${charge.rentalData}');
                             print('Tenant Data: ${charge.tenantData}');
                           });
-                          if (chargeType == 'Charges' && (monthType == 'All' || monthType == null)) {
+                          if (chargeType == 'Charges' &&
+                              (monthType == 'All' || monthType == null)) {
                             filteredCharges = snapshot
                                 .data!.dueRentCharges!.charges!
                                 .where((charge) {
                               var address = charge.rentalData?.address;
-                              var tenantName = charge.tenantData?.tenantfirstName;
-                              print('Searching in Address: $address and Tenant Name: $tenantName');
-                              return (address != null && address.contains(searchvalue)) ||
-                                  (tenantName != null && tenantName.contains(searchvalue));
+                              var tenantName =
+                                  charge.tenantData?.tenantfirstName;
+                              print(
+                                  'Searching in Address: $address and Tenant Name: $tenantName');
+                              return (address != null &&
+                                      address.contains(searchvalue)) ||
+                                  (tenantName != null &&
+                                      tenantName.contains(searchvalue));
                             }).toList();
-                          } else if (chargeType == 'Charges' && monthType == 'Current Month') {
+                          } else if (chargeType == 'Charges' &&
+                              monthType == 'Current Month') {
                             filteredCharges = snapshot
                                 .data!.currentDueRentCharges!.charges!
                                 .where((charge) {
                               var address = charge.rentalData?.address;
-                              var tenantName = charge.tenantData?.tenantfirstName;
-                              print('Searching in Address: $address and Tenant Name: $tenantName');
-                              return (address != null && address.contains(searchvalue)) ||
-                                  (tenantName != null && tenantName.contains(searchvalue));
+                              var tenantName =
+                                  charge.tenantData?.tenantfirstName;
+                              print(
+                                  'Searching in Address: $address and Tenant Name: $tenantName');
+                              return (address != null &&
+                                      address.contains(searchvalue)) ||
+                                  (tenantName != null &&
+                                      tenantName.contains(searchvalue));
                             }).toList();
-                          } else if (chargeType == 'Charges' && monthType == 'Last Month') {
+                          } else if (chargeType == 'Charges' &&
+                              monthType == 'Last Month') {
                             filteredCharges = snapshot
                                 .data!.lastDueRentCharges!.charges!
                                 .where((charge) {
                               var address = charge.rentalData?.address;
-                              var tenantName = charge.tenantData?.tenantfirstName;
-                              print('Searching in Address: $address and Tenant Name: $tenantName');
-                              return (address != null && address.contains(searchvalue)) ||
-                                  (tenantName != null && tenantName.contains(searchvalue));
+                              var tenantName =
+                                  charge.tenantData?.tenantfirstName;
+                              print(
+                                  'Searching in Address: $address and Tenant Name: $tenantName');
+                              return (address != null &&
+                                      address.contains(searchvalue)) ||
+                                  (tenantName != null &&
+                                      tenantName.contains(searchvalue));
                             }).toList();
-                          } else if (chargeType == "Payment" && monthType == "Current Month") {
+                          } else if (chargeType == "Payment" &&
+                              monthType == "Current Month") {
                             filteredCharges = snapshot
                                 .data!.currentPayments!.payments!
                                 .where((payment) {
                               var address = payment.rentalData?.address;
-                              var tenantName = payment.tenantData?.tenantfirstName;
-                              print('Searching in Address: $address and Tenant Name: $tenantName');
-                              return (address != null && address.contains(searchvalue)) ||
-                                  (tenantName != null && tenantName.contains(searchvalue));
+                              var tenantName =
+                                  payment.tenantData?.tenantfirstName;
+                              print(
+                                  'Searching in Address: $address and Tenant Name: $tenantName');
+                              return (address != null &&
+                                      address.contains(searchvalue)) ||
+                                  (tenantName != null &&
+                                      tenantName.contains(searchvalue));
                             }).toList();
-                          } else if (chargeType == "Payment" && monthType == null) {
+                          } else if (chargeType == "Payment" &&
+                              monthType == null) {
                             filteredCharges = snapshot
                                 .data!.currentPayments!.payments!
                                 .where((payment) {
                               var address = payment.rentalData?.address;
-                              var tenantName = payment.tenantData?.tenantfirstName;
-                              print('Searching in Address: $address and Tenant Name: $tenantName');
-                              return (address != null && address.contains(searchvalue)) ||
-                                  (tenantName != null && tenantName.contains(searchvalue));
+                              var tenantName =
+                                  payment.tenantData?.tenantfirstName;
+                              print(
+                                  'Searching in Address: $address and Tenant Name: $tenantName');
+                              return (address != null &&
+                                      address.contains(searchvalue)) ||
+                                  (tenantName != null &&
+                                      tenantName.contains(searchvalue));
                             }).toList();
-                          } else if (chargeType == "Payment" && monthType == "Last Month") {
+                          } else if (chargeType == "Payment" &&
+                              monthType == "Last Month") {
                             filteredCharges = snapshot
                                 .data!.lastPayments!.payments!
                                 .where((payment) {
                               var address = payment.rentalData?.address;
-                              var tenantName = payment.tenantData?.tenantfirstName;
-                              print('Searching in Address: $address and Tenant Name: $tenantName');
-                              return (address != null && address.contains(searchvalue)) ||
-                                  (tenantName != null && tenantName.contains(searchvalue));
+                              var tenantName =
+                                  payment.tenantData?.tenantfirstName;
+                              print(
+                                  'Searching in Address: $address and Tenant Name: $tenantName');
+                              return (address != null &&
+                                      address.contains(searchvalue)) ||
+                                  (tenantName != null &&
+                                      tenantName.contains(searchvalue));
                             }).toList();
                           } else {
-                            filteredCharges = []; // Default to an empty list if no conditions match
+                            filteredCharges =
+                                []; // Default to an empty list if no conditions match
                           }
-
 
                           return SingleChildScrollView(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0,),
+                                horizontal: 16.0,
+                              ),
                               child: Column(
                                 children: [
-                                //  filters(data: rentPastDue),
+                                  //  filters(data: rentPastDue),
 //call the table here base on condition like if selected is charge and and monttype is All call the chrge table
                                   const SizedBox(height: 15),
                                   if (chargeType == 'Charges' &&
-                                      monthType == 'All' || chargeType == 'Charges' && monthType == null)
-                                    chargeTable(snapshot
-                                        .data!.dueRentCharges!.charges!)
-                                    // chargeTable(
-                                    //     snapshot.data!.dueRentCharges!.charges!)
+                                          monthType == 'All' ||
+                                      chargeType == 'Charges' &&
+                                          monthType == null)
+                                    chargeTable(
+                                        snapshot.data!.dueRentCharges!.charges!)
+                                  // chargeTable(
+                                  //     snapshot.data!.dueRentCharges!.charges!)
                                   else if (chargeType == 'Charges' &&
                                       monthType == 'Current Month')
                                     chargeTable(snapshot
@@ -1124,13 +1165,20 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                       monthType == 'Last Month')
                                     chargeTable(snapshot
                                         .data!.lastDueRentCharges!.charges!)
-                                  else if(chargeType == "Payment" && monthType =="Current Month")
-                                        chargeTable(snapshot.data!.currentPayments!.payments!)
-                                      else if(chargeType == "Payment" && monthType == null)
-                                          chargeTable(snapshot.data!.currentPayments!.payments!)
+                                  else if (chargeType == "Payment" &&
+                                      monthType == "Current Month")
+                                    chargeTable(snapshot
+                                        .data!.currentPayments!.payments!)
+                                  else if (chargeType == "Payment" &&
+                                      monthType == null)
+                                    chargeTable(snapshot
+                                        .data!.currentPayments!.payments!)
+                                  else if (chargeType == "Payment" &&
+                                      monthType == "Last Month")
+                                    chargeTable(
+                                        snapshot.data!.lastPayments!.payments!),
 
-                                      else if(chargeType == "Payment" && monthType =="Last Month")
-                                          chargeTable(snapshot.data!.lastPayments!.payments!)
+
                                 ],
                               ),
                             ),
@@ -1140,8 +1188,6 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                         }
                       },
                     ),
-
-
                 ],
               ),
             )
@@ -1171,24 +1217,41 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     );
   }
 
-
-
   chargeTable(List<Transaction> chargedata) {
-
     int totalPages = (chargedata.length / itemsPerPage).ceil();
 
     // Get the current page data
-    List<Transaction> currentPageData = chargedata
-        .skip(currentPage * itemsPerPage)
-        .take(itemsPerPage)
-        .toList();
+    List<Transaction> currentPageData =
+        chargedata.skip(currentPage * itemsPerPage).take(itemsPerPage).toList();
 
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 0.0,),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 0.0,
+        ),
         child: Column(
           children: [
             filters(data: chargedata),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                SizedBox(
+                  width: 3,
+                ),
+                Text(
+                  "Rent Due",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
+                Spacer(),
+                Text(
+                  "\$ ${chargedata.first.total}",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
+                SizedBox(
+                  width: 3,
+                ),
+              ],
+            ),
             const SizedBox(height: 10),
             _buildHeaders(),
             Container(
@@ -1198,7 +1261,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 children: currentPageData.asMap().entries.where((entry) {
                   // Filter the data based on the search input
                   Transaction item = entry.value;
-                  String address = item.rentalData?.address?.toLowerCase() ?? '';
+                  String address =
+                      item.rentalData?.address?.toLowerCase() ?? '';
                   return address.contains(searchvalue);
                 }).map((entry) {
                   int rowIndex = entry.key;
@@ -1252,8 +1316,9 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                           ? FontAwesomeIcons.sortUp
                                           : FontAwesomeIcons.sortDown,
                                       size: 20,
-                                      color:
-                                          isRowExpanded ? Colors.transparent : Colors.transparent,
+                                      color: isRowExpanded
+                                          ? Colors.transparent
+                                          : Colors.transparent,
                                     ),
                                   ),
                                 ),
@@ -1270,7 +1335,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                       });
                                     },
                                     child: Text(
-                                      '${item.rentalData != null ? item.rentalData!.address:"N/A" ?? '-'} ',
+                                      '${item.rentalData != null ? item.rentalData!.address : "N/A" ?? '-'} ',
                                       style: TextStyle(
                                         color: blueColor,
                                         fontWeight: FontWeight.bold,
@@ -1291,7 +1356,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                 Expanded(
                                   flex: 4,
                                   child: Text(
-                                    '${ item.tenantData != null ?  item.tenantData!.tenantfirstName : "N/A" ?? '-'} ${ item.tenantData != null ?  item.tenantData!.tenantlastName : "N/A" ?? '-'}',
+                                    '${item.tenantData != null ? item.tenantData!.tenantfirstName : "N/A" ?? '-'} ${item.tenantData != null ? item.tenantData!.tenantlastName : "N/A" ?? '-'}',
                                     style: TextStyle(
                                       color: blueColor,
                                       fontWeight: FontWeight.bold,
@@ -1317,7 +1382,6 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                             ),
                           ),
                         ),
-
                       ],
                     ),
                   );
@@ -1325,85 +1389,77 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
               ),
             ),
             const SizedBox(height: 20),
-             Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          const SizedBox(width: 10),
-                                          Material(
-                                            elevation: 3,
-                                            child: Container(
-                                              height: 40,
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 12.0),
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Colors.grey),
-                                              ),
-                                              child: DropdownButtonHideUnderline(
-                                                child: DropdownButton<int>(
-                                                  value: itemsPerPage,
-                                                  items: itemsPerPageOptions
-                                                      .map((int value) {
-                                                    return DropdownMenuItem<int>(
-                                                      value: value,
-                                                      child:
-                                                      Text(value.toString()),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: (newValue) {
-                                                    setState(() {
-                                                      itemsPerPage = newValue!;
-                                                      currentPage =
-                                                      0; // Reset to first page when items per page change
-                                                    });
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons.circleChevronLeft,
-                                              color: currentPage == 0
-                                                  ? Colors.grey
-                                                  : blueColor,
-                                            ),
-                                            onPressed: currentPage == 0
-                                                ? null
-                                                : () {
-                                              setState(() {
-                                                currentPage--;
-                                              });
-                                            },
-                                          ),
-                                          Text(
-                                              'Page ${currentPage + 1} of $totalPages'),
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons.circleChevronRight,
-                                              color: currentPage < totalPages - 1
-                                                  ? blueColor
-                                                  : Colors.grey,
-                                            ),
-                                            onPressed:
-                                            currentPage < totalPages - 1
-                                                ? () {
-                                              setState(() {
-                                                currentPage++;
-                                              });
-                                            }
-                                                : null,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Row(
+                  children: [
+                    const SizedBox(width: 10),
+                    Material(
+                      elevation: 3,
+                      child: Container(
+                        height: 40,
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<int>(
+                            value: itemsPerPage,
+                            items: itemsPerPageOptions.map((int value) {
+                              return DropdownMenuItem<int>(
+                                value: value,
+                                child: Text(value.toString()),
+                              );
+                            }).toList(),
+                            onChanged: (newValue) {
+                              setState(() {
+                                itemsPerPage = newValue!;
+                                currentPage =
+                                    0; // Reset to first page when items per page change
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: FaIcon(
+                        FontAwesomeIcons.circleChevronLeft,
+                        color: currentPage == 0 ? Colors.grey : blueColor,
+                      ),
+                      onPressed: currentPage == 0
+                          ? null
+                          : () {
+                              setState(() {
+                                currentPage--;
+                              });
+                            },
+                    ),
+                    Text('Page ${currentPage + 1} of $totalPages'),
+                    IconButton(
+                      icon: FaIcon(
+                        FontAwesomeIcons.circleChevronRight,
+                        color: currentPage < totalPages - 1
+                            ? blueColor
+                            : Colors.grey,
+                      ),
+                      onPressed: currentPage < totalPages - 1
+                          ? () {
+                              setState(() {
+                                currentPage++;
+                              });
+                            }
+                          : null,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -1495,7 +1551,6 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                   ),
                 ),
               ),
-
             ],
           ),
         ),
@@ -1529,9 +1584,9 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                           child: TextField(
                             style: TextStyle(
                                 fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 12
-                                    : 14),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 12
+                                        : 14),
                             // onChanged: (value) {
                             //   setState(() {
                             //     cvverror = false;
@@ -1548,11 +1603,11 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                               border: InputBorder.none,
                               hintText: "Search here...",
                               hintStyle: TextStyle(
-                                 fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.bold,
                                   fontSize:
-                                  MediaQuery.of(context).size.width < 500
-                                      ? 14
-                                      : 18),
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 14
+                                          : 18),
                               contentPadding: (EdgeInsets.only(
                                   left: 5, bottom: 12, top: 5)),
                             ),
@@ -1581,18 +1636,18 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                           generateDelinquentTenantsPdf(data);
                         } else if (value == 'XLSX' && data != null) {
                           print('XLSX');
-                          generateDelinquentTenantsExcel(data,0);
+                          generateDelinquentTenantsExcel(data, 0);
                           //generateRentalOwnerReportExcel(data);
                           //generateDelinquentTenantsExcel(data);
                         } else if (value == 'CSV' && data != null) {
                           print('CSV');
-                          generateDelinquentTenantsCsv(data,0.0);
+                          generateDelinquentTenantsCsv(data, 0.0);
                           //  generateRentalOwnerReportCsv(data);
                           //  generateDelinquentTenantsCsv(data);
                         }
                       },
                       itemBuilder: (BuildContext context) =>
-                      <PopupMenuEntry<String>>[
+                          <PopupMenuEntry<String>>[
                         const PopupMenuItem<String>(
                             value: 'PDF', child: Text('PDF')),
                         const PopupMenuItem<String>(
@@ -1605,11 +1660,11 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                         children: [
                           istenantDataLoading
                               ? const Center(
-                            child: SpinKitFadingCircle(
-                              color: Colors.white,
-                              size: 21.0,
-                            ),
-                          )
+                                  child: SpinKitFadingCircle(
+                                    color: Colors.white,
+                                    size: 21.0,
+                                  ),
+                                )
                               : Text('Export'),
                           Icon(Icons.arrow_drop_down),
                         ],
