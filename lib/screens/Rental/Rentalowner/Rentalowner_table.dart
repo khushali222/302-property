@@ -336,14 +336,6 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
       buttons: [
         DialogButton(
           child: Text(
-            "Cancel",
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          onPressed: () => Navigator.pop(context),
-          color: Colors.grey,
-        ),
-        DialogButton(
-          child: Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -363,6 +355,15 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
           },
           color: Colors.red,
         ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+        ),
+
       ],
     ).show();
   }

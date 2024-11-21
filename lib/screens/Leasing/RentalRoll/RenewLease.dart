@@ -52,7 +52,8 @@ class _RenewleaseState extends State<Renewlease> {
     DateTime startDate = endDate;
     DateTime newEndDate = DateTime(endDate.year, endDate.month + 1, endDate.day);
 
-    startDateController.text = DateFormat('yyyy-MM-dd').format(startDate);
+   // startDateController.text = DateFormat('yyyy-MM-dd').format(startDate);
+    startDateController.text = formatDate(DateTime.now().toString());
     endDateController.text = DateFormat('yyyy-MM-dd').format(newEndDate);
     rent.text = widget.rentamount ??"";
     fetchDropdownData();
@@ -258,7 +259,7 @@ class _RenewleaseState extends State<Renewlease> {
         },
         body: json.encode(renewlease)
       );
-      print(response.body);
+      print(' lease renew ${response.body}');
       if(response.statusCode == 200){
         Fluttertoast.showToast(msg: "Lease Renewal Successfully");
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>SummeryPageLease(leaseId: widget.leaseId,)));

@@ -341,14 +341,6 @@ class _Applicants_tableState extends State<Applicants_table> {
       buttons: [
         DialogButton(
           child: const Text(
-            "Cancel",
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          onPressed: () => Navigator.pop(context),
-          color: Colors.grey,
-        ),
-        DialogButton(
-          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -367,6 +359,14 @@ class _Applicants_tableState extends State<Applicants_table> {
             }
           },
           color: Colors.red,
+        ),
+        DialogButton(
+          child: const Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
         ),
       ],
     ).show();

@@ -319,14 +319,6 @@ class _Tenants_tableState extends State<Tenants_table> {
       buttons: [
         DialogButton(
           child: Text(
-            "Cancel",
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          onPressed: () => Navigator.pop(context),
-          color: Colors.grey,
-        ),
-        DialogButton(
-          child: Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -334,7 +326,7 @@ class _Tenants_tableState extends State<Tenants_table> {
             if(reason.text.isEmpty){
               Fluttertoast.showToast(msg: "Please enter a reason for deletion");
             }
-           else {
+            else {
               await TenantsRepository().deleteTenant(
                   tenantId: id,
                   companyName: companyName,
@@ -349,6 +341,15 @@ class _Tenants_tableState extends State<Tenants_table> {
           },
           color: Colors.red,
         ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+        ),
+
       ],
     ).show();
   }
