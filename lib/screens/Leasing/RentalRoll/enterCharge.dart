@@ -220,7 +220,7 @@ class _enterChargeState extends State<enterCharge> {
   List<FocusNode> focusNodes = [];
   List<Map<String, String>> tenants = [];
   String? selectedTenantId;
-
+  bool isChecked = false;
   @override
   void initState() {
     super.initState();
@@ -1074,7 +1074,7 @@ class _enterChargeState extends State<enterCharge> {
                           : Table(
                               border: TableBorder.all(width: 1),
                               columnWidths: const {
-                                0: FlexColumnWidth(2),
+                                0: FlexColumnWidth(3),
                                 1: FlexColumnWidth(2),
                                 2: FlexColumnWidth(1),
                               },
@@ -1101,7 +1101,7 @@ class _enterChargeState extends State<enterCharge> {
                                   Padding(
                                     padding: EdgeInsets.all(8.0),
                                     child: Center(
-                                      child: Text('Actions',
+                                      child: Text('',
                                           style: TextStyle(
                                               color: blueColor,
                                               fontWeight: FontWeight.bold)),
@@ -1413,10 +1413,10 @@ class _enterChargeState extends State<enterCharge> {
                                                   },
                                                   buttonStyleData:
                                                       ButtonStyleData(
-                                                    height: 45,
+                                                    height: 50,
                                                     padding:
                                                         const EdgeInsets.only(
-                                                            left: 0, right: 14),
+                                                            left: 0, right: 0),
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -1606,7 +1606,7 @@ class _enterChargeState extends State<enterCharge> {
                             color: Colors.red, fontWeight: FontWeight.bold),
                       ),
                     ),
-                  const SizedBox(height: 16),
+
                   const SizedBox(
                     height: 20,
                   ),
@@ -1849,7 +1849,14 @@ class _enterChargeState extends State<enterCharge> {
                                         Fluttertoast.showToast(
                                           msg: "Charge posted successfully",
                                         );
-                                        Navigator.pop(context, true);
+                                        if(isChecked == true){
+                                          resetFields();
+
+                                        }
+                                        else{
+                                          Navigator.pop(context, true);
+                                        }
+
                                       } else {
                                         setState(() {
                                           _isLoading = false;
@@ -1875,7 +1882,12 @@ class _enterChargeState extends State<enterCharge> {
                                   print(Memo.text);
                                 }
                               },
-                              child: widget.chargeid != null
+                              child: _isLoading ? Center(
+                                child: SpinKitFadingCircle(
+                                  color: Colors.white,
+                                  size: 30.0,
+                                ),
+                              ) : widget.chargeid != null
                                   ? Text(
                                       'Edit charge',
                                       style: TextStyle(
@@ -1913,7 +1925,9 @@ class _enterChargeState extends State<enterCharge> {
                                       borderRadius:
                                           BorderRadius.circular(8.0))),
                               onPressed: () {
-                                Navigator.pop(context);
+
+
+                                  Navigator.pop(context);
                                 // firstName.clear();
                                 // lastName.clear();
                                 // email.clear();
@@ -1933,10 +1947,65 @@ class _enterChargeState extends State<enterCharge> {
                   const SizedBox(
                     height: 20,
                   ),
+                  if(widget.chargeid == null)
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 5,
+                      ),
+                      SizedBox(
+                        width: 24.0, // Standard width for checkbox
+                        height: 24.0,
+                        child: Checkbox(
+                          value: isChecked,
+                          onChanged: (value) {
+                            setState(() {
+                              isChecked = value ?? false;
+                            });
+                          },
+                          activeColor: isChecked ? blueColor : Colors.black,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        "Add Another Charge",
+                        style:
+                        TextStyle(color: blueColor, fontWeight: FontWeight.bold),
+                      ),
+
+                    ],
+                  ),
+                  SizedBox(height: 50,)
                 ],
               ),
             ),
           ),
         ));
+  }
+  void resetFields() {
+
+    // _startDate.clear();
+
+    //amountController.clear();
+    Memo.clear();
+
+    selectedAccount = null;
+    Amount.clear();
+    rows.clear();
+    totalAmount = 0.0;
+    validationMessage = null;
+    _uploadedFileNames.clear();
+    _pdfFiles.clear();
+
+
+    // rows.clear();
+    // charges_balances = [0.0];
+
+    // controllers.clear();
+    // Optionally, you can also reset the isChecked variable if needed
+    isChecked = false;
+
   }
 }

@@ -387,6 +387,28 @@ class _RenewleaseState extends State<Renewlease> {
                   return Center(child: Text('No data found'));
                 } else {
                   final leasesummery = snapshot.data!;
+
+                  if(determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate)){
+                    startDateController.text = formatDate(DateTime.now().toString());
+
+                    DateTime newEndDate = DateTime.now().add(Duration(days: 365));
+                    endDateController.text = formatDate(DateFormat('yyyy-MM-dd').format(newEndDate).toString());
+                  }
+                  else if(snapshot.data!.data!.renewLeases!.length > 0){
+                    startDateController.text = formatDate(snapshot.data!.data!.renewLeases!.last.endDate!);
+                    DateTime endDate = formatDates(snapshot.data!.data!.renewLeases!.last.endDate!);
+                    DateTime startDate = endDate;
+                    DateTime newEndDate = DateTime(endDate.year+1, endDate.month , endDate.day);
+                    endDateController.text = formatDate(DateFormat('yyyy-MM-dd').format(newEndDate).toString());
+                  }
+                  else if(determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate) == false){
+                    startDateController.text = formatDate(snapshot.data!.data!.endDate!);
+                    DateTime endDate = formatDates(snapshot.data!.data!.endDate!);
+
+                    DateTime newEndDate = DateTime(endDate.year+1, endDate.month , endDate.day);
+
+                    endDateController.text = formatDate(DateFormat('yyyy-MM-dd').format(newEndDate).toString());
+                  }
                   //final data = leaseLedger.data!.toList();
                   return Padding(
                     padding: const EdgeInsets.only(
@@ -999,7 +1021,7 @@ class _RenewleaseState extends State<Renewlease> {
                                         : Table(
                                       border: TableBorder.all(width: 1),
                                       columnWidths: const {
-                                        0: FlexColumnWidth(2),
+                                        0: FlexColumnWidth(3),
                                         1: FlexColumnWidth(2),
                                         2: FlexColumnWidth(1),
                                       },
@@ -1028,7 +1050,7 @@ class _RenewleaseState extends State<Renewlease> {
                                           Padding(
                                             padding: EdgeInsets.all(5.0),
                                             child: Center(
-                                              child: Text('Actions',
+                                              child: Text('',
                                                   style: TextStyle(
                                                       color:
                                                       blueColor,
@@ -2258,22 +2280,31 @@ class _RenewleaseState extends State<Renewlease> {
                                   Map<String,dynamic> charge = {
                                     "lease_id":widget.leaseId,
                                     "admin_id":leasesummery.data!.adminId,
-                                    "is_leaseAdded": true,
+
                                     "type": "Charge",
                                     "total_amount": totalAmount,
-                                    "entry" : entries
+                                    "entry" : entries.length > 0 ?entries : [
+                                      {
+                                        "account":"",
+                                        "amount":"",
+                                        "charge_type":"",
+                                        "memo":""
+                                      }
+                                    ]
                                   };
 
 
                                   Map<String,dynamic> leasedata = {
                                     "lease_id":widget.leaseId,
+
+                                    "renewAmount":widget.rentamount,
                                     "admin_id":leasesummery.data!.adminId,
                                     "lease_type":leasesummery.data!.leaseType,
-                                    "start_date": startDateController.text,
-                                    "end_date":endDateController.text,
+                                    "start_date": reverseFormatDate(startDateController.text),
+                                    "end_date":reverseFormatDate(endDateController.text),
                                     "amount":rent.text,    // new amount
                                     "lease_amount" :widget.rentamount,
-                                    "charge":charge
+                                    "charges":charge
 
                                   };
                                   updatenewrenewallease(leasedata);
@@ -2354,6 +2385,20 @@ class _RenewleaseState extends State<Renewlease> {
         ],
       ),
     );
+  }
+  bool determineStatus(String? startDate, String? endDate) {
+    if (startDate == null || endDate == null) return false;
+
+    DateTime start = formatDates(startDate);
+    DateTime end = formatDates(endDate);
+    DateTime today = DateTime.now();
+    print(start);
+    print(end);
+    if (today.isAfter(end)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
 
