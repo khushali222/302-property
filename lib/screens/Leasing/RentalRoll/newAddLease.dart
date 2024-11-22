@@ -3334,6 +3334,9 @@ class _addLease3State extends State<addLease3>
                                     onPressed: () async {
                                       if (_formKey.currentState?.validate() ??
                                           false) {
+                                        setState(() {
+                                          isLoading = true; // Stop loading
+                                        });
                                         final provider = Provider.of<
                                                 SelectedTenantsProvider>(
                                             context,
@@ -3364,6 +3367,7 @@ class _addLease3State extends State<addLease3>
                                         setState(() {
                                           // _errorMessagetenants = null;
                                           _errorMessage = null;
+
                                         });
 
                                         double totalRentShare = 0.0;
@@ -3380,7 +3384,8 @@ class _addLease3State extends State<addLease3>
                                                 'Total rent share must equal 100';
                                           });
                                           return;
-                                        } else {
+                                        }
+                                        else {
                                           SharedPreferences prefs =
                                               await SharedPreferences
                                                   .getInstance();
@@ -3644,7 +3649,10 @@ class _addLease3State extends State<addLease3>
                                             ),
                                             tenantData: tenantDataList,
                                           );
-                                          addLeaseAndNavigate(lease);
+                                        await  addLeaseAndNavigate(lease);
+                                          setState(() {
+                                            isLoading = false; // Stop loading
+                                          });
                                           if (widget.applicantId != null &&
                                               widget.applicantId!.isNotEmpty) {
                                             print(
@@ -3657,7 +3665,9 @@ class _addLease3State extends State<addLease3>
 
                                           print('valid');
                                         }
-                                      } else {
+                                      }
+                                      else {
+                                        print("faild");
                                         String leaseStartDate =
                                             startDateController.text;
                                         String leaseEndDate =
@@ -3781,12 +3791,26 @@ class _addLease3State extends State<addLease3>
                                         }).toList();
                                       }
                                     },
-                                    child: const Text(
-                                      'Create Lease',
-                                      style: TextStyle(
-                                          color: Color(0xFFf7f8f9),
-                                          fontSize: 16),
-                                    ))),
+                                    child:
+                                    Center(
+                                      child: isLoading
+                                          ? SpinKitFadingCircle(
+                                        color: Colors.white,
+                                        size: 25.0,
+                                      )
+                                          :
+                                      Text(
+                                        'Create Lease',
+                                        style: TextStyle(
+                                            color: Color(0xFFf7f8f9),
+                                            fontSize: 16),
+                                      )
+                                    ),
+
+
+
+                                )
+                            ),
                             const SizedBox(
                               width: 10,
                             ),

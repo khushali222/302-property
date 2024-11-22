@@ -3685,6 +3685,9 @@ class _Edit_leaseState extends State<Edit_lease>
                                     onPressed: () async {
                                       // Validate the form
                                       if (_formKey.currentState?.validate() ?? false) {
+                                        setState(() {
+                                          isLoading = true; // Stop loading
+                                        });
                                         final provider = Provider.of<SelectedTenantsProvider>(context, listen: false);
                                         final rentShareControllers = provider.rentShareControllers;
 
@@ -3876,7 +3879,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                           tenantData: tenantDataList,
                                         );
 
-                                        updateLeaseAndNavigate(lease);
+                                       await  updateLeaseAndNavigate(lease);
+                                        setState(() {
+                                          isLoading = false; // Stop loading
+                                        });
                                       } else {
                                         SharedPreferences prefs = await SharedPreferences.getInstance();
                                         String adminId = prefs.getString("adminId")!;

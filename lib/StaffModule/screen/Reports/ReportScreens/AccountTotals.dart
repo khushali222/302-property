@@ -18,11 +18,11 @@ import 'package:three_zero_two_property/Model/AccountTotalsReports.dart';
 import 'package:three_zero_two_property/Model/DelinquentTenantsModel.dart';
 import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
+import 'package:three_zero_two_property/StaffModule/repository/AccountTotalsReports.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
-import 'package:three_zero_two_property/repository/AccountTotalsReports.dart';
 import 'package:three_zero_two_property/repository/DelinquentTenantsService.dart';
 import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/repository/RentersInsuranceService.dart';
@@ -37,7 +37,7 @@ import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:fluttertoast/fluttertoast.dart';
-import '../../../Model/rentalownerreport.dart';
+
 import '../../../repository/rentalownerreport.dart';
 import '../../../widgets/custom_drawer.dart';
 

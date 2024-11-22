@@ -741,8 +741,9 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
           ? tenant.rentalData!.address!
           : "N/A" ?? 'N/A');
       sheet.getRangeByIndex(rowIndex, 2).setText(tenant.tenantData != null
-          ? tenant.tenantData!.tenantfirstName!
+          ? '${tenant.tenantData!.tenantfirstName!} ${tenant.tenantData!.tenantlastName!}'
           : "N/A" ?? "");
+
       sheet
           .getRangeByIndex(rowIndex, 3)
           .setNumber(tenant.total!.toDouble() ?? 0.0);
@@ -766,7 +767,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     // Save to file
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
-    final String fileName = 'DelinquentTenants_$formattedDate.xlsx';
+    final String fileName = 'Rent_past_due_report_$formattedDate.xlsx';
 
     final Directory directory = Platform.isIOS
         ? await getApplicationDocumentsDirectory()
@@ -935,7 +936,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     for (var tenant in delinquentTenantsData) {
       csvData.add([
         tenant.rentalData?.address ?? 'N/A',
-        tenant.tenantData?.tenantfirstName ?? 'N/A',
+        '${tenant.tenantData?.tenantfirstName  ?? 'N / A' } ${tenant.tenantData?.tenantlastName  ?? 'N / A' }',
         "\$${tenant.total?.toStringAsFixed(2)}" ?? '0.00',
       ]);
 
@@ -951,7 +952,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     // Save CSV file
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
-    final String fileName = 'DelinquentTenants_$formattedDate.csv';
+    final String fileName = 'Rent_past_due_report_$formattedDate.csv';
 
     final Directory directory = Platform.isIOS
         ? await getApplicationDocumentsDirectory()
@@ -1154,29 +1155,30 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                       chargeType == 'Charges' &&
                                           monthType == null)
                                     chargeTable(
-                                        snapshot.data!.dueRentCharges!.charges!)
+                                        snapshot.data!.dueRentCharges!.charges!,snapshot.data!.dueRentCharges!.total!)
+
                                   // chargeTable(
                                   //     snapshot.data!.dueRentCharges!.charges!)
                                   else if (chargeType == 'Charges' &&
                                       monthType == 'Current Month')
                                     chargeTable(snapshot
-                                        .data!.currentDueRentCharges!.charges!)
+                                        .data!.currentDueRentCharges!.charges!,snapshot.data!.currentMonthRentDue!)
                                   else if (chargeType == 'Charges' &&
                                       monthType == 'Last Month')
                                     chargeTable(snapshot
-                                        .data!.lastDueRentCharges!.charges!)
+                                        .data!.lastDueRentCharges!.charges!,snapshot.data!.lastMonthRentDue!)
                                   else if (chargeType == "Payment" &&
                                       monthType == "Current Month")
                                     chargeTable(snapshot
-                                        .data!.currentPayments!.payments!)
+                                        .data!.currentPayments!.payments!,snapshot.data!.currentPayments!.total!)
                                   else if (chargeType == "Payment" &&
                                       monthType == null)
                                     chargeTable(snapshot
-                                        .data!.currentPayments!.payments!)
+                                        .data!.currentPayments!.payments!,snapshot.data!.currentPayments!.total!)
                                   else if (chargeType == "Payment" &&
                                       monthType == "Last Month")
                                     chargeTable(
-                                        snapshot.data!.lastPayments!.payments!),
+                                        snapshot.data!.lastPayments!.payments!,snapshot.data!.lastPayments!.total!),
 
 
                                 ],
@@ -1217,7 +1219,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     );
   }
 
-  chargeTable(List<Transaction> chargedata) {
+  chargeTable(List<Transaction> chargedata,int total) {
     int totalPages = (chargedata.length / itemsPerPage).ceil();
 
     // Get the current page data
@@ -1240,19 +1242,19 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 ),
                 Text(
                   "Rent Due",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15,color: blueColor),
                 ),
                 Spacer(),
                 Text(
-                  "\$ ${chargedata.first.total}",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                  '\$${total}',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15,color: blueColor),
                 ),
                 SizedBox(
                   width: 3,
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+           const SizedBox(height: 10),
             _buildHeaders(),
             Container(
               decoration: BoxDecoration(
@@ -1676,6 +1678,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
             ],
           ),
         ),
+
+
       ],
     );
   }

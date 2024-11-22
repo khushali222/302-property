@@ -4822,7 +4822,7 @@ class _DashboardState extends State<Dashboard> {
                                                     ),
                                                     // SizedBox(height: 8), // Space between the text
                                                     Text(
-                                                      "\$${currentMonthRentDue}",
+                                                      "\$${currentMonthRentDue.toStringAsFixed(2)}",
                                                       style: const TextStyle(
                                                           fontSize:
                                                           16,
@@ -4863,7 +4863,7 @@ class _DashboardState extends State<Dashboard> {
                                                     ),
                                                     // SizedBox(height: 8), // Space between the text
                                                     Text(
-                                                      "\$${lastMonthRentDue}",
+                                                      "\$${lastMonthRentDue.toStringAsFixed(2)}",
                                                       style: const TextStyle(
                                                           fontSize:
                                                           16,
@@ -4981,7 +4981,7 @@ class _DashboardState extends State<Dashboard> {
                                                     ),
                                                     // SizedBox(height: 8), // Space between the text
                                                     Text(
-                                                      "\$${currentMonthRentPaid}",
+                                                      "\$${currentMonthRentPaid.toStringAsFixed(2)}",
                                                       style: const TextStyle(
                                                           fontSize:
                                                           16,
@@ -5022,7 +5022,7 @@ class _DashboardState extends State<Dashboard> {
                                                     ),
                                                     // SizedBox(height: 8), // Space between the text
                                                     Text(
-                                                      "\$${lastMonthRentPaid}",
+                                                      "\$${lastMonthRentPaid.toStringAsFixed(2)}",
                                                       style: const TextStyle(
                                                           fontSize:
                                                           16,
@@ -5108,7 +5108,7 @@ class _DashboardState extends State<Dashboard> {
                                             ),
                                             child: Center(
                                               child: Text(
-                                                "\$${totalRentPastDue}",
+                                                "\$${totalRentPastDue.toStringAsFixed(2)}",
                                                 style: const TextStyle(
                                                     fontSize: 18,
                                                     color: Color

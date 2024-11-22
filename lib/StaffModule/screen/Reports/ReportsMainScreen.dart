@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/AccountTotals.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/CompletedWorkOrders.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/DelinquentTenants.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/ExpiringLeases.dart';
@@ -588,6 +589,11 @@ List<ReportCardModel> reportCards = [
     title: "Rental Owner Report",
     description: "Report of rental owner transaction",
     destination: RentalOwnerReports(),
+  ),
+  ReportCardModel(
+    title: "Account Totals Report",
+    description: "Report of account totals",
+    destination: AccountTotalsReports(),
   ),
 
 ];
