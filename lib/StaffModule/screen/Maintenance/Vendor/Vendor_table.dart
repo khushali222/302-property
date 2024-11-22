@@ -337,14 +337,6 @@ class _Vendor_tableState extends State<Vendor_table> {
       buttons: [
         DialogButton(
           child: Text(
-            "Cancel",
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          onPressed: () => Navigator.pop(context),
-          color: Colors.grey,
-        ),
-        DialogButton(
-          child: Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -368,7 +360,16 @@ class _Vendor_tableState extends State<Vendor_table> {
             }
           },
           color: Colors.red,
-        )
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+        ),
+
       ],
     ).show();
   }

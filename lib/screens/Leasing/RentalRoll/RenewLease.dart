@@ -41,21 +41,27 @@ class _RenewleaseState extends State<Renewlease> {
   final GlobalKey<FormState> _subFormKey = GlobalKey<FormState>();
   TabController? _tabController;
   bool isError = false;
+  late LeaseSummary leasegetdata;
+
   @override
   void initState() {
     // TODO: implement initState
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
     // _tabController = TabController(length: 3, vsync: this);
     _selectedLeaseType = widget.leasetype;
-    startDateController.text = widget.enddate ?? "";
+    startDateController.text =formatDate( widget.enddate!) ?? "";
     DateTime endDate = formatDates(widget.enddate!);
     DateTime startDate = endDate;
-    DateTime newEndDate = DateTime(endDate.year, endDate.month + 1, endDate.day);
+    DateTime newEndDate = DateTime(endDate.year +1, endDate.month, endDate.day);
 
-    startDateController.text = DateFormat('yyyy-MM-dd').format(startDate);
-    endDateController.text = DateFormat('yyyy-MM-dd').format(newEndDate);
+   // startDateController.text = DateFormat('yyyy-MM-dd').format(startDate);
+    //startDateController.text = formatDate(DateTime.now().toString());
+    endDateController.text = formatDate(DateFormat('yyyy-MM-dd').format(newEndDate).toString());
     rent.text = widget.rentamount ??"";
     fetchDropdownData();
+    leaseData();
+
+
     super.initState();
 
   }
@@ -89,6 +95,32 @@ class _RenewleaseState extends State<Renewlease> {
 
     return parsedDate!;
   }
+
+  leaseData() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString("adminId");
+
+    print('$Api_url/api/leases/lease_summary/${widget.leaseId}');
+    final response = await http.get(
+      Uri.parse('$Api_url/api/leases/lease_summary/${widget.leaseId}'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        leasegetdata =  LeaseSummary.fromJson(jsonDecode(response.body));
+      });
+
+
+    } else {
+      throw Exception('Failed to load lease summary');
+    }
+  }
+
   TextEditingController rent = TextEditingController();
   final TextEditingController startDateController = TextEditingController();
   DateTime? _startDate;
@@ -247,7 +279,7 @@ class _RenewleaseState extends State<Renewlease> {
       String adminId = prefs.getString('adminId') ?? '';
       String? token = prefs.getString('token');
       print(token);
-      print('lease ${widget.leaseId}');
+      print('lease ${renewlease}');
       String? id = prefs.getString("adminId");
       final response = await http.post(
         Uri.parse('$Api_url/api/leases/renew_lease'),
@@ -258,7 +290,7 @@ class _RenewleaseState extends State<Renewlease> {
         },
         body: json.encode(renewlease)
       );
-      print(response.body);
+      print(' lease renew ${response.body}');
       if(response.statusCode == 200){
         Fluttertoast.showToast(msg: "Lease Renewal Successfully");
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>SummeryPageLease(leaseId: widget.leaseId,)));
@@ -366,6 +398,21 @@ class _RenewleaseState extends State<Renewlease> {
                   return Center(child: Text('No data found'));
                 } else {
                   final leasesummery = snapshot.data!;
+                  if(determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate)){
+                    startDateController.text = formatDate(DateTime.now().toString());
+                    DateTime endDate = formatDates(snapshot.data!.data!.renewLeases!.last.endDate!);
+                    DateTime startDate = endDate;
+                    DateTime newEndDate = DateTime(endDate.year+1, endDate.month , endDate.day);
+                    endDateController.text = formatDate(DateFormat('yyyy-MM-dd').format(newEndDate).toString());
+                  }
+                  else if(snapshot.data!.data!.renewLeases!.length > 0){
+                    startDateController.text = formatDate(snapshot.data!.data!.renewLeases!.last.endDate!);
+                    DateTime endDate = formatDates(snapshot.data!.data!.renewLeases!.last.endDate!);
+                    DateTime startDate = endDate;
+                    DateTime newEndDate = DateTime(endDate.year+1, endDate.month , endDate.day);
+                    endDateController.text = formatDate(DateFormat('yyyy-MM-dd').format(newEndDate).toString());
+                  }
+
                   //final data = leaseLedger.data!.toList();
                   return Padding(
                     padding: const EdgeInsets.only(
@@ -2237,22 +2284,31 @@ class _RenewleaseState extends State<Renewlease> {
                                   Map<String,dynamic> charge = {
                                     "lease_id":widget.leaseId,
                                     "admin_id":leasesummery.data!.adminId,
-                                    "is_leaseAdded": true,
+
                                     "type": "Charge",
                                     "total_amount": totalAmount,
-                                    "entry" : entries
+                                    "entry" : entries.length > 0 ?entries : [
+                                      {
+                                        "account":"",
+                                        "amount":"",
+                                        "charge_type":"",
+                                        "memo":""
+                                      }
+                                    ]
                                   };
 
 
                                   Map<String,dynamic> leasedata = {
                                     "lease_id":widget.leaseId,
-                                    "admin_id":leasesummery.data!.adminId,
+
+                                    "renewAmount":widget.rentamount,
+                                   "admin_id":leasesummery.data!.adminId,
                                     "lease_type":leasesummery.data!.leaseType,
-                                    "start_date": startDateController.text,
-                                    "end_date":endDateController.text,
+                                    "start_date": reverseFormatDate(startDateController.text),
+                                    "end_date":reverseFormatDate(endDateController.text),
                                     "amount":rent.text,    // new amount
                                     "lease_amount" :widget.rentamount,
-                                    "charge":charge
+                                    "charges":charge
 
                                   };
                                   updatenewrenewallease(leasedata);
@@ -2334,7 +2390,20 @@ class _RenewleaseState extends State<Renewlease> {
       ),
     );
   }
+  bool determineStatus(String? startDate, String? endDate) {
+    if (startDate == null || endDate == null) return false;
 
+    DateTime start = formatDates(startDate);
+    DateTime end = formatDates(endDate);
+    DateTime today = DateTime.now();
+    print(start);
+    print(end);
+     if (today.isAfter(end)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
 
 }

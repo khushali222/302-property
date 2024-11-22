@@ -379,21 +379,13 @@ class _StaffTableState extends State<StaffTable> {
       buttons: [
         DialogButton(
           child: Text(
-            "Cancel",
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          onPressed: () => Navigator.pop(context),
-          color: Colors.grey,
-        ),
-        DialogButton(
-          child: Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-           if(reason.text.isEmpty){
-             Fluttertoast.showToast(msg: "Please enter a reason for deletion");
-           }
+            if(reason.text.isEmpty){
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+            }
             else {
               await StaffMemberRepository()
                   .DeleteStaffMember(id: id, reason: reason.text);
@@ -407,6 +399,15 @@ class _StaffTableState extends State<StaffTable> {
           },
           color: Colors.red,
         ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+        ),
+
       ],
     ).show();
   }

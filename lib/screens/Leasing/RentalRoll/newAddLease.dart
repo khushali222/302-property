@@ -284,6 +284,7 @@ class _addLease3State extends State<addLease3>
     'Every two months',
     'Quarterly',
     'Yearly',
+     'Semi Monthly'
   ];
 
    rentCycleItemsDynamic(int days){
@@ -302,6 +303,7 @@ class _addLease3State extends State<addLease3>
         'Every two months',
         'Quarterly',
         'Yearly',
+        'Semi Monthly',
       ];
     }
     else if(days >= 93){
@@ -5942,6 +5944,7 @@ class _AddTenantState extends State<AddTenant> {
                                     ),
                                   )
                                 : Container(),
+                            if(_showalterNumber == false)
                             InkWell(
                               onTap: () {
                                 setState(() {
@@ -5949,6 +5952,19 @@ class _AddTenantState extends State<AddTenant> {
                                 });
                               },
                               child: const Text('+Add alternative Phone',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF2ec433))),
+                            ),
+                            if(_showalterNumber == true)
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _showalterNumber = !_showalterNumber;
+                                });
+                              },
+                              child: const Text('-Remove alternative Phone',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
@@ -6012,6 +6028,7 @@ class _AddTenantState extends State<AddTenant> {
                                     ),
                                   )
                                 : Container(),
+                            if(_showalterEmail == false)
                             InkWell(
                               onTap: () {
                                 setState(() {
@@ -6019,6 +6036,19 @@ class _AddTenantState extends State<AddTenant> {
                                 });
                               },
                               child: const Text('+Add alternative Email',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF2ec433))),
+                            ),
+                            if(_showalterEmail == true)
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _showalterEmail = !_showalterEmail;
+                                });
+                              },
+                              child: const Text('-Remove alternative Email',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
@@ -6577,18 +6607,32 @@ class _AddCosignerState extends State<AddCosigner> {
                   const SizedBox(
                     height: 20,
                   ),
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        _showalterNumber = !_showalterNumber;
-                      });
-                    },
-                    child: const Text('+Add alternative Phone',
-                        style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF2ec433))),
-                  ),
+                  if(_showalterNumber == false)
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          _showalterNumber = !_showalterNumber;
+                        });
+                      },
+                      child: const Text('+Add alternative Phone',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF2ec433))),
+                    ),
+                  if(_showalterNumber == true)
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          _showalterNumber = !_showalterNumber;
+                        });
+                      },
+                      child: const Text('-Remove alternative Phone',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF2ec433))),
+                    ),
                   _showalterNumber
                       ? Container(
                           child: Column(
@@ -6641,18 +6685,32 @@ class _AddCosignerState extends State<AddCosigner> {
                   const SizedBox(
                     height: 20,
                   ),
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        _showalterEmail = !_showalterEmail;
-                      });
-                    },
-                    child: const Text('+Add alternative Email',
-                        style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF2ec433))),
-                  ),
+                  if(_showalterEmail == false)
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          _showalterEmail = !_showalterEmail;
+                        });
+                      },
+                      child: const Text('+Add alternative Email',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF2ec433))),
+                    ),
+                  if(_showalterEmail == true)
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          _showalterEmail = !_showalterEmail;
+                        });
+                      },
+                      child: const Text('-Remove alternative Email',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF2ec433))),
+                    ),
                   _showalterEmail
                       ? Container(
                           child: Column(

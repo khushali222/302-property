@@ -220,7 +220,7 @@ class _enterChargeState extends State<enterCharge> {
   List<FocusNode> focusNodes = [];
   List<Map<String, String>> tenants = [];
   String? selectedTenantId;
-
+  bool isChecked = false;
   @override
   void initState() {
     super.initState();
@@ -1852,6 +1852,37 @@ class _enterChargeState extends State<enterCharge> {
                   const SizedBox(
                     height: 20,
                   ),
+                  if(widget.chargeid == null)
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 5,
+                        ),
+                        SizedBox(
+                          width: 24.0, // Standard width for checkbox
+                          height: 24.0,
+                          child: Checkbox(
+                            value: isChecked,
+                            onChanged: (value) {
+                              setState(() {
+                                isChecked = value ?? false;
+                              });
+                            },
+                            activeColor: isChecked ? blueColor : Colors.black,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          "Add Another Charge",
+                          style:
+                          TextStyle(color: blueColor, fontWeight: FontWeight.bold),
+                        ),
+
+                      ],
+                    ),
+                  SizedBox(height: 50,)
                 ],
               ),
             ),

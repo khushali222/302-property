@@ -15,7 +15,7 @@ String Api_url = "http://192.168.1.18:4000";
 String image_upload_url = "https://saas.cloudrentalmanager.com";
 
 
- formatDate(String dateTime) {
+formatDate(String dateTime) {
   //print(dateTime);
   List<String> dateFormats = [
     'yyyy-MM-dd',
@@ -48,8 +48,6 @@ String image_upload_url = "https://saas.cloudrentalmanager.com";
  // print(parsedDate);
   return DateFormat('dd-MM-yyyy').format(parsedDate);
 }
-
-
 
 String formatDate4(String dateTime) {
   DateTime parsedDate = DateFormat('yyyy-MM-dd').parse(dateTime);
