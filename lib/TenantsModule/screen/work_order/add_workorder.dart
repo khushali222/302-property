@@ -522,14 +522,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                           SizedBox(
                             height: 10,
                           ),
-                          _isLoading
-                              ? const Center(
-                            child: SpinKitFadingCircle(
-                              color: Colors.black,
-                              size: 50.0,
-                            ),
-                          )
-                              : Column(
+                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               DropdownButtonHideUnderline(

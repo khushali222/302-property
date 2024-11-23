@@ -2917,6 +2917,9 @@ class _addLease3State extends State<addLease3>
                                     {
                                       if (_formKey.currentState?.validate() ??
                                           false) {
+                                        setState(() {
+                                          isLoading = true; // Stop loading
+                                        });
                                         final provider = Provider.of<SelectedTenantsProvider>(context, listen: false);
                                         final rentShareControllers = provider.rentShareControllers;
                                         // for (int i = 0; i < rentShareControllers.length; i++) {
@@ -3211,7 +3214,10 @@ class _addLease3State extends State<addLease3>
                                             ),
                                             tenantData: tenantDataList,
                                           );
-                                          addLeaseAndNavigate(lease);
+                                       await   addLeaseAndNavigate(lease);
+                                          setState(() {
+                                            isLoading = false; // Stop loading
+                                          });
                                           if (widget.applicantId != null &&
                                               widget.applicantId!.isNotEmpty) {
                                             print(

@@ -4733,308 +4733,159 @@ class _DashboardState extends State<Dashboard> {
                             const SizedBox(
                               height: 20,
                             ),
-                            Container(
-                              height: 110,
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: width * .05),
-                              decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                    Radius.circular(15)),
-                              ),
-                              child: Material(
-                                elevation: 3,
-                                borderRadius:
-                                const BorderRadius.all(
-                                    Radius.circular(15)),
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                      flex: 4,
-                                      child: Container(
-                                        decoration:
-                                        const BoxDecoration(
-                                          color: Color.fromRGBO(
-                                              50, 75, 119, 1),
-                                          borderRadius:
-                                          BorderRadius.vertical(
-                                              top: Radius
-                                                  .circular(
-                                                  15)),
-                                        ),
-                                        child: const Center(
-                                            child: Text(
-                                              "Rent Due",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16,
-                                                  fontWeight:
-                                                  FontWeight.bold),
-                                            )),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 8,
-                                      child: Container(
-                                        decoration:
-                                        const BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                          BorderRadius.vertical(
-                                              bottom: Radius
-                                                  .circular(
-                                                  15)),
-                                        ),
-                                        child: Padding(
-                                          padding:
-                                          const EdgeInsets.all(
-                                              8.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment
-                                                .spaceEvenly,
-                                            children: [
-                                              Column(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .center,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .center,
-                                                children: [
-                                                  const Text(
-                                                    "Current Month",
-                                                    style: TextStyle(
-                                                        fontSize:
-                                                        16,
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .bold,
-                                                        color: Color
-                                                            .fromRGBO(
-                                                            138,
-                                                            149,
-                                                            168,
-                                                            1)),
-                                                  ),
-                                                  // SizedBox(height: 8), // Space between the text
-                                                  Text(
-                                                    "\$${currentMonthRentDue}",
-                                                    style: const TextStyle(
-                                                        fontSize:
-                                                        16,
-                                                        color: Color
-                                                            .fromRGBO(
-                                                            90,
-                                                            134,
-                                                            213,
-                                                            1),
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .bold),
-                                                  ),
-                                                ],
-                                              ),
-                                              Column(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .center,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .center,
-                                                children: [
-                                                  const Text(
-                                                    "Last Month",
-                                                    style: TextStyle(
-                                                        fontSize:
-                                                        16,
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .bold,
-                                                        color: Color
-                                                            .fromRGBO(
-                                                            138,
-                                                            149,
-                                                            168,
-                                                            1)),
-                                                  ),
-                                                  // SizedBox(height: 8), // Space between the text
-                                                  Text(
-                                                    "\$${lastMonthRentDue}",
-                                                    style: const TextStyle(
-                                                        fontSize:
-                                                        16,
-                                                        color: Color
-                                                            .fromRGBO(
-                                                            90,
-                                                            134,
-                                                            213,
-                                                            1),
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .bold),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                            InkWell(
+                                onTap:(){
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>RentPastDueReports(title: "Rent Due",)));
+                              },
+                              child: Container(
+                                height: 110,
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: width * .05),
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(15)),
                                 ),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Container(
-                              height: 110,
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: width * .05),
-                              decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                    Radius.circular(15)),
-                              ),
-                              child: Material(
-                                elevation: 3,
-                                borderRadius:
-                                const BorderRadius.all(
-                                    Radius.circular(15)),
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                      flex: 4,
-                                      child: Container(
-                                        decoration:
-                                        const BoxDecoration(
-                                          color: Color.fromRGBO(
-                                              50, 75, 119, 1),
-                                          borderRadius:
-                                          BorderRadius.vertical(
-                                              top: Radius
-                                                  .circular(
-                                                  15)),
+                                child: Material(
+                                  elevation: 3,
+                                  borderRadius:
+                                  const BorderRadius.all(
+                                      Radius.circular(15)),
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        flex: 4,
+                                        child: Container(
+                                          decoration:
+                                          const BoxDecoration(
+                                            color: Color.fromRGBO(
+                                                50, 75, 119, 1),
+                                            borderRadius:
+                                            BorderRadius.vertical(
+                                                top: Radius
+                                                    .circular(
+                                                    15)),
+                                          ),
+                                          child: const Center(
+                                              child: Text(
+                                                "Rent Due",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                    FontWeight.bold),
+                                              )),
                                         ),
-                                        child: const Center(
-                                            child: Text(
-                                              "Rent Paid",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16,
-                                                  fontWeight:
-                                                  FontWeight.bold),
-                                            )),
                                       ),
-                                    ),
-                                    Expanded(
-                                      flex: 8,
-                                      child: Container(
-                                        decoration:
-                                        const BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                          BorderRadius.vertical(
-                                              bottom: Radius
-                                                  .circular(
-                                                  15)),
-                                        ),
-                                        child: Padding(
-                                          padding:
-                                          const EdgeInsets.all(
-                                              8.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment
-                                                .spaceEvenly,
-                                            children: [
-                                              Column(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .center,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .center,
-                                                children: [
-                                                  const Text(
-                                                    "Current Month",
-                                                    style: TextStyle(
-                                                        fontSize:
-                                                        16,
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .bold,
-                                                        color: Color
-                                                            .fromRGBO(
-                                                            138,
-                                                            149,
-                                                            168,
-                                                            1)),
-                                                  ),
-                                                  // SizedBox(height: 8), // Space between the text
-                                                  Text(
-                                                    "\$${currentMonthRentPaid}",
-                                                    style: const TextStyle(
-                                                        fontSize:
-                                                        16,
-                                                        color: Color
-                                                            .fromRGBO(
-                                                            90,
-                                                            134,
-                                                            213,
-                                                            1),
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .bold),
-                                                  ),
-                                                ],
-                                              ),
-                                              Column(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .center,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .center,
-                                                children: [
-                                                  const Text(
-                                                    "Last Month",
-                                                    style: TextStyle(
-                                                        fontSize:
-                                                        16,
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .bold,
-                                                        color: Color
-                                                            .fromRGBO(
-                                                            138,
-                                                            149,
-                                                            168,
-                                                            1)),
-                                                  ),
-                                                  // SizedBox(height: 8), // Space between the text
-                                                  Text(
-                                                    "\$${lastMonthRentPaid}",
-                                                    style: const TextStyle(
-                                                        fontSize:
-                                                        16,
-                                                        color: Color
-                                                            .fromRGBO(
-                                                            90,
-                                                            134,
-                                                            213,
-                                                            1),
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .bold),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
+                                      Expanded(
+                                        flex: 8,
+                                        child: Container(
+                                          decoration:
+                                          const BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                            BorderRadius.vertical(
+                                                bottom: Radius
+                                                    .circular(
+                                                    15)),
+                                          ),
+                                          child: Padding(
+                                            padding:
+                                            const EdgeInsets.all(
+                                                8.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment
+                                                  .spaceEvenly,
+                                              children: [
+                                                Column(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .center,
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment
+                                                      .center,
+                                                  children: [
+                                                    const Text(
+                                                      "Current Month",
+                                                      style: TextStyle(
+                                                          fontSize:
+                                                          16,
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .bold,
+                                                          color: Color
+                                                              .fromRGBO(
+                                                              138,
+                                                              149,
+                                                              168,
+                                                              1)),
+                                                    ),
+                                                    // SizedBox(height: 8), // Space between the text
+                                                    Text(
+                                                      "\$${currentMonthRentDue.toStringAsFixed(2)}",
+                                                      style: const TextStyle(
+                                                          fontSize:
+                                                          16,
+                                                          color: Color
+                                                              .fromRGBO(
+                                                              90,
+                                                              134,
+                                                              213,
+                                                              1),
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .bold),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Column(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .center,
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment
+                                                      .center,
+                                                  children: [
+                                                    const Text(
+                                                      "Last Month",
+                                                      style: TextStyle(
+                                                          fontSize:
+                                                          16,
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .bold,
+                                                          color: Color
+                                                              .fromRGBO(
+                                                              138,
+                                                              149,
+                                                              168,
+                                                              1)),
+                                                    ),
+                                                    // SizedBox(height: 8), // Space between the text
+                                                    Text(
+                                                      "\$${lastMonthRentDue.toStringAsFixed(2)}",
+                                                      style: const TextStyle(
+                                                          fontSize:
+                                                          16,
+                                                          color: Color
+                                                              .fromRGBO(
+                                                              90,
+                                                              134,
+                                                              213,
+                                                              1),
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .bold),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -5043,7 +4894,166 @@ class _DashboardState extends State<Dashboard> {
                             ),
                             InkWell(
                               onTap:(){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>RentPastDueReports()));
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>RentPastDueReports(isRentdue: true,title: "Rent Paid",)));
+                              },
+                              child: Container(
+                                height: 110,
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: width * .05),
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(15)),
+                                ),
+                                child: Material(
+                                  elevation: 3,
+                                  borderRadius:
+                                  const BorderRadius.all(
+                                      Radius.circular(15)),
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        flex: 4,
+                                        child: Container(
+                                          decoration:
+                                          const BoxDecoration(
+                                            color: Color.fromRGBO(
+                                                50, 75, 119, 1),
+                                            borderRadius:
+                                            BorderRadius.vertical(
+                                                top: Radius
+                                                    .circular(
+                                                    15)),
+                                          ),
+                                          child: const Center(
+                                              child: Text(
+                                                "Rent Paid",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                    FontWeight.bold),
+                                              )),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 8,
+                                        child: Container(
+                                          decoration:
+                                          const BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                            BorderRadius.vertical(
+                                                bottom: Radius
+                                                    .circular(
+                                                    15)),
+                                          ),
+                                          child: Padding(
+                                            padding:
+                                            const EdgeInsets.all(
+                                                8.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment
+                                                  .spaceEvenly,
+                                              children: [
+                                                Column(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .center,
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment
+                                                      .center,
+                                                  children: [
+                                                    const Text(
+                                                      "Current Month",
+                                                      style: TextStyle(
+                                                          fontSize:
+                                                          16,
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .bold,
+                                                          color: Color
+                                                              .fromRGBO(
+                                                              138,
+                                                              149,
+                                                              168,
+                                                              1)),
+                                                    ),
+                                                    // SizedBox(height: 8), // Space between the text
+                                                    Text(
+                                                      "\$${currentMonthRentPaid.toStringAsFixed(2)}",
+                                                      style: const TextStyle(
+                                                          fontSize:
+                                                          16,
+                                                          color: Color
+                                                              .fromRGBO(
+                                                              90,
+                                                              134,
+                                                              213,
+                                                              1),
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .bold),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Column(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .center,
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment
+                                                      .center,
+                                                  children: [
+                                                    const Text(
+                                                      "Last Month",
+                                                      style: TextStyle(
+                                                          fontSize:
+                                                          16,
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .bold,
+                                                          color: Color
+                                                              .fromRGBO(
+                                                              138,
+                                                              149,
+                                                              168,
+                                                              1)),
+                                                    ),
+                                                    // SizedBox(height: 8), // Space between the text
+                                                    Text(
+                                                      "\$${lastMonthRentPaid.toStringAsFixed(2)}",
+                                                      style: const TextStyle(
+                                                          fontSize:
+                                                          16,
+                                                          color: Color
+                                                              .fromRGBO(
+                                                              90,
+                                                              134,
+                                                              213,
+                                                              1),
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .bold),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            InkWell(
+                              onTap:(){
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>RentPastDueReports(title: "Rent Past Due",)));
                               },
                               child: Container(
                                 height: 110,
@@ -5098,7 +5108,7 @@ class _DashboardState extends State<Dashboard> {
                                             ),
                                             child: Center(
                                               child: Text(
-                                                "\$${totalRentPastDue}",
+                                                "\$${totalRentPastDue.toStringAsFixed(2)}",
                                                 style: const TextStyle(
                                                     fontSize: 18,
                                                     color: Color

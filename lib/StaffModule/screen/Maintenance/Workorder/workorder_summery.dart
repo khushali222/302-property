@@ -1782,8 +1782,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     'Work Order Is Updated',
                                     style: TextStyle(color: Colors.grey[500]),
                                   ),
-                                  if (update.workOrderUpdateimages!.length > 0)
-
+                                  if (update.workOrderUpdateimages != null && update.workOrderUpdateimages!.length > 0)
                                     Column(
                                       children: [
                                         SizedBox(height: 10),
@@ -1912,6 +1911,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   //     ),
                                   //   ],
                                   // ),
+
                                   if (summery.workorderUpdates?.first.workOrderUpdateimages == 0)
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -2330,7 +2330,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               height: 10,
                             ),
                             Text(
-                              "${summery.propertyData!.rentaladress} (${summery.unitData!.unitName})",
+                              "${summery.propertyData!.rentaladress} ",
                               textAlign: TextAlign.center,
                               style: TextStyle(color: blueColor),
                             ),
@@ -3334,7 +3334,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 height: 10,
                               ),
                               Text(
-                                "${summery.propertyData!.rentaladress} (${summery.unitData!.unitName})",
+                                "${summery.propertyData!.rentaladress} ",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(color: blueColor),
                               ),

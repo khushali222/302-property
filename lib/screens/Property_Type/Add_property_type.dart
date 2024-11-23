@@ -343,13 +343,15 @@ class _Add_propertyState extends State<Add_property> {
                                     ),
                                   ],
                                 ),
-                                child: Center(
+                                child:
+                                Center(
                                   child: isLoading
                                       ? SpinKitFadingCircle(
                                           color: Colors.white,
                                           size: 25.0,
                                         )
-                                      : Text(
+                                      :
+                                  Text(
                                           "Add Property Type",
                                           style: TextStyle(
                                               color: Colors.white,

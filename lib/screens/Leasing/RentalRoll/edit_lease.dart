@@ -3738,6 +3738,9 @@ class _Edit_leaseState extends State<Edit_lease>
                                     onPressed: () async {
                                       if (_formKey.currentState?.validate() ??
                                           false) {
+                                        setState(() {
+                                          isLoading = true; // Stop loading
+                                        });
                                         final provider = Provider.of<
                                                 SelectedTenantsProvider>(
                                             context,
@@ -4009,8 +4012,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                             tenantData: tenantDataList,
                                           );
 
-                                          updateLeaseAndNavigate(lease);
-
+                                        await  updateLeaseAndNavigate(lease);
+                                          setState(() {
+                                            isLoading = false; // Stop loading
+                                          });
                                           print('valid');
                                         }
                                       } else {
@@ -4427,13 +4432,23 @@ class _Edit_leaseState extends State<Edit_lease>
                                     //     print('invalid');
                                     //   }
                                     // },
-                                    child: const Text(
-                                      'Edit Lease',
-                                      style: TextStyle(
-                                          color: Color(0xFFf7f8f9),
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold),
-                                    ))),
+                                    child:
+                                    Center(
+                                      child: isLoading
+                                          ? SpinKitFadingCircle(
+                                        color: Colors.white,
+                                        size: 25.0,
+                                      )
+                                          :
+                                       Text(
+                                        'Edit Lease',
+                                        style: TextStyle(
+                                            color: Color(0xFFf7f8f9),
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    ),
+                                )),
                             const SizedBox(
                               width: 8,
                             ),

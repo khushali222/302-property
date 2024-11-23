@@ -895,12 +895,7 @@ class _StaffTableState extends State<StaffTable> {
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .02),
+
                                               ],
                                             ),
                                           ),
