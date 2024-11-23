@@ -440,11 +440,11 @@
 import 'dart:convert';
 
 class RentPastDue {
-  final int? currentMonthRentDue;
-  final int? lastMonthRentDue;
-  final int? currentMonthRentPaid;
-  final int? lastMonthRentPaid;
-  final int? totalRentPastDue;
+  final double? currentMonthRentDue;
+  final double? lastMonthRentDue;
+  final double? currentMonthRentPaid;
+  final double? lastMonthRentPaid;
+  final double? totalRentPastDue;
   final CurrentDueRentCharges? currentDueRentCharges;
   final LastDueRentCharges? lastDueRentCharges;
   final DueRentCharges? dueRentCharges;
@@ -465,14 +465,13 @@ class RentPastDue {
   });
 
   factory RentPastDue.fromJson(Map<String, dynamic>? json) {
-    print(json!['dueRentCharges']);
     if (json == null) return RentPastDue();
     return RentPastDue(
-      currentMonthRentDue: json['currentMonthRentDue'] as int?,
-      lastMonthRentDue: json['lastMonthRentDue'] as int?,
-      currentMonthRentPaid: json['currentMonthRentPaid'] as int?,
-      lastMonthRentPaid: json['lastMonthRentPaid'] as int?,
-      totalRentPastDue: json['totalRentPastDue'] as int?,
+      currentMonthRentDue: (json['currentMonthRentDue'] as num?)?.toDouble(),
+      lastMonthRentDue: (json['lastMonthRentDue'] as num?)?.toDouble(),
+      currentMonthRentPaid: (json['currentMonthRentPaid'] as num?)?.toDouble(),
+      lastMonthRentPaid: (json['lastMonthRentPaid'] as num?)?.toDouble(),
+      totalRentPastDue: (json['totalRentPastDue'] as num?)?.toDouble(),
       currentDueRentCharges: json['currentDueRentCharges'] != null
           ? CurrentDueRentCharges.fromJson(json['currentDueRentCharges'])
           : null,
@@ -482,7 +481,6 @@ class RentPastDue {
       dueRentCharges: json['dueRentCharges'] != null
           ? DueRentCharges.fromJson(json['dueRentCharges'])
           : null,
-
       currentPayments: json['currentPayments'] != null
           ? CurrentPayments.fromJson(json['currentPayments'])
           : null,
@@ -495,7 +493,7 @@ class RentPastDue {
 
 class CurrentDueRentCharges {
   final List<Transaction>? charges;
-  final int? total;
+  final double? total;
 
   CurrentDueRentCharges({this.charges, this.total});
 
@@ -505,14 +503,14 @@ class CurrentDueRentCharges {
       charges: (json['charges'] as List?)
           ?.map((e) => Transaction.fromJson(e as Map<String, dynamic>?))
           .toList(),
-      total: json['total'] as int?,
+      total: (json['total'] as num?)?.toDouble(),
     );
   }
 }
 
 class LastDueRentCharges {
   final List<Transaction>? charges;
-  final int? total;
+  final double? total;
 
   LastDueRentCharges({this.charges, this.total});
 
@@ -522,25 +520,24 @@ class LastDueRentCharges {
       charges: (json['charges'] as List?)
           ?.map((e) => Transaction.fromJson(e as Map<String, dynamic>?))
           .toList(),
-      total: json['total'] as int?,
+      total: (json['total'] as num?)?.toDouble(),
     );
   }
 }
 
 class DueRentCharges {
   final List<Transaction>? charges;
-  final int? total;
+  final double? total;
 
   DueRentCharges({this.charges, this.total});
 
   factory DueRentCharges.fromJson(Map<String, dynamic>? json) {
-    print( ' due rent ${json?['charges']}');
     if (json == null) return DueRentCharges();
     return DueRentCharges(
       charges: (json['charges'] as List?)
           ?.map((e) => Transaction.fromJson(e as Map<String, dynamic>?))
           .toList(),
-      total: json['total'] as int?,
+      total: (json['total'] as num?)?.toDouble(),
     );
   }
 }
@@ -551,7 +548,7 @@ class Charge {
   final TenantData? tenantData;
   final UnitData? unitData;
   final List<Entry>? entry;
-  final int? total;
+  final double? total;
 
   Charge({
     this.leaseId,
@@ -563,8 +560,6 @@ class Charge {
   });
 
   factory Charge.fromJson(Map<String, dynamic>? json) {
-
-    print("json onject $json");
     if (json == null) return Charge();
     return Charge(
       leaseId: json['lease_id'] as String?,
@@ -580,7 +575,7 @@ class Charge {
       entry: (json['entry'] as List?)
           ?.map((e) => Entry.fromJson(e as Map<String, dynamic>?))
           .toList(),
-      total: json['total'] as int?,
+      total: (json['total'] as num?)?.toDouble(),
     );
   }
 }
@@ -594,55 +589,54 @@ class RentalData {
   factory RentalData.fromJson(Map<String, dynamic>? json) {
     if (json == null) return RentalData();
     return RentalData(
-      city: json['rental_city']  ?? "",
-      address: json['rental_adress']  ?? "",
+      city: json['rental_city'] ?? "",
+      address: json['rental_adress'] ?? "",
     );
   }
+
   Map<String, dynamic> toJson() {
     return {
       'rental_city': city,
-      'rental_address': address, // Corrected from 'rental_adress' to 'rental_address'
+      'rental_adress': address,
     };
   }
-
 }
 
-
 class TenantData {
-  final String? tenantfirstName;
+  final String? tenantFirstName;
   final String? email;
-  final String? tenantlastName;
+  final String? tenantLastName;
 
-  TenantData({this.tenantfirstName, this.email , this.tenantlastName});
+  TenantData({this.tenantFirstName, this.email, this.tenantLastName});
 
   factory TenantData.fromJson(Map<String, dynamic>? json) {
     if (json == null) return TenantData();
     return TenantData(
-      tenantfirstName: json['tenant_firstName'] as String?,
-      tenantlastName: json['tenant_lastName'] as String?,
+      tenantFirstName: json['tenant_firstName'] as String?,
+      tenantLastName: json['tenant_lastName'] as String?,
       email: json['email'] as String?,
     );
   }
 }
 
 class UnitData {
-  final String? rentalunit;
-  final String? rentalunitadress;
+  final String? rentalUnit;
+  final String? rentalUnitAddress;
 
-  UnitData({this.rentalunit, this.rentalunitadress});
+  UnitData({this.rentalUnit, this.rentalUnitAddress});
 
   factory UnitData.fromJson(Map<String, dynamic>? json) {
     if (json == null) return UnitData();
     return UnitData(
-      rentalunit: json['rental_unit'] as String?,
-      rentalunitadress: json['rental_unit_adress'] as String?,
+      rentalUnit: json['rental_unit'] as String?,
+      rentalUnitAddress: json['rental_unit_address'] as String?,
     );
   }
 }
 
 class Entry {
   final String? entryId;
-  final int? amount;
+  final double? amount;
 
   Entry({this.entryId, this.amount});
 
@@ -650,14 +644,14 @@ class Entry {
     if (json == null) return Entry();
     return Entry(
       entryId: json['entry_id'] as String?,
-      amount: json['amount'] as int?,
+      amount: (json['amount'] as num?)?.toDouble(),
     );
   }
 }
 
 class CurrentPayments {
   final List<Transaction>? payments;
-  final int? total;
+  final double? total;
 
   CurrentPayments({this.payments, this.total});
 
@@ -667,14 +661,14 @@ class CurrentPayments {
       payments: (json['payments'] as List?)
           ?.map((e) => Transaction.fromJson(e as Map<String, dynamic>?))
           .toList(),
-      total: json['total'] as int?,
+      total: (json['total'] as num?)?.toDouble(),
     );
   }
 }
 
 class LastPayments {
   final List<Transaction>? payments;
-  final int? total;
+  final double? total;
 
   LastPayments({this.payments, this.total});
 
@@ -684,24 +678,24 @@ class LastPayments {
       payments: (json['payments'] as List?)
           ?.map((e) => Transaction.fromJson(e as Map<String, dynamic>?))
           .toList(),
-      total: json['total'] as int?,
+      total: (json['total'] as num?)?.toDouble(),
     );
   }
 }
 
 class Transaction {
   final String? paymentId;
-  final int? total;
+  final double? total;
   final RentalData? rentalData;
   final TenantData? tenantData;
-  Transaction({this.paymentId, this.total,this.rentalData,
-    this.tenantData,});
+
+  Transaction({this.paymentId, this.total, this.rentalData, this.tenantData});
 
   factory Transaction.fromJson(Map<String, dynamic>? json) {
     if (json == null) return Transaction();
     return Transaction(
       paymentId: json['payment_id'] as String?,
-      total: json['total'] as int?,
+      total: (json['total'] as num?)?.toDouble(),
       rentalData: json['rental_data'] != null
           ? RentalData.fromJson(json['rental_data'] as Map<String, dynamic>?)
           : null,
@@ -711,4 +705,5 @@ class Transaction {
     );
   }
 }
+
 

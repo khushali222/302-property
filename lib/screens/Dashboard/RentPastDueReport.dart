@@ -43,7 +43,8 @@ import '../../../widgets/custom_drawer.dart';
 
 class RentPastDueReports extends StatefulWidget {
   bool? isRentdue;
-  RentPastDueReports({super.key, this.isRentdue});
+  String? title;
+  RentPastDueReports({super.key, this.isRentdue,this.title});
 
   @override
   State<RentPastDueReports> createState() => _RentPastDueReportsState();
@@ -62,7 +63,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
+        //printresult);
         _connectivityResult = result;
       });
     });
@@ -349,23 +350,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                               style: TextStyle(color: Colors.white)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
-                      ascending1
-                          ? const Padding(
-                              padding: EdgeInsets.only(top: 7, left: 2),
-                              child: FaIcon(
-                                FontAwesomeIcons.sortUp,
-                                size: 20,
-                                color: Colors.white,
-                              ),
-                            )
-                          : const Padding(
-                              padding: EdgeInsets.only(bottom: 7, left: 2),
-                              child: FaIcon(
-                                FontAwesomeIcons.sortDown,
-                                size: 20,
-                                color: Colors.white,
-                              ),
-                            ),
+
                     ],
                   ),
                 ),
@@ -398,23 +383,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                     SizedBox(width: 8),
                     Text("Tenant", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
-                    ascending2
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+
                   ],
                 ),
               ),
@@ -444,26 +413,10 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 },
                 child: Row(
                   children: [
-                    SizedBox(width: 5),
+                    SizedBox(width: 25),
                     Text("Amount", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
-                    ascending3
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+
                   ],
                 ),
               ),
@@ -476,7 +429,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
 
   PdfDelinquentTenantsData? globalDelinquentTenantsData;
   Future<PdfDelinquentTenantsData?> fetchDelinquentTenantsGrandTotal() async {
-    print('Fetching delinquent tenants');
+    //print'Fetching delinquent tenants');
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
@@ -502,7 +455,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
         throw Exception('Failed to load delinquent tenants');
       }
     } catch (e) {
-      print('Error fetching data: $e');
+      //print'Error fetching data: $e');
       return null;
     }
   }
@@ -519,7 +472,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
       profileData = await service.fetchAdminAddress();
     } catch (e) {
       // Handle error
-      print("Error fetching profile data: $e");
+      //print"Error fetching profile data: $e");
       return;
     }
     setState(() {
@@ -679,7 +632,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
             style: pw.TextStyle(fontSize: 12)),
         pw.Text(
           (owner.tenantData != null
-              ? '${owner.tenantData!.tenantfirstName ?? ""} ${owner.tenantData!.tenantlastName ?? ""}'
+              ? '${owner.tenantData!.tenantFirstName ?? ""} ${owner.tenantData!.tenantLastName ?? ""}'
               : "N/A"),
           style: pw.TextStyle(fontSize: 12),
         ),
@@ -741,7 +694,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
           ? tenant.rentalData!.address!
           : "N/A" ?? 'N/A');
       sheet.getRangeByIndex(rowIndex, 2).setText(tenant.tenantData != null
-          ? '${tenant.tenantData!.tenantfirstName!} ${tenant.tenantData!.tenantlastName!}'
+          ? '${tenant.tenantData!.tenantFirstName!} ${tenant.tenantData!.tenantLastName!}'
           : "N/A" ?? "");
 
       sheet
@@ -936,7 +889,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     for (var tenant in delinquentTenantsData) {
       csvData.add([
         tenant.rentalData?.address ?? 'N/A',
-        '${tenant.tenantData?.tenantfirstName  ?? 'N / A' } ${tenant.tenantData?.tenantlastName  ?? 'N / A' }',
+        '${tenant.tenantData?.tenantFirstName  ?? 'N / A' } ${tenant.tenantData?.tenantLastName  ?? 'N / A' }',
         "\$${tenant.total?.toStringAsFixed(2)}" ?? '0.00',
       ]);
 
@@ -974,7 +927,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
 
   List<Map<String, dynamic>> rentalowners = [];
   Future<void> fetchRentalOwners() async {
-    print("calling");
+    //print"calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -984,7 +937,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
       "id": "CRM $id",
     });
     final jsonData = json.decode(response.body);
-    print(jsonData);
+    //printjsonData);
     if (response.statusCode == 200) {
       setState(() {
         rentalowners = (jsonDecode(response.body) as List)
@@ -1019,7 +972,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 children: [
                   const SizedBox(height: 16),
                   titleBar(
-                    title: 'Rent Past Due Report',
+                    title: '${widget.title} Report',
                     width: MediaQuery.of(context).size.width * .91,
                   ),
                   if (MediaQuery.of(context).size.width > 500)
@@ -1030,20 +983,33 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return CircularProgressIndicator();
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                            ),
+                            child: Column(
+                              children: [
+                                filters(),
+                                SizedBox(height: 20,),
+                                SpinKitFadingCircle(
+                                  size: 50,
+                                  color: blueColor,
+                                )
+                              ],
+                            ),
+                          );
                         } else if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
                         } else if (snapshot.hasData) {
-                          print(
-                              'snap data ${snapshot.data!.dueRentCharges!.charges!.length}');
+
                           var rentPastDue = snapshot.data!;
                           List<Transaction> filteredCharges = [];
 
                           // Debugging: Print the rental data and tenant data
                           rentPastDue.dueRentCharges?.charges
                               ?.forEach((charge) {
-                            print('Rental Data: ${charge.rentalData}');
-                            print('Tenant Data: ${charge.tenantData}');
+                            //print'Rental Data: ${charge.rentalData}');
+                            //print'Tenant Data: ${charge.tenantData}');
                           });
                           if (chargeType == 'Charges' &&
                               (monthType == 'All' || monthType == null)) {
@@ -1052,9 +1018,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                 .where((charge) {
                               var address = charge.rentalData?.address;
                               var tenantName =
-                                  charge.tenantData?.tenantfirstName;
-                              print(
-                                  'Searching in Address: $address and Tenant Name: $tenantName');
+                                  charge.tenantData?.tenantFirstName;
+                             //print
                               return (address != null &&
                                       address.contains(searchvalue)) ||
                                   (tenantName != null &&
@@ -1067,9 +1032,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                 .where((charge) {
                               var address = charge.rentalData?.address;
                               var tenantName =
-                                  charge.tenantData?.tenantfirstName;
-                              print(
-                                  'Searching in Address: $address and Tenant Name: $tenantName');
+                                  charge.tenantData?.tenantFirstName;
+                             //print
                               return (address != null &&
                                       address.contains(searchvalue)) ||
                                   (tenantName != null &&
@@ -1082,9 +1046,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                 .where((charge) {
                               var address = charge.rentalData?.address;
                               var tenantName =
-                                  charge.tenantData?.tenantfirstName;
-                              print(
-                                  'Searching in Address: $address and Tenant Name: $tenantName');
+                                  charge.tenantData?.tenantFirstName;
+                             //print
                               return (address != null &&
                                       address.contains(searchvalue)) ||
                                   (tenantName != null &&
@@ -1097,9 +1060,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                 .where((payment) {
                               var address = payment.rentalData?.address;
                               var tenantName =
-                                  payment.tenantData?.tenantfirstName;
-                              print(
-                                  'Searching in Address: $address and Tenant Name: $tenantName');
+                                  payment.tenantData?.tenantFirstName;
+                             //print
                               return (address != null &&
                                       address.contains(searchvalue)) ||
                                   (tenantName != null &&
@@ -1112,9 +1074,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                 .where((payment) {
                               var address = payment.rentalData?.address;
                               var tenantName =
-                                  payment.tenantData?.tenantfirstName;
-                              print(
-                                  'Searching in Address: $address and Tenant Name: $tenantName');
+                                  payment.tenantData?.tenantFirstName;
+                             //print
                               return (address != null &&
                                       address.contains(searchvalue)) ||
                                   (tenantName != null &&
@@ -1127,9 +1088,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                 .where((payment) {
                               var address = payment.rentalData?.address;
                               var tenantName =
-                                  payment.tenantData?.tenantfirstName;
-                              print(
-                                  'Searching in Address: $address and Tenant Name: $tenantName');
+                                  payment.tenantData?.tenantFirstName;
+                             //print
                               return (address != null &&
                                       address.contains(searchvalue)) ||
                                   (tenantName != null &&
@@ -1155,7 +1115,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                       chargeType == 'Charges' &&
                                           monthType == null)
                                     chargeTable(
-                                        snapshot.data!.dueRentCharges!.charges!,snapshot.data!.dueRentCharges!.total!)
+                                        snapshot.data!.dueRentCharges!.charges!,snapshot.data!.dueRentCharges!.total!.toDouble()!)
 
                                   // chargeTable(
                                   //     snapshot.data!.dueRentCharges!.charges!)
@@ -1170,15 +1130,15 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                   else if (chargeType == "Payment" &&
                                       monthType == "Current Month")
                                     chargeTable(snapshot
-                                        .data!.currentPayments!.payments!,snapshot.data!.currentPayments!.total!)
+                                        .data!.currentPayments!.payments!,snapshot.data!.currentPayments!.total!.toDouble()!)
                                   else if (chargeType == "Payment" &&
                                       monthType == null)
                                     chargeTable(snapshot
-                                        .data!.currentPayments!.payments!,snapshot.data!.currentPayments!.total!)
+                                        .data!.currentPayments!.payments!,snapshot.data!.currentPayments!.total!.toDouble()!)
                                   else if (chargeType == "Payment" &&
                                       monthType == "Last Month")
                                     chargeTable(
-                                        snapshot.data!.lastPayments!.payments!,snapshot.data!.lastPayments!.total!),
+                                        snapshot.data!.lastPayments!.payments!,snapshot.data!.lastPayments!.total!.toDouble()!),
 
 
                                 ],
@@ -1219,7 +1179,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     );
   }
 
-  chargeTable(List<Transaction> chargedata,int total) {
+  chargeTable(List<Transaction> chargedata,double total) {
     int totalPages = (chargedata.length / itemsPerPage).ceil();
 
     // Get the current page data
@@ -1238,24 +1198,30 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
             Row(
               children: [
                 SizedBox(
-                  width: 3,
+                  width: 5,
                 ),
                 Text(
-                  "Rent Due",
+                  "${widget.title}",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15,color: blueColor),
                 ),
                 Spacer(),
                 Text(
-                  '\$${total}',
+                  '\$${total.toStringAsFixed(2)}',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15,color: blueColor),
                 ),
                 SizedBox(
-                  width: 3,
+                  width: 5,
                 ),
               ],
             ),
            const SizedBox(height: 10),
             _buildHeaders(),
+            if(currentPageData.length == 0)
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Text("No data Available"),
+              ),
+            if(currentPageData.length > 0)
             Container(
               decoration: BoxDecoration(
                   border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
@@ -1271,7 +1237,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                   Transaction item = entry.value;
                   bool isRowExpanded = expandedRowIndex == rowIndex;
 
-                  print(item.rentalData.toString());
+                  //printitem.rentalData.toString());
+                  //print'${item.rentalData?.address}');
                   //show the charge data
                   //  Charge rental = entry.value;
                   //for the payment data
@@ -1317,7 +1284,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                       isRowExpanded
                                           ? FontAwesomeIcons.sortUp
                                           : FontAwesomeIcons.sortDown,
-                                      size: 20,
+                                      size: 0,
                                       color: isRowExpanded
                                           ? Colors.transparent
                                           : Colors.transparent,
@@ -1358,7 +1325,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                 Expanded(
                                   flex: 4,
                                   child: Text(
-                                    '${item.tenantData != null ? item.tenantData!.tenantfirstName : "N/A" ?? '-'} ${item.tenantData != null ? item.tenantData!.tenantlastName : "N/A" ?? '-'}',
+                                    '${item.tenantData != null ? item.tenantData!.tenantFirstName : "N/A" ?? '-'} ${item.tenantData != null ? item.tenantData!.tenantLastName : "N/A" ?? '-'}',
                                     style: TextStyle(
                                       color: blueColor,
                                       fontWeight: FontWeight.bold,
@@ -1372,7 +1339,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    '${item.total.toString() ?? '-'}',
+                                    '${item.total!.toStringAsFixed(2).toString() ?? '-'}',
                                     style: TextStyle(
                                       color: blueColor,
                                       fontWeight: FontWeight.bold,
@@ -1506,7 +1473,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                           chargeType = value;
                         });
                         // Handle the selected charge type
-                        print(value);
+                        //printvalue);
                       },
                     ),
                   ),
@@ -1528,7 +1495,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                         "Select Month",
                         style: TextStyle(fontSize: 14, color: Colors.black),
                       ),
-                      items: const [
+                      items:  [
+                        if(chargeType != "Payment")
                         DropdownMenuItem<String>(
                           value: 'All',
                           child: Text('All'),
@@ -1547,7 +1515,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                           monthType = value;
                         });
                         // Handle the selected charge type
-                        print(value);
+                        //printvalue);
                       },
                     ),
                   ),
@@ -1634,15 +1602,15 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                       onSelected: (value) async {
                         // Export logic
                         if (value == 'PDF' && data != null) {
-                          print('pdf');
+                          //print'pdf');
                           generateDelinquentTenantsPdf(data);
                         } else if (value == 'XLSX' && data != null) {
-                          print('XLSX');
+                          //print'XLSX');
                           generateDelinquentTenantsExcel(data, 0);
                           //generateRentalOwnerReportExcel(data);
                           //generateDelinquentTenantsExcel(data);
                         } else if (value == 'CSV' && data != null) {
-                          print('CSV');
+                          //print'CSV');
                           generateDelinquentTenantsCsv(data, 0.0);
                           //  generateRentalOwnerReportCsv(data);
                           //  generateDelinquentTenantsCsv(data);

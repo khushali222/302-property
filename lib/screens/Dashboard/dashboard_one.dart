@@ -4735,7 +4735,7 @@ class _DashboardState extends State<Dashboard> {
                             ),
                             InkWell(
                                 onTap:(){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>RentPastDueReports()));
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>RentPastDueReports(title: "Rent Due",)));
                               },
                               child: Container(
                                 height: 110,
@@ -4894,7 +4894,7 @@ class _DashboardState extends State<Dashboard> {
                             ),
                             InkWell(
                               onTap:(){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>RentPastDueReports(isRentdue: true,)));
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>RentPastDueReports(isRentdue: true,title: "Rent Paid",)));
                               },
                               child: Container(
                                 height: 110,
@@ -5053,7 +5053,7 @@ class _DashboardState extends State<Dashboard> {
                             ),
                             InkWell(
                               onTap:(){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>RentPastDueReports()));
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>RentPastDueReports(title: "Rent Past Due",)));
                               },
                               child: Container(
                                 height: 110,
