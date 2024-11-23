@@ -63,6 +63,8 @@ class _Profile_screenState extends State<Profile_screen> {
     });
     checkInternet();
     _fetchProfile();
+    _loadOldPassword();
+
   }
 
   void checkInternet() async {
@@ -106,20 +108,25 @@ class _Profile_screenState extends State<Profile_screen> {
   TextEditingController password = TextEditingController();
   TextEditingController confirmpassword = TextEditingController();
   bool passworderror = false;
+  bool passwordsameerror = false;
   bool confirmpassworderror = false;
   bool loading = false;
 
   String passwordmessage = "";
+  String passwordsamemessage = "";
   String confirmpasswordmessage = "";
   bool visiable_password = true;
   bool visiable_password_confirm = true;
 
   final formKey = GlobalKey<FormState>();
+
+
   void changePassword() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? email = prefs.getString("email");
     String? role = prefs.getString("role");
+
     setState(() {
       loading = true; // Set loading to true while changing password
     });
@@ -150,6 +157,7 @@ class _Profile_screenState extends State<Profile_screen> {
         // ScaffoldMessenger.of(context).showSnackBar(
         //   SnackBar(content: Text("Password updated successfully")),
         // );
+        await _savePassword(password.text);
         Fluttertoast.showToast(
             msg: 'Password updated successfully');
       } else {
@@ -165,7 +173,25 @@ class _Profile_screenState extends State<Profile_screen> {
     }
   }
 
-  @override
+  //for save
+
+  Future<void> _savePassword(String password) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("password", password); // Store the new password
+  }
+
+
+  String oldPassword = "";
+  Future<void> _loadOldPassword() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? pass = prefs.getString("password");
+    setState(() {
+      oldPassword = pass!; // Fetch the old password
+    });
+  }
+
+    @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context, isProfilePageActive: true),
@@ -226,7 +252,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                         fontSize:
                                             MediaQuery.of(context).size.width <
                                                     500
-                                                ? 16
+                                                ? 18
                                                 : 22,
                                         fontWeight: FontWeight.bold,
                                         color: blueColor,
@@ -239,7 +265,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                         fontSize:
                                             MediaQuery.of(context).size.width <
                                                     500
-                                                ? 13
+                                                ? 16
                                                 : 18,
                                         fontWeight: FontWeight.w400,
                                         color: blueColor,
@@ -252,7 +278,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                         fontSize:
                                             MediaQuery.of(context).size.width <
                                                     500
-                                                ? 13
+                                                ? 16
                                                 : 18,
                                         fontWeight: FontWeight.w400,
                                         color: blueColor,
@@ -665,6 +691,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                               setState(() {
                                                                 passworderror =
                                                                     false;
+                                                                passwordsameerror = false;
                                                               });
                                                             },
                                                             obscureText:
@@ -894,105 +921,201 @@ class _Profile_screenState extends State<Profile_screen> {
                                             MediaQuery.of(context).size.height *
                                                 0.04,
                                       ),
+                                      // GestureDetector(
+                                      //   onTap: () {
+                                      //     if (password.text.isEmpty) {
+                                      //       setState(() {
+                                      //         passworderror = true;
+                                      //         passwordmessage =
+                                      //             "Password is required";
+                                      //       });
+                                      //     } else if (password.text.length < 8) {
+                                      //       setState(() {
+                                      //         passworderror = true;
+                                      //         passwordmessage =
+                                      //             "Password must have 8 Characters";
+                                      //       });
+                                      //     } else if (!RegExp(
+                                      //             r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
+                                      //         .hasMatch(password.text)) {
+                                      //       setState(() {
+                                      //         passworderror = true;
+                                      //         passwordmessage =
+                                      //             'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
+                                      //       });
+                                      //     } else if (password.text == oldPassword) { // Check if new password is the same as old
+                                      //       Fluttertoast.showToast(msg: "New password cannot be the same as the old password");
+                                      //       return;
+                                      //     } else {
+                                      //       setState(() {
+                                      //         passworderror = false;
+                                      //       });
+                                      //     }
+                                      //     if (confirmpassword.text.isEmpty) {
+                                      //       setState(() {
+                                      //         confirmpassworderror = true;
+                                      //         confirmpasswordmessage =
+                                      //             "Confirm password is required";
+                                      //       });
+                                      //     } else if (confirmpassword.text !=
+                                      //         password.text) {
+                                      //       setState(() {
+                                      //         confirmpassworderror = true;
+                                      //         confirmpasswordmessage =
+                                      //             "Both password is not match";
+                                      //       });
+                                      //     } else {
+                                      //       setState(() {
+                                      //         confirmpassworderror = false;
+                                      //       });
+                                      //     }
+                                      //     if (!passworderror &&
+                                      //         !confirmpassworderror) {
+                                      //       changePassword();
+                                      //     }
+                                      //   },
+                                      //   child: Row(
+                                      //     children: [
+                                      //       Container(
+                                      //         // height: MediaQuery.of(context)
+                                      //         //         .size
+                                      //         //         .height *
+                                      //         //     0.05,
+                                      //         height:40,
+                                      //          width: MediaQuery.of(context).size.width * 0.45,
+                                      //         decoration: BoxDecoration(
+                                      //           color: blueColor,
+                                      //           borderRadius:
+                                      //               BorderRadius.circular(5),
+                                      //         ),
+                                      //         child: Center(
+                                      //           child: loading
+                                      //               ? SpinKitFadingCircle(
+                                      //                   color: Colors.white,
+                                      //                   size: 40.0,
+                                      //                 )
+                                      //               : Row(
+                                      //                   mainAxisAlignment:
+                                      //                       MainAxisAlignment
+                                      //                           .center,
+                                      //                   children: [
+                                      //                     // SizedBox(
+                                      //                     //   width: 8,
+                                      //                     // ),
+                                      //                     Text(
+                                      //                       "Change password",
+                                      //                       style: TextStyle(
+                                      //                           color: Colors
+                                      //                               .white,
+                                      //                           fontWeight:
+                                      //                               FontWeight
+                                      //                                   .bold,
+                                      //                           fontSize: MediaQuery.of(
+                                      //                               context)
+                                      //                               .size
+                                      //                               .width <
+                                      //                               500
+                                      //                               ? 15
+                                      //                               : 20),
+                                      //                     ),
+                                      //                     // SizedBox(
+                                      //                     //   width: 8,
+                                      //                     // ),
+                                      //                   ],
+                                      //                 ),
+                                      //         ),
+                                      //       ),
+                                      //     ],
+                                      //   ),
+                                      // ),
                                       GestureDetector(
-                                        onTap: () {
+                                        onTap: () async{
+                                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                                          String? pass = prefs.getString("password");
+                                          print(pass);
+                                          // Validate the new password
                                           if (password.text.isEmpty) {
                                             setState(() {
                                               passworderror = true;
-                                              passwordmessage =
-                                                  "Password is required";
+                                              passwordmessage = "Password is required";
                                             });
                                           } else if (password.text.length < 8) {
                                             setState(() {
                                               passworderror = true;
-                                              passwordmessage =
-                                                  "Password must have 8 Characters";
+                                              passwordmessage = "Password must have at least 8 characters";
                                             });
                                           } else if (!RegExp(
-                                                  r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
+                                              r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
                                               .hasMatch(password.text)) {
                                             setState(() {
                                               passworderror = true;
                                               passwordmessage =
-                                                  'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
+                                              'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
                                             });
+                                          } else if (password.text == pass) {
+                                            setState(() {
+                                              passworderror = true;
+                                              passwordmessage = 'New password cannot be the same as the old password';
+                                            });
+
+
                                           } else {
                                             setState(() {
-                                              passworderror = false;
+                                              passworderror = false; // Clear the password error
                                             });
                                           }
+
+                                          // Validate the confirmation password
                                           if (confirmpassword.text.isEmpty) {
                                             setState(() {
                                               confirmpassworderror = true;
-                                              confirmpasswordmessage =
-                                                  "Confirm password is required";
+                                              confirmpasswordmessage = "Confirm password is required";
                                             });
-                                          } else if (confirmpassword.text !=
-                                              password.text) {
+                                          } else if (confirmpassword.text != password.text) {
                                             setState(() {
                                               confirmpassworderror = true;
-                                              confirmpasswordmessage =
-                                                  "Both password is not match";
+                                              confirmpasswordmessage = "Both passwords do not match";
                                             });
                                           } else {
                                             setState(() {
-                                              confirmpassworderror = false;
+                                              confirmpassworderror = false; // Clear the confirmation password error
                                             });
                                           }
-                                          if (!passworderror &&
-                                              !confirmpassworderror) {
-                                            changePassword();
+
+                                          // If there are no errors, proceed to change the password
+                                          if (!passworderror && !confirmpassworderror ) {
+                                            //await _savePassword(password.text);
+                                             changePassword(); // Call the function to change the password
                                           }
                                         },
                                         child: Row(
                                           children: [
                                             Container(
-                                              // height: MediaQuery.of(context)
-                                              //         .size
-                                              //         .height *
-                                              //     0.05,
-                                              height:40,
-                                               width: MediaQuery.of(context).size.width * 0.45,
+                                              height: 40,
+                                              width: MediaQuery.of(context).size.width * 0.45,
                                               decoration: BoxDecoration(
                                                 color: blueColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
+                                                borderRadius: BorderRadius.circular(5),
                                               ),
                                               child: Center(
                                                 child: loading
                                                     ? SpinKitFadingCircle(
-                                                        color: Colors.white,
-                                                        size: 40.0,
-                                                      )
+                                                  color: Colors.white,
+                                                  size: 40.0,
+                                                )
                                                     : Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          // SizedBox(
-                                                          //   width: 8,
-                                                          // ),
-                                                          Text(
-                                                            "Change password",
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: MediaQuery.of(
-                                                                    context)
-                                                                    .size
-                                                                    .width <
-                                                                    500
-                                                                    ? 15
-                                                                    : 20),
-                                                          ),
-                                                          // SizedBox(
-                                                          //   width: 8,
-                                                          // ),
-                                                        ],
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      "Change Password",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
                                                       ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ],

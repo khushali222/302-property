@@ -1277,7 +1277,7 @@ class _Login_ScreenState extends State<Login_Screen> {
 
       prefs.setString('last_name', jsonData['last_name']);
       prefs.setString('email', jsonData['email']);
-
+      prefs.setString('password', password.text);
       if (!mounted) return;
 
       await Provider.of<checkPlanPurchaseProiver>(context, listen: false)
@@ -1350,6 +1350,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setString('first_name', firstname.first);
       prefs.setString('last_name', firstname[1]);
       prefs.setString('staffemail', jsonData['staffmember_email']);
+      prefs.setString('password', password.text);
       await Provider.of<StaffPermissionProvider>(context, listen: false)
           .fetchPermissions();
       Navigator.push(
@@ -1390,6 +1391,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setString('first_name', jsonData['tenant_firstName']);
       prefs.setString('last_name', jsonData['tenant_lastName']);
       prefs.setString('email', jsonData['tenant_email']);
+      prefs.setString('password', password.text);
       await Provider.of<PermissionProvider>(context, listen: false)
           .fetchPermissions();
       Navigator.push(context,
