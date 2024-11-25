@@ -172,6 +172,50 @@ class _Change_passwordState extends State<Change_password> {
     }
   }
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+
+  //for change password
+
+  @override
+  void initState() {
+    super.initState();
+    _loadOldPassword();
+
+  }
+
+  TextEditingController password = TextEditingController();
+  TextEditingController confirmpassword = TextEditingController();
+  bool passworderror = false;
+  bool confirmpassworderror = false;
+  bool loading = false;
+
+  String passwordmessage = "";
+  String confirmpasswordmessage = "";
+  bool visiable_password = true;
+  bool visiable_password_confirm = true;
+
+  final formKey = GlobalKey<FormState>();
+
+
+
+
+  //for save
+
+  Future<void> _savePassword(String password) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("password", password); // Store the new password
+  }
+
+
+  String oldPassword = "";
+  Future<void> _loadOldPassword() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? pass = prefs.getString("password");
+    setState(() {
+      oldPassword = pass!; // Fetch the old password
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -421,148 +465,677 @@ class _Change_passwordState extends State<Change_password> {
             //  size: 18,
             ),
 
+            // Padding(
+            //   padding: const EdgeInsets.all(12.0),
+            //   child: Container(
+            //     width: double.infinity,
+            //     // height: !form_valid ? 860 : 830,
+            //     decoration: BoxDecoration(
+            //         borderRadius: BorderRadius.circular(10.0),
+            //         border: Border.all(
+            //           color: Color.fromRGBO(21, 43, 103, 1),
+            //         )),
+            //     child: Padding(
+            //       padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 10),
+            //       child: Column(
+            //         crossAxisAlignment: CrossAxisAlignment.start,
+            //         children: [
+            //           Text('Enter your new password *',
+            //               style: TextStyle(
+            //                   fontSize: 13,
+            //                   fontWeight: FontWeight.bold,
+            //                   color: Colors.grey)),
+            //           SizedBox(
+            //             height: 10,
+            //           ),
+            //           CustomTextField(
+            //             keyboardType: TextInputType.text,
+            //             hintText: 'New Password',
+            //             obscureText: ispassword1,
+            //             controller: provider,
+            //             //   label: "",
+            //             validator: (value) {
+            //               if (value == null || value.isEmpty) {
+            //                 return 'please enter the subject';
+            //               }
+            //               return null;
+            //             },
+            //             suffixIcon: ispassword1 ? Icon(Icons.visibility,color: Colors.grey,) :  Icon(Icons.visibility_off,color: Colors.grey),
+            //             onSuffixIconPressed: (){
+            //               setState(() {
+            //                 print("111");
+            //                 ispassword1 = !ispassword1;
+            //               });
+            //             },
+            //           ),
+            //           SizedBox(
+            //             height: 10,
+            //           ),
+            //           Text('Confirm new password *',
+            //               style: TextStyle(
+            //                   fontSize: 13,
+            //                   fontWeight: FontWeight.bold,
+            //                   color: Colors.grey)),
+            //           SizedBox(
+            //             height: 10,
+            //           ),
+            //           CustomTextField(
+            //             keyboardType: TextInputType.text,
+            //             hintText: 'Confirm Password',
+            //             obscureText: ispassword2,
+            //             controller: policy,
+            //             //   label: "",
+            //             validator: (value) {
+            //               if (value == null || value.isEmpty) {
+            //                 return 'please enter the subject';
+            //               }
+            //               return null;
+            //             },
+            //             suffixIcon: ispassword2 ? Icon(Icons.visibility,color: Colors.grey,) :  Icon(Icons.visibility_off,color: Colors.grey),
+            //             onSuffixIconPressed: (){
+            //               setState(() {
+            //                 print("111");
+            //                 ispassword2 = !ispassword2;
+            //               });
+            //             },
+            //             matchingPasswordController: provider,
+            //           ),
+            //
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            // ),
             Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(15.0),
               child: Container(
+                // height: 220,
                 width: double.infinity,
-                // height: !form_valid ? 860 : 830,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
-                    border: Border.all(
-                      color: Color.fromRGBO(21, 43, 103, 1),
-                    )),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Enter your new password *',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey)),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        keyboardType: TextInputType.text,
-                        hintText: 'New Password',
-                        obscureText: ispassword1,
-                        controller: provider,
-                        //   label: "",
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'please enter the subject';
-                          }
-                          return null;
-                        },
-                        suffixIcon: ispassword1 ? Icon(Icons.visibility,color: Colors.grey,) :  Icon(Icons.visibility_off,color: Colors.grey),
-                        onSuffixIconPressed: (){
-                          setState(() {
-                            print("111");
-                            ispassword1 = !ispassword1;
-                          });
-                        },
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text('Confirm new password *',
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey)),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        keyboardType: TextInputType.text,
-                        hintText: 'Confirm Password',
-                        obscureText: ispassword2,
-                        controller: policy,
-                        //   label: "",
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'please enter the subject';
-                          }
-                          return null;
-                        },
-                        suffixIcon: ispassword2 ? Icon(Icons.visibility,color: Colors.grey,) :  Icon(Icons.visibility_off,color: Colors.grey),
-                        onSuffixIconPressed: (){
-                          setState(() {
-                            print("111");
-                            ispassword2 = !ispassword2;
-                          });
-                        },
-                        matchingPasswordController: provider,
-                      ),
+                  border: Border.all(color: Colors.black),
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Form(
+                  key: formKey,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        // const SizedBox(height: 20),
+                        // Login text
+                        Row(
+                          children: [
+                            Text(
+                              "Change Password ",
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: MediaQuery.of(context)
+                                      .size
+                                      .width *
+                                      0.045),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height:
+                          MediaQuery.of(context).size.height *
+                              0.03,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Password',
+                              style: TextStyle(
+                                  color: Color(0xFF8A95A8),
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Material(
+                                elevation: 3,
+                                borderRadius:
+                                BorderRadius.circular(
+                                    MediaQuery.of(context)
+                                        .size
+                                        .width *
+                                        0.013),
+                                child: Container(
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.circular(
+                                        MediaQuery.of(context)
+                                            .size
+                                            .width *
+                                            0.013),
+                                    color: Colors.white,
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      Positioned.fill(
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal:
+                                              MediaQuery.of(
+                                                  context)
+                                                  .size
+                                                  .width *
+                                                  0.00),
+                                          child: Center(
+                                            child: TextField(
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  passworderror =
+                                                  false;
+                                                });
+                                              },
+                                              obscureText:
+                                              visiable_password,
+                                              controller:
+                                              password,
+                                              cursorColor:
+                                              blueColor,
+                                              decoration:
+                                              InputDecoration(
+                                                border:
+                                                InputBorder
+                                                    .none,
+                                                contentPadding:
+                                                EdgeInsets
+                                                    .all(14),
+                                                enabledBorder:
+                                                passworderror
+                                                    ? OutlineInputBorder(
+                                                  borderRadius:
+                                                  BorderRadius.circular(
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                          0.013),
+                                                  borderSide:
+                                                  BorderSide(color: Colors.red), // Set border color here
+                                                )
+                                                    : InputBorder
+                                                    .none,
+                                                prefixIcon:
+                                                Padding(
+                                                  padding:
+                                                  const EdgeInsets
+                                                      .all(
+                                                      15.0),
+                                                  child: Image.asset(
+                                                      'assets/icons/pasword.png'),
+                                                ),
+                                                hintText:
+                                                "Password",
+                                                suffixIcon:
+                                                InkWell(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      visiable_password =
+                                                      !visiable_password;
+                                                    });
+                                                  },
+                                                  child: Icon(
+                                                    visiable_password
+                                                        ? Icons
+                                                        .remove_red_eye_outlined
+                                                        : Icons
+                                                        .visibility_off_outlined,
+                                                    color: Colors
+                                                        .grey,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        passworderror
+                            ? Center(
+                            child: Text(
+                              passwordmessage,
+                              style:
+                              TextStyle(color: Colors.red),
+                            ))
+                            : Container(),
+                        SizedBox(
+                          height:
+                          MediaQuery.of(context).size.height *
+                              0.02,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Confirm Password',
+                              style: TextStyle(
+                                  color: Color(0xFF8A95A8),
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            // SizedBox(
+                            //   width: MediaQuery.of(context).size.width * 0.099,
+                            // ),
+                            Expanded(
+                              child: Material(
+                                elevation: 3,
+                                borderRadius:
+                                BorderRadius.circular(
+                                    MediaQuery.of(context)
+                                        .size
+                                        .width *
+                                        0.013),
+                                child: Container(
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.circular(
+                                        MediaQuery.of(context)
+                                            .size
+                                            .width *
+                                            0.013),
+                                    color: Colors.white,
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      Positioned.fill(
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal:
+                                              MediaQuery.of(
+                                                  context)
+                                                  .size
+                                                  .width *
+                                                  0.00),
+                                          child: Center(
+                                            child: TextField(
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  confirmpassworderror =
+                                                  false;
+                                                });
+                                              },
+                                              obscureText:
+                                              visiable_password_confirm,
+                                              controller:
+                                              confirmpassword,
+                                              cursorColor:
+                                              blueColor,
+                                              decoration:
+                                              InputDecoration(
+                                                border:
+                                                InputBorder
+                                                    .none,
+                                                contentPadding:
+                                                EdgeInsets
+                                                    .all(14),
+                                                enabledBorder:
+                                                confirmpassworderror
+                                                    ? OutlineInputBorder(
+                                                  borderRadius:
+                                                  BorderRadius.circular(
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                          0.013),
+                                                  borderSide:
+                                                  BorderSide(color: Colors.red), // Set border color here
+                                                )
+                                                    : InputBorder
+                                                    .none,
+                                                prefixIcon:
+                                                Padding(
+                                                  padding:
+                                                  const EdgeInsets
+                                                      .all(
+                                                      15.0),
+                                                  child: Image.asset(
+                                                      'assets/icons/pasword.png'),
+                                                ),
+                                                hintText:
+                                                "Confirm password",
+                                                suffixIcon:
+                                                InkWell(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      visiable_password_confirm =
+                                                      !visiable_password_confirm;
+                                                    });
+                                                  },
+                                                  child: Icon(
+                                                    visiable_password_confirm
+                                                        ? Icons
+                                                        .remove_red_eye_outlined
+                                                        : Icons
+                                                        .visibility_off_outlined,
+                                                    color: Colors
+                                                        .grey,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            // SizedBox(
+                            //   width: MediaQuery.of(context).size.width * 0.099,
+                            // ),
+                          ],
+                        ),
+                        confirmpassworderror
+                            ? Center(
+                            child: Text(
+                              confirmpasswordmessage,
+                              style:
+                              TextStyle(color: Colors.red),
+                            ))
+                            : Container(),
 
-                    ],
+                        // Spacer(),
+                        // Login button
+                        SizedBox(
+                          height:
+                          MediaQuery.of(context).size.height *
+                              0.04,
+                        ),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     if (password.text.isEmpty) {
+                        //       setState(() {
+                        //         passworderror = true;
+                        //         passwordmessage =
+                        //             "Password is required";
+                        //       });
+                        //     } else if (password.text.length < 8) {
+                        //       setState(() {
+                        //         passworderror = true;
+                        //         passwordmessage =
+                        //             "Password must have 8 Characters";
+                        //       });
+                        //     } else if (!RegExp(
+                        //             r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
+                        //         .hasMatch(password.text)) {
+                        //       setState(() {
+                        //         passworderror = true;
+                        //         passwordmessage =
+                        //             'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
+                        //       });
+                        //     } else if (password.text == oldPassword) { // Check if new password is the same as old
+                        //       Fluttertoast.showToast(msg: "New password cannot be the same as the old password");
+                        //       return;
+                        //     } else {
+                        //       setState(() {
+                        //         passworderror = false;
+                        //       });
+                        //     }
+                        //     if (confirmpassword.text.isEmpty) {
+                        //       setState(() {
+                        //         confirmpassworderror = true;
+                        //         confirmpasswordmessage =
+                        //             "Confirm password is required";
+                        //       });
+                        //     } else if (confirmpassword.text !=
+                        //         password.text) {
+                        //       setState(() {
+                        //         confirmpassworderror = true;
+                        //         confirmpasswordmessage =
+                        //             "Both password is not match";
+                        //       });
+                        //     } else {
+                        //       setState(() {
+                        //         confirmpassworderror = false;
+                        //       });
+                        //     }
+                        //     if (!passworderror &&
+                        //         !confirmpassworderror) {
+                        //       changePassword();
+                        //     }
+                        //   },
+                        //   child: Row(
+                        //     children: [
+                        //       Container(
+                        //         // height: MediaQuery.of(context)
+                        //         //         .size
+                        //         //         .height *
+                        //         //     0.05,
+                        //         height:40,
+                        //          width: MediaQuery.of(context).size.width * 0.45,
+                        //         decoration: BoxDecoration(
+                        //           color: blueColor,
+                        //           borderRadius:
+                        //               BorderRadius.circular(5),
+                        //         ),
+                        //         child: Center(
+                        //           child: loading
+                        //               ? SpinKitFadingCircle(
+                        //                   color: Colors.white,
+                        //                   size: 40.0,
+                        //                 )
+                        //               : Row(
+                        //                   mainAxisAlignment:
+                        //                       MainAxisAlignment
+                        //                           .center,
+                        //                   children: [
+                        //                     // SizedBox(
+                        //                     //   width: 8,
+                        //                     // ),
+                        //                     Text(
+                        //                       "Change password",
+                        //                       style: TextStyle(
+                        //                           color: Colors
+                        //                               .white,
+                        //                           fontWeight:
+                        //                               FontWeight
+                        //                                   .bold,
+                        //                           fontSize: MediaQuery.of(
+                        //                               context)
+                        //                               .size
+                        //                               .width <
+                        //                               500
+                        //                               ? 15
+                        //                               : 20),
+                        //                     ),
+                        //                     // SizedBox(
+                        //                     //   width: 8,
+                        //                     // ),
+                        //                   ],
+                        //                 ),
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
+                        GestureDetector(
+                          onTap: () async{
+                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                            String? pass = prefs.getString("password");
+                            print(pass);
+                            // Validate the new password
+                            if (password.text.isEmpty) {
+                              setState(() {
+                                passworderror = true;
+                                passwordmessage = "Password is required";
+                              });
+                            } else if (password.text.length < 8) {
+                              setState(() {
+                                passworderror = true;
+                                passwordmessage = "Password must have at least 8 characters";
+                              });
+                            } else if (!RegExp(
+                                r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
+                                .hasMatch(password.text)) {
+                              setState(() {
+                                passworderror = true;
+                                passwordmessage =
+                                'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
+                              });
+                            } else if (password.text == pass) {
+                              setState(() {
+                                passworderror = true;
+                                passwordmessage = 'New password cannot be the same as the old password';
+                              });
+                             // Fluttertoast.showToast(msg: "New password cannot be the same as the old password");
+                             //  return;
+                            } else {
+                              setState(() {
+                                passworderror = false; // Clear the password error
+                              });
+                            }
+
+                            // Validate the confirmation password
+                            if (confirmpassword.text.isEmpty) {
+                              setState(() {
+                                confirmpassworderror = true;
+                                confirmpasswordmessage = "Confirm password is required";
+                              });
+                            } else if (confirmpassword.text != password.text) {
+                              setState(() {
+                                confirmpassworderror = true;
+                                confirmpasswordmessage = "Both passwords do not match";
+                              });
+                            } else {
+                              setState(() {
+                                confirmpassworderror = false; // Clear the confirmation password error
+                              });
+                            }
+
+                            // If there are no errors, proceed to change the password
+                            if (!passworderror && !confirmpassworderror) {
+                              //await _savePassword(password.text);
+                              addinsurance();// Call the function to change the password
+                            }
+                          },
+                          child: Row(
+                            children: [
+                              Container(
+                                height: 40,
+                                width: MediaQuery.of(context).size.width * 0.45,
+                                decoration: BoxDecoration(
+                                  color: blueColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Center(
+                                  child: loading
+                                      ? SpinKitFadingCircle(
+                                    color: Colors.white,
+                                    size: 40.0,
+                                  )
+                                      : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Change Password",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height:
+                          MediaQuery.of(context).size.height *
+                              0.02,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  Container(
-                    height: 50,
-                    width: 180,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: blueColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      onPressed: (){
-                        //print("calling 111");
-                        if(_formkey.currentState!.validate()){
-                            print("calling 22");
-                          addinsurance();
-                        }
-                      },
-                      child: isLoading
-                          ? Center(
-                        child: SpinKitFadingCircle(
-                          color: Colors.white,
-                          size: 55.0,
-                        ),
-                      )
-                          : Text(
-                        'Change Password',
-                        style: TextStyle(color: Color(0xFFf7f8f9)),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Container(
-                      height: 50,
-                      width: 120,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0)),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFFffffff),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(8.0))),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            'Cancel',
-                            style: TextStyle(color: Color(0xFF748097)),
-                          )))
-                ],
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(16.0),
+            //   child: Row(
+            //     children: [
+            //       Container(
+            //         height: 50,
+            //         width: 180,
+            //         decoration: BoxDecoration(
+            //           borderRadius: BorderRadius.circular(8.0),
+            //         ),
+            //         child: ElevatedButton(
+            //           style: ElevatedButton.styleFrom(
+            //             backgroundColor: blueColor,
+            //             shape: RoundedRectangleBorder(
+            //               borderRadius: BorderRadius.circular(8.0),
+            //             ),
+            //           ),
+            //           onPressed: (){
+            //             //print("calling 111");
+            //             if(_formkey.currentState!.validate()){
+            //                 print("calling 22");
+            //               addinsurance();
+            //             }
+            //           },
+            //           child: isLoading
+            //               ? Center(
+            //             child: SpinKitFadingCircle(
+            //               color: Colors.white,
+            //               size: 55.0,
+            //             ),
+            //           )
+            //               : Text(
+            //             'Change Password',
+            //             style: TextStyle(color: Color(0xFFf7f8f9)),
+            //           ),
+            //         ),
+            //       ),
+            //       SizedBox(
+            //         width: 8,
+            //       ),
+            //       Container(
+            //           height: 50,
+            //           width: 120,
+            //           decoration: BoxDecoration(
+            //               borderRadius: BorderRadius.circular(8.0)),
+            //           child: ElevatedButton(
+            //               style: ElevatedButton.styleFrom(
+            //                   backgroundColor: Color(0xFFffffff),
+            //                   shape: RoundedRectangleBorder(
+            //                       borderRadius:
+            //                       BorderRadius.circular(8.0))),
+            //               onPressed: () {
+            //                 Navigator.pop(context);
+            //               },
+            //               child: Text(
+            //                 'Cancel',
+            //                 style: TextStyle(color: Color(0xFF748097)),
+            //               )))
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       );
@@ -740,7 +1313,7 @@ class _Change_passwordState extends State<Change_password> {
       String? token = prefs.getString('token');
       String? email = prefs.getString('staffemail');
       String? staffid = prefs.getString("staff_id");
-      Map<String, dynamic> values = {'password': provider.text};
+      Map<String, dynamic> values = {'password':password.text};
       final http.Response response = await http.put(
         Uri.parse('$Api_url/api/staffmember/reset_password/$email'),
         headers: <String, String>{
@@ -755,8 +1328,8 @@ class _Change_passwordState extends State<Change_password> {
       var responseData = json.decode(response.body);
 
       if (responseData["statusCode"] == 200) {
+        await _savePassword(password.text);
         Fluttertoast.showToast(msg: responseData["message"]);
-
         return responseData;
       } else {
         Fluttertoast.showToast(msg: responseData["message"]);

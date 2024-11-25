@@ -184,6 +184,7 @@ class _StaffTableState extends State<StaffTable> {
                 },
                 child: Row(
                   children: [
+
                     Text("Designation",
                         style: TextStyle(color: Colors.white, fontSize: 15)),
                     SizedBox(width: 5),
@@ -865,7 +866,7 @@ class _StaffTableState extends State<StaffTable> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .08),
+                                                            .04),
                                                 Expanded(
                                                   child: Text(
                                                     '${staffmembers.staffmemberDesignation}',
@@ -882,7 +883,7 @@ class _StaffTableState extends State<StaffTable> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            .08),
+                                                            .05),
                                                 Expanded(
                                                   child: Text(
                                                     formatPhoneNumber('${staffmembers.staffmemberPhoneNumber}'),
@@ -895,7 +896,12 @@ class _StaffTableState extends State<StaffTable> {
                                                     ),
                                                   ),
                                                 ),
-
+                                                SizedBox(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .01),
                                               ],
                                             ),
                                           ),
