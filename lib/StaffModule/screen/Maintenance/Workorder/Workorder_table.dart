@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/Model/propertytype.dart';
@@ -23,7 +24,9 @@ import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/custom_drawer.dart';
 
 class Workorder_table extends StatefulWidget {
-  const Workorder_table({super.key});
+
+  String? filter;
+   Workorder_table({super.key,this.filter});
 
   @override
   State<Workorder_table> createState() => _Workorder_tableState();
@@ -276,6 +279,38 @@ class _Workorder_tableState extends State<Workorder_table> {
     });
     checkInternet();
     futureworkorders = WorkOrderRepository().fetchWorkOrders();
+    if(widget.filter != null){
+      selectedValue = widget.filter;
+    }
+
+  }
+
+  DateTime parseDate(String dateString) {
+    try {
+      // List of common date formats to try
+      List<String> formats = [
+        'yyyy-MM-dd',       // Example: 2024-11-25
+        'MM/dd/yyyy',       // Example: 11/25/2024
+        'dd/MM/yyyy',       // Example: 25/11/2024
+        'yyyy-MM-dd HH:mm', // Example: 2024-11-25 14:30
+        'yyyy/MM/dd',       // Example: 2024/11/25
+        'MMMM dd, yyyy',    // Example: November 25, 2024
+      ];
+
+      for (String format in formats) {
+        try {
+          return DateFormat(format).parse(dateString);
+        } catch (e) {
+          // Continue trying other formats
+        }
+      }
+
+      // If none of the formats match, throw an error
+      throw FormatException("Unsupported date format: $dateString");
+    } catch (e) {
+      print("Error parsing date: $e");
+      return DateTime.now(); // Fallback to current date if parsing fails
+    }
   }
   ConnectivityResult? _connectivityResult ;
   void checkInternet()async{
@@ -623,6 +658,8 @@ class _Workorder_tableState extends State<Workorder_table> {
     );
   }
 
+
+
   final _scrollController = ScrollController();
   Widget build(BuildContext context) {
     return Scaffold(
@@ -934,6 +971,12 @@ class _Workorder_tableState extends State<Workorder_table> {
                       );
                     } else {
                       var data = snapshot.data!;
+                      if (isChecked) {
+                        data = data
+                            .where((workorder) =>
+                        workorder.workOrderData!.isBillable == true)
+                            .toList();
+                      }
                       if (selectedValue == null && searchvalue!.isEmpty) {
                         data = snapshot.data!;
                       } else if (selectedValue == "All") {
@@ -945,25 +988,41 @@ class _Workorder_tableState extends State<Workorder_table> {
                                     .toLowerCase()
                                     .contains(searchvalue!.toLowerCase()) )
                             .toList();
-                      } else {
-                        data = snapshot.data!
-                            .where((workorder) =>
-                                workorder.workOrderData!.status! ==
-                                selectedValue)
-                            .toList();
                       }
-                      if (isChecked) {
-                        data = data
-                            .where((workorder) =>
-                                workorder.workOrderData!.isBillable == true)
-                            .toList();
+
+
+                      else {
+
+                        if(selectedValue =="Over Due"){
+                          data = snapshot.data!.where((element) {
+                            DateTime dueDate = parseDate(element.workOrderData!.date!.toString());
+                            bool isOverDue = dueDate.isBefore(DateTime.now());
+                            print(element.workOrderData!.status);
+                            bool isNotCompleted = element.workOrderData!.status != "Completed" && element.workOrderData!.status != "Complete";
+
+
+                            // Adjust based on your date format
+                            return isOverDue && isNotCompleted;
+                          }).toList();
+
+                        }
+                        else{
+                          data = snapshot.data!
+                              .where((property) =>
+                          property.workOrderData!.status == selectedValue)
+                              .toList();
+                        }
+
                       }
+
                       sortData(data);
                       final totalPages = (data.length / itemsPerPage).ceil();
+
                       final currentPageData = data
                           .skip(currentPage * itemsPerPage)
                           .take(itemsPerPage)
                           .toList();
+
                       return SingleChildScrollView(
                         child: Column(
                           children: [
