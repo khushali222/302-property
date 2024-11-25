@@ -3069,7 +3069,9 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                             ),
                             SizedBox(width: 10),
                             Text("Credit Card",style: TextStyle(
-                                fontSize: 16
+                                fontSize: 16,
+                              color: blueColor,
+                                fontWeight: FontWeight.bold
                             ),)
 
                           ],
@@ -3090,7 +3092,9 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                             ),
                             SizedBox(width: 10),
                             Text("Debit Card",style: TextStyle(
-                                fontSize: 16
+                                fontSize: 16,
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
                             ),)
 
                           ],

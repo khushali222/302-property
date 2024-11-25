@@ -966,7 +966,7 @@ class _RentalownersSummeryForMobileState
                           ],
                         ),
                         SizedBox(
-                          height: 5,
+                          height: 15,
                         ),
                         Container(
 
@@ -975,7 +975,9 @@ class _RentalownersSummeryForMobileState
                             children: [
                               SizedBox(width: 11),
                               Text("Credit Card",style: TextStyle(
-                                  fontSize: 16
+                                  fontSize: 16,
+                                color: blueColor,
+                                fontWeight: FontWeight.bold
                               ),),
                               SizedBox(width: 11),
                               Transform.scale(
@@ -1013,7 +1015,9 @@ class _RentalownersSummeryForMobileState
                             children: [
                               SizedBox(width: 13),
                               Text("Debit Card ",style: TextStyle(
-                                  fontSize: 16
+                                  fontSize: 16,
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold
                               ),),
                               SizedBox(width: 13),
                               Transform.scale(
