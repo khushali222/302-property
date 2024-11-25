@@ -5535,39 +5535,67 @@ class _Summery_pageState extends State<Summery_page>
                                         SizedBox(
                                           height: 5,
                                         ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 16),
-                                          child: Text(
-                                            '${widget.properties?.rentalCity} ${widget.properties?.rentalState}',
-                                            style: TextStyle(
-                                                fontSize: MediaQuery.of(context)
-                                                            .size
-                                                            .width <
-                                                        500
-                                                    ? 13
-                                                    : 18,
-                                                color: Colors.grey[800]),
-                                          ),
-                                        ),
                                         SizedBox(
-                                          height: 5,
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 14),
-                                          child: Text(
-                                            '${widget.properties?.rentalCountry} ${widget.properties?.rentalPostcode}',
-                                            style: TextStyle(
-                                                fontSize: MediaQuery.of(context)
-                                                            .size
-                                                            .width <
-                                                        500
+                                          width: MediaQuery.of(context).size.width > 500
+                                              ? 200
+                                              : 159,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(left: 16),
+                                            child:
+                                            Text(
+                                              [
+                                                widget.properties.rentalCity,
+                                                widget.properties.rentalState,
+                                                widget.properties.rentalCountry,
+                                                widget.properties.rentalPostcode,
+                                              ]
+                                                  .where((element) => element != null && element.isNotEmpty) // Filter out null or empty elements
+                                                  .map((element) => element!) // Ensure non-null elements
+                                                  .join(' , '),
+                                              style: TextStyle(
+                                                color: blueColor,
+                                                fontSize:
+                                                MediaQuery.of(context).size.width < 500
                                                     ? 13
                                                     : 18,
-                                                color: Colors.grey[800]),
+                                              ),
+                                              maxLines: 6,
+                                            ),
                                           ),
                                         ),
+                                        // Padding(
+                                        //   padding:
+                                        //       const EdgeInsets.only(left: 16),
+                                        //   child: Text(
+                                        //     '${widget.properties?.rentalCity} ${widget.properties?.rentalState}',
+                                        //     style: TextStyle(
+                                        //         fontSize: MediaQuery.of(context)
+                                        //                     .size
+                                        //                     .width <
+                                        //                 500
+                                        //             ? 13
+                                        //             : 18,
+                                        //         color: Colors.grey[800]),
+                                        //   ),
+                                        // ),
+                                        // SizedBox(
+                                        //   height: 5,
+                                        // ),
+                                        // Padding(
+                                        //   padding:
+                                        //       const EdgeInsets.only(left: 14),
+                                        //   child: Text(
+                                        //     '${widget.properties?.rentalCountry} ${widget.properties?.rentalPostcode}',
+                                        //     style: TextStyle(
+                                        //         fontSize: MediaQuery.of(context)
+                                        //                     .size
+                                        //                     .width <
+                                        //                 500
+                                        //             ? 13
+                                        //             : 18,
+                                        //         color: Colors.grey[800]),
+                                        //   ),
+                                        // ),
                                       ],
                                     ),
                                     Spacer(),

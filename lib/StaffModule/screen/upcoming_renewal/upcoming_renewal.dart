@@ -565,6 +565,38 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
   }
 
   final _scrollController = ScrollController();
+  void _showUndoAlert(BuildContext context, String id) {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Are you sure?",
+      desc: "You want to renew this lease!",
+      style: AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+        ),
+        DialogButton(
+          child: Text(
+            "Confirm",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            undorenewallease(id);
+            Navigator.pop(context);
+          },
+          color: Colors.red,
+        )
+      ],
+    ).show();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -912,120 +944,172 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
-                                                  Row(
-                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () async {
-                                                            var check = await Navigator
-                                                                .push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) =>
-                                                                            Renewlease(
-                                                                              leaseId: Propertytype.leaseId!,
-                                                                              leasetype: Propertytype.leaseType,
-                                                                              rentamount: Propertytype.leaseAmount.toString(),
-                                                                              enddate: Propertytype.endDate,
-                                                                              startdate: Propertytype.startDate,
-                                                                            )));
-                                                            if (check == true) {
-                                                              setState(() {});
-                                                            }
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors
-                                                                        .grey[
-                                                                    350]), // color:Colors.grey[100],
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .edit,
-                                                                  size: 15,
+                                                  if (Propertytype
+                                                      .isRenewing !=
+                                                      false)
+                                                    Row(
+                                                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        Expanded(
+                                                          child:
+                                                          GestureDetector(
+                                                            onTap:
+                                                                () async {
+                                                              var check = await Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) => Renewlease(
+                                                                        leaseId: Propertytype.leaseId!,
+                                                                        leasetype: Propertytype.leaseType,
+                                                                        rentamount: Propertytype.leaseAmount.toString(),
+                                                                        enddate: Propertytype.endDate,
+                                                                        startdate: Propertytype.startDate,
+                                                                      )));
+                                                              if (check ==
+                                                                  true) {
+                                                                setState(
+                                                                        () {});
+                                                              }
+                                                            },
+                                                            child:
+                                                            Container(
+                                                              height: 40,
+                                                              decoration:
+                                                              BoxDecoration(
                                                                   color:
-                                                                      blueColor,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 10,
-                                                                ),
-                                                                Text(
-                                                                  "Renew lease",
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                          blueColor,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                ),
-                                                              ],
+                                                                  Colors.grey[350]), // color:Colors.grey[100],
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                                crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .edit,
+                                                                    size:
+                                                                    15,
+                                                                    color:
+                                                                    blueColor,
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width:
+                                                                    10,
+                                                                  ),
+                                                                  Text(
+                                                                    "Renew lease",
+                                                                    style: TextStyle(
+                                                                        color: blueColor,
+                                                                        fontWeight: FontWeight.bold),
+                                                                  ),
+                                                                ],
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            print("calling");
+                                                        SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                        Expanded(
+                                                          child:
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              print(
+                                                                  "calling");
 
                                                               _showAlert(
-                                                                context,
-                                                                Propertytype
-                                                                    .leaseId!);
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .trashCan,
-                                                                  size: 15,
+                                                                  context,
+                                                                  Propertytype
+                                                                      .leaseId!);
+                                                            },
+                                                            child:
+                                                            Container(
+                                                              height: 40,
+                                                              decoration:
+                                                              BoxDecoration(
                                                                   color:
-                                                                      blueColor,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 10,
-                                                                ),
-                                                                Text(
-                                                                  "Not Renewing",
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                          blueColor,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                )
-                                                              ],
+                                                                  Colors.grey[350]),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                                crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .trashCan,
+                                                                    size:
+                                                                    15,
+                                                                    color:
+                                                                    blueColor,
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width:
+                                                                    10,
+                                                                  ),
+                                                                  Text(
+                                                                    "Not Renewing",
+                                                                    style: TextStyle(
+                                                                        color: blueColor,
+                                                                        fontWeight: FontWeight.bold),
+                                                                  )
+                                                                ],
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
-                                                      ),
-                                                    ],
-                                                  ),
+                                                      ],
+                                                    ),
+                                                  if (Propertytype
+                                                      .isRenewing ==
+                                                      false)
+                                                    Row(
+                                                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        Expanded(
+                                                          child:
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              print(
+                                                                  "calling");
+
+                                                              _showUndoAlert(
+                                                                  context,
+                                                                  Propertytype
+                                                                      .leaseId!);
+                                                            },
+                                                            child:
+                                                            Container(
+                                                              height: 40,
+                                                              decoration:
+                                                              BoxDecoration(
+                                                                  color:
+                                                                  Colors.grey[350]),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                                crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                                children: [
+                                                                  Text(
+                                                                    " Undo Not Renewing",
+                                                                    style: TextStyle(
+                                                                        color: blueColor,
+                                                                        fontWeight: FontWeight.bold),
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                 ],
                                               ),
                                             ),
@@ -1384,6 +1468,38 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
       String? id = prefs.getString("adminId");
       final response = await http.put(
         Uri.parse('$Api_url/api/leases/update_not_renewing/$leaseid'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          'Content-Type': 'application/json',
+        },
+      );
+      print(response.body);
+      if (response.statusCode == 200) {
+        /*   Fluttertoast.showToast(msg: "Lease Renewal Successfully");
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>SummeryPageLease(leaseId: widget.leaseId,)));
+          */
+        Fluttertoast.showToast(msg: "Lease will not renew");
+        setState(() {
+          futureLeaseRenewal = Upcoming_renewal_repo().fetchupcomingrenewal();
+        });
+      } else {
+        Fluttertoast.showToast(msg: "Renewal Lease not success");
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+  Future<void> undorenewallease(String leaseid) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String adminId = prefs.getString('adminId') ?? '';
+      String? token = prefs.getString('token');
+      print(token);
+      // print('lease ${widget.leaseId}');
+      String? id = prefs.getString("adminId");
+      final response = await http.put(
+        Uri.parse('$Api_url/api/leases/undo_renewing/$leaseid'),
         headers: {
           "authorization": "CRM $token",
           "id": "CRM $id",
