@@ -452,7 +452,7 @@ class LeaseRepository {
     final response = await http.get(Uri.parse('${Api_url}/api/leases/get_lease/$leaseId'),
       headers: {"authorization" : "CRM $token",
         "id":"CRM $id",},); // Update with your actual API URL
-    print(response.body);
+    print('lease fetch edit ${response.body}');
     print(leaseId);
     print(leaseId);
     if (response.statusCode == 200) {

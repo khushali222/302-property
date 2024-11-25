@@ -57,6 +57,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
   String? errorMessage;
   int? expandedRowIndex;
   Map<int, int?> expandedTenantIndex = {};
+
   ConnectivityResult? _connectivityResult;
   @override
   void initState() {
@@ -1186,6 +1187,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     List<Transaction> currentPageData =
         chargedata.skip(currentPage * itemsPerPage).take(itemsPerPage).toList();
 
+    currentPageData = currentPageData.reversed.toList();
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -1236,7 +1239,6 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                   int rowIndex = entry.key;
                   Transaction item = entry.value;
                   bool isRowExpanded = expandedRowIndex == rowIndex;
-
                   //printitem.rentalData.toString());
                   //print'${item.rentalData?.address}');
                   //show the charge data

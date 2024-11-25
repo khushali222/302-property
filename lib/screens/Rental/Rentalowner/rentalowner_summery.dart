@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,10 +7,11 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
-
+import 'package:http/http.dart' as http;
 import '../../../Model/RentalOwnersData.dart';
 import '../../../model/rentalOwner.dart';
 import '../../../model/rentalowners_summery.dart';
@@ -122,6 +125,7 @@ class _RentalownersSummeryForMobileState
       });
     });
     checkInternet();
+    fetchPaymentSettings();
   }
   void checkInternet()async{
 
@@ -131,6 +135,38 @@ class _RentalownersSummeryForMobileState
       _connectivityResult = connectiondata;
     });
 
+  }
+
+  //for card payment
+
+  bool creditcard = false;
+  bool debitcard = false;
+
+  Future<void> fetchPaymentSettings() async {
+    print("calling");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/payment/rental_owner/setting/${widget.rentalowners?.rentalownerId}'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
+    final jsonData = json.decode(response.body);
+    print(' rental added ${jsonData}');
+    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
+
+      print(creditcard);
+      print(creditcard);
+      setState(() {
+        creditcard = jsonData['data']['creditCardAccepted'];
+        debitcard = jsonData['data']['debitCardAccepted'];
+      });
+    } else {
+      throw Exception('Failed to load data');
+    }
   }
 
   @override
@@ -873,6 +909,144 @@ class _RentalownersSummeryForMobileState
                   ),
                 ),
               ),
+            ),
+            //card transaction type
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20,top: 20),
+              child: Material(
+                elevation: 6,
+                borderRadius: BorderRadius.circular(10),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: blueColor),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 25, right: 25, top: 20, bottom: 30),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 2,
+                            ),
+                            Text(
+                              "Card Transaction Type \nManagement ",
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  // fontSize: 18
+                                  fontSize:
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 20
+                                      : 25),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 2,
+                            ),
+                            Text(
+                              "Select the type of card you wish to \naccept",
+                              style: TextStyle(
+                                  color: Color(0xFF8A95A8),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize:
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 15
+                                      : 20),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Container(
+
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(width: 11),
+                              Text("Credit Card",style: TextStyle(
+                                  fontSize: 16
+                              ),),
+                              SizedBox(width: 11),
+                              Transform.scale(
+                                scale: 1.2,
+                                child:
+                                Icon(
+                                  creditcard ? Icons.check : Icons.close, // Checkmark or empty circle
+                                  color: creditcard ? Colors.green : Colors.red, // Color based on state
+                                  size: 24.0,
+
+                                ),
+
+                                // Checkbox(
+                                //   value: creditcard,
+                                //   onChanged: null,
+                                // //       (value) {
+                                // //   setState(() {
+                                // //     creditcard = value!;
+                                // //   });
+                                // // },
+                                //   activeColor: blueColor,
+                                //
+                                // ),
+                              ),
+
+
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 10,),
+                        Container(
+
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(width: 13),
+                              Text("Debit Card ",style: TextStyle(
+                                  fontSize: 16
+                              ),),
+                              SizedBox(width: 13),
+                              Transform.scale(
+                                scale: 1.2,
+                                child:
+                                Icon(
+                                  debitcard ? Icons.check : Icons.close, // Checkmark or empty circle
+                                  color: debitcard ? Colors.green : Colors.red, // Color based on state
+                                  size: 24.0, // Adjust the size as needed
+                                ),
+                                // Checkbox(
+                                //     value: debitcard,
+                                //     onChanged: null,
+                                // //     onChanged: (value) {
+                                // //   setState(() {
+                                // //     debitcard = value!;
+                                // //   });
+                                // // },
+                                //     activeColor: blueColor),
+                              ),
+
+
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
             ),
           ],
         ),

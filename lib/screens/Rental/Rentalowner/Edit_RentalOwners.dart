@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
@@ -9,7 +12,7 @@ import 'package:keyboard_actions/keyboard_actions_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
-
+import 'package:http/http.dart' as http;
 import '../../../Model/RentalOwnersData.dart';
 import '../../../model/rentalOwner.dart';
 import '../../../model/rentalowners_summery.dart';
@@ -79,6 +82,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
   String taxidmessage = "";
 
   bool isLoading = false;
+  bool isloading = false;
   Map<int, TextEditingController> _controllers = {};
 
   String? initialName;
@@ -148,6 +152,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     initialTaxType = widget.rentalOwner.textIdentityType;
     initialStartDate = widget.rentalOwner.startDate;
     initialEndDate = widget.rentalOwner.endDate;
+    fetchPaymentSettings();
   }
 
   // Add a text field
@@ -216,8 +221,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
       });
     }
   }
-  bool creditcard = false;
-  bool debitcard = false;
+
   Future<void> _endDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -279,6 +283,88 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
       ],
     );
   }
+
+  //for card payment
+
+  bool creditcard = false;
+  bool debitcard = false;
+
+  Future<void> fetchPaymentSettings() async {
+    print("calling");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/payment/rental_owner/setting/${widget.rentalOwner.rentalownerId}'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
+    final jsonData = json.decode(response.body);
+    print(' rental added ${jsonData}');
+    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
+
+      print(creditcard);
+      print(creditcard);
+      setState(() {
+        creditcard = jsonData['data']['creditCardAccepted'];
+        debitcard = jsonData['data']['debitCardAccepted'];
+      });
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  //for update payment
+
+  Future<void> updatePaymentSettings() async {
+    setState(() {
+      isloading = true; // Show loading indicator
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
+    final url = '${Api_url}/api/payment/rental_owner/setting';
+    final headers = {
+      "authorization": "CRM $token",
+      "id":"CRM $id",
+      'Content-Type': 'application/json; charset=UTF-8',
+
+    };
+    final body = json.encode({
+      "creditCardAccepted": creditcard,
+      "debitCardAccepted": debitcard,
+      "rentalOwnerId":widget.rentalOwner.rentalownerId,
+    });
+
+    try {
+      final response = await http.post(Uri.parse(url), headers: headers, body: body);
+
+      var responseData = json.decode(response.body);
+     print('update card type ${responseData}');
+     print('update card type ${response.body}');
+      if (responseData["statusCode"] == 200) {
+        Fluttertoast.showToast(msg: responseData["message"]);
+        return json.decode(response.body);
+
+      } else {
+        Fluttertoast.showToast(msg: responseData["message"]);
+        throw Exception('Failed to update card type');
+      }
+    } catch (error) {
+      // Handle network error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred: $error')),
+      );
+    } finally {
+      setState(() {
+        isloading = false; // Hide loading indicator
+      });
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -2711,115 +2797,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
             ),
           ),
           SizedBox(
-            height: 10,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 25, right: 25),
-            child: Material(
-              elevation: 6,
-              borderRadius: BorderRadius.circular(10),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: blueColor),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 25, right: 25, top: 20, bottom: 30),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            "Card Transaction Type \nManagement ",
-                            style: TextStyle(
-                                color: blueColor,
-                                fontWeight: FontWeight.bold,
-                                // fontSize: 18
-                                fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 20
-                                    : 25),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            "Select the type of card you wish to \naccept",
-                            style: TextStyle(
-                                color: Color(0xFF8A95A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 15
-                                    : 20),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Container(
-
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Transform.scale(
-                              scale: 1.2,
-                              child: Checkbox(value: creditcard, onChanged: (value) {
-                                setState(() {
-
-                                  creditcard = value!;
-                                });
-                              },activeColor: blueColor,),
-                            ),
-                            SizedBox(width: 10),
-                            Text("Credit Card",style: TextStyle(
-                                fontSize: 16
-                            ),)
-
-                          ],
-                        ),
-                      ),
-                      Container(
-
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Transform.scale(
-                              scale: 1.2,
-                              child: Checkbox(value: debitcard, onChanged: (value) {
-                                setState(() {
-                                  debitcard = value!;
-                                });
-                              },activeColor: blueColor),
-                            ),
-                            SizedBox(width: 10),
-                            Text("Debit Card",style: TextStyle(
-                                fontSize: 16
-                            ),)
-
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(
             height: 20,
           ),
           Row(
@@ -3014,6 +2991,161 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                   },
                   child: Text("Cancel")),
             ],
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          //card transaction type
+          Padding(
+            padding: const EdgeInsets.only(left: 25, right: 25),
+            child: Material(
+              elevation: 6,
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: blueColor),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25, right: 25, top: 20, bottom: 30),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 2,
+                          ),
+                          Text(
+                            "Card Transaction Type \nManagement ",
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                // fontSize: 18
+                                fontSize:
+                                MediaQuery.of(context).size.width < 500
+                                    ? 20
+                                    : 25),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 2,
+                          ),
+                          Text(
+                            "Select the type of card you wish to \naccept",
+                            style: TextStyle(
+                                color: Color(0xFF8A95A8),
+                                fontWeight: FontWeight.bold,
+                                fontSize:
+                                MediaQuery.of(context).size.width < 500
+                                    ? 15
+                                    : 20),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Container(
+
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Transform.scale(
+                              scale: 1.2,
+                              child: Checkbox(value: creditcard, onChanged: (value) {
+                                setState(() {
+
+                                  creditcard = value!;
+                                });
+                              },activeColor: blueColor,),
+                            ),
+                            SizedBox(width: 10),
+                            Text("Credit Card",style: TextStyle(
+                                fontSize: 16
+                            ),)
+
+                          ],
+                        ),
+                      ),
+                      Container(
+
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Transform.scale(
+                              scale: 1.2,
+                              child: Checkbox(value: debitcard, onChanged: (value) {
+                                setState(() {
+                                  debitcard = value!;
+                                });
+                              },activeColor: blueColor),
+                            ),
+                            SizedBox(width: 10),
+                            Text("Debit Card",style: TextStyle(
+                                fontSize: 16
+                            ),)
+
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              updatePaymentSettings();
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(5.0),
+                              child: Container(
+                                height: MediaQuery.of(context).size.height * .045,
+                                width: MediaQuery.of(context).size.width < 500 ? 120 : 190,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  color: blueColor,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey,
+                                      offset: Offset(0.0, 1.0), //(x,y)
+                                      blurRadius: 6.0,
+                                    ),
+                                  ],
+                                ),
+                                child: Center(
+                                  child: isloading ?SpinKitFadingCircle(
+                                    color: Colors.white,
+                                    size: 20.0,
+                                  ):  Text(
+                                    "Update",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: MediaQuery.of(context).size.width < 500
+                                            ? 15
+                                            : 20),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
           SizedBox(
             height: 20,

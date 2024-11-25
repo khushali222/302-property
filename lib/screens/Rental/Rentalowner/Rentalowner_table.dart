@@ -408,7 +408,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
       },
     );
     final jsonData = json.decode(response.body);
-    print(jsonData);
+    print(' rental added ${jsonData}');
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
       print(rentalownerCount);
       print(rentalOwnerCountLimit);

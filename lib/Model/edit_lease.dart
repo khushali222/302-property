@@ -206,7 +206,7 @@ class EditLease {
       leaseType: json['lease_type'],
       startDate: json['start_date'],
       endDate: json['end_date'],
-      leaseAmount: json['lease_amount'].toDouble(),
+      leaseAmount: json['lease_amount'] is String ? double.parse(json['lease_amount']) : (json['lease_amount'] as num?)?.toDouble() ?? 0.0,
       uploadedFile: List<dynamic>.from(json['uploaded_file']),
       entry: (json['entry'] as List)
           .map((entry) => Entry.fromJson(entry))
