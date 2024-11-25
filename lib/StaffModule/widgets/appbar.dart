@@ -172,12 +172,12 @@ class widget_302 {
                             FaIcon(
                               FontAwesomeIcons.cog,
                               size: 20,
-                              color: Colors.black,
+                              color: blueColor,
                             ),
                             SizedBox(
                               width: 10,
                             ),
-                            Text("Settings"),
+                            Text("Settings",style: TextStyle(color: blueColor)),
                           ],
                         ),
                         onTap: () {

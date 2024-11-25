@@ -31,10 +31,10 @@ formatDate(String dateTime) {
   DateTime? parsedDate;
 
   for (String format in dateFormats) {
-  //  print(dateTime);
+    //  print(dateTime);
     try {
       parsedDate = DateFormat(format).parse(dateTime);
-    //  print(parsedDate);
+      //  print(parsedDate);
       break;
     } catch (e) {
       continue;
@@ -43,9 +43,9 @@ formatDate(String dateTime) {
 
   if (parsedDate == null) {
     return dateTime;
-  //  throw FormatException("Date format not recognized: $dateTime");
+    //  throw FormatException("Date format not recognized: $dateTime");
   }
- // print(parsedDate);
+  // print(parsedDate);
   return DateFormat('dd-MM-yyyy').format(parsedDate);
 }
 
@@ -66,7 +66,7 @@ String reverseFormatDate(String formattedDate) {
   return DateFormat('yyyy-MM-dd').format(dateTime);
 }
 
- Color blueColor = Color.fromRGBO(21, 43, 81, 1);
+Color blueColor = Color.fromRGBO(21, 43, 81, 1);
 //Color blueColor = Color.fromRGBO(21, 43, 70, .5);
 
 Color greyColor = Color.fromRGBO(73, 81, 96, 1);
@@ -212,4 +212,3 @@ String? ValidatePassword(String password) {
 
   return null; // Indicate that the password is valid
 }
-

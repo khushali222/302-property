@@ -846,7 +846,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                     InkWell(
                                                       onTap: (){
                                                         if( permissions!.workorderView!)
-                                                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Workorder_table()));
+                                                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Workorder_table(filter: "New",)));
                                                       },
                                                       child: Container(
                                                         margin: EdgeInsets.symmetric(vertical: 12),
@@ -941,7 +941,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                     InkWell(
                                                       onTap: (){
                                                         if( permissions!.workorderView!)
-                                                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Workorder_table()));
+                                                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Workorder_table(filter: "Over Due",)));
                                                       },
                                                       child: Container(
                                                         margin: EdgeInsets.symmetric(vertical: 12),
