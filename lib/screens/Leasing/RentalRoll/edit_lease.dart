@@ -107,8 +107,8 @@ class _Edit_leaseState extends State<Edit_lease>
           formatDate(fetchedDetails.rentCharges!.first.date);
       rentAmount.text = fetchedDetails.rentCharges!.first.amount.toString();
 
-      // if(fetchedDetails.lease.uploadedFile != "")
-      //   _uploadedFileNames.add(fetchedDetails.lease.uploadedFile.first);
+      if(fetchedDetails.lease.uploadedFile != "")
+        _uploadedFileNames.add(fetchedDetails.lease.uploadedFile.first);
 
       if (fetchedDetails.securityCharges != null &&
           fetchedDetails.securityCharges!.length > 0)
@@ -257,9 +257,12 @@ class _Edit_leaseState extends State<Edit_lease>
     }
   }
 
+  bool _showUnitDropdown = false;
+
   Future<void> _loadUnits(String rentalId) async {
     setState(() {
       _isLoading = true;
+      _showUnitDropdown = false;
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
@@ -285,6 +288,7 @@ class _Edit_leaseState extends State<Edit_lease>
         setState(() {
           units = unitAddresses;
           _isLoading = false;
+          _showUnitDropdown = true;
         });
       } else {
         throw Exception('Failed to load units');
@@ -917,7 +921,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 setState(() {
                                                   _selectedProperty = value;
                                                   _selectedUnit =
-                                                      null; // Optionally reset _selectedUnit
+                                                      null;
+                                                  _showUnitDropdown = false;// Optionally reset _selectedUnit
                                                   state.didChange(
                                                       value); // Notify the FormField that the value has changed
                                                   renderId = value.toString();
@@ -1061,7 +1066,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                     ),
                                                   );
                                                 }).toList(),
-                                                value: _selectedUnit!.isEmpty ? null : _selectedUnit,
+                                                value:_selectedUnit == null || _selectedUnit!.isEmpty ? null : _selectedUnit,
                                                 onChanged: (value) {
                                                   setState(() {
                                                     _selectedUnit = value;

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
@@ -139,6 +140,13 @@ class _edit_insuranceState extends State<edit_insurance> {
     }
   }
 
+  late String initialProvider;
+  late String initialPolicy;
+  late String initialEffective;
+  late String initialExpiration;
+  late String initialLiability;
+  late List<String> initialUploadedFileNames;
+
   @override
   initState(){
     provider.text = widget.data.provider!;
@@ -151,6 +159,14 @@ class _edit_insuranceState extends State<edit_insurance> {
     liablity.text = widget.data.liabilityCoverage.toString()!;
     if(widget.data.policy != "")
     _uploadedFileNames.add(widget.data.policy!);
+
+    initialProvider = provider.text;
+    initialPolicy = policy.text;
+    initialEffective = effective.text;
+    initialExpiration = expiration.text;
+    initialLiability = liablity.text;
+    initialUploadedFileNames = List.from(_uploadedFileNames);
+
     super.initState();
 
 
@@ -435,11 +451,27 @@ class _edit_insuranceState extends State<edit_insurance> {
                               borderRadius: BorderRadius.circular(8.0),
                             ),
                           ),
-                          onPressed: (){
-                            //print("calling 111");
-                            if(_formkey.currentState!.validate()){
-                            //  print("calling 22");
-                              editinsurance(widget.data.tenantInsuranceId!);
+                          // onPressed: (){
+                          //   //print("calling 111");
+                          //   if(_formkey.currentState!.validate()){
+                          //   //  print("calling 22");
+                          //     editinsurance(widget.data.tenantInsuranceId!);
+                          //   }
+                          // },
+                          onPressed: () {
+                            if (_formkey.currentState!.validate()) {
+                              // Check if any field has changed
+                              if (provider.text != initialProvider ||
+                                  policy.text != initialPolicy ||
+                                  effective.text != initialEffective ||
+                                  expiration.text != initialExpiration ||
+                                  liablity.text != initialLiability ||
+                                  !listEquals(_uploadedFileNames, initialUploadedFileNames)) {
+                                editinsurance(widget.data.tenantInsuranceId!);
+                              } else {
+                                print("no changes made");
+                                Navigator.of(context).pop(true);
+                              }
                             }
                           },
                           child: isLoading

@@ -1341,13 +1341,13 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     );
                                                   } else {
                                                     setState(() {
-                                                      print(snapshot.data!
-                                                          .where((element) =>
-                                                              element
-                                                                  .propertysubType ==
-                                                              newValue)
-                                                          .first
-                                                          .isMultiunit);
+                                                      // print(snapshot.data!
+                                                      //     .where((element) =>
+                                                      //         element
+                                                      //             .propertysubType ==
+                                                      //         newValue)
+                                                      //     .first
+                                                      //     .isMultiunit);
                                                       // selectedIsMultiUnit = snapshot.data!.where((element) => element.isMultiunit == newValue ).first;
                                                       selectedpropertytypedata =
                                                           snapshot.data!
@@ -4211,7 +4211,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
 //                       },
 
                       onTap: () async {
-                        print("calling");
+                        // print("calling");
 
                         // Validate selected property
                         if (selectedProperty == null) {
@@ -4321,7 +4321,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
                         if (!hasChanges) {
                           // Show message if no changes detected
-                          print("No changes detected");
+                          // print("No changes detected");
                           Navigator.pop(context,false);
                           return; // Exit if no changes
                         }

@@ -273,7 +273,7 @@ class _StaffTableState extends State<StaffTable> {
     futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
+
         _connectivityResult = result;
       });
     });
@@ -336,7 +336,7 @@ class _StaffTableState extends State<StaffTable> {
 
   void handleEdit(Staffmembers staff) async {
     // Handle edit action
-    print('Edit ${staff.sId}');
+
     final result = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -433,7 +433,7 @@ class _StaffTableState extends State<StaffTable> {
     _showDeleteAlert(context, staff.staffmemberId!);
 
     // Handle delete action
-    print('Delete ${staff.staffmemberId}');
+
   }
 
   final _scrollController = ScrollController();
@@ -441,7 +441,7 @@ class _StaffTableState extends State<StaffTable> {
   int staffCountLimit = 0;
   int rentalCount = 0;
   Future<void> fetchstaffadded() async {
-    print("calling");
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -451,15 +451,14 @@ class _StaffTableState extends State<StaffTable> {
       "id": "CRM $id",
     });
     final jsonData = json.decode(response.body);
-    print(jsonData);
+
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
-      print(rentalCount);
-      print(staffCountLimit);
+
       setState(() {
         rentalCount = jsonData['rentalCount'];
-        print(rentalCount);
+
         staffCountLimit = jsonData['staffCountLimit'];
-        print(staffCountLimit);
+
       });
     } else {
       throw Exception('Failed to load data');
@@ -537,8 +536,7 @@ class _StaffTableState extends State<StaffTable> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      print(rentalCount);
-                      print(staffCountLimit);
+
                       // final result = await Navigator.of(context).push(MaterialPageRoute(
                       //     builder: (context) => Add_staffmember()));
                       // if (result == true) {

@@ -145,9 +145,12 @@ class _addLease3State extends State<addLease3>
     }
   }
 
+  bool _showUnitDropdown = false;
+
   Future<void> _loadUnits(String rentalId) async {
     setState(() {
       _isLoading = true;
+      _showUnitDropdown = false;
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");
@@ -174,6 +177,7 @@ class _addLease3State extends State<addLease3>
         setState(() {
           units = unitAddresses;
           _isLoading = false;
+          _showUnitDropdown = true;
         });
       } else {
         throw Exception('Failed to load units');
@@ -730,7 +734,8 @@ class _addLease3State extends State<addLease3>
                                               onChanged: (value) {
                                                 setState(() {
                                                   _selectedProperty = value;
-                                                  _selectedUnit = null; // Optionally reset _selectedUnit
+                                                  _selectedUnit = null;
+                                                  _showUnitDropdown = false;// Optionally reset _selectedUnit
                                                   state.didChange(value); // Notify the FormField that the value has changed
                                                   renderId = value.toString();
                                                   print('Hello Yash:${renderId}');
@@ -788,7 +793,7 @@ class _addLease3State extends State<addLease3>
                                       );
                                     },
                                   ),
-                                  if (units.isNotEmpty)
+                                  if (_showUnitDropdown && units.isNotEmpty)
                                     Padding(
                                       padding: const EdgeInsets.only(top: 5.0),
                                       child: Text(
@@ -800,7 +805,7 @@ class _addLease3State extends State<addLease3>
                                         ),
                                       ),
                                     ),
-                                  if (units.isNotEmpty)
+                                  if (_showUnitDropdown && units.isNotEmpty)
                                     FormField<String>(
                                       // initialValue: _selectedUnit,
                                       validator: (value) {
@@ -3355,12 +3360,23 @@ class _addLease3State extends State<addLease3>
                                       }
 
                                     },
-                                    child: const Text(
-                                      'Create Lease',
-                                      style: TextStyle(color: Color(0xFFf7f8f9),
-                                          fontSize: 16
-                                      ),
-                                    ))),
+                                    child:
+                                    Center(
+                                        child: isLoading
+                                            ? SpinKitFadingCircle(
+                                          color: Colors.white,
+                                          size: 25.0,
+                                        )
+                                            :
+                                        Text(
+                                          'Create Lease',
+                                          style: TextStyle(
+                                              color: Color(0xFFf7f8f9),
+                                              fontSize: 16),
+                                        )
+                                    ),
+                                )
+                            ),
                             const SizedBox(
                               width: 10,
                             ),

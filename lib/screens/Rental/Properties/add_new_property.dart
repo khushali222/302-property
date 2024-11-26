@@ -279,8 +279,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
     if (pickedFile != null) {
       // try {
       String? filename = await uploadImage(File(pickedFile.path));
-      print(index);
-      print(filename);
+
+
       setState(() {
         propertyGroupImagenames[index] = filename!;
         //  _uploadedFilename = filename;
@@ -291,12 +291,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
     }
     setState(() {
       if (pickedFile != null) {
-        print('Image selected: ${pickedFile.path}');
-        print('Before: ${propertyGroupImages.length}');
+        // print('Image selected: ${pickedFile.path}');
+        // print('Before: ${propertyGroupImages.length}');
         propertyGroupImages[index] = File(pickedFile.path);
-        print('After : ${propertyGroupImages.length}');
+        // print('After : ${propertyGroupImages.length}');
       } else {
-        print('No image selected.');
+        // print('No image selected.');
       }
     });
   }
@@ -307,7 +307,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
   List<String?> propertyGroupImagenames = [];
   File? _image;
   Future<String?> uploadImage(File imageFile) async {
-    print(imageFile.path!);
+    // print(imageFile.path!);
     // API URL
     //   final String uploadUrl = 'http://192.168.1.17:4000/api/images/upload';
     final String uploadUrl = '${image_upload_url}/api/images/upload';
@@ -321,14 +321,14 @@ class _Add_new_propertyState extends State<Add_new_property> {
     var response = await request.send();
     // Parse the response
     var responseData = await http.Response.fromStream(response);
-    print(responseData.body);
+    // print(responseData.body);
     var responseBody = json.decode(responseData.body);
 
     // Extract the filename from the response
     if (responseBody['status'] == 'ok') {
       List file = responseBody['files'];
-      print(file.first["filename"]);
-      print(file.first.runtimeType);
+      // print(file.first["filename"]);
+      // print(file.first.runtimeType);
       return file.first["filename"];
     } else {
       throw Exception('Failed to upload file: ${responseBody['message']}');
@@ -510,11 +510,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
   }
 
   void addPropertyGroup() {
-    print("hello");
+    // print("hello");
     List<Widget> fields = [];
     List<TextEditingController> controllers = [];
 
-    print(selectedpropertytype);
+    // print(selectedpropertytype);
 
     if (selectedpropertytype == 'Commercial' && selectedIsMultiUnit == true) {
       var unitController = TextEditingController();
@@ -615,12 +615,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
       }
     }
 
-    print(propertyGroupControllers.length);
+    // print(propertyGroupControllers.length);
 
     for (int i = 0; i < propertyGroupControllers.length; i++) {
       List<TextEditingController> controllers = propertyGroupControllers[i];
       for (int j = 0; j < controllers.length; j++) {
-        print(controllers[j].text);
+        // print(controllers[j].text);
       }
     }
   }
@@ -1126,7 +1126,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                       });
                                                                                     });
                                                                                   }
-                                                                                  print(selectedValue);
+                                                                                  // print(selectedValue);
                                                                                 },
                                                                                 child: ClipRRect(
                                                                                   borderRadius: BorderRadius.circular(5.0),
@@ -1200,13 +1200,13 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                     );
                                                   } else {
                                                     setState(() {
-                                                      print(snapshot.data!
-                                                          .where((element) =>
-                                                              element
-                                                                  .propertysubType ==
-                                                              newValue)
-                                                          .first
-                                                          .isMultiunit);
+                                                      // print(snapshot.data!
+                                                      //     .where((element) =>
+                                                      //         element
+                                                      //             .propertysubType ==
+                                                      //         newValue)
+                                                      //     .first
+                                                      //     .isMultiunit);
                                                       // selectedIsMultiUnit = snapshot.data!.where((element) => element.isMultiunit == newValue ).first;
                                                       selectedpropertytypedata =
                                                           snapshot.data!
@@ -1215,7 +1215,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                       .propertysubType ==
                                                                   newValue)
                                                               .first;
-                                                      print(selectedProperty);
+                                                      // print(selectedProperty);
                                                       selectedProperty =
                                                           newValue;
                                                       propertyGroups = [];
@@ -2290,8 +2290,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                   onTap: () {
                                                                     provider
                                                                         .clearOwners();
-                                                                    print(
-                                                                        "hello");
+
                                                                     setState(
                                                                         () {
                                                                       RentalOwner?
@@ -3825,7 +3824,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               postalCode: updatedOwner.postalCode,
                               //processorid: processorIds!,
                             );
-                            print(selectedpropertytypedata!.propertyId);
+
                             // SharedPreferences prefs =
                             //     await SharedPreferences.getInstance();
                             // String? adminId = prefs.getString("adminId");
@@ -3901,7 +3900,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   }
                                   List<TextEditingController> controllers =
                                       propertyGroupControllers[i];
-                                  print(controllers.length);
+                                  // print(controllers.length);
                                   units[i].sqft = controllers[0].text;
                                   units[i].bath = controllers[1].text;
                                   units[i].bed = controllers[2].text;
@@ -3936,7 +3935,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                             }
                           }
                         } else {
-                          print('Form is invalid');
+                          // print('Form is invalid');
                         }
                       },
                       child: ClipRRect(

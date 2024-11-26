@@ -642,8 +642,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
 
                               // If no changes were made, you can choose to navigate back without making an API call
                               if (!hasChanges) {
-                                print(
-                                    "No changes made, API call not necessary.");
+
                                 Navigator.of(context)
                                     .pop(false); // Optionally navigate back
                                 return;
@@ -694,7 +693,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                     isLoading = false;
                                   });
                                   // You can add further error handling here
-                                  print("Error occurred: $e");
+
                                 }
                               }
                             },

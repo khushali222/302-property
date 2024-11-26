@@ -302,7 +302,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
+        // print(result);
         _connectivityResult = result;
       });
     });
@@ -322,7 +322,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
   }
   void handleEdit(Rentals properties) async {
     // Handle edit action
-    print('Edit ${properties.staffMemberId}');
+    // print('Edit ${properties.staffMemberId}');
     var check = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -348,7 +348,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
 
   void handleTap(Rentals properties) async {
     // Handle edit action
-    print('Edit ${properties.rentalId}');
+    // print('Edit ${properties.rentalId}');
     final result = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -399,7 +399,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
               Fluttertoast.showToast(msg: "Please enter a reason for deletion");
             }
             else{
-              print(id);
+              // print(id);
               var data = await PropertiesRepository()
                   .DeleteProperties(id: id, reason: reason.text);
               if(data != null)
@@ -485,19 +485,19 @@ class _PropertiesTableState extends State<PropertiesTable> {
   }
 
   void handleDelete(Rentals properties) {
-    print(properties.propertyId);
+    // print(properties.propertyId);
     // _showAlert(context,property.propertyId!);
     _showAlert(context, properties.rentalId!);
 
     // Handle delete action
-    print('Delete ${properties.propertyId}');
+    // print('Delete ${properties.propertyId}');
   }
 
   final _scrollController = ScrollController();
   int rentalCount = 0;
   int propertyCountLimit = 0;
   Future<void> fetchRentaladded() async {
-    print("calling");
+    // print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -509,15 +509,15 @@ class _PropertiesTableState extends State<PropertiesTable> {
       },
     );
     final jsonData = json.decode(response.body);
-    print(jsonData);
+    // print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
-      print(rentalCount);
-      print(propertyCountLimit);
+      // print(rentalCount);
+      // print(propertyCountLimit);
       setState(() {
         rentalCount = jsonData['rentalCount'];
-        print(rentalCount);
+        // print(rentalCount);
         propertyCountLimit = jsonData['propertyCountLimit'];
-        print(propertyCountLimit);
+        // print(propertyCountLimit);
       });
     } else {
       throw Exception('Failed to load data');

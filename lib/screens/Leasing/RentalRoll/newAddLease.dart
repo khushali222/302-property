@@ -102,6 +102,7 @@ class _addLease3State extends State<addLease3>
   final TextEditingController rentMemo = TextEditingController();
 
   //changes variables
+  bool _showUnitDropdown = false;
   Future<void> _loadProperties() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
@@ -148,6 +149,7 @@ class _addLease3State extends State<addLease3>
   Future<void> _loadUnits(String rentalId) async {
     setState(() {
       _isLoading = true;
+       _showUnitDropdown = false;
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
@@ -173,6 +175,7 @@ class _addLease3State extends State<addLease3>
         setState(() {
           units = unitAddresses;
           _isLoading = false;
+           _showUnitDropdown = true;
         });
       } else {
         throw Exception('Failed to load units');
@@ -805,6 +808,7 @@ class _addLease3State extends State<addLease3>
                                                   _selectedProperty = value;
                                                   _selectedUnit =
                                                       null; // Optionally reset _selectedUnit
+                                                  _showUnitDropdown = false;
                                                   state.didChange(
                                                       value); // Notify the FormField that the value has changed
                                                   renderId = value.toString();
@@ -880,7 +884,7 @@ class _addLease3State extends State<addLease3>
                                       );
                                     },
                                   ),
-                                  if (units.isNotEmpty)
+                                  if (_showUnitDropdown && units.isNotEmpty)
                                     Padding(
                                       padding: const EdgeInsets.only(top: 0.0),
                                       child: Text(
@@ -892,7 +896,7 @@ class _addLease3State extends State<addLease3>
                                         ),
                                       ),
                                     ),
-                                  if (units.isNotEmpty)
+                                  if (_showUnitDropdown && units.isNotEmpty)
                                     FormField<String>(
                                       // initialValue: _selectedUnit,
                                       validator: (value) {

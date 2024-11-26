@@ -325,7 +325,7 @@ class _Add_propertyState extends State<Add_property> {
                                   });
                                 });
                               }
-                              print(selectedValue);
+
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),

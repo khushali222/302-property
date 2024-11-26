@@ -239,7 +239,7 @@ class _PropertyTableState extends State<PropertyTable> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
+
         _connectivityResult = result;
         if(_connectivityResult != ConnectivityResult.none)
           futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
@@ -263,7 +263,7 @@ class _PropertyTableState extends State<PropertyTable> {
   }
   void handleEdit(propertytype property) async {
     // Handle edit action
-    print('Edit ${property.sId}');
+
     var check = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -397,7 +397,7 @@ class _PropertyTableState extends State<PropertyTable> {
   void handleDelete(propertytype property) {
     _showAlert(context, property.propertyId!);
     // Handle delete action
-    print('Delete ${property.sId}');
+
   }
 
   // Widget _buildHeader<T>(String text, int columnIndex,
