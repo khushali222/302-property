@@ -62,7 +62,39 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
           : b.createdAt!.compareTo(a.createdAt!));
     }*/
   }
-
+  void _showAddInsuranceAlert(BuildContext context, VoidCallback onConfirm) {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Add New Insurance",
+      desc:
+      "If you add a new renter's insurance, the older one will get expired. Do you want to proceed?",
+      style: const AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: const Text(
+            "Cancel",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.grey,
+        ),
+        DialogButton(
+          child: const Text(
+            "Yes",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () {
+            Navigator.pop(context); // Close the alert
+            onConfirm(); // Execute the confirm action
+          },
+          color: Colors.red,
+        ),
+      ],
+    ).show();
+  }
   int? expandedIndex;
   Set<int> expandedIndices = {};
   late bool isExpanded;
@@ -674,53 +706,64 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                     title: 'Insurance',
                   ),
                   if(permissions!.documentsAdd)
-                  GestureDetector(
-                    onTap: () async {
-              final result = await Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => add_insurance()));
-             if (result == true) {
-                        setState(() {
-                          futurePropertyTypes = InsuranceRepository().fetchInsurancesProperties();
-                        });
-                      }
-                    },
-                    child: Container(
-                      height: (MediaQuery.of(context).size.width < 500)
-                          ? 50
-                          : MediaQuery.of(context).size.width * 0.055,
+    GestureDetector(
+      onTap: () async {
+        // Check if there are existing insurance entries
+        final existingInsurances = await futurePropertyTypes.catchError((_) => []);
 
-                      // height:  MediaQuery.of(context).size.width * 0.07,
-                      // height:  40,
-                      width: (MediaQuery.of(context).size.width < 500)
-                          ?  MediaQuery.of(context).size.width * 0.25
-                          : MediaQuery.of(context).size.width * 0.3,
-                      decoration: BoxDecoration(
-                        color: blueColor,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "+ Add",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                (MediaQuery.of(context).size.width < 500)
-                                    ? 16
-                                    :20,
-
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (MediaQuery.of(context).size.width < 500)
+        // If there's more than one existing insurance, show an alert
+        if (existingInsurances.isNotEmpty) {
+          _showAddInsuranceAlert(context, () async {
+            final result = await Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => add_insurance()),
+            );
+            if (result == true) {
+              setState(() {
+                futurePropertyTypes = InsuranceRepository().fetchInsurancesProperties();
+              });
+            }
+          });
+        } else {
+          // Navigate to add_insurance directly if no existing insurance
+          final result = await Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => add_insurance()),
+          );
+          if (result == true) {
+            setState(() {
+              futurePropertyTypes = InsuranceRepository().fetchInsurancesProperties();
+            });
+          }
+        }
+      },
+      child: Container(
+        height: (MediaQuery.of(context).size.width < 500)
+            ? 50
+            : MediaQuery.of(context).size.width * 0.055,
+        width: (MediaQuery.of(context).size.width < 500)
+            ? MediaQuery.of(context).size.width * 0.25
+            : MediaQuery.of(context).size.width * 0.3,
+        decoration: BoxDecoration(
+          color: blueColor,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "+ Add",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: (MediaQuery.of(context).size.width < 500) ? 16 : 20,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+    if (MediaQuery.of(context).size.width < 500)
                     SizedBox(width: 6),
                   if (MediaQuery.of(context).size.width > 500)
                     SizedBox(width: 22),
@@ -1204,156 +1247,14 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                                           ],
                                                         ),
                                                       ),
-                                                      // SizedBox(width: 5),
-                                                      // Expanded(
-                                                      //   child: Column(
-                                                      //     crossAxisAlignment:
-                                                      //     CrossAxisAlignment.start,
-                                                      //     children: <Widget>[
-                                                      //       Text.rich(
-                                                      //         TextSpan(
-                                                      //           children: [
-                                                      //             TextSpan(
-                                                      //               text:
-                                                      //               'Sample Header: ',
-                                                      //               style: TextStyle(
-                                                      //                   fontWeight:
-                                                      //                   FontWeight
-                                                      //                       .bold,
-                                                      //                   color:
-                                                      //                   blueColor), // Bold and black
-                                                      //             ),
-                                                      //             TextSpan(
-                                                      //               text: 'Sample Data',
-                                                      //               style: TextStyle(
-                                                      //                   fontWeight:
-                                                      //                   FontWeight
-                                                      //                       .w700,
-                                                      //                   color: Colors
-                                                      //                       .grey), // Light and grey
-                                                      //             ),
-                                                      //           ],
-                                                      //         ),
-                                                      //       ),
-                                                      //       Text.rich(
-                                                      //         TextSpan(
-                                                      //           children: [
-                                                      //             TextSpan(
-                                                      //               text:
-                                                      //               'Sample Header : ',
-                                                      //               style: TextStyle(
-                                                      //                   fontWeight:
-                                                      //                   FontWeight
-                                                      //                       .bold,
-                                                      //                   color:
-                                                      //                   blueColor), // Bold and black
-                                                      //             ),
-                                                      //             TextSpan(
-                                                      //               text: 'Sample Data',
-                                                      //               style: TextStyle(
-                                                      //                   fontWeight:
-                                                      //                   FontWeight
-                                                      //                       .w700,
-                                                      //                   color: Colors
-                                                      //                       .grey), // Light and grey
-                                                      //             ),
-                                                      //           ],
-                                                      //         ),
-                                                      //       ),
-                                                      //       Text.rich(
-                                                      //         TextSpan(
-                                                      //           children: [
-                                                      //             TextSpan(
-                                                      //               text:
-                                                      //               'Sample Header : ',
-                                                      //               style: TextStyle(
-                                                      //                   fontWeight:
-                                                      //                   FontWeight
-                                                      //                       .bold,
-                                                      //                   color:
-                                                      //                   blueColor), // Bold and black
-                                                      //             ),
-                                                      //             TextSpan(
-                                                      //               text: 'Sample Data',
-                                                      //               style: TextStyle(
-                                                      //                   fontWeight:
-                                                      //                   FontWeight
-                                                      //                       .w700,
-                                                      //                   color: Colors
-                                                      //                       .grey), // Light and grey
-                                                      //             ),
-                                                      //           ],
-                                                      //         ),
-                                                      //       ),
-                                                      //     ],
-                                                      //   ),
-                                                      // ),
-                                                   /*   Container(
-                                                        width: 40,
-                                                        child: Column(
-                                                          children: [
-                                                            if(permissions!.documentsEdit)
-                                                            IconButton(
-                                                              icon: FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .edit,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                    21,
-                                                                    43,
-                                                                    83,
-                                                                    1),
-                                                              ),
-                                                              onPressed:
-                                                                  () async {
-                                                                // handleEdit(Propertytype);
 
-                                                                var check = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => edit_insurance(
-                                                                          data: Propertytype,
-                                                                        )));
-                                                                if (check ==
-                                                                    true) {
-                                                                  setState(
-                                                                          () {
-                                                                            futurePropertyTypes = InsuranceRepository().fetchInsurancesProperties();
-                                                                          });
-                                                                }
-                                                              },
-                                                            ),
-                                                            if(permissions!.documentsDelete)
-                                                            IconButton(
-                                                              icon: FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .trashCan,
-                                                                size: 20,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                    21,
-                                                                    43,
-                                                                    83,
-                                                                    1),
-                                                              ),
-                                                              onPressed: () {
-                                                                //handleDelete(Propertytype);
-                                                                _showAlert(
-                                                                    context,
-                                                                    Propertytype
-                                                                        .tenantInsuranceId!);
-                                                              },
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),*/
                                                     ],
                                                   ),
                                                   SizedBox(height: 10,),
                                                   Row(
                                                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
+                                                      if(Propertytype.status == 'ACTIVE')
                                                       Expanded(
                                                         child: InkWell(
                                                           onTap: ()async{
@@ -1424,6 +1325,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                                         ),
                                                       ),
                                                       SizedBox(width: 5,),
+
                                                       Expanded(
                                                         child: InkWell(
                                                           onTap:(){

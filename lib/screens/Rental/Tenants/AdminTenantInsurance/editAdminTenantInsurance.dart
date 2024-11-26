@@ -147,10 +147,10 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
     provider.text = widget.data.provider!;
     policy.text = widget.data.policyId!;
 
-    // effective.text = formatDate3(widget.data.effectiveDate!);//
-
-    // expiration.text = formatDate3(widget.data.expirationDate!);
+     effective.text = formatDate(widget.data.effectiveDate!);
+     expiration.text = formatDate(widget.data.expirationDate!);
     liablity.text = widget.data.liabilityCoverage.toString()!;
+    if(widget.data.policy!.isNotEmpty)
     _uploadedFileNames.add(widget.data.policy!);
     super.initState();
   }
@@ -439,7 +439,24 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                               //print("calling 111");
                               if (_formkey.currentState!.validate()) {
                                 //  print("calling 22");
-                                editinsurance(widget.data.tenantInsuranceId!);
+
+                                if( provider.text == widget.data.provider! &&
+                                policy.text == widget.data.policyId! &&
+
+                                effective.text == formatDate(widget.data.effectiveDate!) &&
+                                expiration.text == formatDate(widget.data.expirationDate!) &&
+                                liablity.text == widget.data.liabilityCoverage.toString()!
+                                &&  _uploadedFileNames.contains(widget.data.policy!)
+                              ){
+                                  Navigator.of(context).pop();
+                                }
+
+                                else{
+
+
+                                  editinsurance(widget.data.tenantInsuranceId!);
+                                }
+
                               }
                             },
                             child: isLoading
@@ -494,8 +511,8 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
       "admin_id": adminId!,
       "Provider": provider.text,
       "policy_id": policy.text,
-      // "EffectiveDate": reverseFormatDate(effective.text),
-      // "ExpirationDate": reverseFormatDate(expiration.text),
+       "EffectiveDate": reverseFormatDate(effective.text),
+       "ExpirationDate": reverseFormatDate(expiration.text),
       "LiabilityCoverage": liablity.text,
       "Policy": _uploadedFileNames.length > 0 ? _uploadedFileNames.first : "",
     };

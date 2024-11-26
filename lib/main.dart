@@ -162,21 +162,24 @@ void main() {
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
-  // final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      // navigatorKey: navigatorKey,
       theme: ThemeData(
         fontFamily: "Poppins",
-        iconTheme:  IconThemeData(color: blueColor),
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: blueColor),
+        iconTheme: IconThemeData(color: blueColor),
+        colorScheme: ColorScheme.fromSeed(seedColor: blueColor),
         useMaterial3: false,
-
       ),
       home: SplashScreen(),
+      builder: (context, child) {
+        return ScrollConfiguration(
+          behavior: NoGlowScrollBehavior(),
+          child: child!,
+        );
+      },
     );
   }
 }
@@ -227,5 +230,12 @@ class NameProvider extends ChangeNotifier {
     _country = country;
     _postalCode = postalCode;
     notifyListeners();
+  }
+}
+class NoGlowScrollBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
+    // Remove the glow effect
+    return child;
   }
 }
