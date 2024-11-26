@@ -174,7 +174,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                 },
                 child: Row(
                   children: [
-                    Text("Phone", style: TextStyle(color: Colors.white)),
+                    Text("   Phone", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
@@ -198,7 +198,7 @@ class _Tenants_tableState extends State<Tenants_table> {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -223,7 +223,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                 },
                 child: Row(
                   children: [
-                    Text("Created At",
+                    Text("   Created At",
                         textAlign: TextAlign.center,
                         style: TextStyle(color: Colors.white, fontSize: 14)),
                     SizedBox(width: 5),

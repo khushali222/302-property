@@ -748,15 +748,7 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.start,
                                                   children: [
-                                                    FaIcon(
-                                                      isExpanded
-                                                          ? FontAwesomeIcons
-                                                              .sortUp
-                                                          : FontAwesomeIcons
-                                                              .sortDown,
-                                                      size: 50,
-                                                      color: Colors.transparent,
-                                                    ),
+
                                                     Expanded(
                                                       child: Column(
                                                         crossAxisAlignment:
@@ -768,7 +760,7 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                               children: [
                                                                 TextSpan(
                                                                   text:
-                                                                      'Liability Coverage : ',
+                                                                      'Liability Coveragedd : ',
                                                                   style: TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
