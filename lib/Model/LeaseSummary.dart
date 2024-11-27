@@ -243,6 +243,7 @@ class RenewLeases {
   String? leaseType;
   String? startDate;
   String? endDate;
+  String? renewfileName;
   int? amount;
   int? leaseAmount;
   bool? isDelete;
@@ -258,6 +259,7 @@ class RenewLeases {
         this.leaseType,
         this.startDate,
         this.endDate,
+        this.renewfileName,
         this.amount,
         this.leaseAmount,
         this.isDelete,
@@ -272,6 +274,7 @@ class RenewLeases {
     adminId = json['admin_id'];
     leaseType = json['lease_type'];
     startDate = json['start_date'];
+    renewfileName = json['renew_fileName'];
     endDate = json['end_date'];
     amount = json['amount'];
     leaseAmount = json['lease_amount'];
@@ -289,6 +292,7 @@ class RenewLeases {
     data['admin_id'] = this.adminId;
     data['lease_type'] = this.leaseType;
     data['start_date'] = this.startDate;
+    data['renew_fileName'] = this.renewfileName;
     data['end_date'] = this.endDate;
     data['amount'] = this.amount;
     data['lease_amount'] = this.leaseAmount;

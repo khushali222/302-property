@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -13,7 +14,9 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/Model/WorkOrderSetting.dart';
 import 'package:three_zero_two_property/provider/color_theme.dart';
+import 'package:three_zero_two_property/repository/SettingWorkorder.dart';
 
 import 'package:three_zero_two_property/repository/setting.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
@@ -55,7 +58,9 @@ class _TabBarExampleState extends State<TabBarExample> {
   bool isaccounts = false;
   bool islatefee = false;
   bool isLoading = false;
+  bool isloading = false;
   bool isdateformate = false;
+  bool isworkorder = false;
   ConnectivityResult? _connectivityResult;
   List<Setting4> accounts = [];
   String? selectedAccount;
@@ -80,7 +85,13 @@ class _TabBarExampleState extends State<TabBarExample> {
     accountname = TextEditingController();
     note = TextEditingController();
     // _loadColorPreference();
+
+    _loadVendor();
+    _loadStaff();
+    fetchWorkData();
   }
+
+
 
   fetchAccounts() async {
     List<Setting4> fetchedAccounts = await accountRepository().fetchAccounts();
@@ -950,6 +961,292 @@ class _TabBarExampleState extends State<TabBarExample> {
   //   );
   // }
 
+
+  String? _selectedCategory;
+  final List<String> _category = [
+    'Complaint',
+    'Contribution Request',
+    'Feedback/Suggestion',
+    'General inquiry',
+    'Maintenance Request',
+    'Other'
+  ];
+  String? _selectedEntry;
+  final List<String> _entry = [
+    'Yes',
+    'No',
+  ];
+  String? _selectedStatus = "New";
+  final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed','Closed'];
+  final List<String> _account = [
+    'Advertizing',
+    'Association fees',
+  ];
+  List<Map<String, dynamic>> rows = [];
+  bool _showTextField = false;
+  String renderId = '';
+  String unitId = '';
+  String vendorId = '';
+  String StaffId = '';
+  String tenantId = '';
+  bool _isLoading = false;
+  bool _isLoadingvendors = false;
+  bool _isLoadingstaff = false;
+
+  //for vendor
+  Map<String, String> vendors = {};
+  String? _selectedvendorsId;
+  String? _selectedVendors;
+
+  //for Staffmember
+  Map<String, String> staffs = {};
+  String? _selectedstaffId;
+  String? _selectedStaffs;
+  //for tenants
+  Map<String, String> tenants = {};
+  String? _selectedtenantId;
+  String? _selectedTenants;
+
+  Map<String, String> properties = {}; // Mapping of rental_id to rental_address
+  Map<String, String> units = {};
+  bool _isLoadingtenant = false;
+
+  final TextEditingController other = TextEditingController();
+  Future<void> _loadUnits(String rentalId) async {
+    setState(() {
+      _isLoading = true;
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    try {
+      final response = await http
+          .get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'), headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      });
+      print('$Api_url/api/unit/rental_unit/$rentalId');
+
+      if (response.statusCode == 200) {
+        List jsonResponse = json.decode(response.body)['data'];
+        Map<String, String> unitAddresses = {};
+        jsonResponse.forEach((data) {
+          unitAddresses[data['unit_id'].toString()] =
+              data['rental_unit'].toString();
+        });
+        //  200 no hoy tyare _loadtennant
+        setState(() {
+          units = unitAddresses;
+          _isLoading = false;
+        });
+      } else {
+        _loadTenant(rentalId, unitId);
+        throw Exception('Failed to load units');
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _loadTenant(String rentalId, String unitId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    setState(() {
+      _isLoadingtenant = true;
+    });
+    try {
+      final response = await http.get(
+          Uri.parse('${Api_url}/api/leases/get_tenants/$rentalId/$unitId'),
+          headers: {
+            "authorization": "CRM $token",
+            "id": "CRM $id",
+          });
+      print('${Api_url}/api/leases/get_tenants/$rentalId/$unitId');
+      print(response.body);
+      if (response.statusCode == 200) {
+        List jsonResponse = json.decode(response.body)['data'];
+        Map<String, String> tenantsnames = {};
+        jsonResponse.forEach((data) {
+          tenantsnames[data['tenant_id'].toString()] =
+              data['tenant_firstName'].toString() +
+                  " " +
+                  data['tenant_lastName'].toString();
+        });
+        setState(() {
+          tenants = tenantsnames;
+          _isLoadingtenant = false;
+        });
+        print(tenants);
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      setState(() {
+        _isLoadingtenant = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to fetch tenants: $e')),
+      );
+    }
+  }
+
+  //for vendor
+  Future<void> _loadVendor() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    setState(() {
+      _isLoadingvendors = true;
+    });
+    try {
+      final response = await http
+          .get(Uri.parse('${Api_url}/api/vendor/vendors/$id'), headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      });
+      print('${Api_url}/api/vendor/vendors/$id');
+
+      if (response.statusCode == 200) {
+        List jsonResponse = json.decode(response.body)['data'];
+        Map<String, String> names = {};
+        jsonResponse.forEach((data) {
+          names[data['vendor_id'].toString()] = data['vendor_name'].toString();
+        });
+
+        setState(() {
+          vendors = names;
+          _isLoadingvendors = false;
+        });
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      setState(() {
+        _isLoadingvendors = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to fetch vendors: $e')),
+      );
+    }
+  }
+
+  Future<void> _loadStaff() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    setState(() {
+      _isLoadingstaff = true;
+    });
+    try {
+      final response = await http.get(
+          Uri.parse('${Api_url}/api/staffmember/staff_member/$id'),
+          headers: {
+            "authorization": "CRM $token",
+            "id": "CRM $id",
+          });
+      print('${Api_url}/api/staffmember/staff_member/$id');
+
+      if (response.statusCode == 200) {
+        List jsonResponse = json.decode(response.body)['data'];
+        Map<String, String> staffnames = {};
+        jsonResponse.forEach((data) {
+          staffnames[data['staffmember_id'].toString()] =
+              data['staffmember_name'].toString();
+        });
+
+        setState(() {
+          staffs = staffnames;
+          _isLoadingstaff = false;
+        });
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      setState(() {
+        _isLoadingstaff = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to fetch vendors: $e')),
+      );
+    }
+  }
+
+  //for update the workorder
+  Future<void> updateWorkOrderSettings() async {
+    setState(() {
+      isloading = true; // Show loading indicator
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String?  id = prefs.getString('adminId');
+    final url = '${Api_url}/api/work-order/work-defaults';
+    final headers = {
+      "authorization": "CRM $token",
+      "id":"CRM $id",
+      'Content-Type': 'application/json; charset=UTF-8',
+
+    };
+    final body = json.encode({
+      "admin_id": id,
+      "category": _selectedCategory,
+     "entry_allowed": _selectedEntry == 'yes',
+      "staffmember_id":_selectedstaffId,
+      "vendor_id":vendorId,
+    });
+
+    try {
+      final response = await http.post(Uri.parse(url), headers: headers, body: body);
+
+      var responseData = json.decode(response.body);
+      print('add workorder ${responseData}');
+      print('add workorder  ${response.body}');
+      if (responseData["statusCode"] == 200) {
+        Fluttertoast.showToast(msg: responseData["message"]);
+        return json.decode(response.body);
+
+      } else {
+        Fluttertoast.showToast(msg: responseData["message"]);
+        throw Exception('Failed to add workorder');
+      }
+    } catch (error) {
+      // Handle network error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred: $error')),
+      );
+    } finally {
+      setState(() {
+        isloading = false; // Hide loading indicator
+      });
+    }
+  }
+
+  Future<void> fetchWorkData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    try {
+      Data workorder = await fetchWorkOrderSetting();
+      String? entryAllowedString;
+      if (workorder.workDefaults?.entryAllowed != null) {
+        entryAllowedString = workorder.workDefaults!.entryAllowed! ? 'Yes' : 'No';
+      }
+      if (workorder != null) {
+        setState(() {
+          _selectedvendorsId = workorder.workDefaults?.vendorId?.isEmpty ?? true ? null : workorder.workDefaults?.vendorId;
+          _selectedCategory  = workorder.workDefaults?.category ?? "";
+          _selectedstaffId = workorder.workDefaults?.staffmemberId?.isEmpty ?? true ? null : workorder.workDefaults?.staffmemberId;
+          _selectedEntry = entryAllowedString;
+         print('vendor check ${workorder.workDefaults?.vendorId ?? ""}');
+
+        });
+      }
+    } catch (e) {
+      print('Failed to load workorder data: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -1214,6 +1511,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ismail = false;
                                       isdateformate = true;
                                       islatefee = false;
+                                      isworkorder = false;
                                       DateTime now = DateTime.now();
                                       dateformateselect =
                                           dateProvider.dateformateselect;
@@ -1261,25 +1559,27 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     setState(() {
                                       issurge = false;
                                       ismail = false;
-                                      isaccounts = true;
+                                      isaccounts = false;
+                                      isworkorder = true;
                                       islatefee = false;
+                                      isdateformate = false;
                                     });
                                   },
                                   child: Visibility(
-                                    visible: false,
+                                    visible: true,
                                     child: Container(
                                       decoration: BoxDecoration(
                                         border: Border.all(color: blueColor),
-                                        color: !isaccounts
+                                        color: !isworkorder
                                             ? Colors.white
                                             : blueColor,
                                       ),
                                       child: Center(
                                         child: Text(
-                                          "Manage Accounts",
+                                          "Manage WorkOrder",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
-                                              color: isaccounts
+                                              color: isworkorder
                                                   ? Colors.white
                                                   : blueColor,
                                               fontSize: MediaQuery.of(context)
@@ -4427,6 +4727,575 @@ class _TabBarExampleState extends State<TabBarExample> {
                               // ),
                             ],
                           ),
+                        if (isworkorder)
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 15),
+                              Row(
+                                children: [
+                                  Text(
+                                    "Manage WorkOrder",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor,
+                                      fontSize:
+                                      MediaQuery.of(context).size.width <
+                                          500
+                                          ? 18
+                                          : 25,
+                                    ),
+                                  ),
+                                  Spacer(),
+                                ],
+                              ),
+                              SizedBox(height: 15),
+                              Row(
+                                children: [
+                                  Text(
+                                    "Category",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor,
+                                      fontSize:
+                                      MediaQuery.of(context).size.width <
+                                          500
+                                          ? 16
+                                          : 25,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 15),
+                              FormField<String>(
+                                validator: (value) {
+                                  if (_selectedCategory == null ||
+                                      _selectedCategory!.isEmpty) {
+                                    return 'Please select a category';
+                                  }
+                                  return null;
+                                },
+                                builder: (FormFieldState<String> state) {
+                                  return Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      DropdownButtonHideUnderline(
+                                        child: DropdownButton2<String>(
+                                          isExpanded: true,
+                                          hint: const Text('Select Category'),
+                                          value: _selectedCategory,
+                                          items: _category.map((method) {
+                                            return DropdownMenuItem<String>(
+                                              value: method,
+                                              child: Text(method),
+                                            );
+                                          }).toList(),
+                                          onChanged: (String? newValue) {
+                                            setState(() {
+                                              _selectedCategory = newValue;
+                                              _showTextField =
+                                                  _selectedCategory == 'Other';
+                                              state.didChange(newValue);
+                                            });
+                                            print(
+                                                'Selected category: $_selectedCategory');
+                                            state.reset();
+                                            // Notify FormField of value change
+                                          },
+                                          buttonStyleData: ButtonStyleData(
+                                            height: 45,
+                                            padding: const EdgeInsets.only(
+                                                left: 14, right: 14),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                              BorderRadius.circular(6),
+                                              color: Colors.white,
+                                            ),
+                                            elevation: 2,
+                                          ),
+                                          iconStyleData: const IconStyleData(
+                                            icon: Icon(Icons.arrow_drop_down),
+                                            iconSize: 24,
+                                            iconEnabledColor: Color(0xFFb0b6c3),
+                                            iconDisabledColor: Colors.grey,
+                                          ),
+                                          dropdownStyleData: DropdownStyleData(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                              BorderRadius.circular(6),
+                                              color: Colors.white,
+                                            ),
+                                            scrollbarTheme: ScrollbarThemeData(
+                                              radius: const Radius.circular(6),
+                                              thickness:
+                                              MaterialStateProperty.all(6),
+                                              thumbVisibility:
+                                              MaterialStateProperty.all(true),
+                                            ),
+                                          ),
+                                          menuItemStyleData:
+                                          const MenuItemStyleData(
+                                            height: 50,
+                                            padding: EdgeInsets.only(
+                                                left: 14, right: 14),
+                                          ),
+                                        ),
+                                      ),
+                                      if (state.hasError)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 14, top: 8),
+                                          child: Text(
+                                            state.errorText!,
+                                            style: const TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  );
+                                },
+                              ),
+                              _showTextField
+                                  ? Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 10, bottom: 10),
+                                child: buildTextField('Other Category',
+                                    'Enter Other Category', other),
+                              )
+                                  : Container(),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text('Vendor *',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                  fontSize:
+                                  MediaQuery.of(context).size.width <
+                                      500
+                                      ? 16
+                                      : 25,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 2,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  FormField<String>(
+                                    validator: (value) {
+                                      if (_selectedvendorsId == null ||
+                                          _selectedvendorsId!.isEmpty) {
+                                        return 'Please select a vendor';
+                                      }
+                                      return null;
+                                    },
+                                    builder: (FormFieldState<String> state) {
+                                      return Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          DropdownButtonHideUnderline(
+                                            child:
+                                            DropdownButtonFormField2<String>(
+                                              decoration: const InputDecoration(
+                                                border: InputBorder.none,
+                                              ),
+                                              isExpanded: true,
+                                              hint: const Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      'Select here',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                        FontWeight.w400,
+                                                        color: Color(0xFFb0b6c3),
+                                                      ),
+                                                      overflow:
+                                                      TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              items:
+                                              vendors.keys.map((vender_id) {
+                                                return DropdownMenuItem<String>(
+                                                  value: vender_id,
+                                                  child: Text(
+                                                    vendors[vender_id]!,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w400,
+                                                      color: Colors.black87,
+                                                    ),
+                                                    overflow:
+                                                    TextOverflow.ellipsis,
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              value: _selectedvendorsId,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  _selectedvendorsId = value;
+                                                  _selectedVendors =
+                                                  vendors[value];
+                                                  vendorId = value.toString();
+                                                  print(
+                                                      'Selected Vendors: $_selectedVendors');
+                                                  _loadUnits(value!);
+                                                  state.didChange(
+                                                      value); // Fetch units for the selected vendor
+                                                });
+                                                state.reset();
+                                                // Notify form field of the change
+                                              },
+                                              buttonStyleData: ButtonStyleData(
+                                                height: 45,
+                                                width: 160,
+                                                padding: const EdgeInsets.only(
+                                                    left: 14, right: 14),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                  BorderRadius.circular(6),
+                                                  color: Colors.white,
+                                                ),
+                                                elevation: 2,
+                                              ),
+                                              iconStyleData: const IconStyleData(
+                                                icon: Icon(Icons.arrow_drop_down),
+                                                iconSize: 24,
+                                                iconEnabledColor:
+                                                Color(0xFFb0b6c3),
+                                                iconDisabledColor: Colors.grey,
+                                              ),
+                                              dropdownStyleData:
+                                              DropdownStyleData(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                  BorderRadius.circular(6),
+                                                  color: Colors.white,
+                                                ),
+                                                scrollbarTheme:
+                                                ScrollbarThemeData(
+                                                  radius:
+                                                  const Radius.circular(6),
+                                                  thickness:
+                                                  MaterialStateProperty.all(
+                                                      6),
+                                                  thumbVisibility:
+                                                  MaterialStateProperty.all(
+                                                      true),
+                                                ),
+                                              ),
+                                              menuItemStyleData:
+                                              const MenuItemStyleData(
+                                                height: 40,
+                                                padding: EdgeInsets.only(
+                                                    left: 14, right: 14),
+                                              ),
+                                              // validator: (value) {
+                                              //   if (value == null || value.isEmpty) {
+                                              //     return 'Please select a vendor';
+                                              //   }
+                                              //   return null;
+                                              // },
+                                            ),
+                                          ),
+                                          if (state.hasError)
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 14, top: 8),
+                                              child: Text(
+                                                state.errorText!,
+                                                style: const TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text('Entery Allowed ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                  fontSize:
+                                  MediaQuery.of(context).size.width <
+                                      500
+                                      ? 16
+                                      : 25,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              DropdownButtonHideUnderline(
+                                child: DropdownButton2<String>(
+                                  isExpanded: true,
+                                  hint: Text('Select'),
+                                  value: _selectedEntry,
+                                  items: _entry.map((method) {
+                                    return DropdownMenuItem<String>(
+                                      value: method,
+                                      child: Text(method),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selectedEntry = newValue;
+                                      //_selectedPaymentMethod = addRow();
+                                      // if(_selectedCategory == 'Other')
+                                      // addRow();
+                                    });
+                                    print('Selected category: $_selectedEntry');
+                                  },
+                                  buttonStyleData: ButtonStyleData(
+                                    height: 45,
+                                    // width: 200,
+                                    padding: const EdgeInsets.only(
+                                        left: 14, right: 14),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: Colors.white,
+                                    ),
+                                    elevation: 2,
+                                  ),
+                                  iconStyleData: const IconStyleData(
+                                    icon: Icon(
+                                      Icons.arrow_drop_down,
+                                    ),
+                                    iconSize: 24,
+                                    iconEnabledColor: Color(0xFFb0b6c3),
+                                    iconDisabledColor: Colors.grey,
+                                  ),
+                                  dropdownStyleData: DropdownStyleData(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: Colors.white,
+                                    ),
+                                    scrollbarTheme: ScrollbarThemeData(
+                                      radius: const Radius.circular(6),
+                                      thickness: MaterialStateProperty.all(6),
+                                      thumbVisibility:
+                                      MaterialStateProperty.all(true),
+                                    ),
+                                  ),
+                                  menuItemStyleData: const MenuItemStyleData(
+                                    height: 40,
+                                    padding: EdgeInsets.only(left: 14, right: 14),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text('Assigned To *',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                  fontSize:
+                                  MediaQuery.of(context).size.width <
+                                      500
+                                      ? 16
+                                      : 25,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 2,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  FormField<String>(
+                                    validator: (value) {
+                                      if (_selectedstaffId == null ||
+                                          _selectedstaffId!.isEmpty) {
+                                        return 'Please select a staff member';
+                                      }
+                                      return null;
+                                    },
+                                    builder: (FormFieldState<String> state) {
+                                      return Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          DropdownButtonHideUnderline(
+                                            child:
+                                            DropdownButtonFormField2<String>(
+                                              decoration: const InputDecoration(
+                                                border: InputBorder.none,
+                                              ),
+                                              isExpanded: true,
+                                              hint: const Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      'Select here',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                        FontWeight.w400,
+                                                        color: Color(0xFFb0b6c3),
+                                                      ),
+                                                      overflow:
+                                                      TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              items: staffs.keys
+                                                  .map((staffmember_id) {
+                                                return DropdownMenuItem<String>(
+                                                  value: staffmember_id,
+                                                  child: Text(
+                                                    staffs[staffmember_id]!,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w400,
+                                                      color: Colors.black87,
+                                                    ),
+                                                    overflow:
+                                                    TextOverflow.ellipsis,
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              value: _selectedstaffId,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  _selectedstaffId = value;
+                                                  _selectedStaffs = staffs[value];
+                                                  StaffId = value.toString();
+                                                  print(
+                                                      'Selected Staffs: $_selectedStaffs');
+                                                  state.didChange(value);
+                                                });
+                                                state.reset();
+                                                // Notify form field of the change
+                                              },
+                                              buttonStyleData: ButtonStyleData(
+                                                height: 45,
+                                                width: 160,
+                                                padding: const EdgeInsets.only(
+                                                    left: 14, right: 14),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                  BorderRadius.circular(6),
+                                                  color: Colors.white,
+                                                ),
+                                                elevation: 2,
+                                              ),
+                                              iconStyleData: const IconStyleData(
+                                                icon: Icon(Icons.arrow_drop_down),
+                                                iconSize: 24,
+                                                iconEnabledColor:
+                                                Color(0xFFb0b6c3),
+                                                iconDisabledColor: Colors.grey,
+                                              ),
+                                              dropdownStyleData:
+                                              DropdownStyleData(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                  BorderRadius.circular(6),
+                                                  color: Colors.white,
+                                                ),
+                                                scrollbarTheme:
+                                                ScrollbarThemeData(
+                                                  radius:
+                                                  const Radius.circular(6),
+                                                  thickness:
+                                                  MaterialStateProperty.all(
+                                                      6),
+                                                  thumbVisibility:
+                                                  MaterialStateProperty.all(
+                                                      true),
+                                                ),
+                                              ),
+                                              menuItemStyleData:
+                                              const MenuItemStyleData(
+                                                height: 40,
+                                                padding: EdgeInsets.only(
+                                                    left: 14, right: 14),
+                                              ),
+                                            ),
+                                          ),
+                                          if (state.hasError)
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 14, top: 8),
+                                              child: Text(
+                                                state.errorText!,
+                                                style: const TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                                 Row(
+                                   children: [
+                                     Container(
+                                       height: 50,
+                                       width: 100,
+                                       decoration: BoxDecoration(
+                                         borderRadius: BorderRadius.circular(8.0),
+                                       ),
+                                       child: ElevatedButton(
+                                         style: ElevatedButton.styleFrom(
+                                           backgroundColor: blueColor,
+                                           shape: RoundedRectangleBorder(
+                                             borderRadius: BorderRadius.circular(8.0),
+                                           ),
+                                         ),
+                                         onPressed: () async {
+                                           print("hello");
+                                           updateWorkOrderSettings();
+                                         },
+                                         child: isLoading
+                                             ? Center(
+                                           child: SpinKitFadingCircle(
+                                             color: Colors.white,
+                                             size: 55.0,
+                                           ),
+                                         )
+                                             : Text(
+                                           'Save',
+                                           style: TextStyle(
+                                             fontWeight: FontWeight.bold,
+                                             fontSize:
+                                             MediaQuery.of(context).size.width <
+                                                 500
+                                                 ? 16
+                                                 : 25,
+                                           ),
+                                         ),
+                                       ),
+                                     ),
+
+                                   ],
+                                 ),
+                            ],
+                          ),
                       ],
                     ),
                   ),
@@ -5139,6 +6008,37 @@ class _TabBarExampleState extends State<TabBarExample> {
           );
         });
       },
+    );
+  }
+
+  Widget buildTextField(
+      String label, String hintText, TextEditingController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(label,
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+        SizedBox(height: 8.0),
+        Material(
+          elevation: 3,
+          borderRadius: BorderRadius.circular(5),
+          child: Container(
+            padding: EdgeInsets.only(left: 10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: TextFormField(
+              controller: controller,
+              focusNode: FocusNode(),
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: hintText,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

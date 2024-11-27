@@ -114,8 +114,9 @@ class AdminBalanceRepository {
       final response = await http.get(
         Uri.parse(url),
         headers: {
-          'Content-Type': 'application/json',
-          "Authorization": "Bearer $token",
+          "authorization": "CRM $token",
+          "id":"CRM $id",
+          'Content-Type': 'application/json; charset=UTF-8',
         },
       );
 

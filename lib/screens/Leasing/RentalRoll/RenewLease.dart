@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,9 +30,10 @@ class Renewlease extends StatefulWidget {
   String leaseId;
   String? startdate;
   String? enddate;
+  String? renewfileName;
   String? leasetype;
   String? rentamount;
-  Renewlease({super.key, required this.leaseId,  this.lease,this.rentamount,this.startdate,this.enddate,this.leasetype});
+  Renewlease({super.key, required this.leaseId,  this.lease,this.rentamount,this.startdate,this.enddate,this.leasetype,this.renewfileName});
 
   @override
   State<Renewlease> createState() => _RenewleaseState();
@@ -58,6 +62,10 @@ class _RenewleaseState extends State<Renewlease> {
     //startDateController.text = formatDate(DateTime.now().toString());
     endDateController.text = formatDate(DateFormat('yyyy-MM-dd').format(newEndDate).toString());
     rent.text = widget.rentamount ??"";
+
+    // if(widget.renewfileName != "")
+    //   _uploadedFileNames.add(widget.renewfileName!);
+
     fetchDropdownData();
     leaseData();
 
@@ -341,6 +349,77 @@ class _RenewleaseState extends State<Renewlease> {
 
 
   List<String> accounts = [];
+  //for upload file
+
+
+  List<File> _pdfFiles = [];
+
+  List<String> _uploadedFileNames = [];
+
+  Future<void> _pickPdfFiles() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+      allowMultiple: true,
+    );
+
+    if (result != null) {
+      List<File> files = result.paths
+          .where((path) => path != null)
+          .map((path) => File(path!))
+          .toList();
+
+      if (files.length > 10) {
+        Fluttertoast.showToast(msg: 'You can only select up to 10 files.');
+        return; // Exit the method if more than 10 files are selected
+      }
+
+      setState(() {
+        _pdfFiles = files;
+      });
+
+      for (var file in _pdfFiles) {
+        await _uploadPdf(file);
+      }
+    }
+  }
+
+  Future<void> _uploadPdf(File pdfFile) async {
+    try {
+      String? fileName = await uploadPdf(pdfFile);
+      setState(() {
+        if (fileName != null) {
+          if (_uploadedFileNames.isNotEmpty) {
+            _uploadedFileNames.clear();
+          }
+          _uploadedFileNames.add(fileName);
+        }
+      });
+    } catch (e) {
+      print('PDF upload failed: $e');
+    }
+  }
+
+  Future<String?> uploadPdf(File pdfFile) async {
+    print(pdfFile.path);
+    final String uploadUrl = '${image_upload_url}/api/images/upload';
+
+    var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
+    request.files.add(await http.MultipartFile.fromPath('files', pdfFile.path));
+
+    var response = await request.send();
+    var responseData = await http.Response.fromStream(response);
+
+    var responseBody = json.decode(responseData.body);
+    print(responseBody);
+    if (responseBody['status'] == 'ok') {
+      Fluttertoast.showToast(msg: 'PDF added successfully');
+      List file = responseBody['files'];
+      return file.first["filename"];
+    } else {
+      throw Exception('Failed to upload file: ${responseBody['message']}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1019,6 +1098,86 @@ class _RenewleaseState extends State<Renewlease> {
                                       keyboardType: TextInputType.emailAddress,
                                       hintText: 'Enter rent',
                                       controller: rent,
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        Text(
+                                          'Upload File',
+                                          style: TextStyle(
+                                              color: blueColor,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15),
+                                        ),
+                                      ],
+                                    ),
+
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        Container(
+                                          height: 40,
+                                          width: 125,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                          ),
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:  blueColor
+
+
+                                              ,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(8.0),
+                                              ),
+                                            ),
+                                            onPressed: _pickPdfFiles,
+                                            child: Text('Choose Files'),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SingleChildScrollView(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(top: 8,bottom: 8),
+                                        child: Column(
+                                          children: _uploadedFileNames.map((fileName) {
+                                            int index =
+                                            _uploadedFileNames.indexOf(fileName);
+                                            return ListTile(
+                                              title: Text(
+                                                fileName,
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Color(0xFF748097),
+                                                ),
+                                              ),
+                                              trailing: IconButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _uploadedFileNames.removeAt(index);
+                                                  });
+                                                },
+                                                icon: FaIcon(
+                                                  FontAwesomeIcons.remove,
+                                                  color: Color(0xFF748097),
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ),
                                     ),
 
                                     SizedBox(
@@ -2319,7 +2478,8 @@ class _RenewleaseState extends State<Renewlease> {
                                     "end_date":reverseFormatDate(endDateController.text),
                                     "amount":rent.text,    // new amount
                                     "lease_amount" :widget.rentamount,
-                                    "charges":charge
+                                    "charges":charge,
+                                    "renew_fileName" :  _uploadedFileNames.length > 0 ? _uploadedFileNames.first : "",
 
                                   };
                                   updatenewrenewallease(leasedata);

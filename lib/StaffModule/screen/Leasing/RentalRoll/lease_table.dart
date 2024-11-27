@@ -1058,7 +1058,14 @@ class _Lease_tableState extends State<Lease_table> {
                                                                     .remainingDays
                                                                     .toString()),
                                                                 'Rent Start :',
-                                                                '${formatDate(lease.rentDueDate!)}')
+                                                                '${formatDate(lease.rentDueDate!)}'),
+                                                            _buildTableRow(
+                                                                'Current Balance:',
+                                                                _getDisplayValue(
+                                                                    lease
+                                                                        .totalBalance!.toStringAsFixed(2).toString()),
+                                                                '',
+                                                                '')
 
                                                           ],
                                                         ),

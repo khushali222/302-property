@@ -82,14 +82,34 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
   final TextEditingController _fromDateController = TextEditingController();
   final TextEditingController _toDateController = TextEditingController();
 
+  String? lastFromDate;
+  String? lastToDate;
+
   void _fetchData() {
-    if (_fromDateController.text.isNotEmpty &&
-        _toDateController.text.isNotEmpty) {
+    String currentFromDate = _fromDateController.text;
+    String currentToDate = _toDateController.text;
+
+    // Check if the current dates are the same as the last selected dates
+    if (currentFromDate == lastFromDate && currentToDate == lastToDate) {
+      // If the dates are the same, do not call the API
+      return;
+    }
+
+
+    if (currentFromDate.isNotEmpty && currentToDate.isNotEmpty) {
       _futureReport = ExpiringLeaseTableService().fetchExpiringLeases(
-        fromDate: _fromDateController.text,
-        toDate: _toDateController.text,
+        fromDate: currentFromDate,
+        toDate: currentToDate,
       );
+
+      // Update the last selected dates
+      lastFromDate = currentFromDate;
+      lastToDate = currentToDate;
     } else {
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text('Please select both From and To dates.')),
+      // );
+      // return;
       _futureReport = ExpiringLeaseTableService().fetchExpiringLeases();
     }
     setState(() {});
@@ -835,7 +855,8 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                               ),
                             ],
                           )
-                        : Column(
+                        :
+                    Column(
                             children: [
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,

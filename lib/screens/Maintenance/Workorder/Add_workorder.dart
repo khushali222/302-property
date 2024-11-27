@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:three_zero_two_property/Model/WorkOrderSetting.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/repository/SettingWorkorder.dart';
 import 'package:three_zero_two_property/repository/workorder.dart';
 
 import '../../../constant/constant.dart';
@@ -105,6 +106,31 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
     _loadStaff();
     // _loadTenant();
     _selectedPropertyId = widget.rentalid;
+    fetchWorkData();
+  }
+
+  Future<void> fetchWorkData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    try {
+      Data workorder = await fetchWorkOrderSetting();
+      String? entryAllowedString;
+      if (workorder.workDefaults?.entryAllowed != null) {
+        entryAllowedString = workorder.workDefaults!.entryAllowed! ? 'Yes' : 'No';
+      }
+      if (workorder != null) {
+        setState(() {
+          _selectedvendorsId = workorder.workDefaults?.vendorId?.isEmpty ?? true ? null : workorder.workDefaults?.vendorId;
+          _selectedCategory  = workorder.workDefaults?.category ?? "";
+          _selectedstaffId = workorder.workDefaults?.staffmemberId?.isEmpty ?? true ? null : workorder.workDefaults?.staffmemberId;
+          _selectedEntry = entryAllowedString;
+          print('vendor check ${workorder.workDefaults?.vendorId ?? ""}');
+
+        });
+      }
+    } catch (e) {
+      print('Failed to load workorder data: $e');
+    }
   }
 
   Future<void> _loadProperties() async {

@@ -916,6 +916,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                         .data!.startDate,
                                                     enddate: leasesummery
                                                         .data!.endDate,
+                                                    renewfileName: leasesummery.data?.renewLeases?.first.renewfileName,
                                                     leasetype: leasesummery
                                                         .data!.leaseType,
                                                     rentamount: leasesummery
