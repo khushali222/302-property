@@ -25,6 +25,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 
 import '../../../Model/tenants.dart';
+import '../../../model/ApplicantModel.dart';
 import '../../../model/cosigner.dart';
 import '../../../model/lease.dart';
 
@@ -79,6 +80,7 @@ class _addLease3State extends State<addLease3>
 //first container variable
   List<Tenant> selectedTenants = [];
   bool isChecked = false;
+  bool isProRent = false;
   bool isLoading = false;
   int? selectedIndex;
   List<Tenant> tenants = [];
@@ -650,9 +652,9 @@ class _addLease3State extends State<addLease3>
         'dob': tenant.tenantBirthDate ?? '',
         'taxPayerId': tenant.taxPayerId ?? '',
         'emergencyContactName': tenant.emergencyContact?.name ?? '',
-        'emergencyRelation': tenant.emergencyContact!.relation ?? '',
-        'emergencyEmail': tenant.emergencyContact!.email ?? '',
-        'emergencyPhoneNumber': tenant.emergencyContact!.phoneNumber ?? '',
+        'emergencyRelation': tenant.emergencyContact?.relation ?? '',
+        'emergencyEmail': tenant.emergencyContact?.email ?? '',
+        'emergencyPhoneNumber': tenant.emergencyContact?.phoneNumber ?? '',
         'city': '', // Add city if available
         'country': '', // Add country if available
         'postalCode': '', // Add postal code if available
@@ -1802,6 +1804,7 @@ class _addLease3State extends State<addLease3>
                                               ),
                                             ],
                                           ),
+
                                           ...Provider.of<
                                                       SelectedTenantsProvider>(
                                                   context)
@@ -2664,6 +2667,32 @@ class _addLease3State extends State<addLease3>
                                 hintText: 'Enter Memo',
                                 controller: rentMemo,
                                 optional: true,
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 24.0, // Standard width for checkbox
+                                    height: 24.0,
+                                    child: Checkbox(
+                                      value: isProRent,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          isProRent = value ?? false;
+                                        });
+                                      },
+                                      activeColor: isProRent
+                                          ? blueColor
+                                          : Colors.black,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text("Charge pro-rated rent for current month",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
+                                ],
                               ),
                             ],
                           ),
@@ -3632,6 +3661,7 @@ class _addLease3State extends State<addLease3>
                                             ),
                                             leaseData: LeaseData(
                                               adminId: adminId ?? "",
+                                                isProRent: isProRent,
                                               companyName: companyName,
                                               endDate: reverseFormatDate(
                                                   leaseEndDate),
@@ -3649,6 +3679,7 @@ class _addLease3State extends State<addLease3>
                                               tenantResidentStatus:
                                                   _selectedResidentsEmail,
                                               unitId: _selectedUnit,
+
                                               uploadedFile: _uploadedFileNames,
                                             ),
                                             tenantData: tenantDataList,
@@ -5587,6 +5618,9 @@ class _AddTenantState extends State<AddTenant> {
     selected = List<bool>.generate(tenants.length, (index) => false);
 
     fetchTenants();
+    fetchApplicants();
+    filteredApplicant = Applicant;
+    select = List<bool>.generate(Applicant.length, (index) => false);
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -5688,6 +5722,60 @@ class _AddTenantState extends State<AddTenant> {
     }
   }
 
+
+  //for applicant
+
+
+  bool isloading = false;
+  // int? selectedIndex;
+  List<Datum> Applicant = [];
+  List<Datum> filteredApplicant= [];
+  List<Datum> selectedApplicant = [];
+  List<bool> select = [];
+
+  Future<void> fetchApplicants() async {
+    setState(() {
+      isloading = true;
+    });
+
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("adminId");
+      String? token = prefs.getString('token');
+      final response = await http
+          .get(Uri.parse('${Api_url}/api/applicant/applicant/$id'), headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      });
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseData = json.decode(response.body);
+
+        // Check if the response contains the expected keys
+        if (responseData.containsKey('data')) {
+          List<dynamic> data = responseData['data'];
+          Applicant = data.map((item) => Datum.fromJson(item)).toList();
+          filteredApplicant = List.from(Applicant);
+          select = List<bool>.filled(Applicant.length, false);
+        } else {
+          // Handle unexpected response structure
+          print("Unexpected response structure: Missing 'data' key");
+        }
+      } else {
+        // Handle HTTP errors
+        print("Failed to load Applicant: ${response.statusCode}");
+      }
+    } catch (e) {
+      // Handle other errors
+      print("Error fetching Applicant: $e");
+    } finally {
+      setState(() {
+        isloading = false;
+      });
+    }
+  }
+
+
   List<Tenant> selectedTenantsTemp = [];
   //
   // void filterOwners(String query) {
@@ -5702,6 +5790,8 @@ class _AddTenantState extends State<AddTenant> {
   Widget build(BuildContext context) {
     var selectedTenantsProvider =
         Provider.of<SelectedTenantsProvider>(context, listen: false);
+    var selectedApplicantProvider =
+        Provider.of<SelectedApplicantProvider>(context, listen: false);
     return Container(
       child: Form(
         key: _formKey,
@@ -5851,6 +5941,120 @@ class _AddTenantState extends State<AddTenant> {
                           ),
                         ],
                       ),
+                      SizedBox(height: 20.0),
+                      Row(
+                        children: [
+                          Text("Choose Applicant",style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),),
+                        ],
+                      ),
+                      SizedBox(height: 10.0),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(color: Colors.grey),
+                        ),
+                        child: DataTable(
+                          columns: [
+                            DataColumn(label: Text('Applicant Name')),
+                            DataColumn(label: Text('Select  ')),
+                          ],
+                          rows: filteredApplicant.map((applicant) {
+                            /* final isSelected = Provider.of<SelectedTenantsProvider>(context)
+                                .selectedTenants
+                                .contains(tenant);*/
+                            final matchingApplicant =
+                            Provider.of<SelectedApplicantProvider>(context).selectedApplicant.where((test) =>
+                            test.applicantId == applicant.applicantId)
+                                .toList();
+                            print(matchingApplicant);
+                            final isSelect =
+                            matchingApplicant.length > 0 ? true : false;
+                            return DataRow(
+                              cells: [
+                                DataCell(
+                                  Text(
+                                      '${applicant.applicantFirstName} ${applicant.applicantLastName}'),
+                                ),
+                                DataCell(
+                                  SizedBox(
+                                    height: 24,
+                                    width: 24,
+                                    child: Checkbox(
+                                      value: isSelect,
+                                      onChanged: (bool? value) {
+                                        if (value!) {
+                                          selectedApplicantProvider
+                                              .addApplicant(applicant);
+                                        } else {
+                                          selectedApplicantProvider.removeApplicant(applicant);
+                                        }
+                                        setState(() {});
+                                        /* if (value) {
+                                      selectedTenantsProvider.addTenant(tenant);
+                                    } else {
+                                      selectedTenantsProvider.removeTenant(tenant);
+                                    }*/
+                                      },
+                                      activeColor:
+                                      Color.fromRGBO(21, 43, 81, 1),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      SizedBox(height: 16.0),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 2,
+                          ),
+                          // GestureDetector(
+                          //   onTap: () {
+                          //     // When the Add button is clicked, update the provider with selected tenants
+                          //     setState(() {
+                          //       for (var tenant in selectedTenantsTemp) {
+                          //         selectedTenantsProvider.addTenant(tenant);
+                          //       }
+                          //       // Clear the temporary list after adding
+                          //       // selectedTenantsTemp.clear();
+                          //     });
+                          //     Navigator.pop(
+                          //         context); // Close the dialog or screen after adding
+                          //   },
+                          //   child: ClipRRect(
+                          //     borderRadius: BorderRadius.circular(5.0),
+                          //     child: Container(
+                          //       height: 40.0,
+                          //       width: 90,
+                          //       decoration: BoxDecoration(
+                          //         borderRadius: BorderRadius.circular(5.0),
+                          //         color:blueColor,
+                          //         boxShadow: const [
+                          //           BoxShadow(
+                          //             color: Colors.grey,
+                          //             offset: Offset(0.0, 1.0), //(x,y)
+                          //             blurRadius: 6.0,
+                          //           ),
+                          //         ],
+                          //       ),
+                          //       child: Center(
+                          //         child: Text(
+                          //           "Add",
+                          //           style: TextStyle(
+                          //               color: Colors.white,
+                          //               fontWeight: FontWeight.bold,
+                          //               fontSize: 16),
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                        ],
+                      ),
+
                     ],
                   )
                 : Column(

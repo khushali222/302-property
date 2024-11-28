@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -1606,6 +1607,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   children: [
                                     Positioned.fill(
                                       child: TextField(
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.digitsOnly,
+                                          LengthLimitingTextInputFormatter(10),
+                                          PhoneNumberFormatter(),
+                                        ],
                                         focusNode: _nodeText1,
                                         onChanged: (value) {
                                           setState(() {
@@ -1613,9 +1619,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           });
                                         },
                                         controller: phonenum,
-                                        keyboardType:
-                                            TextInputType.numberWithOptions(
-                                                signed: true, decimal: true),
+                                        keyboardType: TextInputType.number,
+                                        // keyboardType:
+                                        //     TextInputType.numberWithOptions(
+                                        //         signed: true, decimal: true),
                                         cursorColor:
                                             blueColor,
                                         decoration: InputDecoration(
@@ -1716,6 +1723,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   children: [
                                     Positioned.fill(
                                       child: TextField(
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.digitsOnly,
+                                          LengthLimitingTextInputFormatter(10),
+                                          PhoneNumberFormatter(),
+                                        ],
                                         focusNode: _nodeText2,
                                         onChanged: (value) {
                                           setState(() {
@@ -1723,9 +1735,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           });
                                         },
                                         controller: homenum,
-                                        keyboardType:
-                                            TextInputType.numberWithOptions(
-                                                signed: true, decimal: true),
+                                        keyboardType: TextInputType.number,
+                                        // keyboardType:
+                                        //     TextInputType.numberWithOptions(
+                                        //         signed: true, decimal: true),
                                         cursorColor:
                                             blueColor,
                                         decoration: InputDecoration(
@@ -1825,15 +1838,21 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   children: [
                                     Positioned.fill(
                                       child: TextField(
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.digitsOnly,
+                                          LengthLimitingTextInputFormatter(10),
+                                          PhoneNumberFormatter(),
+                                        ],
                                         onChanged: (value) {
                                           setState(() {
                                             officenumerror = false;
                                           });
                                         },
                                         controller: officenum,
-                                        keyboardType:
-                                            TextInputType.numberWithOptions(
-                                                signed: true, decimal: true),
+                                        keyboardType: TextInputType.number,
+                                        // keyboardType:
+                                        //     TextInputType.numberWithOptions(
+                                        //         signed: true, decimal: true),
                                         cursorColor:
                                             blueColor,
                                         decoration: InputDecoration(
@@ -3155,12 +3174,18 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       alternativeerror = false;
                     });
                   }*/
-                  if (phonenum.text.isEmpty) {
+                  String formattedPhoneNumber = phonenum.text.replaceAll(RegExp(r'\D'), '');
+                  if (formattedPhoneNumber.isEmpty) {
                     setState(() {
                       phonenumerror = true;
                       phonenummessage = "required";
                     });
-                  } else {
+                  } else if (formattedPhoneNumber.length != 10) {
+                    setState(() {
+                      phonenumerror = true;
+                      phonenummessage = "Phone number must be 10 digits";
+                    });
+                  }else {
                     setState(() {
                       phonenumerror = false;
                     });

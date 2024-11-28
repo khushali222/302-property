@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -76,12 +77,12 @@ class _EditRentalownersState extends State<EditRentalowners> {
       alternativeemail.text =
           fetchedDetails.rentalOwnerData!.rentalOwnerAlternativeEmail!;
       print(alternativeemail);
-      phonenum.text = fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber!;
+      phonenum.text = formatPhoneNumber(fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber!);
       print(phonenum);
-      homenum.text = fetchedDetails.rentalOwnerData!.rentalOwnerHomeNumber!;
+      homenum.text = formatPhoneNumber(fetchedDetails.rentalOwnerData!.rentalOwnerHomeNumber!);
       print(homenum);
       businessnum.text =
-          fetchedDetails.rentalOwnerData!.rentalOwnerBuisinessNumber!;
+          formatPhoneNumber(fetchedDetails.rentalOwnerData!.rentalOwnerBuisinessNumber!);
 
       street2.text = fetchedDetails.rentalOwnerData!.Address!;
       city2.text = fetchedDetails.rentalOwnerData!.city!;
@@ -1121,6 +1122,11 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                             children: [
                                               Positioned.fill(
                                                 child: TextField(
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter.digitsOnly,
+                                                    LengthLimitingTextInputFormatter(10),
+                                                    PhoneNumberFormatter(),
+                                                  ],
                                                   focusNode: _nodeText1,
                                                   style: TextStyle(
                                                     color: Colors.black,
@@ -1132,11 +1138,12 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                             ? 14
                                                             : 15,
                                                   ),
-                                                  keyboardType: TextInputType
-                                                      .numberWithOptions(
-                                                          signed: true,
-                                                          decimal:
-                                                              true), // Adjust as needed
+                                                  keyboardType: TextInputType.number,
+                                                  // keyboardType: TextInputType
+                                                  //     .numberWithOptions(
+                                                  //         signed: true,
+                                                  //         decimal:
+                                                  //             true), // Adjust as needed
                                                   onChanged: (value) {
                                                     setState(() {
                                                       phonenumerror = false;
@@ -1216,6 +1223,11 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                             children: [
                                               Positioned.fill(
                                                 child: TextField(
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter.digitsOnly,
+                                                    LengthLimitingTextInputFormatter(10),
+                                                    PhoneNumberFormatter(),
+                                                  ],
                                                   focusNode: _nodeText2,
                                                   style: TextStyle(
                                                     color: Colors.black,
@@ -1227,11 +1239,12 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                             ? 14
                                                             : 15,
                                                   ),
-                                                  keyboardType: TextInputType
-                                                      .numberWithOptions(
-                                                          signed: true,
-                                                          decimal:
-                                                              true), // Adjust as needed
+                                                  // keyboardType: TextInputType
+                                                  //     .numberWithOptions(
+                                                  //         signed: true,
+                                                  //         decimal:
+                                                  //             true), // Adjust as needed
+                                                  keyboardType: TextInputType.number,
                                                   onChanged: (value) {
                                                     setState(() {
                                                       homenumerror = false;
@@ -1311,6 +1324,11 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                             children: [
                                               Positioned.fill(
                                                 child: TextField(
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter.digitsOnly,
+                                                    LengthLimitingTextInputFormatter(10),
+                                                    PhoneNumberFormatter(),
+                                                  ],
                                                   focusNode: _nodeText3,
                                                   style: TextStyle(
                                                     color: Colors.black,
@@ -1322,11 +1340,12 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                             ? 14
                                                             : 15,
                                                   ),
-                                                  keyboardType: TextInputType
-                                                      .numberWithOptions(
-                                                          signed: true,
-                                                          decimal:
-                                                              true), // Adjust as needed
+                                                  // keyboardType: TextInputType
+                                                  //     .numberWithOptions(
+                                                  //         signed: true,
+                                                  //         decimal:
+                                                  //             true), // Adjust as needed
+                                                  keyboardType: TextInputType.number,
                                                   onChanged: (value) {
                                                     setState(() {
                                                       businessnumerror = false;

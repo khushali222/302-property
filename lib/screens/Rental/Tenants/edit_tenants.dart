@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:email_validator/email_validator.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
@@ -120,8 +121,8 @@ class _EditTenantsState extends State<EditTenants> {
     // TODO: implement initState
     firstName.text = widget.tenants.tenantFirstName ?? "";
     lastName.text = widget.tenants.tenantLastName ?? "";
-    phoneNumber.text = widget.tenants.tenantPhoneNumber ?? "";
-    workNumber.text = widget.tenants.tenantAlternativeNumber ?? "";
+    phoneNumber.text = formatPhoneNumber(widget.tenants.tenantPhoneNumber ?? "");
+    workNumber.text = formatPhoneNumber(widget.tenants.tenantAlternativeNumber ?? "");
     email.text = widget.tenants.tenantEmail ?? "";
     alterEmail.text = widget.tenants.tenantAlternativeEmail ?? "N/A";
     passWord.text = widget.tenants.tenantPassword ?? "";
@@ -131,7 +132,7 @@ class _EditTenantsState extends State<EditTenants> {
     contactName.text = widget.tenants.emergencyContact?.name ?? "";
     relationToTenant.text = widget.tenants.emergencyContact?.relation ?? "";
     emergencyPhoneNumber.text =
-        widget.tenants.emergencyContact?.phoneNumber ?? "";
+       formatPhoneNumber( widget.tenants.emergencyContact?.phoneNumber ?? "");
     emergencyEmail.text = widget.tenants.emergencyContact?.email ?? "";
     _dateController.text = widget.tenants.tenantBirthDate ?? "";
 
@@ -1262,8 +1263,9 @@ class _EditTenantsState extends State<EditTenants> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType: TextInputType.numberWithOptions(
-                                  signed: true, decimal: true),
+                              keyboardType: TextInputType.number,
+                              // keyboardType: TextInputType.numberWithOptions(
+                              //     signed: true, decimal: true),
                               hintText: 'Enter phone number',
                               controller: phoneNumber,
                               validator: (value) {
@@ -1272,6 +1274,11 @@ class _EditTenantsState extends State<EditTenants> {
                                 }
                                 return null;
                               },
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(10),
+                                PhoneNumberFormatter(),
+                              ],
                             ),
                             SizedBox(
                               height: 10,
@@ -1285,11 +1292,17 @@ class _EditTenantsState extends State<EditTenants> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType: TextInputType.numberWithOptions(
-                                  signed: true, decimal: true),
+                              keyboardType: TextInputType.number,
+                              // keyboardType: TextInputType.numberWithOptions(
+                              //     signed: true, decimal: true),
                               hintText: 'Enter work number',
                               controller: workNumber,
                               optional: true,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(10),
+                                PhoneNumberFormatter(),
+                              ],
                             ),
                             SizedBox(
                               height: 10,
@@ -1654,11 +1667,17 @@ class _EditTenantsState extends State<EditTenants> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType: TextInputType.numberWithOptions(
-                                  signed: true, decimal: true),
+                              keyboardType: TextInputType.number,
+                              // keyboardType: TextInputType.numberWithOptions(
+                              //     signed: true, decimal: true),
                               hintText: 'Enter phone number',
                               controller: emergencyPhoneNumber,
                               optional: true,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(10),
+                                PhoneNumberFormatter(),
+                              ],
                             ),
                           ],
                         ),
@@ -2004,6 +2023,7 @@ class CustomTextField extends StatefulWidget {
   final bool? optional;
   final bool? email;
   final bool? pass;
+  final List<TextInputFormatter>? inputFormatters;
 
   CustomTextField({
     Key? key,
@@ -2026,6 +2046,7 @@ class CustomTextField extends StatefulWidget {
     this.optional = false,
     this.email,
     this.pass,
+    this.inputFormatters,
     // Initialize onTap
   }) : super(key: key);
 
@@ -2101,6 +2122,17 @@ class CustomTextFieldState extends State<CustomTextField> {
                         _errorMessage = 'Please ${widget.label}';
                     });
                     return '';
+                  }else if (widget.keyboardType == TextInputType.number) {
+                    String formattedPhoneNumber = widget.controller!.text
+                        .replaceAll(RegExp(r'\D'), '');
+
+                    // Removed the empty check
+                    if (formattedPhoneNumber.length != 10) {
+                      setState(() {
+                        _errorMessage = "Phone number must be 10 digits";
+                      });
+                      return '';
+                    }
                   }else if (widget.pass != null) {
                     String? validationMessage = ValidatePassword(widget.controller!.text);
                     if (validationMessage != null) {
@@ -2170,6 +2202,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                         widget.onChanged2;
                       },*/
                       onFieldSubmitted: widget.onChanged2,
+                      inputFormatters:widget.inputFormatters ?? [],
                       onChanged: (value) {
                         print("object calin $value");
                         if (value.isNotEmpty) {

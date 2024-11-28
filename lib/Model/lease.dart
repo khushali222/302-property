@@ -196,6 +196,7 @@ class LeaseData {
   bool? tenantResidentStatus;
   String? unitId;
   String? memo;
+  bool? isProRent;
   List<String>? uploadedFile;
 
   LeaseData({
@@ -213,6 +214,7 @@ class LeaseData {
     this.tenantResidentStatus,
     this.unitId,
     this.uploadedFile,
+    this.isProRent,
   });
 
   factory LeaseData.fromJson(Map<String, dynamic> json) {
@@ -230,6 +232,7 @@ class LeaseData {
       tenantId: List<String>.from(json['tenant_id']),
       tenantResidentStatus: json['tenant_residentStatus'],
       unitId: json['unit_id'],
+      isProRent: json['isProRent'],
       uploadedFile: List<String>.from(json['uploaded_file']),
     );
   }
@@ -250,6 +253,7 @@ class LeaseData {
       'tenant_id': tenantId,
       'tenant_residentStatus': tenantResidentStatus,
       'unit_id': unitId,
+      'isProRent': isProRent,
       'uploaded_file': uploadedFile,
     };
   }

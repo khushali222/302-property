@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:zxcvbn/zxcvbn.dart';
 
@@ -8,7 +9,7 @@ String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
 //String image_url = "http://192.168.182.128:4000/api/images/get-file/";
 
 //String Api_url = "http://192.168.39.1:4000";
-String Api_url = "http://192.168.1.16:4000";
+String Api_url = "http://192.168.1.10:4000";
 
 //String Api_url = "https://saas.cloudrentalmanager.com";
 
@@ -211,4 +212,35 @@ String? ValidatePassword(String password) {
   }
 
   return null; // Indicate that the password is valid
+}
+
+
+class PhoneNumberFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    // Remove any non-digit characters
+    final digitsOnly = newValue.text.replaceAll(RegExp(r'\D'), '');
+
+    // Check if the number has the right length (10 digits for US phone numbers)
+    if (digitsOnly.length > 10) {
+      return oldValue; // Return old value if the new input exceeds 10 digits
+    }
+
+    String formatted = '';
+    if (digitsOnly.length >= 1) {
+      formatted += '(${digitsOnly.substring(0, digitsOnly.length >= 3 ? 3 : digitsOnly.length)}';
+    }
+    if (digitsOnly.length >= 4) {
+      formatted += ') ${digitsOnly.substring(3, digitsOnly.length >= 6 ? 6 : digitsOnly.length)}';
+    }
+    if (digitsOnly.length >= 7) {
+      formatted += '-${digitsOnly.substring(6)}';
+    }
+
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
+  }
 }

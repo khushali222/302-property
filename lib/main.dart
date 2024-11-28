@@ -117,6 +117,9 @@ void main() {
             create: (context) => SelectedCosignersProvider(),
           ),
           ChangeNotifierProvider(
+            create: (context) => SelectedApplicantProvider(),
+          ),
+          ChangeNotifierProvider(
             create: (context) => NameProvider(),
           ),
           ChangeNotifierProvider(

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
@@ -49,7 +50,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
     super.initState();
     name.text = widget.staff!.staffmemberName!;
     designation.text = widget.staff!.staffmemberDesignation!;
-    phonenumber.text = widget.staff!.staffmemberPhoneNumber!.toString();
+    phonenumber.text = formatPhoneNumber(widget.staff!.staffmemberPhoneNumber!.toString());
     email.text = widget.staff!.staffmemberEmail.toString();
     // password.text = widget.staff!.staffmemberPassword.toString();
 
@@ -396,6 +397,11 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                   children: [
                                     Positioned.fill(
                                       child: TextField(
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.digitsOnly,
+                                          LengthLimitingTextInputFormatter(10),
+                                          PhoneNumberFormatter(),
+                                        ],
                                         onChanged: (value) {
                                           setState(() {
                                             phonenumbererror = false;
@@ -403,9 +409,10 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                         },
                                         focusNode: _nodeText1,
                                         controller: phonenumber,
-                                        keyboardType:
-                                            TextInputType.numberWithOptions(
-                                                signed: true, decimal: true),
+                                        keyboardType: TextInputType.number,
+                                        // keyboardType:
+                                        //     TextInputType.numberWithOptions(
+                                        //         signed: true, decimal: true),
                                         cursorColor: blueColor,
                                         decoration: InputDecoration(
                                           hintText: "Enter phone number",
@@ -606,13 +613,18 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                   designationerror = false;
                                 });
                               }
-
+                              String formattedPhoneNumber = phonenumber.text.replaceAll(RegExp(r'\D'), '');
                               // Validate Phone Number Field
-                              if (phonenumber.text.isEmpty) {
+                              if (formattedPhoneNumber.isEmpty) {
                                 setState(() {
                                   phonenumbererror = true;
                                   phonenumbermessage =
                                       "Phone number is required";
+                                });
+                              }else if (formattedPhoneNumber.length != 10) {
+                                setState(() {
+                                  phonenumbererror = true;
+                                  phonenumbermessage = "Phone number must be 10 digits";
                                 });
                               } else {
                                 setState(() {

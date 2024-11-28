@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -1595,7 +1596,7 @@ class _AddTenantState extends State<AddTenant> {
                               SizedBox(
                                 height: 10,
                               ),
-                              Text('Phone Number *',
+                              Text('Phone Number *8',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
@@ -1604,10 +1605,16 @@ class _AddTenantState extends State<AddTenant> {
                                 height: 10,
                               ),
                               CustomTextField(
-                                keyboardType: TextInputType.numberWithOptions(
-                                    signed: true, decimal: true),
+                                keyboardType: TextInputType.number,
+                                // keyboardType: TextInputType.numberWithOptions(
+                                //     signed: true, decimal: true),
                                 hintText: 'Enter phone number',
                                 controller: phoneNumber,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
+                                  PhoneNumberFormatter(),
+                                ],
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'please enter the phone number';
@@ -1627,11 +1634,17 @@ class _AddTenantState extends State<AddTenant> {
                                 height: 10,
                               ),
                               CustomTextField(
-                                keyboardType: TextInputType.numberWithOptions(
-                                    signed: true, decimal: true),
+                                keyboardType: TextInputType.number,
+                                // keyboardType: TextInputType.numberWithOptions(
+                                //     signed: true, decimal: true),
                                 hintText: 'Enter work number',
                                 controller: workNumber,
                                 optional: true,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
+                                  PhoneNumberFormatter(),
+                                ],
                               ),
                               SizedBox(
                                 height: 10,
@@ -1981,11 +1994,17 @@ class _AddTenantState extends State<AddTenant> {
                                 height: 10,
                               ),
                               CustomTextField(
-                                keyboardType: TextInputType.numberWithOptions(
-                                    signed: true, decimal: true),
+                                keyboardType: TextInputType.number,
+                                // keyboardType: TextInputType.numberWithOptions(
+                                //     signed: true, decimal: true),
                                 hintText: 'Enter phone number',
                                 controller: emergencyPhoneNumber,
                                 optional: true,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
+                                  PhoneNumberFormatter(),
+                                ],
                               ),
                             ],
                           ),
@@ -2378,30 +2397,35 @@ class CustomTextField extends StatefulWidget {
   final bool? optional;
   final bool? email;
   final bool? pass;
+  final bool? phone;
+  final List<TextInputFormatter>? inputFormatters;
 
-  CustomTextField({
-    Key? key,
-    this.onChanged,
-    this.controller,
-    required this.hintText,
-    this.obscureText = false,
-    this.keyboardType = TextInputType.emailAddress,
-    this.readOnnly = false,
-    this.prefixIcon,
-    this.suffixIcon,
-    this.validator,
-    this.onSuffixIconPressed,
-    this.label,
-    this.onTap,
-    this.onChanged2,
-    this.amount_check,
-    this.max_amount,
-    this.error_mess,
-    this.optional = false,
-    this.email,
-    this.pass,
-    // Initialize onTap
-  }) : super(key: key);
+  CustomTextField(
+      {Key? key,
+      this.onChanged,
+      this.controller,
+      required this.hintText,
+      this.obscureText = false,
+      this.keyboardType = TextInputType.emailAddress,
+      this.readOnnly = false,
+      this.prefixIcon,
+      this.suffixIcon,
+      this.validator,
+      this.onSuffixIconPressed,
+      this.label,
+      this.onTap,
+      this.onChanged2,
+      this.amount_check,
+      this.max_amount,
+      this.error_mess,
+      this.optional = false,
+      this.email,
+      this.pass,
+      this.phone,
+      this.inputFormatters,
+      // Initialize onTap
+      })
+      : super(key: key);
 
   @override
   CustomTextFieldState createState() => CustomTextFieldState();
@@ -2475,19 +2499,32 @@ class CustomTextFieldState extends State<CustomTextField> {
                         _errorMessage = 'Please ${widget.label}';
                     });
                     return '';
-                  } else if (widget.email != null) {
+                  }
+                  else if (widget.keyboardType == TextInputType.number) {
+                    String formattedPhoneNumber = widget.controller!.text
+                        .replaceAll(RegExp(r'\D'), '');
+
+                    // Removed the empty check
+                    if (formattedPhoneNumber.length != 10) {
+                      setState(() {
+                        _errorMessage = "Phone number must be 10 digits";
+                      });
+                      return '';
+                    }
+                  }
+                    else if (widget.email != null) {
                     if (!EmailValidator.validate(widget.controller!.text)) {
                       setState(() {
                         _errorMessage = "Email is not valid";
                       });
                       return '';
                     }
-                  }else if (widget.pass != null) {
-                    String? validationMessage = ValidatePassword(widget.controller!.text);
+                  } else if (widget.pass != null) {
+                    String? validationMessage =
+                        ValidatePassword(widget.controller!.text);
                     if (validationMessage != null) {
                       setState(() {
-                        _errorMessage =
-                            validationMessage;
+                        _errorMessage = validationMessage;
                       });
                       return '';
                     }
@@ -2565,6 +2602,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                         if (widget.onChanged != null) widget.onChanged!(value);
 //print("callllll");
                       },
+                      inputFormatters:widget.inputFormatters ?? [],
                       focusNode: _focusNode,
                       onTap: () {
                         if (widget.onTap != null) {
@@ -2583,7 +2621,6 @@ class CustomTextFieldState extends State<CustomTextField> {
                         }
                         return null;
                       },
-
                       controller: widget.controller,
                       decoration: InputDecoration(
                         suffixIcon: widget.suffixIcon,
