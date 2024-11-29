@@ -27,12 +27,20 @@ class TenantsRepository {
     print(response.body);
     print('${Api_url}/api/tenant/tenants/$id');
     if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body)['data'];
-      return jsonResponse.map((data) => Tenant.fromJson(data)).toList();
+      // Decode the JSON response
+      final jsonResponse = json.decode(response.body);
+
+      // Access the 'data' object and then the 'tenants' list
+      if (jsonResponse['data'] != null && jsonResponse['data']['tenants'] != null) {
+        List tenantsJson = jsonResponse['data']['tenants']; // Access the tenants list
+        return tenantsJson.map((data) => Tenant.fromJson(data)).toList(); // Map to Tenant objects
+      } else {
+        print('No tenants found in the response.');
+        return [];
+      }
     } else {
       print('Failed to fetch tenants: ${response.body}');
       return [];
-     // throw Exception('Failed to load data');
     }
   }
 

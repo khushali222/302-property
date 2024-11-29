@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -262,10 +263,16 @@ class _AddApplicantState extends State<AddApplicant> {
                             }
                             return null;
                           },
-                          keyboardType: TextInputType.numberWithOptions(
-                              signed: true, decimal: true),
+                          keyboardType: TextInputType.number,
+                          // keyboardType: TextInputType.numberWithOptions(
+                          //     signed: true, decimal: true),
                           hintText: 'Enter mobile number',
                           controller: mobileNumber,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(10),
+                            PhoneNumberFormatter(),
+                          ],
                         ),
                         const SizedBox(
                           height: 8,
@@ -285,10 +292,16 @@ class _AddApplicantState extends State<AddApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.numberWithOptions(
-                              signed: true, decimal: true),
+                          // keyboardType: TextInputType.numberWithOptions(
+                          //     signed: true, decimal: true),
+                          keyboardType: TextInputType.number,
                           hintText: 'Enter home number',
                           controller: homeNumber,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(10),
+                            PhoneNumberFormatter(),
+                          ],
                           optional: true,
                         ),
                         const SizedBox(
@@ -309,8 +322,14 @@ class _AddApplicantState extends State<AddApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.numberWithOptions(
-                              signed: true, decimal: true),
+                          // keyboardType: TextInputType.numberWithOptions(
+                          //     signed: true, decimal: true),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(10),
+                            PhoneNumberFormatter(),
+                          ],
                           hintText: 'Enter business number',
                           controller: bussinessNumber,
                           optional: true,
@@ -333,8 +352,14 @@ class _AddApplicantState extends State<AddApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.numberWithOptions(
-                              signed: true, decimal: true),
+                          // keyboardType: TextInputType.numberWithOptions(
+                          //     signed: true, decimal: true),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(10),
+                            PhoneNumberFormatter(),
+                          ],
                           hintText: 'Enter telephone number',
                           controller: telePhoneNumber,
                           optional: true,

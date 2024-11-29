@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -134,8 +135,14 @@ class _Add_vendorState extends State<Add_vendor> {
                                 height: 10,
                               ),
                               CustomTextField(
-                                keyboardType: TextInputType.numberWithOptions(
-                                    signed: true, decimal: true),
+                                // keyboardType: TextInputType.numberWithOptions(
+                                //     signed: true, decimal: true),
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
+                                  PhoneNumberFormatter(),
+                                ],
                                 hintText: 'Enter phone number',
                                 controller: phoneNumber,
                                 validator: (value) {
@@ -436,8 +443,14 @@ class _Add_vendorState extends State<Add_vendor> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType: TextInputType.numberWithOptions(
-                                  signed: true, decimal: true),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(10),
+                                PhoneNumberFormatter(),
+                              ],
+                              // keyboardType: TextInputType.numberWithOptions(
+                              //     signed: true, decimal: true),
                               hintText: 'Enter phone number',
                               controller: phoneNumber,
                               validator: (value) {
@@ -714,6 +727,7 @@ class CustomTextField extends StatefulWidget {
   final bool readOnnly;
   final bool? email;
   final bool? pass;
+  final List<TextInputFormatter>? inputFormatters;
 
   CustomTextField({
     Key? key,
@@ -731,6 +745,7 @@ class CustomTextField extends StatefulWidget {
     this.onChanged2,
     this.email,
     this.pass,
+    this.inputFormatters
     // Initialize onTap
   }) : super(key: key);
 
@@ -802,6 +817,17 @@ class CustomTextFieldState extends State<CustomTextField> {
                 _errorMessage = 'Please ${widget.hintText}';
               });
               return '';
+            } else if (widget.keyboardType == TextInputType.number) {
+              String formattedPhoneNumber = widget.controller!.text
+                  .replaceAll(RegExp(r'\D'), '');
+
+              // Removed the empty check
+              if (formattedPhoneNumber.length != 10) {
+                setState(() {
+                  _errorMessage = "Phone number must be 10 digits";
+                });
+                return '';
+              }
             }else if (widget.pass != null) {
               String? validationMessage = ValidatePassword(widget.controller!.text);
               if (validationMessage != null) {
@@ -849,6 +875,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                     readOnly: widget.readOnnly,
                     keyboardType: widget.keyboardType,
                     focusNode: _focusNode,
+                    inputFormatters:widget.inputFormatters ?? [],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         state.validate();

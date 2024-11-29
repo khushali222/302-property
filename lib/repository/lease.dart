@@ -479,6 +479,7 @@ class LeaseRepository {
       },
     );
     log(response.body);
+    print('lease renewal ${response.body}');
     if (response.statusCode == 200) {
       return LeaseSummary.fromJson(jsonDecode(response.body));
 

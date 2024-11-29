@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -6284,7 +6285,7 @@ class _AddTenantState extends State<AddTenant> {
 
         // Check if the response contains the expected keys
         if (responseData.containsKey('data')) {
-          List<dynamic> data = responseData['data'];
+          List<dynamic> data = responseData['data']['tenants'];
           tenants = data.map((item) => Tenant.fromJson(item)).toList();
           filteredTenants = List.from(tenants);
           selected = List<bool>.filled(tenants.length, false);
@@ -6538,6 +6539,11 @@ class _AddTenantState extends State<AddTenant> {
                             ),
                             CustomTextField(
                               keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(10),
+                                PhoneNumberFormatter(),
+                              ],
                               hintText: 'Enter phone number',
                               controller: phoneNumber,
                               validator: (value) {
@@ -6568,6 +6574,11 @@ class _AddTenantState extends State<AddTenant> {
                                           height: 10,
                                         ),
                                         CustomTextField(
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.digitsOnly,
+                                            LengthLimitingTextInputFormatter(10),
+                                            PhoneNumberFormatter(),
+                                          ],
                                           keyboardType: TextInputType.number,
                                           hintText: 'Enter work number',
                                           controller: workNumber,
@@ -7020,6 +7031,11 @@ class _AddTenantState extends State<AddTenant> {
                                   ),
                                   CustomTextField(
                                     keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                      LengthLimitingTextInputFormatter(10),
+                                      PhoneNumberFormatter(),
+                                    ],
                                     hintText: 'Enter phone number',
                                     controller: emergencyPhoneNumber,
                                     optional: true,
@@ -7242,6 +7258,11 @@ class _AddCosignerState extends State<AddCosigner> {
                     keyboardType: TextInputType.number,
                     hintText: 'Enter phone number',
                     controller: phoneNumber,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10),
+                      PhoneNumberFormatter(),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please enter the phone number';
@@ -7295,6 +7316,11 @@ class _AddCosignerState extends State<AddCosigner> {
                                 height: 10,
                               ),
                               CustomTextField(
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
+                                  PhoneNumberFormatter(),
+                                ],
                                 keyboardType: TextInputType.number,
                                 hintText: 'Enter work number',
                                 controller: workNumber,

@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -236,10 +237,16 @@ class _AddTenantState extends State<AddTenant> {
                                                       color: Colors.grey)),
                                               SizedBox(height: 10),
                                               CustomTextField(
-                                                keyboardType: TextInputType
-                                                    .numberWithOptions(
-                                                        signed: true,
-                                                        decimal: true),
+                                                keyboardType: TextInputType.number,
+                                                // keyboardType: TextInputType
+                                                //     .numberWithOptions(
+                                                //         signed: true,
+                                                //         decimal: true),
+                                                inputFormatters: [
+                                                  FilteringTextInputFormatter.digitsOnly,
+                                                  LengthLimitingTextInputFormatter(10),
+                                                  PhoneNumberFormatter(),
+                                                ],
                                                 hintText: 'Enter phone number',
                                                 controller: phoneNumber,
                                                 validator: (value) {
@@ -267,10 +274,16 @@ class _AddTenantState extends State<AddTenant> {
                                                       color: Colors.grey)),
                                               SizedBox(height: 10),
                                               CustomTextField(
-                                                keyboardType: TextInputType
-                                                    .numberWithOptions(
-                                                        signed: true,
-                                                        decimal: true),
+                                                keyboardType: TextInputType.number,
+                                                inputFormatters: [
+                                                  FilteringTextInputFormatter.digitsOnly,
+                                                  LengthLimitingTextInputFormatter(10),
+                                                  PhoneNumberFormatter(),
+                                                ],
+                                                // keyboardType: TextInputType
+                                                //     .numberWithOptions(
+                                                //         signed: true,
+                                                //         decimal: true),
                                                 hintText: 'Enter work number',
                                                 controller: workNumber,
                                                 optional: true,
@@ -743,10 +756,16 @@ class _AddTenantState extends State<AddTenant> {
                                                     color: Colors.grey)),
                                             SizedBox(height: 10),
                                             CustomTextField(
-                                              keyboardType: TextInputType
-                                                  .numberWithOptions(
-                                                      signed: true,
-                                                      decimal: true),
+                                              keyboardType: TextInputType.number,
+                                              // keyboardType: TextInputType
+                                              //     .numberWithOptions(
+                                              //         signed: true,
+                                              //         decimal: true),
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter.digitsOnly,
+                                                LengthLimitingTextInputFormatter(10),
+                                                PhoneNumberFormatter(),
+                                              ],
                                               hintText: 'Enter phone number',
                                               controller: emergencyPhoneNumber,
                                               optional: true,
@@ -1044,9 +1063,15 @@ class _AddTenantState extends State<AddTenant> {
                                     height: 10,
                                   ),
                                   CustomTextField(
-                                    keyboardType:
-                                        TextInputType.numberWithOptions(
-                                            signed: true, decimal: true),
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                      LengthLimitingTextInputFormatter(10),
+                                      PhoneNumberFormatter(),
+                                    ],
+                                    // keyboardType:
+                                    //     TextInputType.numberWithOptions(
+                                    //         signed: true, decimal: true),
                                     hintText: 'Enter phone number',
                                     controller: phoneNumber,
                                     validator: (value) {
@@ -1068,9 +1093,15 @@ class _AddTenantState extends State<AddTenant> {
                                     height: 10,
                                   ),
                                   CustomTextField(
-                                    keyboardType:
-                                        TextInputType.numberWithOptions(
-                                            signed: true, decimal: true),
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                      LengthLimitingTextInputFormatter(10),
+                                      PhoneNumberFormatter(),
+                                    ],
+                                    // keyboardType:
+                                    //     TextInputType.numberWithOptions(
+                                    //         signed: true, decimal: true),
                                     hintText: 'Enter work number',
                                     controller: workNumber,
                                     optional: true,
@@ -1425,9 +1456,15 @@ class _AddTenantState extends State<AddTenant> {
                                     height: 10,
                                   ),
                                   CustomTextField(
-                                    keyboardType:
-                                        TextInputType.numberWithOptions(
-                                            signed: true, decimal: true),
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                      LengthLimitingTextInputFormatter(10),
+                                      PhoneNumberFormatter(),
+                                    ],
+                                    // keyboardType:
+                                    //     TextInputType.numberWithOptions(
+                                    //         signed: true, decimal: true),
                                     hintText: 'Enter phone number',
                                     controller: emergencyPhoneNumber,
                                     optional: true,
@@ -1602,8 +1639,14 @@ class _AddTenantState extends State<AddTenant> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType: TextInputType.numberWithOptions(
-                                  signed: true, decimal: true),
+                              // keyboardType: TextInputType.numberWithOptions(
+                              //     signed: true, decimal: true),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(10),
+                                PhoneNumberFormatter(),
+                              ],
                               hintText: 'Enter phone number',
                               controller: phoneNumber,
                               validator: (value) {
@@ -1625,8 +1668,14 @@ class _AddTenantState extends State<AddTenant> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType: TextInputType.numberWithOptions(
-                                  signed: true, decimal: true),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(10),
+                                PhoneNumberFormatter(),
+                              ],
+                              // keyboardType: TextInputType.numberWithOptions(
+                              //     signed: true, decimal: true),
                               hintText: 'Enter work number',
                               controller: workNumber,
                               optional: true,
@@ -1973,8 +2022,14 @@ class _AddTenantState extends State<AddTenant> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType: TextInputType.numberWithOptions(
-                                  signed: true, decimal: true),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(10),
+                                PhoneNumberFormatter(),
+                              ],
+                              // keyboardType: TextInputType.numberWithOptions(
+                              //     signed: true, decimal: true),
                               hintText: 'Enter phone number',
                               controller: emergencyPhoneNumber,
                               optional: true,
@@ -2369,6 +2424,7 @@ class CustomTextField extends StatefulWidget {
   final bool? optional;
   final bool? email;
   final bool? pass;
+  final List<TextInputFormatter>? inputFormatters;
 
   CustomTextField({
     Key? key,
@@ -2391,6 +2447,7 @@ class CustomTextField extends StatefulWidget {
     this.optional = false,
     this.email,
     this.pass,
+    this.inputFormatters,
     // Initialize onTap
   }) : super(key: key);
 
@@ -2467,6 +2524,17 @@ class CustomTextFieldState extends State<CustomTextField> {
                   _errorMessage = 'Please ${widget.label}';
               });
               return '';
+            } else if (widget.keyboardType == TextInputType.number) {
+              String formattedPhoneNumber = widget.controller!.text
+                  .replaceAll(RegExp(r'\D'), '');
+
+              // Removed the empty check
+              if (formattedPhoneNumber.length != 10) {
+                setState(() {
+                  _errorMessage = "Phone number must be 10 digits";
+                });
+                return '';
+              }
             }else if (widget.pass != null) {
               String? validationMessage = ValidatePassword(widget.controller!.text);
               if (validationMessage != null) {
@@ -2538,6 +2606,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                         widget.onChanged2;
                       },*/
                       onFieldSubmitted: widget.onChanged2,
+                      inputFormatters:widget.inputFormatters ?? [],
                       onChanged: (value) {
                         //  print("object calin $value");
                         if (value.isNotEmpty) {

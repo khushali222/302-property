@@ -665,8 +665,14 @@ class _AddCardState extends State<AddCard> {
                                             fontWeight: FontWeight.bold,
                                             color: Colors.grey)),
                                     CustomTextField(
-                                      keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                                      keyboardType: TextInputType.number,
+                                      // keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                                       hintText: 'Enter Phone Number',
+                                      formatter: [
+                                        FilteringTextInputFormatter.digitsOnly,
+                                        LengthLimitingTextInputFormatter(10),
+                                        PhoneNumberFormatter(),
+                                      ],
                                       controller: phoneNumber,
                                     ),
                                     const SizedBox(
@@ -1240,7 +1246,13 @@ class _AddCardState extends State<AddCard> {
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey)),
                           CustomTextField(
-                            keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                            keyboardType: TextInputType.number,
+                            formatter: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(10),
+                              PhoneNumberFormatter(),
+                            ],
+                            //keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                             hintText: 'Enter Phone Number',
                             controller: phoneNumber,
                           ),
@@ -1891,6 +1903,17 @@ class CustomTextFieldState extends State<CustomTextField> {
                   _errorMessage = 'Please ${widget.label}';
               });
               return '';
+            } else if (widget.keyboardType == TextInputType.number) {
+              String formattedPhoneNumber = widget.controller!.text
+                  .replaceAll(RegExp(r'\D'), '');
+
+              // Removed the empty check
+              if (formattedPhoneNumber.length != 10) {
+                setState(() {
+                  _errorMessage = "Phone number must be 10 digits";
+                });
+                return '';
+              }
             }
             else if (widget.email!) {
               if (!EmailValidator.validate(widget.controller!.text)) {

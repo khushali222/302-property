@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -75,12 +76,14 @@ class _addLease3State extends State<addLease3>
     futureRentalOwners = PropertiesRepository().fetchProperties();
     _loadProperties();
     _tabController = TabController(length: 2, vsync: this);
+    _updateProRatedRent();
   }
 
 //first container variable
   List<Tenant> selectedTenants = [];
   bool isChecked = false;
   bool isProRent = false;
+  bool isAmountEntered = false;
   bool isLoading = false;
   int? selectedIndex;
   List<Tenant> tenants = [];
@@ -388,6 +391,40 @@ class _addLease3State extends State<addLease3>
     }
   }
 
+
+  void _updateProRatedRent() {
+    if (isProRent && isAmountEntered && rentNextDueDate.text.isNotEmpty) {
+      // Get the current date
+      DateTime currentDate = DateTime.now();
+
+      // Parse the next due date
+      DateTime nextDueDate = DateFormat('dd-MM-yyyy').parse(rentNextDueDate.text);
+
+      // Calculate the number of days left until the next due date
+      int daysLeft = nextDueDate.difference(currentDate).inDays + 1; // Include today in the count
+
+      // Get the total rent amount
+      double totalRent = double.tryParse(rentAmount.text) ?? 0.0;
+
+      // Calculate the total days in the current month
+      int totalDaysInMonth = DateTime(currentDate.year, currentDate.month + 1, 0).day;
+
+      // Calculate daily rent
+      double dailyRent = totalRent / totalDaysInMonth;
+
+      // Calculate pro-rated rent
+      double proRatedRent = dailyRent * daysLeft;
+
+      // Update the pro-rated rent field with the calculated pro-rated rent
+      proRatedRentController.text = proRatedRent.toStringAsFixed(2); // Display with 2 decimal places
+    } else {
+      // Clear the pro-rated rent field if conditions are not met
+      proRatedRentController.text = "0.00"; // Reset to 0.00 if not applicable
+    }
+  }
+
+  final TextEditingController proRatedRentController = TextEditingController();
+
   String? selectedValue;
 
   late TabController _tabController;
@@ -612,6 +649,7 @@ class _addLease3State extends State<addLease3>
   //for rentshare
   String? _errorMessage;
   String? _errorMessagetenants;
+
   @override
   Widget build(BuildContext context) {
     final cosigners = Provider.of<SelectedCosignersProvider>(context).cosigners;
@@ -1144,7 +1182,9 @@ class _addLease3State extends State<addLease3>
                                             formattedEndDate;
                                          rentCycleItemsDynamic(endDate.difference(_startDate!).inDays);
                                       });
+
                                     }
+                                    _updateProRatedRent();
                                   },
                                   readOnnly: true,
                                   suffixIcon: IconButton(
@@ -1178,6 +1218,7 @@ class _addLease3State extends State<addLease3>
                               if (MediaQuery.of(context).size.width < 500)
                                 CustomTextField(
                                   onTap: () async {
+
                                     DateTime? pickedDate = await showDatePicker(
                                       context: context,
                                       initialDate: DateTime.now(),
@@ -1226,7 +1267,9 @@ class _addLease3State extends State<addLease3>
                                         endDateController.text = formattedDate;
                                         rentCycleItemsDynamic(pickedDate.difference(_startDate!).inDays);
                                       });
+
                                     }
+                                    _updateProRatedRent();
                                   },
                                   readOnnly: true,
                                   suffixIcon: IconButton(
@@ -1338,6 +1381,7 @@ class _addLease3State extends State<addLease3>
                                                     endDateController.text =
                                                         formattedEndDate;
                                                   });
+                                                  _updateProRatedRent();
                                                 }
                                               },
                                               readOnnly: true,
@@ -2387,8 +2431,10 @@ class _addLease3State extends State<addLease3>
                                               onChanged: (String? value) {
                                                 setState(() {
                                                   _selectedRent = value;
+                                                  _updateNextDueDate();
+                                                  _updateProRatedRent();
                                                 });
-                                                _updateNextDueDate();
+
                                               },
                                             ),
                                             SizedBox(height: 5),
@@ -2476,9 +2522,11 @@ class _addLease3State extends State<addLease3>
                                                     rentNextDueDate.text =
                                                         formattedDate;
                                                   });
+                                                  // _updateProRatedRent();
 
                                                   print(rentNextDueDate.text);
                                                 }
+                                                _updateProRatedRent();
                                               },
                                               readOnnly: true,
                                               optional: true,
@@ -2528,9 +2576,12 @@ class _addLease3State extends State<addLease3>
                                   onChanged: (String? value) {
                                     setState(() {
                                       _selectedRent = value;
+                                     _selectedRent != null;
+                                     isProRent = false;
+                                      _updateProRatedRent();
+                                      _updateNextDueDate();
                                     });
 
-                                    _updateNextDueDate();
                                   },
                                 ),
                               const SizedBox(
@@ -2550,6 +2601,14 @@ class _addLease3State extends State<addLease3>
                                     return 'Please enter amount';
                                   }
                                   return null;
+                                },
+                                onChanged: (value) {
+                                  setState(() {
+                                    isAmountEntered = value.isNotEmpty;
+                                    isProRent = false;
+                                    _updateProRatedRent();// Reset checkbox when amount changes
+                                  });
+
                                 },
                                 keyboardType: TextInputType.number,
                                 hintText: 'Enter Amount',
@@ -2624,10 +2683,14 @@ class _addLease3State extends State<addLease3>
                                         rentNextDueDate.text =
                                             formattedNextDueDate;
                                         rentNextDueDate.text = formattedDate;
+                                        rentNextDueDate.text.isNotEmpty;
+                                        isProRent = false;
                                       });
+                                      _updateProRatedRent();
 
                                       print(rentNextDueDate.text);
                                     }
+                                    _updateProRatedRent();
                                   },
                                   readOnnly: true,
                                   suffixIcon: IconButton(
@@ -2673,26 +2736,74 @@ class _addLease3State extends State<addLease3>
                               ),
                               Row(
                                 children: [
+                                  // SizedBox(
+                                  //   width: 24.0, // Standard width for checkbox
+                                  //   height: 24.0,
+                                  //   child: Checkbox(
+                                  //     value: isProRent,
+                                  //     onChanged: (value) {
+                                  //       setState(() {
+                                  //         isProRent = value ?? false;
+                                  //       });
+                                  //     },
+                                  //     activeColor: isProRent
+                                  //         ? blueColor
+                                  //         : Colors.black,
+                                  //   ),
+                                  // ),
+
                                   SizedBox(
-                                    width: 24.0, // Standard width for checkbox
-                                    height: 24.0,
-                                    child: Checkbox(
-                                      value: isProRent,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          isProRent = value ?? false;
-                                        });
-                                      },
-                                      activeColor: isProRent
-                                          ? blueColor
-                                          : Colors.black,
-                                    ),
-                                  ),
+                                        width: 24.0, // Standard width for checkbox
+                                          height: 24.0,
+                                        child: Checkbox(
+                                          value: isProRent,
+                                          onChanged: isAmountEntered && rentNextDueDate.text.isNotEmpty && _selectedRent != null && startDateController.text.isNotEmpty && endDateController.text.isNotEmpty
+                                              ? (value) {
+                                            setState(() {
+                                              isProRent = value ?? false;
+                                              _updateProRatedRent();
+                                            });
+                                          }
+                                              : null,
+                                          activeColor: blueColor,// Disable checkbox if amount is not entered
+                                        ),
+                                      ),
                                   SizedBox(
                                     width: 5,
                                   ),
                                   Text("Charge pro-rated rent for current month",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
                                 ],
+                              ),
+                              if(isProRent && isAmountEntered && rentNextDueDate.text.isNotEmpty && _selectedRent != null && startDateController.text.isNotEmpty && endDateController.text.isNotEmpty)
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                if(isProRent && isAmountEntered && rentNextDueDate.text.isNotEmpty && _selectedRent != null && startDateController.text.isNotEmpty && endDateController.text.isNotEmpty)
+                              const Text('Pro-rated Rent',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey)),
+                              if(isProRent && isAmountEntered && rentNextDueDate.text.isNotEmpty && _selectedRent != null && startDateController.text.isNotEmpty && endDateController.text.isNotEmpty)
+                              const SizedBox(
+                                height: 8,
+                              ),
+                              if( isProRent && isAmountEntered && rentNextDueDate.text.isNotEmpty && _selectedRent != null && startDateController.text.isNotEmpty && endDateController.text.isNotEmpty)
+                              CustomTextField(
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter rent';
+                                  }
+                                  return null;
+                                },
+                                keyboardType: TextInputType.text,
+                                hintText: 'Enter rent',
+                                controller: proRatedRentController,
+                                optional: true,
+                              ),
+
+                              const SizedBox(
+                                height: 20,
                               ),
                             ],
                           ),
@@ -5700,7 +5811,7 @@ class _AddTenantState extends State<AddTenant> {
 
         // Check if the response contains the expected keys
         if (responseData.containsKey('data')) {
-          List<dynamic> data = responseData['data'];
+          List<dynamic> data = responseData['data']['tenants'];
           tenants = data.map((item) => Tenant.fromJson(item)).toList();
           filteredTenants = List.from(tenants);
           selected = List<bool>.filled(tenants.length, false);
@@ -6146,6 +6257,11 @@ class _AddTenantState extends State<AddTenant> {
                                 }
                                 return null;
                               },
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(10),
+                                PhoneNumberFormatter(),
+                              ],
                             ),
                             const SizedBox(
                               height: 20,
@@ -6168,6 +6284,11 @@ class _AddTenantState extends State<AddTenant> {
                                           height: 10,
                                         ),
                                         CustomTextField(
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.digitsOnly,
+                                            LengthLimitingTextInputFormatter(10),
+                                            PhoneNumberFormatter(),
+                                          ],
                                           keyboardType: TextInputType.number,
                                           hintText: 'Enter work number',
                                           controller: workNumber,
@@ -6599,7 +6720,7 @@ class _AddTenantState extends State<AddTenant> {
                                   const SizedBox(
                                     height: 10,
                                   ),
-                                  const Text('Phone Number',
+                                  const Text('Phone Number ',
                                       style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
@@ -6608,6 +6729,11 @@ class _AddTenantState extends State<AddTenant> {
                                     height: 10,
                                   ),
                                   CustomTextField(
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                      LengthLimitingTextInputFormatter(10),
+                                      PhoneNumberFormatter(),
+                                    ],
                                     keyboardType: TextInputType.number,
                                     hintText: 'Enter phone number',
                                     controller: emergencyPhoneNumber,
@@ -6835,6 +6961,11 @@ class _AddCosignerState extends State<AddCosigner> {
                       }
                       return null;
                     },
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10),
+                      PhoneNumberFormatter(),
+                    ],
                   ),
                   const SizedBox(
                     height: 20,
@@ -6882,6 +7013,11 @@ class _AddCosignerState extends State<AddCosigner> {
                                 height: 10,
                               ),
                               CustomTextField(
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
+                                  PhoneNumberFormatter(),
+                                ],
                                 keyboardType: TextInputType.number,
                                 hintText: 'Enter work number',
                                 controller: workNumber,

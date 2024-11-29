@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -94,9 +95,9 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     // comname.text = widget.rentalOwner.rentalOwnerCompanyName!;
     primaryemail.text = widget.rentalOwner.rentalOwnerPrimaryEmail!;
     alternativeemail.text = widget.rentalOwner.rentalOwnerAlternateEmail!;
-    phonenum.text = widget.rentalOwner.rentalOwnerPhoneNumber!;
-    homenum.text = widget.rentalOwner.rentalOwnerHomeNumber!;
-    officenum.text = widget.rentalOwner.rentalOwnerBusinessNumber!;
+    phonenum.text = formatPhoneNumber(widget.rentalOwner.rentalOwnerPhoneNumber!);
+    homenum.text = formatPhoneNumber(widget.rentalOwner.rentalOwnerHomeNumber!);
+    officenum.text = formatPhoneNumber(widget.rentalOwner.rentalOwnerBusinessNumber!);
     street2.text = widget.rentalOwner.streetAddress!;
     city2.text = widget.rentalOwner.city!;
     state2.text = widget.rentalOwner.state!;
@@ -1735,9 +1736,15 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                           });
                                         },
                                         controller: phonenum,
-                                        keyboardType:
-                                            TextInputType.numberWithOptions(
-                                                signed: true, decimal: true),
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.digitsOnly,
+                                          LengthLimitingTextInputFormatter(10),
+                                          PhoneNumberFormatter(),
+                                        ],
+                                        // keyboardType:
+                                        //     TextInputType.numberWithOptions(
+                                        //         signed: true, decimal: true),
                                         cursorColor:
                                             blueColor,
                                         decoration: InputDecoration(
@@ -1844,9 +1851,15 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                         },
                                         controller: homenum,
                                         focusNode: _nodeText2,
-                                        keyboardType:
-                                            TextInputType.numberWithOptions(
-                                                signed: true, decimal: true),
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.digitsOnly,
+                                          LengthLimitingTextInputFormatter(10),
+                                          PhoneNumberFormatter(),
+                                        ],
+                                        // keyboardType:
+                                        //     TextInputType.numberWithOptions(
+                                        //         signed: true, decimal: true),
                                         cursorColor:
                                             blueColor,
                                         decoration: InputDecoration(
@@ -1953,9 +1966,15 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                           });
                                         },
                                         controller: officenum,
-                                        keyboardType:
-                                            TextInputType.numberWithOptions(
-                                                signed: true, decimal: true),
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.digitsOnly,
+                                          LengthLimitingTextInputFormatter(10),
+                                          PhoneNumberFormatter(),
+                                        ],
+                                        // keyboardType:
+                                        //     TextInputType.numberWithOptions(
+                                        //         signed: true, decimal: true),
                                         cursorColor:
                                             blueColor,
                                         decoration: InputDecoration(
@@ -2853,7 +2872,22 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       primaryemailerror = false;
                     });
                   }
-
+                  String formattedPhoneNumber = phonenum.text.replaceAll(RegExp(r'\D'), '');
+                  if (formattedPhoneNumber.isEmpty) {
+                    setState(() {
+                      phonenumerror = true;
+                      phonenummessage = "required";
+                    });
+                  } else if (formattedPhoneNumber.length != 10) {
+                    setState(() {
+                      phonenumerror = true;
+                      phonenummessage = "Phone number must be 10 digits";
+                    });
+                  }else {
+                    setState(() {
+                      phonenumerror = false;
+                    });
+                  }
                   // Validate other fields similarly...
 
                   // Check for changes

@@ -268,20 +268,20 @@ class RenewLeases {
         this.iV});
 
   RenewLeases.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
-    renewId = json['renew_id'];
-    leaseId = json['lease_id'];
-    adminId = json['admin_id'];
-    leaseType = json['lease_type'];
-    startDate = json['start_date'];
-    renewfileName = json['renew_fileName'];
-    endDate = json['end_date'];
-    amount = json['amount'];
-    leaseAmount = json['lease_amount'];
-    isDelete = json['is_delete'];
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
-    iV = json['__v'];
+    sId = json['_id'] ?? "";
+    renewId = json['renew_id'] ?? "";
+    leaseId = json['lease_id'] ?? "";
+    adminId = json['admin_id']?? "";
+    leaseType = json['lease_type']?? "";
+    startDate = json['start_date']?? "";
+    renewfileName = json['renew_fileName'] ?? "";
+    endDate = json['end_date']??"";
+    amount = json['amount'] ??"";
+    leaseAmount = json['lease_amount'] ?? "";
+    isDelete = json['is_delete']??"";
+    createdAt = json['createdAt']??"";
+    updatedAt = json['updatedAt']??"";
+    iV = json['__v']??"";
   }
 
   Map<String, dynamic> toJson() {

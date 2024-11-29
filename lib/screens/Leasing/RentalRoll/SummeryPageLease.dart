@@ -916,8 +916,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                         .data!.startDate,
                                                     enddate: leasesummery
                                                         .data!.endDate,
-                                                    renewfileName: leasesummery.data?.renewLeases?.first.renewfileName,
-                                                    leasetype: leasesummery
+                                                   leasetype: leasesummery
                                                         .data!.leaseType,
                                                     rentamount: leasesummery
                                                         .data!.amount
@@ -1940,7 +1939,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           ),
                                           const SizedBox(width: 5),
                                           Text(
-                                            '${snapshot.data![index].tenantPhoneNumber}',
+                                            formatPhoneNumber('${snapshot.data![index].tenantPhoneNumber}'),
                                             style: TextStyle(
                                               fontSize: 13,
                                               color: blueColor,
@@ -2243,7 +2242,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               ),
                                               const SizedBox(width: 5),
                                               Text(
-                                                '${snapshot.data![index].tenantPhoneNumber}',
+                                                formatPhoneNumber('${snapshot.data![index].tenantPhoneNumber}'),
                                                 style: TextStyle(
                                                   fontSize: 15,
                                                   color: blueColor,

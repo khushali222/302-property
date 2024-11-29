@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -48,16 +49,16 @@ class _EditApplicantState extends State<EditApplicant> {
     email.text = widget.applicant.applicantEmail!;
     mobileNumber.text = widget.applicant.applicantPhoneNumber == null
         ? ''
-        : widget.applicant.applicantPhoneNumber!.toString();
+        :formatPhoneNumber( widget.applicant.applicantPhoneNumber!.toString());
     homeNumber.text = widget.applicant.applicantHomeNumber == null
         ? ''
-        : widget.applicant.applicantHomeNumber!.toString();
+        : formatPhoneNumber(widget.applicant.applicantHomeNumber!.toString());
     bussinessNumber.text = widget.applicant.applicantBusinessNumber == null
         ? ''
-        : widget.applicant.applicantBusinessNumber!.toString();
+        : formatPhoneNumber(widget.applicant.applicantBusinessNumber!.toString());
     telePhoneNumber.text = widget.applicant.applicantTelephoneNumber == null
         ? ''
-        : widget.applicant.applicantTelephoneNumber!.toString();
+        : formatPhoneNumber(widget.applicant.applicantTelephoneNumber!.toString());
 
     initialFirstName = widget.applicant.applicantFirstName;
     initialLastName = widget.applicant.applicantLastName;
@@ -212,8 +213,14 @@ class _EditApplicantState extends State<EditApplicant> {
                             }
                             return null;
                           },
-                          keyboardType: TextInputType.numberWithOptions(
-                              signed: true, decimal: true),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(10),
+                            PhoneNumberFormatter(),
+                          ],
+                          // keyboardType: TextInputType.numberWithOptions(
+                          //     signed: true, decimal: true),
                           hintText: 'Enter mobile number',
                           controller: mobileNumber,
                         ),
@@ -235,8 +242,14 @@ class _EditApplicantState extends State<EditApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.numberWithOptions(
-                              signed: true, decimal: true),
+                          // keyboardType: TextInputType.numberWithOptions(
+                          //     signed: true, decimal: true),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(10),
+                            PhoneNumberFormatter(),
+                          ],
                           hintText: 'Enter home number',
                           controller: homeNumber,
                           optional: true,
@@ -259,8 +272,14 @@ class _EditApplicantState extends State<EditApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.numberWithOptions(
-                              signed: true, decimal: true),
+                          // keyboardType: TextInputType.numberWithOptions(
+                          //     signed: true, decimal: true),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(10),
+                            PhoneNumberFormatter(),
+                          ],
+                          keyboardType: TextInputType.number,
                           hintText: 'Enter business number',
                           controller: bussinessNumber,
                           optional: true,
@@ -283,8 +302,14 @@ class _EditApplicantState extends State<EditApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.numberWithOptions(
-                              signed: true, decimal: true),
+                          // keyboardType: TextInputType.numberWithOptions(
+                          //     signed: true, decimal: true),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(10),
+                            PhoneNumberFormatter(),
+                          ],
+                          keyboardType: TextInputType.number,
                           hintText: 'Enter telephone number',
                           controller: telePhoneNumber,
                           optional: true,

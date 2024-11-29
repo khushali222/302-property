@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -134,10 +135,16 @@ class _Add_vendorState extends State<Add_vendor> {
                                 height: 10,
                               ),
                               CustomTextField(
-                                keyboardType: TextInputType.numberWithOptions(
-                                    signed: true, decimal: true),
+                                keyboardType: TextInputType.number,
+                                // keyboardType: TextInputType.numberWithOptions(
+                                //     signed: true, decimal: true),
                                 hintText: 'Enter phone number',
                                 controller: phoneNumber,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
+                                  PhoneNumberFormatter(),
+                                ],
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'please enter the phone number';
@@ -435,10 +442,16 @@ class _Add_vendorState extends State<Add_vendor> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType: TextInputType.numberWithOptions(
-                                  signed: true, decimal: true),
+                              // keyboardType: TextInputType.numberWithOptions(
+                              //     signed: true, decimal: true),
+                              keyboardType: TextInputType.number,
                               hintText: 'Enter phone number',
                               controller: phoneNumber,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(10),
+                                PhoneNumberFormatter(),
+                              ],
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'please enter the phone number';
@@ -712,6 +725,7 @@ class CustomTextField extends StatefulWidget {
   bool? optional;
   final bool? pass;
   final bool? email;
+  final List<TextInputFormatter>? inputFormatters;
 
   CustomTextField({
     Key? key,
@@ -730,6 +744,7 @@ class CustomTextField extends StatefulWidget {
     this.onChanged2,
     this.pass,
     this.email, // Initialize onTap
+    this.inputFormatters,
   }) : super(key: key);
 
   @override
@@ -802,6 +817,17 @@ class CustomTextFieldState extends State<CustomTextField> {
                       _errorMessage = 'Please ${widget.hintText}';
                     });
                     return '';
+                  }else if (widget.keyboardType == TextInputType.number) {
+                    String formattedPhoneNumber = widget.controller!.text
+                        .replaceAll(RegExp(r'\D'), '');
+
+                    // Removed the empty check
+                    if (formattedPhoneNumber.length != 10) {
+                      setState(() {
+                        _errorMessage = "Phone number must be 10 digits";
+                      });
+                      return '';
+                    }
                   }
                   else if (widget.email != null) {
                     if (!EmailValidator.validate(widget.controller!.text)) {
@@ -858,6 +884,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       return null;
                     },
                     controller: widget.controller,
+                    inputFormatters:widget.inputFormatters ?? [],
                     decoration: InputDecoration(
                       suffixIcon: widget.suffixIcon,
                       hintStyle:
