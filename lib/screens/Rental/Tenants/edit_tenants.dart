@@ -121,8 +121,8 @@ class _EditTenantsState extends State<EditTenants> {
     // TODO: implement initState
     firstName.text = widget.tenants.tenantFirstName ?? "";
     lastName.text = widget.tenants.tenantLastName ?? "";
-    phoneNumber.text = formatPhoneNumber(widget.tenants.tenantPhoneNumber ?? "");
-    workNumber.text = formatPhoneNumber(widget.tenants.tenantAlternativeNumber ?? "");
+    phoneNumber.text = formatPhoneNumberedit(widget.tenants.tenantPhoneNumber ?? "");
+    workNumber.text = formatPhoneNumberedit(widget.tenants.tenantAlternativeNumber ?? "");
     email.text = widget.tenants.tenantEmail ?? "";
     alterEmail.text = widget.tenants.tenantAlternativeEmail ?? "N/A";
     passWord.text = widget.tenants.tenantPassword ?? "";
@@ -132,7 +132,7 @@ class _EditTenantsState extends State<EditTenants> {
     contactName.text = widget.tenants.emergencyContact?.name ?? "";
     relationToTenant.text = widget.tenants.emergencyContact?.relation ?? "";
     emergencyPhoneNumber.text =
-       formatPhoneNumber( widget.tenants.emergencyContact?.phoneNumber ?? "");
+        formatPhoneNumberedit( widget.tenants.emergencyContact?.phoneNumber ?? "");
     emergencyEmail.text = widget.tenants.emergencyContact?.email ?? "";
     _dateController.text = widget.tenants.tenantBirthDate ?? "";
 
@@ -385,12 +385,18 @@ class _EditTenantsState extends State<EditTenants> {
                                                   color: Colors.grey)),
                                           SizedBox(height: 10),
                                           CustomTextField(
-                                            keyboardType:
-                                                TextInputType.numberWithOptions(
-                                                    signed: true,
-                                                    decimal: true),
+                                            keyboardType: TextInputType.number,
+                                            // keyboardType:
+                                            //     TextInputType.numberWithOptions(
+                                            //         signed: true,
+                                            //         decimal: true),
                                             hintText: 'Enter work number',
                                             controller: workNumber,
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter.digitsOnly,
+                                              LengthLimitingTextInputFormatter(10),
+                                              PhoneNumberFormatter(),
+                                            ],
                                             optional: true,
                                           ),
                                         ],
@@ -1283,7 +1289,7 @@ class _EditTenantsState extends State<EditTenants> {
                             SizedBox(
                               height: 10,
                             ),
-                            Text('Work Number',
+                            Text('Work Number 0',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
@@ -2112,52 +2118,84 @@ class CustomTextFieldState extends State<CustomTextField> {
       children: <Widget>[
         FormField<String>(
           validator: widget.optional!
-              ? null
-              : (value) {
-                  if (widget.controller!.text.isEmpty) {
-                    setState(() {
-                      if (widget.label == null)
-                        _errorMessage = 'Please ${widget.hintText}';
-                      else
-                        _errorMessage = 'Please ${widget.label}';
-                    });
-                    return '';
-                  }else if (widget.keyboardType == TextInputType.number) {
-                    String formattedPhoneNumber = widget.controller!.text
-                        .replaceAll(RegExp(r'\D'), '');
+              ? (value) {
+            if (widget.controller!.text.isEmpty) {
+              return '';
+            } else if (widget.keyboardType == TextInputType.number) {
+              String formattedPhoneNumber =
+              widget.controller!.text.replaceAll(RegExp(r'\D'), '');
 
-                    // Removed the empty check
-                    if (formattedPhoneNumber.length != 10) {
-                      setState(() {
-                        _errorMessage = "Phone number must be 10 digits";
-                      });
-                      return '';
-                    }
-                  }else if (widget.pass != null) {
-                    String? validationMessage = ValidatePassword(widget.controller!.text);
-                    if (validationMessage != null) {
-                      setState(() {
-                        _errorMessage =
-                            validationMessage;
-                      });
-                      return '';
-                    }
-                  }
-                  else if (widget.email != null) {
-                    if (!EmailValidator.validate(widget.controller!.text)) {
-                      setState(() {
-                        _errorMessage = "Email is not valid";
-                      });
-                      return '';
-                    }
-                  } else if (widget.amount_check != null &&
-                      double.parse(widget.controller!.text) >
-                          double.parse(widget.max_amount!))
-                    setState(() {
-                      _errorMessage = '${widget.error_mess}';
-                    });
-                  return null;
-                },
+              // Removed the empty check
+              if (formattedPhoneNumber.length != 10) {
+                setState(() {
+                  _errorMessage = "Phone number must be 10 digits";
+                });
+                return '';
+              }
+            } else if (widget.amount_check != null &&
+                double.parse(widget.controller!.text) >
+                    double.parse(widget.max_amount!))
+              setState(() {
+                _errorMessage = '${widget.error_mess}';
+              });
+            return null;
+          }
+              : (value) {
+            if (widget.controller!.text.isEmpty) {
+              setState(() {
+                if (widget.label == null)
+                  _errorMessage = 'Please ${widget.hintText}';
+                else
+                  _errorMessage = 'Please ${widget.label}';
+              });
+              return '';
+            } else if (widget.keyboardType == TextInputType.number) {
+              String formattedPhoneNumber =
+              widget.controller!.text.replaceAll(RegExp(r'\D'), '');
+
+              // Removed the empty check
+              if (formattedPhoneNumber.length != 10) {
+                setState(() {
+                  _errorMessage = "Phone number must be 10 digits";
+                });
+                return '';
+              }
+            } else if (widget.email != null) {
+              if (!EmailValidator.validate(widget.controller!.text)) {
+                setState(() {
+                  _errorMessage = "Email is not valid";
+                });
+                return '';
+              }
+            } else if (widget.pass != null) {
+              String? validationMessage =
+              ValidatePassword(widget.controller!.text);
+              if (validationMessage != null) {
+                setState(() {
+                  _errorMessage = validationMessage;
+                });
+                return '';
+              }
+            }
+            // else if (widget.pass != null) {
+            //   // Validate as password
+            //   String? validationMessage = ValidatePassword(value ?? '');
+            //   if (validationMessage != null) {
+            //     setState(() {
+            //       _errorMessage = validationMessage;
+            //     });
+            //     return ''; // Return empty string to indicate error
+            //   }
+            // }
+
+            else if (widget.amount_check != null &&
+                double.parse(widget.controller!.text) >
+                    double.parse(widget.max_amount!))
+              setState(() {
+                _errorMessage = '${widget.error_mess}';
+              });
+            return null;
+          },
           builder: (FormFieldState<String> state) {
             return Column(
               children: <Widget>[
@@ -2167,7 +2205,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                   child: Container(
                     height: 50,
                     padding:
-                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                    EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.0),
@@ -2202,20 +2240,26 @@ class CustomTextFieldState extends State<CustomTextField> {
                         widget.onChanged2;
                       },*/
                       onFieldSubmitted: widget.onChanged2,
-                      inputFormatters:widget.inputFormatters ?? [],
                       onChanged: (value) {
-                        print("object calin $value");
+                        //  print("object calin $value");
                         if (value.isNotEmpty) {
                           setState(() {
                             _errorMessage = null;
                           });
                         }
-
-                        widget.onChanged;
-                        print("callllll");
+                        if (widget.onChanged != null) widget.onChanged!(value);
+//print("callllll");
                       },
+                      inputFormatters: widget.inputFormatters ?? [],
                       focusNode: _focusNode,
-                      onTap: widget.onTap,
+                      onTap: () {
+                        if (widget.onTap != null) {
+                          widget.onTap!();
+                          setState(() {
+                            _errorMessage = null;
+                          });
+                        }
+                      },
                       obscureText: widget.obscureText,
                       readOnly: widget.readOnnly,
                       keyboardType: widget.keyboardType,
@@ -2229,14 +2273,15 @@ class CustomTextFieldState extends State<CustomTextField> {
                       decoration: InputDecoration(
                         suffixIcon: widget.suffixIcon,
                         hintStyle:
-                            TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                        TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                         border: InputBorder.none,
                         hintText: widget.hintText,
                       ),
                     ),
                   ),
                 ),
-                if (state.hasError || widget.amount_check != null)
+                if (state.hasError && _errorMessage != null ||
+                    widget.amount_check != null)
                   SizedBox(height: 24),
                 // Reserve space for error message
               ],

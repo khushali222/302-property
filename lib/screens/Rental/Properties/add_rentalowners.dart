@@ -175,9 +175,9 @@ class _AddRentalownersState extends State<AddRentalowners> {
     primaryemail.text = widget.OwnersDetails?.rentalOwnerPrimaryEmail ?? "";
     alternativeemail.text =
         widget.OwnersDetails?.rentalOwnerAlternateEmail ?? "";
-    phonenum.text = formatPhoneNumber(widget.OwnersDetails?.rentalOwnerPhoneNumber ?? "");
-    homenum.text = formatPhoneNumber(widget.OwnersDetails?.rentalOwnerHomeNumber ?? "");
-    businessnum.text = formatPhoneNumber(widget.OwnersDetails?.rentalOwnerBusinessNumber ?? "");
+    phonenum.text = formatPhoneNumberedit(widget.OwnersDetails?.rentalOwnerPhoneNumber ?? "");
+    homenum.text = formatPhoneNumberedit(widget.OwnersDetails?.rentalOwnerHomeNumber ?? "");
+    businessnum.text = formatPhoneNumberedit(widget.OwnersDetails?.rentalOwnerBusinessNumber ?? "");
     street2.text = widget.OwnersDetails?.streetAddress ?? "";
     city2.text = widget.OwnersDetails?.city ?? "";
     county2.text = widget.OwnersDetails?.country ?? "";
@@ -2029,10 +2029,40 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             phonenummessage = "Phone number must be 10 digits";
                           });
                         }
-
                         else {
                           setState(() {
                             phonenumerror = false;
+                          });
+                        }
+                        String formattedhomeNumber = homenum.text.replaceAll(RegExp(r'\D'), '');
+                        if (formattedhomeNumber.isEmpty) {
+                          setState(() {
+                            homenumerror = false;
+
+                          });
+                        }else if(formattedhomeNumber.length != 10){
+                          setState(() {
+                            homenumerror = true;
+                            homenummessage = "Phone number must be 10 digits";
+                          });
+                        } else {
+                          setState(() {
+                            homenumerror = false;
+                          });
+                        }
+                        String formattedofficeNumber = businessnum.text.replaceAll(RegExp(r'\D'), '');
+                        if (formattedofficeNumber.isEmpty) {
+                          setState(() {
+                            businessnumerror = false;
+                          });
+                        }else if(formattedofficeNumber.length != 10){
+                          setState(() {
+                            businessnumerror = true;
+                            businessnummessage = "Phone number must be 10 digits";
+                          });
+                        } else {
+                          setState(() {
+                            businessnumerror = false;
                           });
                         }
                         if (!firstnameerror &&

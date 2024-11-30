@@ -49,16 +49,16 @@ class _EditApplicantState extends State<EditApplicant> {
     email.text = widget.applicant.applicantEmail!;
     mobileNumber.text = widget.applicant.applicantPhoneNumber == null
         ? ''
-        : formatPhoneNumber(widget.applicant.applicantPhoneNumber!.toString());
+        : formatPhoneNumberedit(widget.applicant.applicantPhoneNumber!.toString());
     homeNumber.text = widget.applicant.applicantHomeNumber == null
         ? ''
-        : formatPhoneNumber(widget.applicant.applicantHomeNumber!.toString());
+        : formatPhoneNumberedit(widget.applicant.applicantHomeNumber!.toString());
     bussinessNumber.text = widget.applicant.applicantBusinessNumber == null
         ? ''
-        : formatPhoneNumber(widget.applicant.applicantBusinessNumber!.toString());
+        : formatPhoneNumberedit(widget.applicant.applicantBusinessNumber!.toString());
     telePhoneNumber.text = widget.applicant.applicantTelephoneNumber == null
         ? ''
-        :formatPhoneNumber( widget.applicant.applicantTelephoneNumber!.toString());
+        :formatPhoneNumberedit( widget.applicant.applicantTelephoneNumber!.toString());
 
     initialFirstName = widget.applicant.applicantFirstName;
     initialLastName = widget.applicant.applicantLastName;

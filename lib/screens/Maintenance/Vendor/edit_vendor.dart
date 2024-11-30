@@ -44,7 +44,7 @@ class _edit_vendorState extends State<edit_vendor> {
       initialPassword = vendor.vendorPassword;
 
       firstName.text = vendor.vendorName!;
-      phoneNumber.text = formatPhoneNumber(vendor.vendorPhoneNumber!);
+      phoneNumber.text = formatPhoneNumberedit(vendor.vendorPhoneNumber!);
       email.text = vendor.vendorEmail!;
       passWord.text = vendor.vendorPassword!;
     } catch (e) {

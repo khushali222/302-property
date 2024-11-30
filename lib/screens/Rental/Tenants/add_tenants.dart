@@ -1625,7 +1625,7 @@ class _AddTenantState extends State<AddTenant> {
                               SizedBox(
                                 height: 10,
                               ),
-                              Text('Work Number',
+                              Text('Work Number ',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
@@ -1640,6 +1640,7 @@ class _AddTenantState extends State<AddTenant> {
                                 hintText: 'Enter work number',
                                 controller: workNumber,
                                 optional: true,
+                                phone: true,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly,
                                   LengthLimitingTextInputFormatter(10),
@@ -2400,32 +2401,31 @@ class CustomTextField extends StatefulWidget {
   final bool? phone;
   final List<TextInputFormatter>? inputFormatters;
 
-  CustomTextField(
-      {Key? key,
-      this.onChanged,
-      this.controller,
-      required this.hintText,
-      this.obscureText = false,
-      this.keyboardType = TextInputType.emailAddress,
-      this.readOnnly = false,
-      this.prefixIcon,
-      this.suffixIcon,
-      this.validator,
-      this.onSuffixIconPressed,
-      this.label,
-      this.onTap,
-      this.onChanged2,
-      this.amount_check,
-      this.max_amount,
-      this.error_mess,
-      this.optional = false,
-      this.email,
-      this.pass,
-      this.phone,
-      this.inputFormatters,
-      // Initialize onTap
-      })
-      : super(key: key);
+  CustomTextField({
+    Key? key,
+    this.onChanged,
+    this.controller,
+    required this.hintText,
+    this.obscureText = false,
+    this.keyboardType = TextInputType.emailAddress,
+    this.readOnnly = false,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.validator,
+    this.onSuffixIconPressed,
+    this.label,
+    this.onTap,
+    this.onChanged2,
+    this.amount_check,
+    this.max_amount,
+    this.error_mess,
+    this.optional = false,
+    this.email,
+    this.pass,
+    this.phone,
+    this.inputFormatters,
+    // Initialize onTap
+  }) : super(key: key);
 
   @override
   CustomTextFieldState createState() => CustomTextFieldState();
@@ -2489,7 +2489,29 @@ class CustomTextFieldState extends State<CustomTextField> {
       children: <Widget>[
         FormField<String>(
           validator: widget.optional!
-              ? null
+              ?
+              (value) {
+                  if (widget.controller!.text.isEmpty) {
+                    return null;
+                  } else if (widget.keyboardType == TextInputType.number) {
+                    String formattedPhoneNumber =
+                        widget.controller!.text.replaceAll(RegExp(r'\D'), '');
+
+                    // Removed the empty check
+                    if (formattedPhoneNumber.length != 10) {
+                      setState(() {
+                        _errorMessage = "Phone number must be 10 digits";
+                      });
+                      return '';
+                    }
+                  } else if (widget.amount_check != null &&
+                      double.parse(widget.controller!.text) >
+                          double.parse(widget.max_amount!))
+                    setState(() {
+                      _errorMessage = '${widget.error_mess}';
+                    });
+                  return null;
+                }
               : (value) {
                   if (widget.controller!.text.isEmpty) {
                     setState(() {
@@ -2499,10 +2521,9 @@ class CustomTextFieldState extends State<CustomTextField> {
                         _errorMessage = 'Please ${widget.label}';
                     });
                     return '';
-                  }
-                  else if (widget.keyboardType == TextInputType.number) {
-                    String formattedPhoneNumber = widget.controller!.text
-                        .replaceAll(RegExp(r'\D'), '');
+                  } else if (widget.keyboardType == TextInputType.number) {
+                    String formattedPhoneNumber =
+                        widget.controller!.text.replaceAll(RegExp(r'\D'), '');
 
                     // Removed the empty check
                     if (formattedPhoneNumber.length != 10) {
@@ -2511,8 +2532,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       });
                       return '';
                     }
-                  }
-                    else if (widget.email != null) {
+                  } else if (widget.email != null) {
                     if (!EmailValidator.validate(widget.controller!.text)) {
                       setState(() {
                         _errorMessage = "Email is not valid";
@@ -2602,7 +2622,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                         if (widget.onChanged != null) widget.onChanged!(value);
 //print("callllll");
                       },
-                      inputFormatters:widget.inputFormatters ?? [],
+                      inputFormatters: widget.inputFormatters ?? [],
                       focusNode: _focusNode,
                       onTap: () {
                         if (widget.onTap != null) {

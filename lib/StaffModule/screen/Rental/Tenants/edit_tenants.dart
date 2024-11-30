@@ -107,8 +107,8 @@ class _EditTenantsState extends State<EditTenants> {
     // TODO: implement initState
     firstName.text = widget.tenants.tenantFirstName!;
     lastName.text = widget.tenants.tenantLastName!;
-    phoneNumber.text = formatPhoneNumber(widget.tenants.tenantPhoneNumber!);
-    workNumber.text = formatPhoneNumber(widget.tenants.tenantAlternativeNumber!);
+    phoneNumber.text = formatPhoneNumberedit(widget.tenants.tenantPhoneNumber!);
+    workNumber.text = formatPhoneNumberedit(widget.tenants.tenantAlternativeNumber!);
     email.text = widget.tenants.tenantEmail!;
     alterEmail.text = widget.tenants.tenantAlternativeEmail!;
     passWord.text = widget.tenants.tenantPassword!;
@@ -118,7 +118,7 @@ class _EditTenantsState extends State<EditTenants> {
     contactName.text = widget.tenants.emergencyContact?.name ?? "";
     relationToTenant.text = widget.tenants.emergencyContact!.relation ?? "";
     emergencyPhoneNumber.text =
-        formatPhoneNumber(widget.tenants.emergencyContact!.phoneNumber ?? "");
+        formatPhoneNumberedit(widget.tenants.emergencyContact!.phoneNumber ?? "");
     emergencyEmail.text = widget.tenants.emergencyContact!.email ?? "";
     _dateController.text = widget.tenants.tenantBirthDate!;
 
@@ -2044,7 +2044,28 @@ class CustomTextFieldState extends State<CustomTextField> {
       clipBehavior: Clip.none,
       children: <Widget>[
         FormField<String>(
-          validator: widget.optional! ? null :
+          validator: widget.optional! ? (value) {
+            if (widget.controller!.text.isEmpty) {
+              return '';
+            } else if (widget.keyboardType == TextInputType.number) {
+              String formattedPhoneNumber =
+              widget.controller!.text.replaceAll(RegExp(r'\D'), '');
+
+              // Removed the empty check
+              if (formattedPhoneNumber.length != 10) {
+                setState(() {
+                  _errorMessage = "Phone number must be 10 digits";
+                });
+                return '';
+              }
+            } else if (widget.amount_check != null &&
+                double.parse(widget.controller!.text) >
+                    double.parse(widget.max_amount!))
+              setState(() {
+                _errorMessage = '${widget.error_mess}';
+              });
+            return null;
+          } :
               (value) {
             if (widget.controller!.text.isEmpty) {
               setState(() {

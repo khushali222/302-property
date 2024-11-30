@@ -113,9 +113,9 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     // comname.text = widget.rentalOwner.rentalOwnerCompanyName!;
     primaryemail.text = widget.rentalOwner.rentalOwnerPrimaryEmail!;
     alternativeemail.text = widget.rentalOwner.rentalOwnerAlternateEmail!;
-    phonenum.text = formatPhoneNumber(widget.rentalOwner.rentalOwnerPhoneNumber!);
-    homenum.text = formatPhoneNumber(widget.rentalOwner.rentalOwnerHomeNumber!);
-    officenum.text = formatPhoneNumber(widget.rentalOwner.rentalOwnerBusinessNumber!);
+    phonenum.text = formatPhoneNumberedit(widget.rentalOwner.rentalOwnerPhoneNumber!);
+    homenum.text = formatPhoneNumberedit(widget.rentalOwner.rentalOwnerHomeNumber!);
+    officenum.text = formatPhoneNumberedit(widget.rentalOwner.rentalOwnerBusinessNumber!);
     street2.text = widget.rentalOwner.streetAddress!;
     city2.text = widget.rentalOwner.city!;
     state2.text = widget.rentalOwner.state!;
@@ -2887,6 +2887,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       phonenumerror = false;
                     });
                   }
+
+
 
                   // Validate other fields similarly...
 

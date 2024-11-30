@@ -2514,7 +2514,28 @@ class CustomTextFieldState extends State<CustomTextField> {
         FormField<String>(
           validator:
           widget.optional!
-              ? null
+              ? (value) {
+            if (widget.controller!.text.isEmpty) {
+              return '';
+            } else if (widget.keyboardType == TextInputType.number) {
+              String formattedPhoneNumber =
+              widget.controller!.text.replaceAll(RegExp(r'\D'), '');
+
+              // Removed the empty check
+              if (formattedPhoneNumber.length != 10) {
+                setState(() {
+                  _errorMessage = "Phone number must be 10 digits";
+                });
+                return '';
+              }
+            } else if (widget.amount_check != null &&
+                double.parse(widget.controller!.text) >
+                    double.parse(widget.max_amount!))
+              setState(() {
+                _errorMessage = '${widget.error_mess}';
+              });
+            return null;
+          }
               : (value) {
             if (widget.controller!.text.isEmpty) {
               setState(() {

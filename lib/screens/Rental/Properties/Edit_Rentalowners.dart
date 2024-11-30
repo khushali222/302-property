@@ -77,12 +77,12 @@ class _EditRentalownersState extends State<EditRentalowners> {
       alternativeemail.text =
           fetchedDetails.rentalOwnerData!.rentalOwnerAlternativeEmail!;
       print(alternativeemail);
-      phonenum.text = formatPhoneNumber(fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber!);
+      phonenum.text = formatPhoneNumberedit(fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber!);
       print(phonenum);
-      homenum.text = formatPhoneNumber(fetchedDetails.rentalOwnerData!.rentalOwnerHomeNumber!);
+      homenum.text = formatPhoneNumberedit(fetchedDetails.rentalOwnerData!.rentalOwnerHomeNumber!);
       print(homenum);
       businessnum.text =
-          formatPhoneNumber(fetchedDetails.rentalOwnerData!.rentalOwnerBuisinessNumber!);
+          formatPhoneNumberedit(fetchedDetails.rentalOwnerData!.rentalOwnerBuisinessNumber!);
 
       street2.text = fetchedDetails.rentalOwnerData!.Address!;
       city2.text = fetchedDetails.rentalOwnerData!.city!;

@@ -3174,6 +3174,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       alternativeerror = false;
                     });
                   }*/
+
                   String formattedPhoneNumber = phonenum.text.replaceAll(RegExp(r'\D'), '');
                   if (formattedPhoneNumber.isEmpty) {
                     setState(() {
@@ -3190,27 +3191,38 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       phonenumerror = false;
                     });
                   }
-                /*  if (homenum.text.isEmpty) {
+                  String formattedhomeNumber = homenum.text.replaceAll(RegExp(r'\D'), '');
+                  if (formattedhomeNumber.isEmpty) {
+                    setState(() {
+                      homenumerror = false;
+
+                    });
+                  }else if(formattedhomeNumber.length != 10){
                     setState(() {
                       homenumerror = true;
-                      homenummessage = "required";
+                      homenummessage = "Phone number must be 10 digits";
                     });
                   } else {
                     setState(() {
                       homenumerror = false;
                     });
                   }
-                  if (officenum.text.isEmpty) {
+                  String formattedofficeNumber = officenum.text.replaceAll(RegExp(r'\D'), '');
+                  if (formattedofficeNumber.isEmpty) {
+                    setState(() {
+                      officenumerror = false;
+                    });
+                  }else if(formattedofficeNumber.length != 10){
                     setState(() {
                       officenumerror = true;
-                      officenummessage = "required";
+                      officenummessage = "Phone number must be 10 digits";
                     });
                   } else {
                     setState(() {
                       officenumerror = false;
                     });
                   }
-                  if (street2.text.isEmpty) {
+                 /* if (street2.text.isEmpty) {
                     setState(() {
                       street2error = true;
                       street2message = "required";

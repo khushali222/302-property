@@ -130,7 +130,7 @@ class _AddCardState extends State<AddCard> {
           'tenant_lastName': '${tenant['tenant_lastName']}',
 
           'tenant_email':'${tenant['tenant_email']}',
-          'tenant_phoneNumber':'${tenant['tenant_phoneNumber']}',
+          'tenant_phoneNumber':formatPhoneNumberedit('${tenant['tenant_phoneNumber']}'),
           'rental_adress':"${data['data']['rental_adress']}",
           'rental_city':"${data['data']['rental_city']}",
           'rental_state':"${data['data']['rental_state']}",

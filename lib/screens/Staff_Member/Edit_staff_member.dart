@@ -50,7 +50,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
     super.initState();
     name.text = widget.staff!.staffmemberName!;
     designation.text = widget.staff!.staffmemberDesignation!;
-    phonenumber.text = formatPhoneNumber(widget.staff!.staffmemberPhoneNumber!.toString());
+    phonenumber.text = formatPhoneNumberedit(widget.staff!.staffmemberPhoneNumber!.toString());
     email.text = widget.staff!.staffmemberEmail.toString();
     // password.text = widget.staff!.staffmemberPassword.toString();
 
