@@ -76,10 +76,11 @@ class _addLease3State extends State<addLease3>
     futureRentalOwners = PropertiesRepository().fetchProperties();
     _loadProperties();
     _tabController = TabController(length: 2, vsync: this);
-    _updateProRatedRent();
+    _updateProRatedRent(_selectedRent ?? 'Monthly');
   }
 
 //first container variable
+  String selectedFrequency = 'Monthly';
   List<Tenant> selectedTenants = [];
   bool isChecked = false;
   bool isProRent = false;
@@ -318,6 +319,7 @@ class _addLease3State extends State<addLease3>
       rentCycleitems = [
         'Daily',
         'Weekly',
+        'Semi Monthly',
         'Every two weeks',
         'Monthly',
         'Every two months',
@@ -328,6 +330,7 @@ class _addLease3State extends State<addLease3>
       rentCycleitems = [
         'Daily',
         'Weekly',
+        'Semi Monthly',
         'Every two weeks',
         'Monthly',
         'Every two months',
@@ -337,6 +340,7 @@ class _addLease3State extends State<addLease3>
       rentCycleitems = [
         'Daily',
         'Weekly',
+        'Semi Monthly',
         'Every two weeks',
         'Monthly',
       ];
@@ -345,6 +349,7 @@ class _addLease3State extends State<addLease3>
       rentCycleitems = [
         'Daily',
         'Weekly',
+        'Semi Monthly',
         'Every two weeks',
       ];
     }
@@ -374,6 +379,23 @@ class _addLease3State extends State<addLease3>
         return DateTime(startDate.year, startDate.month + 3, startDate.day);
       case 'Yearly':
         return DateTime(startDate.year + 1, startDate.month, startDate.day);
+      case 'Semi Monthly':
+      // Get the number of days in the current month
+        int lastDayOfMonth = DateTime(startDate.year, startDate.month + 1, 0).day;
+        // Determine the middle of the month
+        int middleOfMonth = (lastDayOfMonth / 2).floor();
+
+        if (startDate.day <= middleOfMonth) {
+          // If today is in the first half (1st to mid-month), set the next due date to the middle of this month
+          return DateTime(startDate.year, startDate.month, middleOfMonth);
+        } else {
+          // If today is in the second half (mid+1 to end of month), set the next due date to the middle of next month
+          if (startDate.month == 12) {
+            // Special case for December, next due date should be January 1st
+            return DateTime(startDate.year + 1, 1, middleOfMonth);
+          }
+          return DateTime(startDate.year, startDate.month + 1, middleOfMonth);
+        }
       default:
         return startDate;
     }
@@ -392,36 +414,184 @@ class _addLease3State extends State<addLease3>
   }
 
 
-  void _updateProRatedRent() {
+  // void _updateProRatedRent() {
+  //   if (isProRent && isAmountEntered && rentNextDueDate.text.isNotEmpty) {
+  //     // Get the current date
+  //     DateTime currentDate = DateTime.now();
+  //
+  //     // Parse the next due date
+  //     DateTime nextDueDate = DateFormat('dd-MM-yyyy').parse(rentNextDueDate.text);
+  //
+  //     // Calculate the number of days left until the next due date
+  //     int daysLeft = nextDueDate.difference(currentDate).inDays + 1; // Include today in the count
+  //
+  //     // Get the total rent amount
+  //     double totalRent = double.tryParse(rentAmount.text) ?? 0.0;
+  //
+  //     // Calculate the total days in the current month
+  //     int totalDaysInMonth = DateTime(currentDate.year, currentDate.month + 1, 0).day;
+  //
+  //     // Calculate daily rent
+  //     double dailyRent = totalRent / totalDaysInMonth;
+  //
+  //     // Calculate pro-rated rent
+  //     double proRatedRent = dailyRent * daysLeft;
+  //
+  //     // Update the pro-rated rent field with the calculated pro-rated rent
+  //     proRatedRentController.text = proRatedRent.toStringAsFixed(2); // Display with 2 decimal places
+  //   } else {
+  //     // Clear the pro-rated rent field if conditions are not met
+  //     proRatedRentController.text = "0.00"; // Reset to 0.00 if not applicable
+  //   }
+  // }
+
+
+
+
+  void _updateProRatedRent(String frequency) {
     if (isProRent && isAmountEntered && rentNextDueDate.text.isNotEmpty) {
-      // Get the current date
-      DateTime currentDate = DateTime.now();
+      try {
+        // Parse the start date from the TextField (instead of using current date)
+        DateTime currentDate = DateFormat('dd-MM-yyyy').parse(startDateController.text);
+        DateTime nextDueDate = DateFormat('dd-MM-yyyy').parse(rentNextDueDate.text);
 
-      // Parse the next due date
-      DateTime nextDueDate = DateFormat('dd-MM-yyyy').parse(rentNextDueDate.text);
+        double totalRent = double.tryParse(rentAmount.text) ?? 0.0;
 
-      // Calculate the number of days left until the next due date
-      int daysLeft = nextDueDate.difference(currentDate).inDays + 1; // Include today in the count
+        // Debug prints
+        print("Start Date (current date): $currentDate");
+        print("Next Due Date: $nextDueDate");
+        print("Total Rent Entered: $totalRent");
 
-      // Get the total rent amount
-      double totalRent = double.tryParse(rentAmount.text) ?? 0.0;
+        // Validate rent and dates
+        if (totalRent <= 0 || !nextDueDate.isAfter(currentDate)) {
+          setState(() {
+            proRatedRentController.text = "0.00";
+          });
+          print("Validation failed: Either rent is <= 0 or next due date is not after start date.");
+          return;
+        }
 
-      // Calculate the total days in the current month
-      int totalDaysInMonth = DateTime(currentDate.year, currentDate.month + 1, 0).day;
+        // Calculate days left, including the current day
+        int daysLeft = nextDueDate.difference(currentDate).inDays;
+        print("Days Left: $daysLeft");
 
-      // Calculate daily rent
-      double dailyRent = totalRent / totalDaysInMonth;
+        // Calculate pro-rated rent
+        double proRatedRent = 0.0;
 
-      // Calculate pro-rated rent
-      double proRatedRent = dailyRent * daysLeft;
+        // Get total days in the current month
+         int totalDaysInMonth = _getDaysInMonth(nextDueDate.year,currentDate.month);
+        // print("Total Days in Month: $totalDaysInMonth");
 
-      // Update the pro-rated rent field with the calculated pro-rated rent
-      proRatedRentController.text = proRatedRent.toStringAsFixed(2); // Display with 2 decimal places
-    } else {
-      // Clear the pro-rated rent field if conditions are not met
-      proRatedRentController.text = "0.00"; // Reset to 0.00 if not applicable
+        // Define total days in other periods
+        int totalDaysInYear = 365; // For non-leap years
+        int totalDaysInQuarter = totalDaysInMonth * 3; // 3 months period
+
+        switch (frequency) {
+          case 'Daily':
+            proRatedRent = (totalRent / 1) * daysLeft;
+            break;
+          case 'Weekly':
+            proRatedRent = (totalRent / 7) * daysLeft;
+            break;
+          case 'Every two weeks':
+            proRatedRent = (totalRent / 14) * daysLeft;
+            break;
+          // case 'Monthly':
+          //   proRatedRent = (totalRent / totalDaysInMonth) * daysLeft;
+          //   break;
+          case 'Monthly':
+            int totalDaysInMonth = _getDaysInMonth(currentDate.year, currentDate.month);
+            print("Total Days in Month: $totalDaysInMonth");
+            proRatedRent = (totalRent / totalDaysInMonth) * daysLeft;
+            break;
+          case 'Every two months':
+          // Calculate total days in the 2-month period
+            int totalDaysInTwoMonths = _getDaysInMonth(currentDate.year, currentDate.month) +
+                _getDaysInMonth(nextDueDate.year, nextDueDate.month);
+            print("Total Days in Two Months: $totalDaysInTwoMonths");
+
+            // Adjust the calculation to ensure rent remains at totalRent
+            proRatedRent = totalRent;
+            break;
+          case 'Quarterly':
+          // Calculate total days in the quarter (3 months)
+            int totalDaysInQuarter = _getDaysInMonth(nextDueDate.year, nextDueDate.month) +
+                _getDaysInMonth(nextDueDate.year, nextDueDate.month - 1) +
+                _getDaysInMonth(nextDueDate.year, nextDueDate.month - 2);
+
+            // Calculate pro-rated rent
+            if (totalDaysInQuarter > 0) {
+              proRatedRent = (totalRent / totalDaysInQuarter) * daysLeft;
+              proRatedRent = proRatedRent.roundToDouble(); // Round to nearest whole number
+            } else {
+              proRatedRent = 0.0; // Fallback in case of an error
+            }
+            break;
+          case 'Semi Monthly':
+          // Calculate the semi-monthly due date
+            int midMonth = _getDaysInMonth(currentDate.year, currentDate.month) > 30 ? 15 : 14; // Handle shorter months like February
+
+            // If today is before or on the mid-month date, calculate for the first half
+            if (currentDate.day <= midMonth) {
+              // First half of the month (1st to mid-month)
+              proRatedRent = (totalRent / midMonth) * daysLeft;
+            } else {
+              // Second half of the month (after mid-month)
+              int remainingDays = _getDaysInMonth(currentDate.year, currentDate.month) - midMonth;
+              proRatedRent = (totalRent / remainingDays) * daysLeft;
+            }
+            break;
+          case 'Yearly':
+            proRatedRent = (totalRent / totalDaysInYear) * daysLeft;
+            break;
+          default:
+            proRatedRent = 0.0;
+        }
+
+        // Update text field with calculated value
+        setState(() {
+          proRatedRentController.text = proRatedRent.toStringAsFixed(2);
+        });
+        print("Calculated Pro-Rated Rent: $proRatedRent");
+      } catch (e) {
+        // Handle unexpected errors
+        setState(() {
+          proRatedRentController.text = "Error";
+        });
+        print("Error occurred while calculating pro-rated rent: $e");
+      }
     }
   }
+
+  int _getDaysInMonth(int year, int month) {
+    // Get the number of days in the month considering leap years for February
+    switch (month) {
+      case 1:  // January
+      case 3:  // March
+      case 5:  // May
+      case 7:  // July
+      case 8:  // August
+      case 10: // October
+      case 12: // December
+        return 31;
+      case 4:  // April
+      case 6:  // June
+      case 9:  // September
+      case 11: // November
+        return 30;
+      case 2:  // February
+        return _isLeapYear(year) ? 29 : 28;
+      default:
+        return 30;
+    }
+  }
+
+  bool _isLeapYear(int year) {
+    // Leap year is divisible by 4, but not divisible by 100 unless divisible by 400
+    return (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
+  }
+
+
 
   final TextEditingController proRatedRentController = TextEditingController();
 
@@ -1181,10 +1351,11 @@ class _addLease3State extends State<addLease3>
                                         endDateController.text =
                                             formattedEndDate;
                                          rentCycleItemsDynamic(endDate.difference(_startDate!).inDays);
+                                        _updateProRatedRent(_selectedRent ?? 'Monthly');
                                       });
 
                                     }
-                                    _updateProRatedRent();
+
                                   },
                                   readOnnly: true,
                                   suffixIcon: IconButton(
@@ -1266,10 +1437,11 @@ class _addLease3State extends State<addLease3>
                                       setState(() {
                                         endDateController.text = formattedDate;
                                         rentCycleItemsDynamic(pickedDate.difference(_startDate!).inDays);
+                                        _updateProRatedRent(_selectedRent ?? 'Monthly');
                                       });
 
                                     }
-                                    _updateProRatedRent();
+
                                   },
                                   readOnnly: true,
                                   suffixIcon: IconButton(
@@ -1380,8 +1552,9 @@ class _addLease3State extends State<addLease3>
                                                     _startDate = pickedDate;
                                                     endDateController.text =
                                                         formattedEndDate;
+                                                    _updateProRatedRent(_selectedRent ?? 'Monthly');
                                                   });
-                                                  _updateProRatedRent();
+
                                                 }
                                               },
                                               readOnnly: true,
@@ -2431,10 +2604,10 @@ class _addLease3State extends State<addLease3>
                                               onChanged: (String? value) {
                                                 setState(() {
                                                   _selectedRent = value;
-                                                  _updateNextDueDate();
-                                                  _updateProRatedRent();
-                                                });
 
+                                                  _updateProRatedRent(_selectedRent ?? 'Monthly');
+                                                });
+                                                _updateNextDueDate();
                                               },
                                             ),
                                             SizedBox(height: 5),
@@ -2521,12 +2694,13 @@ class _addLease3State extends State<addLease3>
                                                         formattedNextDueDate;
                                                     rentNextDueDate.text =
                                                         formattedDate;
+                                                    _updateProRatedRent(_selectedRent ?? 'Monthly');
                                                   });
-                                                  // _updateProRatedRent();
+
 
                                                   print(rentNextDueDate.text);
                                                 }
-                                                _updateProRatedRent();
+
                                               },
                                               readOnnly: true,
                                               optional: true,
@@ -2576,12 +2750,9 @@ class _addLease3State extends State<addLease3>
                                   onChanged: (String? value) {
                                     setState(() {
                                       _selectedRent = value;
-                                     _selectedRent != null;
-                                     isProRent = false;
-                                      _updateProRatedRent();
-                                      _updateNextDueDate();
+                                      _updateProRatedRent(_selectedRent ?? 'Monthly');
                                     });
-
+                                    _updateNextDueDate();
                                   },
                                 ),
                               const SizedBox(
@@ -2606,7 +2777,7 @@ class _addLease3State extends State<addLease3>
                                   setState(() {
                                     isAmountEntered = value.isNotEmpty;
                                     isProRent = false;
-                                    _updateProRatedRent();// Reset checkbox when amount changes
+                                    _updateProRatedRent(_selectedRent ?? 'Monthly');// Reset checkbox when amount changes
                                   });
 
                                 },
@@ -2685,12 +2856,13 @@ class _addLease3State extends State<addLease3>
                                         rentNextDueDate.text = formattedDate;
                                         rentNextDueDate.text.isNotEmpty;
                                         isProRent = false;
+                                        _updateProRatedRent(_selectedRent ?? 'Monthly');
                                       });
-                                      _updateProRatedRent();
+
 
                                       print(rentNextDueDate.text);
                                     }
-                                    _updateProRatedRent();
+
                                   },
                                   readOnnly: true,
                                   suffixIcon: IconButton(
@@ -2761,7 +2933,7 @@ class _addLease3State extends State<addLease3>
                                               ? (value) {
                                             setState(() {
                                               isProRent = value ?? false;
-                                              _updateProRatedRent();
+                                              _updateProRatedRent(_selectedRent ?? 'Monthly');
                                             });
                                           }
                                               : null,

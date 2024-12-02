@@ -1523,6 +1523,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                           children: [
                                             Positioned.fill(
                                               child: TextField(
+                                                keyboardType: TextInputType.text,
                                                 controller: city,
                                                 style: TextStyle(
                                                   color: Colors.black,
@@ -1636,6 +1637,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                           children: [
                                             Positioned.fill(
                                               child: TextField(
+                                                keyboardType: TextInputType.text,
                                                 controller: state,
                                                 style: TextStyle(
                                                   color: Colors.black,
@@ -1760,6 +1762,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                           children: [
                                             Positioned.fill(
                                               child: TextField(
+                                                keyboardType: TextInputType.text,
                                                 controller: country,
                                                 style: TextStyle(
                                                   color: Colors.black,

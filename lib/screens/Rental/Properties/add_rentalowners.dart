@@ -1562,6 +1562,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   children: [
                                                     Positioned.fill(
                                                       child: TextField(
+                                                        keyboardType: TextInputType.text,
                                                         controller: city2,
                                                         style: TextStyle(
                                                           color: Colors.black,
@@ -1666,6 +1667,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   children: [
                                                     Positioned.fill(
                                                       child: TextField(
+                                                        keyboardType: TextInputType.text,
                                                         controller: state2,
                                                         style: TextStyle(
                                                           color: Colors.black,
@@ -1782,6 +1784,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   children: [
                                                     Positioned.fill(
                                                       child: TextField(
+                                                        keyboardType: TextInputType.text,
                                                         controller: county2,
                                                         style: TextStyle(
                                                           color: Colors.black,

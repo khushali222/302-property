@@ -2056,6 +2056,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   children: [
                                     Positioned.fill(
                                       child: TextField(
+                                        keyboardType: TextInputType.text,
                                         onChanged: (value) {
                                           setState(() {
                                             city2error = false;
@@ -2161,6 +2162,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   children: [
                                     Positioned.fill(
                                       child: TextField(
+                                        keyboardType: TextInputType.text,
                                         onChanged: (value) {
                                           setState(() {
                                             state2error = false;
@@ -2266,6 +2268,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   children: [
                                     Positioned.fill(
                                       child: TextField(
+                                        keyboardType: TextInputType.text,
                                         onChanged: (value) {
                                           setState(() {
                                             county2error = false;

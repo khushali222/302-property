@@ -1596,7 +1596,7 @@ class _AddTenantState extends State<AddTenant> {
                               SizedBox(
                                 height: 10,
                               ),
-                              Text('Phone Number *8',
+                              Text('Phone Number *',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
@@ -1694,7 +1694,7 @@ class _AddTenantState extends State<AddTenant> {
                               SizedBox(
                                 height: 10,
                               ),
-                              Text('Password  abc*',
+                              Text('Password *',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
