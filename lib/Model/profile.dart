@@ -11,7 +11,7 @@ class profile {
   String? companyCity;
   String? companyState;
   String? companyCountry;
-  int? phoneNumber;
+  String? phoneNumber;
   String? createdAt;
   String? updatedAt;
   bool? isAdminDelete;

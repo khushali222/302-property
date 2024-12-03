@@ -2738,6 +2738,7 @@ class _addLease3State extends State<addLease3>
                                 ),
                               if (MediaQuery.of(context).size.width < 500)
                                 CustomDropdown(
+                                  key: UniqueKey(),
                                   validator: (value) {
                                     if (_selectedRent == null) {
                                       return 'Please select a rent cycle';
@@ -2750,6 +2751,8 @@ class _addLease3State extends State<addLease3>
                                   onChanged: (String? value) {
                                     setState(() {
                                       _selectedRent = value;
+                                      _selectedRent != null;
+                                      isProRent = false;
                                       _updateProRatedRent(_selectedRent ?? 'Monthly');
                                     });
                                     _updateNextDueDate();

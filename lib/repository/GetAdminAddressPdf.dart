@@ -20,7 +20,7 @@ class GetAddressAdminPdfService {
         "id": "CRM $id",
       },
     );
-
+  print(response.body);
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
       if (responseData["statusCode"] == 200) {

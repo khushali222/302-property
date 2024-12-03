@@ -7,6 +7,7 @@ import 'package:three_zero_two_property/screens/Reports/ReportScreens/CompletedW
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/DelinquentTenants.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/ExpiringLeases.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/OpenWorkOrders.dart';
+import 'package:three_zero_two_property/screens/Reports/ReportScreens/Payment_Exception.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/RentersInsurance.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
@@ -583,5 +584,10 @@ List<ReportCardModel> reportCards = [
     title: "Account Totals Report",
     description: "Report of account totals",
     destination: AccountTotalsReports(),
+  ),
+  ReportCardModel(
+    title: "Payment Exception Report",
+    description: "Report of payments that are not attached to tenant",
+    destination: PaymentExceptionReports(),
   ),
 ];
