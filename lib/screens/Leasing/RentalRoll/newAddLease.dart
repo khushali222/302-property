@@ -449,9 +449,9 @@ class _addLease3State extends State<addLease3>
 
 
   void _updateProRatedRent(String frequency) {
-    if (isProRent && isAmountEntered && rentNextDueDate.text.isNotEmpty) {
+    if (isProRent && isAmountEntered && rentNextDueDate.text.isNotEmpty && startDateController.text.isNotEmpty && endDateController.text.isNotEmpty) {
       try {
-        // Parse the start date from the TextField (instead of using current date)
+        // Parse the  from the TextField (instead of using current date)
         DateTime currentDate = DateFormat('dd-MM-yyyy').parse(startDateController.text);
         DateTime nextDueDate = DateFormat('dd-MM-yyyy').parse(rentNextDueDate.text);
 
@@ -467,7 +467,7 @@ class _addLease3State extends State<addLease3>
           setState(() {
             proRatedRentController.text = "0.00";
           });
-          print("Validation failed: Either rent is <= 0 or next due date is not after start date.");
+          print("Validation failed: Either rent is <= 0 or next due date is not after .");
           return;
         }
 
@@ -1351,6 +1351,8 @@ class _addLease3State extends State<addLease3>
                                         endDateController.text =
                                             formattedEndDate;
                                          rentCycleItemsDynamic(endDate.difference(_startDate!).inDays);
+                                        startDateController.text.isNotEmpty;
+                                        isProRent = false;
                                         _updateProRatedRent(_selectedRent ?? 'Monthly');
                                       });
 
@@ -1364,7 +1366,7 @@ class _addLease3State extends State<addLease3>
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Please select start date';
+                                      return 'Please select ';
                                     }
                                     return null;
                                   },
@@ -1437,6 +1439,8 @@ class _addLease3State extends State<addLease3>
                                       setState(() {
                                         endDateController.text = formattedDate;
                                         rentCycleItemsDynamic(pickedDate.difference(_startDate!).inDays);
+                                        endDateController.text.isNotEmpty;
+                                        isProRent = false;
                                         _updateProRatedRent(_selectedRent ?? 'Monthly');
                                       });
 
@@ -1552,6 +1556,9 @@ class _addLease3State extends State<addLease3>
                                                     _startDate = pickedDate;
                                                     endDateController.text =
                                                         formattedEndDate;
+                                                    startDateController.text.isNotEmpty;
+                                                    isProRent = false;
+
                                                     _updateProRatedRent(_selectedRent ?? 'Monthly');
                                                   });
 
@@ -1566,7 +1573,7 @@ class _addLease3State extends State<addLease3>
                                               validator: (value) {
                                                 if (value == null ||
                                                     value.isEmpty) {
-                                                  return 'Please select start date';
+                                                  return 'Please select ';
                                                 }
                                                 return null;
                                               },

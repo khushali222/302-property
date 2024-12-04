@@ -31,12 +31,13 @@ class Data {
   String? leaseId;
   String? paymentType;
   String? response;
-  List<Entry>? entry;
+  List<Entryy>? entry;
   int? totalAmount;
   String? type;
   List<Null>? paymentAttachment;
   String? createdAt;
   String? updatedAt;
+  String? checknumber;
   bool? isDelete;
   RentalData? rentalData;
 
@@ -52,6 +53,7 @@ class Data {
     this.type,
     this.paymentAttachment,
     this.createdAt,
+    this.checknumber,
     this.updatedAt,
     this.isDelete,
     this.rentalData,
@@ -66,7 +68,7 @@ class Data {
       paymentType: json['payment_type']??"",
       response: json['response']??"",
       entry: json['entry'] != null
-          ? List<Entry>.from(json['entry'].map((v) => Entry.fromJson(v)))
+          ? List<Entryy>.from(json['entry'].map((v) => Entryy.fromJson(v)))
           : null,
       totalAmount: json['total_amount']  as int?,
       type: json['type'],
@@ -74,6 +76,7 @@ class Data {
           ? List<Null>.from(json['payment_attachment'].map((v) => null)) // Assuming you meant to handle nulls differently
           : null,
       createdAt: json['createdAt']??"",
+      checknumber: json['check_number']??"",
       updatedAt: json['updatedAt'] ??"",
       isDelete: json['is_delete']??"",
       rentalData: json['rental_data'] != null
@@ -95,6 +98,7 @@ class Data {
       'type': type,
       'payment_attachment': paymentAttachment,
       'createdAt': createdAt,
+      'check_number': checknumber,
       'updatedAt': updatedAt,
       'is_delete': isDelete,
       'rental_data': rentalData?.toJson(),
@@ -102,16 +106,16 @@ class Data {
   }
 }
 
-class Entry {
+class Entryy {
   String? account;
   int? amount;
   String? chargeType;
   String? date;
 
-  Entry({this.account, this.amount, this.chargeType, this.date});
+  Entryy({this.account, this.amount, this.chargeType, this.date});
 
-  factory Entry.fromJson(Map<String, dynamic> json) {
-    return Entry(
+  factory Entryy.fromJson(Map<String, dynamic> json) {
+    return Entryy(
       account: json['account']??"",
       amount: json['amount'] as int?,
       chargeType: json['charge_type']??"",

@@ -18,6 +18,7 @@ import 'package:three_zero_two_property/Model/AccountTotalsReports.dart';
 import 'package:three_zero_two_property/Model/DelinquentTenantsModel.dart';
 import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
 import 'package:three_zero_two_property/Model/payment_exception.dart';
+import 'package:three_zero_two_property/Model/payment_exception.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -699,15 +700,25 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
     final syncXlsx.Workbook workbook = syncXlsx.Workbook();
     final syncXlsx.Worksheet sheet = workbook.worksheets[0];
 
+    List<String> headerData = [];
+
+    rentalOwnerReports.forEach((transaction) {
+      transaction.entry!.forEach((entry) {
+        headerData.add(entry.account!);
+      });
+    });
+    List<String> uniqueList = [...(Set<String>.from(headerData))];
     // Set column widths
-    sheet.getRangeByName('A1:C1').columnWidth = 20;
+    sheet.getRangeByName('A1:ZZ1').columnWidth = 20;
 
     final List<String> headers = [
       'Property',
       'Payment',
       'Date',
       'Check Number',
+      ...uniqueList,
       'Total'
+
     ];
 
     // Header cell style
@@ -718,6 +729,12 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
     headerCellStyle.fontColor = '#FFFFFF';
     headerCellStyle.fontSize = 16;
     headerCellStyle.hAlign = syncXlsx.HAlignType.center;
+
+    for (int i = 0; i < headers.length; i++) {
+      final cell = sheet.getRangeByIndex(1, i + 1);
+      cell.setText(headers[i]);
+      cell.cellStyle = headerCellStyle;
+    }
 
     // Currency cell style
     final syncXlsx.Style currencyCellStyle =
@@ -742,39 +759,48 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
     int rowIndex = 2;
     double grandTotal = 0.0;
 
-    for (var owner in rentalOwnerReports) {
-      // Rental Owner Name
-      final rentalOwnerCell = sheet.getRangeByIndex(rowIndex, 1);
-      rentalOwnerCell.setText(owner.rentalData?.rentalAdress ?? '');
-      rentalOwnerCell.cellStyle.bold = true;
-      sheet.getRangeByName('A$rowIndex:C$rowIndex').merge();
-      rowIndex++;
 
-      for (var property in owner.entry!) {
-        // Account
-        sheet.getRangeByIndex(rowIndex, 1).setText('');
-        sheet.getRangeByIndex(rowIndex, 2).setText(property.account ?? 'N/A');
-        sheet.getRangeByIndex(rowIndex, 3).cellStyle = currencyCellStyle; // Apply currency style
-        rowIndex++;
+    for (int i = 0; i < rentalOwnerReports.length; i++) {
+      final workOrder = rentalOwnerReports[i];
+
+      // Safe date parsing with default/fallback value
+      String formattedDate;
+      try {
+        formattedDate = workOrder.entry!.first.date != null
+            ? DateFormat('yyyy-MM-dd').format(
+            DateFormat('yyyy-MM-dd').parse(workOrder.createdAt.toString()))
+            : 'Invalid Date';
+      } catch (e) {
+        formattedDate = 'Invalid Date';
       }
 
-      // Subtotal
-      if(owner.totalAmount != 'Grand Totals') {
-        sheet.getRangeByIndex(rowIndex, 1).setText('');
-        sheet.getRangeByIndex(rowIndex, 2).setText('Subtotal');
-        sheet
-            .getRangeByIndex(rowIndex, 2)
-            .cellStyle
-            .bold = true;
-        // sheet.getRangeByIndex(rowIndex, 2).setText(''); // Empty for Account
-      //  sheet.getRangeByIndex(rowIndex, 3).setNumber(owner.rentalData!.rentalAdress ?? "");
-        sheet
-            .getRangeByIndex(rowIndex, 3)
-            .cellStyle = boldAmountStyle; // Apply bold amount style
-        rowIndex++;
+      sheet.getRangeByIndex(2 + i, 1).setText(
+          "${workOrder.rentalData?.rentalAdress} " ?? '');
+      sheet.getRangeByIndex(2 + i, 2).setText(workOrder.paymentType ?? '');
+      sheet.getRangeByIndex(2 + i, 3).setText(formattedDate);
+      String? checkNumber = workOrder.checknumber != null && workOrder.checknumber!.isNotEmpty
+          ? workOrder.checknumber
+          : 'N/A';
+      sheet.getRangeByIndex(2 + i, 4).setText(checkNumber);
+      sheet
+          .getRangeByIndex(2 + i, 5 + uniqueList.length)
+          .setText(workOrder.totalAmount.toString());
+      sheet.getRangeByIndex(2 + i, 5 + uniqueList.length).cellStyle.hAlign =
+          syncXlsx.HAlignType.right;
+      for (int j = 0; j < uniqueList.length; j++) {
+        final String header = uniqueList.elementAt(j);
+        final List<Entryy> value = workOrder.entry!.length > 0
+            ? workOrder.entry!
+            .where((entry) =>
+        entry.account != null && entry.account == header)
+            .toList()
+            : [];
+        sheet.getRangeByIndex(2 + i, 5 + j).setText(value.length > 0
+            ? value[0].amount.toString() ?? '0'
+            : "0"); // Handle null values gracefully
+        sheet.getRangeByIndex(2 + i, 5 + j).cellStyle.hAlign =
+            syncXlsx.HAlignType.right;
       }
-
-      grandTotal += owner.totalAmount ?? 00;
     }
 
     // Grand Total
@@ -807,71 +833,77 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
     );
   }
 
-  Future<void> generateAccountTotalReportCsv(
-      List<Data> rentalOwnerReports) async {
+  Future<void> generateAccountTotalReportCsv(List<Data> rentalOwnerReports) async {
+    final List<List<String>> rows = [];
+
     // Define headers for CSV
     final List<String> headers = [
       'Property',
       'Payment',
       'Date',
       'Check Number',
-      'Total'
+      ...rentalOwnerReports.fold<Set<String>>({}, (Set<String> existingHeaders, Data transaction) {
+        existingHeaders.addAll(transaction.entry!.map((entry) => entry.account ?? ""));
+        return existingHeaders;
+      }).toList(),
+      'Total',
     ];
+
+    rows.add(headers);
+
+    for (final workOrder in rentalOwnerReports) {
+      final List<String> row = []; // Stores data for a single row
+
+      // Safe date parsing with default/fallback value
+      String formattedDate;
+      try {
+        formattedDate = workOrder.entry!.first.date != null
+            ? DateFormat('yyyy-MM-dd').format(
+            DateFormat('yyyy-MM-dd').parse(workOrder.entry!.first.date ?? ""))
+            : 'Invalid Date';
+      } catch (e) {
+        formattedDate = 'Invalid Date';
+      }
+
+      row.add("${workOrder.rentalData?.rentalAdress}" ?? '');
+      row.add(workOrder.paymentType ?? '');
+      row.add(formattedDate);
+
+      // Set check number or "N/A" if it's empty
+      String? checkNumber = (workOrder.checknumber != null && workOrder.checknumber!.isNotEmpty)
+          ? workOrder.checknumber
+          : 'N/A';  // This line ensures "N/A" is shown if checknumber is empty
+      row.add(checkNumber!);
+
+      for (final String header in rentalOwnerReports.fold<Set<String>>({},
+              (Set<String> existingHeaders, Data transaction) {
+            existingHeaders.addAll(
+                transaction.entry!.map((entry) => entry.account ?? ""));
+            return existingHeaders;
+          }).toList()) {
+        final List<Entryy> value = workOrder.entry!.length > 0
+            ? workOrder.entry!
+            .where((entry) =>
+        entry.account != null && entry.account == header)
+            .toList()
+            : [];
+        row.add(value.length > 0
+            ? value[0].amount.toString() ?? '0'
+            : '0'); // Handle null values
+      }
+
+      row.add(workOrder.totalAmount.toString());
+      rows.add(row);
+
+    }
 
     // Create a buffer to store CSV data
     final StringBuffer csvBuffer = StringBuffer();
 
     // Add headers to the CSV file
-    csvBuffer.writeln(headers.join(','));
-
-    double grandTotal = 0.0;
-
-    // Iterate through each rental owner report
-    for (var owner in rentalOwnerReports) {
-      // Add rental owner name as a row
-      csvBuffer.writeln('${owner.rentalData?.rentalAdress ?? ''}');
-
-      // Iterate through each property for the current rental owner
-      for (var property in owner.entry!) {
-        // Add property and tenant details
-        csvBuffer.writeln([
-          '',
-          property.account,
-          property.amount ?? 0/0,
-
-        ].join(','));
-
-
-
-        // Add surcharge row if applicable
-        // if (property.surcharge != 0.0) {
-        //   csvBuffer.writeln([
-        //     'Surcharge',
-        //     '',
-        //     '',
-        //     '',
-        //     '',
-        //     '',
-        //     '',
-        //     '',
-        //     '\$${property.surcharge.toStringAsFixed(2)}'
-        //   ].join(','));
-        // }
-      }
-
-      // Add subtotal row for the current rental owner
-      if(owner.rentalData?.rentalAdress != 'Grand Totals')
-        csvBuffer.writeln([
-          '',
-          'Subtotal ',
-          '${(owner.totalAmount ?? 0.0).toStringAsFixed(2)}'
-        ].join(','));
-
-      // Accumulate grand total
-      grandTotal += owner.totalAmount ?? 0.0;
+    for (final row in rows) {
+      csvBuffer.writeln(row.join(','));
     }
-
-
 
     // Convert buffer to list of bytes for CSV file
     final List<int> bytes = utf8.encode(csvBuffer.toString());
@@ -2558,19 +2590,15 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                                 DateTime(now.year, 12, 31).toString());
                           } else if (value == "Custom") {
                             customdate = true;
-
-                          }
-                          if (value != "Custom" && customdate == true) {
-                            customdate = false;
-                            fromDate.text = "";
+                            fromDate.text = ""; // Set fromDate to empty
                             toDate.text = "";
+                            _futurePaymentException = fetchPaymentExceptionReportsData();// Set toDate to empty
                           }
-                          if (value != "Custom") {
+                          // Fetch the report data with the selected date range
+                          if (daterange != "Custom") {
                             DateTime from = DateTime.parse(convertDateFormat(fromDate.text));
                             DateTime to = DateTime.parse(convertDateFormat(toDate.text));
                             _futurePaymentException = fetchPaymentExceptionReportsData(fromDate: from, toDate: to);
-
-                            print('custom ${value}');
                           }
 
                         });
@@ -2720,11 +2748,11 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                           generateAccountTotalReportPdf(data);
                         } else if (value == 'XLSX' && data != null) {
                           print('XLSX');
-                         // generateAccountTotalReportExcel(data);
+                         generateAccountTotalReportExcel(data);
 
                         } else if (value == 'CSV' && data != null) {
                           print('CSV');
-                         // generateAccountTotalReportCsv(data);
+                          generateAccountTotalReportCsv(data);
 
                         }
                       },
