@@ -619,6 +619,8 @@ class _Lease_tableState extends State<Lease_table> {
                       Provider.of<SelectedCosignersProvider>(context,
                               listen: false)
                           .clearCosigner();
+                      Provider.of<SelectedApplicantProvider>(context,
+                          listen: false).clearApplicant();
                       if (leaseCount < leaseCountLimit) {
                         final result = await Navigator.of(context).push(
                             MaterialPageRoute(

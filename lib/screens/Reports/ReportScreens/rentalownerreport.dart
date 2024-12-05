@@ -503,6 +503,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
   }
 
   bool istenantDataLoading = false;
+  bool isAddLoading = false;
   bool customdate = false;
   Future<void> generateDelinquentTenantsPdf(
       List<RentalOwnerReport> delinquentTenantsData) async {
@@ -1216,8 +1217,9 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
             .toString()
             .split(" ")[0];
         fromDate.text = formatDate(fromDate.text);
-        _futureRentersInsurance =
-            fetchDelinquentTenantsData(fromDate.text, toDate.text);
+
+        // _futureRentersInsurance =
+        //     fetchDelinquentTenantsData(fromDate.text, toDate.text);
       });
 
       // Notify the FormField state of the change
@@ -1255,8 +1257,8 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
             .toString()
             .split(" ")[0];
         toDate.text = formatDate(toDate.text);
-        _futureRentersInsurance =
-            fetchDelinquentTenantsData(fromDate.text, toDate.text);
+        // _futureRentersInsurance =
+        //     fetchDelinquentTenantsData(fromDate.text, toDate.text);
       });
 
       // Notify the FormField state of the change
@@ -1319,6 +1321,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
   String? daterange;
   String? chargeType;
   String? selectedrenatalownerid;
+  bool showTableData = false;
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -1422,6 +1425,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                 const SizedBox(height: 10),
                                 _buildHeaders(),
                                 const SizedBox(height: 20),
+                                if (showTableData)
                                 Container(
                                   decoration: BoxDecoration(
                                       border: Border.all(
@@ -2855,9 +2859,9 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                       onChanged: (value) {
                         setState(() {
                           selectedrenatalownerid = value;
-                          _futureRentersInsurance = fetchDelinquentTenantsData(
-                              fromDate.text, toDate.text,
-                              rentalownerid: value);
+                          // _futureRentersInsurance = fetchDelinquentTenantsData(
+                          //     fromDate.text, toDate.text,
+                          //     rentalownerid: value);
                         });
                         // Handle the selected charge type
                         print(value);
@@ -2946,9 +2950,9 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                             toDate.text = "";
                           }
                           if (value != "Custom") {
-                            _futureRentersInsurance =
-                                fetchDelinquentTenantsData(
-                                    fromDate.text, toDate.text);
+                            // _futureRentersInsurance =
+                            //     fetchDelinquentTenantsData(
+                            //         fromDate.text, toDate.text);
                           }
                         });
                         // Handle the selected charge type
@@ -3067,6 +3071,12 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                         DropdownMenuItem<String>(
                           value: 'Check',
                           child: Text('Check'),
+                        ), DropdownMenuItem<String>(
+                          value: 'Cash',
+                          child: Text('Check'),
+                        ), DropdownMenuItem<String>(
+                          value: 'Manual',
+                          child: Text('Check'),
                         ),
                         DropdownMenuItem<String>(
                           value: 'Money Order',
@@ -3084,9 +3094,9 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                       onChanged: (value) {
                         setState(() {
                           chargeType = value;
-                          _futureRentersInsurance = fetchDelinquentTenantsData(
-                              fromDate.text, toDate.text,
-                              charge: value);
+                          // _futureRentersInsurance = fetchDelinquentTenantsData(
+                          //     fromDate.text, toDate.text,
+                          //     charge: value);
                         });
                         // Handle the selected charge type
                         print(value);
@@ -3096,6 +3106,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                 ),
               ),
               const SizedBox(width: 6),
+              if(showTableData)
               Expanded(
                 child: SizedBox(
                   //  width: 100,
@@ -3144,6 +3155,48 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                           Icon(Icons.arrow_drop_down),
                         ],
                       ),
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 0.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Spacer(),
+              Expanded(
+                child: SizedBox(
+                  //  width: 100,
+                  height: 42,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: blueColor,
+                    ),
+                    onPressed: () async {
+                      setState(() {
+                        showTableData = true; // Set to true when the button is pressed
+                      });
+                      await fetchDelinquentTenantsData(fromDate.text, toDate.text); // Call the API
+                    },
+                    child:
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        isAddLoading
+                            ? const Center(
+                          child: SpinKitFadingCircle(
+                            color: Colors.white,
+                            size: 21.0,
+                          ),
+                        )
+                            : Text('Add'),
+
+                      ],
                     ),
                   ),
                 ),

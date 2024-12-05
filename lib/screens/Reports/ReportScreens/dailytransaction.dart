@@ -2155,9 +2155,23 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                           DropdownMenuItem<String>(
                                             value: 'Check',
                                             child: Text('Check'),
+                                          ), DropdownMenuItem<String>(
+                                            value: 'Cash',
+                                            child: Text('Check'),
+                                          ), DropdownMenuItem<String>(
+                                            value: 'Manual',
+                                            child: Text('Check'),
                                           ),
                                           DropdownMenuItem<String>(
-                                            value: 'All',
+                                            value: 'Money Order',
+                                            child: Text('Money Order'),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: "Cashier's Check",
+                                            child: Text("Cashier's Check"),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: "All",
                                             child: Text('All'),
                                           ),
                                         ],
@@ -2900,85 +2914,85 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                   ),
                                 ),
                                 SizedBox(height: 20),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        SizedBox(width: 10),
-                                        Material(
-                                          elevation: 3,
-                                          child: Container(
-                                            height: 40,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 12.0),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.grey),
-                                            ),
-                                            child: DropdownButtonHideUnderline(
-                                              child: DropdownButton<int>(
-                                                value: itemsPerPage,
-                                                items: itemsPerPageOptions
-                                                    .map((int value) {
-                                                  return DropdownMenuItem<int>(
-                                                    value: value,
-                                                    child:
-                                                        Text(value.toString()),
-                                                  );
-                                                }).toList(),
-                                                onChanged: (newValue) {
-                                                  setState(() {
-                                                    itemsPerPage = newValue!;
-                                                    currentPage =
-                                                        0; // Reset to first page when items per page change
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                          icon: FaIcon(
-                                            FontAwesomeIcons.circleChevronLeft,
-                                            color: currentPage == 0
-                                                ? Colors.grey
-                                                : blueColor,
-                                          ),
-                                          onPressed: currentPage == 0
-                                              ? null
-                                              : () {
-                                                  setState(() {
-                                                    currentPage--;
-                                                  });
-                                                },
-                                        ),
-                                        Text(
-                                            'Page ${currentPage + 1} of $totalPages'),
-                                        IconButton(
-                                          icon: FaIcon(
-                                            FontAwesomeIcons.circleChevronRight,
-                                            color: currentPage < totalPages - 1
-                                                ? blueColor
-                                                : Colors.grey,
-                                          ),
-                                          onPressed:
-                                              currentPage < totalPages - 1
-                                                  ? () {
-                                                      setState(() {
-                                                        currentPage++;
-                                                      });
-                                                    }
-                                                  : null,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.end,
+                                //   children: [
+                                //     Row(
+                                //       children: [
+                                //         SizedBox(width: 10),
+                                //         Material(
+                                //           elevation: 3,
+                                //           child: Container(
+                                //             height: 40,
+                                //             padding: EdgeInsets.symmetric(
+                                //                 horizontal: 12.0),
+                                //             decoration: BoxDecoration(
+                                //               border: Border.all(
+                                //                   color: Colors.grey),
+                                //             ),
+                                //             child: DropdownButtonHideUnderline(
+                                //               child: DropdownButton<int>(
+                                //                 value: itemsPerPage,
+                                //                 items: itemsPerPageOptions
+                                //                     .map((int value) {
+                                //                   return DropdownMenuItem<int>(
+                                //                     value: value,
+                                //                     child:
+                                //                         Text(value.toString()),
+                                //                   );
+                                //                 }).toList(),
+                                //                 onChanged: (newValue) {
+                                //                   setState(() {
+                                //                     itemsPerPage = newValue!;
+                                //                     currentPage =
+                                //                         0; // Reset to first page when items per page change
+                                //                   });
+                                //                 },
+                                //               ),
+                                //             ),
+                                //           ),
+                                //         ),
+                                //       ],
+                                //     ),
+                                //     Row(
+                                //       children: [
+                                //         IconButton(
+                                //           icon: FaIcon(
+                                //             FontAwesomeIcons.circleChevronLeft,
+                                //             color: currentPage == 0
+                                //                 ? Colors.grey
+                                //                 : blueColor,
+                                //           ),
+                                //           onPressed: currentPage == 0
+                                //               ? null
+                                //               : () {
+                                //                   setState(() {
+                                //                     currentPage--;
+                                //                   });
+                                //                 },
+                                //         ),
+                                //         Text(
+                                //             'Page ${currentPage + 1} of $totalPages'),
+                                //         IconButton(
+                                //           icon: FaIcon(
+                                //             FontAwesomeIcons.circleChevronRight,
+                                //             color: currentPage < totalPages - 1
+                                //                 ? blueColor
+                                //                 : Colors.grey,
+                                //           ),
+                                //           onPressed:
+                                //               currentPage < totalPages - 1
+                                //                   ? () {
+                                //                       setState(() {
+                                //                         currentPage++;
+                                //                       });
+                                //                     }
+                                //                   : null,
+                                //         ),
+                                //       ],
+                                //     ),
+                                //   ],
+                                // ),
                               ],
                             ),
                           if (data.length == 0)

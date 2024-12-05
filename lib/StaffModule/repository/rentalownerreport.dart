@@ -30,6 +30,7 @@ class RentalOwnerReportService {
         "id": "CRM $id",
       },);
 
+      print('rentalowners abc ${response.body}');
       if (response.statusCode == 200) {
         final List<dynamic> jsonData = json.decode(response.body)["data"];
 

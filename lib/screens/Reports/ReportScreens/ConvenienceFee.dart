@@ -5,33 +5,30 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:csv/csv.dart';
+
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/Model/AccountTotalsReports.dart';
+
 import 'package:three_zero_two_property/Model/DelinquentTenantsModel.dart';
-import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
-import 'package:three_zero_two_property/Model/payment_exception.dart';
-import 'package:three_zero_two_property/Model/payment_exception.dart';
+
+
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
-import 'package:three_zero_two_property/constant/constant.dart';
+
 import 'package:three_zero_two_property/provider/dateProvider.dart';
-import 'package:three_zero_two_property/provider/getAdminAddress.dart';
-import 'package:three_zero_two_property/repository/AccountTotalsReports.dart';
-import 'package:three_zero_two_property/repository/DelinquentTenantsService.dart';
+
 import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
-import 'package:three_zero_two_property/repository/RentersInsuranceService.dart';
+
 import 'package:three_zero_two_property/repository/payment_Exception.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
-import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
+
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -40,19 +37,20 @@ import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:fluttertoast/fluttertoast.dart';
-import '../../../Model/rentalownerreport.dart';
-import '../../../repository/rentalownerreport.dart';
+
+import '../../../Model/ConvenienceFeeModel.dart';
+import '../../../repository/ConvenienceFeeRepo.dart';
 import '../../../widgets/custom_drawer.dart';
 
-class PaymentExceptionReports extends StatefulWidget {
-  const PaymentExceptionReports({super.key});
+class ConvenienceFeeReports extends StatefulWidget {
+  const ConvenienceFeeReports({super.key});
 
   @override
-  State<PaymentExceptionReports> createState() => _PaymentExceptionReportsState();
+  State<ConvenienceFeeReports> createState() => _ConvenienceFeeReportsState();
 }
 
-class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
-  late Future<List<Data>> _futurePaymentException;
+class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
+  late Future<List<Data>> _futureConvenienceFee;
   List<Data> DelinquentTenantsModel = [];
   bool isLoading = true;
   String? errorMessage;
@@ -102,10 +100,10 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
     DateTime to = DateTime(now.year, now.month, now.day, 23, 59, 59); // End of the day
     if (daterange == "Custom" && fromDate.text.isEmpty && toDate.text.isEmpty) {
       // Fetch all data logic here
-      _futurePaymentException = fetchPaymentExceptionReportsData(); // Adjust this method to fetch all data
+      _futureConvenienceFee = fetchConvenienceFeeReportsData(); // Adjust this method to fetch all data
     }
     // Call the fetch method with the date range
-    //_futurePaymentException = fetchPaymentExceptionReportsData(fromDate: from, toDate: to);
+    //_futureConvenienceFee = fetchPaymentExceptionReportsData(fromDate: from, toDate: to);
   }
   DateTime? parseDate(String dateString) {
     // Try parsing with the expected format
@@ -121,24 +119,24 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
       }
     }
   }
-  Future<List<Data>> fetchPaymentExceptionReportsData({DateTime? fromDate, DateTime? toDate}) async {
+  Future<List<Data>> fetchConvenienceFeeReportsData({DateTime? fromDate, DateTime? toDate}) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
       String? token = prefs.getString('token');
 
-      List<Data> data = await PaymentExceptionReportsServices().fetchPaymentExceptionReports();
+      List<Data> data = await ConvenienceFeeReportsServices().fetchConvenienceFeeReports();
 
       // Filter data based on the provided date range
-      if (fromDate != null && toDate != null) {
-        data = data.where((item) {
-          DateTime? itemDate = parseDate(item.entry?.first.date ?? ""); // Use the new parseDate function
-          if (itemDate == null) {
-            return false; // Exclude this item if the date could not be parsed
-          }
-          return itemDate.isAfter(fromDate.subtract(Duration(days: 1))) && itemDate.isBefore(toDate.add(Duration(days: 1)));
-        }).toList();
-      }
+      // if (fromDate != null && toDate != null) {
+      //   data = data.where((item) {
+      //     DateTime? itemDate = parseDate(item.entry?.first.date ?? ""); // Use the new parseDate function
+      //     if (itemDate == null) {
+      //       return false; // Exclude this item if the date could not be parsed
+      //     }
+      //     return itemDate.isAfter(fromDate.subtract(Duration(days: 1))) && itemDate.isBefore(toDate.add(Duration(days: 1)));
+      //   }).toList();
+      // }
 
       setState(() {
         DelinquentTenantsModel = data;
@@ -427,26 +425,30 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                 },
                 child: Row(
                   children: [
-                    SizedBox(width: 25),
-                    Text("Type", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 20),
+                width < 400
+                    ? const Text("Lease \nEndDate",
+                    style: TextStyle(color: Colors.white))
+                    : const Text("Lease EndDate",
+                    style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
                         : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -477,25 +479,25 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                 child: Row(
                   children: [
                     SizedBox(width: 25),
-                    Text("Date", style: TextStyle(color: Colors.white)),
+                    Text("Tenant", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
                     ascending3
                         ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
                         : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -592,7 +594,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                 mainAxisAlignment: pw.MainAxisAlignment.center,
                 children: [
                   pw.Text(
-                    'Payment Exception Report ',
+                    'Convenience Fee Override',
                     style: pw.TextStyle(
                       fontSize: 18,
                       fontWeight: pw.FontWeight.bold,
@@ -630,7 +632,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                   ),
                   pw.Text(
                     '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
-                        '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
+                        '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'},'
                         '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
                     style: pw.TextStyle(
                       fontSize: 10,
@@ -658,10 +660,9 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
             pw.Table.fromTextArray(
                 headers: [
                   'Property',
-                  'Payment',
-                  'Date',
-                  'Check Number',
-                   'Total'
+                  'Lease End Date',
+                  'Tenant',
+                  'Override Percentage',
                 ],
                 data: _generateTableData(delinquentTenantsData),
                 headerStyle: pw.TextStyle(
@@ -674,17 +675,17 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                 cellAlignment: pw.Alignment.centerLeft,
                 headerAlignment: pw.Alignment.centerLeft,
                 border: null),
-            pw.Divider(thickness: 3),
-            pw.Padding(
-                padding: pw.EdgeInsets.symmetric(horizontal: 5),
-                child: pw.Row(
-                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                    children: [
-                      pw.Text('Grand Total',
-                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                      pw.Text('\$${grandtotal.toStringAsFixed(2)}',
-                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold))
-                    ])),
+            // pw.Divider(thickness: 3),
+            // pw.Padding(
+            //     padding: pw.EdgeInsets.symmetric(horizontal: 5),
+            //     child: pw.Row(
+            //         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            //         children: [
+            //           pw.Text('Grand Total',
+            //               style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+            //           pw.Text('\$${grandtotal.toStringAsFixed(2)}',
+            //               style: pw.TextStyle(fontWeight: pw.FontWeight.bold))
+            //         ])),
           ];
         },
       ),
@@ -702,23 +703,15 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
 
     List<String> headerData = [];
 
-    rentalOwnerReports.forEach((transaction) {
-      transaction.entry!.forEach((entry) {
-        headerData.add(entry.account!);
-      });
-    });
-    List<String> uniqueList = [...(Set<String>.from(headerData))];
+
     // Set column widths
     sheet.getRangeByName('A1:ZZ1').columnWidth = 20;
 
     final List<String> headers = [
       'Property',
-      'Payment',
-      'Date',
-      'Check Number',
-      ...uniqueList,
-      'Total'
-
+      'Lease End Date',
+      'Tenant',
+      'Override Percentage',
     ];
 
     // Header cell style
@@ -759,63 +752,49 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
     int rowIndex = 2;
     double grandTotal = 0.0;
 
+    final syncXlsx.Style rightAlignedTextStyle = workbook.styles.add('rightAlignedTextStyle');
+    rightAlignedTextStyle.hAlign = syncXlsx.HAlignType.right;
 
     for (int i = 0; i < rentalOwnerReports.length; i++) {
       final workOrder = rentalOwnerReports[i];
 
-      // Safe date parsing with default/fallback value
-      String formattedDate;
-      try {
-        formattedDate = workOrder.entry!.first.date != null
-            ? DateFormat('yyyy-MM-dd').format(
-            DateFormat('yyyy-MM-dd').parse(workOrder.createdAt.toString()))
-            : 'Invalid Date';
-      } catch (e) {
-        formattedDate = 'Invalid Date';
+      sheet.getRangeByIndex(2 + i, 1).setText(
+          '${workOrder.rentalData?.rentalAddress ?? '-'}${(workOrder.rentalData?.rentalAddress != null && workOrder.unitData?.rentalUnit != null) ? ' - ' : ''}${workOrder.unitData?.rentalUnit ?? ''}');
+      sheet.getRangeByIndex(2 + i, 2).setText(formatDate(workOrder.endDate ?? ""));
+     // sheet.getRangeByIndex(2 + i, 3).setText('${workOrder.tenantData!.first.tenantFirstName}''${workOrder.tenantData!.first.tenantLastName}');
+      String tenantInfo = '';
+      if (workOrder.tenantData != null && workOrder.tenantData!.isNotEmpty) {
+        for (var tenant in workOrder.tenantData!) {
+          tenantInfo += '${tenant.tenantFirstName} ${tenant.tenantLastName} , ';
+        }
+        // Remove the trailing comma and space
+        tenantInfo = tenantInfo.substring(0, tenantInfo.length - 2);
+      } else {
+        tenantInfo = 'N/A';
       }
 
-      sheet.getRangeByIndex(2 + i, 1).setText(
-          "${workOrder.rentalData?.rentalAdress} " ?? '');
-      sheet.getRangeByIndex(2 + i, 2).setText(workOrder.paymentType ?? '');
-      sheet.getRangeByIndex(2 + i, 3).setText(formattedDate);
-      String? checkNumber = workOrder.checknumber != null && workOrder.checknumber!.isNotEmpty
-          ? workOrder.checknumber
-          : 'N/A';
-      sheet.getRangeByIndex(2 + i, 4).setText(checkNumber);
-      sheet
-          .getRangeByIndex(2 + i, 5 + uniqueList.length)
-          .setText(workOrder.totalAmount.toString());
-      sheet.getRangeByIndex(2 + i, 5 + uniqueList.length).cellStyle.hAlign =
-          syncXlsx.HAlignType.right;
-      for (int j = 0; j < uniqueList.length; j++) {
-        final String header = uniqueList.elementAt(j);
-        final List<Entryy> value = workOrder.entry!.length > 0
-            ? workOrder.entry!
-            .where((entry) =>
-        entry.account != null && entry.account == header)
-            .toList()
-            : [];
-        sheet.getRangeByIndex(2 + i, 5 + j).setText(value.length > 0
-            ? value[0].amount.toString() ?? '0'
-            : "0"); // Handle null values gracefully
-        sheet.getRangeByIndex(2 + i, 5 + j).cellStyle.hAlign =
-            syncXlsx.HAlignType.right;
+// Set tenant info
+      sheet.getRangeByIndex(rowIndex + i, 3).setText(tenantInfo);
+      String overrideFee = '';
+      if (workOrder.tenantData != null && workOrder.tenantData!.isNotEmpty) {
+        overrideFee = workOrder.tenantData!.map((tenant) => '${tenant.overrideFee}%').join(', ');
+      } else {
+        overrideFee = 'N/A';
       }
+      sheet.getRangeByIndex(rowIndex + i, 4).setText(overrideFee);
+      sheet.getRangeByIndex(rowIndex + i, 4).cellStyle = rightAlignedTextStyle; // Apply right alignment style
+
+      sheet.getRangeByIndex(2 + i, 4).cellStyle = rightAlignedTextStyle;
     }
 
-    // Grand Total
-    // sheet.getRangeByIndex(rowIndex, 1).setText('Grand Total');
-    // sheet.getRangeByIndex(rowIndex, 1).cellStyle.bold = true;
-    // sheet.getRangeByIndex(rowIndex, 2).setText(''); // Empty for Account
-    // sheet.getRangeByIndex(rowIndex, 3).setNumber(grandTotal);
-    // sheet.getRangeByIndex(rowIndex, 3).cellStyle = boldAmountStyle; // Apply bold amount style
+
 
     final List<int> bytes = workbook.saveAsStream();
     workbook.dispose();
 
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
-    final String fileName = 'Payment_exception_report_$formattedDate.xlsx';
+    final String fileName = 'Convenience_fee_override_$formattedDate.xlsx';
 
     final Directory directory = Platform.isIOS
         ? await getApplicationDocumentsDirectory()
@@ -833,68 +812,60 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
     );
   }
 
+
   Future<void> generateAccountTotalReportCsv(List<Data> rentalOwnerReports) async {
     final List<List<String>> rows = [];
 
     // Define headers for CSV
     final List<String> headers = [
       'Property',
-      'Payment',
-      'Date',
-      'Check Number',
-      ...rentalOwnerReports.fold<Set<String>>({}, (Set<String> existingHeaders, Data transaction) {
-        existingHeaders.addAll(transaction.entry!.map((entry) => entry.account ?? ""));
-        return existingHeaders;
-      }).toList(),
-      'Total',
+      'Lease End Date',
+      'Tenant',
+      'Override Percentage',
     ];
 
     rows.add(headers);
 
     for (final workOrder in rentalOwnerReports) {
-      final List<String> row = []; // Stores data for a single row
+      // Check if tenantData is not empty
+      if (workOrder.tenantData != null && workOrder.tenantData!.isNotEmpty) {
+        // Get property and lease end date
+        final String property = '${workOrder.rentalData?.rentalAddress ?? '-'}${(workOrder.rentalData?.rentalAddress != null && workOrder.unitData?.rentalUnit != null) ? ' - ' : ''}${workOrder.unitData?.rentalUnit ?? ''}';
+        final String leaseEndDate = formatDate(workOrder.endDate ?? "");
 
-      // Safe date parsing with default/fallback value
-      String formattedDate;
-      try {
-        formattedDate = workOrder.entry!.first.date != null
-            ? DateFormat('yyyy-MM-dd').format(
-            DateFormat('yyyy-MM-dd').parse(workOrder.entry!.first.date ?? ""))
-            : 'Invalid Date';
-      } catch (e) {
-        formattedDate = 'Invalid Date';
+        // Iterate through each tenant
+        for (int i = 0; i < workOrder.tenantData!.length; i++) {
+          final tenant = workOrder.tenantData![i];
+          final List<String> row = []; // Stores data for a single row
+
+          // Add property and lease end date only for the first tenant
+          if (i == 0) {
+            row.add(property); // Add property
+            row.add(leaseEndDate); // Add lease end date
+          } else {
+            row.add(''); // Leave property blank for subsequent tenants
+            row.add(''); // Leave lease end date blank for subsequent tenants
+          }
+
+          // Add tenant's full name
+          row.add('${tenant.tenantFirstName} ${tenant.tenantLastName}');
+
+          // Add override fee
+          row.add('${tenant.overrideFee ?? 'N/A'}%');
+
+          // Add the row to the rows list
+          rows.add(row);
+        }
+      } else {
+        // If there are no tenants, add a row with N/A for tenant and override percentage
+        final List<String> row = [
+          '${workOrder.rentalData?.rentalAddress ?? '-'}${(workOrder.rentalData?.rentalAddress != null && workOrder.unitData?.rentalUnit != null) ? ' - ' : ''}${workOrder.unitData?.rentalUnit ?? ''}',
+          formatDate(workOrder.endDate ?? ""),
+          'N/A',
+          'N/A',
+        ];
+        rows.add(row);
       }
-
-      row.add("${workOrder.rentalData?.rentalAdress}" ?? '');
-      row.add(workOrder.paymentType ?? '');
-      row.add(formattedDate);
-
-      // Set check number or "N/A" if it's empty
-      String? checkNumber = (workOrder.checknumber != null && workOrder.checknumber!.isNotEmpty)
-          ? workOrder.checknumber
-          : 'N/A';  // This line ensures "N/A" is shown if checknumber is empty
-      row.add(checkNumber!);
-
-      for (final String header in rentalOwnerReports.fold<Set<String>>({},
-              (Set<String> existingHeaders, Data transaction) {
-            existingHeaders.addAll(
-                transaction.entry!.map((entry) => entry.account ?? ""));
-            return existingHeaders;
-          }).toList()) {
-        final List<Entryy> value = workOrder.entry!.length > 0
-            ? workOrder.entry!
-            .where((entry) =>
-        entry.account != null && entry.account == header)
-            .toList()
-            : [];
-        row.add(value.length > 0
-            ? value[0].amount.toString() ?? '0'
-            : '0'); // Handle null values
-      }
-
-      row.add(workOrder.totalAmount.toString());
-      rows.add(row);
-
     }
 
     // Create a buffer to store CSV data
@@ -902,7 +873,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
 
     // Add headers to the CSV file
     for (final row in rows) {
-      csvBuffer.writeln(row.join(','));
+      csvBuffer.writeln(row.map((item) => '"$item"').join(',')); // Wrap each item in quotes
     }
 
     // Convert buffer to list of bytes for CSV file
@@ -911,7 +882,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
     // Define file name with current date and time
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
-    final String fileName = 'Payment_exception_report_$formattedDate.csv';
+    final String fileName = 'Convenience_fee_override_$formattedDate.csv';
 
     // Define file path
     final Directory directory = Platform.isIOS
@@ -935,85 +906,75 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
     );
   }
 
-//for table data of pdf
-  List<List<dynamic>> _generateTableData(
-      List<Data> rentalOwnerReports) {
+  // List<List<dynamic>> _generateTableData(
+  //     List<Data> rentalOwnerReports) {
+  //   final List<List<dynamic>> tableData = [];
+  //   double total = 0.0;
+  //
+  //   for (var owner in rentalOwnerReports) {
+  //     // Main row for the rental owner name
+  //     tableData.add([
+  //       pw.Text('${owner.rentalData?.rentalAddress ?? '-'}${(owner.rentalData?.rentalAddress != null && owner.unitData?.rentalUnit != null) ? ' - ' : ''}${owner.unitData?.rentalUnit ?? ''}',
+  //           style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+  //       pw.Text(formatDate(owner.endDate ?? ""),
+  //           style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+  //       pw.Text('${owner.tenantData!.first.tenantFirstName}''${owner.tenantData!.first.tenantLastName}' ,
+  //           style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+  //       pw.Text(' ${owner.tenantData?.isNotEmpty == true ? owner.tenantData?.first.overrideFee : 'N/A'} \%',
+  //           style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+  //
+  //     ]);
+  //
+  //
+  //
+  //
+  //
+  //   }
+  //
+  //   setState(() {
+  //     grandtotal = total;
+  //   });
+  //
+  //   return tableData;
+  // }
+  List<List<dynamic>> _generateTableData(List<Data> rentalOwnerReports) {
     final List<List<dynamic>> tableData = [];
     double total = 0.0;
 
     for (var owner in rentalOwnerReports) {
-      // Main row for the rental owner name
-      tableData.add([
-        pw.Text(owner.rentalData!.rentalAdress ?? "",
-            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-        pw.Text(owner.paymentType ?? "",
-            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-        pw.Text(owner.entry!.first.date ?? "",
-            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-        pw.Text(owner.entry!.first.chargeType ?? "",
-            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-        pw.Text(owner.totalAmount.toString(),
-            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-      ]);
+      // Get property and lease end date
+      final String property = '${owner.rentalData?.rentalAddress ?? '-'}${(owner.rentalData?.rentalAddress != null && owner.unitData?.rentalUnit != null) ? ' - ' : ''}${owner.unitData?.rentalUnit ?? ''}';
+      final String leaseEndDate = formatDate(owner.endDate ?? "");
 
-      for (var property in owner.entry!) {
+      // Check if tenantData is not empty
+      if (owner.tenantData != null && owner.tenantData!.isNotEmpty) {
+        // Add the main row for the rental owner with property and lease end date
         tableData.add([
-          pw.Padding(
-              child: pw.Text(
-                '${property.account ?? 'N/A'}',
-                style: pw.TextStyle(fontSize: 10, ),
-              ),
-              padding: pw.EdgeInsets.only(left: 15)), // Property Name
-          '',
-          '',
-          '',
-          pw.Text(
-            '${property.amount}',
-            style: pw.TextStyle(
-             // fontWeight: pw.FontWeight.bold,
-              fontSize: 10,
-            ),
-          ), // Property Name
-          // Tenant Name
-
+          pw.Text(property, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+          pw.Text(leaseEndDate, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+          pw.Text('${owner.tenantData!.first.tenantFirstName} ${owner.tenantData!.first.tenantLastName}', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+          pw.Text('${owner.tenantData!.first.overrideFee ?? 'N/A'}%', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
         ]);
 
-
-
-        // if (property.surcharge != 0.0) {
-        //   tableData.add([
-        //     pw.Padding(
-        //         child: pw.Text(
-        //           'Surcharge',
-        //           style: pw.TextStyle(fontSize: 10),
-        //         ),
-        //         padding: pw.EdgeInsets.only(left: 15)),
-        //     '', // Account Amount
-        //     '', '', '', '', '', '',
-        //     pw.Align(
-        //         alignment: pw.Alignment.centerRight,
-        //         child: pw.Text(
-        //             '\$${(property.surcharge ?? 0.0).toStringAsFixed(2)}', // Surcharge formatted to 2 decimal places
-        //             style: pw.TextStyle(fontSize: 10),
-        //             textAlign: pw.TextAlign.right // Align text to the right
-        //             ))
-        //   ]);
-        // }
+        // Iterate through each tenant and add their details
+        for (int i = 1; i < owner.tenantData!.length; i++) {
+          final tenant = owner.tenantData![i];
+          tableData.add([
+            pw.Text('', style: pw.TextStyle(fontSize: 10)), // Leave property blank
+            pw.Text('', style: pw.TextStyle(fontSize: 10)), // Leave lease end date blank
+            pw.Text('${tenant.tenantFirstName} ${tenant.tenantLastName}', style: pw.TextStyle(fontSize: 10)),
+            pw.Text('${tenant.overrideFee ?? 'N/A'}%', style: pw.TextStyle(fontSize: 10)),
+          ]);
+        }
+      } else {
+        // If there are no tenants, add a row with N/A for tenant and override percentage
+        tableData.add([
+          pw.Text(property, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+          pw.Text(leaseEndDate, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+          pw.Text('N/A', style: pw.TextStyle(fontSize: 10)),
+          pw.Text('N/A', style: pw.TextStyle(fontSize: 10)),
+        ]);
       }
-
-      // Subtotal row for the rental owner
-      // tableData.add([
-      //   pw.Padding(
-      //       child: pw.Text('Subtotal ${owner.rentalData?.rentalAdress ?? 'N/A'}',
-      //           style:
-      //           pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-      //       padding: pw.EdgeInsets.only(
-      //           left: 15)), // Label for rental owner subtotal
-      //   '', '', '', '', '', '', '',
-      //
-      // ]);
-      total += owner.totalAmount!.toInt();
-
     }
 
     setState(() {
@@ -1055,8 +1016,8 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
         // Assuming you want to set the toDate to the same day for now
         toDate.text = DateFormat('yyyy-MM-dd').format(picked);
 
-        // Call fetchPaymentExceptionReportsData with the selected date
-        _futurePaymentException = fetchPaymentExceptionReportsData(
+        // Call fetchConvenienceFeeReportsData with the selected date
+        _futureConvenienceFee = fetchConvenienceFeeReportsData(
           fromDate: picked,
           toDate: picked, // You can adjust this as needed
         );
@@ -1093,8 +1054,8 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
         // Update the toDate text field
         toDate.text = DateFormat('yyyy-MM-dd').format(picked);
 
-        // Call fetchPaymentExceptionReportsData with both fromDate and toDate
-        _futurePaymentException = fetchPaymentExceptionReportsData(
+        // Call fetchConvenienceFeeReportsData with both fromDate and toDate
+        _futureConvenienceFee = fetchConvenienceFeeReportsData(
           fromDate: DateTime.parse(fromDate.text), // Assuming fromDate is already set
           toDate: picked, // Use the selected end date
         );
@@ -1161,14 +1122,14 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
           children: [
             const SizedBox(height: 16),
             titleBar(
-              title: 'Payment Exception Report',
+              title: 'Convenience Fee Override',
               width: MediaQuery.of(context).size.width * .91,
             ),
             if (MediaQuery.of(context).size.width > 500)
               const SizedBox(height: 16),
             if (MediaQuery.of(context).size.width < 500)
               FutureBuilder<List<Data>>(
-                future: _futurePaymentException,
+                future: _futureConvenienceFee,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState ==
                       ConnectionState.waiting) {
@@ -1177,7 +1138,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                       const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Column(
                         children: [
-                         filters(),
+                          filters(),
                           SizedBox(
                             height: 10,
                           ),
@@ -1235,22 +1196,26 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                   } else if (searchvalue.isNotEmpty) {
                     data = snapshot.data!
                         .where((lease) =>
-                    lease.rentalData!.rentalAdress!
+                    lease.rentalData!.rentalAddress!
                         .toLowerCase()
                         .contains(searchvalue.toLowerCase()) ||
-                        lease.paymentType!
+                        lease.tenantData!.first.tenantFirstName!
                             .toLowerCase()
-                            .contains(searchvalue.toLowerCase()))
+                            .contains(searchvalue.toLowerCase()) ||
+                        lease.tenantData!.first.tenantLastName!
+                            .toLowerCase()
+                            .contains(searchvalue.toLowerCase())
+                    )
                         .toList();
                   } else {
                     data = snapshot.data!
-                        .where((lease) => lease.paymentType == selectedValue)
+                        .where((lease) => lease.tenantData!.first.tenantFirstName == selectedValue)
                         .toList();
                   }
 
 
 
-                 // Pagination logic
+                  // Pagination logic
                   final totalPages = (data.length / itemsPerPage).ceil();
                   final currentPageData = data
                       .skip(currentPage * itemsPerPage)
@@ -1266,7 +1231,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                           SizedBox(
                             height: 5,
                           ),
-                         filters(data: data),
+                          filters(data: data),
                           const SizedBox(height: 10),
                           _buildHeaders(),
                           const SizedBox(height: 20),
@@ -1285,7 +1250,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                                 bool isRowExpanded =
                                     expandedRowIndex == rowIndex;
                                 Data rental = entry.value;
-                              print(rental.paymentType);
+                                print(rental.rentalData!.rentalAddress);
                                 return Container(
                                   // decoration: BoxDecoration(
                                   //   border: Border.all(color: blueColor),
@@ -1363,7 +1328,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                                                     });
                                                   },
                                                   child: Text(
-                                                    '${rental.rentalData?.rentalAdress ?? '-'}',
+                                                    '${rental.rentalData?.rentalAddress ?? '-'}${(rental.rentalData?.rentalAddress != null && rental.unitData?.rentalUnit != null) ? ' - ' : ''}${rental.unitData?.rentalUnit ?? ''}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -1385,7 +1350,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                                               Expanded(
                                                 flex: 3,
                                                 child: Text(
-                                                  '${rental.paymentType ?? '-'}',
+                                                  formatDate('${rental.endDate ?? '-'}'),
                                                   style: TextStyle(
                                                     color: blueColor,
                                                     fontWeight:
@@ -1399,14 +1364,27 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                                               ),
                                               Expanded(
                                                 flex: 3,
-                                                child: Text(
-                                                  formatDate('${rental.entry?.first.date ?? '-'}'),
-                                                  style: TextStyle(
-                                                    color: blueColor,
-                                                    fontWeight:
-                                                    FontWeight.bold,
-                                                    fontSize: 14,
-                                                  ),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: rental.tenantData?.map((tenant) {
+                                                    return Text(
+                                                      '${tenant.tenantFirstName ?? '-'} ${tenant.tenantLastName ?? '-'}',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: 14,
+                                                      ),
+                                                    );
+                                                  }).toList() ?? [
+                                                    Text(
+                                                      'N/A',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                               SizedBox(
@@ -1416,7 +1394,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                                           ),
                                         ),
                                       ),
-                                     if (isRowExpanded)
+                                      if (isRowExpanded)
                                         Column(
                                           children: [
                                             Row(
@@ -1434,190 +1412,43 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                                                   Colors.transparent,
                                                 ),
                                                 Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                    CrossAxisAlignment
-                                                        .start,
+                                                  child: Row(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: <Widget>[
-                                                      Text.rich(
-                                                        TextSpan(
-                                                          children: [
-                                                            TextSpan(
-                                                              text:
-                                                              'Payment : ',
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                                  color:
-                                                                  blueColor), // Bold and black
-                                                            ),
-                                                            TextSpan(
-                                                              // text: formatDate(
-                                                              //     '${Propertytype.updatedAt}'),
-                                                              text: '${rental.paymentAttachment?.isNotEmpty == true ? rental.paymentAttachment : 'N/A'}',
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
-                                                                  color:
-                                                                  grey), // Light and grey
-                                                            ),
-                                                          ],
+                                                      Text(
+                                                        'Override Percentage : ',
+                                                        style: TextStyle(
+                                                          fontWeight: FontWeight.bold,
+                                                          color: blueColor,
                                                         ),
                                                       ),
+                                                      // Check if there are tenants and display their override fees
+                                                      ...?rental.tenantData?.map((tenant) {
+                                                        return Padding(
+                                                          padding: const EdgeInsets.only(left: 10,right: 10),
+                                                          child: Text(
+                                                            '${tenant.overrideFee ?? 'N/A'}%',
+                                                            style: TextStyle(
+                                                              fontWeight: FontWeight.w700,
+                                                              color: grey,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }) ?? [
+                                                        Text(
+                                                          'N/A',
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.w700,
+                                                            color: grey,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ],
                                                   ),
                                                 ),
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                    CrossAxisAlignment
-                                                        .start,
-                                                    children: <Widget>[
-                                                      Text.rich(
-                                                        TextSpan(
-                                                          children: [
-                                                            TextSpan(
-                                                              text:
-                                                              'Total : ',
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                                  color:
-                                                                  blueColor), // Bold and black
-                                                            ),
-                                                            TextSpan(
-                                                              // text: formatDate(
-                                                              //     '${Propertytype.updatedAt}'),
-                                                              text: '${rental.totalAmount?.toStringAsFixed(2).isNotEmpty == true ? rental.totalAmount : 'N/A'}',
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
-                                                                  color:
-                                                                  grey), // Light and grey
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
+
                                               ],
                                             ),
-                                            if(rental.entry!.isNotEmpty)
-                                              Row(
-                                                children: [
-                                                  SizedBox(
-                                                    width: 25,
-                                                  ),
-                                                  Text("Details : ",  style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .bold,
-                                                      color:
-                                                      blueColor),),
-                                                ],
-                                              ),
-                                            if(rental.entry!.isNotEmpty)
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                            if(rental.entry!.isNotEmpty)
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                            if(rental.entry!.isNotEmpty)
-                                            Column(
-                                              children: item.entry!
-                                                  .asMap()
-                                                  .entries
-                                                  .map((tenantEntry) {
-                                                int tenantIndex =
-                                                    tenantEntry.key;
-                                                var tenant =
-                                                    tenantEntry.value;
-                                                bool isTenantExpanded =
-                                                    expandedTenantIndex[
-                                                    rowIndex] ==
-                                                        tenantIndex;
-
-                                                return Column(
-                                                  children: [
-                                                    if(rental.entry!.isNotEmpty)
-                                                    Row(
-                                                      children: [
-                                                        SizedBox(
-                                                          width: 25,
-                                                        ),
-                                                        Expanded(
-                                                            child:
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  if (expandedTenantIndex[
-                                                                  rowIndex] ==
-                                                                      tenantIndex) {
-                                                                    expandedTenantIndex[
-                                                                    rowIndex] =
-                                                                    null;
-                                                                  } else {
-                                                                    expandedTenantIndex[
-                                                                    rowIndex] =
-                                                                        tenantIndex;
-                                                                  }
-                                                                });
-                                                              },
-                                                              child: Text(
-                                                                "${tenant.account}",
-                                                                style: TextStyle(
-                                                                    fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                    color:
-                                                                    blueColor),
-                                                              ),
-                                                            )),
-                                                        Expanded(
-                                                            child:
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  if (expandedTenantIndex[
-                                                                  rowIndex] ==
-                                                                      tenantIndex) {
-                                                                    expandedTenantIndex[
-                                                                    rowIndex] =
-                                                                    null;
-                                                                  } else {
-                                                                    expandedTenantIndex[
-                                                                    rowIndex] =
-                                                                        tenantIndex;
-                                                                  }
-                                                                });
-                                                              },
-                                                              child: Text(
-                                                                "${tenant.amount}",
-                                                                style: TextStyle(
-                                                                    fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                    color:
-                                                                    blueColor),
-                                                              ),
-                                                            )),
-                                                      ],
-                                                    ),
-                                                    SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                  ],
-                                                );
-                                              }).toList(),
-                                            ),
-
                                             SizedBox(
                                               height: 10,
                                             ),
@@ -2528,175 +2359,6 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Container(
-                  height: 42,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Colors.grey)),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: daterange,
-                      padding: EdgeInsets.symmetric(horizontal: 5),
-                      hint: Text(
-                        "Date Range",
-                        style: TextStyle(fontSize: 14, color: Colors.black),
-                      ),
-                      items: const [
-                        DropdownMenuItem<String>(
-                          value: 'Today',
-                          child: Text('Today'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'This Week',
-                          child: Text('This Week'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'This Month',
-                          child: Text('This Month'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'This Year',
-                          child: Text('This Year'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Custom',
-                          child: Text('Custom'),
-                        ),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          daterange = value;
-                          if (value == "Today") {
-                            customdate = false;
-                            fromDate.text =
-                                formatDate(DateTime.now().toString());
-                            toDate.text = formatDate(DateTime.now().toString());
-                          } else if (value == "This Week") {
-                            DateTime now = DateTime.now();
-                            //  fromDate.text = formatDate(now.toString());
-                            customdate = false;
-                            fromDate.text = formatDate(now.subtract(Duration(days: now.weekday - 1)).toString());
-                            toDate.text = formatDate(now.add(Duration(
-                                days: DateTime.daysPerWeek - now.weekday)).toString());
-                          } else if (value == "This Month") {
-                            customdate = false;
-                            DateTime now = DateTime.now();
-                            fromDate.text = formatDate(
-                                DateTime(now.year, now.month, 1).toString());
-                            toDate.text = formatDate(
-                                DateTime(now.year, now.month + 1, 0)
-                                    .toString());
-                          } else if (value == "This Year") {
-                            customdate = false;
-                            DateTime now = DateTime.now();
-                            fromDate.text =
-                                formatDate(DateTime(now.year, 1, 1).toString());
-                            toDate.text = formatDate(
-                                DateTime(now.year, 12, 31).toString());
-                          } else if (value == "Custom") {
-                            customdate = true;
-                            fromDate.text = ""; // Set fromDate to empty
-                            toDate.text = "";
-                            _futurePaymentException = fetchPaymentExceptionReportsData();// Set toDate to empty
-                          }
-                          // Fetch the report data with the selected date range
-                          if (daterange != "Custom") {
-                            DateTime from = DateTime.parse(convertDateFormat(fromDate.text));
-                            DateTime to = DateTime.parse(convertDateFormat(toDate.text));
-                            _futurePaymentException = fetchPaymentExceptionReportsData(fromDate: from, toDate: to);
-                          }
-
-                        });
-                        // Handle the selected charge type
-                        print(value);
-                      },
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 6),
-            ],
-          ),
-        ),
-        const SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0.0),
-          child: Row(
-            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Container(
-                  // width: 110,
-                  child: TextFormField(
-                    controller: fromDate,
-                    // enabled: customdate,
-                    onTap: customdate
-                        ? () {
-                      _pickDate(context);
-                    }
-                        : null,
-                    readOnly: true,
-                    style: TextStyle(fontSize: 14, color: Colors.black),
-                    textInputAction: TextInputAction.next,
-                    textAlignVertical: TextAlignVertical.center,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 10), //Imp Line
-                      isDense: true,
-
-                      hintText: "From",
-
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: const BorderSide(
-                            width: 1,
-                          )),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: Container(
-                  // width: 110,
-                  child: TextFormField(
-                    controller: toDate,
-                    // enabled: customdate,
-                    style: TextStyle(fontSize: 14, color: Colors.black),
-                    onTap: customdate
-                        ? () {
-                      _endDate(context);
-                    }
-                        : null,
-                    readOnly: true,
-                    textInputAction: TextInputAction.next,
-                    textAlignVertical: TextAlignVertical.center,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 10), //Imp Line
-                      isDense: true,
-                      hintText: "To",
-
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: const BorderSide(
-                            width: 0.5,
-                          )),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 6),
-            ],
-          ),
-        ),
-        const SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
                 child: Row(
                   children: [
                     Material(
@@ -2753,11 +2415,11 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                           generateAccountTotalReportPdf(data);
                         } else if (value == 'XLSX' && data != null) {
                           print('XLSX');
-                         generateAccountTotalReportExcel(data);
+                          generateAccountTotalReportExcel(data);
 
                         } else if (value == 'CSV' && data != null) {
                           print('CSV');
-                          generateAccountTotalReportCsv(data);
+                           generateAccountTotalReportCsv(data);
 
                         }
                       },
@@ -2791,6 +2453,176 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
             ],
           ),
         ),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 0.0),
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //     children: [
+        //       Expanded(
+        //         child: Container(
+        //           height: 42,
+        //           decoration: BoxDecoration(
+        //               borderRadius: BorderRadius.circular(5),
+        //               border: Border.all(color: Colors.grey)),
+        //           child: DropdownButtonHideUnderline(
+        //             child: DropdownButton<String>(
+        //               value: daterange,
+        //               padding: EdgeInsets.symmetric(horizontal: 5),
+        //               hint: Text(
+        //                 "Date Range",
+        //                 style: TextStyle(fontSize: 14, color: Colors.black),
+        //               ),
+        //               items: const [
+        //                 DropdownMenuItem<String>(
+        //                   value: 'Today',
+        //                   child: Text('Today'),
+        //                 ),
+        //                 DropdownMenuItem<String>(
+        //                   value: 'This Week',
+        //                   child: Text('This Week'),
+        //                 ),
+        //                 DropdownMenuItem<String>(
+        //                   value: 'This Month',
+        //                   child: Text('This Month'),
+        //                 ),
+        //                 DropdownMenuItem<String>(
+        //                   value: 'This Year',
+        //                   child: Text('This Year'),
+        //                 ),
+        //                 DropdownMenuItem<String>(
+        //                   value: 'Custom',
+        //                   child: Text('Custom'),
+        //                 ),
+        //               ],
+        //               onChanged: (value) {
+        //                 setState(() {
+        //                   daterange = value;
+        //                   if (value == "Today") {
+        //                     customdate = false;
+        //                     fromDate.text =
+        //                         formatDate(DateTime.now().toString());
+        //                     toDate.text = formatDate(DateTime.now().toString());
+        //                   } else if (value == "This Week") {
+        //                     DateTime now = DateTime.now();
+        //                     //  fromDate.text = formatDate(now.toString());
+        //                     customdate = false;
+        //                     fromDate.text = formatDate(now.subtract(Duration(days: now.weekday - 1)).toString());
+        //                     toDate.text = formatDate(now.add(Duration(
+        //                         days: DateTime.daysPerWeek - now.weekday)).toString());
+        //                   } else if (value == "This Month") {
+        //                     customdate = false;
+        //                     DateTime now = DateTime.now();
+        //                     fromDate.text = formatDate(
+        //                         DateTime(now.year, now.month, 1).toString());
+        //                     toDate.text = formatDate(
+        //                         DateTime(now.year, now.month + 1, 0)
+        //                             .toString());
+        //                   } else if (value == "This Year") {
+        //                     customdate = false;
+        //                     DateTime now = DateTime.now();
+        //                     fromDate.text =
+        //                         formatDate(DateTime(now.year, 1, 1).toString());
+        //                     toDate.text = formatDate(
+        //                         DateTime(now.year, 12, 31).toString());
+        //                   } else if (value == "Custom") {
+        //                     customdate = true;
+        //                     fromDate.text = ""; // Set fromDate to empty
+        //                     toDate.text = "";
+        //                     _futureConvenienceFee = fetchConvenienceFeeReportsData();// Set toDate to empty
+        //                   }
+        //                   // Fetch the report data with the selected date range
+        //                   if (daterange != "Custom") {
+        //                     DateTime from = DateTime.parse(convertDateFormat(fromDate.text));
+        //                     DateTime to = DateTime.parse(convertDateFormat(toDate.text));
+        //                     _futureConvenienceFee = fetchConvenienceFeeReportsData(fromDate: from, toDate: to);
+        //                   }
+        //
+        //                 });
+        //                 // Handle the selected charge type
+        //                 print(value);
+        //               },
+        //             ),
+        //           ),
+        //         ),
+        //       ),
+        //       const SizedBox(width: 6),
+        //     ],
+        //   ),
+        // ),
+        // const SizedBox(height: 10),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 0.0),
+        //   child: Row(
+        //     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //     children: [
+        //       Expanded(
+        //         child: Container(
+        //           // width: 110,
+        //           child: TextFormField(
+        //             controller: fromDate,
+        //             // enabled: customdate,
+        //             onTap: customdate
+        //                 ? () {
+        //               _pickDate(context);
+        //             }
+        //                 : null,
+        //             readOnly: true,
+        //             style: TextStyle(fontSize: 14, color: Colors.black),
+        //             textInputAction: TextInputAction.next,
+        //             textAlignVertical: TextAlignVertical.center,
+        //             decoration: InputDecoration(
+        //               contentPadding: const EdgeInsets.symmetric(
+        //                   vertical: 10, horizontal: 10), //Imp Line
+        //               isDense: true,
+        //
+        //               hintText: "From",
+        //
+        //               border: OutlineInputBorder(
+        //                   borderRadius: BorderRadius.circular(5),
+        //                   borderSide: const BorderSide(
+        //                     width: 1,
+        //                   )),
+        //             ),
+        //           ),
+        //         ),
+        //       ),
+        //       SizedBox(width: 10),
+        //       Expanded(
+        //         child: Container(
+        //           // width: 110,
+        //           child: TextFormField(
+        //             controller: toDate,
+        //             // enabled: customdate,
+        //             style: TextStyle(fontSize: 14, color: Colors.black),
+        //             onTap: customdate
+        //                 ? () {
+        //               _endDate(context);
+        //             }
+        //                 : null,
+        //             readOnly: true,
+        //             textInputAction: TextInputAction.next,
+        //             textAlignVertical: TextAlignVertical.center,
+        //             decoration: InputDecoration(
+        //               contentPadding: const EdgeInsets.symmetric(
+        //                   vertical: 10, horizontal: 10), //Imp Line
+        //               isDense: true,
+        //               hintText: "To",
+        //
+        //               border: OutlineInputBorder(
+        //                   borderRadius: BorderRadius.circular(5),
+        //                   borderSide: const BorderSide(
+        //                     width: 0.5,
+        //                   )),
+        //             ),
+        //           ),
+        //         ),
+        //       ),
+        //       const SizedBox(width: 6),
+        //     ],
+        //   ),
+        // ),
+        // const SizedBox(height: 10),
+
       ],
     );
   }

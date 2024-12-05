@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/AccountTotals.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/CompletedWorkOrders.dart';
+import 'package:three_zero_two_property/screens/Reports/ReportScreens/ConvenienceFee.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/DelinquentTenants.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/ExpiringLeases.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/OpenWorkOrders.dart';
@@ -589,5 +590,10 @@ List<ReportCardModel> reportCards = [
     title: "Payment Exception Report",
     description: "Report of payments that are not attached to tenant",
     destination: PaymentExceptionReports(),
+  ),
+  ReportCardModel(
+    title: "Convenience Fee Override",
+    description: "Report shows all leases with convenience fee override",
+    destination: ConvenienceFeeReports(),
   ),
 ];

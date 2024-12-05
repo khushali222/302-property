@@ -155,7 +155,7 @@ class _addLease3State extends State<addLease3>
   Future<void> _loadUnits(String rentalId) async {
     setState(() {
       _isLoading = true;
-       _showUnitDropdown = false;
+      _showUnitDropdown = false;
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
@@ -181,7 +181,7 @@ class _addLease3State extends State<addLease3>
         setState(() {
           units = unitAddresses;
           _isLoading = false;
-           _showUnitDropdown = true;
+          _showUnitDropdown = true;
         });
       } else {
         throw Exception('Failed to load units');
@@ -285,7 +285,7 @@ class _addLease3State extends State<addLease3>
     'Fixed w/rollover',
     'At-will(month to month)',
   ];
-   List<String> rentCycleitems = [
+  List<String> rentCycleitems = [
     'Daily',
     'Weekly',
     'Every two weeks',
@@ -293,17 +293,14 @@ class _addLease3State extends State<addLease3>
     'Every two months',
     'Quarterly',
     'Yearly',
-     'Semi Monthly'
+    'Semi Monthly'
   ];
 
-   rentCycleItemsDynamic(int days){
-     print("days = $days");
-    if(days == 1){
-      rentCycleitems = [
-        'Daily'
-      ];
-    }
-    else if(days >= 365){
+  rentCycleItemsDynamic(int days) {
+    print("days = $days");
+    if (days == 1) {
+      rentCycleitems = ['Daily'];
+    } else if (days >= 365) {
       rentCycleitems = [
         'Daily',
         'Weekly',
@@ -314,8 +311,7 @@ class _addLease3State extends State<addLease3>
         'Yearly',
         'Semi Monthly',
       ];
-    }
-    else if(days >= 93){
+    } else if (days >= 93) {
       rentCycleitems = [
         'Daily',
         'Weekly',
@@ -325,8 +321,7 @@ class _addLease3State extends State<addLease3>
         'Every two months',
         'Quarterly',
       ];
-    }
-    else if(days >= 62){
+    } else if (days >= 62) {
       rentCycleitems = [
         'Daily',
         'Weekly',
@@ -335,8 +330,7 @@ class _addLease3State extends State<addLease3>
         'Monthly',
         'Every two months',
       ];
-    }
-    else if(days >= 32){
+    } else if (days >= 32) {
       rentCycleitems = [
         'Daily',
         'Weekly',
@@ -344,25 +338,22 @@ class _addLease3State extends State<addLease3>
         'Every two weeks',
         'Monthly',
       ];
-    }
-    else if(days >= 15){
+    } else if (days >= 15) {
       rentCycleitems = [
         'Daily',
         'Weekly',
         'Semi Monthly',
         'Every two weeks',
       ];
-    }
-    else if(days >= 7){
+    } else if (days >= 7) {
       rentCycleitems = [
         'Daily',
         'Weekly',
       ];
     }
-    setState(() {
+    setState(() {});
+  }
 
-    });
-   }
   DateTime calculateNextDueDate(DateTime startDate, String rentCycle) {
     switch (rentCycle) {
       case 'Daily':
@@ -380,8 +371,9 @@ class _addLease3State extends State<addLease3>
       case 'Yearly':
         return DateTime(startDate.year + 1, startDate.month, startDate.day);
       case 'Semi Monthly':
-      // Get the number of days in the current month
-        int lastDayOfMonth = DateTime(startDate.year, startDate.month + 1, 0).day;
+        // Get the number of days in the current month
+        int lastDayOfMonth =
+            DateTime(startDate.year, startDate.month + 1, 0).day;
         // Determine the middle of the month
         int middleOfMonth = (lastDayOfMonth / 2).floor();
 
@@ -412,7 +404,6 @@ class _addLease3State extends State<addLease3>
       });
     }
   }
-
 
   // void _updateProRatedRent() {
   //   if (isProRent && isAmountEntered && rentNextDueDate.text.isNotEmpty) {
@@ -445,15 +436,18 @@ class _addLease3State extends State<addLease3>
   //   }
   // }
 
-
-
-
   void _updateProRatedRent(String frequency) {
-    if (isProRent && isAmountEntered && rentNextDueDate.text.isNotEmpty && startDateController.text.isNotEmpty && endDateController.text.isNotEmpty) {
+    if (isProRent &&
+        isAmountEntered &&
+        rentNextDueDate.text.isNotEmpty &&
+        startDateController.text.isNotEmpty &&
+        endDateController.text.isNotEmpty) {
       try {
-        // Parse the  from the TextField (instead of using current date)
-        DateTime currentDate = DateFormat('dd-MM-yyyy').parse(startDateController.text);
-        DateTime nextDueDate = DateFormat('dd-MM-yyyy').parse(rentNextDueDate.text);
+        // Parse the start date from the TextField (instead of using current date)
+        DateTime currentDate =
+            DateFormat('dd-MM-yyyy').parse(startDateController.text);
+        DateTime nextDueDate =
+            DateFormat('dd-MM-yyyy').parse(rentNextDueDate.text);
 
         double totalRent = double.tryParse(rentAmount.text) ?? 0.0;
 
@@ -467,7 +461,8 @@ class _addLease3State extends State<addLease3>
           setState(() {
             proRatedRentController.text = "0.00";
           });
-          print("Validation failed: Either rent is <= 0 or next due date is not after .");
+          print(
+              "Validation failed: Either rent is <= 0 or next due date is not after start date.");
           return;
         }
 
@@ -479,7 +474,8 @@ class _addLease3State extends State<addLease3>
         double proRatedRent = 0.0;
 
         // Get total days in the current month
-         int totalDaysInMonth = _getDaysInMonth(nextDueDate.year,currentDate.month);
+        int totalDaysInMonth =
+            _getDaysInMonth(nextDueDate.year, currentDate.month);
         // print("Total Days in Month: $totalDaysInMonth");
 
         // Define total days in other periods
@@ -500,36 +496,43 @@ class _addLease3State extends State<addLease3>
           //   proRatedRent = (totalRent / totalDaysInMonth) * daysLeft;
           //   break;
           case 'Monthly':
-            int totalDaysInMonth = _getDaysInMonth(currentDate.year, currentDate.month);
+            int totalDaysInMonth =
+                _getDaysInMonth(currentDate.year, currentDate.month);
             print("Total Days in Month: $totalDaysInMonth");
             proRatedRent = (totalRent / totalDaysInMonth) * daysLeft;
             break;
           case 'Every two months':
-          // Calculate total days in the 2-month period
-            int totalDaysInTwoMonths = _getDaysInMonth(currentDate.year, currentDate.month) +
-                _getDaysInMonth(nextDueDate.year, nextDueDate.month);
+            // Calculate total days in the 2-month period
+            int totalDaysInTwoMonths =
+                _getDaysInMonth(currentDate.year, currentDate.month) +
+                    _getDaysInMonth(nextDueDate.year, nextDueDate.month);
             print("Total Days in Two Months: $totalDaysInTwoMonths");
 
             // Adjust the calculation to ensure rent remains at totalRent
             proRatedRent = totalRent;
             break;
           case 'Quarterly':
-          // Calculate total days in the quarter (3 months)
-            int totalDaysInQuarter = _getDaysInMonth(nextDueDate.year, nextDueDate.month) +
-                _getDaysInMonth(nextDueDate.year, nextDueDate.month - 1) +
-                _getDaysInMonth(nextDueDate.year, nextDueDate.month - 2);
+            // Calculate total days in the quarter (3 months)
+            int totalDaysInQuarter =
+                _getDaysInMonth(nextDueDate.year, nextDueDate.month) +
+                    _getDaysInMonth(nextDueDate.year, nextDueDate.month - 1) +
+                    _getDaysInMonth(nextDueDate.year, nextDueDate.month - 2);
 
             // Calculate pro-rated rent
             if (totalDaysInQuarter > 0) {
               proRatedRent = (totalRent / totalDaysInQuarter) * daysLeft;
-              proRatedRent = proRatedRent.roundToDouble(); // Round to nearest whole number
+              proRatedRent =
+                  proRatedRent.roundToDouble(); // Round to nearest whole number
             } else {
               proRatedRent = 0.0; // Fallback in case of an error
             }
             break;
           case 'Semi Monthly':
-          // Calculate the semi-monthly due date
-            int midMonth = _getDaysInMonth(currentDate.year, currentDate.month) > 30 ? 15 : 14; // Handle shorter months like February
+            // Calculate the semi-monthly due date
+            int midMonth =
+                _getDaysInMonth(currentDate.year, currentDate.month) > 30
+                    ? 15
+                    : 14; // Handle shorter months like February
 
             // If today is before or on the mid-month date, calculate for the first half
             if (currentDate.day <= midMonth) {
@@ -537,7 +540,9 @@ class _addLease3State extends State<addLease3>
               proRatedRent = (totalRent / midMonth) * daysLeft;
             } else {
               // Second half of the month (after mid-month)
-              int remainingDays = _getDaysInMonth(currentDate.year, currentDate.month) - midMonth;
+              int remainingDays =
+                  _getDaysInMonth(currentDate.year, currentDate.month) -
+                      midMonth;
               proRatedRent = (totalRent / remainingDays) * daysLeft;
             }
             break;
@@ -566,20 +571,20 @@ class _addLease3State extends State<addLease3>
   int _getDaysInMonth(int year, int month) {
     // Get the number of days in the month considering leap years for February
     switch (month) {
-      case 1:  // January
-      case 3:  // March
-      case 5:  // May
-      case 7:  // July
-      case 8:  // August
+      case 1: // January
+      case 3: // March
+      case 5: // May
+      case 7: // July
+      case 8: // August
       case 10: // October
       case 12: // December
         return 31;
-      case 4:  // April
-      case 6:  // June
-      case 9:  // September
+      case 4: // April
+      case 6: // June
+      case 9: // September
       case 11: // November
         return 30;
-      case 2:  // February
+      case 2: // February
         return _isLeapYear(year) ? 29 : 28;
       default:
         return 30;
@@ -590,8 +595,6 @@ class _addLease3State extends State<addLease3>
     // Leap year is divisible by 4, but not divisible by 100 unless divisible by 400
     return (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
   }
-
-
 
   final TextEditingController proRatedRentController = TextEditingController();
 
@@ -873,6 +876,12 @@ class _addLease3State extends State<addLease3>
         Provider.of<SelectedTenantsProvider>(context, listen: false);
     // var selectedCosignerProvider =
     // Provider.of<SelectedCosignersProvider>(context, listen: false);
+    bool hasSelectedTenants = Provider.of<SelectedTenantsProvider>(context)
+        .selectedTenants
+        .isNotEmpty;
+    bool hasSelectedApplicants = Provider.of<SelectedApplicantProvider>(context)
+        .selectedApplicant
+        .isNotEmpty;
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -900,7 +909,7 @@ class _addLease3State extends State<addLease3>
                     //Same as `blurRadius` i guess
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
-                      color:blueColor,
+                      color: blueColor,
                       boxShadow: const [
                         BoxShadow(
                           color: Colors.grey,
@@ -912,10 +921,9 @@ class _addLease3State extends State<addLease3>
                     child: const Text(
                       "Add Lease",
                       style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
                       ),
                     ),
                   ),
@@ -1300,28 +1308,20 @@ class _addLease3State extends State<addLease3>
                                           Widget? child) {
                                         return Theme(
                                           data: ThemeData.light().copyWith(
-                                            colorScheme:
-                                                 ColorScheme.light(
-                                              primary: blueColor
-
-
-, // header background color
+                                            colorScheme: ColorScheme.light(
+                                              primary:
+                                                  blueColor, // header background color
                                               onPrimary: Colors
                                                   .white, // header text color
-                                              onSurface: blueColor
-
-
-, // body text color
+                                              onSurface:
+                                                  blueColor, // body text color
                                             ),
                                             textButtonTheme:
                                                 TextButtonThemeData(
                                               style: TextButton.styleFrom(
                                                 foregroundColor: Colors.white,
                                                 backgroundColor:
-                                                    blueColor
-
-
-, // button text color
+                                                    blueColor, // button text color
                                               ),
                                             ),
                                           ),
@@ -1335,8 +1335,8 @@ class _addLease3State extends State<addLease3>
                                       String formattedStartDate =
                                           "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                                       DateTime endDate = DateTime(
-                                          pickedDate.year +1,
-                                          pickedDate.month ,
+                                          pickedDate.year + 1,
+                                          pickedDate.month,
                                           pickedDate.day);
                                       // String formattedEndDate =
                                       //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
@@ -1350,14 +1350,15 @@ class _addLease3State extends State<addLease3>
                                         _startDate = pickedDate;
                                         endDateController.text =
                                             formattedEndDate;
-                                         rentCycleItemsDynamic(endDate.difference(_startDate!).inDays);
+                                        rentCycleItemsDynamic(endDate
+                                            .difference(_startDate!)
+                                            .inDays);
                                         startDateController.text.isNotEmpty;
                                         isProRent = false;
-                                        _updateProRatedRent(_selectedRent ?? 'Monthly');
+                                        _updateProRatedRent(
+                                            _selectedRent ?? 'Monthly');
                                       });
-
                                     }
-
                                   },
                                   readOnnly: true,
                                   suffixIcon: IconButton(
@@ -1366,7 +1367,7 @@ class _addLease3State extends State<addLease3>
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Please select ';
+                                      return 'Please select start date';
                                     }
                                     return null;
                                   },
@@ -1391,39 +1392,32 @@ class _addLease3State extends State<addLease3>
                               if (MediaQuery.of(context).size.width < 500)
                                 CustomTextField(
                                   onTap: () async {
-
                                     DateTime? pickedDate = await showDatePicker(
                                       context: context,
                                       initialDate: DateTime.now(),
-                                      firstDate: _startDate != null ? _startDate!: DateTime(1900) ,
+                                      firstDate: _startDate != null
+                                          ? _startDate!
+                                          : DateTime(1900),
                                       lastDate: DateTime(2101),
                                       locale: const Locale('en', 'US'),
                                       builder: (BuildContext context,
                                           Widget? child) {
                                         return Theme(
                                           data: ThemeData.light().copyWith(
-                                            colorScheme:
-                                                 ColorScheme.light(
-                                              primary: blueColor
-
-
-, // header background color
+                                            colorScheme: ColorScheme.light(
+                                              primary:
+                                                  blueColor, // header background color
                                               onPrimary: Colors
                                                   .white, // header text color
-                                              onSurface: blueColor
-
-
-, // body text color
+                                              onSurface:
+                                                  blueColor, // body text color
                                             ),
                                             textButtonTheme:
                                                 TextButtonThemeData(
                                               style: TextButton.styleFrom(
                                                 foregroundColor: Colors.white,
                                                 backgroundColor:
-                                                    blueColor
-
-
-, // button text color
+                                                    blueColor, // button text color
                                               ),
                                             ),
                                           ),
@@ -1438,14 +1432,15 @@ class _addLease3State extends State<addLease3>
                                           "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                                       setState(() {
                                         endDateController.text = formattedDate;
-                                        rentCycleItemsDynamic(pickedDate.difference(_startDate!).inDays);
+                                        rentCycleItemsDynamic(pickedDate
+                                            .difference(_startDate!)
+                                            .inDays);
                                         endDateController.text.isNotEmpty;
                                         isProRent = false;
-                                        _updateProRatedRent(_selectedRent ?? 'Monthly');
+                                        _updateProRatedRent(
+                                            _selectedRent ?? 'Monthly');
                                       });
-
                                     }
-
                                   },
                                   readOnnly: true,
                                   suffixIcon: IconButton(
@@ -1522,10 +1517,7 @@ class _addLease3State extends State<addLease3>
                                                             foregroundColor:
                                                                 Colors.white,
                                                             backgroundColor:
-                                                                blueColor
-
-
-, // button text color
+                                                                blueColor, // button text color
                                                           ),
                                                         ),
                                                       ),
@@ -1541,7 +1533,7 @@ class _addLease3State extends State<addLease3>
                                                       "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                                                   DateTime endDate = DateTime(
                                                       pickedDate.year,
-                                                      pickedDate.month+2,
+                                                      pickedDate.month + 2,
                                                       pickedDate.day);
                                                   print(endDate);
                                                   String formattedEndDate =
@@ -1556,12 +1548,14 @@ class _addLease3State extends State<addLease3>
                                                     _startDate = pickedDate;
                                                     endDateController.text =
                                                         formattedEndDate;
-                                                    startDateController.text.isNotEmpty;
+                                                    startDateController
+                                                        .text.isNotEmpty;
                                                     isProRent = false;
 
-                                                    _updateProRatedRent(_selectedRent ?? 'Monthly');
+                                                    _updateProRatedRent(
+                                                        _selectedRent ??
+                                                            'Monthly');
                                                   });
-
                                                 }
                                               },
                                               readOnnly: true,
@@ -1573,7 +1567,7 @@ class _addLease3State extends State<addLease3>
                                               validator: (value) {
                                                 if (value == null ||
                                                     value.isEmpty) {
-                                                  return 'Please select ';
+                                                  return 'Please select start date';
                                                 }
                                                 return null;
                                               },
@@ -1636,10 +1630,7 @@ class _addLease3State extends State<addLease3>
                                                             foregroundColor:
                                                                 Colors.white,
                                                             backgroundColor:
-                                                                blueColor
-
-
-, // button text color
+                                                                blueColor, // button text color
                                                           ),
                                                         ),
                                                       ),
@@ -1706,7 +1697,7 @@ class _addLease3State extends State<addLease3>
                               const SizedBox(
                                 height: 10,
                               ),
-                               Text('Add lease',
+                              Text('Add lease',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
@@ -1726,7 +1717,7 @@ class _addLease3State extends State<addLease3>
                                               return AlertDialog(
                                                 backgroundColor: Colors.white,
                                                 contentPadding: EdgeInsets.zero,
-                                                title:  Text(
+                                                title: Text(
                                                   'Add Tenant or Cosigner',
                                                   style: TextStyle(
                                                     fontSize: 16,
@@ -1778,7 +1769,7 @@ class _addLease3State extends State<addLease3>
                                                                                   width: 1,
                                                                                 ),
                                                                           gradient: isTenantSelected
-                                                                              ?  LinearGradient(
+                                                                              ? LinearGradient(
                                                                                   colors: [
                                                                                     blueColor,
                                                                                     blueColor,
@@ -1808,7 +1799,7 @@ class _addLease3State extends State<addLease3>
                                                                               )
                                                                             : ShaderMask(
                                                                                 shaderCallback: (bounds) {
-                                                                                  return  LinearGradient(
+                                                                                  return LinearGradient(
                                                                                     colors: [
                                                                                       blueColor,
                                                                                       blueColor,
@@ -1848,7 +1839,7 @@ class _addLease3State extends State<addLease3>
                                                                                   width: 1,
                                                                                 ),
                                                                           gradient: isTenantSelected == false
-                                                                              ?  LinearGradient(
+                                                                              ? LinearGradient(
                                                                                   colors: [
                                                                                     blueColor,
                                                                                     blueColor,
@@ -1878,7 +1869,7 @@ class _addLease3State extends State<addLease3>
                                                                               )
                                                                             : ShaderMask(
                                                                                 shaderCallback: (bounds) {
-                                                                                  return  LinearGradient(
+                                                                                  return LinearGradient(
                                                                                     colors: [
                                                                                       blueColor,
                                                                                       blueColor,
@@ -1944,6 +1935,566 @@ class _addLease3State extends State<addLease3>
                                 SizedBox(
                                   height: 10,
                                 ),
+                              // if (hasSelectedTenants || hasSelectedApplicants)
+                              //   Padding(
+                              //     padding:
+                              //         const EdgeInsets.only(left: 4, right: 4),
+                              //     child: Column(
+                              //       crossAxisAlignment:
+                              //           CrossAxisAlignment.start,
+                              //       children: [
+                              //         Table(
+                              //           border: TableBorder.all(
+                              //             width: 1,
+                              //             color: const Color.fromRGBO(
+                              //                 21, 43, 83, 1),
+                              //           ),
+                              //           columnWidths: const {
+                              //             0: FlexColumnWidth(2),
+                              //             1: FlexColumnWidth(2),
+                              //             2: FlexColumnWidth(1.3),
+                              //           },
+                              //           children: [
+                              //             TableRow(
+                              //               decoration: BoxDecoration(
+                              //                 color: blueColor,
+                              //               ),
+                              //               children: [
+                              //                 Padding(
+                              //                   padding:
+                              //                       const EdgeInsets.all(8.0),
+                              //                   child: Text(
+                              //                     'Name',
+                              //                     style: TextStyle(
+                              //                       color: Colors.white,
+                              //                       fontWeight: FontWeight.bold,
+                              //                       fontSize:
+                              //                           MediaQuery.of(context)
+                              //                                       .size
+                              //                                       .width <
+                              //                                   500
+                              //                               ? 14
+                              //                               : 20,
+                              //                     ),
+                              //                   ),
+                              //                 ),
+                              //                 Padding(
+                              //                   padding:
+                              //                       const EdgeInsets.all(8.0),
+                              //                   child: Text(
+                              //                     'Rent Share',
+                              //                     style: TextStyle(
+                              //                       color: Colors.white,
+                              //                       fontWeight: FontWeight.bold,
+                              //                       fontSize:
+                              //                           MediaQuery.of(context)
+                              //                                       .size
+                              //                                       .width <
+                              //                                   500
+                              //                               ? 14
+                              //                               : 20,
+                              //                     ),
+                              //                   ),
+                              //                 ),
+                              //                 Padding(
+                              //                   padding:
+                              //                       const EdgeInsets.all(8.0),
+                              //                   child: Text(
+                              //                     'Action',
+                              //                     style: TextStyle(
+                              //                       color: Colors.white,
+                              //                       fontWeight: FontWeight.bold,
+                              //                       fontSize:
+                              //                           MediaQuery.of(context)
+                              //                                       .size
+                              //                                       .width <
+                              //                                   500
+                              //                               ? 14
+                              //                               : 20,
+                              //                     ),
+                              //                   ),
+                              //                 ),
+                              //               ],
+                              //             ),
+                              //             // Tenant Rows
+                              //             if (hasSelectedTenants)
+                              //               ...Provider.of<
+                              //                   SelectedTenantsProvider>(
+                              //                   context)
+                              //                   .selectedTenants
+                              //                   .asMap()
+                              //                   .entries
+                              //                   .map((entry) {
+                              //                 final index = entry.key;
+                              //                 final tenant = entry.value;
+                              //                 final controller = Provider.of<
+                              //                     SelectedTenantsProvider>(
+                              //                     context)
+                              //                     .rentShareControllers[index];
+                              //
+                              //                 return TableRow(
+                              //                   children: [
+                              //                     Padding(
+                              //                       padding:
+                              //                       const EdgeInsets.only(
+                              //                           left: 10, top: 15),
+                              //                       child: Text(
+                              //                         '${tenant.tenantFirstName} ${tenant.tenantLastName}',
+                              //                         style: TextStyle(
+                              //                           fontSize:
+                              //                           MediaQuery.of(context)
+                              //                               .size
+                              //                               .width <
+                              //                               500
+                              //                               ? 14
+                              //                               : 18,
+                              //                           fontWeight:
+                              //                           FontWeight.w700,
+                              //                           color:
+                              //                           blueColor
+                              //
+                              //
+                              //                           ,
+                              //                         ),
+                              //                       ),
+                              //                     ),
+                              //                     Padding(
+                              //                       padding:
+                              //                       const EdgeInsets.all(8.0),
+                              //                       child: Material(
+                              //                         elevation: 3,
+                              //                         borderRadius:
+                              //                         BorderRadius.circular(
+                              //                             8),
+                              //                         child: Container(
+                              //                           height:
+                              //                           MediaQuery.of(context)
+                              //                               .size
+                              //                               .width <
+                              //                               500
+                              //                               ? 45
+                              //                               : 50,
+                              //                           width:
+                              //                           MediaQuery.of(context)
+                              //                               .size
+                              //                               .width <
+                              //                               500
+                              //                               ? 70
+                              //                               : 400,
+                              //                           decoration: BoxDecoration(
+                              //                             color: Colors.white,
+                              //                             borderRadius:
+                              //                             BorderRadius
+                              //                                 .circular(8),
+                              //                             border: Border.all(
+                              //                               color:
+                              //                               Colors.grey[300]!,
+                              //                               width: 1,
+                              //                             ),
+                              //                           ),
+                              //                           child: Center(
+                              //                             child:
+                              //                             Padding(
+                              //                               padding:
+                              //                               const EdgeInsets
+                              //                                   .only(
+                              //                                   left: 10,
+                              //                                   bottom: 7),
+                              //                               child: TextField(
+                              //                                 controller:
+                              //                                 controller,
+                              //                                 style: TextStyle(
+                              //                                   fontSize: MediaQuery.of(
+                              //                                       context)
+                              //                                       .size
+                              //                                       .width <
+                              //                                       500
+                              //                                       ? 16
+                              //                                       : 16,
+                              //                                   fontWeight:
+                              //                                   FontWeight
+                              //                                       .bold,
+                              //                                   color:
+                              //                                   Colors.black,
+                              //                                 ),
+                              //                                 onChanged: (value) {
+                              //                                   double
+                              //                                   enteredValue =
+                              //                                       double.tryParse(
+                              //                                           value) ??
+                              //                                           0;
+                              //                                   if (enteredValue >
+                              //                                       100) {
+                              //                                     controller
+                              //                                         .text =
+                              //                                     '100';
+                              //                                     controller
+                              //                                         .selection =
+                              //                                         TextSelection
+                              //                                             .fromPosition(
+                              //                                           TextPosition(
+                              //                                               offset: controller
+                              //                                                   .text
+                              //                                                   .length),
+                              //                                         );
+                              //                                   }
+                              //                                   Provider.of<SelectedTenantsProvider>(
+                              //                                       context,
+                              //                                       listen:
+                              //                                       false)
+                              //                                       .validateRentShares();
+                              //
+                              //                                   final provider =
+                              //                                   Provider.of<
+                              //                                       SelectedTenantsProvider>(
+                              //                                       context,
+                              //                                       listen:
+                              //                                       false);
+                              //                                   final rentShareControllers =
+                              //                                       provider
+                              //                                           .rentShareControllers;
+                              //                                   double
+                              //                                   totalRentShare =
+                              //                                   0.0;
+                              //                                   for (var controller
+                              //                                   in rentShareControllers) {
+                              //                                     double
+                              //                                     rentShare =
+                              //                                         double.tryParse(
+                              //                                             controller.text) ??
+                              //                                             0.0;
+                              //                                     totalRentShare +=
+                              //                                         rentShare;
+                              //                                   }
+                              //                                   if (totalRentShare !=
+                              //                                       100.0) {
+                              //                                     setState(() {
+                              //                                       _errorMessage =
+                              //                                       'Total rent share must equal 100';
+                              //                                     });
+                              //                                   }
+                              //                                   else{
+                              //                                     setState(() {
+                              //                                       _errorMessage = null;
+                              //                                     });
+                              //                                   }
+                              //                                 },
+                              //                                 keyboardType:
+                              //                                 TextInputType
+                              //                                     .number,
+                              //                                 decoration:
+                              //                                 InputDecoration(
+                              //                                   hintText: "0",
+                              //                                   hintStyle:
+                              //                                   TextStyle(
+                              //                                     fontSize: MediaQuery.of(context)
+                              //                                         .size
+                              //                                         .width <
+                              //                                         500
+                              //                                         ? 16
+                              //                                         : 16,
+                              //                                     fontWeight:
+                              //                                     FontWeight
+                              //                                         .bold,
+                              //                                     color: Colors
+                              //                                         .black,
+                              //                                   ),
+                              //                                   border:
+                              //                                   InputBorder
+                              //                                       .none,
+                              //                                   contentPadding:
+                              //                                   EdgeInsets
+                              //                                       .symmetric(
+                              //                                       vertical:
+                              //                                       8),
+                              //                                 ),
+                              //                               ),
+                              //                             ),
+                              //                           ),
+                              //                         ),
+                              //                       ),
+                              //                     ),
+                              //                     Padding(
+                              //                       padding:
+                              //                       const EdgeInsets.only(
+                              //                           top: 15),
+                              //                       child: Row(
+                              //                         mainAxisAlignment:
+                              //                         MainAxisAlignment
+                              //                             .center,
+                              //                         crossAxisAlignment:
+                              //                         CrossAxisAlignment
+                              //                             .center,
+                              //                         children: [
+                              //                           InkWell(
+                              //                             onTap: () {
+                              //                               Provider.of<SelectedTenantsProvider>(
+                              //                                   context,
+                              //                                   listen: false)
+                              //                                   .removeTenant(
+                              //                                   tenant);
+                              //                             },
+                              //                             child: Icon(
+                              //                               Icons.delete,
+                              //                               color: const Color
+                              //                                   .fromRGBO(
+                              //                                   21, 43, 83, 1),
+                              //                               size: MediaQuery.of(
+                              //                                   context)
+                              //                                   .size
+                              //                                   .width <
+                              //                                   500
+                              //                                   ? 18
+                              //                                   : 25,
+                              //                             ),
+                              //                           ),
+                              //                         ],
+                              //                       ),
+                              //                     ),
+                              //                   ],
+                              //                 );
+                              //               }).toList(),
+                              //             // Applicant Rows
+                              //             if (hasSelectedApplicants)
+                              //               ...Provider.of<
+                              //                           SelectedApplicantProvider>(
+                              //                       context)
+                              //                   .selectedApplicant
+                              //                   .asMap()
+                              //                   .entries
+                              //                   .map((entry) {
+                              //                 final index = entry.key;
+                              //                 final applicant = entry.value;
+                              //                 final controller = Provider.of<
+                              //                     SelectedApplicantProvider>(
+                              //                     context)
+                              //                     .rentShareControllers[index];
+                              //
+                              //                 return TableRow(
+                              //                   children: [
+                              //                     Padding(
+                              //                       padding:
+                              //                           const EdgeInsets.only(
+                              //                               left: 20, top: 15),
+                              //                       child: Text(
+                              //                         '${applicant.applicantFirstName} ${applicant.applicantLastName}',
+                              //                         style: TextStyle(
+                              //                           fontSize: MediaQuery.of(
+                              //                                           context)
+                              //                                       .size
+                              //                                       .width <
+                              //                                   500
+                              //                               ? 14
+                              //                               : 18,
+                              //                           fontWeight:
+                              //                               FontWeight.w700,
+                              //                           color: blueColor,
+                              //                         ),
+                              //                       ),
+                              //                     ),
+                              //                     Padding(
+                              //                       padding:
+                              //                       const EdgeInsets.all(8.0),
+                              //                       child: Material(
+                              //                         elevation: 3,
+                              //                         borderRadius:
+                              //                         BorderRadius.circular(
+                              //                             8),
+                              //                         child: Container(
+                              //                           height:
+                              //                           MediaQuery.of(context)
+                              //                               .size
+                              //                               .width <
+                              //                               500
+                              //                               ? 45
+                              //                               : 50,
+                              //                           width:
+                              //                           MediaQuery.of(context)
+                              //                               .size
+                              //                               .width <
+                              //                               500
+                              //                               ? 70
+                              //                               : 400,
+                              //                           decoration: BoxDecoration(
+                              //                             color: Colors.white,
+                              //                             borderRadius:
+                              //                             BorderRadius
+                              //                                 .circular(8),
+                              //                             border: Border.all(
+                              //                               color:
+                              //                               Colors.grey[300]!,
+                              //                               width: 1,
+                              //                             ),
+                              //                           ),
+                              //                           child: Center(
+                              //                             child:
+                              //                             Padding(
+                              //                               padding:
+                              //                               const EdgeInsets
+                              //                                   .only(
+                              //                                   left: 10,
+                              //                                   bottom: 7),
+                              //                               child: TextField(
+                              //                                 controller:
+                              //                                 controller,
+                              //                                 style: TextStyle(
+                              //                                   fontSize: MediaQuery.of(
+                              //                                       context)
+                              //                                       .size
+                              //                                       .width <
+                              //                                       500
+                              //                                       ? 16
+                              //                                       : 16,
+                              //                                   fontWeight:
+                              //                                   FontWeight
+                              //                                       .bold,
+                              //                                   color:
+                              //                                   Colors.black,
+                              //                                 ),
+                              //                                 onChanged: (value) {
+                              //                                   double
+                              //                                   enteredValue =
+                              //                                       double.tryParse(
+                              //                                           value) ??
+                              //                                           0;
+                              //                                   if (enteredValue >
+                              //                                       100) {
+                              //                                     controller
+                              //                                         .text =
+                              //                                     '100';
+                              //                                     controller
+                              //                                         .selection =
+                              //                                         TextSelection
+                              //                                             .fromPosition(
+                              //                                           TextPosition(
+                              //                                               offset: controller
+                              //                                                   .text
+                              //                                                   .length),
+                              //                                         );
+                              //                                   }
+                              //                                   Provider.of<SelectedApplicantProvider>(
+                              //                                       context,
+                              //                                       listen:
+                              //                                       false)
+                              //                                       .validateRentShares();
+                              //
+                              //                                   final provider =
+                              //                                   Provider.of<
+                              //                                       SelectedApplicantProvider>(
+                              //                                       context,
+                              //                                       listen:
+                              //                                       false);
+                              //                                   final rentShareControllers =
+                              //                                       provider
+                              //                                           .rentShareControllers;
+                              //                                   double
+                              //                                   totalRentShare =
+                              //                                   0.0;
+                              //                                   for (var controller
+                              //                                   in rentShareControllers) {
+                              //                                     double
+                              //                                     rentShare =
+                              //                                         double.tryParse(
+                              //                                             controller.text) ??
+                              //                                             0.0;
+                              //                                     totalRentShare +=
+                              //                                         rentShare;
+                              //                                   }
+                              //                                   if (totalRentShare !=
+                              //                                       100.0) {
+                              //                                     setState(() {
+                              //                                       _errorMessage =
+                              //                                       'Total rent share must equal 100';
+                              //                                     });
+                              //                                   }
+                              //                                   else{
+                              //                                     setState(() {
+                              //                                       _errorMessage = null;
+                              //                                     });
+                              //                                   }
+                              //                                 },
+                              //                                 keyboardType:
+                              //                                 TextInputType
+                              //                                     .number,
+                              //                                 decoration:
+                              //                                 InputDecoration(
+                              //                                   hintText: "0",
+                              //                                   hintStyle:
+                              //                                   TextStyle(
+                              //                                     fontSize: MediaQuery.of(context)
+                              //                                         .size
+                              //                                         .width <
+                              //                                         500
+                              //                                         ? 16
+                              //                                         : 16,
+                              //                                     fontWeight:
+                              //                                     FontWeight
+                              //                                         .bold,
+                              //                                     color: Colors
+                              //                                         .black,
+                              //                                   ),
+                              //                                   border:
+                              //                                   InputBorder
+                              //                                       .none,
+                              //                                   contentPadding:
+                              //                                   EdgeInsets
+                              //                                       .symmetric(
+                              //                                       vertical:
+                              //                                       8),
+                              //                                 ),
+                              //                               ),
+                              //                             ),
+                              //                           ),
+                              //                         ),
+                              //                       ),
+                              //                     ),
+                              //                     Padding(
+                              //                       padding:
+                              //                       const EdgeInsets.only(
+                              //                           top: 15),
+                              //                       child: Row(
+                              //                         mainAxisAlignment:
+                              //                         MainAxisAlignment
+                              //                             .center,
+                              //                         crossAxisAlignment:
+                              //                         CrossAxisAlignment
+                              //                             .center,
+                              //                         children: [
+                              //                           InkWell(
+                              //                             onTap: () {
+                              //                               Provider.of<SelectedApplicantProvider>(
+                              //                                   context,
+                              //                                   listen:
+                              //                                   false)
+                              //                                   .removeApplicant(
+                              //                                   applicant);
+                              //                             },
+                              //                             child: Icon(
+                              //                               Icons.delete,
+                              //                               color: const Color
+                              //                                   .fromRGBO(
+                              //                                   21, 43, 83, 1),
+                              //                               size: MediaQuery.of(
+                              //                                   context)
+                              //                                   .size
+                              //                                   .width <
+                              //                                   500
+                              //                                   ? 18
+                              //                                   : 25,
+                              //                             ),
+                              //                           ),
+                              //                         ],
+                              //                       ),
+                              //                     ),
+                              //                   ],
+                              //                 );
+                              //               }).toList(),
+                              //           ],
+                              //         ),
+                              //       ],
+                              //     ),
+                              //   ),
+
                               if (Provider.of<SelectedTenantsProvider>(context)
                                   .selectedTenants
                                   .isNotEmpty)
@@ -2270,6 +2821,7 @@ class _addLease3State extends State<addLease3>
                                     ],
                                   ),
                                 ),
+
                               /*  if (Provider.of<SelectedTenantsProvider>(context)
                                     .selectedTenants
                                     .isNotEmpty)
@@ -2361,10 +2913,7 @@ class _addLease3State extends State<addLease3>
                                             children: [
                                               TableRow(
                                                 decoration: BoxDecoration(
-                                                  color: blueColor
-
-
-,
+                                                  color: blueColor,
                                                 ),
                                                 children: [
                                                   Padding(
@@ -2456,10 +3005,7 @@ class _addLease3State extends State<addLease3>
                                                               : 20,
                                                           fontWeight:
                                                               FontWeight.w700,
-                                                          color: blueColor
-
-
-,
+                                                          color: blueColor,
                                                         ),
                                                       ),
                                                     ),
@@ -2570,7 +3116,7 @@ class _addLease3State extends State<addLease3>
                               const SizedBox(
                                 height: 10,
                               ),
-                               Text('Rent',
+                              Text('Rent',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
@@ -2612,7 +3158,9 @@ class _addLease3State extends State<addLease3>
                                                 setState(() {
                                                   _selectedRent = value;
 
-                                                  _updateProRatedRent(_selectedRent ?? 'Monthly');
+                                                  _updateProRatedRent(
+                                                      _selectedRent ??
+                                                          'Monthly');
                                                 });
                                                 _updateNextDueDate();
                                               },
@@ -2673,10 +3221,7 @@ class _addLease3State extends State<addLease3>
                                                             foregroundColor:
                                                                 Colors.white,
                                                             backgroundColor:
-                                                                blueColor
-
-
-, // button text color
+                                                                blueColor, // button text color
                                                           ),
                                                         ),
                                                       ),
@@ -2701,13 +3246,13 @@ class _addLease3State extends State<addLease3>
                                                         formattedNextDueDate;
                                                     rentNextDueDate.text =
                                                         formattedDate;
-                                                    _updateProRatedRent(_selectedRent ?? 'Monthly');
+                                                    _updateProRatedRent(
+                                                        _selectedRent ??
+                                                            'Monthly');
                                                   });
-
 
                                                   print(rentNextDueDate.text);
                                                 }
-
                                               },
                                               readOnnly: true,
                                               optional: true,
@@ -2760,7 +3305,8 @@ class _addLease3State extends State<addLease3>
                                       _selectedRent = value;
                                       _selectedRent != null;
                                       isProRent = false;
-                                      _updateProRatedRent(_selectedRent ?? 'Monthly');
+                                      _updateProRatedRent(
+                                          _selectedRent ?? 'Monthly');
                                     });
                                     _updateNextDueDate();
                                   },
@@ -2787,9 +3333,9 @@ class _addLease3State extends State<addLease3>
                                   setState(() {
                                     isAmountEntered = value.isNotEmpty;
                                     isProRent = false;
-                                    _updateProRatedRent(_selectedRent ?? 'Monthly');// Reset checkbox when amount changes
+                                    _updateProRatedRent(_selectedRent ??
+                                        'Monthly'); // Reset checkbox when amount changes
                                   });
-
                                 },
                                 keyboardType: TextInputType.number,
                                 hintText: 'Enter Amount',
@@ -2821,28 +3367,20 @@ class _addLease3State extends State<addLease3>
                                           Widget? child) {
                                         return Theme(
                                           data: ThemeData.light().copyWith(
-                                            colorScheme:
-                                                 ColorScheme.light(
-                                              primary: blueColor
-
-
-, // header background color
+                                            colorScheme: ColorScheme.light(
+                                              primary:
+                                                  blueColor, // header background color
                                               onPrimary: Colors
                                                   .white, // header text color
-                                              onSurface: blueColor
-
-
-, // body text color
+                                              onSurface:
+                                                  blueColor, // body text color
                                             ),
                                             textButtonTheme:
                                                 TextButtonThemeData(
                                               style: TextButton.styleFrom(
                                                 foregroundColor: Colors.white,
                                                 backgroundColor:
-                                                    blueColor
-
-
-, // button text color
+                                                    blueColor, // button text color
                                               ),
                                             ),
                                           ),
@@ -2866,13 +3404,12 @@ class _addLease3State extends State<addLease3>
                                         rentNextDueDate.text = formattedDate;
                                         rentNextDueDate.text.isNotEmpty;
                                         isProRent = false;
-                                        _updateProRatedRent(_selectedRent ?? 'Monthly');
+                                        _updateProRatedRent(
+                                            _selectedRent ?? 'Monthly');
                                       });
-
 
                                       print(rentNextDueDate.text);
                                     }
-
                                   },
                                   readOnnly: true,
                                   suffixIcon: IconButton(
@@ -2935,55 +3472,86 @@ class _addLease3State extends State<addLease3>
                                   // ),
 
                                   SizedBox(
-                                        width: 24.0, // Standard width for checkbox
-                                          height: 24.0,
-                                        child: Checkbox(
-                                          value: isProRent,
-                                          onChanged: isAmountEntered && rentNextDueDate.text.isNotEmpty && _selectedRent != null && startDateController.text.isNotEmpty && endDateController.text.isNotEmpty
-                                              ? (value) {
-                                            setState(() {
-                                              isProRent = value ?? false;
-                                              _updateProRatedRent(_selectedRent ?? 'Monthly');
-                                            });
-                                          }
-                                              : null,
-                                          activeColor: blueColor,// Disable checkbox if amount is not entered
-                                        ),
-                                      ),
+                                    width: 24.0, // Standard width for checkbox
+                                    height: 24.0,
+                                    child: Checkbox(
+                                      value: isProRent,
+                                      onChanged: isAmountEntered &&
+                                              rentNextDueDate.text.isNotEmpty &&
+                                              _selectedRent != null &&
+                                              startDateController
+                                                  .text.isNotEmpty &&
+                                              endDateController.text.isNotEmpty
+                                          ? (value) {
+                                              setState(() {
+                                                isProRent = value ?? false;
+                                                _updateProRatedRent(
+                                                    _selectedRent ?? 'Monthly');
+                                              });
+                                            }
+                                          : null,
+                                      activeColor:
+                                          blueColor, // Disable checkbox if amount is not entered
+                                    ),
+                                  ),
                                   SizedBox(
                                     width: 5,
                                   ),
-                                  Text("Charge pro-rated rent for current month",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
+                                  Text(
+                                    "Charge pro-rated rent for current month",
+                                    style: TextStyle(
+                                        color: blueColor,
+                                        fontWeight: FontWeight.bold),
+                                  )
                                 ],
                               ),
-                              if(isProRent && isAmountEntered && rentNextDueDate.text.isNotEmpty && _selectedRent != null && startDateController.text.isNotEmpty && endDateController.text.isNotEmpty)
+                              if (isProRent &&
+                                  isAmountEntered &&
+                                  rentNextDueDate.text.isNotEmpty &&
+                                  _selectedRent != null &&
+                                  startDateController.text.isNotEmpty &&
+                                  endDateController.text.isNotEmpty)
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                if(isProRent && isAmountEntered && rentNextDueDate.text.isNotEmpty && _selectedRent != null && startDateController.text.isNotEmpty && endDateController.text.isNotEmpty)
-                              const Text('Pro-rated Rent',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              if(isProRent && isAmountEntered && rentNextDueDate.text.isNotEmpty && _selectedRent != null && startDateController.text.isNotEmpty && endDateController.text.isNotEmpty)
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              if( isProRent && isAmountEntered && rentNextDueDate.text.isNotEmpty && _selectedRent != null && startDateController.text.isNotEmpty && endDateController.text.isNotEmpty)
-                              CustomTextField(
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter rent';
-                                  }
-                                  return null;
-                                },
-                                keyboardType: TextInputType.text,
-                                hintText: 'Enter rent',
-                                controller: proRatedRentController,
-                                optional: true,
-                              ),
-
+                              if (isProRent &&
+                                  isAmountEntered &&
+                                  rentNextDueDate.text.isNotEmpty &&
+                                  _selectedRent != null &&
+                                  startDateController.text.isNotEmpty &&
+                                  endDateController.text.isNotEmpty)
+                                const Text('Pro-rated Rent',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey)),
+                              if (isProRent &&
+                                  isAmountEntered &&
+                                  rentNextDueDate.text.isNotEmpty &&
+                                  _selectedRent != null &&
+                                  startDateController.text.isNotEmpty &&
+                                  endDateController.text.isNotEmpty)
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                              if (isProRent &&
+                                  isAmountEntered &&
+                                  rentNextDueDate.text.isNotEmpty &&
+                                  _selectedRent != null &&
+                                  startDateController.text.isNotEmpty &&
+                                  endDateController.text.isNotEmpty)
+                                CustomTextField(
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter rent';
+                                    }
+                                    return null;
+                                  },
+                                  keyboardType: TextInputType.text,
+                                  hintText: 'Enter rent',
+                                  controller: proRatedRentController,
+                                  optional: true,
+                                ),
                               const SizedBox(
                                 height: 20,
                               ),
@@ -3011,7 +3579,7 @@ class _addLease3State extends State<addLease3>
                               const SizedBox(
                                 height: 10,
                               ),
-                               Text(
+                              Text(
                                 'Charges (Optional)',
                                 style: TextStyle(
                                   fontSize: 16,
@@ -3143,7 +3711,7 @@ class _addLease3State extends State<addLease3>
                                       height: 10,
                                     ),
                                   if (formDataRecurringList.isNotEmpty)
-                                     Text(
+                                    Text(
                                       'Recurring Information',
                                       style: TextStyle(
                                         fontSize: 15,
@@ -3156,132 +3724,126 @@ class _addLease3State extends State<addLease3>
                                       height: 5,
                                     ),
                                   if (formDataRecurringList.isNotEmpty)
-                                  Table(
-                                    border: TableBorder.all(
-                                      width: 1,
-                                      color:
-                                          blueColor,
-                                    ),
-                                    columnWidths: {
-                                      0: const FlexColumnWidth(2),
-                                      1: const FlexColumnWidth(2),
-                                      2: const FlexColumnWidth(1.3),
-                                    },
-                                    children: [
-                                      if (formDataRecurringList.isNotEmpty)
-                                         TableRow(
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  blueColor,
-                                            ),
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  'Account',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
+                                    Table(
+                                      border: TableBorder.all(
+                                        width: 1,
+                                        color: blueColor,
+                                      ),
+                                      columnWidths: {
+                                        0: const FlexColumnWidth(2),
+                                        1: const FlexColumnWidth(2),
+                                        2: const FlexColumnWidth(1.3),
+                                      },
+                                      children: [
+                                        if (formDataRecurringList.isNotEmpty)
+                                          TableRow(
+                                              decoration: BoxDecoration(
+                                                color: blueColor,
+                                              ),
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                    'Account',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  'Amount',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
+                                                Padding(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                    'Amount',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  'Actions',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
+                                                Padding(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                    'Actions',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ]),
-                                      ...formDataRecurringList
-                                          .asMap()
-                                          .entries
-                                          .map((entry) {
-                                        int index = entry.key;
-                                        var item = entry.value;
-                                        return TableRow(children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              '${item['account']}',
-                                              style:  TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w700,
-                                                color: blueColor
-
-
-,
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              '${item['amount']}',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.grey[500],
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
+                                              ]),
+                                        ...formDataRecurringList
+                                            .asMap()
+                                            .entries
+                                            .map((entry) {
+                                          int index = entry.key;
+                                          var item = entry.value;
+                                          return TableRow(children: [
+                                            Padding(
                                               padding:
                                                   const EdgeInsets.all(8.0),
-                                              child: Row(children: [
-                                                InkWell(
-                                                  onTap: () {
-                                                    _showRecurringPopupForm(
-                                                        context,
-                                                        _selectedRent
-                                                            .toString(),
-                                                        initialData: item,
-                                                        index: index);
-                                                  },
-                                                  child:  Icon(
-                                                    Icons.edit,
-                                                    color: blueColor
-
-
-,
-                                                    size: 18,
-                                                  ),
+                                              child: Text(
+                                                '${item['account']}',
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: blueColor,
                                                 ),
-                                                const SizedBox(width: 10),
-                                                InkWell(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      formDataRecurringList
-                                                          .removeAt(index);
-                                                    });
-                                                  },
-                                                  child:  Icon(
-                                                    Icons.delete,
-                                                    color: blueColor
-
-
-,
-                                                    size: 18,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                '${item['amount']}',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.grey[500],
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Row(children: [
+                                                  InkWell(
+                                                    onTap: () {
+                                                      _showRecurringPopupForm(
+                                                          context,
+                                                          _selectedRent
+                                                              .toString(),
+                                                          initialData: item,
+                                                          index: index);
+                                                    },
+                                                    child: Icon(
+                                                      Icons.edit,
+                                                      color: blueColor,
+                                                      size: 18,
+                                                    ),
                                                   ),
-                                                )
-                                              ]))
-                                        ]);
-                                      })
-                                    ],
-                                  ),
+                                                  const SizedBox(width: 10),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        formDataRecurringList
+                                                            .removeAt(index);
+                                                      });
+                                                    },
+                                                    child: Icon(
+                                                      Icons.delete,
+                                                      color: blueColor,
+                                                      size: 18,
+                                                    ),
+                                                  )
+                                                ]))
+                                          ]);
+                                        })
+                                      ],
+                                    ),
                                   if (formDataOneTimeList.isNotEmpty)
                                     const SizedBox(
                                       height: 10,
@@ -3291,7 +3853,7 @@ class _addLease3State extends State<addLease3>
                                       height: 5,
                                     ),
                                   if (formDataOneTimeList.isNotEmpty)
-                                     Text(
+                                    Text(
                                       'One Time Information',
                                       style: TextStyle(
                                         fontSize: 15,
@@ -3304,134 +3866,128 @@ class _addLease3State extends State<addLease3>
                                       height: 5,
                                     ),
                                   if (formDataOneTimeList.isNotEmpty)
-                                  Table(
-                                    border: TableBorder.all(
-                                      width: 1,
-                                      color:
-                                          blueColor,
-                                    ),
-                                    columnWidths: const {
-                                      0: FlexColumnWidth(2),
-                                      1: FlexColumnWidth(2),
-                                      2: FlexColumnWidth(1.3),
-                                    },
-                                    children: [
-                                      if (formDataOneTimeList.isNotEmpty)
-                                         TableRow(
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  blueColor,
-                                            ),
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  'Account',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
+                                    Table(
+                                      border: TableBorder.all(
+                                        width: 1,
+                                        color: blueColor,
+                                      ),
+                                      columnWidths: const {
+                                        0: FlexColumnWidth(2),
+                                        1: FlexColumnWidth(2),
+                                        2: FlexColumnWidth(1.3),
+                                      },
+                                      children: [
+                                        if (formDataOneTimeList.isNotEmpty)
+                                          TableRow(
+                                              decoration: BoxDecoration(
+                                                color: blueColor,
+                                              ),
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                    'Account',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  'Amount',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
+                                                Padding(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                    'Amount',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  'Actions',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
+                                                Padding(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                    'Actions',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ]),
-                                      ...formDataOneTimeList
-                                          .asMap()
-                                          .entries
-                                          .map((entry) {
-                                        int index = entry.key;
-                                        var item = entry.value;
-                                        return TableRow(children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              '${item['account']}',
-                                              style:  TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w700,
-                                                color: blueColor
-
-
-,
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              '${item['amount']}',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.grey[500],
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
+                                              ]),
+                                        ...formDataOneTimeList
+                                            .asMap()
+                                            .entries
+                                            .map((entry) {
+                                          int index = entry.key;
+                                          var item = entry.value;
+                                          return TableRow(children: [
+                                            Padding(
                                               padding:
                                                   const EdgeInsets.all(8.0),
-                                              child: Row(children: [
-                                                InkWell(
-                                                  onTap: () {
-                                                    _showPopupForm(
-                                                        context,
-                                                        _selectedRent
-                                                            .toString(),
-                                                        initialData: item,
-                                                        index: index);
-
-                                                    // Implement edit functionality here
-                                                  },
-                                                  child:  Icon(
-                                                    Icons.edit,
-                                                    color: blueColor
-
-
-,
-                                                    size: 18,
-                                                  ),
+                                              child: Text(
+                                                '${item['account']}',
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: blueColor,
                                                 ),
-                                                const SizedBox(width: 10),
-                                                InkWell(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      formDataOneTimeList
-                                                          .removeAt(index);
-                                                    });
-                                                  },
-                                                  child:  Icon(
-                                                    Icons.delete,
-                                                    color: blueColor
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                '${item['amount']}',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.grey[500],
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Row(children: [
+                                                  InkWell(
+                                                    onTap: () {
+                                                      _showPopupForm(
+                                                          context,
+                                                          _selectedRent
+                                                              .toString(),
+                                                          initialData: item,
+                                                          index: index);
 
-
-,
-                                                    size: 18,
+                                                      // Implement edit functionality here
+                                                    },
+                                                    child: Icon(
+                                                      Icons.edit,
+                                                      color: blueColor,
+                                                      size: 18,
+                                                    ),
                                                   ),
-                                                )
-                                              ]))
-                                        ]);
-                                      })
-                                    ],
-                                  ),
+                                                  const SizedBox(width: 10),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        formDataOneTimeList
+                                                            .removeAt(index);
+                                                      });
+                                                    },
+                                                    child: Icon(
+                                                      Icons.delete,
+                                                      color: blueColor,
+                                                      size: 18,
+                                                    ),
+                                                  )
+                                                ]))
+                                          ]);
+                                        })
+                                      ],
+                                    ),
                                 ],
                               ),
                             ],
@@ -3456,7 +4012,7 @@ class _addLease3State extends State<addLease3>
                               const SizedBox(
                                 height: 10,
                               ),
-                               Text('Security Deposit (Optional)',
+                              Text('Security Deposit (Optional)',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
@@ -3519,7 +4075,7 @@ class _addLease3State extends State<addLease3>
                               const SizedBox(
                                 height: 10,
                               ),
-                               Text('Upload Files (Maximum of 10)',
+                              Text('Upload Files (Maximum of 10)',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
@@ -3535,7 +4091,7 @@ class _addLease3State extends State<addLease3>
                                 ),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor:  blueColor,
+                                    backgroundColor: blueColor,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),
@@ -3610,7 +4166,7 @@ class _addLease3State extends State<addLease3>
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
-                                   Text('Residents center Welcome Email',
+                                  Text('Residents center Welcome Email',
                                       style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
@@ -3619,7 +4175,7 @@ class _addLease3State extends State<addLease3>
                                     width: 5,
                                   ),
                                   Switch(
-                                    activeColor:  blueColor,
+                                    activeColor: blueColor,
                                     value: _selectedResidentsEmail,
                                     onChanged: (newValue) {
                                       setState(() {
@@ -3652,363 +4208,70 @@ class _addLease3State extends State<addLease3>
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8.0)),
                                 child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: blueColor,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0))),
-                                    onPressed: () async {
-                                      if (_formKey.currentState?.validate() ??
-                                          false) {
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: blueColor,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0))),
+                                  onPressed: () async {
+                                    if (_formKey.currentState?.validate() ??
+                                        false) {
+                                      setState(() {
+                                        isLoading = true; // Stop loading
+                                      });
+                                      final provider =
+                                          Provider.of<SelectedTenantsProvider>(
+                                              context,
+                                              listen: false);
+                                      final rentShareControllers =
+                                          provider.rentShareControllers;
+                                      // for (int i = 0; i < rentShareControllers.length; i++) {
+                                      //   print('Tenant ${i + 1}: ${rentShareControllers[i].text}');
+                                      // }
+                                      // bool hasError = false;
+                                      // if (hasError || provider.validationMessage != null) {
+                                      //   setState(() {
+                                      //
+                                      //   });
+                                      //   return;
+                                      // }
+                                      // provider.clearValidationMessage();
+                                      //charges
+                                      if (rentShareControllers.length < 1) {
                                         setState(() {
-                                          isLoading = true; // Stop loading
+                                          _errorMessage = "required tenants";
+                                          // _errorMessagetenants = 'Please select at least one tenant or cosigner.';
+                                          // _errorMessage = null;
                                         });
-                                        final provider = Provider.of<
-                                                SelectedTenantsProvider>(
-                                            context,
-                                            listen: false);
-                                        final rentShareControllers =
-                                            provider.rentShareControllers;
-                                        // for (int i = 0; i < rentShareControllers.length; i++) {
-                                        //   print('Tenant ${i + 1}: ${rentShareControllers[i].text}');
-                                        // }
-                                        // bool hasError = false;
-                                        // if (hasError || provider.validationMessage != null) {
-                                        //   setState(() {
-                                        //
-                                        //   });
-                                        //   return;
-                                        // }
-                                        // provider.clearValidationMessage();
-                                        //charges
-                                        if (rentShareControllers.length < 1) {
-                                          setState(() {
-                                            _errorMessage = "required tenants";
-                                            // _errorMessagetenants = 'Please select at least one tenant or cosigner.';
-                                            // _errorMessage = null;
-                                          });
-                                          return;
-                                        }
-
-                                        setState(() {
-                                          // _errorMessagetenants = null;
-                                          _errorMessage = null;
-
-                                        });
-
-                                        double totalRentShare = 0.0;
-                                        for (var controller
-                                            in rentShareControllers) {
-                                          double rentShare = double.tryParse(
-                                                  controller.text) ??
-                                              0.0;
-                                          totalRentShare += rentShare;
-                                        }
-                                        if (totalRentShare != 100.0) {
-                                          setState(() {
-                                            _errorMessage =
-                                                'Total rent share must equal 100';
-                                          });
-                                          return;
-                                        }
-                                        else {
-                                          SharedPreferences prefs =
-                                              await SharedPreferences
-                                                  .getInstance();
-                                          String adminId =
-                                              prefs.getString("adminId")!;
-                                          bool _isLeaseAdded = false;
-                                          // // Printing ChargeData object
-                                          //Changes
-                                          List<Map<String, String>>
-                                              mergedFormDataList = [
-                                            ...formDataOneTimeList,
-                                            ...formDataRecurringList,
-                                          ];
-                                          String leaseStartDate =
-                                              startDateController.text;
-                                          String leaseEndDate =
-                                              endDateController.text;
-                                          print(
-                                              'ends date : ${endDateController.text}');
-
-                                          print(
-                                              'rent next due date ${reverseFormatDate(rentNextDueDate.text)}');
-                                          List<Entry> chargeEntries =
-                                              mergedFormDataList.map((data) {
-                                            print(data['account']);
-                                            return Entry(
-                                              account: data['account'] ?? '',
-                                              amount: double.tryParse(
-                                                      data['amount'] ??
-                                                          '0.0') ??
-                                                  0.0,
-                                              chargeType:
-                                                  data['charge_type'] ?? '',
-                                              date: reverseFormatDate(
-                                                  rentNextDueDate.text),
-                                              isRepeatable:
-                                                  data['is_repeatable']
-                                                          ?.toLowerCase() ==
-                                                      'true',
-                                              memo: data['memo'] ?? '',
-                                              rentCycle: data[
-                                                  'rent_cycle'], // Assuming this field might be present
-                                              tenantId: data[
-                                                  'tenant_id'], // Assuming this field might be present
-                                            );
-                                          }).toList();
-                                          // print(ne)
-                                          chargeEntries.add(Entry(
-                                            account: "Rent Income",
-                                            amount: double.tryParse(
-                                                    rentAmount.text) ??
-                                                0.0,
-                                            chargeType: 'Rent',
-                                            date: reverseFormatDate(
-                                                rentNextDueDate.text),
-                                            isRepeatable:
-                                                false, // Set to false if it's not repeatable, adjust as needed
-                                            memo: rentMemo.text,
-                                            rentCycle:
-                                                _selectedRent, // Set default value or adjust as needed
-                                          ));
-                                          chargeEntries.add(Entry(
-                                            account: "Security Deposit",
-                                            amount: double.tryParse(
-                                                    securityDepositeAmount
-                                                        .text) ??
-                                                0.0,
-                                            chargeType: 'Security Deposit',
-                                            date: reverseFormatDate(
-                                                rentNextDueDate.text),
-                                            isRepeatable:
-                                                false, // Set to false if it's not repeatable, adjust as needed
-                                            memo: 'Last Month\'s Rent',
-                                            rentCycle:
-                                                _selectedRent, // Set default value or adjust as needed
-                                          ));
-                                          ChargeData chargeData = ChargeData(
-                                            adminId: adminId,
-                                            entry: chargeEntries,
-                                            isLeaseAdded: _isLeaseAdded,
-                                          );
-                                          print('${chargeEntries}');
-                                          //Tenant
-                                          List<TenantData> tenants = [];
-                                          Map<String, String>? firstCosigner =
-                                              cosignersMap.isNotEmpty
-                                                  ? cosignersMap[0]
-                                                  : {};
-                                          print(
-                                              'tenant\'s length ${tenantsMap.length}');
-                                          String currentDate =
-                                              DateTime.now().toString();
-                                          List<TenantData> tenantDataList =
-                                              tenantsMap.entries.map((entry) {
-                                            int index = entry.key;
-                                            final tenantMap = entry.value;
-                                            print(tenantMap['firstName']);
-                                            print(tenantMap['firstName']);
-                                            return TenantData(
-                                              adminId: adminId,
-                                              comments:
-                                                  tenantMap['comments'] ?? '',
-                                              emergencyContact:
-                                                  EmergencyContacts(
-                                                name: tenantMap[
-                                                        'emergencyContactName'] ??
-                                                    '',
-                                                relation: tenantMap[
-                                                        'emergencyRelation'] ??
-                                                    '',
-                                                email: tenantMap[
-                                                        'emergencyEmail'] ??
-                                                    '',
-                                                phoneNumber: tenantMap[
-                                                        'emergencyPhoneNumber'] ??
-                                                    '',
-                                              ),
-                                              isDelete: tenantMap['isDelete'] ==
-                                                  'true',
-                                              taxPayerId:
-                                                  tenantMap['taxPayerId'] ?? '',
-                                              tenantAlternativeEmail:
-                                                  tenantMap['alterEmail'] ?? '',
-                                              tenantAlternativeNumber:
-                                                  tenantMap['workNumber'] ?? '',
-                                              tenantBirthDate:
-                                                  tenantMap['dob'].toString() ??
-                                                      '',
-                                              tenantEmail:
-                                                  tenantMap['email'] ?? '',
-                                              tenantFirstName:
-                                                  tenantMap['firstName'] ?? '',
-                                              tenantId:
-                                                  tenantMap['tenantId'] ?? '',
-                                              tenantLastName:
-                                                  tenantMap['lastName'] ?? '',
-                                              tenantPassword:
-                                                  tenantMap['passWord'] ?? '',
-                                              tenantPhoneNumber:
-                                                  tenantMap['phoneNumber'] ??
-                                                      '',
-                                              updatedAt: tenantMap['updatedAt']
-                                                      .toString() ??
-                                                  '',
-                                              rentShare:
-                                                  rentShareControllers[index]
-                                                      .text,
-                                            );
-                                          }).toList();
-                                          print(tenantDataList.length);
-                                          // Assuming tenantDataList is a List<TenantData>
-                                          List<String> tenantIds =
-                                              tenantDataList
-                                                  .map((tenant) =>
-                                                      tenant.tenantId ?? '')
-                                                  .toList();
-
-                                          print(
-                                              'tenant ids :${tenantIds.length}');
-
-                                          //print all data
-                                          print(firstCosigner);
-                                          print('Tenant Data List:');
-                                          for (var tenant in tenantDataList) {
-                                            print(
-                                                'admin ID: ${tenant.adminId}');
-                                            print(
-                                                'Tenant First Name: ${tenant.tenantFirstName}');
-                                            print(
-                                                'Tenant Last Name: ${tenant.tenantLastName}');
-                                            print(
-                                                'Tenant Email: ${tenant.tenantEmail}');
-                                            print(
-                                                'Tenant Phone Number: ${tenant.tenantPhoneNumber}');
-                                            print(
-                                                'Tenant Birth Date: ${tenant.tenantBirthDate}');
-                                            print(
-                                                'Rental Address: ${tenant.rentalAddress}');
-                                            print(
-                                                'Rental Unit: ${tenant.rentalUnit}');
-                                            print(
-                                                'Tax Payer ID: ${tenant.taxPayerId}');
-                                            print(
-                                                'Tenant Alternative Email: ${tenant.tenantAlternativeEmail}');
-                                            print(
-                                                'Tenant Alternative Number: ${tenant.tenantAlternativeNumber}');
-                                            print(
-                                                'Created At: ${tenant.createdAt}');
-                                            print(
-                                                'Updated At: ${tenant.updatedAt}');
-                                            print(
-                                                'Is Delete: ${tenant.isDelete}');
-                                            print(
-                                                'Comments: ${tenant.comments}');
-                                            print(
-                                                'Admin ID: ${tenant.adminId}');
-
-                                            print('v: ${tenant.v}');
-                                            print('ID: ${tenant.id}');
-                                            print('-----------------------');
-                                          }
-                                          print(_selectedResidentsEmail);
-                                          print('unit id data :${unitId}');
-                                          Lease lease = Lease(
-                                            chargeData: ChargeData(
-                                              adminId: adminId ?? "",
-                                              entry: chargeEntries,
-                                              isLeaseAdded: true,
-                                            ),
-                                            cosignerData: CosignerData(
-                                              adminId: adminId,
-                                              cosignerFirstName:
-                                                  firstCosigner?['firstName'] ??
-                                                      '',
-                                              cosignerLastName:
-                                                  firstCosigner?['lastName'] ??
-                                                      '',
-                                              cosignerPhoneNumber:
-                                                  firstCosigner?[
-                                                          'phoneNumber'] ??
-                                                      '',
-                                              cosignerEmail:
-                                                  firstCosigner?['email'] ?? '',
-                                              cosignerAlternativeEmail:
-                                                  firstCosigner?[
-                                                          'alterEmail'] ??
-                                                      '',
-                                              cosignerAddress: firstCosigner?[
-                                                      'streetAddress'] ??
-                                                  '',
-                                              cosignerCity:
-                                                  firstCosigner?['city'] ?? '',
-                                              cosignerCountry:
-                                                  firstCosigner?['country'] ??
-                                                      '',
-                                              cosignerPostalcode:
-                                                  firstCosigner?[
-                                                          'postalCode'] ??
-                                                      '',
-                                            ),
-                                            leaseData: LeaseData(
-                                              adminId: adminId ?? "",
-                                                isProRent: isProRent,
-                                              companyName: companyName,
-                                              endDate: reverseFormatDate(
-                                                  leaseEndDate),
-                                              entry: chargeEntries,
-                                              leaseAmount: rentAmount.text,
-                                              leaseType:
-                                                  _selectedLeaseType ?? "",
-                                              rentalId: renderId,
-                                              startDate: reverseFormatDate(
-                                                  leaseStartDate),
-                                              tenantId: tenantDataList
-                                                  .map((tenant) =>
-                                                      tenant.tenantId ?? '')
-                                                  .toList(),
-                                              tenantResidentStatus:
-                                                  _selectedResidentsEmail,
-                                              unitId: _selectedUnit,
-
-                                              uploadedFile: _uploadedFileNames,
-                                            ),
-                                            tenantData: tenantDataList,
-                                          );
-                                        await  addLeaseAndNavigate(lease);
-                                          setState(() {
-                                            isLoading = false; // Stop loading
-                                          });
-                                          if (widget.applicantId != null &&
-                                              widget.applicantId!.isNotEmpty) {
-                                            print(
-                                                'applicant id is: ${widget.applicantId}');
-                                            ifApplicantMoveIn(
-                                                widget.applicantId!);
-                                          } else {
-                                            print('No applicant id provided');
-                                          }
-
-                                          print('valid');
-                                        }
+                                        return;
                                       }
-                                      else {
-                                        print("faild");
-                                        String leaseStartDate =
-                                            startDateController.text;
-                                        String leaseEndDate =
-                                            endDateController.text;
 
+                                      setState(() {
+                                        // _errorMessagetenants = null;
+                                        _errorMessage = null;
+                                      });
+
+                                      double totalRentShare = 0.0;
+                                      for (var controller
+                                          in rentShareControllers) {
+                                        double rentShare =
+                                            double.tryParse(controller.text) ??
+                                                0.0;
+                                        totalRentShare += rentShare;
+                                      }
+                                      if (totalRentShare != 100.0) {
+                                        setState(() {
+                                          _errorMessage =
+                                              'Total rent share must equal 100';
+                                        });
+                                        return;
+                                      } else {
                                         SharedPreferences prefs =
                                             await SharedPreferences
                                                 .getInstance();
                                         String adminId =
                                             prefs.getString("adminId")!;
-
                                         bool _isLeaseAdded = false;
-
                                         // // Printing ChargeData object
                                         //Changes
                                         List<Map<String, String>>
@@ -4016,8 +4279,15 @@ class _addLease3State extends State<addLease3>
                                           ...formDataOneTimeList,
                                           ...formDataRecurringList,
                                         ];
+                                        String leaseStartDate =
+                                            startDateController.text;
+                                        String leaseEndDate =
+                                            endDateController.text;
+                                        print(
+                                            'ends date : ${endDateController.text}');
 
-                                        // Creating Entry objects from the merged list
+                                        print(
+                                            'rent next due date ${reverseFormatDate(rentNextDueDate.text)}');
                                         List<Entry> chargeEntries =
                                             mergedFormDataList.map((data) {
                                           print(data['account']);
@@ -4040,105 +4310,360 @@ class _addLease3State extends State<addLease3>
                                                 'tenant_id'], // Assuming this field might be present
                                           );
                                         }).toList();
-                                        // Creating ChargeData object
+                                        // print(ne)
+                                        chargeEntries.add(Entry(
+                                          account: "Rent Income",
+                                          amount: double.tryParse(
+                                                  rentAmount.text) ??
+                                              0.0,
+                                          chargeType: 'Rent',
+                                          date: reverseFormatDate(
+                                              rentNextDueDate.text),
+                                          isRepeatable:
+                                              false, // Set to false if it's not repeatable, adjust as needed
+                                          memo: rentMemo.text,
+                                          rentCycle:
+                                              _selectedRent, // Set default value or adjust as needed
+                                        ));
+                                        chargeEntries.add(Entry(
+                                          account: "Security Deposit",
+                                          amount: double.tryParse(
+                                                  securityDepositeAmount
+                                                      .text) ??
+                                              0.0,
+                                          chargeType: 'Security Deposit',
+                                          date: reverseFormatDate(
+                                              rentNextDueDate.text),
+                                          isRepeatable:
+                                              false, // Set to false if it's not repeatable, adjust as needed
+                                          memo: 'Last Month\'s Rent',
+                                          rentCycle:
+                                              _selectedRent, // Set default value or adjust as needed
+                                        ));
                                         ChargeData chargeData = ChargeData(
                                           adminId: adminId,
                                           entry: chargeEntries,
                                           isLeaseAdded: _isLeaseAdded,
                                         );
-                                        print(
-                                            'ChargeData: ${jsonEncode(chargeData.toJson())}');
-                                        //consiger
+                                        print('${chargeEntries}');
+                                        //Tenant
+                                        List<TenantData> tenants = [];
                                         Map<String, String>? firstCosigner =
                                             cosignersMap.isNotEmpty
                                                 ? cosignersMap[0]
                                                 : {};
+                                        print(
+                                            'tenant\'s length ${tenantsMap.length}');
+                                        String currentDate =
+                                            DateTime.now().toString();
                                         List<TenantData> tenantDataList =
                                             tenantsMap.entries.map((entry) {
+                                          int index = entry.key;
                                           final tenantMap = entry.value;
+                                          print(tenantMap['firstName']);
+                                          print(tenantMap['firstName']);
                                           return TenantData(
-                                            adminId: tenantMap['adminId'] ?? '',
+                                            adminId: adminId,
                                             comments:
                                                 tenantMap['comments'] ?? '',
-                                            createdAt:
-                                                tenantMap['createdAt'] ?? '',
                                             emergencyContact: EmergencyContacts(
                                               name: tenantMap[
                                                       'emergencyContactName'] ??
                                                   '',
                                               relation: tenantMap[
-                                                      'emergencyContactRelation'] ??
+                                                      'emergencyRelation'] ??
                                                   '',
-                                              email: tenantMap[
-                                                      'emergencyContactEmail'] ??
-                                                  '',
+                                              email:
+                                                  tenantMap['emergencyEmail'] ??
+                                                      '',
                                               phoneNumber: tenantMap[
-                                                      'emergencyContactPhoneNumber'] ??
+                                                      'emergencyPhoneNumber'] ??
                                                   '',
                                             ),
                                             isDelete:
                                                 tenantMap['isDelete'] == 'true',
-                                            rentalAddress:
-                                                tenantMap['rentalAddress'] ??
-                                                    '',
-                                            rentalUnit:
-                                                tenantMap['rentalUnit'] ?? '',
                                             taxPayerId:
                                                 tenantMap['taxPayerId'] ?? '',
-                                            tenantAlternativeEmail: tenantMap[
-                                                    'tenantAlternativeEmail'] ??
-                                                '',
-                                            tenantAlternativeNumber: tenantMap[
-                                                    'tenantAlternativeNumber'] ??
-                                                '',
+                                            tenantAlternativeEmail:
+                                                tenantMap['alterEmail'] ?? '',
+                                            tenantAlternativeNumber:
+                                                tenantMap['workNumber'] ?? '',
                                             tenantBirthDate:
-                                                tenantMap['dob'] ?? '',
-                                            tenantEmail:
-                                                tenantMap['tenantEmail'] ?? '',
-                                            tenantFirstName:
-                                                tenantMap['tenantFirstName'] ??
+                                                tenantMap['dob'].toString() ??
                                                     '',
+                                            tenantEmail:
+                                                tenantMap['email'] ?? '',
+                                            tenantFirstName:
+                                                tenantMap['firstName'] ?? '',
                                             tenantId:
                                                 tenantMap['tenantId'] ?? '',
                                             tenantLastName:
-                                                tenantMap['tenantLastName'] ??
-                                                    '',
+                                                tenantMap['lastName'] ?? '',
                                             tenantPassword:
-                                                tenantMap['tenantPassword'] ??
-                                                    '',
-                                            tenantPhoneNumber: tenantMap[
-                                                    'tenantPhoneNumber'] ??
+                                                tenantMap['passWord'] ?? '',
+                                            tenantPhoneNumber:
+                                                tenantMap['phoneNumber'] ?? '',
+                                            updatedAt: tenantMap['updatedAt']
+                                                    .toString() ??
                                                 '',
-                                            updatedAt:
-                                                tenantMap['updatedAt'] ?? '',
-                                            v: int.tryParse(
-                                                    tenantMap['v'] ?? '0') ??
-                                                0,
-                                            id: tenantMap['id'] ?? '',
+                                            rentShare:
+                                                rentShareControllers[index]
+                                                    .text,
                                           );
                                         }).toList();
+                                        print(tenantDataList.length);
+                                        // Assuming tenantDataList is a List<TenantData>
+                                        List<String> tenantIds = tenantDataList
+                                            .map((tenant) =>
+                                                tenant.tenantId ?? '')
+                                            .toList();
+
+                                        print(
+                                            'tenant ids :${tenantIds.length}');
+
+                                        //print all data
+                                        print(firstCosigner);
+                                        print('Tenant Data List:');
+                                        for (var tenant in tenantDataList) {
+                                          print('admin ID: ${tenant.adminId}');
+                                          print(
+                                              'Tenant First Name: ${tenant.tenantFirstName}');
+                                          print(
+                                              'Tenant Last Name: ${tenant.tenantLastName}');
+                                          print(
+                                              'Tenant Email: ${tenant.tenantEmail}');
+                                          print(
+                                              'Tenant Phone Number: ${tenant.tenantPhoneNumber}');
+                                          print(
+                                              'Tenant Birth Date: ${tenant.tenantBirthDate}');
+                                          print(
+                                              'Rental Address: ${tenant.rentalAddress}');
+                                          print(
+                                              'Rental Unit: ${tenant.rentalUnit}');
+                                          print(
+                                              'Tax Payer ID: ${tenant.taxPayerId}');
+                                          print(
+                                              'Tenant Alternative Email: ${tenant.tenantAlternativeEmail}');
+                                          print(
+                                              'Tenant Alternative Number: ${tenant.tenantAlternativeNumber}');
+                                          print(
+                                              'Created At: ${tenant.createdAt}');
+                                          print(
+                                              'Updated At: ${tenant.updatedAt}');
+                                          print(
+                                              'Is Delete: ${tenant.isDelete}');
+                                          print('Comments: ${tenant.comments}');
+                                          print('Admin ID: ${tenant.adminId}');
+
+                                          print('v: ${tenant.v}');
+                                          print('ID: ${tenant.id}');
+                                          print('-----------------------');
+                                        }
+                                        print(_selectedResidentsEmail);
+                                        print('unit id data :${unitId}');
+                                        Lease lease = Lease(
+                                          chargeData: ChargeData(
+                                            adminId: adminId ?? "",
+                                            entry: chargeEntries,
+                                            isLeaseAdded: true,
+                                          ),
+                                          cosignerData: CosignerData(
+                                            adminId: adminId,
+                                            cosignerFirstName:
+                                                firstCosigner?['firstName'] ??
+                                                    '',
+                                            cosignerLastName:
+                                                firstCosigner?['lastName'] ??
+                                                    '',
+                                            cosignerPhoneNumber:
+                                                firstCosigner?['phoneNumber'] ??
+                                                    '',
+                                            cosignerEmail:
+                                                firstCosigner?['email'] ?? '',
+                                            cosignerAlternativeEmail:
+                                                firstCosigner?['alterEmail'] ??
+                                                    '',
+                                            cosignerAddress: firstCosigner?[
+                                                    'streetAddress'] ??
+                                                '',
+                                            cosignerCity:
+                                                firstCosigner?['city'] ?? '',
+                                            cosignerCountry:
+                                                firstCosigner?['country'] ?? '',
+                                            cosignerPostalcode:
+                                                firstCosigner?['postalCode'] ??
+                                                    '',
+                                          ),
+                                          leaseData: LeaseData(
+                                            adminId: adminId ?? "",
+                                            isProRent: isProRent,
+                                            companyName: companyName,
+                                            endDate:
+                                                reverseFormatDate(leaseEndDate),
+                                            entry: chargeEntries,
+                                            leaseAmount: rentAmount.text,
+                                            leaseType: _selectedLeaseType ?? "",
+                                            rentalId: renderId,
+                                            startDate: reverseFormatDate(
+                                                leaseStartDate),
+                                            tenantId: tenantDataList
+                                                .map((tenant) =>
+                                                    tenant.tenantId ?? '')
+                                                .toList(),
+                                            tenantResidentStatus:
+                                                _selectedResidentsEmail,
+                                            unitId: _selectedUnit,
+                                            uploadedFile: _uploadedFileNames,
+                                          ),
+                                          tenantData: tenantDataList,
+                                        );
+                                        await addLeaseAndNavigate(lease);
+                                        setState(() {
+                                          isLoading = false; // Stop loading
+                                        });
+                                        if (widget.applicantId != null &&
+                                            widget.applicantId!.isNotEmpty) {
+                                          print(
+                                              'applicant id is: ${widget.applicantId}');
+                                          ifApplicantMoveIn(
+                                              widget.applicantId!);
+                                        } else {
+                                          print('No applicant id provided');
+                                        }
+
+                                        print('valid');
                                       }
-                                    },
-                                    child:
-                                    Center(
+                                    } else {
+                                      print("faild");
+                                      String leaseStartDate =
+                                          startDateController.text;
+                                      String leaseEndDate =
+                                          endDateController.text;
+
+                                      SharedPreferences prefs =
+                                          await SharedPreferences.getInstance();
+                                      String adminId =
+                                          prefs.getString("adminId")!;
+
+                                      bool _isLeaseAdded = false;
+
+                                      // // Printing ChargeData object
+                                      //Changes
+                                      List<Map<String, String>>
+                                          mergedFormDataList = [
+                                        ...formDataOneTimeList,
+                                        ...formDataRecurringList,
+                                      ];
+
+                                      // Creating Entry objects from the merged list
+                                      List<Entry> chargeEntries =
+                                          mergedFormDataList.map((data) {
+                                        print(data['account']);
+                                        return Entry(
+                                          account: data['account'] ?? '',
+                                          amount: double.tryParse(
+                                                  data['amount'] ?? '0.0') ??
+                                              0.0,
+                                          chargeType: data['charge_type'] ?? '',
+                                          date: reverseFormatDate(
+                                              rentNextDueDate.text),
+                                          isRepeatable: data['is_repeatable']
+                                                  ?.toLowerCase() ==
+                                              'true',
+                                          memo: data['memo'] ?? '',
+                                          rentCycle: data[
+                                              'rent_cycle'], // Assuming this field might be present
+                                          tenantId: data[
+                                              'tenant_id'], // Assuming this field might be present
+                                        );
+                                      }).toList();
+                                      // Creating ChargeData object
+                                      ChargeData chargeData = ChargeData(
+                                        adminId: adminId,
+                                        entry: chargeEntries,
+                                        isLeaseAdded: _isLeaseAdded,
+                                      );
+                                      print(
+                                          'ChargeData: ${jsonEncode(chargeData.toJson())}');
+                                      //consiger
+                                      Map<String, String>? firstCosigner =
+                                          cosignersMap.isNotEmpty
+                                              ? cosignersMap[0]
+                                              : {};
+                                      List<TenantData> tenantDataList =
+                                          tenantsMap.entries.map((entry) {
+                                        final tenantMap = entry.value;
+                                        return TenantData(
+                                          adminId: tenantMap['adminId'] ?? '',
+                                          comments: tenantMap['comments'] ?? '',
+                                          createdAt:
+                                              tenantMap['createdAt'] ?? '',
+                                          emergencyContact: EmergencyContacts(
+                                            name: tenantMap[
+                                                    'emergencyContactName'] ??
+                                                '',
+                                            relation: tenantMap[
+                                                    'emergencyContactRelation'] ??
+                                                '',
+                                            email: tenantMap[
+                                                    'emergencyContactEmail'] ??
+                                                '',
+                                            phoneNumber: tenantMap[
+                                                    'emergencyContactPhoneNumber'] ??
+                                                '',
+                                          ),
+                                          isDelete:
+                                              tenantMap['isDelete'] == 'true',
+                                          rentalAddress:
+                                              tenantMap['rentalAddress'] ?? '',
+                                          rentalUnit:
+                                              tenantMap['rentalUnit'] ?? '',
+                                          taxPayerId:
+                                              tenantMap['taxPayerId'] ?? '',
+                                          tenantAlternativeEmail: tenantMap[
+                                                  'tenantAlternativeEmail'] ??
+                                              '',
+                                          tenantAlternativeNumber: tenantMap[
+                                                  'tenantAlternativeNumber'] ??
+                                              '',
+                                          tenantBirthDate:
+                                              tenantMap['dob'] ?? '',
+                                          tenantEmail:
+                                              tenantMap['tenantEmail'] ?? '',
+                                          tenantFirstName:
+                                              tenantMap['tenantFirstName'] ??
+                                                  '',
+                                          tenantId: tenantMap['tenantId'] ?? '',
+                                          tenantLastName:
+                                              tenantMap['tenantLastName'] ?? '',
+                                          tenantPassword:
+                                              tenantMap['tenantPassword'] ?? '',
+                                          tenantPhoneNumber:
+                                              tenantMap['tenantPhoneNumber'] ??
+                                                  '',
+                                          updatedAt:
+                                              tenantMap['updatedAt'] ?? '',
+                                          v: int.tryParse(
+                                                  tenantMap['v'] ?? '0') ??
+                                              0,
+                                          id: tenantMap['id'] ?? '',
+                                        );
+                                      }).toList();
+                                    }
+                                  },
+                                  child: Center(
                                       child: isLoading
                                           ? SpinKitFadingCircle(
-                                        color: Colors.white,
-                                        size: 25.0,
-                                      )
-                                          :
-                                      Text(
-                                        'Create Lease',
-                                        style: TextStyle(
-                                            color: Color(0xFFf7f8f9),
-                                            fontSize: 16),
-                                      )
-                                    ),
-
-
-
-                                )
-                            ),
+                                              color: Colors.white,
+                                              size: 25.0,
+                                            )
+                                          : Text(
+                                              'Create Lease',
+                                              style: TextStyle(
+                                                  color: Color(0xFFf7f8f9),
+                                                  fontSize: 16),
+                                            )),
+                                )),
                             const SizedBox(
                               width: 10,
                             ),
@@ -4251,7 +4776,7 @@ class _addLease3State extends State<addLease3>
             return AlertDialog(
               backgroundColor: Colors.white,
               contentPadding: EdgeInsets.zero,
-              title:  Text('Add Tenant or Cosigner',
+              title: Text('Add Tenant or Cosigner',
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -4283,13 +4808,9 @@ class _addLease3State extends State<addLease3>
                                         border: isTenantSelected
                                             ? null
                                             : Border.all(
-                                                color: blueColor
-
-
-,
-                                                width: 1),
+                                                color: blueColor, width: 1),
                                         gradient: isTenantSelected
-                                            ?  LinearGradient(
+                                            ? LinearGradient(
                                                 colors: [
                                                   blueColor,
                                                   blueColor,
@@ -4319,16 +4840,9 @@ class _addLease3State extends State<addLease3>
                                             )
                                           : ShaderMask(
                                               shaderCallback: (bounds) {
-                                                return  LinearGradient(
+                                                return LinearGradient(
                                                   colors: [
-
-
-
-
-                                                    blueColor
-
-
-,
+                                                    blueColor,
                                                   ],
                                                 ).createShader(bounds);
                                               },
@@ -4357,13 +4871,9 @@ class _addLease3State extends State<addLease3>
                                         border: isTenantSelected == false
                                             ? null
                                             : Border.all(
-                                                color: blueColor
-
-
-,
-                                                width: 1),
+                                                color: blueColor, width: 1),
                                         gradient: isTenantSelected == false
-                                            ?  LinearGradient(
+                                            ? LinearGradient(
                                                 colors: [
                                                   blueColor,
                                                   blueColor,
@@ -4393,16 +4903,9 @@ class _addLease3State extends State<addLease3>
                                             )
                                           : ShaderMask(
                                               shaderCallback: (bounds) {
-                                                return  LinearGradient(
+                                                return LinearGradient(
                                                   colors: [
-
-
-
-
-                                                    blueColor
-
-
-,
+                                                    blueColor,
                                                   ],
                                                 ).createShader(bounds);
                                               },
@@ -4442,7 +4945,7 @@ class _addLease3State extends State<addLease3>
                         BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            backgroundColor:  blueColor,
+                            backgroundColor: blueColor,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0))),
                         onPressed: () {
@@ -4586,12 +5089,12 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                           ),
                         ),
                         const SizedBox(height: 15),
-                         Text(
+                        Text(
                           'Account *',
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            color:blueColor,
+                            color: blueColor,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -4636,318 +5139,324 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                     //updated
                                     DropdownMenuItem<String>(
                                       value: 'button_item',
-                                      child:  GestureDetector(
-                                        onTap: (){
+                                      child: GestureDetector(
+                                        onTap: () {
                                           showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
                                               return StatefulBuilder(
                                                   builder: (context, setState) {
-                                                    return
-                                                      Dialog(
-                                                        backgroundColor: Colors.white,
-                                                        surfaceTintColor: Colors.white,
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                            BorderRadius.circular(10.0)),
-                                                        child: SingleChildScrollView(
-                                                          child: Container(
-
-                                                            child: Padding(
-                                                              padding:
-                                                              const EdgeInsets.all(
-                                                                  16.0),
-                                                              child: Form(
-                                                                key: _subFormKey,
-                                                                child: Column(
-                                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                  children: [
-                                                                    Text(
-                                                                      'Add account',
-                                                                      style: TextStyle(
-                                                                        fontSize: 16,
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        color:
-                                                                        blueColor,
-                                                                      ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 20,
-                                                                    ),
-                                                                    Text(
-                                                                      'Account Name *',
-                                                                      style: TextStyle(
-                                                                        fontSize: 14,
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        color:
-                                                                        blueColor,
-                                                                      ),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        height: 5),
-                                                                    CustomTextField(
-                                                                      validator:
-                                                                          (value) {
-                                                                        if (value ==
-                                                                            null ||
-                                                                            value
-                                                                                .isEmpty) {
-                                                                          return 'Please enter Account Name';
-                                                                        }
-                                                                        return null;
-                                                                      },
-                                                                      keyboardType:
-                                                                      TextInputType
-                                                                          .text,
-                                                                      hintText:
-                                                                      'Enter Account Name',
-                                                                      controller:
-                                                                      _accountNameController,
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        height: 10),
-                                                                    Text(
-                                                                      'Account Type',
-                                                                      style: TextStyle(
-                                                                        fontSize: 14,
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        color:
-                                                                        blueColor,
-                                                                      ),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        height: 5),
-                                                                    CustomDropdown(
-                                                                      validator:
-                                                                          (value) {
-                                                                        if (value ==
-                                                                            null ||
-                                                                            value
-                                                                                .isEmpty) {
-                                                                          return 'Please select a Account Type';
-                                                                        }
-                                                                        return null;
-                                                                      },
-                                                                      labelText:
-                                                                      'Select Account Type',
-                                                                      items:
-                                                                      accountTypeItems,
-                                                                      selectedValue:
-                                                                      _selectedAccountType,
-                                                                      onChanged:
-                                                                          (String?
-                                                                      value) {
-                                                                        setState(() {
-                                                                          _selectedAccountType =
-                                                                              value;
-                                                                        });
-                                                                      },
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        height: 10),
-                                                                    Text(
-                                                                      'Fund Type',
-                                                                      style: TextStyle(
-                                                                        fontSize: 14,
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        color:
-                                                                        blueColor,
-                                                                      ),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        height: 5),
-                                                                    CustomDropdown(
-                                                                      validator:
-                                                                          (value) {
-                                                                        if (value ==
-                                                                            null ||
-                                                                            value
-                                                                                .isEmpty) {
-                                                                          return 'Please select a Fund Type';
-                                                                        }
-                                                                        return null;
-                                                                      },
-                                                                      labelText:
-                                                                      'Select Fund Type',
-                                                                      items:
-                                                                      fundTypeItems,
-                                                                      selectedValue:
-                                                                      _selectedFundType,
-                                                                      onChanged:
-                                                                          (String?
-                                                                      value) {
-                                                                        setState(() {
-                                                                          _selectedFundType =
-                                                                              value;
-                                                                        });
-                                                                      },
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        height: 10),
-                                                                    Text(
-                                                                      'Notes',
-                                                                      style: TextStyle(
-                                                                        fontSize: 14,
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        color:
-                                                                        blueColor,
-                                                                      ),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        height: 5),
-                                                                    CustomTextField(
-                                                                      validator:
-                                                                          (value) {
-                                                                        if (value ==
-                                                                            null ||
-                                                                            value
-                                                                                .isEmpty) {
-                                                                          return 'Please enter Notes';
-                                                                        }
-                                                                        return null;
-                                                                      },
-                                                                      keyboardType:
-                                                                      TextInputType
-                                                                          .text,
-                                                                      hintText:
-                                                                      'Enter Notes',
-                                                                      controller:
-                                                                      _notesController,
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      height: 20,
-                                                                    ),
-                                                                    RichText(
+                                                return Dialog(
+                                                  backgroundColor: Colors.white,
+                                                  surfaceTintColor:
+                                                      Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10.0)),
+                                                  child: SingleChildScrollView(
+                                                    child: Container(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(16.0),
+                                                        child: Form(
+                                                          key: _subFormKey,
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Text(
+                                                                'Add account',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 16,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color:
+                                                                      blueColor,
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                height: 20,
+                                                              ),
+                                                              Text(
+                                                                'Account Name *',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 14,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color:
+                                                                      blueColor,
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 5),
+                                                              CustomTextField(
+                                                                validator:
+                                                                    (value) {
+                                                                  if (value ==
+                                                                          null ||
+                                                                      value
+                                                                          .isEmpty) {
+                                                                    return 'Please enter Account Name';
+                                                                  }
+                                                                  return null;
+                                                                },
+                                                                keyboardType:
+                                                                    TextInputType
+                                                                        .text,
+                                                                hintText:
+                                                                    'Enter Account Name',
+                                                                controller:
+                                                                    _accountNameController,
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 10),
+                                                              Text(
+                                                                'Account Type',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 14,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color:
+                                                                      blueColor,
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 5),
+                                                              CustomDropdown(
+                                                                validator:
+                                                                    (value) {
+                                                                  if (value ==
+                                                                          null ||
+                                                                      value
+                                                                          .isEmpty) {
+                                                                    return 'Please select a Account Type';
+                                                                  }
+                                                                  return null;
+                                                                },
+                                                                labelText:
+                                                                    'Select Account Type',
+                                                                items:
+                                                                    accountTypeItems,
+                                                                selectedValue:
+                                                                    _selectedAccountType,
+                                                                onChanged:
+                                                                    (String?
+                                                                        value) {
+                                                                  setState(() {
+                                                                    _selectedAccountType =
+                                                                        value;
+                                                                  });
+                                                                },
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 10),
+                                                              Text(
+                                                                'Fund Type',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 14,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color:
+                                                                      blueColor,
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 5),
+                                                              CustomDropdown(
+                                                                validator:
+                                                                    (value) {
+                                                                  if (value ==
+                                                                          null ||
+                                                                      value
+                                                                          .isEmpty) {
+                                                                    return 'Please select a Fund Type';
+                                                                  }
+                                                                  return null;
+                                                                },
+                                                                labelText:
+                                                                    'Select Fund Type',
+                                                                items:
+                                                                    fundTypeItems,
+                                                                selectedValue:
+                                                                    _selectedFundType,
+                                                                onChanged:
+                                                                    (String?
+                                                                        value) {
+                                                                  setState(() {
+                                                                    _selectedFundType =
+                                                                        value;
+                                                                  });
+                                                                },
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 10),
+                                                              Text(
+                                                                'Notes',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 14,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color:
+                                                                      blueColor,
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 5),
+                                                              CustomTextField(
+                                                                validator:
+                                                                    (value) {
+                                                                  if (value ==
+                                                                          null ||
+                                                                      value
+                                                                          .isEmpty) {
+                                                                    return 'Please enter Notes';
+                                                                  }
+                                                                  return null;
+                                                                },
+                                                                keyboardType:
+                                                                    TextInputType
+                                                                        .text,
+                                                                hintText:
+                                                                    'Enter Notes',
+                                                                controller:
+                                                                    _notesController,
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 20,
+                                                              ),
+                                                              RichText(
+                                                                text: TextSpan(
+                                                                  children: <TextSpan>[
+                                                                    TextSpan(
                                                                       text:
-                                                                       TextSpan(
-                                                                        children: <TextSpan>[
-                                                                          TextSpan(
-                                                                            text:
-                                                                            'We stores this information ',
-                                                                            style:
-                                                                            TextStyle(
-                                                                              fontSize:
-                                                                              12,
-                                                                              fontWeight:
-                                                                              FontWeight
-                                                                                  .bold,
-                                                                              color: Colors
-                                                                                  .grey,
-                                                                            ),
-                                                                          ),
-                                                                          TextSpan(
-                                                                            text:
-                                                                            ' Privately ',
-                                                                            style:
-                                                                            TextStyle(
-                                                                              fontSize:
-                                                                              12,
-                                                                              fontWeight:
-                                                                              FontWeight
-                                                                                  .bold,
-                                                                              color: blueColor,
-                                                                            ),
-                                                                          ),
-                                                                          TextSpan(
-                                                                            text:
-                                                                            ' and ',
-                                                                            style:
-                                                                            TextStyle(
-                                                                              fontSize:
-                                                                              12,
-                                                                              fontWeight:
-                                                                              FontWeight
-                                                                                  .normal,
-                                                                              color: Colors
-                                                                                  .grey,
-                                                                            ),
-                                                                          ),
-                                                                          TextSpan(
-                                                                            text:
-                                                                            ' Securely ',
-                                                                            style:
-                                                                            TextStyle(
-                                                                              fontSize:
-                                                                              12,
-                                                                              fontWeight:
-                                                                              FontWeight
-                                                                                  .bold,
-                                                                              color: blueColor,
-                                                                            ),
-                                                                          ),
-                                                                        ],
+                                                                          'We stores this information ',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontSize:
+                                                                            12,
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                        color: Colors
+                                                                            .grey,
                                                                       ),
                                                                     ),
-                                                                    const SizedBox(
-                                                                      height: 20,
+                                                                    TextSpan(
+                                                                      text:
+                                                                          ' Privately ',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontSize:
+                                                                            12,
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                        color:
+                                                                            blueColor,
+                                                                      ),
                                                                     ),
-                                                                    Row(
-                                                                      mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .end,
-                                                                      children: [
-                                                                        Container(
-                                                                            height: 50,
-                                                                            width: 90,
-                                                                            decoration: BoxDecoration(
-                                                                                borderRadius:
-                                                                                BorderRadius.circular(8.0)),
-                                                                            child: ElevatedButton(
-                                                                                style: ElevatedButton.styleFrom(backgroundColor:  blueColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
-                                                                                onPressed: () {
-                                                                                  _submitSubForm();
-                                                                                },
-                                                                                child: const Text(
-                                                                                  'Add',
-                                                                                  style:
-                                                                                  TextStyle(color: Color(0xFFf7f8f9)),
-                                                                                ))),
-                                                                        const SizedBox(
-                                                                          width: 10,
-                                                                        ),
-                                                                        Container(
-                                                                            height: 50,
-                                                                            width: 94,
-                                                                            decoration: BoxDecoration(
-                                                                                borderRadius:
-                                                                                BorderRadius.circular(8.0)),
-                                                                            child: ElevatedButton(
-                                                                                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFffffff), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
-                                                                                onPressed: () {
-                                                                                  setState(() {
-                                                                                    Navigator.pop(
-                                                                                        context);
-                                                                                    _selectedProperty = null;
-                                                                                  });
-                                                                                  Navigator.pop(
-                                                                                      context);
-                                                                                },
-                                                                                child: const Text(
-                                                                                  'Cancel',
-                                                                                  style:
-                                                                                  TextStyle(color: Color(0xFF748097)),
-                                                                                )))
-                                                                      ],
+                                                                    TextSpan(
+                                                                      text:
+                                                                          ' and ',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontSize:
+                                                                            12,
+                                                                        fontWeight:
+                                                                            FontWeight.normal,
+                                                                        color: Colors
+                                                                            .grey,
+                                                                      ),
+                                                                    ),
+                                                                    TextSpan(
+                                                                      text:
+                                                                          ' Securely ',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontSize:
+                                                                            12,
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                        color:
+                                                                            blueColor,
+                                                                      ),
                                                                     ),
                                                                   ],
                                                                 ),
                                                               ),
-                                                            ),
+                                                              const SizedBox(
+                                                                height: 20,
+                                                              ),
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .end,
+                                                                children: [
+                                                                  Container(
+                                                                      height:
+                                                                          50,
+                                                                      width: 90,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                              borderRadius: BorderRadius.circular(8.0)),
+                                                                      child: ElevatedButton(
+                                                                          style: ElevatedButton.styleFrom(backgroundColor: blueColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
+                                                                          onPressed: () {
+                                                                            _submitSubForm();
+                                                                          },
+                                                                          child: const Text(
+                                                                            'Add',
+                                                                            style:
+                                                                                TextStyle(color: Color(0xFFf7f8f9)),
+                                                                          ))),
+                                                                  const SizedBox(
+                                                                    width: 10,
+                                                                  ),
+                                                                  Container(
+                                                                      height:
+                                                                          50,
+                                                                      width: 94,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                              borderRadius: BorderRadius.circular(8.0)),
+                                                                      child: ElevatedButton(
+                                                                          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFffffff), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
+                                                                          onPressed: () {
+                                                                            setState(() {
+                                                                              Navigator.pop(context);
+                                                                              _selectedProperty = null;
+                                                                            });
+                                                                            Navigator.pop(context);
+                                                                          },
+                                                                          child: const Text(
+                                                                            'Cancel',
+                                                                            style:
+                                                                                TextStyle(color: Color(0xFF748097)),
+                                                                          )))
+                                                                ],
+                                                              ),
+                                                            ],
                                                           ),
                                                         ),
-                                                      );
-                                                  });
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              });
                                             },
                                           );
                                         },
@@ -4968,15 +5477,14 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                   value: _selectedProperty,
                                   onChanged: (value) {
                                     setState(() {
-                                    //  _selectedProperty = value;
-                                      _selectedProperty =  value;
+                                      //  _selectedProperty = value;
+                                      _selectedProperty = value;
                                     });
                                     // widget.onChanged(value);
                                     // state.didChange(value);
                                   },
                                   buttonStyleData: ButtonStyleData(
                                     height: 45,
-
                                     padding: const EdgeInsets.only(
                                         left: 0, right: 14),
                                     decoration: BoxDecoration(
@@ -5013,7 +5521,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                 ),
                               ),
                         const SizedBox(height: 8),
-                         Text(
+                        Text(
                           'Amount *',
                           style: TextStyle(
                             fontSize: 13,
@@ -5034,7 +5542,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                           controller: _amountController,
                         ),
                         const SizedBox(height: 8),
-                         Text(
+                        Text(
                           'Memo',
                           style: TextStyle(
                             fontSize: 13,
@@ -5068,8 +5576,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                     borderRadius: BorderRadius.circular(8.0)),
                                 child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                             blueColor,
+                                        backgroundColor: blueColor,
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(8.0))),
@@ -5140,7 +5647,6 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
       final formData = {
         'admin_id': adminId,
         'account': _accountNameController.text,
-
         'account_type': _selectedAccountType ?? '',
         'fund_type': _selectedFundType ?? '',
         'notes': _notesController.text,
@@ -5160,7 +5666,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
       );
 
       if (response.statusCode == 200) {
-       // widget.onSave(formData);
+        // widget.onSave(formData);
         final newAccountName = _accountNameController.text;
 
         setState(() {
@@ -5298,7 +5804,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                   ),
                 ),
                 SizedBox(height: 10),
-                 Text(
+                Text(
                   'Account *',
                   style: TextStyle(
                     fontSize: 13,
@@ -5306,7 +5812,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                     color: blueColor,
                   ),
                 ),
-                 SizedBox(height: 8),
+                SizedBox(height: 8),
                 _isLoading
                     ? const Center(
                         child: SpinKitFadingCircle(
@@ -5349,294 +5855,305 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                             DropdownMenuItem<String>(
                               value: 'button_item',
                               child: GestureDetector(
-                                onTap: (){
+                                onTap: () {
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
                                       return StatefulBuilder(
                                           builder: (context, setState) {
-                                            return
-                                              Dialog(
-                                                backgroundColor: Colors.white,
-                                                surfaceTintColor: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(10.0)),
-                                                child:
-                                                SingleChildScrollView(
-                                                  child: Container(
-                                                    // height: 450,
-                                                    child:
-                                                    Padding(
-                                                      padding:
-                                                      const EdgeInsets.all(16.0),
-                                                      child: Form(
-                                                        key: _subFormKey,
-                                                        child: Column(
-                                                          mainAxisAlignment: MainAxisAlignment.start,
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: [
-                                                            Text(
-                                                              'Add account',
+                                        return Dialog(
+                                          backgroundColor: Colors.white,
+                                          surfaceTintColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0)),
+                                          child: SingleChildScrollView(
+                                            child: Container(
+                                              // height: 450,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(16.0),
+                                                child: Form(
+                                                  key: _subFormKey,
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        'Add account',
+                                                        style: TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: blueColor,
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      Text(
+                                                        'Account Name *',
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: blueColor,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 5),
+                                                      CustomTextField(
+                                                        validator: (value) {
+                                                          if (value == null ||
+                                                              value.isEmpty) {
+                                                            return 'Please enter Account Name';
+                                                          }
+                                                          return null;
+                                                        },
+                                                        keyboardType:
+                                                            TextInputType.text,
+                                                        hintText:
+                                                            'Enter Account Name',
+                                                        controller:
+                                                            _accountNameController,
+                                                      ),
+                                                      const SizedBox(
+                                                          height: 10),
+                                                      Text(
+                                                        'Account Type',
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: blueColor,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 5),
+                                                      CustomDropdown(
+                                                        validator: (value) {
+                                                          if (_selectedAccountType ==
+                                                                  null ||
+                                                              _selectedAccountType!
+                                                                  .isEmpty) {
+                                                            return 'Please select a Account Type';
+                                                          }
+                                                          return null;
+                                                        },
+                                                        labelText:
+                                                            'Select Account Type',
+                                                        items: accountTypeItems,
+                                                        selectedValue:
+                                                            _selectedAccountType,
+                                                        onChanged:
+                                                            (String? value) {
+                                                          setState(() {
+                                                            _selectedAccountType =
+                                                                value;
+                                                          });
+                                                        },
+                                                      ),
+                                                      const SizedBox(
+                                                          height: 10),
+                                                      Text(
+                                                        'Fund Type',
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: blueColor,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 5),
+                                                      CustomDropdown(
+                                                        validator: (value) {
+                                                          if (_selectedFundType ==
+                                                                  null ||
+                                                              _selectedFundType!
+                                                                  .isEmpty) {
+                                                            return 'Please select a Fund Type';
+                                                          }
+                                                          return null;
+                                                        },
+                                                        labelText:
+                                                            'Select Fund Type',
+                                                        items: fundTypeItems,
+                                                        selectedValue:
+                                                            _selectedFundType,
+                                                        onChanged:
+                                                            (String? value) {
+                                                          setState(() {
+                                                            _selectedFundType =
+                                                                value;
+                                                          });
+                                                        },
+                                                      ),
+                                                      const SizedBox(
+                                                          height: 10),
+                                                      Text(
+                                                        'Notes',
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: blueColor,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 5),
+                                                      CustomTextField(
+                                                        validator: (value) {
+                                                          if (value == null ||
+                                                              value.isEmpty) {
+                                                            return 'Please enter Notes';
+                                                          }
+                                                          return null;
+                                                        },
+                                                        keyboardType:
+                                                            TextInputType.text,
+                                                        hintText: 'Enter Notes',
+                                                        controller:
+                                                            _notesController,
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      RichText(
+                                                        text: TextSpan(
+                                                          children: <TextSpan>[
+                                                            TextSpan(
+                                                              text:
+                                                                  'We stores this information ',
                                                               style: TextStyle(
-                                                                fontSize: 16,
+                                                                fontSize: 12,
                                                                 fontWeight:
-                                                                FontWeight.bold,
-                                                                color: blueColor,
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    Colors.grey,
                                                               ),
                                                             ),
-                                                            SizedBox(
-                                                              height: 20,
-                                                            ),
-                                                            Text(
-                                                              'Account Name *',
+                                                            TextSpan(
+                                                              text:
+                                                                  ' Privately ',
                                                               style: TextStyle(
-                                                                fontSize: 14,
+                                                                fontSize: 12,
                                                                 fontWeight:
-                                                                FontWeight.bold,
-                                                                color: blueColor,
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    blueColor,
                                                               ),
                                                             ),
-                                                            const SizedBox(height: 5),
-                                                            CustomTextField(
-                                                              validator: (value) {
-                                                                if (value == null ||
-                                                                    value.isEmpty) {
-                                                                  return 'Please enter Account Name';
-                                                                }
-                                                                return null;
-                                                              },
-                                                              keyboardType:
-                                                              TextInputType.text,
-                                                              hintText:
-                                                              'Enter Account Name',
-                                                              controller:
-                                                              _accountNameController,
-                                                            ),
-                                                            const SizedBox(height: 10),
-                                                            Text(
-                                                              'Account Type',
+                                                            TextSpan(
+                                                              text: ' and ',
                                                               style: TextStyle(
-                                                                fontSize: 14,
+                                                                fontSize: 12,
                                                                 fontWeight:
-                                                                FontWeight.bold,
-                                                                color: blueColor,
+                                                                    FontWeight
+                                                                        .normal,
+                                                                color:
+                                                                    Colors.grey,
                                                               ),
                                                             ),
-                                                            const SizedBox(height: 5),
-                                                            CustomDropdown(
-                                                              validator: (value) {
-                                                                if (_selectedAccountType == null ||
-                                                                    _selectedAccountType!.isEmpty) {
-                                                                  return 'Please select a Account Type';
-                                                                }
-                                                                return null;
-                                                              },
-                                                              labelText:
-                                                              'Select Account Type',
-                                                              items: accountTypeItems,
-                                                              selectedValue:
-                                                              _selectedAccountType,
-                                                              onChanged:
-                                                                  (String? value) {
-                                                                setState(() {
-                                                                  _selectedAccountType =
-                                                                      value;
-                                                                });
-                                                              },
-                                                            ),
-                                                            const SizedBox(height: 10),
-                                                            Text(
-                                                              'Fund Type',
+                                                            TextSpan(
+                                                              text:
+                                                                  ' Securely ',
                                                               style: TextStyle(
-                                                                fontSize: 14,
+                                                                fontSize: 12,
                                                                 fontWeight:
-                                                                FontWeight.bold,
-                                                                color: blueColor,
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    blueColor,
                                                               ),
-                                                            ),
-                                                            const SizedBox(height: 5),
-                                                            CustomDropdown(
-                                                              validator: (value) {
-                                                                if (_selectedFundType == null ||
-                                                                    _selectedFundType!.isEmpty) {
-                                                                  return 'Please select a Fund Type';
-                                                                }
-                                                                return null;
-                                                              },
-                                                              labelText:
-                                                              'Select Fund Type',
-                                                              items: fundTypeItems,
-                                                              selectedValue:
-                                                              _selectedFundType,
-                                                              onChanged:
-                                                                  (String? value) {
-                                                                setState(() {
-                                                                  _selectedFundType =
-                                                                      value;
-                                                                });
-                                                              },
-                                                            ),
-                                                            const SizedBox(height: 10),
-                                                            Text(
-                                                              'Notes',
-                                                              style: TextStyle(
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                FontWeight.bold,
-                                                                color: blueColor,
-                                                              ),
-                                                            ),
-                                                            const SizedBox(height: 5),
-                                                            CustomTextField(
-                                                              validator: (value) {
-                                                                if (value == null ||
-                                                                    value.isEmpty) {
-                                                                  return 'Please enter Notes';
-                                                                }
-                                                                return null;
-                                                              },
-                                                              keyboardType:
-                                                              TextInputType.text,
-                                                              hintText: 'Enter Notes',
-                                                              controller:
-                                                              _notesController,
-                                                            ),
-                                                            const SizedBox(
-                                                              height: 20,
-                                                            ),
-                                                            RichText(
-                                                              text:  TextSpan(
-                                                                children: <TextSpan>[
-                                                                  TextSpan(
-                                                                    text:
-                                                                    'We stores this information ',
-                                                                    style: TextStyle(
-                                                                      fontSize: 12,
-                                                                      fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                      color:
-                                                                      Colors.grey,
-                                                                    ),
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: ' Privately ',
-                                                                    style: TextStyle(
-                                                                      fontSize: 12,
-                                                                      fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                      color: blueColor,
-                                                                    ),
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: ' and ',
-                                                                    style: TextStyle(
-                                                                      fontSize: 12,
-                                                                      fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
-                                                                      color:
-                                                                      Colors.grey,
-                                                                    ),
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: ' Securely ',
-                                                                    style: TextStyle(
-                                                                      fontSize: 12,
-                                                                      fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                      color: blueColor,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                              height: 20,
-                                                            ),
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                              MainAxisAlignment.end,
-                                                              children: [
-                                                                Container(
-                                                                    height: 50,
-                                                                    width: 90,
-                                                                    decoration: BoxDecoration(
-                                                                        borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                            8.0)),
-                                                                    child:
-                                                                    ElevatedButton(
-                                                                        style: ElevatedButton.styleFrom(
-                                                                            backgroundColor:
-                                                                            blueColor,
-                                                                            shape: RoundedRectangleBorder(
-                                                                                borderRadius: BorderRadius.circular(
-                                                                                    8.0))),
-                                                                        onPressed:
-                                                                            () {
-                                                                          _submitSubForm(context);
-                                                                        },
-                                                                        child:
-                                                                        const Text(
-                                                                          'Add',
-                                                                          style: TextStyle(
-                                                                              color:
-                                                                              Color(0xFFf7f8f9)),
-                                                                        ))),
-                                                                const SizedBox(
-                                                                  width: 10,
-                                                                ),
-                                                                Container(
-                                                                    height: 50,
-                                                                    width: 94,
-                                                                    decoration: BoxDecoration(
-                                                                        borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                            8.0)),
-                                                                    child:
-                                                                    ElevatedButton(
-                                                                        style: ElevatedButton.styleFrom(
-                                                                            backgroundColor:
-                                                                            const Color(
-                                                                                0xFFffffff),
-                                                                            shape: RoundedRectangleBorder(
-                                                                                borderRadius: BorderRadius.circular(
-                                                                                    8.0))),
-                                                                        onPressed:
-                                                                            () {
-                                                                              setState(() {
-                                                                                Navigator.pop(
-                                                                                    context);
-                                                                                _selectedProperty = null;
-                                                                              });
-                                                                          Navigator.pop(
-                                                                              context);
-
-                                                                        },
-                                                                        child:
-                                                                        const Text(
-                                                                          'Cancel',
-                                                                          style: TextStyle(
-                                                                              color:
-                                                                              Color(0xFF748097)),
-                                                                        )))
-                                                              ],
                                                             ),
                                                           ],
                                                         ),
                                                       ),
-                                                    ),
+                                                      const SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          Container(
+                                                              height: 50,
+                                                              width: 90,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8.0)),
+                                                              child:
+                                                                  ElevatedButton(
+                                                                      style: ElevatedButton.styleFrom(
+                                                                          backgroundColor:
+                                                                              blueColor,
+                                                                          shape: RoundedRectangleBorder(
+                                                                              borderRadius: BorderRadius.circular(
+                                                                                  8.0))),
+                                                                      onPressed:
+                                                                          () {
+                                                                        _submitSubForm(
+                                                                            context);
+                                                                      },
+                                                                      child:
+                                                                          const Text(
+                                                                        'Add',
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Color(0xFFf7f8f9)),
+                                                                      ))),
+                                                          const SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                          Container(
+                                                              height: 50,
+                                                              width: 94,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                          8.0)),
+                                                              child:
+                                                                  ElevatedButton(
+                                                                      style: ElevatedButton.styleFrom(
+                                                                          backgroundColor: const Color(
+                                                                              0xFFffffff),
+                                                                          shape: RoundedRectangleBorder(
+                                                                              borderRadius: BorderRadius.circular(
+                                                                                  8.0))),
+                                                                      onPressed:
+                                                                          () {
+                                                                        setState(
+                                                                            () {
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                          _selectedProperty =
+                                                                              null;
+                                                                        });
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      },
+                                                                      child:
+                                                                          const Text(
+                                                                        'Cancel',
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Color(0xFF748097)),
+                                                                      )))
+                                                        ],
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                              );
-
-                                          });
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      });
                                     },
                                   );
                                 },
@@ -5667,7 +6184,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                           },
                           buttonStyleData: ButtonStyleData(
                             height: 45,
-                           // width: 160,
+                            // width: 160,
                             padding: const EdgeInsets.only(left: 0, right: 14),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(6),
@@ -5701,7 +6218,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                         ),
                       ),
                 const SizedBox(height: 8),
-                 Text(
+                Text(
                   'Amount *',
                   style: TextStyle(
                     fontSize: 13,
@@ -5722,7 +6239,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                   controller: _amountController,
                 ),
                 const SizedBox(height: 8),
-                 Text(
+                Text(
                   'Memo',
                   style: TextStyle(
                     fontSize: 13,
@@ -5756,7 +6273,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                             borderRadius: BorderRadius.circular(8.0)),
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor:  blueColor,
+                                backgroundColor: blueColor,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0))),
                             onPressed: () {
@@ -5847,7 +6364,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       );
 
       if (response.statusCode == 200) {
-       //widget.onSave(formData);
+        //widget.onSave(formData);
         final newAccountName = _accountNameController.text;
         setState(() {
           items.insert(items.length, newAccountName);
@@ -5873,7 +6390,6 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       });
     }
   }
-
 }
 
 class AddTenant extends StatefulWidget {
@@ -6015,14 +6531,12 @@ class _AddTenantState extends State<AddTenant> {
     }
   }
 
-
   //for applicant
-
 
   bool isloading = false;
   // int? selectedIndex;
   List<Datum> Applicant = [];
-  List<Datum> filteredApplicant= [];
+  List<Datum> filteredApplicant = [];
   List<Datum> selectedApplicant = [];
   List<bool> select = [];
 
@@ -6068,7 +6582,6 @@ class _AddTenantState extends State<AddTenant> {
     }
   }
 
-
   List<Tenant> selectedTenantsTemp = [];
   //
   // void filterOwners(String query) {
@@ -6107,9 +6620,7 @@ class _AddTenantState extends State<AddTenant> {
                         isChecked = value ?? false;
                       });
                     },
-                    activeColor: isChecked
-                        ? blueColor
-                        : Colors.black,
+                    activeColor: isChecked ? blueColor : Colors.black,
                   ),
                 ),
                 SizedBox(
@@ -6135,19 +6646,9 @@ class _AddTenantState extends State<AddTenant> {
                             DataColumn(label: Text('Tenant Name')),
                             DataColumn(label: Text('Select')),
                           ],
-                            rows: filteredTenants.map((tenant) {
-                              /* final isSelected = Provider.of<SelectedTenantsProvider>(context)
-                                .selectedTenants
-                                .contains(tenant);*/
-                              final matchingTenants =
-                              Provider.of<SelectedTenantsProvider>(context)
-                                  .selectedTenants
-                                  .where((test) =>
-                              test.tenantId == tenant.tenantId)
-                                  .toList();
-                              print(matchingTenants);
-                              final isSelected =
-                              matchingTenants.length > 0 ? true : false;
+                          rows: [
+                            // Add tenant rows
+                            ...filteredTenants.map((tenant) {
                               return DataRow(
                                 cells: [
                                   DataCell(
@@ -6155,34 +6656,58 @@ class _AddTenantState extends State<AddTenant> {
                                         '${tenant.tenantFirstName} ${tenant.tenantLastName}'),
                                   ),
                                   DataCell(
-                                    SizedBox(
-                                      height: 24,
-                                      width: 24,
-                                      child: Checkbox(
-                                        value: isSelected,
-                                        onChanged: (bool? value) {
-                                          if (value!) {
-                                            selectedTenantsProvider
-                                                .addTenant(tenant);
-                                          } else {
-                                            selectedTenantsProvider
-                                                .removeTenant(tenant);
-                                          }
-                                          setState(() {});
-                                          /* if (value) {
-                                      selectedTenantsProvider.addTenant(tenant);
-                                    } else {
-                                      selectedTenantsProvider.removeTenant(tenant);
-                                    }*/
-                                        },
-                                        activeColor:
-                                        Color.fromRGBO(21, 43, 81, 1),
-                                      ),
+                                    Checkbox(
+                                      value: selectedTenantsProvider
+                                          .selectedTenants
+                                          .contains(tenant),
+                                      onChanged: (bool? value) {
+                                        if (value!) {
+                                          selectedTenantsProvider
+                                              .addTenant(tenant);
+                                        } else {
+                                          selectedTenantsProvider
+                                              .removeTenant(tenant);
+                                        }
+                                        setState(() {});
+                                      },
                                     ),
                                   ),
                                 ],
                               );
                             }).toList(),
+                            // Add applicant rows
+                            // ...filteredApplicant.map((applicant) {
+                            //   return DataRow(
+                            //     cells: [
+                            //       DataCell(
+                            //         Padding(
+                            //           padding: const EdgeInsets.only(
+                            //               left: 20.0), // Indent for applicants
+                            //           child: Text(
+                            //               '${applicant.applicantFirstName} ${applicant.applicantLastName}'),
+                            //         ),
+                            //       ),
+                            //       DataCell(
+                            //         Checkbox(
+                            //           value: selectedApplicantProvider
+                            //               .selectedApplicant
+                            //               .contains(applicant),
+                            //           onChanged: (bool? value) {
+                            //             if (value!) {
+                            //               selectedApplicantProvider
+                            //                   .addApplicant(applicant);
+                            //             } else {
+                            //               selectedApplicantProvider
+                            //                   .removeApplicant(applicant);
+                            //             }
+                            //             setState(() {});
+                            //           },
+                            //         ),
+                            //       ),
+                            //     ],
+                            //   );
+                            // }).toList(),
+                          ],
                         ),
                       ),
                       SizedBox(height: 16.0),
@@ -6199,7 +6724,7 @@ class _AddTenantState extends State<AddTenant> {
                                   selectedTenantsProvider.addTenant(tenant);
                                 }
                                 // Clear the temporary list after adding
-                               // selectedTenantsTemp.clear();
+                                // selectedTenantsTemp.clear();
                               });
                               Navigator.pop(
                                   context); // Close the dialog or screen after adding
@@ -6211,7 +6736,7 @@ class _AddTenantState extends State<AddTenant> {
                                 width: 90,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
-                                  color:blueColor,
+                                  color: blueColor,
                                   boxShadow: const [
                                     BoxShadow(
                                       color: Colors.grey,
@@ -6234,120 +6759,14 @@ class _AddTenantState extends State<AddTenant> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 20.0),
-                      Row(
-                        children: [
-                          Text("Choose Applicant",style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),),
-                        ],
-                      ),
-                      SizedBox(height: 10.0),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          border: Border.all(color: Colors.grey),
-                        ),
-                        child: DataTable(
-                          columns: [
-                            DataColumn(label: Text('Applicant Name')),
-                            DataColumn(label: Text('Select  ')),
-                          ],
-                          rows: filteredApplicant.map((applicant) {
-                            /* final isSelected = Provider.of<SelectedTenantsProvider>(context)
-                                .selectedTenants
-                                .contains(tenant);*/
-                            final matchingApplicant =
-                            Provider.of<SelectedApplicantProvider>(context).selectedApplicant.where((test) =>
-                            test.applicantId == applicant.applicantId)
-                                .toList();
-                            print(matchingApplicant);
-                            final isSelect =
-                            matchingApplicant.length > 0 ? true : false;
-                            return DataRow(
-                              cells: [
-                                DataCell(
-                                  Text(
-                                      '${applicant.applicantFirstName} ${applicant.applicantLastName}'),
-                                ),
-                                DataCell(
-                                  SizedBox(
-                                    height: 24,
-                                    width: 24,
-                                    child: Checkbox(
-                                      value: isSelect,
-                                      onChanged: (bool? value) {
-                                        if (value!) {
-                                          selectedApplicantProvider
-                                              .addApplicant(applicant);
-                                        } else {
-                                          selectedApplicantProvider.removeApplicant(applicant);
-                                        }
-                                        setState(() {});
-                                        /* if (value) {
-                                      selectedTenantsProvider.addTenant(tenant);
-                                    } else {
-                                      selectedTenantsProvider.removeTenant(tenant);
-                                    }*/
-                                      },
-                                      activeColor:
-                                      Color.fromRGBO(21, 43, 81, 1),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            );
-                          }).toList(),
-                        ),
-                      ),
                       SizedBox(height: 16.0),
                       Row(
                         children: [
                           SizedBox(
                             width: 2,
                           ),
-                          // GestureDetector(
-                          //   onTap: () {
-                          //     // When the Add button is clicked, update the provider with selected tenants
-                          //     setState(() {
-                          //       for (var tenant in selectedTenantsTemp) {
-                          //         selectedTenantsProvider.addTenant(tenant);
-                          //       }
-                          //       // Clear the temporary list after adding
-                          //       // selectedTenantsTemp.clear();
-                          //     });
-                          //     Navigator.pop(
-                          //         context); // Close the dialog or screen after adding
-                          //   },
-                          //   child: ClipRRect(
-                          //     borderRadius: BorderRadius.circular(5.0),
-                          //     child: Container(
-                          //       height: 40.0,
-                          //       width: 90,
-                          //       decoration: BoxDecoration(
-                          //         borderRadius: BorderRadius.circular(5.0),
-                          //         color:blueColor,
-                          //         boxShadow: const [
-                          //           BoxShadow(
-                          //             color: Colors.grey,
-                          //             offset: Offset(0.0, 1.0), //(x,y)
-                          //             blurRadius: 6.0,
-                          //           ),
-                          //         ],
-                          //       ),
-                          //       child: Center(
-                          //         child: Text(
-                          //           "Add",
-                          //           style: TextStyle(
-                          //               color: Colors.white,
-                          //               fontWeight: FontWeight.bold,
-                          //               fontSize: 16),
-                          //         ),
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
                         ],
                       ),
-
                     ],
                   )
                 : Column(
@@ -6356,7 +6775,7 @@ class _AddTenantState extends State<AddTenant> {
                       Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                            color:  blueColor,
+                            color: blueColor,
                             border: Border.all(
                               color: blueColor,
                             ),
@@ -6467,8 +6886,10 @@ class _AddTenantState extends State<AddTenant> {
                                         ),
                                         CustomTextField(
                                           inputFormatters: [
-                                            FilteringTextInputFormatter.digitsOnly,
-                                            LengthLimitingTextInputFormatter(10),
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
+                                            LengthLimitingTextInputFormatter(
+                                                10),
                                             PhoneNumberFormatter(),
                                           ],
                                           keyboardType: TextInputType.number,
@@ -6479,32 +6900,32 @@ class _AddTenantState extends State<AddTenant> {
                                     ),
                                   )
                                 : Container(),
-                            if(_showalterNumber == false)
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  _showalterNumber = !_showalterNumber;
-                                });
-                              },
-                              child: const Text('+Add alternative Phone',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF2ec433))),
-                            ),
-                            if(_showalterNumber == true)
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  _showalterNumber = !_showalterNumber;
-                                });
-                              },
-                              child: const Text('-Remove alternative Phone',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF2ec433))),
-                            ),
+                            if (_showalterNumber == false)
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _showalterNumber = !_showalterNumber;
+                                  });
+                                },
+                                child: const Text('+Add alternative Phone',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF2ec433))),
+                              ),
+                            if (_showalterNumber == true)
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _showalterNumber = !_showalterNumber;
+                                  });
+                                },
+                                child: const Text('-Remove alternative Phone',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF2ec433))),
+                              ),
                             const SizedBox(
                               height: 10,
                             ),
@@ -6563,32 +6984,32 @@ class _AddTenantState extends State<AddTenant> {
                                     ),
                                   )
                                 : Container(),
-                            if(_showalterEmail == false)
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  _showalterEmail = !_showalterEmail;
-                                });
-                              },
-                              child: const Text('+Add alternative Email',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF2ec433))),
-                            ),
-                            if(_showalterEmail == true)
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  _showalterEmail = !_showalterEmail;
-                                });
-                              },
-                              child: const Text('-Remove alternative Email',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF2ec433))),
-                            ),
+                            if (_showalterEmail == false)
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _showalterEmail = !_showalterEmail;
+                                  });
+                                },
+                                child: const Text('+Add alternative Email',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF2ec433))),
+                              ),
+                            if (_showalterEmail == true)
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _showalterEmail = !_showalterEmail;
+                                  });
+                                },
+                                child: const Text('-Remove alternative Email',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF2ec433))),
+                              ),
                             const SizedBox(
                               height: 10,
                             ),
@@ -6668,7 +7089,7 @@ class _AddTenantState extends State<AddTenant> {
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
-                              color:  blueColor,
+                              color: blueColor,
                               border: Border.all(
                                 color: blueColor,
                               ),
@@ -6828,7 +7249,7 @@ class _AddTenantState extends State<AddTenant> {
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
-                              color:  blueColor,
+                              color: blueColor,
                               border: Border.all(
                                 color: blueColor,
                               ),
@@ -6968,7 +7389,7 @@ class _AddTenantState extends State<AddTenant> {
                                 width: 90,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
-                                  color:blueColor,
+                                  color: blueColor,
                                   boxShadow: const [
                                     BoxShadow(
                                       color: Colors.grey,
@@ -7058,7 +7479,7 @@ class _AddCosignerState extends State<AddCosigner> {
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-                 color:  blueColor,
+                color: blueColor,
                 border: Border.all(
                   color: blueColor,
                 ),
@@ -7152,7 +7573,7 @@ class _AddCosignerState extends State<AddCosigner> {
                   const SizedBox(
                     height: 20,
                   ),
-                  if(_showalterNumber == false)
+                  if (_showalterNumber == false)
                     InkWell(
                       onTap: () {
                         setState(() {
@@ -7165,7 +7586,7 @@ class _AddCosignerState extends State<AddCosigner> {
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF2ec433))),
                     ),
-                  if(_showalterNumber == true)
+                  if (_showalterNumber == true)
                     InkWell(
                       onTap: () {
                         setState(() {
@@ -7235,7 +7656,7 @@ class _AddCosignerState extends State<AddCosigner> {
                   const SizedBox(
                     height: 20,
                   ),
-                  if(_showalterEmail == false)
+                  if (_showalterEmail == false)
                     InkWell(
                       onTap: () {
                         setState(() {
@@ -7248,7 +7669,7 @@ class _AddCosignerState extends State<AddCosigner> {
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF2ec433))),
                     ),
-                  if(_showalterEmail == true)
+                  if (_showalterEmail == true)
                     InkWell(
                       onTap: () {
                         setState(() {
@@ -7298,7 +7719,7 @@ class _AddCosignerState extends State<AddCosigner> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 Text(
+                Text(
                   'Address',
                   style: TextStyle(
                       fontSize: 14,
@@ -7432,7 +7853,7 @@ class _AddCosignerState extends State<AddCosigner> {
                           width: 90,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
-                            color:blueColor,
+                            color: blueColor,
                             boxShadow: const [
                               BoxShadow(
                                 color: Colors.grey,
@@ -7551,7 +7972,6 @@ class _CustomDropdownState extends State<CustomDropdown> {
                         ),
                       ],
                     ),
-
                   ),
                   iconStyleData: const IconStyleData(
                     icon: Icon(
