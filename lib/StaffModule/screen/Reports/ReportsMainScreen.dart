@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/AccountTotals.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/CompletedWorkOrders.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/ConvenienceFee.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/DelinquentTenants.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/ExpiringLeases.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/OpenWorkOrders.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/Payment_Exception.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/RentersInsurance.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/dailytransaction.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/rentalownerreport.dart';
@@ -595,5 +597,14 @@ List<ReportCardModel> reportCards = [
     description: "Report of account totals",
     destination: AccountTotalsReports(),
   ),
-
+  ReportCardModel(
+    title: "Payment Exception Report",
+    description: "Report of payments that are not attached to tenant",
+    destination: PaymentExceptionReports(),
+  ),
+  ReportCardModel(
+    title: "Convenience Fee Override",
+    description: "Report shows all leases with convenience fee override",
+    destination: ConvenienceFeeReports(),
+  ),
 ];

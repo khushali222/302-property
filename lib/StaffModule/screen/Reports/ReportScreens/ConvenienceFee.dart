@@ -19,6 +19,7 @@ import 'package:three_zero_two_property/Model/DelinquentTenantsModel.dart';
 
 
 import 'package:three_zero_two_property/Model/profile.dart';
+import 'package:three_zero_two_property/StaffModule/repository/ConvenienceFeeRepo.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
 import 'package:three_zero_two_property/provider/dateProvider.dart';
@@ -38,8 +39,9 @@ import 'package:printing/printing.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:fluttertoast/fluttertoast.dart';
 
-import '../../../Model/ConvenienceFeeModel.dart';
-import '../../../repository/ConvenienceFeeRepo.dart';
+import '../../../../Model/ConvenienceFeeModel.dart';
+
+
 import '../../../widgets/custom_drawer.dart';
 
 class ConvenienceFeeReports extends StatefulWidget {

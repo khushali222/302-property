@@ -23,6 +23,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/model/properties.dart';
 
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
+import '../../../../Model/ApplicantModel.dart';
 import '../../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
@@ -134,8 +135,13 @@ class _Edit_leaseState extends State<Edit_lease>
 
 
 
-      if(fetchedDetails.lease.uploadedFile != "")
+      // if(fetchedDetails.lease.uploadedFile != "")
+      //   _uploadedFileNames.add(fetchedDetails.lease.uploadedFile.first);
+
+      if (fetchedDetails.lease.uploadedFile != null &&
+          fetchedDetails.lease.uploadedFile.isNotEmpty) {
         _uploadedFileNames.add(fetchedDetails.lease.uploadedFile.first);
+      }
 
       if (fetchedDetails.securityCharges != null &&
           fetchedDetails.securityCharges!.length > 0)
@@ -2853,7 +2859,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                   ),
                                                 )
                                                 .toList(),
-                                            value: _selectedRent,
+                                            value:  rentCycleitems.contains(_selectedRent) ? _selectedRent : null,
                                             onChanged: (value) {
                                               state.didChange(
                                                   value); // Update the FormField state
@@ -6203,7 +6209,89 @@ class _AddTenantState extends State<AddTenant> {
     filteredTenants = tenants;
     selected = List<bool>.generate(tenants.length, (index) => false);
 
-    fetchTenants();
+    fetchTenantsAndApplicants();
+    filteredApplicant = Applicant;
+    select = List<bool>.generate(Applicant.length, (index) => false);
+    // fetchTenants();
+  }
+  List<Datum> Applicant = [];
+  List<Datum> filteredApplicant = [];
+  List<Datum> selectedApplicant = [];
+  List<bool> select = [];
+  Future<void> fetchTenantsAndApplicants() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? adminid = prefs.getString("adminId");
+      String? id = prefs.getString("staff_id");
+      String? token = prefs.getString('token');
+
+      // Fetch tenants
+      final tenantResponse = await http
+          .get(Uri.parse('${Api_url}/api/tenant/tenants/$adminid'), headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      });
+
+      if (tenantResponse.statusCode == 200) {
+        Map<String, dynamic> tenantData = json.decode(tenantResponse.body);
+        if (tenantData.containsKey('data')) {
+          List<dynamic> tenantList = tenantData['data']['tenants'];
+          tenants = tenantList.map((item) => Tenant.fromJson(item)).toList();
+        } else {
+          print("Unexpected tenant response structure: Missing 'data' key");
+        }
+      } else {
+        print("Failed to load tenants: ${tenantResponse.statusCode}");
+      }
+
+      // Fetch applicants
+      final applicantResponse = await http
+          .get(Uri.parse('${Api_url}/api/applicant/applicant/$adminid'), headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      });
+
+      if (applicantResponse.statusCode == 200) {
+        Map<String, dynamic> applicantData = json.decode(applicantResponse.body);
+        if (applicantData.containsKey('data')) {
+          List<dynamic> applicantList = applicantData['data'];
+          List<Tenant> convertedApplicants = applicantList
+              .map((item) => convertApplicantToTenant(Datum.fromJson(item)))
+              .toList();
+
+          // Merge tenants and converted applicants
+          tenants.addAll(convertedApplicants);
+        } else {
+          print("Unexpected applicant response structure: Missing 'data' key");
+        }
+      } else {
+        print("Failed to load applicants: ${applicantResponse.statusCode}");
+      }
+
+      // Update filtered list and selection state
+      filteredTenants = List.from(tenants);
+      selected = List<bool>.filled(tenants.length, false);
+    } catch (e) {
+      print("Error fetching tenants or applicants: $e");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Tenant convertApplicantToTenant(Datum applicant) {
+    return Tenant(
+      tenantFirstName: applicant.applicantFirstName,
+      tenantLastName: applicant.applicantLastName,
+      tenantEmail: applicant.applicantEmail,
+      tenantPhoneNumber: applicant.applicantPhoneNumber.toString(),
+      tenantId: null, // Explicitly set tenantId as null
+    );
   }
 
   Future<void> _selectDate(BuildContext context) async {

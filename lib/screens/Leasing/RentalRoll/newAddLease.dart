@@ -6425,9 +6425,9 @@ class _AddTenantState extends State<AddTenant> {
     super.initState();
     filteredTenants = tenants;
     selected = List<bool>.generate(tenants.length, (index) => false);
-
-    fetchTenants();
-    fetchApplicants();
+    fetchTenantsAndApplicants();
+   // fetchTenants();
+  //  fetchApplicants();
     filteredApplicant = Applicant;
     select = List<bool>.generate(Applicant.length, (index) => false);
   }
@@ -6464,7 +6464,15 @@ class _AddTenantState extends State<AddTenant> {
       });
     }
   }
-
+  Tenant convertApplicantToTenant(Datum applicant) {
+    return Tenant(
+      tenantFirstName: applicant.applicantFirstName,
+      tenantLastName: applicant.applicantLastName,
+      tenantEmail: applicant.applicantEmail,
+      tenantPhoneNumber: applicant.applicantPhoneNumber.toString(),
+      tenantId: null, // Explicitly set tenantId as null
+    );
+  }
   bool isValidEmail(String email) {
     String pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$';
     RegExp regex = RegExp(pattern);
@@ -6530,6 +6538,72 @@ class _AddTenantState extends State<AddTenant> {
       });
     }
   }
+  Future<void> fetchTenantsAndApplicants() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("adminId");
+      String? token = prefs.getString('token');
+
+      // Fetch tenants
+      final tenantResponse = await http
+          .get(Uri.parse('${Api_url}/api/tenant/tenants/$id'), headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      });
+
+      if (tenantResponse.statusCode == 200) {
+        Map<String, dynamic> tenantData = json.decode(tenantResponse.body);
+        if (tenantData.containsKey('data')) {
+          List<dynamic> tenantList = tenantData['data']['tenants'];
+          tenants = tenantList.map((item) => Tenant.fromJson(item)).toList();
+        } else {
+          print("Unexpected tenant response structure: Missing 'data' key");
+        }
+      } else {
+        print("Failed to load tenants: ${tenantResponse.statusCode}");
+      }
+
+      // Fetch applicants
+      final applicantResponse = await http
+          .get(Uri.parse('${Api_url}/api/applicant/applicant/$id'), headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      });
+
+      if (applicantResponse.statusCode == 200) {
+        Map<String, dynamic> applicantData = json.decode(applicantResponse.body);
+        if (applicantData.containsKey('data')) {
+          List<dynamic> applicantList = applicantData['data'];
+          List<Tenant> convertedApplicants = applicantList
+              .map((item) => convertApplicantToTenant(Datum.fromJson(item)))
+              .toList();
+
+          // Merge tenants and converted applicants
+          tenants.addAll(convertedApplicants);
+        } else {
+          print("Unexpected applicant response structure: Missing 'data' key");
+        }
+      } else {
+        print("Failed to load applicants: ${applicantResponse.statusCode}");
+      }
+
+      // Update filtered list and selection state
+      filteredTenants = List.from(tenants);
+      selected = List<bool>.filled(tenants.length, false);
+    } catch (e) {
+      print("Error fetching tenants or applicants: $e");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+
 
   //for applicant
 
@@ -6562,8 +6636,14 @@ class _AddTenantState extends State<AddTenant> {
         if (responseData.containsKey('data')) {
           List<dynamic> data = responseData['data'];
           Applicant = data.map((item) => Datum.fromJson(item)).toList();
+          List<Tenant> tenants = Applicant.map((applicant) =>
+              convertApplicantToTenant(applicant)).toList();
           filteredApplicant = List.from(Applicant);
           select = List<bool>.filled(Applicant.length, false);
+
+
+
+
         } else {
           // Handle unexpected response structure
           print("Unexpected response structure: Missing 'data' key");
