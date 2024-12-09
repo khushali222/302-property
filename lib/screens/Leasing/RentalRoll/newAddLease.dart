@@ -1353,6 +1353,9 @@ class _addLease3State extends State<addLease3>
                                         rentCycleItemsDynamic(endDate
                                             .difference(_startDate!)
                                             .inDays);
+                                        _selectedRent = null;
+                                        rentAmount.text = ''; // Reset amount entered status
+                                        rentNextDueDate.text = '';
                                         startDateController.text.isNotEmpty;
                                         isProRent = false;
                                         _updateProRatedRent(
@@ -3337,7 +3340,7 @@ class _addLease3State extends State<addLease3>
                                         'Monthly'); // Reset checkbox when amount changes
                                   });
                                 },
-                                keyboardType: TextInputType.number,
+                               // keyboardType: TextInputType.number,
                                 hintText: 'Enter Amount',
                                 controller: rentAmount,
                               ),
@@ -4035,7 +4038,7 @@ class _addLease3State extends State<addLease3>
                                   }
                                   return null;
                                 },
-                                keyboardType: TextInputType.number,
+                               // keyboardType: TextInputType.number,
                                 hintText: 'Enter Amount',
                                 controller: securityDepositeAmount,
                                 optional: true,
@@ -4497,6 +4500,7 @@ class _addLease3State extends State<addLease3>
                                           leaseData: LeaseData(
                                             adminId: adminId ?? "",
                                             isProRent: isProRent,
+                                            proRatedRent: isProRent ? proRatedRentController.text : null,
                                             companyName: companyName,
                                             endDate:
                                                 reverseFormatDate(leaseEndDate),
@@ -4517,7 +4521,10 @@ class _addLease3State extends State<addLease3>
                                           ),
                                           tenantData: tenantDataList,
                                         );
+                                        print("Pro-rated Rent Value: ${proRatedRentController.text}");
+                                        print('${lease}');
                                         await addLeaseAndNavigate(lease);
+
                                         setState(() {
                                           isLoading = false; // Stop loading
                                         });
@@ -5537,7 +5544,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                             }
                             return null;
                           },
-                          keyboardType: TextInputType.number,
+                         // keyboardType: TextInputType.number,
                           hintText: 'Enter Amount',
                           controller: _amountController,
                         ),
@@ -6234,7 +6241,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                     }
                     return null;
                   },
-                  keyboardType: TextInputType.number,
+                 // keyboardType: TextInputType.number,
                   hintText: 'Enter Amount',
                   controller: _amountController,
                 ),

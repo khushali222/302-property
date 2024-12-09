@@ -55,10 +55,11 @@ class LeaseRepository {
       var responseData = jsonDecode(response.body);
       print('Response body of the lease :${response.body}');
       log(response.body);
-
+      print('Lease Object: ${jsonEncode(lease.toJson())}');
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (responseData['statusCode'] == 200) {
           print('Response successfully: ${responseData['data']}');
+
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Successfully added lease');
 

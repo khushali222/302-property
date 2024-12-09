@@ -49,6 +49,7 @@ class addLease3 extends StatefulWidget {
 class _addLease3State extends State<addLease3>
     with SingleTickerProviderStateMixin {
   late Future<List<Rentals>> futureRentalOwners;
+  final TextEditingController proRatedRentController = TextEditingController();
 
   @override
   void initState() {
@@ -75,6 +76,167 @@ class _addLease3State extends State<addLease3>
     futureRentalOwners = PropertiesRepository().fetchProperties();
     _loadProperties();
     _tabController = TabController(length: 2, vsync: this);
+    _updateProRatedRent(_selectedRent ?? 'Monthly');
+  }
+
+  void _updateProRatedRent(String frequency) {
+    if (isProRent &&
+        isAmountEntered &&
+        rentNextDueDate.text.isNotEmpty &&
+        startDateController.text.isNotEmpty &&
+        endDateController.text.isNotEmpty) {
+      try {
+        // Parse the start date from the TextField (instead of using current date)
+        DateTime currentDate =
+        DateFormat('dd-MM-yyyy').parse(startDateController.text);
+        DateTime nextDueDate =
+        DateFormat('dd-MM-yyyy').parse(rentNextDueDate.text);
+
+        double totalRent = double.tryParse(rentAmount.text) ?? 0.0;
+
+        // Debug prints
+        print("Start Date (current date): $currentDate");
+        print("Next Due Date: $nextDueDate");
+        print("Total Rent Entered: $totalRent");
+
+        // Validate rent and dates
+        if (totalRent <= 0 || !nextDueDate.isAfter(currentDate)) {
+          setState(() {
+            proRatedRentController.text = "0.00";
+          });
+          print(
+              "Validation failed: Either rent is <= 0 or next due date is not after start date.");
+          return;
+        }
+
+        // Calculate days left, including the current day
+        int daysLeft = nextDueDate.difference(currentDate).inDays;
+        print("Days Left: $daysLeft");
+
+        // Calculate pro-rated rent
+        double proRatedRent = 0.0;
+
+        // Get total days in the current month
+        int totalDaysInMonth =
+        _getDaysInMonth(nextDueDate.year, currentDate.month);
+        // print("Total Days in Month: $totalDaysInMonth");
+
+        // Define total days in other periods
+        int totalDaysInYear = 365; // For non-leap years
+        int totalDaysInQuarter = totalDaysInMonth * 3; // 3 months period
+
+        switch (frequency) {
+          case 'Daily':
+            proRatedRent = (totalRent / 1) * daysLeft;
+            break;
+          case 'Weekly':
+            proRatedRent = (totalRent / 7) * daysLeft;
+            break;
+          case 'Every two weeks':
+            proRatedRent = (totalRent / 14) * daysLeft;
+            break;
+        // case 'Monthly':
+        //   proRatedRent = (totalRent / totalDaysInMonth) * daysLeft;
+        //   break;
+          case 'Monthly':
+            int totalDaysInMonth =
+            _getDaysInMonth(currentDate.year, currentDate.month);
+            print("Total Days in Month: $totalDaysInMonth");
+            proRatedRent = (totalRent / totalDaysInMonth) * daysLeft;
+            break;
+          case 'Every two months':
+          // Calculate total days in the 2-month period
+            int totalDaysInTwoMonths =
+                _getDaysInMonth(currentDate.year, currentDate.month) +
+                    _getDaysInMonth(nextDueDate.year, nextDueDate.month);
+            print("Total Days in Two Months: $totalDaysInTwoMonths");
+
+            // Adjust the calculation to ensure rent remains at totalRent
+            proRatedRent = totalRent;
+            break;
+          case 'Quarterly':
+          // Calculate total days in the quarter (3 months)
+            int totalDaysInQuarter =
+                _getDaysInMonth(nextDueDate.year, nextDueDate.month) +
+                    _getDaysInMonth(nextDueDate.year, nextDueDate.month - 1) +
+                    _getDaysInMonth(nextDueDate.year, nextDueDate.month - 2);
+
+            // Calculate pro-rated rent
+            if (totalDaysInQuarter > 0) {
+              proRatedRent = (totalRent / totalDaysInQuarter) * daysLeft;
+              proRatedRent =
+                  proRatedRent.roundToDouble(); // Round to nearest whole number
+            } else {
+              proRatedRent = 0.0; // Fallback in case of an error
+            }
+            break;
+          case 'Semi Monthly':
+          // Calculate the semi-monthly due date
+            int midMonth =
+            _getDaysInMonth(currentDate.year, currentDate.month) > 30
+                ? 15
+                : 14; // Handle shorter months like February
+
+            // If today is before or on the mid-month date, calculate for the first half
+            if (currentDate.day <= midMonth) {
+              // First half of the month (1st to mid-month)
+              proRatedRent = (totalRent / midMonth) * daysLeft;
+            } else {
+              // Second half of the month (after mid-month)
+              int remainingDays =
+                  _getDaysInMonth(currentDate.year, currentDate.month) -
+                      midMonth;
+              proRatedRent = (totalRent / remainingDays) * daysLeft;
+            }
+            break;
+          case 'Yearly':
+            proRatedRent = (totalRent / totalDaysInYear) * daysLeft;
+            break;
+          default:
+            proRatedRent = 0.0;
+        }
+
+        // Update text field with calculated value
+        setState(() {
+          proRatedRentController.text = proRatedRent.toStringAsFixed(2);
+        });
+        print("Calculated Pro-Rated Rent: $proRatedRent");
+      } catch (e) {
+        // Handle unexpected errors
+        setState(() {
+          proRatedRentController.text = "Error";
+        });
+        print("Error occurred while calculating pro-rated rent: $e");
+      }
+    }
+  }
+
+  int _getDaysInMonth(int year, int month) {
+    // Get the number of days in the month considering leap years for February
+    switch (month) {
+      case 1: // January
+      case 3: // March
+      case 5: // May
+      case 7: // July
+      case 8: // August
+      case 10: // October
+      case 12: // December
+        return 31;
+      case 4: // April
+      case 6: // June
+      case 9: // September
+      case 11: // November
+        return 30;
+      case 2: // February
+        return _isLeapYear(year) ? 29 : 28;
+      default:
+        return 30;
+    }
+  }
+
+  bool _isLeapYear(int year) {
+    // Leap year is divisible by 4, but not divisible by 100 unless divisible by 400
+    return (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
   }
 
 //first container variable
@@ -95,7 +257,9 @@ class _addLease3State extends State<addLease3>
   final TextEditingController startDateController = TextEditingController();
   DateTime? _startDate;
   final TextEditingController endDateController = TextEditingController();
-
+  String selectedFrequency = 'Monthly';
+  bool isProRent = false;
+  bool isAmountEntered = false;
   //second container variables
   String? _selectedRent;
   final TextEditingController rentAmount = TextEditingController();
@@ -284,7 +448,7 @@ class _addLease3State extends State<addLease3>
     'Fixed w/rollover',
     'At-will(month to month)',
   ];
-  final List<String> rentCycleitems = [
+  List<String> rentCycleitems = [
     'Daily',
     'Weekly',
     'Every two weeks',
@@ -292,9 +456,67 @@ class _addLease3State extends State<addLease3>
     'Every two months',
     'Quarterly',
     'Yearly',
-    'Semi Monthly',
-
+    'Semi Monthly'
   ];
+
+  rentCycleItemsDynamic(int days) {
+    print("days = $days");
+    if (days == 1) {
+      rentCycleitems = ['Daily'];
+    } else if (days >= 365) {
+      rentCycleitems = [
+        'Daily',
+        'Weekly',
+        'Every two weeks',
+        'Monthly',
+        'Every two months',
+        'Quarterly',
+        'Yearly',
+        'Semi Monthly',
+      ];
+    } else if (days >= 93) {
+      rentCycleitems = [
+        'Daily',
+        'Weekly',
+        'Semi Monthly',
+        'Every two weeks',
+        'Monthly',
+        'Every two months',
+        'Quarterly',
+      ];
+    } else if (days >= 62) {
+      rentCycleitems = [
+        'Daily',
+        'Weekly',
+        'Semi Monthly',
+        'Every two weeks',
+        'Monthly',
+        'Every two months',
+      ];
+    } else if (days >= 32) {
+      rentCycleitems = [
+        'Daily',
+        'Weekly',
+        'Semi Monthly',
+        'Every two weeks',
+        'Monthly',
+      ];
+    } else if (days >= 15) {
+      rentCycleitems = [
+        'Daily',
+        'Weekly',
+        'Semi Monthly',
+        'Every two weeks',
+      ];
+    } else if (days >= 7) {
+      rentCycleitems = [
+        'Daily',
+        'Weekly',
+      ];
+    }
+    setState(() {});
+  }
+
   DateTime calculateNextDueDate(DateTime startDate, String rentCycle) {
     switch (rentCycle) {
       case 'Daily':
@@ -311,6 +533,24 @@ class _addLease3State extends State<addLease3>
         return DateTime(startDate.year, startDate.month + 3, startDate.day);
       case 'Yearly':
         return DateTime(startDate.year + 1, startDate.month, startDate.day);
+      case 'Semi Monthly':
+      // Get the number of days in the current month
+        int lastDayOfMonth =
+            DateTime(startDate.year, startDate.month + 1, 0).day;
+        // Determine the middle of the month
+        int middleOfMonth = (lastDayOfMonth / 2).floor();
+
+        if (startDate.day <= middleOfMonth) {
+          // If today is in the first half (1st to mid-month), set the next due date to the middle of this month
+          return DateTime(startDate.year, startDate.month, middleOfMonth);
+        } else {
+          // If today is in the second half (mid+1 to end of month), set the next due date to the middle of next month
+          if (startDate.month == 12) {
+            // Special case for December, next due date should be January 1st
+            return DateTime(startDate.year + 1, 1, middleOfMonth);
+          }
+          return DateTime(startDate.year, startDate.month + 1, middleOfMonth);
+        }
       default:
         return startDate;
     }
@@ -965,25 +1205,24 @@ class _addLease3State extends State<addLease3>
                                       firstDate: DateTime(2000),
                                       lastDate: DateTime(2101),
                                       locale: const Locale('en', 'US'),
-                                      builder: (BuildContext context, Widget? child) {
+                                      builder: (BuildContext context,
+                                          Widget? child) {
                                         return Theme(
                                           data: ThemeData.light().copyWith(
-                                            colorScheme: const ColorScheme.light(
-                                              primary: Color.fromRGBO(21, 43, 83,
-                                                  1), // header background color
-                                              onPrimary:
-                                              Colors.white, // header text color
-                                              onSurface: Color.fromRGBO(
-                                                  21, 43, 83, 1), // body text color
+                                            colorScheme: ColorScheme.light(
+                                              primary:
+                                              blueColor, // header background color
+                                              onPrimary: Colors
+                                                  .white, // header text color
+                                              onSurface:
+                                              blueColor, // body text color
                                             ),
-                                            textButtonTheme: TextButtonThemeData(
+                                            textButtonTheme:
+                                            TextButtonThemeData(
                                               style: TextButton.styleFrom(
                                                 foregroundColor: Colors.white,
-                                                backgroundColor: const Color.fromRGBO(
-                                                    21,
-                                                    43,
-                                                    83,
-                                                    1), // button text color
+                                                backgroundColor:
+                                                blueColor, // button text color
                                               ),
                                             ),
                                           ),
@@ -994,19 +1233,34 @@ class _addLease3State extends State<addLease3>
                                     if (pickedDate != null) {
                                       // String formattedStartDate =
                                       //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                      String formattedStartDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                                      DateTime endDate = DateTime(pickedDate.year,
-                                          pickedDate.month + 1, pickedDate.day);
+                                      String formattedStartDate =
+                                          "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                      DateTime endDate = DateTime(
+                                          pickedDate.year + 1,
+                                          pickedDate.month,
+                                          pickedDate.day);
                                       // String formattedEndDate =
                                       //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
 
-                                      String formattedEndDate = "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
-
+                                      String formattedEndDate =
+                                          "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+                                      print(formattedStartDate);
                                       setState(() {
-
-                                        startDateController.text = formattedStartDate;
+                                        startDateController.text =
+                                            formattedStartDate;
                                         _startDate = pickedDate;
-                                        endDateController.text = formattedEndDate;
+                                        endDateController.text =
+                                            formattedEndDate;
+                                        rentCycleItemsDynamic(endDate
+                                            .difference(_startDate!)
+                                            .inDays);
+                                        _selectedRent = null;
+                                        rentAmount.text = ''; // Reset amount entered status
+                                        rentNextDueDate.text = '';
+                                        startDateController.text.isNotEmpty;
+                                        isProRent = false;
+                                        _updateProRatedRent(
+                                            _selectedRent ?? 'Monthly');
                                       });
                                     }
                                   },
@@ -1045,28 +1299,29 @@ class _addLease3State extends State<addLease3>
                                     DateTime? pickedDate = await showDatePicker(
                                       context: context,
                                       initialDate: DateTime.now(),
-                                      firstDate: DateTime(2000),
+                                      firstDate: _startDate != null
+                                          ? _startDate!
+                                          : DateTime(1900),
                                       lastDate: DateTime(2101),
                                       locale: const Locale('en', 'US'),
-                                      builder: (BuildContext context, Widget? child) {
+                                      builder: (BuildContext context,
+                                          Widget? child) {
                                         return Theme(
                                           data: ThemeData.light().copyWith(
-                                            colorScheme: const ColorScheme.light(
-                                              primary: Color.fromRGBO(21, 43, 83,
-                                                  1), // header background color
-                                              onPrimary:
-                                              Colors.white, // header text color
-                                              onSurface: Color.fromRGBO(
-                                                  21, 43, 83, 1), // body text color
+                                            colorScheme: ColorScheme.light(
+                                              primary:
+                                              blueColor, // header background color
+                                              onPrimary: Colors
+                                                  .white, // header text color
+                                              onSurface:
+                                              blueColor, // body text color
                                             ),
-                                            textButtonTheme: TextButtonThemeData(
+                                            textButtonTheme:
+                                            TextButtonThemeData(
                                               style: TextButton.styleFrom(
                                                 foregroundColor: Colors.white,
-                                                backgroundColor: const Color.fromRGBO(
-                                                    21,
-                                                    43,
-                                                    83,
-                                                    1), // button text color
+                                                backgroundColor:
+                                                blueColor, // button text color
                                               ),
                                             ),
                                           ),
@@ -1077,9 +1332,17 @@ class _addLease3State extends State<addLease3>
                                     if (pickedDate != null) {
                                       // String formattedDate =
                                       //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                      String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                      String formattedDate =
+                                          "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                                       setState(() {
                                         endDateController.text = formattedDate;
+                                        rentCycleItemsDynamic(pickedDate
+                                            .difference(_startDate!)
+                                            .inDays);
+                                        endDateController.text.isNotEmpty;
+                                        isProRent = false;
+                                        _updateProRatedRent(
+                                            _selectedRent ?? 'Monthly');
                                       });
                                     }
                                   },
@@ -1166,6 +1429,13 @@ class _addLease3State extends State<addLease3>
                                                     startDateController.text = formattedStartDate;
                                                     _startDate = pickedDate;
                                                     endDateController.text = formattedEndDate;
+                                                    startDateController
+                                                        .text.isNotEmpty;
+                                                    isProRent = false;
+
+                                                    _updateProRatedRent(
+                                                        _selectedRent ??
+                                                            'Monthly');
                                                   });
                                                 }
                                               },
@@ -2004,6 +2274,10 @@ class _addLease3State extends State<addLease3>
                                               onChanged: (String? value) {
                                                 setState(() {
                                                   _selectedRent = value;
+
+                                                  _updateProRatedRent(
+                                                      _selectedRent ??
+                                                          'Monthly');
                                                 });
                                                 _updateNextDueDate();
                                               },
@@ -2070,6 +2344,9 @@ class _addLease3State extends State<addLease3>
                                                   setState(() {
                                                     rentNextDueDate.text = formattedNextDueDate;
                                                     rentNextDueDate.text = formattedDate;
+                                                    _updateProRatedRent(
+                                                        _selectedRent ??
+                                                            'Monthly');
                                                   });
 
                                                   print(rentNextDueDate.text);
@@ -2109,6 +2386,7 @@ class _addLease3State extends State<addLease3>
                                 ),
                               if(MediaQuery.of(context).size.width < 500)
                                 CustomDropdown(
+                                  key: UniqueKey(),
                                   validator: (value) {
                                     if (_selectedRent == null) {
                                       return 'Please select a rent cycle';
@@ -2121,8 +2399,11 @@ class _addLease3State extends State<addLease3>
                                   onChanged: (String? value) {
                                     setState(() {
                                       _selectedRent = value;
+                                      _selectedRent != null;
+                                      isProRent = false;
+                                      _updateProRatedRent(
+                                          _selectedRent ?? 'Monthly');
                                     });
-
                                     _updateNextDueDate();
                                   },
                                 ),
@@ -2144,7 +2425,15 @@ class _addLease3State extends State<addLease3>
                                   }
                                   return null;
                                 },
-                                keyboardType: TextInputType.number,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isAmountEntered = value.isNotEmpty;
+                                    isProRent = false;
+                                    _updateProRatedRent(_selectedRent ??
+                                        'Monthly'); // Reset checkbox when amount changes
+                                  });
+                                },
+                              //  keyboardType: TextInputType.number,
                                 hintText: 'Enter Amount',
                                 controller: rentAmount,
                               ),
@@ -2207,6 +2496,9 @@ class _addLease3State extends State<addLease3>
                                       setState(() {
                                         rentNextDueDate.text = formattedNextDueDate;
                                         rentNextDueDate.text = formattedDate;
+                                        _updateProRatedRent(
+                                            _selectedRent ??
+                                                'Monthly');
                                       });
 
                                       print(rentNextDueDate.text);
@@ -2250,6 +2542,111 @@ class _addLease3State extends State<addLease3>
                                 hintText: 'Enter Memo',
                                 controller: rentMemo,
                                 optional: true,
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Row(
+                                children: [
+                                  // SizedBox(
+                                  //   width: 24.0, // Standard width for checkbox
+                                  //   height: 24.0,
+                                  //   child: Checkbox(
+                                  //     value: isProRent,
+                                  //     onChanged: (value) {
+                                  //       setState(() {
+                                  //         isProRent = value ?? false;
+                                  //       });
+                                  //     },
+                                  //     activeColor: isProRent
+                                  //         ? blueColor
+                                  //         : Colors.black,
+                                  //   ),
+                                  // ),
+
+                                  SizedBox(
+                                    width: 24.0, // Standard width for checkbox
+                                    height: 24.0,
+                                    child: Checkbox(
+                                      value: isProRent,
+                                      onChanged: isAmountEntered &&
+                                          rentNextDueDate.text.isNotEmpty &&
+                                          _selectedRent != null &&
+                                          startDateController
+                                              .text.isNotEmpty &&
+                                          endDateController.text.isNotEmpty
+                                          ? (value) {
+                                        setState(() {
+                                          isProRent = value ?? false;
+                                          _updateProRatedRent(
+                                              _selectedRent ?? 'Monthly');
+                                        });
+                                      }
+                                          : null,
+                                      activeColor:
+                                      blueColor, // Disable checkbox if amount is not entered
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    "Charge pro-rated rent for current month",
+                                    style: TextStyle(
+                                        color: blueColor,
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                              if (isProRent &&
+                                  isAmountEntered &&
+                                  rentNextDueDate.text.isNotEmpty &&
+                                  _selectedRent != null &&
+                                  startDateController.text.isNotEmpty &&
+                                  endDateController.text.isNotEmpty)
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                              if (isProRent &&
+                                  isAmountEntered &&
+                                  rentNextDueDate.text.isNotEmpty &&
+                                  _selectedRent != null &&
+                                  startDateController.text.isNotEmpty &&
+                                  endDateController.text.isNotEmpty)
+                                const Text('Pro-rated Rent',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey)),
+                              if (isProRent &&
+                                  isAmountEntered &&
+                                  rentNextDueDate.text.isNotEmpty &&
+                                  _selectedRent != null &&
+                                  startDateController.text.isNotEmpty &&
+                                  endDateController.text.isNotEmpty)
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                              if (isProRent &&
+                                  isAmountEntered &&
+                                  rentNextDueDate.text.isNotEmpty &&
+                                  _selectedRent != null &&
+                                  startDateController.text.isNotEmpty &&
+                                  endDateController.text.isNotEmpty)
+                                CustomTextField(
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter rent';
+                                    }
+                                    return null;
+                                  },
+                                  keyboardType: TextInputType.text,
+                                  hintText: 'Enter rent',
+                                  controller: proRatedRentController,
+                                  optional: true,
+                                ),
+                              const SizedBox(
+                                height: 20,
                               ),
                             ],
                           ),
@@ -2728,7 +3125,7 @@ class _addLease3State extends State<addLease3>
                                   }
                                   return null;
                                 },
-                                keyboardType: TextInputType.number,
+                              //  keyboardType: TextInputType.number,
                                 hintText: 'Enter Amount',
                                 controller: securityDepositeAmount,
                                 optional: true,
@@ -2920,346 +3317,65 @@ class _addLease3State extends State<addLease3>
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                             BorderRadius.circular(8.0))),
-                                    onPressed: () async
-                                    {
-                                      if (_formKey.currentState?.validate() ??
-                                          false) {
+                                  onPressed: () async {
+                                    if (_formKey.currentState?.validate() ??
+                                        false) {
+                                      setState(() {
+                                        isLoading = true; // Stop loading
+                                      });
+                                      final provider =
+                                      Provider.of<SelectedTenantsProvider>(
+                                          context,
+                                          listen: false);
+                                      final rentShareControllers =
+                                          provider.rentShareControllers;
+                                      // for (int i = 0; i < rentShareControllers.length; i++) {
+                                      //   print('Tenant ${i + 1}: ${rentShareControllers[i].text}');
+                                      // }
+                                      // bool hasError = false;
+                                      // if (hasError || provider.validationMessage != null) {
+                                      //   setState(() {
+                                      //
+                                      //   });
+                                      //   return;
+                                      // }
+                                      // provider.clearValidationMessage();
+                                      //charges
+                                      if (rentShareControllers.length < 1) {
                                         setState(() {
-                                          isLoading = true; // Stop loading
+                                          _errorMessage = "required tenants";
+                                          // _errorMessagetenants = 'Please select at least one tenant or cosigner.';
+                                          // _errorMessage = null;
                                         });
-                                        final provider = Provider.of<SelectedTenantsProvider>(context, listen: false);
-                                        final rentShareControllers = provider.rentShareControllers;
-                                        // for (int i = 0; i < rentShareControllers.length; i++) {
-                                        //   print('Tenant ${i + 1}: ${rentShareControllers[i].text}');
-                                        // }
-                                        // bool hasError = false;
-                                        // if (hasError || provider.validationMessage != null) {
-                                        //   setState(() {
-                                        //
-                                        //   });
-                                        //   return;
-                                        // }
-                                        // provider.clearValidationMessage();
-                                        //charges
-                                        if (rentShareControllers.length <1 ) {
-                                          setState(() {
-                                            _errorMessage = "required tenants";
-                                            // _errorMessagetenants = 'Please select at least one tenant or cosigner.';
-                                            // _errorMessage = null;
-                                          });
-                                          return;
-                                        }
-
-                                        setState(() {
-                                          // _errorMessagetenants = null;
-                                          _errorMessage = null;
-                                        });
-
-                                        double totalRentShare = 0.0;
-                                        for (var controller in rentShareControllers) {
-                                          double rentShare = double.tryParse(controller.text) ?? 0.0;
-                                          totalRentShare += rentShare;
-                                        }
-                                        if (totalRentShare != 100.0){
-                                          setState(() {
-                                            _errorMessage = 'Total rent share must equal 100';
-
-                                          });
-                                          return;
-                                        }
-                                        else{
-
-                                          SharedPreferences prefs =
-                                          await SharedPreferences.getInstance();
-                                          String adminId =
-                                          prefs.getString("adminId")!;
-                                          bool _isLeaseAdded = false;
-                                          // // Printing ChargeData object
-                                          //Changes
-                                          List<Map<String, String>>
-                                          mergedFormDataList = [
-                                            ...formDataOneTimeList,
-                                            ...formDataRecurringList,
-                                          ];
-                                          String leaseStartDate =
-                                              startDateController.text;
-                                          String leaseEndDate =
-                                              endDateController.text;
-                                          print(
-                                              'ends date : ${endDateController.text}');
-                                          // Creating Entry objects from the merged list
-                                          // List<Entry> chargeEntries =
-                                          //     mergedFormDataList.map((data) {
-                                          //   print(data['account']);
-                                          //   return Entry(
-                                          //     account: data['account'] ?? '',
-                                          //     amount: double.tryParse(
-                                          //             data['amount'] ?? '0.0') ??
-                                          //         0.0,
-                                          //     chargeType: data['charge_type'] ?? '',
-                                          //     date: rentNextDueDate.text,
-                                          //     isRepeatable: data['is_repeatable']
-                                          //             ?.toLowerCase() ==
-                                          //         'true',
-                                          //     memo: data['memo'] ?? '',
-                                          //     rentCycle: data[
-                                          //         'rent_cycle'], // Assuming this field might be present
-                                          //     tenantId: data[
-                                          //         'tenant_id'], // Assuming this field might be present
-                                          //   );
-                                          // }).toList();
-
-                                          // // Creating ChargeData object
-                                          // ChargeData chargeData = ChargeData(
-                                          //   adminId: adminId,
-                                          //   entry: chargeEntries,
-                                          //   isLeaseAdded: _isLeaseAdded,
-                                          // );
-                                          print(
-                                              'rent next due date ${reverseFormatDate(rentNextDueDate.text)}');
-                                          List<Entry> chargeEntries =
-                                          mergedFormDataList.map((data) {
-                                            print(data['account']);
-                                            return Entry(
-                                              account: data['account'] ?? '',
-                                              amount: double.tryParse(
-                                                  data['amount'] ?? '0.0') ??
-                                                  0.0,
-                                              chargeType: data['charge_type'] ?? '',
-                                              date:  reverseFormatDate(rentNextDueDate.text),
-                                              isRepeatable: data['is_repeatable']
-                                                  ?.toLowerCase() ==
-                                                  'true',
-                                              memo: data['memo'] ?? '',
-                                              rentCycle: data[
-                                              'rent_cycle'], // Assuming this field might be present
-                                              tenantId: data[
-                                              'tenant_id'], // Assuming this field might be present
-                                            );
-                                          }).toList();
-                                          // print(ne)
-                                          chargeEntries.add(Entry(
-                                            account: "Rent Income",
-                                            amount:
-                                            double.tryParse(rentAmount.text) ??
-                                                0.0,
-                                            chargeType: 'Rent',
-                                            date:  reverseFormatDate(rentNextDueDate.text),
-                                            isRepeatable:
-                                            false, // Set to false if it's not repeatable, adjust as needed
-                                            memo: rentMemo.text,
-                                            rentCycle:
-                                            _selectedRent, // Set default value or adjust as needed
-                                          ));
-                                          chargeEntries.add(Entry(
-                                            account: "Security Deposit",
-                                            amount: double.tryParse(
-                                                securityDepositeAmount.text) ??
-                                                0.0,
-                                            chargeType: 'Security Deposit',
-                                            date:  reverseFormatDate(rentNextDueDate.text),
-                                            isRepeatable:
-                                            false, // Set to false if it's not repeatable, adjust as needed
-                                            memo: 'Last Month\'s Rent',
-                                            rentCycle:
-                                            _selectedRent, // Set default value or adjust as needed
-                                          ));
-                                          ChargeData chargeData = ChargeData(
-                                            adminId: adminId,
-                                            entry: chargeEntries,
-                                            isLeaseAdded: _isLeaseAdded,
-                                          );
-                                          print('${chargeEntries}');
-                                          //Tenant
-                                          List<TenantData> tenants = [];
-                                          Map<String, String>? firstCosigner =
-                                          cosignersMap.isNotEmpty
-                                              ? cosignersMap[0]
-                                              : {};
-                                          print(
-                                              'tenant\'s length ${tenantsMap.length}');
-                                          String currentDate =
-                                          DateTime.now().toString();
-                                          List<TenantData> tenantDataList =
-                                          tenantsMap.entries.map((entry) {
-                                            int index = entry.key;
-                                            final tenantMap = entry.value;
-                                            print(tenantMap['firstName']);
-                                            print(tenantMap['firstName']);
-                                            return TenantData(
-                                              adminId: adminId,
-                                              comments: tenantMap['comments'] ?? '',
-                                              emergencyContact: EmergencyContacts(
-                                                name: tenantMap[
-                                                'emergencyContactName'] ??
-                                                    '',
-                                                relation:
-                                                tenantMap['emergencyRelation'] ??
-                                                    '',
-                                                email:
-                                                tenantMap['emergencyEmail'] ?? '',
-                                                phoneNumber: tenantMap[
-                                                'emergencyPhoneNumber'] ??
-                                                    '',
-                                              ),
-                                              isDelete:
-                                              tenantMap['isDelete'] == 'true',
-                                              taxPayerId:
-                                              tenantMap['taxPayerId'] ?? '',
-                                              tenantAlternativeEmail:
-                                              tenantMap['alterEmail'] ?? '',
-                                              tenantAlternativeNumber:
-                                              tenantMap['workNumber'] ?? '',
-                                              tenantBirthDate:
-                                              tenantMap['dob'].toString() ?? '',
-                                              tenantEmail: tenantMap['email'] ?? '',
-                                              tenantFirstName:
-                                              tenantMap['firstName'] ?? '',
-                                              tenantId: tenantMap['tenantId'] ?? '',
-                                              tenantLastName:
-                                              tenantMap['lastName'] ?? '',
-                                              tenantPassword:
-                                              tenantMap['passWord'] ?? '',
-                                              tenantPhoneNumber:
-                                              tenantMap['phoneNumber'] ?? '',
-                                              updatedAt:
-                                              tenantMap['updatedAt'].toString() ??
-                                                  '',
-                                              rentShare: rentShareControllers[index].text,
-                                            );
-                                          }).toList();
-                                          print(tenantDataList.length);
-                                          // Assuming tenantDataList is a List<TenantData>
-                                          List<String> tenantIds = tenantDataList
-                                              .map((tenant) => tenant.tenantId ?? '')
-                                              .toList();
-
-                                          print('tenant ids :${tenantIds.length}');
-
-                                          //print all data
-                                          print(firstCosigner);
-                                          print('Tenant Data List:');
-                                          for (var tenant in tenantDataList) {
-                                            print('admin ID: ${tenant.adminId}');
-                                            print(
-                                                'Tenant First Name: ${tenant.tenantFirstName}');
-                                            print(
-                                                'Tenant Last Name: ${tenant.tenantLastName}');
-                                            print(
-                                                'Tenant Email: ${tenant.tenantEmail}');
-                                            print(
-                                                'Tenant Phone Number: ${tenant.tenantPhoneNumber}');
-                                            print(
-                                                'Tenant Birth Date: ${tenant.tenantBirthDate}');
-                                            print(
-                                                'Rental Address: ${tenant.rentalAddress}');
-                                            print(
-                                                'Rental Unit: ${tenant.rentalUnit}');
-                                            print(
-                                                'Tax Payer ID: ${tenant.taxPayerId}');
-                                            print(
-                                                'Tenant Alternative Email: ${tenant.tenantAlternativeEmail}');
-                                            print(
-                                                'Tenant Alternative Number: ${tenant.tenantAlternativeNumber}');
-                                            print('Created At: ${tenant.createdAt}');
-                                            print('Updated At: ${tenant.updatedAt}');
-                                            print('Is Delete: ${tenant.isDelete}');
-                                            print('Comments: ${tenant.comments}');
-                                            print('Admin ID: ${tenant.adminId}');
-
-                                            print('v: ${tenant.v}');
-                                            print('ID: ${tenant.id}');
-                                            print('-----------------------');
-                                          }
-                                          print(_selectedResidentsEmail);
-                                          print('unit id data :${unitId}');
-                                          Lease lease = Lease(
-                                            chargeData: ChargeData(
-                                              adminId: adminId ?? "",
-                                              entry: chargeEntries,
-                                              isLeaseAdded: true,
-                                            ),
-                                            cosignerData: CosignerData(
-                                              adminId: adminId,
-                                              cosignerFirstName:
-                                              firstCosigner?['firstName'] ?? '',
-                                              cosignerLastName:
-                                              firstCosigner?['lastName'] ?? '',
-                                              cosignerPhoneNumber:
-                                              firstCosigner?['phoneNumber'] ?? '',
-                                              cosignerEmail:
-                                              firstCosigner?['email'] ?? '',
-                                              cosignerAlternativeEmail:
-                                              firstCosigner?['alterEmail'] ?? '',
-                                              cosignerAddress:
-                                              firstCosigner?['streetAddress'] ??
-                                                  '',
-                                              cosignerCity:
-                                              firstCosigner?['city'] ?? '',
-                                              cosignerCountry:
-                                              firstCosigner?['country'] ?? '',
-                                              cosignerPostalcode:
-                                              firstCosigner?['postalCode'] ?? '',
-                                            ),
-                                            leaseData: LeaseData(
-                                              adminId: adminId ?? "",
-                                              companyName: companyName,
-                                              endDate: reverseFormatDate(leaseEndDate),
-                                              entry: chargeEntries,
-                                              leaseAmount: rentAmount.text,
-                                              leaseType: _selectedLeaseType ?? "",
-                                              rentalId: renderId,
-                                              startDate: reverseFormatDate(leaseStartDate),
-                                              tenantId: tenantDataList
-                                                  .map((tenant) =>
-                                              tenant.tenantId ?? '')
-                                                  .toList(),
-                                              tenantResidentStatus:
-                                              _selectedResidentsEmail,
-                                              unitId: _selectedUnit,
-                                              uploadedFile: _uploadedFileNames,
-                                            ),
-                                            tenantData: tenantDataList,
-                                          );
-                                       await   addLeaseAndNavigate(lease);
-                                          setState(() {
-                                            isLoading = false; // Stop loading
-                                          });
-                                          if (widget.applicantId != null &&
-                                              widget.applicantId!.isNotEmpty) {
-                                            print(
-                                                'applicant id is: ${widget.applicantId}');
-                                            ifApplicantMoveIn(widget.applicantId!);
-                                          } else {
-                                            print('No applicant id provided');
-                                          }
-
-                                          print('valid');
-
-
-                                        }
+                                        return;
                                       }
-                                      else {
-                                        String leaseStartDate =
-                                            startDateController.text;
-                                        String leaseEndDate =
-                                            endDateController.text;
-                                        print(reverseFormatDate(leaseStartDate));
 
-                                        print('Form validation failed');
-                                        print(reverseFormatDate(endDateController.text));
-                                        print(reverseFormatDate(startDateController.text));
-                                        print(
-                                            'ends date : ${endDateController.text}');
-                                        print(
-                                            'start date : ${startDateController.text}');
+                                      setState(() {
+                                        // _errorMessagetenants = null;
+                                        _errorMessage = null;
+                                      });
+
+                                      double totalRentShare = 0.0;
+                                      for (var controller
+                                      in rentShareControllers) {
+                                        double rentShare =
+                                            double.tryParse(controller.text) ??
+                                                0.0;
+                                        totalRentShare += rentShare;
+                                      }
+                                      if (totalRentShare != 100.0) {
+                                        setState(() {
+                                          _errorMessage =
+                                          'Total rent share must equal 100';
+                                        });
+                                        return;
+                                      } else {
                                         SharedPreferences prefs =
-                                        await SharedPreferences.getInstance();
+                                        await SharedPreferences
+                                            .getInstance();
                                         String adminId =
                                         prefs.getString("adminId")!;
-
                                         bool _isLeaseAdded = false;
-
                                         // // Printing ChargeData object
                                         //Changes
                                         List<Map<String, String>>
@@ -3267,8 +3383,15 @@ class _addLease3State extends State<addLease3>
                                           ...formDataOneTimeList,
                                           ...formDataRecurringList,
                                         ];
+                                        String leaseStartDate =
+                                            startDateController.text;
+                                        String leaseEndDate =
+                                            endDateController.text;
+                                        print(
+                                            'ends date : ${endDateController.text}');
 
-                                        // Creating Entry objects from the merged list
+                                        print(
+                                            'rent next due date ${reverseFormatDate(rentNextDueDate.text)}');
                                         List<Entry> chargeEntries =
                                         mergedFormDataList.map((data) {
                                           print(data['account']);
@@ -3277,8 +3400,10 @@ class _addLease3State extends State<addLease3>
                                             amount: double.tryParse(
                                                 data['amount'] ?? '0.0') ??
                                                 0.0,
-                                            chargeType: data['charge_type'] ?? '',
-                                            date: reverseFormatDate(rentNextDueDate.text),
+                                            chargeType:
+                                            data['charge_type'] ?? '',
+                                            date: reverseFormatDate(
+                                                rentNextDueDate.text),
                                             isRepeatable: data['is_repeatable']
                                                 ?.toLowerCase() ==
                                                 'true',
@@ -3289,79 +3414,354 @@ class _addLease3State extends State<addLease3>
                                             'tenant_id'], // Assuming this field might be present
                                           );
                                         }).toList();
-                                        // Creating ChargeData object
+                                        // print(ne)
+                                        chargeEntries.add(Entry(
+                                          account: "Rent Income",
+                                          amount: double.tryParse(
+                                              rentAmount.text) ??
+                                              0.0,
+                                          chargeType: 'Rent',
+                                          date: reverseFormatDate(
+                                              rentNextDueDate.text),
+                                          isRepeatable:
+                                          false, // Set to false if it's not repeatable, adjust as needed
+                                          memo: rentMemo.text,
+                                          rentCycle:
+                                          _selectedRent, // Set default value or adjust as needed
+                                        ));
+                                        chargeEntries.add(Entry(
+                                          account: "Security Deposit",
+                                          amount: double.tryParse(
+                                              securityDepositeAmount
+                                                  .text) ??
+                                              0.0,
+                                          chargeType: 'Security Deposit',
+                                          date: reverseFormatDate(
+                                              rentNextDueDate.text),
+                                          isRepeatable:
+                                          false, // Set to false if it's not repeatable, adjust as needed
+                                          memo: 'Last Month\'s Rent',
+                                          rentCycle:
+                                          _selectedRent, // Set default value or adjust as needed
+                                        ));
                                         ChargeData chargeData = ChargeData(
                                           adminId: adminId,
                                           entry: chargeEntries,
                                           isLeaseAdded: _isLeaseAdded,
                                         );
-                                        print(
-                                            'ChargeData: ${jsonEncode(chargeData.toJson())}');
-                                        //consiger
+                                        print('${chargeEntries}');
+                                        //Tenant
+                                        List<TenantData> tenants = [];
                                         Map<String, String>? firstCosigner =
                                         cosignersMap.isNotEmpty
                                             ? cosignersMap[0]
                                             : {};
+                                        print(
+                                            'tenant\'s length ${tenantsMap.length}');
+                                        String currentDate =
+                                        DateTime.now().toString();
                                         List<TenantData> tenantDataList =
                                         tenantsMap.entries.map((entry) {
+                                          int index = entry.key;
                                           final tenantMap = entry.value;
+                                          print(tenantMap['firstName']);
+                                          print(tenantMap['firstName']);
                                           return TenantData(
-                                            adminId: tenantMap['adminId'] ?? '',
-                                            comments: tenantMap['comments'] ?? '',
-                                            createdAt: tenantMap['createdAt'] ?? '',
+                                            adminId: adminId,
+                                            comments:
+                                            tenantMap['comments'] ?? '',
                                             emergencyContact: EmergencyContacts(
                                               name: tenantMap[
                                               'emergencyContactName'] ??
                                                   '',
                                               relation: tenantMap[
-                                              'emergencyContactRelation'] ??
+                                              'emergencyRelation'] ??
                                                   '',
-                                              email: tenantMap[
-                                              'emergencyContactEmail'] ??
+                                              email:
+                                              tenantMap['emergencyEmail'] ??
                                                   '',
                                               phoneNumber: tenantMap[
-                                              'emergencyContactPhoneNumber'] ??
+                                              'emergencyPhoneNumber'] ??
                                                   '',
                                             ),
                                             isDelete:
                                             tenantMap['isDelete'] == 'true',
-                                            rentalAddress:
-                                            tenantMap['rentalAddress'] ?? '',
-                                            rentalUnit:
-                                            tenantMap['rentalUnit'] ?? '',
                                             taxPayerId:
                                             tenantMap['taxPayerId'] ?? '',
-                                            tenantAlternativeEmail: tenantMap[
-                                            'tenantAlternativeEmail'] ??
+                                            tenantAlternativeEmail:
+                                            tenantMap['alterEmail'] ?? '',
+                                            tenantAlternativeNumber:
+                                            tenantMap['workNumber'] ?? '',
+                                            tenantBirthDate:
+                                            tenantMap['dob'].toString() ??
                                                 '',
-                                            tenantAlternativeNumber: tenantMap[
-                                            'tenantAlternativeNumber'] ??
-                                                '',
-                                            tenantBirthDate: tenantMap['dob'] ?? '',
                                             tenantEmail:
-                                            tenantMap['tenantEmail'] ?? '',
+                                            tenantMap['email'] ?? '',
                                             tenantFirstName:
-                                            tenantMap['tenantFirstName'] ?? '',
-                                            tenantId: tenantMap['tenantId'] ?? '',
+                                            tenantMap['firstName'] ?? '',
+                                            tenantId:
+                                            tenantMap['tenantId'] ?? '',
                                             tenantLastName:
-                                            tenantMap['tenantLastName'] ?? '',
+                                            tenantMap['lastName'] ?? '',
                                             tenantPassword:
-                                            tenantMap['tenantPassword'] ?? '',
+                                            tenantMap['passWord'] ?? '',
                                             tenantPhoneNumber:
-                                            tenantMap['tenantPhoneNumber'] ??
+                                            tenantMap['phoneNumber'] ?? '',
+                                            updatedAt: tenantMap['updatedAt']
+                                                .toString() ??
                                                 '',
-                                            updatedAt: tenantMap['updatedAt'] ?? '',
-                                            v: int.tryParse(
-                                                tenantMap['v'] ?? '0') ??
-                                                0,
-                                            id: tenantMap['id'] ?? '',
+                                            rentShare:
+                                            rentShareControllers[index]
+                                                .text,
                                           );
                                         }).toList();
+                                        print(tenantDataList.length);
+                                        // Assuming tenantDataList is a List<TenantData>
+                                        List<String> tenantIds = tenantDataList
+                                            .map((tenant) =>
+                                        tenant.tenantId ?? '')
+                                            .toList();
 
+                                        print(
+                                            'tenant ids :${tenantIds.length}');
 
+                                        //print all data
+                                        print(firstCosigner);
+                                        print('Tenant Data List:');
+                                        for (var tenant in tenantDataList) {
+                                          print('admin ID: ${tenant.adminId}');
+                                          print(
+                                              'Tenant First Name: ${tenant.tenantFirstName}');
+                                          print(
+                                              'Tenant Last Name: ${tenant.tenantLastName}');
+                                          print(
+                                              'Tenant Email: ${tenant.tenantEmail}');
+                                          print(
+                                              'Tenant Phone Number: ${tenant.tenantPhoneNumber}');
+                                          print(
+                                              'Tenant Birth Date: ${tenant.tenantBirthDate}');
+                                          print(
+                                              'Rental Address: ${tenant.rentalAddress}');
+                                          print(
+                                              'Rental Unit: ${tenant.rentalUnit}');
+                                          print(
+                                              'Tax Payer ID: ${tenant.taxPayerId}');
+                                          print(
+                                              'Tenant Alternative Email: ${tenant.tenantAlternativeEmail}');
+                                          print(
+                                              'Tenant Alternative Number: ${tenant.tenantAlternativeNumber}');
+                                          print(
+                                              'Created At: ${tenant.createdAt}');
+                                          print(
+                                              'Updated At: ${tenant.updatedAt}');
+                                          print(
+                                              'Is Delete: ${tenant.isDelete}');
+                                          print('Comments: ${tenant.comments}');
+                                          print('Admin ID: ${tenant.adminId}');
+
+                                          print('v: ${tenant.v}');
+                                          print('ID: ${tenant.id}');
+                                          print('-----------------------');
+                                        }
+                                        print(_selectedResidentsEmail);
+                                        print('unit id data :${unitId}');
+                                        Lease lease = Lease(
+                                          chargeData: ChargeData(
+                                            adminId: adminId ?? "",
+                                            entry: chargeEntries,
+                                            isLeaseAdded: true,
+                                          ),
+                                          cosignerData: CosignerData(
+                                            adminId: adminId,
+                                            cosignerFirstName:
+                                            firstCosigner?['firstName'] ??
+                                                '',
+                                            cosignerLastName:
+                                            firstCosigner?['lastName'] ??
+                                                '',
+                                            cosignerPhoneNumber:
+                                            firstCosigner?['phoneNumber'] ??
+                                                '',
+                                            cosignerEmail:
+                                            firstCosigner?['email'] ?? '',
+                                            cosignerAlternativeEmail:
+                                            firstCosigner?['alterEmail'] ??
+                                                '',
+                                            cosignerAddress: firstCosigner?[
+                                            'streetAddress'] ??
+                                                '',
+                                            cosignerCity:
+                                            firstCosigner?['city'] ?? '',
+                                            cosignerCountry:
+                                            firstCosigner?['country'] ?? '',
+                                            cosignerPostalcode:
+                                            firstCosigner?['postalCode'] ??
+                                                '',
+                                          ),
+                                          leaseData: LeaseData(
+                                            adminId: adminId ?? "",
+                                            isProRent: isProRent,
+                                            proRatedRent: isProRent ? proRatedRentController.text : null,
+                                            companyName: companyName,
+                                            endDate:
+                                            reverseFormatDate(leaseEndDate),
+                                            entry: chargeEntries,
+                                            leaseAmount: rentAmount.text,
+                                            leaseType: _selectedLeaseType ?? "",
+                                            rentalId: renderId,
+                                            startDate: reverseFormatDate(
+                                                leaseStartDate),
+                                            tenantId: tenantDataList
+                                                .map((tenant) =>
+                                            tenant.tenantId ?? '')
+                                                .toList(),
+                                            tenantResidentStatus:
+                                            _selectedResidentsEmail,
+                                            unitId: _selectedUnit,
+                                            uploadedFile: _uploadedFileNames,
+                                          ),
+                                          tenantData: tenantDataList,
+                                        );
+                                        String jsonBody = jsonEncode(chargeData.toJson());
+                                        print('Serialized JSON: $jsonBody');
+
+                                        print("Pro-rated Rent Value: ${proRatedRentController.text}");
+                                        print('${lease}');
+                                        await addLeaseAndNavigate(lease);
+
+                                        setState(() {
+                                          isLoading = false; // Stop loading
+                                        });
+                                        if (widget.applicantId != null &&
+                                            widget.applicantId!.isNotEmpty) {
+                                          print(
+                                              'applicant id is: ${widget.applicantId}');
+                                          ifApplicantMoveIn(
+                                              widget.applicantId!);
+                                        } else {
+                                          print('No applicant id provided');
+                                        }
+
+                                        print('valid');
                                       }
+                                    } else {
+                                      print("faild");
+                                      String leaseStartDate =
+                                          startDateController.text;
+                                      String leaseEndDate =
+                                          endDateController.text;
 
-                                    },
+                                      SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                      String adminId =
+                                      prefs.getString("adminId")!;
+
+                                      bool _isLeaseAdded = false;
+
+                                      // // Printing ChargeData object
+                                      //Changes
+                                      List<Map<String, String>>
+                                      mergedFormDataList = [
+                                        ...formDataOneTimeList,
+                                        ...formDataRecurringList,
+                                      ];
+
+                                      // Creating Entry objects from the merged list
+                                      List<Entry> chargeEntries =
+                                      mergedFormDataList.map((data) {
+                                        print(data['account']);
+                                        return Entry(
+                                          account: data['account'] ?? '',
+                                          amount: double.tryParse(
+                                              data['amount'] ?? '0.0') ??
+                                              0.0,
+                                          chargeType: data['charge_type'] ?? '',
+                                          date: reverseFormatDate(
+                                              rentNextDueDate.text),
+                                          isRepeatable: data['is_repeatable']
+                                              ?.toLowerCase() ==
+                                              'true',
+                                          memo: data['memo'] ?? '',
+                                          rentCycle: data[
+                                          'rent_cycle'], // Assuming this field might be present
+                                          tenantId: data[
+                                          'tenant_id'], // Assuming this field might be present
+                                        );
+                                      }).toList();
+                                      // Creating ChargeData object
+                                      ChargeData chargeData = ChargeData(
+                                        adminId: adminId,
+                                        entry: chargeEntries,
+                                        isLeaseAdded: _isLeaseAdded,
+                                      );
+                                      print(
+                                          'ChargeData: ${jsonEncode(chargeData.toJson())}');
+                                      //consiger
+                                      Map<String, String>? firstCosigner =
+                                      cosignersMap.isNotEmpty
+                                          ? cosignersMap[0]
+                                          : {};
+                                      List<TenantData> tenantDataList =
+                                      tenantsMap.entries.map((entry) {
+                                        final tenantMap = entry.value;
+                                        return TenantData(
+                                          adminId: tenantMap['adminId'] ?? '',
+                                          comments: tenantMap['comments'] ?? '',
+                                          createdAt:
+                                          tenantMap['createdAt'] ?? '',
+                                          emergencyContact: EmergencyContacts(
+                                            name: tenantMap[
+                                            'emergencyContactName'] ??
+                                                '',
+                                            relation: tenantMap[
+                                            'emergencyContactRelation'] ??
+                                                '',
+                                            email: tenantMap[
+                                            'emergencyContactEmail'] ??
+                                                '',
+                                            phoneNumber: tenantMap[
+                                            'emergencyContactPhoneNumber'] ??
+                                                '',
+                                          ),
+                                          isDelete:
+                                          tenantMap['isDelete'] == 'true',
+                                          rentalAddress:
+                                          tenantMap['rentalAddress'] ?? '',
+                                          rentalUnit:
+                                          tenantMap['rentalUnit'] ?? '',
+                                          taxPayerId:
+                                          tenantMap['taxPayerId'] ?? '',
+                                          tenantAlternativeEmail: tenantMap[
+                                          'tenantAlternativeEmail'] ??
+                                              '',
+                                          tenantAlternativeNumber: tenantMap[
+                                          'tenantAlternativeNumber'] ??
+                                              '',
+                                          tenantBirthDate:
+                                          tenantMap['dob'] ?? '',
+                                          tenantEmail:
+                                          tenantMap['tenantEmail'] ?? '',
+                                          tenantFirstName:
+                                          tenantMap['tenantFirstName'] ??
+                                              '',
+                                          tenantId: tenantMap['tenantId'] ?? '',
+                                          tenantLastName:
+                                          tenantMap['tenantLastName'] ?? '',
+                                          tenantPassword:
+                                          tenantMap['tenantPassword'] ?? '',
+                                          tenantPhoneNumber:
+                                          tenantMap['tenantPhoneNumber'] ??
+                                              '',
+                                          updatedAt:
+                                          tenantMap['updatedAt'] ?? '',
+                                          v: int.tryParse(
+                                              tenantMap['v'] ?? '0') ??
+                                              0,
+                                          id: tenantMap['id'] ?? '',
+                                        );
+                                      }).toList();
+                                    }
+                                  },
                                     child:
                                     Center(
                                         child: isLoading
@@ -4314,7 +4714,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                             }
                             return null;
                           },
-                          keyboardType: TextInputType.number,
+                        //  keyboardType: TextInputType.number,
                           hintText: 'Enter Amount',
                           controller: _amountController,
                         ),
@@ -5039,7 +5439,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                     }
                     return null;
                   },
-                  keyboardType: TextInputType.number,
+                 // keyboardType: TextInputType.number,
                   hintText: 'Enter Amount',
                   controller: _amountController,
                 ),

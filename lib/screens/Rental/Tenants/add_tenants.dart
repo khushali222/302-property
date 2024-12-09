@@ -821,7 +821,8 @@ class _AddTenantState extends State<AddTenant> {
                                       ],
                                     ),
                                     enableOverrideFee
-                                        ? Material(
+                                        ?
+                                    Material(
                                             elevation: 2,
                                             borderRadius:
                                                 BorderRadius.circular(8.0),

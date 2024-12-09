@@ -46,6 +46,7 @@ class ChargeData {
   });
 
   factory ChargeData.fromJson(Map<String, dynamic> json) {
+    print(json['entry']);
     return ChargeData(
       adminId: json['admin_id'],
       entry: (json['entry'] as List).map((i) => Entry.fromJson(i)).toList(),
@@ -148,6 +149,7 @@ class CosignerData {
   });
 
   factory CosignerData.fromJson(Map<String, dynamic> json) {
+
     return CosignerData(
       adminId: json['admin_id'],
       cosignerAddress: json['cosigner_address'],
@@ -186,6 +188,7 @@ class LeaseData {
   String? leaseId;
   String? adminId;
   String? companyName;
+  String? proRatedRent;
   String? endDate;
   List<Entry>? entry;
   String? leaseAmount;
@@ -203,6 +206,7 @@ class LeaseData {
     this.leaseId,
     this.adminId,
     this.companyName,
+    this.proRatedRent,
     this.endDate,
     this.memo,
     this.entry,
@@ -222,6 +226,7 @@ class LeaseData {
       leaseId: json['lease_id'],
       adminId: json['admin_id'],
       companyName: json['company_name'],
+      proRatedRent: json['proRatedRent'],
       memo:json['memo'],
       endDate: json['end_date'],
       entry: (json['entry'] as List).map((i) => Entry.fromJson(i)).toList(),
@@ -254,6 +259,7 @@ class LeaseData {
       'tenant_residentStatus': tenantResidentStatus,
       'unit_id': unitId,
       'isProRent': isProRent,
+      'proRatedRent': proRatedRent,
       'uploaded_file': uploadedFile,
     };
   }
@@ -389,7 +395,7 @@ class TenantData {
       emergencyContact: EmergencyContacts.fromJson(json['emergency_contact']),
       isDelete: json['is_delete'],
       rentalAddress: json['rental_adress'],
-      rentalUnit: json['rental_unit'],
+      rentalUnit: json['rental_unit']??"",
       taxPayerId: json['taxPayer_id'],
       tenantAlternativeEmail: json['tenant_alternativeEmail'],
       tenantAlternativeNumber: json['tenant_alternativeNumber'],
@@ -448,10 +454,10 @@ class EmergencyContacts {
 
   factory EmergencyContacts.fromJson(Map<String, dynamic> json) {
     return EmergencyContacts(
-      name: json['name'],
-      relation: json['relation'],
-      email: json['email'],
-      phoneNumber: json['phoneNumber'],
+      name: json['name']??"",
+      relation: json['relation']??"",
+      email: json['email']??"",
+      phoneNumber: json['phoneNumber']??"",
     );
   }
 
