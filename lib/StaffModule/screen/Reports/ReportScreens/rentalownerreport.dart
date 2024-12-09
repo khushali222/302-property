@@ -2726,6 +2726,12 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                         DropdownMenuItem<String>(
                           value: 'Check',
                           child: Text('Check'),
+                        ), DropdownMenuItem<String>(
+                          value: 'Cash',
+                          child: Text('Cash'),
+                        ), DropdownMenuItem<String>(
+                          value: 'Manual',
+                          child: Text('Manual'),
                         ),
                         DropdownMenuItem<String>(
                           value: 'Money Order',

@@ -2522,7 +2522,8 @@ class CustomTextFieldState extends State<CustomTextField> {
                         _errorMessage = 'Please ${widget.label}';
                     });
                     return '';
-                  } else if (widget.keyboardType == TextInputType.number) {
+                  }
+                  else if (widget.keyboardType == TextInputType.number) {
                     String formattedPhoneNumber =
                         widget.controller!.text.replaceAll(RegExp(r'\D'), '');
 
@@ -2533,7 +2534,8 @@ class CustomTextFieldState extends State<CustomTextField> {
                       });
                       return '';
                     }
-                  } else if (widget.email != null) {
+                  }
+                  else if (widget.email != null) {
                     if (!EmailValidator.validate(widget.controller!.text)) {
                       setState(() {
                         _errorMessage = "Email is not valid";

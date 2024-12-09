@@ -3073,10 +3073,10 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                           child: Text('Check'),
                         ), DropdownMenuItem<String>(
                           value: 'Cash',
-                          child: Text('Check'),
+                          child: Text('Cash'),
                         ), DropdownMenuItem<String>(
                           value: 'Manual',
-                          child: Text('Check'),
+                          child: Text('Manual'),
                         ),
                         DropdownMenuItem<String>(
                           value: 'Money Order',

@@ -2046,7 +2046,7 @@ class CustomTextFieldState extends State<CustomTextField> {
         FormField<String>(
           validator: widget.optional! ? (value) {
             if (widget.controller!.text.isEmpty) {
-              return '';
+              return null;
             } else if (widget.keyboardType == TextInputType.number) {
               String formattedPhoneNumber =
               widget.controller!.text.replaceAll(RegExp(r'\D'), '');

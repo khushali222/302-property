@@ -1617,9 +1617,23 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                           DropdownMenuItem<String>(
                                             value: 'Check',
                                             child: Text('Check'),
+                                          ), DropdownMenuItem<String>(
+                                            value: 'Cash',
+                                            child: Text('Cash'),
+                                          ), DropdownMenuItem<String>(
+                                            value: 'Manual',
+                                            child: Text('Manual'),
                                           ),
                                           DropdownMenuItem<String>(
-                                            value: 'All',
+                                            value: 'Money Order',
+                                            child: Text('Money Order'),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: "Cashier's Check",
+                                            child: Text("Cashier's Check"),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: "All",
                                             child: Text('All'),
                                           ),
                                         ],
@@ -1787,9 +1801,23 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                           DropdownMenuItem<String>(
                                             value: 'Check',
                                             child: Text('Check'),
+                                          ), DropdownMenuItem<String>(
+                                            value: 'Cash',
+                                            child: Text('Cash'),
+                                          ), DropdownMenuItem<String>(
+                                            value: 'Manual',
+                                            child: Text('Manual'),
                                           ),
                                           DropdownMenuItem<String>(
-                                            value: 'All',
+                                            value: 'Money Order',
+                                            child: Text('Money Order'),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: "Cashier's Check",
+                                            child: Text("Cashier's Check"),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: "All",
                                             child: Text('All'),
                                           ),
                                         ],
@@ -1956,9 +1984,23 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                           DropdownMenuItem<String>(
                                             value: 'Check',
                                             child: Text('Check'),
+                                          ), DropdownMenuItem<String>(
+                                            value: 'Cash',
+                                            child: Text('Cash'),
+                                          ), DropdownMenuItem<String>(
+                                            value: 'Manual',
+                                            child: Text('Manual'),
                                           ),
                                           DropdownMenuItem<String>(
-                                            value: 'All',
+                                            value: 'Money Order',
+                                            child: Text('Money Order'),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: "Cashier's Check",
+                                            child: Text("Cashier's Check"),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: "All",
                                             child: Text('All'),
                                           ),
                                         ],
@@ -2157,10 +2199,10 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                             child: Text('Check'),
                                           ), DropdownMenuItem<String>(
                                             value: 'Cash',
-                                            child: Text('Check'),
+                                            child: Text('Cash'),
                                           ), DropdownMenuItem<String>(
                                             value: 'Manual',
-                                            child: Text('Check'),
+                                            child: Text('Manual'),
                                           ),
                                           DropdownMenuItem<String>(
                                             value: 'Money Order',
