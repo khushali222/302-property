@@ -2954,7 +2954,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                   }
                                   return null;
                                 },
-                                keyboardType: TextInputType.text,
+                                keyboardType: TextInputType.number,
                                 hintText: 'Enter Amount',
                                 controller: rentAmount,
                               ),
@@ -3568,7 +3568,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                   }
                                   return null;
                                 },
-                                keyboardType: TextInputType.text,
+                                keyboardType: TextInputType.number,
                                 hintText: 'Enter Amount',
                                 controller: securityDepositeAmount,
                                 optional: true,
@@ -6640,6 +6640,7 @@ class _AddTenantState extends State<AddTenant> {
                                 }
                                 return null;
                               },
+                              phone: true,
                             ),
                             const SizedBox(
                               height: 20,
@@ -6671,6 +6672,7 @@ class _AddTenantState extends State<AddTenant> {
                                           hintText: 'Enter work number',
                                           controller: workNumber,
                                           optional: true,
+                                          phone: true,
                                         ),
                                         const SizedBox(
                                           height: 10,
@@ -7127,6 +7129,7 @@ class _AddTenantState extends State<AddTenant> {
                                     hintText: 'Enter phone number',
                                     controller: emergencyPhoneNumber,
                                     optional: true,
+                                    phone: true,
                                   ),
                                 ],
                               ),
@@ -7351,6 +7354,7 @@ class _AddCosignerState extends State<AddCosigner> {
                       LengthLimitingTextInputFormatter(10),
                       PhoneNumberFormatter(),
                     ],
+                    phone: true,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please enter the phone number';
@@ -7413,6 +7417,7 @@ class _AddCosignerState extends State<AddCosigner> {
                                 hintText: 'Enter work number',
                                 controller: workNumber,
                                 optional: true,
+                                phone: true,
                               ),
                               const SizedBox(
                                 height: 10,
@@ -7575,7 +7580,16 @@ class _AddCosignerState extends State<AddCosigner> {
                   height: 10,
                 ),
                 CustomTextField(
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+                    TextInputFormatter.withFunction((oldValue, newValue) {
+                      return TextEditingValue(
+                        text: newValue.text.toUpperCase(),
+                        selection: newValue.selection,
+                      );
+                    }),
+                  ],
                   hintText: 'Enter zip code',
                   controller: postalCode,
                   validator: (value) {

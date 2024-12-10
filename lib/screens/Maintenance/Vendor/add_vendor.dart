@@ -145,6 +145,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                   LengthLimitingTextInputFormatter(10),
                                   PhoneNumberFormatter(),
                                 ],
+                                phone: true,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'please enter the phone number';
@@ -452,6 +453,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                 LengthLimitingTextInputFormatter(10),
                                 PhoneNumberFormatter(),
                               ],
+                              phone: true,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'please enter the phone number';
@@ -725,6 +727,7 @@ class CustomTextField extends StatefulWidget {
   bool? optional;
   final bool? pass;
   final bool? email;
+  final bool? phone;
   final List<TextInputFormatter>? inputFormatters;
 
   CustomTextField({
@@ -744,6 +747,7 @@ class CustomTextField extends StatefulWidget {
     this.onChanged2,
     this.pass,
     this.email, // Initialize onTap
+    this.phone,
     this.inputFormatters,
   }) : super(key: key);
 
@@ -817,7 +821,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       _errorMessage = 'Please ${widget.hintText}';
                     });
                     return '';
-                  }else if (widget.keyboardType == TextInputType.number) {
+                  }else if (widget.phone != null) {
                     String formattedPhoneNumber = widget.controller!.text
                         .replaceAll(RegExp(r'\D'), '');
 

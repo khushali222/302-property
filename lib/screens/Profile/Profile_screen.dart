@@ -83,7 +83,7 @@ class _Profile_screenState extends State<Profile_screen> {
         _firstNameController.text = profileData.firstName ?? '';
         _lastNameController.text = profileData.lastName ?? '';
         _emailController.text = profileData.email ?? '';
-        _phoneNumberController.text = profileData.phoneNumber?.toString() ?? '';
+        _phoneNumberController.text = formatPhoneNumberedit(profileData.phoneNumber?.toString() ?? '');
         _companyNameController.text = profileData.companyName ?? '';
         _companyAddressController.text = profileData.companyAddress ?? '';
         _companyPostalCodeController.text = profileData.companyPostalCode ?? '';

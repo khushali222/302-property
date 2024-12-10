@@ -15,13 +15,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/edit_lease.dart';
 
-
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 
 import 'CardModel.dart';
 import 'Service.dart';
 import '../../../../widgets/custom_drawer.dart';
+
 class AddCard extends StatefulWidget {
   final String leaseId;
   AddCard({required this.leaseId});
@@ -110,35 +110,32 @@ class _AddCardState extends State<AddCard> {
       final data = jsonDecode(response.body);
       print(data);
       final List<Map<String, String>> fetchedTenants = [];
-      print(firstName.text = data['tenant_firstName'] ??"");
+      print(firstName.text = data['tenant_firstName'] ?? "");
       for (var tenant in data['data']['tenants']) {
         fetchedTenants.add({
           'tenant_id': tenant['tenant_id'],
           'tenant_name':
               '${tenant['tenant_firstName']} ${tenant['tenant_lastName']}',
-          'tenant_firstname':'${tenant['tenant_firstName']}',
-          'tenant_lastName':'${tenant['tenant_lastName']}',
-          'tenant_email':'${tenant['tenant_email']}',
-          'tenant_phoneNumber':'${tenant['tenant_phoneNumber']}',
-          'rental_adress':"${data['data']['rental_adress']}",
-          'rental_city':"${data['data']['rental_city']}",
-          'rental_state':"${data['data']['rental_state']}",
-          'rental_country':"${data['data']['rental_country']}",
-          'rental_zip':"${data['data']['rental_zip']}",
-
+          'tenant_firstname': '${tenant['tenant_firstName']}',
+          'tenant_lastName': '${tenant['tenant_lastName']}',
+          'tenant_email': '${tenant['tenant_email']}',
+          'tenant_phoneNumber': '${tenant['tenant_phoneNumber']}',
+          'rental_adress': "${data['data']['rental_adress']}",
+          'rental_city': "${data['data']['rental_city']}",
+          'rental_state': "${data['data']['rental_state']}",
+          'rental_country': "${data['data']['rental_country']}",
+          'rental_zip': "${data['data']['rental_zip']}",
           'tenant_firstName': '${tenant['tenant_firstName']}',
           'tenant_lastName': '${tenant['tenant_lastName']}',
-
-          'tenant_email':'${tenant['tenant_email']}',
-          'tenant_phoneNumber':formatPhoneNumberedit('${tenant['tenant_phoneNumber']}'),
-          'rental_adress':"${data['data']['rental_adress']}",
-          'rental_city':"${data['data']['rental_city']}",
-          'rental_state':"${data['data']['rental_state']}",
-          'rental_country':"${data['data']['rental_country']}",
-          'rental_zip':"${data['data']['rental_zip']}",
-
+          'tenant_email': '${tenant['tenant_email']}',
+          'tenant_phoneNumber':
+              formatPhoneNumberedit('${tenant['tenant_phoneNumber']}'),
+          'rental_adress': "${data['data']['rental_adress']}",
+          'rental_city': "${data['data']['rental_city']}",
+          'rental_state': "${data['data']['rental_state']}",
+          'rental_country': "${data['data']['rental_country']}",
+          'rental_zip': "${data['data']['rental_zip']}",
         });
-
       }
 
       setState(() {
@@ -418,1185 +415,1542 @@ class _AddCardState extends State<AddCard> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Rent Roll",dropdown: true,),
+      drawer: CustomDrawer(
+        currentpage: "Rent Roll",
+        dropdown: true,
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
-      bool isTablet = constraints.maxWidth > 600;
-      return isTablet
-          ? SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child:
-        Padding(
-          padding: const EdgeInsets.only(
-            left: 10,
-            right: 5,
-            top: 30,
-          ),
-          child: Wrap(
-            alignment: WrapAlignment.start,
-            spacing: MediaQuery.of(context).size.width * 0.03,
-            runSpacing: MediaQuery.of(context).size.width * 0.035,
-            children:
-            [
-              SingleChildScrollView(
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    //crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16,right: 16,top: 16),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(5.0),
-                          child: Container(
-                            height: 50.0,
-                            padding: const EdgeInsets.only(top: 10, left: 10),
-                            width: MediaQuery.of(context).size.width * .99,
-                            margin: const EdgeInsets.only(bottom: 6.0),
-                            //Same as `blurRadius` i guess
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5.0),
-                              color:blueColor,
-                              boxShadow: [
-                                const BoxShadow(
-                                  color: Colors.grey,
-                                  offset: Offset(0.0, 1.0), //(x,y)
-                                  blurRadius: 6.0,
-                                ),
-                              ],
-                            ),
-                            child: const Text(
-                              "Add Card",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18),
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                        child: Row(
-                         // mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // First Column
-                            Expanded(
-                              child:
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    showmessage
-                                        ? Text('${errorMessageDropdown.toString()}',
-                                        style: const TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.red))
-                                        : Container(),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const Text('Recieved From *',
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey)),
-                                    tenants.isEmpty
-                                        ? const Center(
-                                      child: SpinKitSpinningLines(
-                                        color: Colors.black,
-                                        size: 55.0,
-                                      ),
-                                    )
-                                        : DropdownButtonHideUnderline(
-                                      child: DropdownButtonFormField2<String>(
-                                        decoration:
-                                        const InputDecoration(border: InputBorder.none),
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please select resident';
-                                          }
-                                          return null;
-                                        },
-                                        isExpanded: true,
-                                        hint: const Text('Select Resident'),
-                                        value: selectedTenantId,
-                                        items: tenants.map((tenant) {
-                                          return DropdownMenuItem<String>(
-                                            value: tenant['tenant_id'],
-                                            child: Text(tenant['tenant_name']!),
-                                          );
-                                        }).toList(),
-                                        onChanged: (value) {
-                                          setState(() {
-                                            selectedTenantId = value;
-                                            showmessage = false;
-                                            final selectedTenant = tenants.firstWhere((tenant) => tenant['tenant_id'] == value);
-                                            firstName.text = selectedTenant['tenant_firstName']!;
-                                            lastName.text = selectedTenant['tenant_lastName']!;
-                                            firstName.text = selectedTenant['tenant_firstname']!;
-                                            lastName.text = selectedTenant['tenant_lastName']!;
-                                            email.text = selectedTenant['tenant_email']!;
-                                            phoneNumber.text = selectedTenant['tenant_phoneNumber']!;
-                                            address.text = selectedTenant['rental_adress']!;
-                                            city.text = selectedTenant['rental_city']!;
-                                            state.text = selectedTenant['rental_state']!;
-                                            country.text = selectedTenant['rental_country']!;
-                                            zip.text = selectedTenant['rental_zip']!;
-
-                                          });
-
-                                          fetchcreditcard(value!);
-                                          print('Selected tenant_id: $selectedTenantId');
-                                        },
-                                        buttonStyleData: ButtonStyleData(
-                                          height: 45,
-                                          width: double.infinity,
-                                          padding:
-                                          const EdgeInsets.only(left: 14, right: 14),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(6),
-                                            color: Colors.white,
-                                          ),
-                                          elevation: 2,
-                                        ),
-                                        iconStyleData: const IconStyleData(
-                                          icon: Icon(
-                                            Icons.arrow_drop_down,
-                                          ),
-                                          iconSize: 24,
-                                          iconEnabledColor: Color(0xFFb0b6c3),
-                                          iconDisabledColor: Colors.grey,
-                                        ),
-                                        dropdownStyleData: DropdownStyleData(
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(6),
-                                            color: Colors.white,
-                                          ),
-                                          scrollbarTheme: ScrollbarThemeData(
-                                            radius: const Radius.circular(6),
-                                            thickness: MaterialStateProperty.all(6),
-                                            thumbVisibility:
-                                            MaterialStateProperty.all(true),
-                                          ),
-                                        ),
-                                        menuItemStyleData: const MenuItemStyleData(
-                                          height: 40,
-                                          padding: EdgeInsets.only(left: 14, right: 14),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const Text('Card Number *',
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey)),
-                                    CustomTextField(
-                                      validator: (value) {
-                                        if (value == null ||
-                                            value.isEmpty &&
-                                                !isValidLuhn(value.replaceAll(' ', ''))) {
-                                          return !isValidLuhn(value!.replaceAll(' ', ''))
-                                              ? 'Invalid credit card number'
-                                              : 'Please enter a credit card number';
-                                        } else if (!isValidLuhn(value.replaceAll(' ', ''))) {
-                                          return 'Invalid credit card number';
-                                        }
-                                        return null;
-                                      },
-                                      keyboardType: TextInputType.number,
-                                      hintText: '0000 0000 0000 0000',
-                                      controller: cardNumber,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const Text('Expiration Date *',
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey)),
-                                    CustomTextField(
-                                      keyboardType: TextInputType.text,
-                                      hintText: 'Enter Expiration Date',
-                                      controller: expirationDate,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const Text('First Name *',
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey)),
-                                    CustomTextField(
-                                      keyboardType: TextInputType.text,
-                                      hintText: 'Enter First Name',
-                                      controller: firstName,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const Text('Last Name *',
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey)),
-                                    CustomTextField(
-                                      keyboardType: TextInputType.text,
-                                      hintText: 'Enter Last Name',
-                                      controller: lastName,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const Text('Email *',
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey)),
-                                    CustomTextField(
-                                      keyboardType: TextInputType.text,
-                                      hintText: 'Enter Email',
-                                      controller: email,
-                                      email: true,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const Text('Phone Number*',
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey)),
-                                    CustomTextField(
-                                      keyboardType: TextInputType.number,
-                                      formatter: [
-                                        FilteringTextInputFormatter.digitsOnly,
-                                        LengthLimitingTextInputFormatter(10),
-                                        PhoneNumberFormatter(),
-                                      ],
-                                     // keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
-                                      hintText: 'Enter Phone Number',
-                                      controller: phoneNumber,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const Text('Address *',
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey)),
-                                    CustomTextField(
-                                      keyboardType: TextInputType.text,
-                                      hintText: 'Enter Address',
-                                      controller: address,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const Text('City',
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey)),
-                                    CustomTextField(
-                                      keyboardType: TextInputType.text,
-                                      hintText: 'Enter City',
-                                      controller: city,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const Text('State',
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey)),
-                                    CustomTextField(
-                                      keyboardType: TextInputType.text,
-                                      hintText: 'Enter State',
-                                      controller: state,
-                                    ), const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const Text('Zip',
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey)),
-                                    CustomTextField(
-                                      keyboardType: TextInputType.number,
-                                      hintText: 'Enter Zip',
-                                      controller: zip,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    const Text('Country',
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey)),
-                                    CustomTextField(
-                                      keyboardType: TextInputType.text,
-                                      hintText: 'Enter Country',
-                                      controller: country,
-                                    ),
-
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 16),
-                            // Second Column
-                            Expanded(
+          bool isTablet = constraints.maxWidth > 600;
+          return isTablet
+              ? SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      left: 10,
+                      right: 5,
+                      top: 30,
+                    ),
+                    child: Wrap(
+                        alignment: WrapAlignment.start,
+                        spacing: MediaQuery.of(context).size.width * 0.03,
+                        runSpacing: MediaQuery.of(context).size.width * 0.035,
+                        children: [
+                          SingleChildScrollView(
+                            child: Form(
+                              key: _formKey,
                               child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                //crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  selectedTenantId == null
-                                      ? Container()
-                                      :  Padding(
-                                    padding: EdgeInsets.only(left: 10.0,top: 10),
-                                    child: Text('Cards',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500,
-                                            color: blueColor)),
-                                  ),
-                                  selectedTenantId == null ? Container() : const SizedBox(height: 8),
-                                  selectedTenantId == null
-                                      ? Container()
-                                      : isLoading
-                                          ? const Center(
-                                        child: SpinKitFadingCircle(
-                                          color: Colors.black,
-                                          size: 55.0,
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 16, right: 16, top: 16),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                      child: Container(
+                                        height: 50.0,
+                                        padding: const EdgeInsets.only(
+                                            top: 10, left: 10),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .99,
+                                        margin:
+                                            const EdgeInsets.only(bottom: 6.0),
+                                        //Same as `blurRadius` i guess
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0),
+                                          color: blueColor,
+                                          boxShadow: [
+                                            const BoxShadow(
+                                              color: Colors.grey,
+                                              offset: Offset(0.0, 1.0), //(x,y)
+                                              blurRadius: 6.0,
+                                            ),
+                                          ],
                                         ),
-                                      )
-                                          : cardDetails.isEmpty
-                                          ? Center(
-                                        child: Text(messageCardAvailable ??
-                                            'No card details available'),
-                                      )
-                                          : ListView.builder(
-                                        shrinkWrap: true,
-                                        physics: const NeverScrollableScrollPhysics(),
-                                        itemCount: cardDetails.length,
-                                        itemBuilder: (context, index) {
-                                          return Row(
-                                            children: [
-                                              Expanded(
-                                                child: _buildCreditCard(
-                                                    cardDetails[index],
-                                                    customervaultid.toString()),
-                                              ),
-                                              const SizedBox(
-                                                width: 5,
-                                              ),
-                                              const SizedBox(
-                                                width: 5,
-                                              ),
-                                            ],
-                                          );
-                                        },
+                                        child: const Text(
+                                          "Add Card",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18),
+                                        ),
                                       ),
-                                  SizedBox(height: 5),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 5.0),
+                                    child: Row(
+                                      // mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // First Column
+                                        Expanded(
+                                          child: Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 10),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                showmessage
+                                                    ? Text(
+                                                        '${errorMessageDropdown.toString()}',
+                                                        style: const TextStyle(
+                                                            fontSize: 13,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors.red))
+                                                    : Container(),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const Text('Recieved From *',
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey)),
+                                                tenants.isEmpty
+                                                    ? const Center(
+                                                        child:
+                                                            SpinKitSpinningLines(
+                                                          color: Colors.black,
+                                                          size: 55.0,
+                                                        ),
+                                                      )
+                                                    : DropdownButtonHideUnderline(
+                                                        child:
+                                                            DropdownButtonFormField2<
+                                                                String>(
+                                                          decoration:
+                                                              const InputDecoration(
+                                                                  border:
+                                                                      InputBorder
+                                                                          .none),
+                                                          validator: (value) {
+                                                            if (value == null ||
+                                                                value.isEmpty) {
+                                                              return 'Please select resident';
+                                                            }
+                                                            return null;
+                                                          },
+                                                          isExpanded: true,
+                                                          hint: const Text(
+                                                              'Select Resident'),
+                                                          value:
+                                                              selectedTenantId,
+                                                          items: tenants
+                                                              .map((tenant) {
+                                                            return DropdownMenuItem<
+                                                                String>(
+                                                              value: tenant[
+                                                                  'tenant_id'],
+                                                              child: Text(tenant[
+                                                                  'tenant_name']!),
+                                                            );
+                                                          }).toList(),
+                                                          onChanged: (value) {
+                                                            setState(() {
+                                                              selectedTenantId =
+                                                                  value;
+                                                              showmessage =
+                                                                  false;
+                                                              final selectedTenant =
+                                                                  tenants.firstWhere(
+                                                                      (tenant) =>
+                                                                          tenant[
+                                                                              'tenant_id'] ==
+                                                                          value);
+                                                              firstName.text =
+                                                                  selectedTenant[
+                                                                      'tenant_firstName']!;
+                                                              lastName.text =
+                                                                  selectedTenant[
+                                                                      'tenant_lastName']!;
+                                                              firstName.text =
+                                                                  selectedTenant[
+                                                                      'tenant_firstname']!;
+                                                              lastName.text =
+                                                                  selectedTenant[
+                                                                      'tenant_lastName']!;
+                                                              email.text =
+                                                                  selectedTenant[
+                                                                      'tenant_email']!;
+                                                              phoneNumber.text =
+                                                                  selectedTenant[
+                                                                      'tenant_phoneNumber']!;
+                                                              address.text =
+                                                                  selectedTenant[
+                                                                      'rental_adress']!;
+                                                              city.text =
+                                                                  selectedTenant[
+                                                                      'rental_city']!;
+                                                              state.text =
+                                                                  selectedTenant[
+                                                                      'rental_state']!;
+                                                              country.text =
+                                                                  selectedTenant[
+                                                                      'rental_country']!;
+                                                              zip.text =
+                                                                  selectedTenant[
+                                                                      'rental_zip']!;
+                                                            });
 
+                                                            fetchcreditcard(
+                                                                value!);
+                                                            print(
+                                                                'Selected tenant_id: $selectedTenantId');
+                                                          },
+                                                          buttonStyleData:
+                                                              ButtonStyleData(
+                                                            height: 45,
+                                                            width:
+                                                                double.infinity,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    left: 14,
+                                                                    right: 14),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          6),
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                            elevation: 2,
+                                                          ),
+                                                          iconStyleData:
+                                                              const IconStyleData(
+                                                            icon: Icon(
+                                                              Icons
+                                                                  .arrow_drop_down,
+                                                            ),
+                                                            iconSize: 24,
+                                                            iconEnabledColor:
+                                                                Color(
+                                                                    0xFFb0b6c3),
+                                                            iconDisabledColor:
+                                                                Colors.grey,
+                                                          ),
+                                                          dropdownStyleData:
+                                                              DropdownStyleData(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          6),
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                            scrollbarTheme:
+                                                                ScrollbarThemeData(
+                                                              radius:
+                                                                  const Radius
+                                                                      .circular(
+                                                                      6),
+                                                              thickness:
+                                                                  MaterialStateProperty
+                                                                      .all(6),
+                                                              thumbVisibility:
+                                                                  MaterialStateProperty
+                                                                      .all(
+                                                                          true),
+                                                            ),
+                                                          ),
+                                                          menuItemStyleData:
+                                                              const MenuItemStyleData(
+                                                            height: 40,
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 14,
+                                                                    right: 14),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const Text('Card Number *',
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey)),
+                                                CustomTextField(
+                                                  validator: (value) {
+                                                    if (value == null ||
+                                                        value.isEmpty &&
+                                                            !isValidLuhn(value
+                                                                .replaceAll(
+                                                                    ' ', ''))) {
+                                                      return !isValidLuhn(value!
+                                                              .replaceAll(
+                                                                  ' ', ''))
+                                                          ? 'Invalid credit card number'
+                                                          : 'Please enter a credit card number';
+                                                    } else if (!isValidLuhn(
+                                                        value.replaceAll(
+                                                            ' ', ''))) {
+                                                      return 'Invalid credit card number';
+                                                    }
+                                                    return null;
+                                                  },
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  hintText:
+                                                      '0000 0000 0000 0000',
+                                                  controller: cardNumber,
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const Text('Expiration Date *',
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey)),
+                                                CustomTextField(
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  hintText:
+                                                      'Enter Expiration Date',
+                                                  controller: expirationDate,
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const Text('First Name *',
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey)),
+                                                CustomTextField(
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  hintText: 'Enter First Name',
+                                                  controller: firstName,
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const Text('Last Name *',
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey)),
+                                                CustomTextField(
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  hintText: 'Enter Last Name',
+                                                  controller: lastName,
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const Text('Email *',
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey)),
+                                                CustomTextField(
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  hintText: 'Enter Email',
+                                                  controller: email,
+                                                  email: true,
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const Text('Phone Number*',
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey)),
+                                                CustomTextField(
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  formatter: [
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
+                                                    LengthLimitingTextInputFormatter(
+                                                        10),
+                                                    PhoneNumberFormatter(),
+                                                  ],
+                                                  // keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                                                  hintText:
+                                                      'Enter Phone Number',
+                                                  controller: phoneNumber,
+                                                  phone: true,
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const Text('Address *',
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey)),
+                                                CustomTextField(
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  hintText: 'Enter Address',
+                                                  controller: address,
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const Text('City',
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey)),
+                                                CustomTextField(
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  hintText: 'Enter City',
+                                                  controller: city,
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const Text('State',
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey)),
+                                                CustomTextField(
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  hintText: 'Enter State',
+                                                  controller: state,
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const Text('Zip',
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey)),
+                                                CustomTextField(
+                                                  formatter: [
+                                                    FilteringTextInputFormatter
+                                                        .allow(RegExp(
+                                                            r'[a-zA-Z0-9]')),
+                                                    TextInputFormatter
+                                                        .withFunction((oldValue,
+                                                            newValue) {
+                                                      return TextEditingValue(
+                                                        text: newValue.text
+                                                            .toUpperCase(),
+                                                        selection:
+                                                            newValue.selection,
+                                                      );
+                                                    }),
+                                                  ],
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  hintText: 'Enter Zip',
+                                                  controller: zip,
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                const Text('Country',
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey)),
+                                                CustomTextField(
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  hintText: 'Enter Country',
+                                                  controller: country,
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(width: 16),
+                                        // Second Column
+                                        Expanded(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              selectedTenantId == null
+                                                  ? Container()
+                                                  : Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: 10.0, top: 10),
+                                                      child: Text('Cards',
+                                                          style: TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              color:
+                                                                  blueColor)),
+                                                    ),
+                                              selectedTenantId == null
+                                                  ? Container()
+                                                  : const SizedBox(height: 8),
+                                              selectedTenantId == null
+                                                  ? Container()
+                                                  : isLoading
+                                                      ? const Center(
+                                                          child:
+                                                              SpinKitFadingCircle(
+                                                            color: Colors.black,
+                                                            size: 55.0,
+                                                          ),
+                                                        )
+                                                      : cardDetails.isEmpty
+                                                          ? Center(
+                                                              child: Text(
+                                                                  messageCardAvailable ??
+                                                                      'No card details available'),
+                                                            )
+                                                          : ListView.builder(
+                                                              shrinkWrap: true,
+                                                              physics:
+                                                                  const NeverScrollableScrollPhysics(),
+                                                              itemCount:
+                                                                  cardDetails
+                                                                      .length,
+                                                              itemBuilder:
+                                                                  (context,
+                                                                      index) {
+                                                                return Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                      child: _buildCreditCard(
+                                                                          cardDetails[
+                                                                              index],
+                                                                          customervaultid
+                                                                              .toString()),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      width: 5,
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      width: 5,
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              },
+                                                            ),
+                                              SizedBox(height: 5),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 16.0, bottom: 18.0, top: 10),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                            height: 42,
+                                            width: 110,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0)),
+                                            child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                    backgroundColor: blueColor,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.0))),
+                                                onPressed: () async {
+                                                  if (_formKey.currentState
+                                                          ?.validate() ??
+                                                      false) {
+                                                    SharedPreferences prefs =
+                                                        await SharedPreferences
+                                                            .getInstance();
+                                                    String? id = prefs
+                                                        .getString("adminId");
+                                                    String? token = prefs
+                                                        .getString('token');
+
+                                                    String randomNumber =
+                                                        generateRandomNumber(
+                                                            10);
+
+                                                    String? comapanyName =
+                                                        await fetchCompanyName(
+                                                            id!);
+
+                                                    CardModel
+                                                        cardwithOutVaultId =
+                                                        CardModel(
+                                                      firstName: firstName.text,
+                                                      lastName: lastName.text,
+                                                      ccnumber: cardNumber.text,
+                                                      ccexp:
+                                                          expirationDate.text,
+                                                      address1: address.text,
+                                                      address2: '',
+                                                      city: city.text,
+                                                      state: state.text,
+                                                      zip: zip.text,
+                                                      country: country.text,
+                                                      phone: phoneNumber.text,
+                                                      email: email.text,
+                                                      company: comapanyName,
+                                                      billingId: randomNumber,
+                                                      adminId: id,
+                                                    );
+
+                                                    CardModel cardwithVaultId =
+                                                        CardModel(
+                                                            phone: phoneNumber
+                                                                .text,
+                                                            adminId: id,
+                                                            company:
+                                                                comapanyName,
+                                                            firstName:
+                                                                firstName.text,
+                                                            lastName:
+                                                                lastName.text,
+                                                            ccnumber:
+                                                                cardNumber.text,
+                                                            ccexp:
+                                                                expirationDate
+                                                                    .text,
+                                                            address1:
+                                                                address.text,
+                                                            address2: '',
+                                                            zip: zip.text,
+                                                            state: state.text,
+                                                            city: city.text,
+                                                            billingId:
+                                                                randomNumber,
+                                                            email: email.text,
+                                                            country:
+                                                                country.text,
+                                                            customervaultid:
+                                                                customervaultid
+                                                                    .toString());
+
+                                                    AddCardService
+                                                        addCardService =
+                                                        AddCardService();
+
+                                                    if (messageCardAvailable ==
+                                                        "No card found for this tenant") {
+                                                      print(
+                                                          'create api and billing post api both');
+                                                      // await addCardService
+                                                      //     .postCardDetails(cardwithOutVaultId);
+                                                      CardResponse?
+                                                          cardResponse =
+                                                          await addCardService
+                                                              .postCardDetails(
+                                                                  cardwithOutVaultId);
+
+                                                      if (cardResponse !=
+                                                          null) {
+                                                        print(
+                                                            'Customer Vault ID: ${cardResponse.customerVaultId}');
+                                                        print(
+                                                            'Response Code: ${cardResponse.responseCode}');
+                                                      } else {
+                                                        print(
+                                                            'Failed to get card response');
+                                                      }
+                                                      AddCreditCard addcard =
+                                                          AddCreditCard(
+                                                        tenantId:
+                                                            selectedTenantId,
+                                                        billingId: randomNumber,
+                                                        customerVaultId:
+                                                            cardResponse!
+                                                                .customerVaultId,
+                                                        responseCode:
+                                                            cardResponse
+                                                                .responseCode,
+                                                      );
+
+                                                      await addCardService
+                                                          .postAddCreditCard(
+                                                              addcard);
+                                                      Navigator.pop(context);
+                                                      Fluttertoast.showToast(
+                                                          msg:
+                                                              'Add Card Successfully');
+                                                    } else {
+                                                      CardResponse?
+                                                          cardResponses =
+                                                          await addCardService
+                                                              .postCardWithVaultId(
+                                                                  cardwithVaultId);
+                                                      if (cardResponses !=
+                                                          null) {
+                                                        print(
+                                                            'Customer Vault ID: ${cardResponses.customerVaultId}');
+                                                        print(
+                                                            'Response Code: ${cardResponses.responseCode}');
+                                                      } else {
+                                                        print(
+                                                            'Failed to get card response');
+                                                      }
+                                                      AddCreditCard addcards =
+                                                          AddCreditCard(
+                                                        tenantId:
+                                                            selectedTenantId,
+                                                        billingId: randomNumber,
+                                                        customerVaultId:
+                                                            cardResponses
+                                                                ?.customerVaultId,
+                                                        responseCode:
+                                                            cardResponses
+                                                                ?.responseCode,
+                                                      );
+                                                      await addCardService
+                                                          .postAddCreditCard(
+                                                              addcards);
+                                                      Navigator.pop(context);
+                                                      Fluttertoast.showToast(
+                                                          msg:
+                                                              'Add Card Successfully');
+                                                    }
+
+                                                    //charges
+                                                  } else {}
+                                                },
+                                                child: const Text(
+                                                  'Add Card',
+                                                  style: TextStyle(
+                                                      color: Color(0xFFf7f8f9)),
+                                                ))),
+                                        const SizedBox(
+                                          width: 8,
+                                        ),
+                                        Container(
+                                            height: 42,
+                                            width: 100,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0)),
+                                            child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        const Color(0xFFffffff),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.0))),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text(
+                                                  'Cancel',
+                                                  style: TextStyle(
+                                                      color: Color(0xFF748097)),
+                                                )))
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16.0, bottom: 18.0,top: 10),
-                        child: Row(
-                          children: [
-                            Container(
-                                height: 42,
-                                width: 110,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8.0)),
-                                child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                         blueColor,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(8.0))),
-                                    onPressed: () async {
-                                      if (_formKey.currentState?.validate() ?? false) {
-                                        SharedPreferences prefs =
-                                        await SharedPreferences.getInstance();
-                                        String? id = prefs.getString("adminId");
-                                        String? token = prefs.getString('token');
-
-                                        String randomNumber = generateRandomNumber(10);
-
-                                        String? comapanyName =
-                                        await fetchCompanyName(id!);
-
-                                        CardModel cardwithOutVaultId = CardModel(
-                                          firstName: firstName.text,
-                                          lastName: lastName.text,
-                                          ccnumber: cardNumber.text,
-                                          ccexp: expirationDate.text,
-                                          address1: address.text,
-                                          address2: '',
-                                          city: city.text,
-                                          state: state.text,
-                                          zip: zip.text,
-                                          country: country.text,
-                                          phone: phoneNumber.text,
-                                          email: email.text,
-                                          company: comapanyName,
-                                          billingId: randomNumber,
-                                          adminId: id,
-                                        );
-
-                                        CardModel cardwithVaultId = CardModel(
-                                            phone: phoneNumber.text,
-                                            adminId: id,
-                                            company: comapanyName,
-                                            firstName: firstName.text,
-                                            lastName: lastName.text,
-                                            ccnumber: cardNumber.text,
-                                            ccexp: expirationDate.text,
-                                            address1: address.text,
-                                            address2: '',
-                                            zip: zip.text,
-                                            state: state.text,
-                                            city: city.text,
-                                            billingId: randomNumber,
-                                            email: email.text,
-                                            country: country.text,
-                                            customervaultid:
-                                            customervaultid.toString());
-
-                                        AddCardService addCardService =
-                                        AddCardService();
-
-                                        if (messageCardAvailable ==
-                                            "No card found for this tenant") {
-                                          print('create api and billing post api both');
-                                          // await addCardService
-                                          //     .postCardDetails(cardwithOutVaultId);
-                                          CardResponse? cardResponse =
-                                          await addCardService
-                                              .postCardDetails(cardwithOutVaultId);
-
-                                          if (cardResponse != null) {
-                                            print(
-                                                'Customer Vault ID: ${cardResponse.customerVaultId}');
-                                            print(
-                                                'Response Code: ${cardResponse.responseCode}');
-                                          } else {
-                                            print('Failed to get card response');
-                                          }
-                                          AddCreditCard addcard = AddCreditCard(
-                                            tenantId: selectedTenantId,
-                                            billingId: randomNumber,
-                                            customerVaultId:
-                                            cardResponse!.customerVaultId,
-                                            responseCode: cardResponse.responseCode,
-                                          );
-
-                                          await addCardService
-                                              .postAddCreditCard(addcard);
-                                          Navigator.pop(context);
-                                          Fluttertoast.showToast(
-                                              msg: 'Add Card Successfully');
-                                        }
-                                        else {
-                                          CardResponse? cardResponses =
-                                          await addCardService
-                                              .postCardWithVaultId(cardwithVaultId);
-                                          if (cardResponses != null) {
-                                            print(
-                                                'Customer Vault ID: ${cardResponses.customerVaultId}');
-                                            print(
-                                                'Response Code: ${cardResponses.responseCode}');
-                                          } else {
-                                            print('Failed to get card response');
-                                          }
-                                          AddCreditCard addcards = AddCreditCard(
-                                            tenantId: selectedTenantId,
-                                            billingId: randomNumber,
-                                            customerVaultId:
-                                            cardResponses?.customerVaultId,
-                                            responseCode: cardResponses?.responseCode,
-                                          );
-                                          await addCardService
-                                              .postAddCreditCard(addcards);
-                                          Navigator.pop(context);
-                                          Fluttertoast.showToast(
-                                              msg: 'Add Card Successfully');
-                                        }
-
-                                        //charges
-                                      } else {}
-                                    },
-                                    child: const Text(
-                                      'Add Card',
-                                      style: TextStyle(color: Color(0xFFf7f8f9)),
-                                    ))),
-                            const SizedBox(
-                              width: 8,
-                            ),
-                            Container(
-                                height: 42,
-                                width: 100,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8.0)),
-                                child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(0xFFffffff),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(8.0))),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text(
-                                      'Cancel',
-                                      style: TextStyle(color: Color(0xFF748097)),
-                                    )))
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),]
-          ),
-        ),
-      )
-          : SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Wrap(
-          alignment: WrapAlignment.start,
-          spacing: MediaQuery.of(context).size.width * 0.03,
-          runSpacing: MediaQuery.of(context).size.width * 0.02,
-          children:
-         [
-           SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16,right: 16,top: 16),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(5.0),
-                      child: Container(
-                        height: 50.0,
-                        padding: const EdgeInsets.only(top: 10, left: 10),
-                        width: MediaQuery.of(context).size.width * .94,
-                        margin: const EdgeInsets.only(bottom: 6.0),
-                        //Same as `blurRadius` i guess
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.0),
-                          color:blueColor,
-                          boxShadow: [
-                            const BoxShadow(
-                              color: Colors.grey,
-                              offset: Offset(0.0, 1.0), //(x,y)
-                              blurRadius: 6.0,
-                            ),
-                          ],
-                        ),
-                        child: const Text(
-                          "Add Card",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          showmessage
-                              ? Text('${errorMessageDropdown.toString()}',
-                                  style: const TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.red))
-                              : Container(),
-                          const SizedBox(
-                            height: 8,
                           ),
-                          const Text('Recieved From *',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                          tenants.isEmpty
-                              ? const Center(
-                                  child: SpinKitFadingCircle(
-                                    color: Colors.black,
-                                    size: 55.0,
-                                  ),
-                                )
-                              : DropdownButtonHideUnderline(
-                                  child: DropdownButtonFormField2<String>(
-                                    decoration:
-                                        const InputDecoration(border: InputBorder.none),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please select resident';
-                                      }
-                                      return null;
-                                    },
-                                    isExpanded: true,
-                                    hint: const Text('Select Resident'),
-                                    value: selectedTenantId,
-                                    items: tenants.map((tenant) {
-                                      return DropdownMenuItem<String>(
-                                        value: tenant['tenant_id'],
-                                        child: Text(tenant['tenant_name']!),
-                                      );
-                                    }).toList(),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        selectedTenantId = value;
-                                        showmessage = false;
-                                        final selectedTenant = tenants.firstWhere((tenant) => tenant['tenant_id'] == value);
-                                        firstName.text = selectedTenant['tenant_firstName']!;
-                                        lastName.text = selectedTenant['tenant_lastName']!;
-                                        email.text = selectedTenant['tenant_email']!;
-                                        phoneNumber.text = selectedTenant['tenant_phoneNumber']!;
-                                        address.text = selectedTenant['rental_adress']!;
-                                        city.text = selectedTenant['rental_city']!;
-                                        state.text = selectedTenant['rental_state']!;
-                                        country.text = selectedTenant['rental_country']!;
-                                        zip.text = selectedTenant['rental_zip']!;
-                                      });
-                                      // Get the selected tenant
-                                      final selectedTenant = tenants.firstWhere((tenant) => tenant['tenant_id'] == value);
-                                      print(selectedTenant);
-                                      // Update the text controllers with the selected tenant's values
-                                      firstName.text = selectedTenant['tenant_firstname']!;
-                                      lastName.text = selectedTenant['tenant_lastName']!;
-                                      email.text = selectedTenant['tenant_email']!;
-                                      phoneNumber.text = selectedTenant['tenant_phoneNumber']!;
-                                      address.text = selectedTenant['rental_adress']!;
-                                      city.text = selectedTenant['rental_city']!;
-                                      state.text = selectedTenant['rental_state']!;
-                                      country.text = selectedTenant['rental_country']!;
-                                      zip.text = selectedTenant['rental_zip']!;
-
-
-                                      fetchcreditcard(value!);
-                                      print('Selected tenant_id: $selectedTenantId');
-                                    },
-                                    buttonStyleData: ButtonStyleData(
-                                      height: 45,
-                                      width: double.infinity,
-                                      padding:
-                                          const EdgeInsets.only(left: 14, right: 14),
+                        ]),
+                  ),
+                )
+              : SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Wrap(
+                      alignment: WrapAlignment.start,
+                      spacing: MediaQuery.of(context).size.width * 0.03,
+                      runSpacing: MediaQuery.of(context).size.width * 0.02,
+                      children: [
+                        SingleChildScrollView(
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 16, right: 16, top: 16),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    child: Container(
+                                      height: 50.0,
+                                      padding: const EdgeInsets.only(
+                                          top: 10, left: 10),
+                                      width: MediaQuery.of(context).size.width *
+                                          .94,
+                                      margin:
+                                          const EdgeInsets.only(bottom: 6.0),
+                                      //Same as `blurRadius` i guess
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(6),
-                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(5.0),
+                                        color: blueColor,
+                                        boxShadow: [
+                                          const BoxShadow(
+                                            color: Colors.grey,
+                                            offset: Offset(0.0, 1.0), //(x,y)
+                                            blurRadius: 6.0,
+                                          ),
+                                        ],
                                       ),
-                                      elevation: 2,
-                                    ),
-                                    iconStyleData: const IconStyleData(
-                                      icon: Icon(
-                                        Icons.arrow_drop_down,
+                                      child: const Text(
+                                        "Add Card",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18),
                                       ),
-                                      iconSize: 24,
-                                      iconEnabledColor: Color(0xFFb0b6c3),
-                                      iconDisabledColor: Colors.grey,
-                                    ),
-                                    dropdownStyleData: DropdownStyleData(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(6),
-                                        color: Colors.white,
-                                      ),
-                                      scrollbarTheme: ScrollbarThemeData(
-                                        radius: const Radius.circular(6),
-                                        thickness: MaterialStateProperty.all(6),
-                                        thumbVisibility:
-                                            MaterialStateProperty.all(true),
-                                      ),
-                                    ),
-                                    menuItemStyleData: const MenuItemStyleData(
-                                      height: 40,
-                                      padding: EdgeInsets.only(left: 14, right: 14),
                                     ),
                                   ),
                                 ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const Text('Card Number *',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                          CustomTextField(
-                            validator: (value) {
-                              if (value == null ||
-                                  value.isEmpty &&
-                                      !isValidLuhn(value.replaceAll(' ', ''))) {
-                                return !isValidLuhn(value!.replaceAll(' ', ''))
-                                    ? 'Invalid credit card number'
-                                    : 'Please enter a credit card number';
-                              } else if (!isValidLuhn(value.replaceAll(' ', ''))) {
-                                return 'Invalid credit card number';
-                              }
-                              return null;
-                            },
-                            formatter: [
-                              CardNumberInputFormatter(),
-                              LengthLimitingTextInputFormatter(19),
-                            ],
-                            label: "enter card number",
-                            keyboardType: TextInputType.number,
-                            hintText: '0000 0000 0000 0000',
-                            controller: cardNumber,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const Text('Expiration Date *',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                          CustomTextField(
-                            keyboardType: TextInputType.text,
-                            hintText: 'Enter Expiration Date',
-                            controller: expirationDate,
-                            formatter: [
-                              ExpiryDateInputFormatter()
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const Text('First Name *',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                          CustomTextField(
-                            keyboardType: TextInputType.text,
-                            hintText: 'Enter First Name',
-                            controller: firstName,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const Text('Last Name *',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                          CustomTextField(
-                            keyboardType: TextInputType.text,
-                            hintText: 'Enter Last Name',
-                            controller: lastName,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const Text('Email *',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                          CustomTextField(
-                            keyboardType: TextInputType.text,
-                            hintText: 'Enter Email',
-                            controller: email,
-                            email: true,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const Text('Phone Number*',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                          CustomTextField(
-                            formatter: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(10),
-                              PhoneNumberFormatter(),
-                            ],
-                            keyboardType: TextInputType.number,
-                            // keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
-                            hintText: 'Enter Phone Number',
-                            controller: phoneNumber,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const Text('Address *',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                          CustomTextField(
-                            keyboardType: TextInputType.text,
-                            hintText: 'Enter Address',
-                            controller: address,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const Text('City',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                          CustomTextField(
-                            keyboardType: TextInputType.text,
-                            hintText: 'Enter City',
-                            controller: city,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const Text('State',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                          CustomTextField(
-                            keyboardType: TextInputType.text,
-                            hintText: 'Enter State',
-                            controller: state,
-                          ), const SizedBox(
-                            height: 8,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const Text('Zip',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                          CustomTextField(
-                            keyboardType: TextInputType.number,
-                            hintText: 'Enter Zip',
-                            controller: zip,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          const Text('Country',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                          CustomTextField(
-                            keyboardType: TextInputType.text,
-                            hintText: 'Enter Country',
-                            controller: country,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  selectedTenantId == null
-                      ? Container()
-                      :  Padding(
-                          padding: EdgeInsets.only(left: 16.0),
-                          child: Text('Cards',
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: blueColor
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Container(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        showmessage
+                                            ? Text(
+                                                '${errorMessageDropdown.toString()}',
+                                                style: const TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.red))
+                                            : Container(),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const Text('Recieved From *',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey)),
+                                        tenants.isEmpty
+                                            ? const Center(
+                                                child: SpinKitFadingCircle(
+                                                  color: Colors.black,
+                                                  size: 55.0,
+                                                ),
+                                              )
+                                            : DropdownButtonHideUnderline(
+                                                child: DropdownButtonFormField2<
+                                                    String>(
+                                                  decoration:
+                                                      const InputDecoration(
+                                                          border:
+                                                              InputBorder.none),
+                                                  validator: (value) {
+                                                    if (value == null ||
+                                                        value.isEmpty) {
+                                                      return 'Please select resident';
+                                                    }
+                                                    return null;
+                                                  },
+                                                  isExpanded: true,
+                                                  hint: const Text(
+                                                      'Select Resident'),
+                                                  value: selectedTenantId,
+                                                  items: tenants.map((tenant) {
+                                                    return DropdownMenuItem<
+                                                        String>(
+                                                      value:
+                                                          tenant['tenant_id'],
+                                                      child: Text(tenant[
+                                                          'tenant_name']!),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      selectedTenantId = value;
+                                                      showmessage = false;
+                                                      final selectedTenant =
+                                                          tenants.firstWhere(
+                                                              (tenant) =>
+                                                                  tenant[
+                                                                      'tenant_id'] ==
+                                                                  value);
+                                                      firstName.text =
+                                                          selectedTenant[
+                                                              'tenant_firstName']!;
+                                                      lastName.text =
+                                                          selectedTenant[
+                                                              'tenant_lastName']!;
+                                                      email.text =
+                                                          selectedTenant[
+                                                              'tenant_email']!;
+                                                      phoneNumber.text =
+                                                          selectedTenant[
+                                                              'tenant_phoneNumber']!;
+                                                      address.text =
+                                                          selectedTenant[
+                                                              'rental_adress']!;
+                                                      city.text =
+                                                          selectedTenant[
+                                                              'rental_city']!;
+                                                      state.text =
+                                                          selectedTenant[
+                                                              'rental_state']!;
+                                                      country.text =
+                                                          selectedTenant[
+                                                              'rental_country']!;
+                                                      zip.text = selectedTenant[
+                                                          'rental_zip']!;
+                                                    });
+                                                    // Get the selected tenant
+                                                    final selectedTenant = tenants
+                                                        .firstWhere((tenant) =>
+                                                            tenant[
+                                                                'tenant_id'] ==
+                                                            value);
+                                                    print(selectedTenant);
+                                                    // Update the text controllers with the selected tenant's values
+                                                    firstName.text =
+                                                        selectedTenant[
+                                                            'tenant_firstname']!;
+                                                    lastName.text =
+                                                        selectedTenant[
+                                                            'tenant_lastName']!;
+                                                    email.text = selectedTenant[
+                                                        'tenant_email']!;
+                                                    phoneNumber.text =
+                                                        selectedTenant[
+                                                            'tenant_phoneNumber']!;
+                                                    address.text =
+                                                        selectedTenant[
+                                                            'rental_adress']!;
+                                                    city.text = selectedTenant[
+                                                        'rental_city']!;
+                                                    state.text = selectedTenant[
+                                                        'rental_state']!;
+                                                    country.text =
+                                                        selectedTenant[
+                                                            'rental_country']!;
+                                                    zip.text = selectedTenant[
+                                                        'rental_zip']!;
 
-
-)),
-                        ),
-                  selectedTenantId == null ? Container() : const SizedBox(height: 8),
-                  selectedTenantId == null
-                      ? Container()
-                      : Padding(
-                          padding: const EdgeInsets.only(left: 10, right: 10),
-                          child: isLoading
-                              ? const Center(
-                                  child: SpinKitFadingCircle(
-                                    color: Colors.black,
-                                    size: 55.0,
-                                  ),
-                                )
-                              : cardDetails.isEmpty
-                                  ? Center(
-                                      child: Text(messageCardAvailable ??
-                                          'No card details available'),
-                                    )
-                                  : ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: const NeverScrollableScrollPhysics(),
-                                      itemCount: cardDetails.length,
-                                      itemBuilder: (context, index) {
-                                        return Row(
-                                          children: [
-                                            Expanded(
-                                              child: _buildCreditCard(
-                                                  cardDetails[index],
-                                                  customervaultid.toString()),
-                                            ),
-                                            const SizedBox(
-                                              width: 5,
-                                            ),
-                                            const SizedBox(
-                                              width: 5,
-                                            ),
+                                                    fetchcreditcard(value!);
+                                                    print(
+                                                        'Selected tenant_id: $selectedTenantId');
+                                                  },
+                                                  buttonStyleData:
+                                                      ButtonStyleData(
+                                                    height: 45,
+                                                    width: double.infinity,
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 14,
+                                                            right: 14),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              6),
+                                                      color: Colors.white,
+                                                    ),
+                                                    elevation: 2,
+                                                  ),
+                                                  iconStyleData:
+                                                      const IconStyleData(
+                                                    icon: Icon(
+                                                      Icons.arrow_drop_down,
+                                                    ),
+                                                    iconSize: 24,
+                                                    iconEnabledColor:
+                                                        Color(0xFFb0b6c3),
+                                                    iconDisabledColor:
+                                                        Colors.grey,
+                                                  ),
+                                                  dropdownStyleData:
+                                                      DropdownStyleData(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              6),
+                                                      color: Colors.white,
+                                                    ),
+                                                    scrollbarTheme:
+                                                        ScrollbarThemeData(
+                                                      radius:
+                                                          const Radius.circular(
+                                                              6),
+                                                      thickness:
+                                                          MaterialStateProperty
+                                                              .all(6),
+                                                      thumbVisibility:
+                                                          MaterialStateProperty
+                                                              .all(true),
+                                                    ),
+                                                  ),
+                                                  menuItemStyleData:
+                                                      const MenuItemStyleData(
+                                                    height: 40,
+                                                    padding: EdgeInsets.only(
+                                                        left: 14, right: 14),
+                                                  ),
+                                                ),
+                                              ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const Text('Card Number *',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey)),
+                                        CustomTextField(
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty &&
+                                                    !isValidLuhn(value
+                                                        .replaceAll(' ', ''))) {
+                                              return !isValidLuhn(value!
+                                                      .replaceAll(' ', ''))
+                                                  ? 'Invalid credit card number'
+                                                  : 'Please enter a credit card number';
+                                            } else if (!isValidLuhn(
+                                                value.replaceAll(' ', ''))) {
+                                              return 'Invalid credit card number';
+                                            }
+                                            return null;
+                                          },
+                                          formatter: [
+                                            CardNumberInputFormatter(),
+                                            LengthLimitingTextInputFormatter(
+                                                19),
                                           ],
-                                        );
-                                      },
+                                          label: "enter card number",
+                                          keyboardType: TextInputType.number,
+                                          hintText: '0000 0000 0000 0000',
+                                          controller: cardNumber,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const Text('Expiration Date *',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey)),
+                                        CustomTextField(
+                                          keyboardType: TextInputType.text,
+                                          hintText: 'Enter Expiration Date',
+                                          controller: expirationDate,
+                                          formatter: [
+                                            ExpiryDateInputFormatter()
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const Text('First Name *',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey)),
+                                        CustomTextField(
+                                          keyboardType: TextInputType.text,
+                                          hintText: 'Enter First Name',
+                                          controller: firstName,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const Text('Last Name *',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey)),
+                                        CustomTextField(
+                                          keyboardType: TextInputType.text,
+                                          hintText: 'Enter Last Name',
+                                          controller: lastName,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const Text('Email *',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey)),
+                                        CustomTextField(
+                                          keyboardType: TextInputType.text,
+                                          hintText: 'Enter Email',
+                                          controller: email,
+                                          email: true,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const Text('Phone Number*',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey)),
+                                        CustomTextField(
+                                          formatter: [
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
+                                            LengthLimitingTextInputFormatter(
+                                                10),
+                                            PhoneNumberFormatter(),
+                                          ],
+                                          keyboardType: TextInputType.number,
+                                          // keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                                          hintText: 'Enter Phone Number',
+                                          controller: phoneNumber,
+                                          phone: true,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const Text('Address *',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey)),
+                                        CustomTextField(
+                                          keyboardType: TextInputType.text,
+                                          hintText: 'Enter Address',
+                                          controller: address,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const Text('City',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey)),
+                                        CustomTextField(
+                                          keyboardType: TextInputType.text,
+                                          hintText: 'Enter City',
+                                          controller: city,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const Text('State',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey)),
+                                        CustomTextField(
+                                          keyboardType: TextInputType.text,
+                                          hintText: 'Enter State',
+                                          controller: state,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const Text('Zip',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey)),
+                                        CustomTextField(
+                                          formatter: [
+                                            FilteringTextInputFormatter.allow(
+                                                RegExp(r'[a-zA-Z0-9]')),
+                                            TextInputFormatter.withFunction(
+                                                (oldValue, newValue) {
+                                              return TextEditingValue(
+                                                text:
+                                                    newValue.text.toUpperCase(),
+                                                selection: newValue.selection,
+                                              );
+                                            }),
+                                          ],
+                                          keyboardType: TextInputType.text,
+                                          hintText: 'Enter Zip',
+                                          controller: zip,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        const Text('Country',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey)),
+                                        CustomTextField(
+                                          keyboardType: TextInputType.text,
+                                          hintText: 'Enter Country',
+                                          controller: country,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                      ],
                                     ),
+                                  ),
+                                ),
+                                selectedTenantId == null
+                                    ? Container()
+                                    : Padding(
+                                        padding: EdgeInsets.only(left: 16.0),
+                                        child: Text('Cards',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
+                                                color: blueColor)),
+                                      ),
+                                selectedTenantId == null
+                                    ? Container()
+                                    : const SizedBox(height: 8),
+                                selectedTenantId == null
+                                    ? Container()
+                                    : Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 10, right: 10),
+                                        child: isLoading
+                                            ? const Center(
+                                                child: SpinKitFadingCircle(
+                                                  color: Colors.black,
+                                                  size: 55.0,
+                                                ),
+                                              )
+                                            : cardDetails.isEmpty
+                                                ? Center(
+                                                    child: Text(
+                                                        messageCardAvailable ??
+                                                            'No card details available'),
+                                                  )
+                                                : ListView.builder(
+                                                    shrinkWrap: true,
+                                                    physics:
+                                                        const NeverScrollableScrollPhysics(),
+                                                    itemCount:
+                                                        cardDetails.length,
+                                                    itemBuilder:
+                                                        (context, index) {
+                                                      return Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child: _buildCreditCard(
+                                                                cardDetails[
+                                                                    index],
+                                                                customervaultid
+                                                                    .toString()),
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  ),
+                                      ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 16.0, bottom: 16.0),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                          height: 42,
+                                          width: 110,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0)),
+                                          child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                  backgroundColor: blueColor,
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0))),
+                                              onPressed: () async {
+                                                if (_formKey.currentState
+                                                        ?.validate() ??
+                                                    false) {
+                                                  SharedPreferences prefs =
+                                                      await SharedPreferences
+                                                          .getInstance();
+                                                  String? id = prefs
+                                                      .getString("adminId");
+                                                  String? token =
+                                                      prefs.getString('token');
+
+                                                  String randomNumber =
+                                                      generateRandomNumber(10);
+
+                                                  String? comapanyName =
+                                                      await fetchCompanyName(
+                                                          id!);
+
+                                                  CardModel cardwithOutVaultId =
+                                                      CardModel(
+                                                    firstName: firstName.text,
+                                                    lastName: lastName.text,
+                                                    ccnumber: cardNumber.text
+                                                        .replaceAll(' ', ''),
+                                                    ccexp: expirationDate.text,
+                                                    address1: address.text,
+                                                    address2: '',
+                                                    city: city.text,
+                                                    state: state.text,
+                                                    zip: zip.text,
+                                                    country: country.text,
+                                                    phone: phoneNumber.text,
+                                                    email: email.text,
+                                                    company: comapanyName,
+                                                    billingId: randomNumber,
+                                                    adminId: id,
+                                                  );
+
+                                                  CardModel cardwithVaultId =
+                                                      CardModel(
+                                                          phone:
+                                                              phoneNumber.text,
+                                                          adminId: id,
+                                                          company: comapanyName,
+                                                          firstName:
+                                                              firstName.text,
+                                                          lastName:
+                                                              lastName.text,
+                                                          ccnumber: cardNumber
+                                                              .text
+                                                              .replaceAll(
+                                                                  ' ', ''),
+                                                          ccexp: expirationDate
+                                                              .text,
+                                                          address1:
+                                                              address.text,
+                                                          address2: '',
+                                                          zip: zip.text,
+                                                          state: state.text,
+                                                          city: city.text,
+                                                          billingId:
+                                                              randomNumber,
+                                                          email: email.text,
+                                                          country: country.text,
+                                                          customervaultid:
+                                                              customervaultid
+                                                                  .toString());
+
+                                                  AddCardService
+                                                      addCardService =
+                                                      AddCardService();
+
+                                                  if (messageCardAvailable ==
+                                                      "No card found for this tenant") {
+                                                    print(
+                                                        'create api and billing post api both');
+                                                    // await addCardService
+                                                    //     .postCardDetails(cardwithOutVaultId);
+                                                    CardResponse? cardResponse =
+                                                        await addCardService
+                                                            .postCardDetails(
+                                                                cardwithOutVaultId);
+
+                                                    if (cardResponse != null) {
+                                                      print(
+                                                          'Customer Vault ID: ${cardResponse.customerVaultId}');
+                                                      print(
+                                                          'Response Code: ${cardResponse.responseCode}');
+                                                    } else {
+                                                      print(
+                                                          'Failed to get card response');
+                                                    }
+                                                    AddCreditCard addcard =
+                                                        AddCreditCard(
+                                                      tenantId:
+                                                          selectedTenantId,
+                                                      billingId: randomNumber,
+                                                      customerVaultId:
+                                                          cardResponse!
+                                                              .customerVaultId,
+                                                      responseCode: cardResponse
+                                                          .responseCode,
+                                                    );
+
+                                                    await addCardService
+                                                        .postAddCreditCard(
+                                                            addcard);
+                                                    Navigator.pop(context);
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            'Add Card Successfully');
+                                                  } else {
+                                                    CardResponse?
+                                                        cardResponses =
+                                                        await addCardService
+                                                            .postCardWithVaultId(
+                                                                cardwithVaultId);
+                                                    if (cardResponses != null) {
+                                                      print(
+                                                          'Customer Vault ID: ${cardResponses.customerVaultId}');
+                                                      print(
+                                                          'Response Code: ${cardResponses.responseCode}');
+                                                    } else {
+                                                      print(
+                                                          'Failed to get card response');
+                                                    }
+                                                    AddCreditCard addcards =
+                                                        AddCreditCard(
+                                                      tenantId:
+                                                          selectedTenantId,
+                                                      billingId: randomNumber,
+                                                      customerVaultId:
+                                                          cardResponses
+                                                              ?.customerVaultId,
+                                                      responseCode:
+                                                          cardResponses
+                                                              ?.responseCode,
+                                                    );
+                                                    await addCardService
+                                                        .postAddCreditCard(
+                                                            addcards);
+                                                    Navigator.pop(context);
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            'Add Card Successfully');
+                                                  }
+
+                                                  //charges
+                                                } else {}
+                                              },
+                                              child: const Text(
+                                                'Add Card',
+                                                style: TextStyle(
+                                                    color: Color(0xFFf7f8f9)),
+                                              ))),
+                                      const SizedBox(
+                                        width: 8,
+                                      ),
+                                      Container(
+                                          height: 42,
+                                          width: 100,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0)),
+                                          child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      const Color(0xFFffffff),
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0))),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text(
+                                                'Cancel',
+                                                style: TextStyle(
+                                                    color: Color(0xFF748097)),
+                                              )))
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0, bottom: 16.0),
-                    child: Row(
-                      children: [
-                        Container(
-                            height: 42,
-                            width: 110,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0)),
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                         blueColor,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8.0))),
-                                onPressed: () async {
-                                  if (_formKey.currentState?.validate() ?? false) {
-                                    SharedPreferences prefs =
-                                        await SharedPreferences.getInstance();
-                                    String? id = prefs.getString("adminId");
-                                    String? token = prefs.getString('token');
-
-                                    String randomNumber = generateRandomNumber(10);
-
-                                    String? comapanyName =
-                                        await fetchCompanyName(id!);
-
-                                    CardModel cardwithOutVaultId = CardModel(
-                                      firstName: firstName.text,
-                                      lastName: lastName.text,
-                                      ccnumber: cardNumber.text.replaceAll(' ', ''),
-                                      ccexp: expirationDate.text,
-                                      address1: address.text,
-                                      address2: '',
-                                      city: city.text,
-                                      state: state.text,
-                                      zip: zip.text,
-                                      country: country.text,
-                                      phone: phoneNumber.text,
-                                      email: email.text,
-                                      company: comapanyName,
-                                      billingId: randomNumber,
-                                      adminId: id,
-                                    );
-
-                                    CardModel cardwithVaultId = CardModel(
-                                        phone: phoneNumber.text,
-                                        adminId: id,
-                                        company: comapanyName,
-                                        firstName: firstName.text,
-                                        lastName: lastName.text,
-                                        ccnumber: cardNumber.text.replaceAll(' ', ''),
-                                        ccexp: expirationDate.text,
-                                        address1: address.text,
-                                        address2: '',
-                                        zip: zip.text,
-                                        state: state.text,
-                                        city: city.text,
-                                        billingId: randomNumber,
-                                        email: email.text,
-                                        country: country.text,
-                                        customervaultid:
-                                            customervaultid.toString());
-
-                                    AddCardService addCardService =
-                                        AddCardService();
-
-                                    if (messageCardAvailable ==
-                                        "No card found for this tenant") {
-                                      print('create api and billing post api both');
-                                      // await addCardService
-                                      //     .postCardDetails(cardwithOutVaultId);
-                                      CardResponse? cardResponse =
-                                          await addCardService
-                                              .postCardDetails(cardwithOutVaultId);
-
-                                      if (cardResponse != null) {
-                                        print(
-                                            'Customer Vault ID: ${cardResponse.customerVaultId}');
-                                        print(
-                                            'Response Code: ${cardResponse.responseCode}');
-                                      } else {
-                                        print('Failed to get card response');
-                                      }
-                                      AddCreditCard addcard = AddCreditCard(
-                                        tenantId: selectedTenantId,
-                                        billingId: randomNumber,
-                                        customerVaultId:
-                                            cardResponse!.customerVaultId,
-                                        responseCode: cardResponse.responseCode,
-                                      );
-
-                                      await addCardService
-                                          .postAddCreditCard(addcard);
-                                      Navigator.pop(context);
-                                      Fluttertoast.showToast(
-                                          msg: 'Add Card Successfully');
-                                    } else {
-                                      CardResponse? cardResponses =
-                                          await addCardService
-                                              .postCardWithVaultId(cardwithVaultId);
-                                      if (cardResponses != null) {
-                                        print(
-                                            'Customer Vault ID: ${cardResponses.customerVaultId}');
-                                        print(
-                                            'Response Code: ${cardResponses.responseCode}');
-                                      } else {
-                                        print('Failed to get card response');
-                                      }
-                                      AddCreditCard addcards = AddCreditCard(
-                                        tenantId: selectedTenantId,
-                                        billingId: randomNumber,
-                                        customerVaultId:
-                                            cardResponses?.customerVaultId,
-                                        responseCode: cardResponses?.responseCode,
-                                      );
-                                      await addCardService
-                                          .postAddCreditCard(addcards);
-                                      Navigator.pop(context);
-                                      Fluttertoast.showToast(
-                                          msg: 'Add Card Successfully');
-                                    }
-
-                                    //charges
-                                  } else {}
-                                },
-                                child: const Text(
-                                  'Add Card',
-                                  style: TextStyle(color: Color(0xFFf7f8f9)),
-                                ))),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        Container(
-                            height: 42,
-                            width: 100,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0)),
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFFffffff),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8.0))),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text(
-                                  'Cancel',
-                                  style: TextStyle(color: Color(0xFF748097)),
-                                )))
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),]
-        ),
-      );
-
-    },
-    ),
-
+                      ]),
+                );
+        },
+      ),
     );
   }
 
@@ -1803,9 +2157,11 @@ LinearGradient _getCardGradient(String cardType) {
     );
   }
 }
+
 class CardNumberInputFormatter extends TextInputFormatter {
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
     // Remove any existing spaces in the input
     String newText = newValue.text.replaceAll(' ', '');
 
@@ -1828,6 +2184,7 @@ class CardNumberInputFormatter extends TextInputFormatter {
     );
   }
 }
+
 class CustomTextField extends StatefulWidget {
   final String hintText;
   final TextEditingController? controller;
@@ -1846,6 +2203,7 @@ class CustomTextField extends StatefulWidget {
   final String? max_amount;
   final String? error_mess;
   final bool? optional;
+  final bool? phone;
   final List<TextInputFormatter>? formatter;
   final bool? email;
 
@@ -1862,11 +2220,13 @@ class CustomTextField extends StatefulWidget {
     this.validator,
     this.onSuffixIconPressed,
     this.label,
-    this.onTap, this.onChanged2,
+    this.onTap,
+    this.onChanged2,
     this.amount_check,
     this.max_amount,
     this.error_mess,
     this.formatter,
+    this.phone,
     this.optional = false,
     this.email,
     // Initialize onTap
@@ -1879,25 +2239,24 @@ class CustomTextField extends StatefulWidget {
 class CustomTextFieldState extends State<CustomTextField> {
   String? _errorMessage;
   TextEditingController _textController =
-  TextEditingController(); // Add this line
+      TextEditingController(); // Add this line
 
   late FocusNode _focusNode;
   @override
-
   @override
   void initState() {
     super.initState();
     _textController = widget.controller ?? TextEditingController();
     _focusNode = FocusNode();
-
   }
+
   KeyboardActionsConfig _buildConfig(BuildContext context) {
     return KeyboardActionsConfig(
       actions: [
         KeyboardActionsItem(
           focusNode: _focusNode,
           toolbarButtons: [
-                (node) {
+            (node) {
               return GestureDetector(
                 onTap: () {
                   if (widget.onChanged2 != null) {
@@ -1907,10 +2266,11 @@ class CustomTextFieldState extends State<CustomTextField> {
                 },
                 child: Padding(
                   padding: EdgeInsets.all(14.0),
-                  child: Text("Done",style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold
-                  ),),
+                  child: Text(
+                    "Done",
+                    style: TextStyle(
+                        color: Colors.blue, fontWeight: FontWeight.bold),
+                  ),
                 ),
               );
             },
@@ -1922,46 +2282,49 @@ class CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
-    final shouldUseKeyboardActions = widget.keyboardType == TextInputType.number;
-      Widget textfield = Stack(
+    final shouldUseKeyboardActions =
+        widget.keyboardType == TextInputType.number;
+    Widget textfield = Stack(
       clipBehavior: Clip.none,
       children: <Widget>[
         FormField<String>(
-          validator:  widget.optional! ? null : (value) {
-            if (widget.controller!.text.isEmpty) {
-              setState(() {
-                if(widget.label == null)
-                  _errorMessage = 'Please ${widget.hintText}';
-                else
-                  _errorMessage = 'Please ${widget.label}';
-              });
-              return '';
-            }else if (widget.keyboardType == TextInputType.number) {
-              String formattedPhoneNumber = widget.controller!.text
-                  .replaceAll(RegExp(r'\D'), '');
+          validator: widget.optional!
+              ? null
+              : (value) {
+                  if (widget.controller!.text.isEmpty) {
+                    setState(() {
+                      if (widget.label == null)
+                        _errorMessage = 'Please ${widget.hintText}';
+                      else
+                        _errorMessage = 'Please ${widget.label}';
+                    });
+                    return '';
+                  } else if (widget.phone != null) {
+                    String formattedPhoneNumber =
+                        widget.controller!.text.replaceAll(RegExp(r'\D'), '');
 
-              // Removed the empty check
-              if (formattedPhoneNumber.length != 10) {
-                setState(() {
-                  _errorMessage = "Phone number must be 10 digits";
-                });
-                return '';
-              }
-            }
-            else if (widget.email != null) {
-              if (!EmailValidator.validate(widget.controller!.text)) {
-                setState(() {
-                  _errorMessage = "Email is not valid";
-                });
-                return '';
-              }
-            }
-            else if(widget.amount_check != null && double.parse(widget.controller!.text) > double.parse(widget.max_amount!))
-              setState(() {
-                _errorMessage = '${widget.error_mess}';
-              });
-            return null;
-          },
+                    // Removed the empty check
+                    if (formattedPhoneNumber.length != 10) {
+                      setState(() {
+                        _errorMessage = "Phone number must be 10 digits";
+                      });
+                      return '';
+                    }
+                  } else if (widget.email != null) {
+                    if (!EmailValidator.validate(widget.controller!.text)) {
+                      setState(() {
+                        _errorMessage = "Email is not valid";
+                      });
+                      return '';
+                    }
+                  } else if (widget.amount_check != null &&
+                      double.parse(widget.controller!.text) >
+                          double.parse(widget.max_amount!))
+                    setState(() {
+                      _errorMessage = '${widget.error_mess}';
+                    });
+                  return null;
+                },
           builder: (FormFieldState<String> state) {
             return Column(
               children: <Widget>[
@@ -1971,7 +2334,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                   child: Container(
                     height: 50,
                     padding:
-                    EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.0),
@@ -2005,28 +2368,26 @@ class CustomTextFieldState extends State<CustomTextField> {
                         print(value);
                         widget.onChanged2;
                       },*/
-                      inputFormatters:widget.formatter ?? [],
+                      inputFormatters: widget.formatter ?? [],
                       onFieldSubmitted: widget.onChanged2,
-                      onChanged:(value){
-                      //  print("object calin $value");
-                        if(value.isNotEmpty){
+                      onChanged: (value) {
+                        //  print("object calin $value");
+                        if (value.isNotEmpty) {
                           setState(() {
                             _errorMessage = null;
                           });
                         }
-                          if(widget.onChanged != null)
-                          widget.onChanged!(value);
-                       // print("callllll");
+                        if (widget.onChanged != null) widget.onChanged!(value);
+                        // print("callllll");
                       },
                       focusNode: _focusNode,
-                      onTap: (){
-                        if(widget.onTap != null){
+                      onTap: () {
+                        if (widget.onTap != null) {
                           widget.onTap!();
                           setState(() {
                             _errorMessage = null;
                           });
                         }
-
                       },
                       obscureText: widget.obscureText,
                       readOnly: widget.readOnnly,
@@ -2041,14 +2402,15 @@ class CustomTextFieldState extends State<CustomTextField> {
                       decoration: InputDecoration(
                         suffixIcon: widget.suffixIcon,
                         hintStyle:
-                        TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                            TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                         border: InputBorder.none,
                         hintText: widget.hintText,
                       ),
                     ),
                   ),
                 ),
-                if (state.hasError && _errorMessage != null || widget.amount_check != null)
+                if (state.hasError && _errorMessage != null ||
+                    widget.amount_check != null)
                   SizedBox(height: 24),
                 // Reserve space for error message
               ],
@@ -2071,19 +2433,27 @@ class CustomTextFieldState extends State<CustomTextField> {
     );
     return shouldUseKeyboardActions
         ? SizedBox(
-      height:  widget.amount_check != null ?widget.amount_check! ?  75 :60: _errorMessage != null  ?75 :60,
-      width: MediaQuery.of(context).size.width * .98,
-      child: KeyboardActions(
-        config: _buildConfig(context),
-        child: textfield,
-      ),
-    )
+            height: widget.amount_check != null
+                ? widget.amount_check!
+                    ? 75
+                    : 60
+                : _errorMessage != null
+                    ? 75
+                    : 60,
+            width: MediaQuery.of(context).size.width * .98,
+            child: KeyboardActions(
+              config: _buildConfig(context),
+              child: textfield,
+            ),
+          )
         : textfield;
   }
 }
+
 class ExpiryDateInputFormatter extends TextInputFormatter {
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
     String newText = newValue.text.replaceAll('/', '');
 
     if (newText.length > 6) {

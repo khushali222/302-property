@@ -674,6 +674,7 @@ class _AddCardState extends State<AddCard> {
                                         PhoneNumberFormatter(),
                                       ],
                                       controller: phoneNumber,
+                                      phone: true,
                                     ),
                                     const SizedBox(
                                       height: 8,
@@ -735,7 +736,16 @@ class _AddCardState extends State<AddCard> {
                                             fontWeight: FontWeight.bold,
                                             color: Colors.grey)),
                                     CustomTextField(
-                                      keyboardType: TextInputType.number,
+                                      formatter: [
+                                        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+                                        TextInputFormatter.withFunction((oldValue, newValue) {
+                                          return TextEditingValue(
+                                            text: newValue.text.toUpperCase(),
+                                            selection: newValue.selection,
+                                          );
+                                        }),
+                                      ],
+                                      keyboardType: TextInputType.text,
                                       hintText: 'Enter Zip',
                                       controller: zip,
                                     ),
@@ -1255,6 +1265,7 @@ class _AddCardState extends State<AddCard> {
                             //keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                             hintText: 'Enter Phone Number',
                             controller: phoneNumber,
+                            phone: true,
                           ),
                           const SizedBox(
                             height: 8,
@@ -1315,7 +1326,16 @@ class _AddCardState extends State<AddCard> {
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey)),
                           CustomTextField(
-                            keyboardType: TextInputType.number,
+                            formatter: [
+                              FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+                              TextInputFormatter.withFunction((oldValue, newValue) {
+                                return TextEditingValue(
+                                  text: newValue.text.toUpperCase(),
+                                  selection: newValue.selection,
+                                );
+                              }),
+                            ],
+                            keyboardType: TextInputType.text,
                             hintText: 'Enter Zip',
                             controller: zip,
                           ),
@@ -1808,6 +1828,7 @@ class CustomTextField extends StatefulWidget {
   final String? error_mess;
   final bool? optional;
   final bool? email;
+  final bool? phone;
   final List<TextInputFormatter>? formatter;
 
   CustomTextField({
@@ -1828,6 +1849,7 @@ class CustomTextField extends StatefulWidget {
     this.max_amount,
     this.error_mess,
     this.formatter,
+    this.phone,
     this.optional = false,
     this.email,
 
@@ -1903,7 +1925,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                   _errorMessage = 'Please ${widget.label}';
               });
               return '';
-            } else if (widget.keyboardType == TextInputType.number) {
+            } else if (widget.phone != null) {
               String formattedPhoneNumber = widget.controller!.text
                   .replaceAll(RegExp(r'\D'), '');
 

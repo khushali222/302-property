@@ -213,6 +213,7 @@ class _EditApplicantState extends State<EditApplicant> {
                             }
                             return null;
                           },
+                          phone: true,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
@@ -250,6 +251,7 @@ class _EditApplicantState extends State<EditApplicant> {
                             LengthLimitingTextInputFormatter(10),
                             PhoneNumberFormatter(),
                           ],
+                          phone: true,
                           hintText: 'Enter home number',
                           controller: homeNumber,
                           optional: true,
@@ -283,6 +285,7 @@ class _EditApplicantState extends State<EditApplicant> {
                           hintText: 'Enter business number',
                           controller: bussinessNumber,
                           optional: true,
+                          phone: true,
                         ),
                         const SizedBox(
                           height: 8,
@@ -313,6 +316,7 @@ class _EditApplicantState extends State<EditApplicant> {
                           hintText: 'Enter telephone number',
                           controller: telePhoneNumber,
                           optional: true,
+                          phone: true,
                         ),
                       ],
                     ),

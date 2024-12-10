@@ -2382,8 +2382,16 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         },
                                         controller: code2,
                                         keyboardType:
-                                        TextInputType.numberWithOptions(
-                                            signed: true, decimal: true),
+                                       TextInputType.text,
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+                                          TextInputFormatter.withFunction((oldValue, newValue) {
+                                            return TextEditingValue(
+                                              text: newValue.text.toUpperCase(),
+                                              selection: newValue.selection,
+                                            );
+                                          }),
+                                        ],
                                         cursorColor:
                                         blueColor,
                                         decoration: InputDecoration(

@@ -2433,7 +2433,7 @@ class _addLease3State extends State<addLease3>
                                         'Monthly'); // Reset checkbox when amount changes
                                   });
                                 },
-                              //  keyboardType: TextInputType.number,
+                                keyboardType: TextInputType.number,
                                 hintText: 'Enter Amount',
                                 controller: rentAmount,
                               ),
@@ -3125,7 +3125,7 @@ class _addLease3State extends State<addLease3>
                                   }
                                   return null;
                                 },
-                              //  keyboardType: TextInputType.number,
+                                keyboardType: TextInputType.number,
                                 hintText: 'Enter Amount',
                                 controller: securityDepositeAmount,
                                 optional: true,
@@ -4714,7 +4714,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                             }
                             return null;
                           },
-                        //  keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.number,
                           hintText: 'Enter Amount',
                           controller: _amountController,
                         ),
@@ -5439,7 +5439,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                     }
                     return null;
                   },
-                 // keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.number,
                   hintText: 'Enter Amount',
                   controller: _amountController,
                 ),
@@ -6049,6 +6049,7 @@ Tenant convertApplicantToTenant(Datum applicant) {
                           }
                           return null;
                         },
+                        phone: true,
                       ),
                       const SizedBox(
                         height: 20,
@@ -6080,6 +6081,7 @@ Tenant convertApplicantToTenant(Datum applicant) {
                               hintText: 'Enter work number',
                               controller: workNumber,
                               optional: true,
+                              phone: true,
                             ),
                             const SizedBox(
                               height: 10,
@@ -6536,6 +6538,7 @@ Tenant convertApplicantToTenant(Datum applicant) {
                         hintText: 'Enter phone number',
                         controller: emergencyPhoneNumber,
                         optional: true,
+                        phone: true,
                       ),
                     ],
                   ),
@@ -6766,6 +6769,7 @@ class _AddCosignerState extends State<AddCosigner> {
                       }
                       return null;
                     },
+                    phone: true,
                   ),
                   const SizedBox(
                     height: 20,
@@ -6822,6 +6826,7 @@ class _AddCosignerState extends State<AddCosigner> {
                                 hintText: 'Enter work number',
                                 controller: workNumber,
                                 optional: true,
+                                phone: true,
                               ),
                             ],
                           ),
@@ -6978,7 +6983,16 @@ class _AddCosignerState extends State<AddCosigner> {
                   height: 10,
                 ),
                 CustomTextField(
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+                    TextInputFormatter.withFunction((oldValue, newValue) {
+                      return TextEditingValue(
+                        text: newValue.text.toUpperCase(),
+                        selection: newValue.selection,
+                      );
+                    }),
+                  ],
                   hintText: 'Enter zip code',
                   controller: postalCode,
                   validator: (value) {

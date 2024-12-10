@@ -3340,7 +3340,7 @@ class _addLease3State extends State<addLease3>
                                         'Monthly'); // Reset checkbox when amount changes
                                   });
                                 },
-                               // keyboardType: TextInputType.number,
+                                keyboardType: TextInputType.number,
                                 hintText: 'Enter Amount',
                                 controller: rentAmount,
                               ),
@@ -4038,7 +4038,7 @@ class _addLease3State extends State<addLease3>
                                   }
                                   return null;
                                 },
-                               // keyboardType: TextInputType.number,
+                                keyboardType: TextInputType.number,
                                 hintText: 'Enter Amount',
                                 controller: securityDepositeAmount,
                                 optional: true,
@@ -5544,7 +5544,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                             }
                             return null;
                           },
-                         // keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.number,
                           hintText: 'Enter Amount',
                           controller: _amountController,
                         ),
@@ -6241,7 +6241,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                     }
                     return null;
                   },
-                 // keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.number,
                   hintText: 'Enter Amount',
                   controller: _amountController,
                 ),
@@ -6938,6 +6938,7 @@ class _AddTenantState extends State<AddTenant> {
                             CustomTextField(
                               keyboardType: TextInputType.number,
                               hintText: 'Enter phone number',
+                              phone: true,
                               controller: phoneNumber,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -6982,6 +6983,7 @@ class _AddTenantState extends State<AddTenant> {
                                           keyboardType: TextInputType.number,
                                           hintText: 'Enter work number',
                                           controller: workNumber,
+                                          phone: true,
                                         ),
                                       ],
                                     ),
@@ -7428,6 +7430,7 @@ class _AddTenantState extends State<AddTenant> {
                                     hintText: 'Enter phone number',
                                     controller: emergencyPhoneNumber,
                                     optional: true,
+                                    phone: true,
                                   ),
                                 ],
                               ),
@@ -7651,6 +7654,7 @@ class _AddCosignerState extends State<AddCosigner> {
                       }
                       return null;
                     },
+                    phone: true,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
                       LengthLimitingTextInputFormatter(10),
@@ -7712,6 +7716,7 @@ class _AddCosignerState extends State<AddCosigner> {
                                 hintText: 'Enter work number',
                                 controller: workNumber,
                                 optional: true,
+                                phone: true,
                               ),
                             ],
                           ),
@@ -7869,9 +7874,18 @@ class _AddCosignerState extends State<AddCosigner> {
                   height: 10,
                 ),
                 CustomTextField(
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   hintText: 'Enter zip code',
                   controller: postalCode,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+                    TextInputFormatter.withFunction((oldValue, newValue) {
+                      return TextEditingValue(
+                        text: newValue.text.toUpperCase(),
+                        selection: newValue.selection,
+                      );
+                    }),
+                  ],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'please enter zip code';

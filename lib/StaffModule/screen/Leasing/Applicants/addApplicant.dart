@@ -276,6 +276,7 @@ class _AddApplicantState extends State<AddApplicant> {
                             LengthLimitingTextInputFormatter(10),
                             PhoneNumberFormatter(),
                           ],
+                          phone: true,
                         ),
                         const SizedBox(
                           height: 8,
@@ -305,6 +306,7 @@ class _AddApplicantState extends State<AddApplicant> {
                             LengthLimitingTextInputFormatter(10),
                             PhoneNumberFormatter(),
                           ],
+                          phone: true,
                           optional: true,
                         ),
                         const SizedBox(
@@ -325,11 +327,13 @@ class _AddApplicantState extends State<AddApplicant> {
                           //   }
                           //   return null;
                           // },
-                          keyboardType: TextInputType.numberWithOptions(
-                              signed: true, decimal: true),
+                          keyboardType: TextInputType.number,
+                          // keyboardType: TextInputType.numberWithOptions(
+                          //     signed: true, decimal: true),
                           hintText: 'Enter business number',
                           controller: bussinessNumber,
                           optional: true,
+                          phone: true,
                         ),
                         const SizedBox(
                           height: 8,
@@ -360,6 +364,7 @@ class _AddApplicantState extends State<AddApplicant> {
                           keyboardType: TextInputType.number,
                           controller: telePhoneNumber,
                           optional: true,
+                          phone: true,
                         ),
                         const SizedBox(
                           height: 8,

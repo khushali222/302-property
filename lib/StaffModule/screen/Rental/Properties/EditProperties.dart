@@ -3,8 +3,10 @@ import 'dart:io';
 
 
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -1992,7 +1994,17 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     postalcodeerror = false;
                                                   });
                                                 },
-                                                keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
+                                                keyboardType: TextInputType.text,
+                                                inputFormatters: [
+                                                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+                                                  TextInputFormatter.withFunction((oldValue, newValue) {
+                                                    return TextEditingValue(
+                                                      text: newValue.text.toUpperCase(),
+                                                      selection: newValue.selection,
+                                                    );
+                                                  }),
+                                                ],
+                                               // keyboardType: TextInputType.numberWithOptions(signed: true,decimal: true),
                                                 cursorColor: blueColor,
                                                 decoration: InputDecoration(
                                                   enabledBorder: postalcodeerror
@@ -2453,799 +2465,989 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     builder: (BuildContext
                                                     context,
                                                         StateSetter setState) {
-                                                      return AlertDialog(
-                                                        backgroundColor:
-                                                        Colors.white,
-                                                        surfaceTintColor:
-                                                        Colors.white,
-                                                        content:
-                                                        SingleChildScrollView(
-                                                          child: Column(
-                                                            children: [
-                                                              SizedBox(
-                                                                  height: 15),
-                                                              Row(
+                                                      return
+                                                        Dialog(
+                                                          backgroundColor:
+                                                          Colors.white,
+                                                          surfaceTintColor:
+                                                          Colors.white,
+                                                          child:  Padding(
+                                                            padding: const EdgeInsets.only(left: 10,right: 5,bottom: 20,top: 10),
+                                                            child: SingleChildScrollView(
+                                                              child: Column(
                                                                 children: [
-                                                                  SizedBox(
-                                                                    width: 15,
-                                                                  ),
-                                                                  Text(
-                                                                    "New Staff Member",
-                                                                    style: TextStyle(
-                                                                        color: blueColor,
-
-
-
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        fontSize:
-                                                                        18),
-                                                                  ),
-                                                                  Spacer(),
-                                                                  InkWell(
-                                                                    onTap: () {
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                    },
-                                                                    child:
-                                                                    Container(
-                                                                      //    color: Colors.redAccent,
-                                                                      padding:
-                                                                      EdgeInsets
-                                                                          .zero,
-                                                                      child:
-                                                                      FaIcon(
-                                                                        FontAwesomeIcons
-                                                                            .xmark,
-                                                                        size:
-                                                                        15,
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    width: 5,
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              SizedBox(
-                                                                height: 10,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 15,
-                                                                  ),
-                                                                  Text(
-                                                                    "Staff member name..*",
-                                                                    style: TextStyle(
-                                                                        color: Color(
-                                                                            0xFF8A95A8),
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        fontSize:
-                                                                        13),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              SizedBox(
-                                                                height: 5,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                      width:
-                                                                      15),
-                                                                  Material(
-                                                                    elevation:
-                                                                    4,
-                                                                    child:
-                                                                    Container(
-                                                                      height:
-                                                                      50,
-                                                                      width: MediaQuery.of(context)
-                                                                          .size
-                                                                          .width *
-                                                                          .54,
-                                                                      decoration:
-                                                                      BoxDecoration(
-                                                                        borderRadius:
-                                                                        BorderRadius.circular(2),
-                                                                        border:
-                                                                        Border.all(
-                                                                          color:
-                                                                          Color(0xFF8A95A8),
-                                                                        ),
-                                                                      ),
-                                                                      child:
-                                                                      Stack(
-                                                                        children: [
-                                                                          Positioned
-                                                                              .fill(
-                                                                            child:
-                                                                            TextField(
-                                                                              onChanged: (value) {
-                                                                                setState(() {
-                                                                                  nameerror = false;
-                                                                                });
-                                                                              },
-                                                                              controller: name,
-                                                                              cursorColor: blueColor,
-                                                                              decoration: InputDecoration(
-                                                                                hintText: "Enter a staff member name here..*",
-                                                                                hintStyle: TextStyle(
-                                                                                  fontSize: 13,
-                                                                                  color: Color(0xFF8A95A8),
-                                                                                ),
-                                                                                enabledBorder: nameerror
-                                                                                    ? OutlineInputBorder(
-                                                                                  borderRadius: BorderRadius.circular(2),
-                                                                                  borderSide: BorderSide(
-                                                                                    color: Colors.red,
-                                                                                  ),
-                                                                                )
-                                                                                    : InputBorder.none,
-                                                                                border: InputBorder.none,
-                                                                                contentPadding: EdgeInsets.all(12),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                      width:
-                                                                      20),
-                                                                ],
-                                                              ),
-                                                              nameerror
-                                                                  ? Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width:
-                                                                    117,
-                                                                  ),
-                                                                  Text(
-                                                                    namemessage,
-                                                                    style:
-                                                                    TextStyle(color: Colors.red),
-                                                                  ),
-                                                                ],
-                                                              )
-                                                                  : Container(),
-                                                              SizedBox(
-                                                                height: 10,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 15,
-                                                                  ),
-                                                                  Text(
-                                                                    "Designation...*",
-                                                                    style: TextStyle(
-                                                                      // color: Colors.grey,
-                                                                        color: Color(0xFF8A95A8),
-                                                                        fontWeight: FontWeight.bold,
-                                                                        fontSize: 13),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              SizedBox(
-                                                                height: 5,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                      width:
-                                                                      15),
-                                                                  Material(
-                                                                    elevation:
-                                                                    4,
-                                                                    child:
-                                                                    Container(
-                                                                      height:
-                                                                      50,
-                                                                      width: MediaQuery.of(context)
-                                                                          .size
-                                                                          .width *
-                                                                          .54,
-                                                                      decoration:
-                                                                      BoxDecoration(
-                                                                        borderRadius:
-                                                                        BorderRadius.circular(2),
-                                                                        border:
-                                                                        Border.all(
-                                                                          color:
-                                                                          Color(0xFF8A95A8),
-                                                                        ),
-                                                                      ),
-                                                                      child:
-                                                                      Stack(
-                                                                        children: [
-                                                                          Positioned
-                                                                              .fill(
-                                                                            child:
-                                                                            TextField(
-                                                                              onChanged: (value) {
-                                                                                setState(() {
-                                                                                  designationerror = false;
-                                                                                });
-                                                                              },
-                                                                              controller: designation,
-                                                                              cursorColor: blueColor,
-                                                                              decoration: InputDecoration(
-                                                                                hintText: "Enter Designation here..*",
-                                                                                hintStyle: TextStyle(
-                                                                                  fontSize: 13,
-                                                                                  color: Color(0xFF8A95A8),
-                                                                                ),
-                                                                                enabledBorder: designationerror
-                                                                                    ? OutlineInputBorder(
-                                                                                  borderRadius: BorderRadius.circular(2),
-                                                                                  borderSide: BorderSide(
-                                                                                    color: Colors.red,
-                                                                                  ),
-                                                                                )
-                                                                                    : InputBorder.none,
-                                                                                border: InputBorder.none,
-                                                                                contentPadding: EdgeInsets.all(12),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                      width:
-                                                                      20),
-                                                                ],
-                                                              ),
-                                                              designationerror
-                                                                  ? Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width:
-                                                                    117,
-                                                                  ),
-                                                                  Text(
-                                                                    designationmessage,
-                                                                    style:
-                                                                    TextStyle(color: Colors.red),
-                                                                  ),
-                                                                ],
-                                                              )
-                                                                  : Container(),
-                                                              SizedBox(
-                                                                height: 10,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 15,
-                                                                  ),
-                                                                  Text(
-                                                                    "Phone Number...",
-                                                                    style: TextStyle(
-                                                                      // color: Colors.grey,
-                                                                        color: Color(0xFF8A95A8),
-                                                                        fontWeight: FontWeight.bold,
-                                                                        fontSize: 13),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              SizedBox(
-                                                                height: 5,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                      width:
-                                                                      15),
-                                                                  Material(
-                                                                    elevation:
-                                                                    4,
-                                                                    child:
-                                                                    Container(
-                                                                      height:
-                                                                      50,
-                                                                      width: MediaQuery.of(context)
-                                                                          .size
-                                                                          .width *
-                                                                          .54,
-                                                                      decoration:
-                                                                      BoxDecoration(
-                                                                        borderRadius:
-                                                                        BorderRadius.circular(2),
-                                                                        border:
-                                                                        Border.all(
-                                                                          color:
-                                                                          Color(0xFF8A95A8),
-                                                                        ),
-                                                                      ),
-                                                                      child:
-                                                                      Stack(
-                                                                        children: [
-                                                                          Positioned
-                                                                              .fill(
-                                                                            child:
-                                                                            TextField(
-                                                                              onChanged: (value) {
-                                                                                setState(() {
-                                                                                  phonenumbererror = false;
-                                                                                });
-                                                                              },
-                                                                              controller: phonenumber,
-                                                                              cursorColor: blueColor,
-                                                                              decoration: InputDecoration(
-                                                                                hintText: "Enter Phone Number here..*",
-                                                                                hintStyle: TextStyle(
-                                                                                  fontSize: 13,
-                                                                                  color: Color(0xFF8A95A8),
-                                                                                ),
-                                                                                enabledBorder: phonenumbererror
-                                                                                    ? OutlineInputBorder(
-                                                                                  borderRadius: BorderRadius.circular(2),
-                                                                                  borderSide: BorderSide(
-                                                                                    color: Colors.red,
-                                                                                  ),
-                                                                                )
-                                                                                    : InputBorder.none,
-                                                                                border: InputBorder.none,
-                                                                                contentPadding: EdgeInsets.all(12),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                      width:
-                                                                      20),
-                                                                ],
-                                                              ),
-                                                              phonenumbererror
-                                                                  ? Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width:
-                                                                    117,
-                                                                  ),
-                                                                  Text(
-                                                                    phonenumbermessage,
-                                                                    style:
-                                                                    TextStyle(color: Colors.red),
-                                                                  ),
-                                                                ],
-                                                              )
-                                                                  : Container(),
-                                                              SizedBox(
-                                                                height: 10,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 15,
-                                                                  ),
-                                                                  Text(
-                                                                    "Email...*",
-                                                                    style: TextStyle(
-                                                                      // color: Colors.grey,
-                                                                        color: Color(0xFF8A95A8),
-                                                                        fontWeight: FontWeight.bold,
-                                                                        fontSize: 13),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              SizedBox(
-                                                                height: 5,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                      width:
-                                                                      15),
-                                                                  Material(
-                                                                    elevation:
-                                                                    4,
-                                                                    child:
-                                                                    Container(
-                                                                      height:
-                                                                      50,
-                                                                      width: MediaQuery.of(context)
-                                                                          .size
-                                                                          .width *
-                                                                          .54,
-                                                                      decoration:
-                                                                      BoxDecoration(
-                                                                        borderRadius:
-                                                                        BorderRadius.circular(2),
-                                                                        border:
-                                                                        Border.all(
-                                                                          color:
-                                                                          Color(0xFF8A95A8),
-                                                                        ),
-                                                                      ),
-                                                                      child:
-                                                                      Stack(
-                                                                        children: [
-                                                                          Positioned
-                                                                              .fill(
-                                                                            child:
-                                                                            TextField(
-                                                                              onChanged: (value) {
-                                                                                setState(() {
-                                                                                  emailerror = false;
-                                                                                });
-                                                                              },
-                                                                              controller: email,
-                                                                              cursorColor: blueColor,
-                                                                              decoration: InputDecoration(
-                                                                                hintText: "Enter Email here..*",
-                                                                                hintStyle: TextStyle(
-                                                                                  fontSize: 13,
-                                                                                  color: Color(0xFF8A95A8),
-                                                                                ),
-                                                                                enabledBorder: emailerror
-                                                                                    ? OutlineInputBorder(
-                                                                                  borderRadius: BorderRadius.circular(2),
-                                                                                  borderSide: BorderSide(
-                                                                                    color: Colors.red,
-                                                                                  ),
-                                                                                )
-                                                                                    : InputBorder.none,
-                                                                                border: InputBorder.none,
-                                                                                contentPadding: EdgeInsets.all(12),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                      width:
-                                                                      20),
-                                                                ],
-                                                              ),
-                                                              emailerror
-                                                                  ? Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width:
-                                                                    117,
-                                                                  ),
-                                                                  Text(
-                                                                    emailmessage,
-                                                                    style:
-                                                                    TextStyle(color: Colors.red),
-                                                                  ),
-                                                                ],
-                                                              )
-                                                                  : Container(),
-                                                              SizedBox(
-                                                                height: 10,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 15,
-                                                                  ),
-                                                                  Text(
-                                                                    "Password...*",
-                                                                    style: TextStyle(
-                                                                      // color: Colors.grey,
-                                                                        color: Color(0xFF8A95A8),
-                                                                        fontWeight: FontWeight.bold,
-                                                                        fontSize: 13),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              SizedBox(
-                                                                height: 5,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                      width:
-                                                                      15),
-                                                                  Material(
-                                                                    elevation:
-                                                                    4,
-                                                                    child:
-                                                                    Container(
-                                                                      height:
-                                                                      50,
-                                                                      width: MediaQuery.of(context)
-                                                                          .size
-                                                                          .width *
-                                                                          .54,
-                                                                      decoration:
-                                                                      BoxDecoration(
-                                                                        borderRadius:
-                                                                        BorderRadius.circular(2),
-                                                                        border:
-                                                                        Border.all(
-                                                                          color:
-                                                                          Color(0xFF8A95A8),
-                                                                        ),
-                                                                      ),
-                                                                      child:
-                                                                      Stack(
-                                                                        children: [
-                                                                          Positioned
-                                                                              .fill(
-                                                                            child:
-                                                                            TextField(
-                                                                              onChanged: (value) {
-                                                                                setState(() {
-                                                                                  passworderror = false;
-                                                                                });
-                                                                              },
-                                                                              controller: password,
-                                                                              cursorColor: blueColor,
-                                                                              decoration: InputDecoration(
-                                                                                hintText: "Enter Password here..*",
-                                                                                hintStyle: TextStyle(
-                                                                                  fontSize: 13,
-                                                                                  color: Color(0xFF8A95A8),
-                                                                                ),
-                                                                                enabledBorder: passworderror
-                                                                                    ? OutlineInputBorder(
-                                                                                  borderRadius: BorderRadius.circular(2),
-                                                                                  borderSide: BorderSide(
-                                                                                    color: Colors.red,
-                                                                                  ),
-                                                                                )
-                                                                                    : InputBorder.none,
-                                                                                border: InputBorder.none,
-                                                                                contentPadding: EdgeInsets.all(12),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                      width:
-                                                                      20),
-                                                                ],
-                                                              ),
-                                                              passworderror
-                                                                  ? Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width:
-                                                                    117,
-                                                                  ),
-                                                                  Text(
-                                                                    passwordmessage,
-                                                                    style:
-                                                                    TextStyle(color: Colors.red),
-                                                                  ),
-                                                                ],
-                                                              )
-                                                                  : Container(),
-                                                              SizedBox(
-                                                                height: 20,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  if(MediaQuery.of(context).size.width > 500)
-                                                                    SizedBox(
-                                                                      width: MediaQuery.of(context).size.width *
-                                                                          0.013,
-                                                                    ),
-                                                                  if(MediaQuery.of(context).size.width < 500)
-                                                                    SizedBox(
-                                                                      width: MediaQuery.of(context).size.width *
-                                                                          0.035,
-                                                                    ),
-                                                                  GestureDetector(
-                                                                    onTap:
-                                                                        () async {
-                                                                      if (name.text
-                                                                          .isEmpty) {
-                                                                        setState(
-                                                                                () {
-                                                                              nameerror =
-                                                                              true;
-                                                                              namemessage =
-                                                                              "name is required";
-                                                                            });
-                                                                      } else {
-                                                                        setState(
-                                                                                () {
-                                                                              nameerror =
-                                                                              false;
-                                                                            });
-                                                                      }
-                                                                      if (designation
-                                                                          .text
-                                                                          .isEmpty) {
-                                                                        setState(
-                                                                                () {
-                                                                              designationerror =
-                                                                              true;
-                                                                              designationmessage =
-                                                                              "designation is required";
-                                                                            });
-                                                                      } else {
-                                                                        setState(
-                                                                                () {
-                                                                              designationerror =
-                                                                              false;
-                                                                            });
-                                                                      }
-                                                                      if (phonenumber
-                                                                          .text
-                                                                          .isEmpty) {
-                                                                        setState(
-                                                                                () {
-                                                                              phonenumbererror =
-                                                                              true;
-                                                                              phonenumbermessage =
-                                                                              "number is required";
-                                                                            });
-                                                                      } else {
-                                                                        setState(
-                                                                                () {
-                                                                              phonenumbererror =
-                                                                              false;
-                                                                            });
-                                                                      }
-                                                                      if (email.text
-                                                                          .isEmpty) {
-                                                                        setState(
-                                                                                () {
-                                                                              emailerror =
-                                                                              true;
-                                                                              emailmessage =
-                                                                              "email is required";
-                                                                            });
-                                                                      } else {
-                                                                        setState(
-                                                                                () {
-                                                                              emailerror =
-                                                                              false;
-                                                                            });
-                                                                      }
-                                                                      if (password
-                                                                          .text
-                                                                          .isEmpty) {
-                                                                        setState(
-                                                                                () {
-                                                                              passworderror =
-                                                                              true;
-                                                                              passwordmessage =
-                                                                              "password is required";
-                                                                            });
-                                                                      } else {
-                                                                        setState(
-                                                                                () {
-                                                                              passworderror =
-                                                                              false;
-                                                                            });
-                                                                      }
-                                                                      if (!nameerror &&
-                                                                          !designationerror &&
-                                                                          !phonenumbererror &&
-                                                                          !emailerror &&
-                                                                          !phonenumbererror) {
-                                                                        setState(
-                                                                                () {
-                                                                              loading =
-                                                                              true;
-                                                                            });
-                                                                      }
-                                                                      SharedPreferences
-                                                                      prefs =
-                                                                      await SharedPreferences
-                                                                          .getInstance();
-                                                                      String?
-                                                                      adminId =
-                                                                      prefs.getString(
-                                                                          "adminId");
-                                                                      if (adminId !=
-                                                                          null) {
-                                                                        try {
-                                                                          await StaffMemberRepository()
-                                                                              .addStaffMember(
-                                                                            adminId:
-                                                                            adminId,
-                                                                            staffmemberName:
-                                                                            name.text,
-                                                                            staffmemberDesignation:
-                                                                            designation.text,
-                                                                            staffmemberPhoneNumber:
-                                                                            phonenumber.text,
-                                                                            staffmemberEmail:
-                                                                            email.text,
-                                                                            staffmemberPassword:
-                                                                            password.text,
-                                                                          );
-                                                                          setState(
-                                                                                  () {
-                                                                                loading =
-                                                                                false;
-                                                                              });
-                                                                          Navigator.of(
-                                                                              context)
-                                                                              .pop(
-                                                                              true);
-                                                                        } catch (e) {
-                                                                          setState(
-                                                                                  () {
-                                                                                loading =
-                                                                                false;
-                                                                              });
-                                                                          // Handle error
-                                                                        }
-                                                                      }
-                                                                    },
-                                                                    child: ClipRRect(
-                                                                      borderRadius:
-                                                                      BorderRadius.circular(
-                                                                          5.0),
-                                                                      child:
-                                                                      Container(
-                                                                        height:
-                                                                        30.0,
-                                                                        width: MediaQuery.of(context).size.width *
-                                                                            .36,
-                                                                        decoration:
-                                                                        BoxDecoration(
-                                                                          borderRadius:
-                                                                          BorderRadius.circular(5.0),
-                                                                          color: blueColor
-
-
-,
-                                                                          boxShadow: [
-                                                                            BoxShadow(
-                                                                              color: Colors.grey,
-                                                                              offset: Offset(0.0, 1.0), //(x,y)
-                                                                              blurRadius: 6.0,
-                                                                            ),
-                                                                          ],
-                                                                        ),
+                                                                  Row(
+                                                                    children: [
+                                                                      Spacer(),
+                                                                      InkWell(
+                                                                        onTap: () {
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                        },
                                                                         child:
-                                                                        Center(
+                                                                        Container(
+                                                                          //    color: Colors.redAccent,
+                                                                          padding:
+                                                                          EdgeInsets
+                                                                              .zero,
                                                                           child:
-                                                                          Text(
-                                                                            "Add staff Member",
-                                                                            style: TextStyle(
-                                                                                color: Colors.white,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 13),
+                                                                          FaIcon(
+                                                                            FontAwesomeIcons
+                                                                                .xmark,
+                                                                            size:
+                                                                            20,
+                                                                            color: Color(
+                                                                                0xFF8A95A8),
                                                                           ),
                                                                         ),
                                                                       ),
-                                                                    ),
+                                                                      SizedBox(
+                                                                        width: 5,
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  Row(
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width: 15,
+                                                                      ),
+                                                                      Text(
+                                                                        "New Staff Member",
+                                                                        style: TextStyle(
+                                                                            color: blueColor
+
+
+                                                                            ,
+                                                                            fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                            fontSize:
+                                                                            18),
+                                                                      ),
+
+                                                                    ],
                                                                   ),
                                                                   SizedBox(
-                                                                    width: 15,
+                                                                    height: 10,
                                                                   ),
-                                                                  InkWell(
-                                                                    onTap:(){
-                                                                      Navigator.pop(context);
-                                                                    },
-                                                                    child: Text(
-                                                                        "Cancel"),
+                                                                  Row(
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width: 15,
+                                                                      ),
+                                                                      Text(
+                                                                        "Staff member name..*",
+                                                                        style: TextStyle(
+                                                                            color: Color(
+                                                                                0xFF8A95A8),
+                                                                            fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                            fontSize:
+                                                                            13),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                  Row(
+                                                                    children: [
+                                                                      SizedBox(
+                                                                          width:
+                                                                          15),
+                                                                      Material(
+                                                                        elevation:
+                                                                        4,
+                                                                        child:
+                                                                        Container(
+                                                                          height:
+                                                                          50,
+                                                                          width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                              .65,
+                                                                          decoration:
+                                                                          BoxDecoration(
+                                                                            borderRadius:
+                                                                            BorderRadius.circular(2),
+                                                                            border:
+                                                                            Border.all(
+                                                                              color:
+                                                                              Color(0xFF8A95A8),
+                                                                            ),
+                                                                          ),
+                                                                          child:
+                                                                          Stack(
+                                                                            children: [
+                                                                              Positioned
+                                                                                  .fill(
+                                                                                child:
+                                                                                TextField(
+                                                                                  onChanged: (value) {
+                                                                                    setState(() {
+                                                                                      nameerror = false;
+                                                                                    });
+                                                                                  },
+                                                                                  controller: name,
+                                                                                  cursorColor: blueColor,
+                                                                                  decoration: InputDecoration(
+                                                                                    hintText: "Enter a staff member name here..*",
+                                                                                    hintStyle: TextStyle(
+                                                                                      fontSize: 13,
+                                                                                      color: Color(0xFF8A95A8),
+                                                                                    ),
+                                                                                    enabledBorder: nameerror
+                                                                                        ? OutlineInputBorder(
+                                                                                      borderRadius: BorderRadius.circular(2),
+                                                                                      borderSide: BorderSide(
+                                                                                        color: Colors.red,
+                                                                                      ),
+                                                                                    )
+                                                                                        : InputBorder.none,
+                                                                                    border: InputBorder.none,
+                                                                                    contentPadding: EdgeInsets.all(12),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(
+                                                                          width:
+                                                                          20),
+                                                                    ],
+                                                                  ),
+                                                                  nameerror
+                                                                      ? Row(
+                                                                    children: [
+                                                                      SizedBox(width: 12,),
+                                                                      Expanded(
+                                                                        child: Text(
+                                                                          namemessage,
+                                                                          style:
+                                                                          TextStyle(color: Colors.red,fontSize: 14),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(width: 20,),
+                                                                    ],
+                                                                  )
+                                                                      : Container(),
+                                                                  SizedBox(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Row(
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width: 15,
+                                                                      ),
+                                                                      Text(
+                                                                        "Designation...*",
+                                                                        style: TextStyle(
+                                                                          // color: Colors.grey,
+                                                                            color: Color(0xFF8A95A8),
+                                                                            fontWeight: FontWeight.bold,
+                                                                            fontSize: 13),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                  Row(
+                                                                    children: [
+                                                                      SizedBox(
+                                                                          width:
+                                                                          15),
+                                                                      Material(
+                                                                        elevation:
+                                                                        4,
+                                                                        child:
+                                                                        Container(
+                                                                          height:
+                                                                          50,
+                                                                          width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                              .65,
+                                                                          decoration:
+                                                                          BoxDecoration(
+                                                                            borderRadius:
+                                                                            BorderRadius.circular(2),
+                                                                            border:
+                                                                            Border.all(
+                                                                              color:
+                                                                              Color(0xFF8A95A8),
+                                                                            ),
+                                                                          ),
+                                                                          child:
+                                                                          Stack(
+                                                                            children: [
+                                                                              Positioned
+                                                                                  .fill(
+                                                                                child:
+                                                                                TextField(
+                                                                                  onChanged: (value) {
+                                                                                    setState(() {
+                                                                                      designationerror = false;
+                                                                                    });
+                                                                                  },
+                                                                                  controller: designation,
+                                                                                  cursorColor: blueColor,
+                                                                                  decoration: InputDecoration(
+                                                                                    hintText: "Enter Designation here..*",
+                                                                                    hintStyle: TextStyle(
+                                                                                      fontSize: 13,
+                                                                                      color: Color(0xFF8A95A8),
+                                                                                    ),
+                                                                                    enabledBorder: designationerror
+                                                                                        ? OutlineInputBorder(
+                                                                                      borderRadius: BorderRadius.circular(2),
+                                                                                      borderSide: BorderSide(
+                                                                                        color: Colors.red,
+                                                                                      ),
+                                                                                    )
+                                                                                        : InputBorder.none,
+                                                                                    border: InputBorder.none,
+                                                                                    contentPadding: EdgeInsets.all(12),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(
+                                                                          width:
+                                                                          20),
+                                                                    ],
+                                                                  ),
+                                                                  designationerror
+                                                                      ? Row(
+                                                                    children: [
+                                                                      SizedBox(width: 12,),
+                                                                      Expanded(
+                                                                        child: Text(
+                                                                          designationmessage,
+                                                                          style:
+                                                                          TextStyle(color: Colors.red,fontSize: 14),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(width: 20,),
+                                                                    ],
+                                                                  )
+                                                                      : Container(),
+                                                                  SizedBox(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Row(
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width: 15,
+                                                                      ),
+                                                                      Text(
+                                                                        "Phone Number...",
+                                                                        style: TextStyle(
+                                                                          // color: Colors.grey,
+                                                                            color: Color(0xFF8A95A8),
+                                                                            fontWeight: FontWeight.bold,
+                                                                            fontSize: 13),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                  Row(
+                                                                    children: [
+                                                                      SizedBox(
+                                                                          width:
+                                                                          15),
+                                                                      Material(
+                                                                        elevation:
+                                                                        4,
+                                                                        child:
+                                                                        Container(
+                                                                          height:
+                                                                          50,
+                                                                          width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                              .65,
+                                                                          decoration:
+                                                                          BoxDecoration(
+                                                                            borderRadius:
+                                                                            BorderRadius.circular(2),
+                                                                            border:
+                                                                            Border.all(
+                                                                              color:
+                                                                              Color(0xFF8A95A8),
+                                                                            ),
+                                                                          ),
+                                                                          child:
+                                                                          Stack(
+                                                                            children: [
+                                                                              Positioned
+                                                                                  .fill(
+                                                                                child:
+                                                                                TextField(
+                                                                                  onChanged: (value) {
+                                                                                    setState(() {
+                                                                                      phonenumbererror = false;
+                                                                                    });
+                                                                                  },
+                                                                                  controller: phonenumber,
+                                                                                  inputFormatters: [
+                                                                                    FilteringTextInputFormatter.digitsOnly,
+                                                                                    LengthLimitingTextInputFormatter(10),
+                                                                                    PhoneNumberFormatter(),
+                                                                                  ],
+                                                                                  keyboardType: TextInputType.number,
+                                                                                  cursorColor: blueColor,
+                                                                                  decoration: InputDecoration(
+                                                                                    hintText: "Enter Phone Number here..*",
+                                                                                    hintStyle: TextStyle(
+                                                                                      fontSize: 13,
+                                                                                      color: Color(0xFF8A95A8),
+                                                                                    ),
+                                                                                    enabledBorder: phonenumbererror
+                                                                                        ? OutlineInputBorder(
+                                                                                      borderRadius: BorderRadius.circular(2),
+                                                                                      borderSide: BorderSide(
+                                                                                        color: Colors.red,
+                                                                                      ),
+                                                                                    )
+                                                                                        : InputBorder.none,
+                                                                                    border: InputBorder.none,
+                                                                                    contentPadding: EdgeInsets.all(12),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(
+                                                                          width:
+                                                                          20),
+                                                                    ],
+                                                                  ),
+                                                                  phonenumbererror
+                                                                      ? Row(
+                                                                    children: [
+                                                                      SizedBox(width: 12,),
+                                                                      Expanded(
+                                                                        child: Text(
+                                                                          phonenumbermessage,
+                                                                          style:
+                                                                          TextStyle(color: Colors.red,fontSize: 14),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(width: 20,),
+                                                                    ],
+                                                                  )
+                                                                      : Container(),
+                                                                  SizedBox(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Row(
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width: 15,
+                                                                      ),
+                                                                      Text(
+                                                                        "Email...*",
+                                                                        style: TextStyle(
+                                                                          // color: Colors.grey,
+                                                                            color: Color(0xFF8A95A8),
+                                                                            fontWeight: FontWeight.bold,
+                                                                            fontSize: 13),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                  Row(
+                                                                    children: [
+                                                                      SizedBox(
+                                                                          width:
+                                                                          15),
+                                                                      Material(
+                                                                        elevation:
+                                                                        4,
+                                                                        child:
+                                                                        Container(
+                                                                          height:
+                                                                          50,
+                                                                          width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                              .65,
+                                                                          decoration:
+                                                                          BoxDecoration(
+                                                                            borderRadius:
+                                                                            BorderRadius.circular(2),
+                                                                            border:
+                                                                            Border.all(
+                                                                              color:
+                                                                              Color(0xFF8A95A8),
+                                                                            ),
+                                                                          ),
+                                                                          child:
+                                                                          Stack(
+                                                                            children: [
+                                                                              Positioned
+                                                                                  .fill(
+                                                                                child:
+                                                                                TextField(
+                                                                                  onChanged: (value) {
+                                                                                    setState(() {
+                                                                                      emailerror = false;
+                                                                                    });
+                                                                                  },
+                                                                                  controller: email,
+                                                                                  cursorColor: blueColor,
+                                                                                  decoration: InputDecoration(
+                                                                                    hintText: "Enter Email here..*",
+                                                                                    hintStyle: TextStyle(
+                                                                                      fontSize: 13,
+                                                                                      color: Color(0xFF8A95A8),
+                                                                                    ),
+                                                                                    enabledBorder: emailerror
+                                                                                        ? OutlineInputBorder(
+                                                                                      borderRadius: BorderRadius.circular(2),
+                                                                                      borderSide: BorderSide(
+                                                                                        color: Colors.red,
+                                                                                      ),
+                                                                                    )
+                                                                                        : InputBorder.none,
+                                                                                    border: InputBorder.none,
+                                                                                    contentPadding: EdgeInsets.all(12),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(
+                                                                          width:
+                                                                          20),
+                                                                    ],
+                                                                  ),
+                                                                  emailerror
+                                                                      ? Row(
+                                                                    children: [
+                                                                      SizedBox(width: 12,),
+                                                                      Expanded(
+                                                                        child: Text(
+                                                                          emailmessage,
+                                                                          style:
+                                                                          TextStyle(color: Colors.red,fontSize: 14),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(width: 20,),
+                                                                    ],
+                                                                  )
+                                                                      : Container(),
+                                                                  SizedBox(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Row(
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width: 15,
+                                                                      ),
+                                                                      Text(
+                                                                        "Password...*",
+                                                                        style: TextStyle(
+                                                                          // color: Colors.grey,
+                                                                            color: Color(0xFF8A95A8),
+                                                                            fontWeight: FontWeight.bold,
+                                                                            fontSize: 13),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                  Row(
+                                                                    children: [
+                                                                      SizedBox(
+                                                                          width:
+                                                                          15),
+                                                                      Material(
+                                                                        elevation:
+                                                                        4,
+                                                                        child:
+                                                                        Container(
+                                                                          height:
+                                                                          50,
+                                                                          width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                              .65,
+                                                                          decoration:
+                                                                          BoxDecoration(
+                                                                            borderRadius:
+                                                                            BorderRadius.circular(2),
+                                                                            border:
+                                                                            Border.all(
+                                                                              color:
+                                                                              Color(0xFF8A95A8),
+                                                                            ),
+                                                                          ),
+                                                                          child:
+                                                                          Stack(
+                                                                            children: [
+                                                                              Positioned
+                                                                                  .fill(
+                                                                                child:
+                                                                                TextField(
+                                                                                  onChanged: (value) {
+                                                                                    setState(() {
+                                                                                      passworderror = false;
+                                                                                    });
+                                                                                  },
+                                                                                  controller: password,
+                                                                                  cursorColor: blueColor,
+                                                                                  decoration: InputDecoration(
+                                                                                    hintText: "Enter Password here..*",
+                                                                                    hintStyle: TextStyle(
+                                                                                      fontSize: 13,
+                                                                                      color: Color(0xFF8A95A8),
+                                                                                    ),
+                                                                                    enabledBorder: passworderror
+                                                                                        ? OutlineInputBorder(
+                                                                                      borderRadius: BorderRadius.circular(2),
+                                                                                      borderSide: BorderSide(
+                                                                                        color: Colors.red,
+                                                                                      ),
+                                                                                    )
+                                                                                        : InputBorder.none,
+                                                                                    border: InputBorder.none,
+                                                                                    contentPadding: EdgeInsets.all(12),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(
+                                                                          width:
+                                                                          20),
+                                                                    ],
+                                                                  ),
+                                                                  passworderror
+                                                                      ? Row(
+                                                                    children: [
+                                                                      SizedBox(width: 12,),
+                                                                      Expanded(
+                                                                        child: Text(
+                                                                          passwordmessage,
+                                                                          style:
+                                                                          TextStyle(color: Colors.red,fontSize: 14),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(width: 20,),
+                                                                    ],
+                                                                  )
+                                                                      : Container(),
+                                                                  SizedBox(
+                                                                    height: 20,
+                                                                  ),
+                                                                  Row(
+                                                                    children: [
+                                                                      if (MediaQuery.of(
+                                                                          context)
+                                                                          .size
+                                                                          .width >
+                                                                          500)
+                                                                        SizedBox(
+                                                                          width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                              0.013,
+                                                                        ),
+                                                                      if (MediaQuery.of(
+                                                                          context)
+                                                                          .size
+                                                                          .width <
+                                                                          500)
+                                                                        SizedBox(
+                                                                          width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                              0.035,
+                                                                        ),
+                                                                      //                                                                   GestureDetector(
+                                                                      //                                                                     onTap:
+                                                                      //                                                                         () async {
+                                                                      //                                                                       if (name
+                                                                      //                                                                           .text
+                                                                      //                                                                           .isEmpty) {
+                                                                      //                                                                         setState(
+                                                                      //                                                                             () {
+                                                                      //                                                                           nameerror =
+                                                                      //                                                                               true;
+                                                                      //                                                                           namemessage =
+                                                                      //                                                                               "required";
+                                                                      //                                                                         });
+                                                                      //                                                                       } else {
+                                                                      //                                                                         setState(
+                                                                      //                                                                             () {
+                                                                      //                                                                           nameerror =
+                                                                      //                                                                               false;
+                                                                      //                                                                         });
+                                                                      //                                                                       }
+                                                                      //                                                                       if (designation
+                                                                      //                                                                           .text
+                                                                      //                                                                           .isEmpty) {
+                                                                      //                                                                         setState(
+                                                                      //                                                                             () {
+                                                                      //                                                                           designationerror =
+                                                                      //                                                                               true;
+                                                                      //                                                                           designationmessage =
+                                                                      //                                                                               "required";
+                                                                      //                                                                         });
+                                                                      //                                                                       } else {
+                                                                      //                                                                         setState(
+                                                                      //                                                                             () {
+                                                                      //                                                                           designationerror =
+                                                                      //                                                                               false;
+                                                                      //                                                                         });
+                                                                      //                                                                       }
+                                                                      //                                                                       if (phonenumber
+                                                                      //                                                                           .text
+                                                                      //                                                                           .isEmpty) {
+                                                                      //                                                                         setState(
+                                                                      //                                                                             () {
+                                                                      //                                                                           phonenumbererror =
+                                                                      //                                                                               true;
+                                                                      //                                                                           phonenumbermessage =
+                                                                      //                                                                               "required";
+                                                                      //                                                                         });
+                                                                      //                                                                       } else {
+                                                                      //                                                                         setState(
+                                                                      //                                                                             () {
+                                                                      //                                                                           phonenumbererror =
+                                                                      //                                                                               false;
+                                                                      //                                                                         });
+                                                                      //                                                                       }
+                                                                      //                                                                       if (email
+                                                                      //                                                                           .text
+                                                                      //                                                                           .isEmpty) {
+                                                                      //                                                                         setState(
+                                                                      //                                                                             () {
+                                                                      //                                                                           emailerror =
+                                                                      //                                                                               true;
+                                                                      //                                                                           emailmessage =
+                                                                      //                                                                               "required";
+                                                                      //                                                                         });
+                                                                      //                                                                       } else {
+                                                                      //                                                                         setState(
+                                                                      //                                                                             () {
+                                                                      //                                                                           emailerror =
+                                                                      //                                                                               false;
+                                                                      //                                                                         });
+                                                                      //                                                                       }
+                                                                      //                                                                       if (password
+                                                                      //                                                                           .text
+                                                                      //                                                                           .isEmpty) {
+                                                                      //                                                                         setState(
+                                                                      //                                                                             () {
+                                                                      //                                                                           passworderror =
+                                                                      //                                                                               true;
+                                                                      //                                                                           passwordmessage =
+                                                                      //                                                                               "required";
+                                                                      //                                                                         });
+                                                                      //                                                                       } else {
+                                                                      //                                                                         setState(
+                                                                      //                                                                             () {
+                                                                      //                                                                           passworderror =
+                                                                      //                                                                               false;
+                                                                      //                                                                         });
+                                                                      //                                                                       }
+                                                                      //                                                                       if (!nameerror &&
+                                                                      //                                                                           !designationerror &&
+                                                                      //                                                                           !phonenumbererror &&
+                                                                      //                                                                           !emailerror &&
+                                                                      //                                                                           !phonenumbererror) {
+                                                                      //                                                                         setState(
+                                                                      //                                                                             () {
+                                                                      //                                                                           loading =
+                                                                      //                                                                               true;
+                                                                      //                                                                         });
+                                                                      //                                                                       }
+                                                                      //                                                                       SharedPreferences
+                                                                      //                                                                           prefs =
+                                                                      //                                                                           await SharedPreferences
+                                                                      //                                                                               .getInstance();
+                                                                      //                                                                       String?
+                                                                      //                                                                           adminId =
+                                                                      //                                                                           prefs.getString(
+                                                                      //                                                                               "adminId");
+                                                                      //                                                                       if (adminId !=
+                                                                      //                                                                           null) {
+                                                                      //                                                                         try {
+                                                                      //                                                                           await StaffMemberRepository()
+                                                                      //                                                                               .addStaffMember(
+                                                                      //                                                                             adminId:
+                                                                      //                                                                                 adminId,
+                                                                      //                                                                             staffmemberName:
+                                                                      //                                                                                 name.text,
+                                                                      //                                                                             staffmemberDesignation:
+                                                                      //                                                                                 designation.text,
+                                                                      //                                                                             staffmemberPhoneNumber:
+                                                                      //                                                                                 phonenumber.text,
+                                                                      //                                                                             staffmemberEmail:
+                                                                      //                                                                                 email.text,
+                                                                      //                                                                             staffmemberPassword:
+                                                                      //                                                                                 password.text,
+                                                                      //                                                                           );
+                                                                      //                                                                           setState(
+                                                                      //                                                                               () {
+                                                                      //                                                                             loading =
+                                                                      //                                                                                 false;
+                                                                      //                                                                           });
+                                                                      //                                                                           Navigator.of(context)
+                                                                      //                                                                               .pop(true);
+                                                                      //                                                                         } catch (e) {
+                                                                      //                                                                           setState(
+                                                                      //                                                                               () {
+                                                                      //                                                                             loading =
+                                                                      //                                                                                 false;
+                                                                      //                                                                           });
+                                                                      //                                                                           // Handle error
+                                                                      //                                                                         }
+                                                                      //                                                                       }
+                                                                      //                                                                     },
+                                                                      //                                                                     child:
+                                                                      //                                                                         ClipRRect(
+                                                                      //                                                                       borderRadius:
+                                                                      //                                                                           BorderRadius.circular(
+                                                                      //                                                                               5.0),
+                                                                      //                                                                       child:
+                                                                      //                                                                           Container(
+                                                                      //                                                                         height:
+                                                                      //                                                                             30.0,
+                                                                      //                                                                         width: MediaQuery.of(context).size.width *
+                                                                      //                                                                             .36,
+                                                                      //                                                                         decoration:
+                                                                      //                                                                             BoxDecoration(
+                                                                      //                                                                           borderRadius:
+                                                                      //                                                                               BorderRadius.circular(5.0),
+                                                                      //                                                                           color: blueColor
+                                                                      //
+                                                                      //
+                                                                      // ,
+                                                                      //                                                                           boxShadow: [
+                                                                      //                                                                             BoxShadow(
+                                                                      //                                                                               color: Colors.grey,
+                                                                      //                                                                               offset: Offset(0.0, 1.0), //(x,y)
+                                                                      //                                                                               blurRadius: 6.0,
+                                                                      //                                                                             ),
+                                                                      //                                                                           ],
+                                                                      //                                                                         ),
+                                                                      //                                                                         child:
+                                                                      //                                                                             Center(
+                                                                      //                                                                           child:
+                                                                      //                                                                               Text(
+                                                                      //                                                                             "Add staff Member",
+                                                                      //                                                                             style: TextStyle(
+                                                                      //                                                                                 color: Colors.white,
+                                                                      //                                                                                 fontWeight: FontWeight.bold,
+                                                                      //                                                                                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 18),
+                                                                      //                                                                           ),
+                                                                      //                                                                         ),
+                                                                      //                                                                       ),
+                                                                      //                                                                     ),
+                                                                      //                                                                   ),
+                                                                      GestureDetector(
+                                                                        onTap: () async {
+                                                                          // Reset error states
+                                                                          setState(() {
+                                                                            nameerror = false;
+                                                                            designationerror = false;
+                                                                            phonenumbererror = false;
+                                                                            emailerror = false;
+                                                                            passworderror = false;
+                                                                          });
+
+                                                                          // Validate fields
+                                                                          bool isValid = true;
+
+                                                                          if (name.text.isEmpty) {
+                                                                            setState(() {
+                                                                              nameerror = true;
+                                                                              namemessage = "required";
+                                                                            });
+                                                                            isValid = false;
+                                                                          }
+
+                                                                          if (designation.text.isEmpty) {
+                                                                            setState(() {
+                                                                              designationerror = true;
+                                                                              designationmessage = "required";
+                                                                            });
+                                                                            isValid = false;
+                                                                          }
+
+                                                                          // Validate phone number
+                                                                          String formattedPhoneNumber = phonenumber.text.replaceAll(RegExp(r'\D'), '');
+                                                                          if (formattedPhoneNumber.isEmpty) {
+                                                                            setState(() {
+                                                                              phonenumbererror = true;
+                                                                              phonenumbermessage = "required";
+                                                                            });
+                                                                            isValid = false;
+                                                                          } else if (formattedPhoneNumber.length != 10) {
+                                                                            setState(() {
+                                                                              phonenumbererror = true;
+                                                                              phonenumbermessage = "must be 10 digits";
+                                                                            });
+                                                                            isValid = false;
+                                                                          } else {
+                                                                            setState(() {
+                                                                              phonenumbererror = false;
+                                                                            });
+                                                                          }
+
+                                                                          // Validate email
+                                                                          if (email.text.isEmpty) {
+                                                                            setState(() {
+                                                                              emailerror = true;
+                                                                              emailmessage = "required";
+                                                                            });
+                                                                            isValid = false;
+                                                                          } else if (!EmailValidator.validate(email.text)) {
+                                                                            setState(() {
+                                                                              emailerror = true;
+                                                                              emailmessage = "Email is not valid";
+                                                                            });
+                                                                            isValid = false;
+                                                                          } else {
+                                                                            setState(() {
+                                                                              emailerror = false;
+                                                                            });
+                                                                          }
+
+                                                                          // Validate password
+                                                                          if (password.text.isEmpty) {
+                                                                            setState(() {
+                                                                              passworderror = true;
+                                                                              passwordmessage = "required";
+                                                                            });
+                                                                            isValid = false;
+                                                                          } else if (password.text.length < 8) {
+                                                                            setState(() {
+                                                                              passworderror = true;
+                                                                              passwordmessage = "at least 8 characters";
+                                                                            });
+                                                                            isValid = false;
+                                                                          } else {
+                                                                            String? validationMessage = ValidatePassword(password.text);
+                                                                            if (validationMessage != null) {
+                                                                              setState(() {
+                                                                                passworderror = true;
+                                                                                passwordmessage = validationMessage; // Use the dynamic message
+                                                                              });
+                                                                              isValid = false;
+                                                                            } else {
+                                                                              setState(() {
+                                                                                passworderror = false; // No error
+                                                                              });
+                                                                            }
+                                                                          }
+
+                                                                          // If all fields are valid, proceed to add the staff member
+                                                                          if (isValid) {
+                                                                            setState(() {
+                                                                              loading = true;
+                                                                            });
+
+                                                                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                                                                            String? adminId = prefs.getString("adminId");
+
+                                                                            if (adminId != null) {
+                                                                              try {
+                                                                                await StaffMemberRepository().addStaffMember(
+                                                                                  adminId: adminId,
+                                                                                  staffmemberName: name.text,
+                                                                                  staffmemberDesignation: designation.text,
+                                                                                  staffmemberPhoneNumber: phonenumber.text,
+                                                                                  staffmemberEmail: email.text,
+                                                                                  staffmemberPassword: password.text,
+                                                                                );
+                                                                                setState(() {
+                                                                                  loading = false;
+                                                                                });
+                                                                                Navigator.of(context).pop(true);
+                                                                              } catch (e) {
+                                                                                setState(() {
+                                                                                  loading = false;
+                                                                                });
+                                                                                // Handle error
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        },
+                                                                        child: ClipRRect(
+                                                                          borderRadius: BorderRadius.circular(5.0),
+                                                                          child: Container(
+                                                                            height: 37.0,
+                                                                            width: MediaQuery.of(context).size.width * .36,
+                                                                            decoration: BoxDecoration(
+                                                                              borderRadius: BorderRadius.circular(5.0),
+                                                                              color: blueColor,
+                                                                              boxShadow: [
+                                                                                BoxShadow(
+                                                                                  color: Colors.grey,
+                                                                                  offset: Offset(0.0, 1.0), //(x,y)
+                                                                                  blurRadius: 6.0,
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            child: Center(
+                                                                              child: loading
+                                                                                  ? SpinKitFadingCircle(
+                                                                                color: Colors.white,
+                                                                                size: 25.0,
+                                                                              )
+                                                                                  :Text(
+                                                                                "Add Staff Member",
+                                                                                style: TextStyle(
+                                                                                  color: Colors.white,
+                                                                                  fontWeight: FontWeight.bold,
+                                                                                  fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width: 15,
+                                                                      ),
+                                                                      InkWell(
+                                                                        onTap: () {
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                        },
+                                                                        child: Text(
+                                                                            "Cancel"),
+                                                                      ),
+                                                                    ],
                                                                   ),
                                                                 ],
                                                               ),
-                                                            ],
+                                                            ),
                                                           ),
-                                                        ),
-                                                      );
+
+                                                        );
                                                     },
                                                   );
                                                 },

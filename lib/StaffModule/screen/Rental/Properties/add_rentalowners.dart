@@ -1899,10 +1899,16 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                       child: TextField(
                                                         focusNode: _nodeText4,
                                                         controller: code2,
-                                                        keyboardType: TextInputType
-                                                            .numberWithOptions(
-                                                                signed: true,
-                                                                decimal: true),
+                                                        keyboardType: TextInputType.text,
+                                                        inputFormatters: [
+                                                          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+                                                          TextInputFormatter.withFunction((oldValue, newValue) {
+                                                            return TextEditingValue(
+                                                              text: newValue.text.toUpperCase(),
+                                                              selection: newValue.selection,
+                                                            );
+                                                          }),
+                                                        ],
                                                         style: TextStyle(
                                                           color: Colors.black,
                                                           fontSize: MediaQuery.of(

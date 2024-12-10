@@ -186,6 +186,7 @@ class _edit_vendorState extends State<edit_vendor> {
                                   }
                                   return null;
                                 },
+                                phone: true,
                               ),
                               /*  SizedBox(
                           height: 10,
@@ -556,6 +557,7 @@ class _edit_vendorState extends State<edit_vendor> {
                                 LengthLimitingTextInputFormatter(10),
                                 PhoneNumberFormatter(),
                               ],
+                              phone: true,
                             ),
                             /*  SizedBox(
                         height: 10,
@@ -1024,6 +1026,7 @@ class CustomTextField extends StatefulWidget {
   final bool readOnnly;
   final bool? email;
   final bool? pass;
+  final bool? phone;
   final List<TextInputFormatter>? inputFormatters;
 
   CustomTextField({
@@ -1042,6 +1045,7 @@ class CustomTextField extends StatefulWidget {
     this.onChanged2,
     this.email,
     this.pass,
+    this.phone,
     this.inputFormatters
 
     // Initialize onTap
@@ -1115,7 +1119,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                 _errorMessage = 'Please ${widget.hintText}';
               });
               return '';
-            }else if (widget.keyboardType == TextInputType.number) {
+            }else if (widget.phone != null) {
               String formattedPhoneNumber = widget.controller!.text
                   .replaceAll(RegExp(r'\D'), '');
 

@@ -273,6 +273,7 @@ class _AddApplicantState extends State<AddApplicant> {
                             LengthLimitingTextInputFormatter(10),
                             PhoneNumberFormatter(),
                           ],
+                          phone: true,
                         ),
                         const SizedBox(
                           height: 8,
@@ -303,6 +304,7 @@ class _AddApplicantState extends State<AddApplicant> {
                             PhoneNumberFormatter(),
                           ],
                           optional: true,
+                          phone: true,
                         ),
                         const SizedBox(
                           height: 8,
@@ -333,6 +335,7 @@ class _AddApplicantState extends State<AddApplicant> {
                           hintText: 'Enter business number',
                           controller: bussinessNumber,
                           optional: true,
+                          phone: true,
                         ),
                         const SizedBox(
                           height: 8,
@@ -363,6 +366,7 @@ class _AddApplicantState extends State<AddApplicant> {
                           hintText: 'Enter telephone number',
                           controller: telePhoneNumber,
                           optional: true,
+                          phone: true,
                         ),
                         const SizedBox(
                           height: 8,
