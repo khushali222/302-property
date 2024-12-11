@@ -1016,7 +1016,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
 
           workCategory: _selectedCategory!,
           workPerformed: perform.text,
-          status: 'Pending',
+          status: 'New',
           rentalAddress: properties[_selectedPropertyId]!,
           rentalUnit: units[_selectedUnitId]!,
           tenant: "${firstName} ${lastName}(Tenant)",

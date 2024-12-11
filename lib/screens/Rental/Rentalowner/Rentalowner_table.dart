@@ -493,20 +493,31 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      if (rentalownerCount <= rentalOwnerCountLimit) {
-                        final result = await Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => Add_rentalowners()));
-                        if (result == true) {
-                          setState(() {
-                            futureRentalOwners =
-                                RentalOwnerService().fetchRentalOwners("");
-                            //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                          });
-                          fetchRentalOwneradded();
-                        }
-                      } else {
-                        _showAlertforLimit(context);
+                      // if (rentalownerCount <= rentalOwnerCountLimit) {
+                      //   final result = await Navigator.of(context).push(
+                      //       MaterialPageRoute(
+                      //           builder: (context) => Add_rentalowners()));
+                      //   if (result == true) {
+                      //     setState(() {
+                      //       futureRentalOwners =
+                      //           RentalOwnerService().fetchRentalOwners("");
+                      //       //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                      //     });
+                      //     fetchRentalOwneradded();
+                      //   }
+                      // } else {
+                      //   _showAlertforLimit(context);
+                      // }
+                      final result = await Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) => Add_rentalowners()));
+                      if (result == true) {
+                        setState(() {
+                          futureRentalOwners =
+                              RentalOwnerService().fetchRentalOwners("");
+                          //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                        });
+
                       }
                     },
                     child: Container(
@@ -589,35 +600,35 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                       ),
                     ),
                   ),
-                  Spacer(),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Added : ${rentalownerCount.toString()} ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF8A95A8),
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
-                      Text(
-                        'Total : ${rentalOwnerCountLimit.toString()} ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF8A95A8),
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
-                        ),
-                      ),
-                    ],
-                  ),
+                  // Spacer(),
+                  // Column(
+                  //   mainAxisAlignment: MainAxisAlignment.end,
+                  //   crossAxisAlignment: CrossAxisAlignment.end,
+                  //   children: [
+                  //     Text(
+                  //       'Added : ${rentalownerCount.toString()} ',
+                  //       style: TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //         color: Color(0xFF8A95A8),
+                  //         fontSize:
+                  //             MediaQuery.of(context).size.width < 500 ? 14 : 21,
+                  //       ),
+                  //     ),
+                  //     SizedBox(
+                  //       width: 5,
+                  //     ),
+                  //     //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
+                  //     Text(
+                  //       'Total : ${rentalOwnerCountLimit.toString()} ',
+                  //       style: TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //         color: Color(0xFF8A95A8),
+                  //         fontSize:
+                  //             MediaQuery.of(context).size.width < 500 ? 14 : 21,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                   if (MediaQuery.of(context).size.width < 500)
                     SizedBox(width: 5),
                   if (MediaQuery.of(context).size.width > 500)

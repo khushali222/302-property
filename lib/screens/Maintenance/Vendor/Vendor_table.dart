@@ -674,19 +674,29 @@ class _Vendor_tableState extends State<Vendor_table> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      if (vendorCount < vendorCountLimit) {
-                        final result = await Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => Add_vendor()));
-                        if (result == true) {
-                          setState(() {
-                            futurePropertyTypes =
-                                VendorRepository(baseUrl: '').getVendors();
-                          });
-                          fetchvendoradded();
-                        }
-                      } else {
-                        _showAlertforLimit(context);
+                      // if (vendorCount < vendorCountLimit) {
+                      //   final result = await Navigator.of(context).push(
+                      //       MaterialPageRoute(
+                      //           builder: (context) => Add_vendor()));
+                      //   if (result == true) {
+                      //     setState(() {
+                      //       futurePropertyTypes =
+                      //           VendorRepository(baseUrl: '').getVendors();
+                      //     });
+                      //     fetchvendoradded();
+                      //   }
+                      // } else {
+                      //   _showAlertforLimit(context);
+                      // }
+                      final result = await Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) => Add_vendor()));
+                      if (result == true) {
+                        setState(() {
+                          futurePropertyTypes =
+                              VendorRepository(baseUrl: '').getVendors();
+                        });
+
                       }
                     },
                     child: Container(
@@ -795,37 +805,37 @@ class _Vendor_tableState extends State<Vendor_table> {
                       ),
                     ),
                   ),
-                  Spacer(),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Added : ${vendorCount.toString()}',
-                        // 'Added : 5',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF8A95A8),
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
-                      Text(
-                        'Total: ${vendorCountLimit.toString()}',
-                        // 'Total: 10',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF8A95A8),
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
-                        ),
-                      ),
-                    ],
-                  ),
+                  // Spacer(),
+                  // Column(
+                  //   mainAxisAlignment: MainAxisAlignment.end,
+                  //   crossAxisAlignment: CrossAxisAlignment.end,
+                  //   children: [
+                  //     Text(
+                  //       'Added : ${vendorCount.toString()}',
+                  //       // 'Added : 5',
+                  //       style: TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //         color: const Color(0xFF8A95A8),
+                  //         fontSize:
+                  //             MediaQuery.of(context).size.width < 500 ? 14 : 21,
+                  //       ),
+                  //     ),
+                  //     const SizedBox(
+                  //       width: 5,
+                  //     ),
+                  //     //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
+                  //     Text(
+                  //       'Total: ${vendorCountLimit.toString()}',
+                  //       // 'Total: 10',
+                  //       style: TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //         color: const Color(0xFF8A95A8),
+                  //         fontSize:
+                  //             MediaQuery.of(context).size.width < 500 ? 14 : 21,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                   if (MediaQuery.of(context).size.width < 500)
                     const SizedBox(width: 8),
                   if (MediaQuery.of(context).size.width > 500)

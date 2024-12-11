@@ -556,24 +556,39 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      if (rentalCount < propertyCountLimit) {
-                        final ownerDetailsProvider =
+                      // if (rentalCount < propertyCountLimit) {
+                      //   final ownerDetailsProvider =
+                      //       Provider.of<OwnerDetailsProvider>(context,
+                      //           listen: false);
+                      //   ownerDetailsProvider.clearOwners();
+                      //   final result = await Navigator.of(context).push(
+                      //       MaterialPageRoute(
+                      //           builder: (context) => Add_new_property()));
+                      //   if (result == true) {
+                      //     setState(() {
+                      //       futureRentalOwners =
+                      //           PropertiesRepository().fetchProperties();
+                      //       //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                      //     });
+                      //     fetchRentaladded();
+                      //   }
+                      // } else {
+                      //   _showAlertforLimit(context);
+                      // }
+                      final ownerDetailsProvider =
                             Provider.of<OwnerDetailsProvider>(context,
                                 listen: false);
                         ownerDetailsProvider.clearOwners();
-                        final result = await Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => Add_new_property()));
-                        if (result == true) {
-                          setState(() {
-                            futureRentalOwners =
-                                PropertiesRepository().fetchProperties();
-                            //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                          });
-                          fetchRentaladded();
-                        }
-                      } else {
-                        _showAlertforLimit(context);
+                      final result = await Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) => Add_new_property()));
+                      if (result == true) {
+                        setState(() {
+                          futureRentalOwners =
+                              PropertiesRepository().fetchProperties();
+                          //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                        });
+
                       }
                     },
                     child: Container(
@@ -778,48 +793,48 @@ class _PropertiesTableState extends State<PropertiesTable> {
             SizedBox(
               height: 10,
             ),
-            Row(
-              children: [
-                Spacer(),
-                Row(
-                  children: [
-                    Text(
-                      'Added : ${rentalCount.toString()}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF8A95A8),
-                        fontSize:
-                            MediaQuery.of(context).size.width < 500 ? 13 : 18,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Text(
-                      "/",
-                      style: TextStyle(color: greyColor),
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
-                    Text(
-                      'Total: ${propertyCountLimit.toString()}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF8A95A8),
-                        fontSize:
-                            MediaQuery.of(context).size.width < 500 ? 13 : 18,
-                      ),
-                    ),
-                  ],
-                ),
-                if (MediaQuery.of(context).size.width < 500)
-                  SizedBox(width: 15),
-                if (MediaQuery.of(context).size.width > 500)
-                  SizedBox(width: 39),
-              ],
-            ),
+            // Row(
+            //   children: [
+            //     Spacer(),
+            //     Row(
+            //       children: [
+            //         Text(
+            //           'Added : ${rentalCount.toString()}',
+            //           style: TextStyle(
+            //             fontWeight: FontWeight.bold,
+            //             color: Color(0xFF8A95A8),
+            //             fontSize:
+            //                 MediaQuery.of(context).size.width < 500 ? 13 : 18,
+            //           ),
+            //         ),
+            //         SizedBox(
+            //           width: 5,
+            //         ),
+            //         Text(
+            //           "/",
+            //           style: TextStyle(color: greyColor),
+            //         ),
+            //         SizedBox(
+            //           width: 5,
+            //         ),
+            //         //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
+            //         Text(
+            //           'Total: ${propertyCountLimit.toString()}',
+            //           style: TextStyle(
+            //             fontWeight: FontWeight.bold,
+            //             color: Color(0xFF8A95A8),
+            //             fontSize:
+            //                 MediaQuery.of(context).size.width < 500 ? 13 : 18,
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //     if (MediaQuery.of(context).size.width < 500)
+            //       SizedBox(width: 15),
+            //     if (MediaQuery.of(context).size.width > 500)
+            //       SizedBox(width: 39),
+            //   ],
+            // ),
             if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
             if (MediaQuery.of(context).size.width < 500)
               Padding(

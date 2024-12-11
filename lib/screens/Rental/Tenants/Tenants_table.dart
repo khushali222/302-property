@@ -691,19 +691,29 @@ class _Tenants_tableState extends State<Tenants_table> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      if (rentalCount < propertyCountLimit) {
-                        final result = await Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => AddTenant()));
-                        if (result == true) {
-                          setState(() {
-                            futureTenants = TenantsRepository().fetchTenants();
-                            //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                          });
-                          fetchtenantsadded();
-                        }
-                      } else {
-                        _showAlertforLimit(context);
+                      // if (rentalCount < propertyCountLimit) {
+                      //   final result = await Navigator.of(context).push(
+                      //       MaterialPageRoute(
+                      //           builder: (context) => AddTenant()));
+                      //   if (result == true) {
+                      //     setState(() {
+                      //       futureTenants = TenantsRepository().fetchTenants();
+                      //       //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                      //     });
+                      //     fetchtenantsadded();
+                      //   }
+                      // } else {
+                      //   _showAlertforLimit(context);
+                      // }
+                      final result = await Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) => AddTenant()));
+                      if (result == true) {
+                        setState(() {
+                          futureTenants = TenantsRepository().fetchTenants();
+                          //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                        });
+
                       }
                     },
                     child: Container(
@@ -810,7 +820,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                       ),
                     ),
                   ),
-                  Spacer(),
+                 // Spacer(),
                   // Expanded(
                   //   child: Container(
                   //     child: Text(
@@ -824,37 +834,37 @@ class _Tenants_tableState extends State<Tenants_table> {
                   //     ),
                   //   ),
                   // ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Container(
-                        child: Text(
-                          'Added : ${rentalCount.toString()}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF8A95A8),
-                            fontSize:
-                            MediaQuery.of(context).size.width < 500 ? 14 : 21,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Container(
-                        child: Text(
-                          'Total : ${propertyCountLimit.toString()}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF8A95A8),
-                            fontSize:
-                            MediaQuery.of(context).size.width < 500 ? 14 : 21,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  // Column(
+                  //   mainAxisAlignment: MainAxisAlignment.end,
+                  //   crossAxisAlignment: CrossAxisAlignment.end,
+                  //   children: [
+                  //     Container(
+                  //       child: Text(
+                  //         'Added : ${rentalCount.toString()}',
+                  //         style: TextStyle(
+                  //           fontWeight: FontWeight.bold,
+                  //           color: Color(0xFF8A95A8),
+                  //           fontSize:
+                  //           MediaQuery.of(context).size.width < 500 ? 14 : 21,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     SizedBox(
+                  //       height: 5,
+                  //     ),
+                  //     Container(
+                  //       child: Text(
+                  //         'Total : ${propertyCountLimit.toString()}',
+                  //         style: TextStyle(
+                  //           fontWeight: FontWeight.bold,
+                  //           color: Color(0xFF8A95A8),
+                  //           fontSize:
+                  //           MediaQuery.of(context).size.width < 500 ? 14 : 21,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                   if (MediaQuery.of(context).size.width < 500)
                     SizedBox(width: 8),
                   if (MediaQuery.of(context).size.width > 500)

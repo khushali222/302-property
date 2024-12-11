@@ -4521,6 +4521,9 @@ class _Summery_pageState extends State<Summery_page>
                                                 data[0].rentalunitadress!;
                                             unitnum.text = data[0].rentalunit!;
                                             //_image = data[0].p;
+                                            String? imageUrl = data[0].rentalImages != null && data[0].rentalImages!.isNotEmpty
+                                                ? "$image_url${data[0].rentalImages!.first}" // Assuming image_url is the base URL
+                                                : null;
                                             if (widget
                                                         .properties
                                                         .propertyTypeData!
@@ -4864,25 +4867,68 @@ class _Summery_pageState extends State<Summery_page>
                                                               const SizedBox(
                                                                 height: 10,
                                                               ),
+                                                              // _image != null
+                                                              //     ? Column(
+                                                              //         children: [
+                                                              //           Image
+                                                              //               .file(
+                                                              //             _image!,
+                                                              //             height:
+                                                              //                 80,
+                                                              //             width:
+                                                              //                 80,
+                                                              //             fit: BoxFit
+                                                              //                 .cover,
+                                                              //           ),
+                                                              //           Text(_uploadedFileName ??
+                                                              //               ""),
+                                                              //         ],
+                                                              //       )
+                                                              //     : const Text(
+                                                              //         ''),
                                                               _image != null
                                                                   ? Column(
                                                                       children: [
-                                                                        Image
-                                                                            .file(
-                                                                          _image!,
-                                                                          height:
-                                                                              80,
-                                                                          width:
-                                                                              80,
-                                                                          fit: BoxFit
-                                                                              .cover,
+                                                                        Row(
+                                                                          children: [
+                                                                            Image
+                                                                                .file(
+                                                                              _image!,
+                                                                              height:
+                                                                                  80,
+                                                                              width:
+                                                                                  80,
+                                                                              fit: BoxFit
+                                                                                  .cover,
+                                                                            ),
+                                                                          ],
                                                                         ),
-                                                                        Text(_uploadedFileName ??
-                                                                            ""),
+                                                                        // Text(_uploadedFileName ??
+                                                                        //     ""),
                                                                       ],
                                                                     )
-                                                                  : const Text(
-                                                                      ''),
+                                                                  : imageUrl != null
+                                                                  ? Column(
+                                                                children: [
+                                                                  Row(
+                                                                    children: [
+                                                                      CachedNetworkImage(
+                                                                        imageUrl: imageUrl,
+                                                                        height: 80,
+                                                                        width: 80,
+                                                                        fit: BoxFit.cover,
+                                                                        placeholder: (context, url) => CircularProgressIndicator(),
+                                                                        errorWidget: (context, url, error) => Image.asset(
+                                                                          "assets/images/no_image.jpg",
+                                                                          fit: BoxFit.fill,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  const SizedBox(height: 8.0),
+                                                                ],
+                                                              )
+                                                                  : const Text('No image available'),
                                                               const SizedBox(
                                                                   height: 8.0),
                                                               Row(
@@ -4916,15 +4962,23 @@ class _Summery_pageState extends State<Summery_page>
                                                                         String?
                                                                             id =
                                                                             prefs.getString("adminId");
+
+                                                                        print("Rental Images: $_uploadedFileNames");
+                                                                        List<String> rentalImages = _uploadedFileNames ?? [];
                                                                         Properies_summery_Repo()
                                                                             .Editunit(
+                                                                          rentalImages: rentalImages,
                                                                                 rentalsqft: sqft3.text,
                                                                                 rentalunitadress: street3.text,
                                                                                 rentalbath: bath3.text,
                                                                                 rentalbed: bed3.text,
-                                                                                unitId: unit?.unitId,
+                                                                             //   unitId: unit?.unitId,
+                                                                                unitId: data.first.unitId,
                                                                                 adminId: id,
-                                                                                rentalId: unit?.rentalId)
+                                                                              //  rentalId: unit?.rentalId
+                                                                                rentalId: data.first.rentalId,
+
+                                                                        )
                                                                             .then((value) {
                                                                           setState(
                                                                               () {
@@ -5223,25 +5277,68 @@ class _Summery_pageState extends State<Summery_page>
                                                               ),
                                                               const SizedBox(
                                                                   height: 8.0),
+                                                              // _image != null
+                                                              //     ? Column(
+                                                              //         children: [
+                                                              //           Image
+                                                              //               .file(
+                                                              //             _image!,
+                                                              //             height:
+                                                              //                 80,
+                                                              //             width:
+                                                              //                 80,
+                                                              //             fit: BoxFit
+                                                              //                 .cover,
+                                                              //           ),
+                                                              //           Text(_uploadedFileName ??
+                                                              //               ""),
+                                                              //         ],
+                                                              //       )
+                                                              //     : const Text(
+                                                              //         ''),
                                                               _image != null
                                                                   ? Column(
-                                                                      children: [
-                                                                        Image
-                                                                            .file(
-                                                                          _image!,
-                                                                          height:
-                                                                              80,
-                                                                          width:
-                                                                              80,
-                                                                          fit: BoxFit
-                                                                              .cover,
+                                                                children: [
+                                                                  Row(
+                                                                    children: [
+                                                                      Image
+                                                                          .file(
+                                                                        _image!,
+                                                                        height:
+                                                                        80,
+                                                                        width:
+                                                                        80,
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  // Text(_uploadedFileName ??
+                                                                  //     ""),
+                                                                ],
+                                                              )
+                                                                  : imageUrl != null
+                                                                  ? Column(
+                                                                children: [
+                                                                  Row(
+                                                                    children: [
+                                                                      CachedNetworkImage(
+                                                                        imageUrl: imageUrl,
+                                                                        height: 80,
+                                                                        width: 80,
+                                                                        fit: BoxFit.cover,
+                                                                        placeholder: (context, url) => CircularProgressIndicator(),
+                                                                        errorWidget: (context, url, error) => Image.asset(
+                                                                          "assets/images/no_image.jpg",
+                                                                          fit: BoxFit.fill,
                                                                         ),
-                                                                        Text(_uploadedFileName ??
-                                                                            ""),
-                                                                      ],
-                                                                    )
-                                                                  : const Text(
-                                                                      ''),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  const SizedBox(height: 8.0),
+                                                                ],
+                                                              )
+                                                                  : const Text('No image available'),
                                                               const SizedBox(
                                                                   height: 8.0),
                                                               Row(
@@ -5274,12 +5371,16 @@ class _Summery_pageState extends State<Summery_page>
                                                                         String?
                                                                             id =
                                                                             prefs.getString("adminId");
+                                                                        List<String> rentalImages = _uploadedFileNames ?? [];
                                                                         Properies_summery_Repo()
                                                                             .Editunit(
+                                                                          rentalImages: rentalImages,
                                                                           rentalsqft:
                                                                               sqft3.text,
                                                                           unitId:
-                                                                              unit?.unitId,
+                                                                          data.first.unitId,
+                                                                          rentalId: data.first.rentalId,
+                                                                          adminId: id,
                                                                         )
                                                                             .then((value) {
                                                                           setState(
@@ -5290,6 +5391,7 @@ class _Summery_pageState extends State<Summery_page>
 
                                                                           Navigator.of(context)
                                                                               .pop(true);
+                                                                          reload_Screen();
                                                                         }).catchError((e) {
                                                                           setState(
                                                                               () {
@@ -10366,11 +10468,18 @@ class _Summery_pageState extends State<Summery_page>
                           .length;
                     }
                     if (isChecked) {
-                      data = data
-                          .where((workorder) => workorder.status == 'Completed')
-                          .toList();
-                      Provider.of<WorkOrderCountProvider>(context)
-                          .updateCount(data.length);
+                      // data = data
+                      //     .where((workorder) => workorder.status == 'Completed')
+                      //     .toList();
+                      // Provider.of<WorkOrderCountProvider>(context)
+                      //     .updateCount(data.length);
+                      data = data.where((workorder) => workorder.status == 'Completed').toList();
+
+                      // Schedule the update after the current frame
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        Provider.of<WorkOrderCountProvider>(context, listen: false)
+                            .updateCount(data.length);
+                      });
                     } else {
                       data = data
                           .where((workorder) => workorder.status != 'Completed')

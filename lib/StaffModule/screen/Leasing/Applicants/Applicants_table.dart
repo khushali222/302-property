@@ -698,19 +698,29 @@ class _Applicants_tableState extends State<Applicants_table> {
                       //     futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
                       //   });
                       // }
-                      if (applicantCount < applicantCountLimit) {
-                        final result = await Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => const AddApplicant()));
-                        if (result == true) {
-                          setState(() {
-                            futureApplicantdata =
-                                ApplicantRepository().fetchApplicants();
-                          });
-                          fetchapplicantadded();
-                        }
-                      } else {
-                        _showAlertforLimit(context);
+                      // if (applicantCount < applicantCountLimit) {
+                      //   final result = await Navigator.of(context).push(
+                      //       MaterialPageRoute(
+                      //           builder: (context) => const AddApplicant()));
+                      //   if (result == true) {
+                      //     setState(() {
+                      //       futureApplicantdata =
+                      //           ApplicantRepository().fetchApplicants();
+                      //     });
+                      //     fetchapplicantadded();
+                      //   }
+                      // } else {
+                      //   _showAlertforLimit(context);
+                      // }
+                      final result = await Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) => const AddApplicant()));
+                      if (result == true) {
+                        setState(() {
+                          futureApplicantdata =
+                              ApplicantRepository().fetchApplicants();
+                        });
+
                       }
                     },
                     child: Container(
@@ -795,37 +805,37 @@ class _Applicants_tableState extends State<Applicants_table> {
                       ),
                     ),
                   ),
-                  const Spacer(),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Added : ${applicantCount.toString()}',
-                        // 'Added : 5',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF8A95A8),
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
-                      Text(
-                        'Total: ${applicantCountLimit.toString()}',
-                        // 'Total: 10',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF8A95A8),
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
-                        ),
-                      ),
-                    ],
-                  ),
+                  // const Spacer(),
+                  // Column(
+                  //   mainAxisAlignment: MainAxisAlignment.end,
+                  //   crossAxisAlignment: CrossAxisAlignment.end,
+                  //   children: [
+                  //     Text(
+                  //       'Added : ${applicantCount.toString()}',
+                  //       // 'Added : 5',
+                  //       style: TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //         color: const Color(0xFF8A95A8),
+                  //         fontSize:
+                  //             MediaQuery.of(context).size.width < 500 ? 14 : 21,
+                  //       ),
+                  //     ),
+                  //     const SizedBox(
+                  //       width: 5,
+                  //     ),
+                  //     //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
+                  //     Text(
+                  //       'Total: ${applicantCountLimit.toString()}',
+                  //       // 'Total: 10',
+                  //       style: TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //         color: const Color(0xFF8A95A8),
+                  //         fontSize:
+                  //             MediaQuery.of(context).size.width < 500 ? 14 : 21,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                   if (MediaQuery.of(context).size.width < 500)
                     const SizedBox(width: 8),
                   if (MediaQuery.of(context).size.width > 500)

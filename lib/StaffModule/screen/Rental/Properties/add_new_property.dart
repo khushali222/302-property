@@ -2472,9 +2472,9 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                         ConnectionState.waiting) {
                                       return Center(
                                           child: SpinKitFadingCircle(
-                                        color: Colors.black,
-                                        size: 40.0,
-                                      ));
+                                            color: Colors.black,
+                                            size: 40.0,
+                                          ));
                                     } else if (snapshot.hasError) {
                                       return Text('Error: ${snapshot.error}');
                                     } else if (!snapshot.hasData ||
@@ -2482,40 +2482,51 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                       return Text('No staff members found');
                                     } else {
                                       List<Staffmembers> staffMembers =
-                                          snapshot.data!;
+                                      snapshot.data!;
                                       List<DropdownMenuItem<String>>
-                                          dropdownItems = staffMembers
-                                              .map<DropdownMenuItem<String>>(
-                                                  (Staffmembers staffMember) {
-                                        return DropdownMenuItem<String>(
-                                          value: staffMember.sId,
-                                          onTap: () {
-                                            setState(() {
-                                              sid = staffMember.staffmemberId;
-                                            });
-                                          },
-                                          child: Text(
-                                            staffMember.staffmemberName ?? '',
-                                            style: TextStyle(fontSize: 14),
-                                          ),
-                                        );
-                                      }).toList();
+                                      dropdownItems = staffMembers
+                                          .map<DropdownMenuItem<String>>(
+                                              (Staffmembers staffMember) {
+                                            return DropdownMenuItem<String>(
+                                              value: staffMember.sId,
+                                              onTap: () {
+                                                setState(() {
+                                                  sid = staffMember.staffmemberId;
+                                                });
+                                              },
 
+                                              child: Text(
+                                                staffMember.staffmemberName ?? '',
+                                                style: TextStyle(fontSize: 14),
+                                              ),
+                                            );
+                                          }).toList();
                                       // Add the special "Add new property" item
                                       dropdownItems.add(
                                         DropdownMenuItem<String>(
                                           value: 'Edit_properties',
                                           child: GestureDetector(
                                             onTap: () {
+                                              name.clear();
+                                              designation.clear();
+                                              phonenumber.clear();
+                                              email.clear();
+                                              password.clear();
+                                              nameerror = false;
+                                              designationerror = false;
+                                              phonenumbererror = false;
+                                              emailerror = false;
+                                              passworderror = false;
+                                              Navigator.of(context).pop();
                                               showDialog(
                                                 context: context,
                                                 builder:
                                                     (BuildContext context) {
                                                   bool isChecked =
-                                                      false; // Moved isChecked inside the StatefulBuilder
+                                                  false; // Moved isChecked inside the StatefulBuilder
                                                   return StatefulBuilder(
                                                     builder: (BuildContext
-                                                            context,
+                                                    context,
                                                         StateSetter setState) {
                                                       return
                                                         Dialog(
@@ -3516,12 +3527,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                   'Add New Staffmember',
                                                   style: TextStyle(
                                                       fontSize:
-                                                          MediaQuery.of(context)
-                                                                      .size
-                                                                      .width <
-                                                                  500
-                                                              ? 13.5
-                                                              : 15),
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                          500
+                                                          ? 13
+                                                          : 15),
                                                 ),
                                               ],
                                             ),
@@ -3536,10 +3547,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                           //         .size
                                           //         .height *
                                           //     .05,
-                                          height: 50,
+                                          height:50,
                                           width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
+                                              .size
+                                              .width *
                                               .5,
                                           padding: EdgeInsets.symmetric(
                                               horizontal: 8, vertical: 4),
@@ -3548,7 +3559,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                               color: Color(0xFF8A95A8),
                                             ),
                                             borderRadius:
-                                                BorderRadius.circular(10),
+                                            BorderRadius.circular(10),
                                           ),
                                           child: DropdownButtonHideUnderline(
                                             child: DropdownButton<String>(
@@ -3557,12 +3568,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                 'Select',
                                                 style: TextStyle(
                                                   fontSize:
-                                                      MediaQuery.of(context)
-                                                                  .size
-                                                                  .width <
-                                                              500
-                                                          ? 15
-                                                          : 18,
+                                                  MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                      500
+                                                      ? 15
+                                                      : 18,
                                                   color: Color(0xFF8A95A8),
                                                 ),
                                               ),
@@ -3573,47 +3584,47 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                   setState(() {
                                                     selectedStaff = null;
                                                   });
-                                                  // Show the dialog
-                                                  showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      //  bool isChecked = false; // Moved isChecked inside the StatefulBuilder
-                                                      return StatefulBuilder(
-                                                        builder: (BuildContext
-                                                                context,
-                                                            StateSetter
-                                                                setState) {
-                                                          return AlertDialog(
-                                                            backgroundColor:
-                                                                Colors.white,
-                                                            surfaceTintColor:
-                                                                Colors.white,
-                                                            title: Text(
-                                                              "Add Rental Owner",
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1),
-                                                                  fontSize: 15),
-                                                            ),
-                                                            content:
-                                                                SingleChildScrollView(
-                                                                    child:
-                                                                        Column(
-                                                              children: [],
-                                                            )),
-                                                          );
-                                                        },
-                                                      );
-                                                    },
-                                                  );
+                                                  // // Show the dialog
+                                                  // showDialog(
+                                                  //   context: context,
+                                                  //   builder:
+                                                  //       (BuildContext context) {
+                                                  //     //  bool isChecked = false; // Moved isChecked inside the StatefulBuilder
+                                                  //     return StatefulBuilder(
+                                                  //       builder: (BuildContext
+                                                  //               context,
+                                                  //           StateSetter
+                                                  //               setState) {
+                                                  //         return AlertDialog(
+                                                  //           backgroundColor:
+                                                  //               Colors.white,
+                                                  //           surfaceTintColor:
+                                                  //               Colors.white,
+                                                  //           title: Text(
+                                                  //             "Add Rental Owner",
+                                                  //             style: TextStyle(
+                                                  //                 fontWeight:
+                                                  //                     FontWeight
+                                                  //                         .bold,
+                                                  //                 color: Color
+                                                  //                     .fromRGBO(
+                                                  //                         21,
+                                                  //                         43,
+                                                  //                         81,
+                                                  //                         1),
+                                                  //                 fontSize: 15),
+                                                  //           ),
+                                                  //           content:
+                                                  //               SingleChildScrollView(
+                                                  //                   child:
+                                                  //                       Column(
+                                                  //             children: [],
+                                                  //           )),
+                                                  //         );
+                                                  //       },
+                                                  //     );
+                                                  //   },
+                                                  // );
                                                 } else {
                                                   setState(() {
                                                     selectedStaff = newValue;

@@ -621,20 +621,30 @@ class _Lease_tableState extends State<Lease_table> {
                           .clearCosigner();
                       Provider.of<SelectedApplicantProvider>(context,
                           listen: false).clearApplicant();
-                      if (leaseCount < leaseCountLimit) {
-                        final result = await Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => addLease3()));
-                        if (result == true) {
-                          setState(() {
-                            futureLease = LeaseRepository().fetchLease("");
-                            //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                          });
-                          fetchLeaseadded();
-                        }
-                      } else {
-                        _showAlertforLimit(context);
+                      final result = await Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) => addLease3()));
+                      if (result == true) {
+                        setState(() {
+                          futureLease = LeaseRepository().fetchLease("");
+                          //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                        });
+
                       }
+                      // if (leaseCount < leaseCountLimit) {
+                      //   final result = await Navigator.of(context).push(
+                      //       MaterialPageRoute(
+                      //           builder: (context) => addLease3()));
+                      //   if (result == true) {
+                      //     setState(() {
+                      //       futureLease = LeaseRepository().fetchLease("");
+                      //       //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                      //     });
+                      //     fetchLeaseadded();
+                      //   }
+                      // } else {
+                      //   _showAlertforLimit(context);
+                      // }
                     },
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
@@ -740,35 +750,35 @@ class _Lease_tableState extends State<Lease_table> {
                       ),
                     ),
                   ),
-                  Spacer(),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Added : ${leaseCount.toString()}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF8A95A8),
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
-                      Text(
-                        'Total : ${leaseCountLimit.toString()}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF8A95A8),
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
-                        ),
-                      ),
-                    ],
-                  ),
+                  // Spacer(),
+                  // Column(
+                  //   mainAxisAlignment: MainAxisAlignment.end,
+                  //   crossAxisAlignment: CrossAxisAlignment.end,
+                  //   children: [
+                  //     Text(
+                  //       'Added : ${leaseCount.toString()}',
+                  //       style: TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //         color: Color(0xFF8A95A8),
+                  //         fontSize:
+                  //             MediaQuery.of(context).size.width < 500 ? 14 : 21,
+                  //       ),
+                  //     ),
+                  //     SizedBox(
+                  //       width: 5,
+                  //     ),
+                  //     //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
+                  //     Text(
+                  //       'Total : ${leaseCountLimit.toString()}',
+                  //       style: TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //         color: Color(0xFF8A95A8),
+                  //         fontSize:
+                  //             MediaQuery.of(context).size.width < 500 ? 14 : 21,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                   if (MediaQuery.of(context).size.width < 500)
                     SizedBox(width: 8),
                   if (MediaQuery.of(context).size.width > 500)

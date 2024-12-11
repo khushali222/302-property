@@ -643,7 +643,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                           futurePropertyTypes =
                               VendorRepository(baseUrl: '').getVendors();
                         });
-                        fetchvendoradded();
+                        // fetchvendoradded();
                       }
                     },
                     child: Container(
@@ -752,37 +752,37 @@ class _Vendor_tableState extends State<Vendor_table> {
                       ),
                     ),
                   ),
-                  Spacer(),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Added : ${vendorCount.toString()}',
-                        // 'Added : 5',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF8A95A8),
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
-                      Text(
-                        'Total: ${vendorCountLimit.toString()}',
-                        // 'Total: 10',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF8A95A8),
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 14 : 21,
-                        ),
-                      ),
-                    ],
-                  ),
+                  // Spacer(),
+                  // Column(
+                  //   mainAxisAlignment: MainAxisAlignment.end,
+                  //   crossAxisAlignment: CrossAxisAlignment.end,
+                  //   children: [
+                  //     Text(
+                  //       'Added : ${vendorCount.toString()}',
+                  //       // 'Added : 5',
+                  //       style: TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //         color: const Color(0xFF8A95A8),
+                  //         fontSize:
+                  //             MediaQuery.of(context).size.width < 500 ? 14 : 21,
+                  //       ),
+                  //     ),
+                  //     const SizedBox(
+                  //       width: 5,
+                  //     ),
+                  //     //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
+                  //     Text(
+                  //       'Total: ${vendorCountLimit.toString()}',
+                  //       // 'Total: 10',
+                  //       style: TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //         color: const Color(0xFF8A95A8),
+                  //         fontSize:
+                  //             MediaQuery.of(context).size.width < 500 ? 14 : 21,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                   if (MediaQuery.of(context).size.width < 500)
                     const SizedBox(width: 5),
                   if (MediaQuery.of(context).size.width > 500)

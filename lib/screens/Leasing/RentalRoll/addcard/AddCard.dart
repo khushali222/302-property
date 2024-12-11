@@ -226,7 +226,7 @@ class _AddCardState extends State<AddCard> {
     } else if (response.statusCode == 404) {
       print('customer_vault_id not found');
       setState(() {
-        messageCardAvailable = 'No card found for this tenant';
+        messageCardAvailable = 'No card found for this tenant  ';
       });
     } else {
       throw Exception('Failed to load credit card data');
@@ -1741,6 +1741,9 @@ class _AddCardState extends State<AddCard> {
                                                     },
                                                   ),
                                       ),
+                                SizedBox(
+                                  height: 15,
+                                ),
                                 Padding(
                                   padding: const EdgeInsets.only(
                                       left: 16.0, bottom: 16.0),

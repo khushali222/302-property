@@ -2607,6 +2607,17 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                           value: 'Edit_properties',
                                           child: GestureDetector(
                                             onTap: () {
+                                              name.clear();
+                                              designation.clear();
+                                              phonenumber.clear();
+                                              email.clear();
+                                              password.clear();
+                                              nameerror = false;
+                                              designationerror = false;
+                                              phonenumbererror = false;
+                                              emailerror = false;
+                                              passworderror = false;
+                                              Navigator.of(context).pop();
                                               showDialog(
                                                 context: context,
                                                 builder:
@@ -3679,46 +3690,46 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                     selectedStaff = null;
                                                   });
                                                   // Show the dialog
-                                                  showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      //  bool isChecked = false; // Moved isChecked inside the StatefulBuilder
-                                                      return StatefulBuilder(
-                                                        builder: (BuildContext
-                                                                context,
-                                                            StateSetter
-                                                                setState) {
-                                                          return AlertDialog(
-                                                            backgroundColor:
-                                                                Colors.white,
-                                                            surfaceTintColor:
-                                                                Colors.white,
-                                                            title: Text(
-                                                              "Add Rental Owner",
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1),
-                                                                  fontSize: 15),
-                                                            ),
-                                                            content:
-                                                                SingleChildScrollView(
-                                                                    child:
-                                                                        Column(
-                                                              children: [],
-                                                            )),
-                                                          );
-                                                        },
-                                                      );
-                                                    },
-                                                  );
+                                                  // showDialog(
+                                                  //   context: context,
+                                                  //   builder:
+                                                  //       (BuildContext context) {
+                                                  //     //  bool isChecked = false; // Moved isChecked inside the StatefulBuilder
+                                                  //     return StatefulBuilder(
+                                                  //       builder: (BuildContext
+                                                  //               context,
+                                                  //           StateSetter
+                                                  //               setState) {
+                                                  //         return AlertDialog(
+                                                  //           backgroundColor:
+                                                  //               Colors.white,
+                                                  //           surfaceTintColor:
+                                                  //               Colors.white,
+                                                  //           title: Text(
+                                                  //             "Add Rental Owner",
+                                                  //             style: TextStyle(
+                                                  //                 fontWeight:
+                                                  //                     FontWeight
+                                                  //                         .bold,
+                                                  //                 color: Color
+                                                  //                     .fromRGBO(
+                                                  //                         21,
+                                                  //                         43,
+                                                  //                         81,
+                                                  //                         1),
+                                                  //                 fontSize: 15),
+                                                  //           ),
+                                                  //           content:
+                                                  //               SingleChildScrollView(
+                                                  //                   child:
+                                                  //                       Column(
+                                                  //             children: [],
+                                                  //           )),
+                                                  //         );
+                                                  //       },
+                                                  //     );
+                                                  //   },
+                                                  // );
                                                 } else {
                                                   setState(() {
                                                     selectedStaff = newValue;
