@@ -139,6 +139,7 @@ class _notificationsState extends State<notifications> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: notifications.map((notification) {
+                           // print(formatNotificationDateTime(DateTime.parse(notification['createdAt'])));
                             return Padding(
                               padding: const EdgeInsets.symmetric(vertical: 8.0),
                               child: Column(
@@ -160,12 +161,14 @@ class _notificationsState extends State<notifications> {
                                           Text(
                                             notification['notification_title'],
                                             style: TextStyle(
-                                                fontSize: 18.0,
+                                                fontSize: 16.0,
                                                 fontWeight: FontWeight.bold,
                                                 color: blueColor
                                             ),
                                           ),
-                                          Text( formatNotificationDateTime(DateTime.parse(notification['createdAt'])), style: TextStyle(
+                                          Text( notification['createdAt']?.isEmpty ?? true
+                                              ? 'No date available'
+                                              : formatNotificationDateTime(DateTime.parse(notification['createdAt'] ?? '')), style: TextStyle(
                                               color: Colors.black.withOpacity(.7),
                                               fontSize: 14
 

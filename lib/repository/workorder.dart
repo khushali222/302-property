@@ -61,6 +61,7 @@ class WorkOrderRepository {
     String? date,
     bool? isBillable,
     List<Map<String, dynamic>>? parts,
+    String? notificationTime,
   }) async {
     // Constructing the request data
     final Map<String, dynamic> data = {
@@ -83,6 +84,7 @@ class WorkOrderRepository {
       'work_charge_to': workChargeTo,
       'date': date,
       'is_billable': isBillable,
+      'notificationTime':notificationTime,
       // 'parts': parts,
     };
     print("'status': $status");
@@ -104,11 +106,13 @@ class WorkOrderRepository {
       body: jsonEncode({
         "workOrder": data,
         'parts': parts,
+        'notificationTime':notificationTime,
       }),
     );
 
     //print('Response status: ${response.statusCode}');
-    // print('Response body: ${response.body}');
+     print('Response body add: ${response.body}');
+     print('Response notifi: ${notificationTime}');
 
     var responseData = json.decode(response.body);
 
@@ -166,6 +170,7 @@ class WorkOrderRepository {
     String? date,
     bool? isBillable,
     List<Map<String, dynamic>>? parts,
+    String? notificationTime,
   }) async {
     // Constructing the request data
     final Map<String, dynamic> data = {
@@ -189,6 +194,7 @@ class WorkOrderRepository {
       'work_charge_to': workChargeTo,
       'date': date,
       'is_billable': isBillable,
+      'notificationTime':notificationTime,
       // 'parts': parts,
     };
 
@@ -206,6 +212,7 @@ class WorkOrderRepository {
       body: jsonEncode({
         "workOrder": data,
         'parts': parts,
+        'notificationTime':notificationTime,
       }),
     );
 

@@ -163,6 +163,7 @@ class WorkOrderRepository {
     String? date,
     bool? isBillable,
     List<Map<String, dynamic>>? parts,
+    String? notificationTime,
   }) async {
     print(parts!.length);
     // Constructing the request data
@@ -187,6 +188,7 @@ class WorkOrderRepository {
       'work_charge_to': workChargeTo,
       'date': date,
       'is_billable': isBillable,
+      'notificationTime':notificationTime,
       // 'parts': parts,
     };
 
@@ -203,7 +205,11 @@ class WorkOrderRepository {
         "id": "CRMss $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode({"workOrder": data,'parts': parts,}),
+      body: jsonEncode({
+        "workOrder": data,
+        'parts': parts,
+        'notificationTime':notificationTime,
+      }),
     );
 
     print('data length${data.length}');

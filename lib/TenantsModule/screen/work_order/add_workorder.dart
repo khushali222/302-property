@@ -1023,6 +1023,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
           rentalid: rentalId,
           unitid: unitId,
           entry: _selectedEntry == 'Yes',
+          notificationTime: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
         );
 
         Fluttertoast.showToast(

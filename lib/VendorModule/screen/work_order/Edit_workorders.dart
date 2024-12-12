@@ -3746,6 +3746,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         date: _dateController.text,
         entry: _selectedEntry == 'yes',
         parts: parts,
+        notificationTime:DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
       ).then((value) {
         setState(() {
           widget.property?.workSubject = subject.text;

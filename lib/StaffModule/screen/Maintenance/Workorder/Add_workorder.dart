@@ -2294,6 +2294,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile> {
           date: _dateController.text,
           entry: _selectedEntry == 'yes',
           parts: parts,
+          notificationTime:DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
         )
             .then((value) {
           Navigator.pop(context, true);

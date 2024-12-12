@@ -2329,7 +2329,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           "amount": double.tryParse(part['totalController'].text) ?? 0.0,
         };
       }).toList();
-
+      print(DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()));
       try {
         await WorkOrderRepository().EditWorkOrder(
           adminId: id,
@@ -2353,6 +2353,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           date: _dateController.text,
           entry: _selectedEntry == 'Yes',
           parts: parts,
+          notificationTime: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
         );
 
         // Success
@@ -5157,6 +5158,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         date: _dateController.text,
         entry: _selectedEntry == 'yes',
         parts: parts,
+        notificationTime: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
       )
           .then((value) {
         setState(() {

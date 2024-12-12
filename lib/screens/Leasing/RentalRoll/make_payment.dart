@@ -2596,7 +2596,8 @@ class _MakePaymentState extends State<MakePayment> {
                                                 children: [
                                                   DropdownButton2<String>(
                                                     isExpanded: true,
-                                                    value: liabilityAccounts.contains(row['account']) ? "${row['account']}_Liability Account" : "${row['account']}_${row['charge_type']}",
+                                                    //value: liabilityAccounts.contains(row['account']) ? "${row['account']}_Liability Account" : "${row['account']}_${row['charge_type']}",
+                                                    value: liabilityAccounts.contains(row['account']) ? "${row['account']}_Liability Account" : liabilityAccounts.contains(row['account']) ? "" : "${row['account']}_${row['charge_type']}",
                                                     items: [
                                                       ...categorizedDataCopy
                                                           .entries
@@ -3422,7 +3423,9 @@ class _MakePaymentState extends State<MakePayment> {
                                           entries: rows,
                                           tenantname: tenantname,
                                           future_Date: futuredate!,
-                                          uploadedFile: _uploadedFileNames)
+                                          uploadedFile: _uploadedFileNames,
+                                          notificationTime:DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+                                  )
                                       .then((value) {
                                     Fluttertoast.showToast(msg: "$value");
                                     setState(() {
@@ -3497,7 +3500,9 @@ class _MakePaymentState extends State<MakePayment> {
                                         checkaba: bankrountingnum.text,
                                         tenantname: tenantname,
                                         checkname: achname.text,
-                                        uploadedFile: _uploadedFileNames)
+                                        uploadedFile: _uploadedFileNames,
+                                  notificationTime:DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+                                )
                                     .then((value) {
                                   Fluttertoast.showToast(msg: "$value");
                                   setState(() {
@@ -3570,6 +3575,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   Check: true,
                                   uploadedFile: _uploadedFileNames,
                                   payment_method: _selectedPaymentMethod!,
+                                  notificationTime:DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
                                 )
                                     .then((value) {
                                   Fluttertoast.showToast(msg: "$value");
@@ -3615,6 +3621,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   payment_method: _selectedPaymentMethod!,
                                   Check: false,
                                   uploadedFile: _uploadedFileNames,
+                                  notificationTime:DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
                                 )
                                     .then((value) {
                                   Fluttertoast.showToast(msg: "$value");

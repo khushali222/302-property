@@ -10,6 +10,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:keyboard_actions/keyboard_actions_config.dart';
 import 'package:provider/provider.dart';
@@ -4156,10 +4157,15 @@ class _Add_new_propertyState extends State<Add_new_property> {
 //                                  units[i].unit = controllers[0].text;
                                   }
                                 }
+                                final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+                                String notificationTime = formatter.format(DateTime.now());
+                                print(notificationTime);
                                 RentalRequest rentalrequest = RentalRequest(
                                     rentalOwner: owners,
                                     rental: rentals,
-                                    units: units);
+                                    units: units,
+                                  notificationTime: notificationTime,
+                                );
                                 await Rental_PropertiesRepository()
                                     .createRental(rentalrequest)
                                     .then((value) {

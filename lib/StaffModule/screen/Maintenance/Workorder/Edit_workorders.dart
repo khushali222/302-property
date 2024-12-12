@@ -2402,6 +2402,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           date: _dateController.text,
           entry: _selectedEntry == 'Yes',
           parts: parts,
+          notificationTime:DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
         );
 
         // Success
@@ -5558,6 +5559,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         date: _dateController.text,
         entry: _selectedEntry == 'yes',
         parts: parts,
+        notificationTime:DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
       )
           .then((value) {
         setState(() {

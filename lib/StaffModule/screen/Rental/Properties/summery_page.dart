@@ -3552,1023 +3552,1509 @@ startdateController.text = displayDate;
                       children: [
 
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(2.0),
                           child: Container(
-                            height:
-                            MediaQuery.of(context).size.width <
-                                500
-                                ? 36
-                                : 45,
-                            width:
-                            MediaQuery.of(context).size.width <
-                                500
-                                ? 120
-                                : 150,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                sqft3.text = data[0].rentalsqft!;
-                                bath3.text = data[0].rentalbath!;
-                                bed3.text = data[0].rentalbed!;
-                                street3.text =
-                                data[0].rentalunitadress!;
-                                unitnum.text = data[0].rentalunit!;
-                                //_image = data[0].p;
-                                String? imageUrl = data[0].rentalImages != null && data[0].rentalImages!.isNotEmpty
-                                    ? "$image_url${data[0].rentalImages!.first}" // Assuming image_url is the base URL
-                                    : null;
-                                if (widget
-                                    .properties
-                                    .propertyTypeData!
-                                    .isMultiunit! ==
-                                    false &&
-                                    widget
-                                        .properties
-                                        .propertyTypeData!
-                                        .propertyType ==
-                                        'Residential') {
-                                  showDialog(
-                                    context: context,
-                                    builder:
-                                        (BuildContext context) {
-                                      bool isChecked =
-                                      false; // Moved isChecked inside the StatefulBuilder
-                                      return StatefulBuilder(
-                                        builder: (BuildContext
-                                        context,
-                                            StateSetter setState) {
-                                          return AlertDialog(
-                                            backgroundColor:
-                                            Colors.white,
-                                            surfaceTintColor:
-                                            Colors.white,
-                                            content:
-                                            SingleChildScrollView(
-                                              child: Column(
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      const Text(
-                                                        "Edit Unit Details",
-                                                        style:
-                                                        TextStyle(
-                                                          color: Color
-                                                              .fromRGBO(
-                                                              21,
-                                                              43,
-                                                              81,
-                                                              1),
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold,
-                                                        ),
-                                                      ),
-                                                      Spacer(),
-                                                      Align(
-                                                        alignment:
-                                                        Alignment
-                                                            .centerRight,
-                                                        child:
-                                                        InkWell(
-                                                          onTap:
-                                                              () {
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          child: const Icon(
-                                                              Icons
-                                                                  .close,
-                                                              color:
-                                                              Colors.black),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  const Row(
-                                                    children: [
-                                                      Text(
-                                                        "SQFT",
-                                                        style: TextStyle(
-                                                            color: Color(
-                                                                0xFF8A95A8),
-                                                            fontWeight:
-                                                            FontWeight.bold),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                    const EdgeInsets
-                                                        .symmetric(
-                                                        vertical:
-                                                        1),
-                                                    child: Material(
-                                                      elevation: 3,
-                                                      borderRadius:
-                                                      BorderRadius
-                                                          .circular(
-                                                          3),
-                                                      child:
-                                                      TextFormField(
-                                                        controller:
-                                                        sqft3,
-                                                        cursorColor:
-                                                        Colors
-                                                            .black,
-                                                        decoration:
-                                                        InputDecoration(
-                                                          //  hintText: label,
-                                                          // labelText: label,
-                                                          // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                          filled:
-                                                          true,
-                                                          fillColor:
-                                                          Colors
-                                                              .white,
-                                                          border:
-                                                          OutlineInputBorder(
-                                                            borderRadius:
-                                                            BorderRadius.circular(3),
-                                                            borderSide:
-                                                            BorderSide.none,
-                                                          ),
-                                                          enabledBorder:
-                                                          OutlineInputBorder(
-                                                            borderRadius:
-                                                            BorderRadius.circular(3),
-                                                            borderSide:
-                                                            const BorderSide(color: Color(0xFF8A95A8)),
-                                                          ),
-                                                          focusedBorder:
-                                                          OutlineInputBorder(
-                                                            borderRadius:
-                                                            BorderRadius.circular(3),
-                                                            borderSide: const BorderSide(
-                                                                color:
-                                                                Color(0xFF8A95A8),
-                                                                width: 2),
-                                                          ),
-                                                          contentPadding: const EdgeInsets
-                                                              .symmetric(
-                                                              vertical:
-                                                              10.0,
-                                                              horizontal:
-                                                              10.0),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  const Row(
-                                                    children: [
-                                                      Text(
-                                                        "bath",
-                                                        style: TextStyle(
-                                                            color: Color(
-                                                                0xFF8A95A8),
-                                                            fontWeight:
-                                                            FontWeight.bold),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                    const EdgeInsets
-                                                        .symmetric(
-                                                        vertical:
-                                                        1),
-                                                    child: Material(
-                                                      elevation: 3,
-                                                      borderRadius:
-                                                      BorderRadius
-                                                          .circular(
-                                                          3),
-                                                      child:
-                                                      TextFormField(
-                                                        controller:
-                                                        bath3,
-                                                        cursorColor:
-                                                        Colors
-                                                            .black,
-                                                        decoration:
-                                                        InputDecoration(
-                                                          //  hintText: label,
-                                                          // labelText: label,
-                                                          // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                          filled:
-                                                          true,
-                                                          fillColor:
-                                                          Colors
-                                                              .white,
-                                                          border:
-                                                          OutlineInputBorder(
-                                                            borderRadius:
-                                                            BorderRadius.circular(3),
-                                                            borderSide:
-                                                            BorderSide.none,
-                                                          ),
-                                                          enabledBorder:
-                                                          OutlineInputBorder(
-                                                            borderRadius:
-                                                            BorderRadius.circular(3),
-                                                            borderSide:
-                                                            const BorderSide(color: Color(0xFF8A95A8)),
-                                                          ),
-                                                          focusedBorder:
-                                                          OutlineInputBorder(
-                                                            borderRadius:
-                                                            BorderRadius.circular(3),
-                                                            borderSide: const BorderSide(
-                                                                color:
-                                                                Color(0xFF8A95A8),
-                                                                width: 2),
-                                                          ),
-                                                          contentPadding: const EdgeInsets
-                                                              .symmetric(
-                                                              vertical:
-                                                              10.0,
-                                                              horizontal:
-                                                              10.0),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  const Row(
-                                                    children: [
-                                                      Text(
-                                                        "bed",
-                                                        style: TextStyle(
-                                                            color: Color(
-                                                                0xFF8A95A8),
-                                                            fontWeight:
-                                                            FontWeight.bold),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                    const EdgeInsets
-                                                        .symmetric(
-                                                        vertical:
-                                                        1),
-                                                    child: Material(
-                                                      elevation: 3,
-                                                      borderRadius:
-                                                      BorderRadius
-                                                          .circular(
-                                                          3),
-                                                      child:
-                                                      TextFormField(
-                                                        controller:
-                                                        bed3,
-                                                        cursorColor:
-                                                        Colors
-                                                            .black,
-                                                        decoration:
-                                                        InputDecoration(
-                                                          //  hintText: label,
-                                                          // labelText: label,
-                                                          // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                          filled:
-                                                          true,
-                                                          fillColor:
-                                                          Colors
-                                                              .white,
-                                                          border:
-                                                          OutlineInputBorder(
-                                                            borderRadius:
-                                                            BorderRadius.circular(3),
-                                                            borderSide:
-                                                            BorderSide.none,
-                                                          ),
-                                                          enabledBorder:
-                                                          OutlineInputBorder(
-                                                            borderRadius:
-                                                            BorderRadius.circular(3),
-                                                            borderSide:
-                                                            const BorderSide(color: Color(0xFF8A95A8)),
-                                                          ),
-                                                          focusedBorder:
-                                                          OutlineInputBorder(
-                                                            borderRadius:
-                                                            BorderRadius.circular(3),
-                                                            borderSide: const BorderSide(
-                                                                color:
-                                                                Color(0xFF8A95A8),
-                                                                width: 2),
-                                                          ),
-                                                          contentPadding: const EdgeInsets
-                                                              .symmetric(
-                                                              vertical:
-                                                              10.0,
-                                                              horizontal:
-                                                              10.0),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  const Row(
-                                                    children: [
-                                                      Text(
-                                                        'Photo',
-                                                        style: TextStyle(
-                                                            color: Colors
-                                                                .black),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(
-                                                      height: 8.0),
-                                                  Row(
-                                                    children: [
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          _pickImage()
-                                                              .then(
-                                                                  (_) {
-                                                                setState(
-                                                                        () {}); // Rebuild the widget after selecting the image
-                                                              });
-                                                        },
-                                                        child:
-                                                        const Text(
-                                                          '+ Add',
-                                                          style: TextStyle(
-                                                              color:
-                                                              Colors.green),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  // _image != null
-                                                  //     ? Column(
-                                                  //         children: [
-                                                  //           Image
-                                                  //               .file(
-                                                  //             _image!,
-                                                  //             height:
-                                                  //                 80,
-                                                  //             width:
-                                                  //                 80,
-                                                  //             fit: BoxFit
-                                                  //                 .cover,
-                                                  //           ),
-                                                  //           Text(_uploadedFileName ??
-                                                  //               ""),
-                                                  //         ],
-                                                  //       )
-                                                  //     : const Text(
-                                                  //         ''),
-                                                  _image != null
-                                                      ? Column(
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          Image
-                                                              .file(
-                                                            _image!,
-                                                            height:
-                                                            80,
-                                                            width:
-                                                            80,
-                                                            fit: BoxFit
-                                                                .cover,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      // Text(_uploadedFileName ??
-                                                      //     ""),
-                                                    ],
-                                                  )
-                                                      : imageUrl != null
-                                                      ? Column(
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          CachedNetworkImage(
-                                                            imageUrl: imageUrl,
-                                                            height: 80,
-                                                            width: 80,
-                                                            fit: BoxFit.cover,
-                                                            placeholder: (context, url) => CircularProgressIndicator(),
-                                                            errorWidget: (context, url, error) => Image.asset(
-                                                              "assets/images/no_image.jpg",
-                                                              fit: BoxFit.fill,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(height: 8.0),
-                                                    ],
-                                                  )
-                                                      : const Text('No image available'),
-                                                  const SizedBox(
-                                                      height: 8.0),
-                                                  Row(
-                                                    children: [
-                                                      const SizedBox(
-                                                        width: 0,
-                                                      ),
-                                                      GestureDetector(
-                                                        onTap:
-                                                            () async {
-                                                          if (sqft3
-                                                              .text
-                                                              .isEmpty) {
-                                                            setState(
-                                                                    () {
-                                                                  iserror =
-                                                                  true;
-                                                                });
-                                                          } else {
-                                                            setState(
-                                                                    () {
-                                                                  isLoading =
-                                                                  true;
-                                                                  iserror =
-                                                                  false;
-                                                                });
-                                                            SharedPreferences
-                                                            prefs =
-                                                            await SharedPreferences.getInstance();
-
-                                                            String?
-                                                            id =
-                                                            prefs.getString("adminId");
-
-                                                            print("Rental Images: $_uploadedFileNames");
-                                                            List<String> rentalImages = _uploadedFileNames ?? [];
-                                                            Properies_summery_Repo()
-                                                                .Editunit(
-                                                              rentalImages: rentalImages,
-                                                              rentalsqft: sqft3.text,
-                                                              rentalunitadress: street3.text,
-                                                              rentalbath: bath3.text,
-                                                              rentalbed: bed3.text,
-                                                              //   unitId: unit?.unitId,
-                                                              unitId: data.first.unitId,
-                                                              adminId: id,
-                                                              //  rentalId: unit?.rentalId
-                                                              rentalId: data.first.rentalId,
-
-                                                            )
-                                                                .then((value) {
-                                                              setState(
-                                                                      () {
-                                                                    isLoading =
-                                                                    false;
-                                                                  });
-                                                              Navigator.of(context)
-                                                                  .pop(true);
-                                                              reload_Screen();
-                                                            }).catchError((e) {
-                                                              setState(
-                                                                      () {
-                                                                    isLoading =
-                                                                    false;
-                                                                  });
-                                                            });
-                                                          }
-                                                        },
-                                                        child:
-                                                        Material(
-                                                          elevation:
-                                                          3,
-                                                          borderRadius:
-                                                          const BorderRadius
-                                                              .all(
-                                                            Radius.circular(
-                                                                5),
-                                                          ),
-                                                          child:
-                                                          Container(
-                                                            height:
-                                                            30,
-                                                            width:
-                                                            80,
-                                                            decoration:
-                                                            BoxDecoration(
-                                                              color:
-                                                              blueColor,
-                                                              borderRadius:
-                                                              BorderRadius.all(
-                                                                Radius.circular(5),
-                                                              ),
-                                                            ),
-                                                            child: const Center(
-                                                                child: Text(
-                                                                  "Save",
-                                                                  style: TextStyle(
-                                                                      fontWeight: FontWeight.w500,
-                                                                      color: Colors.white),
-                                                                )),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                          width:
-                                                          10),
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child:
-                                                        Material(
-                                                          elevation:
-                                                          3,
-                                                          borderRadius:
-                                                          const BorderRadius
-                                                              .all(
-                                                            Radius.circular(
-                                                                5),
-                                                          ),
-                                                          child:
-                                                          Container(
-                                                            height:
-                                                            30,
-                                                            width:
-                                                            80,
-                                                            decoration:
-                                                            const BoxDecoration(
-                                                              color:
-                                                              Colors.white,
-                                                              borderRadius:
-                                                              BorderRadius.all(
-                                                                Radius.circular(5),
-                                                              ),
-                                                            ),
-                                                            child: Center(
-                                                                child: Text(
-                                                                  "Cancel",
-                                                                  style: TextStyle(
-                                                                      fontWeight: FontWeight.w500,
-                                                                      color: blueColor),
-                                                                )),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(
-                                                      height: 8.0),
-                                                  if (iserror)
-                                                    const Text(
-                                                      "Please fill in all fields correctly.",
-                                                      style: TextStyle(
-                                                          color: Colors
-                                                              .redAccent),
-                                                    ),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                  );
-                                }
-                                if (widget
-                                    .properties
-                                    .propertyTypeData!
-                                    .isMultiunit! ==
-                                    false &&
-                                    widget
-                                        .properties
-                                        .propertyTypeData!
-                                        .propertyType ==
-                                        'Commercial') {
-                                  showDialog(
-                                    context: context,
-                                    builder:
-                                        (BuildContext context) {
-                                      bool isChecked =
-                                      false; // Moved isChecked inside the StatefulBuilder
-                                      return StatefulBuilder(
-                                        builder: (BuildContext
-                                        context,
-                                            StateSetter setState) {
-                                          return AlertDialog(
-                                            backgroundColor:
-                                            Colors.white,
-                                            surfaceTintColor:
-                                            Colors.white,
-                                            content:
-                                            SingleChildScrollView(
-                                              child: Column(
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      const Text(
-                                                        "Edit Unit Details",
-                                                        style:
-                                                        TextStyle(
-                                                          color: Color
-                                                              .fromRGBO(
-                                                              21,
-                                                              43,
-                                                              81,
-                                                              1),
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold,
-                                                        ),
-                                                      ),
-                                                      const Spacer(),
-                                                      Align(
-                                                        alignment:
-                                                        Alignment
-                                                            .centerRight,
-                                                        child:
-                                                        InkWell(
-                                                          onTap:
-                                                              () {
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          child: const Icon(
-                                                              Icons
-                                                                  .close,
-                                                              color:
-                                                              Colors.black),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  const Row(
-                                                    children: [
-                                                      Text(
-                                                        "SQFT",
-                                                        style: TextStyle(
-                                                            color: Color(
-                                                                0xFF8A95A8),
-                                                            fontWeight:
-                                                            FontWeight.bold),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                    const EdgeInsets
-                                                        .symmetric(
-                                                        vertical:
-                                                        1),
-                                                    child: Material(
-                                                      elevation: 3,
-                                                      borderRadius:
-                                                      BorderRadius
-                                                          .circular(
-                                                          3),
-                                                      child:
-                                                      TextFormField(
-                                                        controller:
-                                                        sqft3,
-                                                        cursorColor:
-                                                        Colors
-                                                            .black,
-                                                        decoration:
-                                                        InputDecoration(
-                                                          //  hintText: label,
-                                                          // labelText: label,
-                                                          // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                          filled:
-                                                          true,
-                                                          fillColor:
-                                                          Colors
-                                                              .white,
-                                                          border:
-                                                          OutlineInputBorder(
-                                                            borderRadius:
-                                                            BorderRadius.circular(3),
-                                                            borderSide:
-                                                            BorderSide.none,
-                                                          ),
-                                                          enabledBorder:
-                                                          OutlineInputBorder(
-                                                            borderRadius:
-                                                            BorderRadius.circular(3),
-                                                            borderSide:
-                                                            const BorderSide(color: Color(0xFF8A95A8)),
-                                                          ),
-                                                          focusedBorder:
-                                                          OutlineInputBorder(
-                                                            borderRadius:
-                                                            BorderRadius.circular(3),
-                                                            borderSide: const BorderSide(
-                                                                color:
-                                                                Color(0xFF8A95A8),
-                                                                width: 2),
-                                                          ),
-                                                          contentPadding: const EdgeInsets
-                                                              .symmetric(
-                                                              vertical:
-                                                              10.0,
-                                                              horizontal:
-                                                              10.0),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  const Row(
-                                                    children: [
-                                                      Text(
-                                                        'Photo',
-                                                        style: TextStyle(
-                                                            color: Colors
-                                                                .black),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(
-                                                      height: 8.0),
-                                                  Row(
-                                                    children: [
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          _pickImage()
-                                                              .then(
-                                                                  (_) {
-                                                                setState(
-                                                                        () {}); // Rebuild the widget after selecting the image
-                                                              });
-                                                        },
-                                                        child:
-                                                        const Text(
-                                                          '+ Add',
-                                                          style: TextStyle(
-                                                              color:
-                                                              Colors.green),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(
-                                                      height: 8.0),
-                                                  // _image != null
-                                                  //     ? Column(
-                                                  //         children: [
-                                                  //           Image
-                                                  //               .file(
-                                                  //             _image!,
-                                                  //             height:
-                                                  //                 80,
-                                                  //             width:
-                                                  //                 80,
-                                                  //             fit: BoxFit
-                                                  //                 .cover,
-                                                  //           ),
-                                                  //           Text(_uploadedFileName ??
-                                                  //               ""),
-                                                  //         ],
-                                                  //       )
-                                                  //     : const Text(
-                                                  //         ''),
-                                                  _image != null
-                                                      ? Column(
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          Image
-                                                              .file(
-                                                            _image!,
-                                                            height:
-                                                            80,
-                                                            width:
-                                                            80,
-                                                            fit: BoxFit
-                                                                .cover,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      // Text(_uploadedFileName ??
-                                                      //     ""),
-                                                    ],
-                                                  )
-                                                      : imageUrl != null
-                                                      ? Column(
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          CachedNetworkImage(
-                                                            imageUrl: imageUrl,
-                                                            height: 80,
-                                                            width: 80,
-                                                            fit: BoxFit.cover,
-                                                            placeholder: (context, url) => CircularProgressIndicator(),
-                                                            errorWidget: (context, url, error) => Image.asset(
-                                                              "assets/images/no_image.jpg",
-                                                              fit: BoxFit.fill,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(height: 8.0),
-                                                    ],
-                                                  )
-                                                      : const Text('No image available'),
-                                                  const SizedBox(
-                                                      height: 8.0),
-                                                  Row(
-                                                    children: [
-                                                      const SizedBox(
-                                                        width: 0,
-                                                      ),
-                                                      GestureDetector(
-                                                        onTap:
-                                                            () async {
-                                                          if (sqft3
-                                                              .text
-                                                              .isEmpty) {
-                                                            setState(
-                                                                    () {
-                                                                  iserror =
-                                                                  true;
-                                                                });
-                                                          } else {
-                                                            setState(
-                                                                    () {
-                                                                  isLoading =
-                                                                  true;
-                                                                  iserror =
-                                                                  false;
-                                                                });
-                                                            SharedPreferences
-                                                            prefs =
-                                                            await SharedPreferences.getInstance();
-                                                            String?
-                                                            id =
-                                                            prefs.getString("adminId");
-                                                            List<String> rentalImages = _uploadedFileNames ?? [];
-                                                            Properies_summery_Repo()
-                                                                .Editunit(
-                                                              rentalImages: rentalImages,
-                                                              rentalsqft:
-                                                              sqft3.text,
-                                                              unitId:
-                                                              data.first.unitId,
-                                                              rentalId: data.first.rentalId,
-                                                              adminId: id,
-                                                            )
-                                                                .then((value) {
-                                                              setState(
-                                                                      () {
-                                                                    isLoading =
-                                                                    false;
-                                                                  });
-
-                                                              Navigator.of(context)
-                                                                  .pop(true);
-                                                              reload_Screen();
-                                                            }).catchError((e) {
-                                                              setState(
-                                                                      () {
-                                                                    isLoading =
-                                                                    false;
-                                                                  });
-                                                            });
-                                                          }
-                                                        },
-                                                        child:
-                                                        Material(
-                                                          elevation:
-                                                          3,
-                                                          borderRadius:
-                                                          const BorderRadius
-                                                              .all(
-                                                            Radius.circular(
-                                                                5),
-                                                          ),
-                                                          child:
-                                                          Container(
-                                                            height:
-                                                            30,
-                                                            width:
-                                                            80,
-                                                            decoration:
-                                                            BoxDecoration(
-                                                              color:
-                                                              blueColor,
-                                                              borderRadius:
-                                                              BorderRadius.all(
-                                                                Radius.circular(5),
-                                                              ),
-                                                            ),
-                                                            child: const Center(
-                                                                child: Text(
-                                                                  "Save",
-                                                                  style: TextStyle(
-                                                                      fontWeight: FontWeight.w500,
-                                                                      color: Colors.white),
-                                                                )),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                          width:
-                                                          10),
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child:
-                                                        Material(
-                                                          elevation:
-                                                          3,
-                                                          borderRadius:
-                                                          const BorderRadius
-                                                              .all(
-                                                            Radius.circular(
-                                                                5),
-                                                          ),
-                                                          child:
-                                                          Container(
-                                                            height:
-                                                            30,
-                                                            width:
-                                                            80,
-                                                            decoration:
-                                                            const BoxDecoration(
-                                                              color:
-                                                              Colors.white,
-                                                              borderRadius:
-                                                              BorderRadius.all(
-                                                                Radius.circular(5),
-                                                              ),
-                                                            ),
-                                                            child: Center(
-                                                                child: Text(
-                                                                  "Cancel",
-                                                                  style: TextStyle(
-                                                                      fontWeight: FontWeight.w500,
-                                                                      color: blueColor),
-                                                                )),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(
-                                                      height: 8.0),
-                                                  if (iserror)
-                                                    const Text(
-                                                      "Please fill in all fields correctly.",
-                                                      style: TextStyle(
-                                                          color: Colors
-                                                              .redAccent),
-                                                    ),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                  );
-                                }
-                              },
-                              child: Text(
-                                'Update unit',
-                                style: TextStyle(
-                                    fontSize: MediaQuery.of(context)
-                                        .size
-                                        .width <
-                                        500
-                                        ? 13
-                                        : 18,
-                                    color: Colors.white),
+                            //height: screenHeight * 0.82,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12.0),
+                              color: Colors.white,
+                              border: Border.all(
+                                color: blueColor,
+                                width: 1,
                               ),
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: blueColor,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(
-                                          12.0))),
+                            ),
+                            child: Column(
+                              // mainAxisAlignment: MainAxisAlignment.start,
+                              // crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Container(
+                                        height: MediaQuery.of(context)
+                                            .size
+                                            .width <
+                                            500
+                                            ? 36
+                                            : 45,
+                                        width: MediaQuery.of(context)
+                                            .size
+                                            .width <
+                                            500
+                                            ? 120
+                                            : 150,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            sqft3.text = data[0].rentalsqft!;
+                                            bath3.text = data[0].rentalbath!;
+                                            bed3.text = data[0].rentalbed!;
+                                            street3.text =
+                                            data[0].rentalunitadress!;
+                                            unitnum.text =
+                                            data[0].rentalunit!;
+                                            //_image = data[0].p;
+                                            if (widget
+                                                .properties
+                                                .propertyTypeData!
+                                                .isMultiunit! ==
+                                                false &&
+                                                widget
+                                                    .properties
+                                                    .propertyTypeData!
+                                                    .propertyType ==
+                                                    'Residential') {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  bool isChecked =
+                                                  false; // Moved isChecked inside the StatefulBuilder
+                                                  return StatefulBuilder(
+                                                    builder:
+                                                        (BuildContext context,
+                                                        StateSetter
+                                                        setState) {
+                                                      return AlertDialog(
+                                                        backgroundColor:
+                                                        Colors.white,
+                                                        surfaceTintColor:
+                                                        Colors.white,
+                                                        content:
+                                                        SingleChildScrollView(
+                                                          child: Column(
+                                                            children: [
+                                                              Row(
+                                                                children: [
+                                                                  const Text(
+                                                                    "Edit Unit Details",
+                                                                    style:
+                                                                    TextStyle(
+                                                                      color: Color.fromRGBO(
+                                                                          21,
+                                                                          43,
+                                                                          81,
+                                                                          1),
+                                                                      fontWeight:
+                                                                      FontWeight.bold,
+                                                                    ),
+                                                                  ),
+                                                                  const Spacer(),
+                                                                  Align(
+                                                                    alignment:
+                                                                    Alignment
+                                                                        .centerRight,
+                                                                    child:
+                                                                    InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      },
+                                                                      child: const Icon(
+                                                                          Icons
+                                                                              .close,
+                                                                          color:
+                                                                          Colors.black),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                              const Row(
+                                                                children: [
+                                                                  Text(
+                                                                    "SQFT",
+                                                                    style: TextStyle(
+                                                                        color: Color(
+                                                                            0xFF8A95A8),
+                                                                        fontWeight:
+                                                                        FontWeight.bold),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                              Padding(
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                    1),
+                                                                child:
+                                                                Material(
+                                                                  elevation:
+                                                                  3,
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(3),
+                                                                  child:
+                                                                  TextFormField(
+                                                                    controller:
+                                                                    sqft3,
+                                                                    cursorColor:
+                                                                    Colors
+                                                                        .black,
+                                                                    decoration:
+                                                                    InputDecoration(
+                                                                      //  hintText: label,
+                                                                      // labelText: label,
+                                                                      // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                      filled:
+                                                                      true,
+                                                                      fillColor:
+                                                                      Colors.white,
+                                                                      border:
+                                                                      OutlineInputBorder(
+                                                                        borderRadius:
+                                                                        BorderRadius.circular(3),
+                                                                        borderSide:
+                                                                        BorderSide.none,
+                                                                      ),
+                                                                      enabledBorder:
+                                                                      OutlineInputBorder(
+                                                                        borderRadius:
+                                                                        BorderRadius.circular(3),
+                                                                        borderSide:
+                                                                        const BorderSide(color: Color(0xFF8A95A8)),
+                                                                      ),
+                                                                      focusedBorder:
+                                                                      OutlineInputBorder(
+                                                                        borderRadius:
+                                                                        BorderRadius.circular(3),
+                                                                        borderSide: const BorderSide(
+                                                                            color: Color(0xFF8A95A8),
+                                                                            width: 2),
+                                                                      ),
+                                                                      contentPadding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          vertical:
+                                                                          10.0,
+                                                                          horizontal:
+                                                                          10.0),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                              const Row(
+                                                                children: [
+                                                                  Text(
+                                                                    "bath",
+                                                                    style: TextStyle(
+                                                                        color: Color(
+                                                                            0xFF8A95A8),
+                                                                        fontWeight:
+                                                                        FontWeight.bold),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Padding(
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                    1),
+                                                                child:
+                                                                Material(
+                                                                  elevation:
+                                                                  3,
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(3),
+                                                                  child:
+                                                                  TextFormField(
+                                                                    controller:
+                                                                    bath3,
+                                                                    cursorColor:
+                                                                    Colors
+                                                                        .black,
+                                                                    decoration:
+                                                                    InputDecoration(
+                                                                      //  hintText: label,
+                                                                      // labelText: label,
+                                                                      // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                      filled:
+                                                                      true,
+                                                                      fillColor:
+                                                                      Colors.white,
+                                                                      border:
+                                                                      OutlineInputBorder(
+                                                                        borderRadius:
+                                                                        BorderRadius.circular(3),
+                                                                        borderSide:
+                                                                        BorderSide.none,
+                                                                      ),
+                                                                      enabledBorder:
+                                                                      OutlineInputBorder(
+                                                                        borderRadius:
+                                                                        BorderRadius.circular(3),
+                                                                        borderSide:
+                                                                        const BorderSide(color: Color(0xFF8A95A8)),
+                                                                      ),
+                                                                      focusedBorder:
+                                                                      OutlineInputBorder(
+                                                                        borderRadius:
+                                                                        BorderRadius.circular(3),
+                                                                        borderSide: const BorderSide(
+                                                                            color: Color(0xFF8A95A8),
+                                                                            width: 2),
+                                                                      ),
+                                                                      contentPadding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          vertical:
+                                                                          10.0,
+                                                                          horizontal:
+                                                                          10.0),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                              const Row(
+                                                                children: [
+                                                                  Text(
+                                                                    "bed",
+                                                                    style: TextStyle(
+                                                                        color: Color(
+                                                                            0xFF8A95A8),
+                                                                        fontWeight:
+                                                                        FontWeight.bold),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Padding(
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                    1),
+                                                                child:
+                                                                Material(
+                                                                  elevation:
+                                                                  3,
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(3),
+                                                                  child:
+                                                                  TextFormField(
+                                                                    controller:
+                                                                    bed3,
+                                                                    cursorColor:
+                                                                    Colors
+                                                                        .black,
+                                                                    decoration:
+                                                                    InputDecoration(
+                                                                      //  hintText: label,
+                                                                      // labelText: label,
+                                                                      // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                      filled:
+                                                                      true,
+                                                                      fillColor:
+                                                                      Colors.white,
+                                                                      border:
+                                                                      OutlineInputBorder(
+                                                                        borderRadius:
+                                                                        BorderRadius.circular(3),
+                                                                        borderSide:
+                                                                        BorderSide.none,
+                                                                      ),
+                                                                      enabledBorder:
+                                                                      OutlineInputBorder(
+                                                                        borderRadius:
+                                                                        BorderRadius.circular(3),
+                                                                        borderSide:
+                                                                        const BorderSide(color: Color(0xFF8A95A8)),
+                                                                      ),
+                                                                      focusedBorder:
+                                                                      OutlineInputBorder(
+                                                                        borderRadius:
+                                                                        BorderRadius.circular(3),
+                                                                        borderSide: const BorderSide(
+                                                                            color: Color(0xFF8A95A8),
+                                                                            width: 2),
+                                                                      ),
+                                                                      contentPadding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          vertical:
+                                                                          10.0,
+                                                                          horizontal:
+                                                                          10.0),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                              const Row(
+                                                                children: [
+                                                                  Text(
+                                                                    'Photo',
+                                                                    style: TextStyle(
+                                                                        color:
+                                                                        Colors.black),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                  height:
+                                                                  8.0),
+                                                              Row(
+                                                                children: [
+                                                                  GestureDetector(
+                                                                    onTap:
+                                                                        () {
+                                                                      _pickImage()
+                                                                          .then((_) {
+                                                                        setState(
+                                                                                () {}); // Rebuild the widget after selecting the image
+                                                                      });
+                                                                    },
+                                                                    child:
+                                                                    const Text(
+                                                                      '+ Add',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                          Colors.green),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                              _image != null
+                                                                  ? Column(
+                                                                children: [
+                                                                  Image
+                                                                      .file(
+                                                                    _image!,
+                                                                    height:
+                                                                    80,
+                                                                    width:
+                                                                    80,
+                                                                    fit:
+                                                                    BoxFit.cover,
+                                                                  ),
+                                                                  Text(_uploadedFileName ??
+                                                                      ""),
+                                                                ],
+                                                              )
+                                                                  : const Text(
+                                                                  ''),
+                                                              const SizedBox(
+                                                                  height:
+                                                                  8.0),
+                                                              Row(
+                                                                children: [
+                                                                  const SizedBox(
+                                                                    width: 0,
+                                                                  ),
+                                                                  GestureDetector(
+                                                                    onTap:
+                                                                        () async {
+                                                                      if (sqft3
+                                                                          .text
+                                                                          .isEmpty) {
+                                                                        setState(
+                                                                                () {
+                                                                              iserror =
+                                                                              true;
+                                                                            });
+                                                                      } else {
+                                                                        setState(
+                                                                                () {
+                                                                              isLoading =
+                                                                              true;
+                                                                              iserror =
+                                                                              false;
+                                                                            });
+                                                                        SharedPreferences
+                                                                        prefs =
+                                                                        await SharedPreferences.getInstance();
+
+                                                                        String?
+                                                                        id =
+                                                                        prefs.getString("adminId");
+                                                                        Properies_summery_Repo()
+                                                                            .Editunit(rentalsqft: sqft3.text, rentalunitadress: street3.text, rentalbath: bath3.text, rentalbed: bed3.text, unitId: unit?.unitId, adminId: id, rentalId: unit?.rentalId)
+                                                                            .then((value) {
+                                                                          setState(() {
+                                                                            isLoading = false;
+                                                                          });
+                                                                          Navigator.of(context).pop(true);
+                                                                          reload_Screen();
+                                                                        }).catchError((e) {
+                                                                          setState(() {
+                                                                            isLoading = false;
+                                                                          });
+                                                                        });
+                                                                      }
+                                                                    },
+                                                                    child:
+                                                                    Material(
+                                                                      elevation:
+                                                                      3,
+                                                                      borderRadius:
+                                                                      const BorderRadius.all(
+                                                                        Radius.circular(
+                                                                            5),
+                                                                      ),
+                                                                      child:
+                                                                      Container(
+                                                                        height:
+                                                                        30,
+                                                                        width:
+                                                                        80,
+                                                                        decoration:
+                                                                         BoxDecoration(
+                                                                          color: blueColor
+
+
+,
+                                                                          borderRadius:
+                                                                          BorderRadius.all(
+                                                                            Radius.circular(5),
+                                                                          ),
+                                                                        ),
+                                                                        child: const Center(
+                                                                            child: Text(
+                                                                              "Save",
+                                                                              style:
+                                                                              TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
+                                                                            )),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      width:
+                                                                      10),
+                                                                  GestureDetector(
+                                                                    onTap:
+                                                                        () {
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    },
+                                                                    child:
+                                                                    Material(
+                                                                      elevation:
+                                                                      3,
+                                                                      borderRadius:
+                                                                      const BorderRadius.all(
+                                                                        Radius.circular(
+                                                                            5),
+                                                                      ),
+                                                                      child:
+                                                                      Container(
+                                                                        height:
+                                                                        30,
+                                                                        width:
+                                                                        80,
+                                                                        decoration:
+                                                                        const BoxDecoration(
+                                                                          color:
+                                                                          Colors.white,
+                                                                          borderRadius:
+                                                                          BorderRadius.all(
+                                                                            Radius.circular(5),
+                                                                          ),
+                                                                        ),
+                                                                        child:  Center(
+                                                                            child: Text(
+                                                                              "Cancel",
+                                                                              style:
+                                                                              TextStyle(fontWeight: FontWeight.w500, color: blueColor),
+                                                                            )),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                  height:
+                                                                  8.0),
+                                                              if (iserror)
+                                                                const Text(
+                                                                  "Please fill in all fields correctly.",
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .redAccent),
+                                                                ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                              );
+                                            }
+                                            if (widget
+                                                .properties
+                                                .propertyTypeData!
+                                                .isMultiunit! ==
+                                                false &&
+                                                widget
+                                                    .properties
+                                                    .propertyTypeData!
+                                                    .propertyType ==
+                                                    'Commercial') {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  bool isChecked =
+                                                  false; // Moved isChecked inside the StatefulBuilder
+                                                  return StatefulBuilder(
+                                                    builder:
+                                                        (BuildContext context,
+                                                        StateSetter
+                                                        setState) {
+                                                      return AlertDialog(
+                                                        backgroundColor:
+                                                        Colors.white,
+                                                        surfaceTintColor:
+                                                        Colors.white,
+                                                        content:
+                                                        SingleChildScrollView(
+                                                          child: Column(
+                                                            children: [
+                                                              Row(
+                                                                children: [
+                                                                  const Text(
+                                                                    "Edit Unit Details",
+                                                                    style:
+                                                                    TextStyle(
+                                                                      color: Color.fromRGBO(
+                                                                          21,
+                                                                          43,
+                                                                          81,
+                                                                          1),
+                                                                      fontWeight:
+                                                                      FontWeight.bold,
+                                                                    ),
+                                                                  ),
+                                                                  const Spacer(),
+                                                                  Align(
+                                                                    alignment:
+                                                                    Alignment
+                                                                        .centerRight,
+                                                                    child:
+                                                                    InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      },
+                                                                      child: const Icon(
+                                                                          Icons
+                                                                              .close,
+                                                                          color:
+                                                                          Colors.black),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                              const Row(
+                                                                children: [
+                                                                  Text(
+                                                                    "SQFT",
+                                                                    style: TextStyle(
+                                                                        color: Color(
+                                                                            0xFF8A95A8),
+                                                                        fontWeight:
+                                                                        FontWeight.bold),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Padding(
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                    1),
+                                                                child:
+                                                                Material(
+                                                                  elevation:
+                                                                  3,
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(3),
+                                                                  child:
+                                                                  TextFormField(
+                                                                    controller:
+                                                                    sqft3,
+                                                                    cursorColor:
+                                                                    Colors
+                                                                        .black,
+                                                                    decoration:
+                                                                    InputDecoration(
+                                                                      //  hintText: label,
+                                                                      // labelText: label,
+                                                                      // labelStyle: TextStyle(color: Colors.grey[700]),
+                                                                      filled:
+                                                                      true,
+                                                                      fillColor:
+                                                                      Colors.white,
+                                                                      border:
+                                                                      OutlineInputBorder(
+                                                                        borderRadius:
+                                                                        BorderRadius.circular(3),
+                                                                        borderSide:
+                                                                        BorderSide.none,
+                                                                      ),
+                                                                      enabledBorder:
+                                                                      OutlineInputBorder(
+                                                                        borderRadius:
+                                                                        BorderRadius.circular(3),
+                                                                        borderSide:
+                                                                        const BorderSide(color: Color(0xFF8A95A8)),
+                                                                      ),
+                                                                      focusedBorder:
+                                                                      OutlineInputBorder(
+                                                                        borderRadius:
+                                                                        BorderRadius.circular(3),
+                                                                        borderSide: const BorderSide(
+                                                                            color: Color(0xFF8A95A8),
+                                                                            width: 2),
+                                                                      ),
+                                                                      contentPadding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          vertical:
+                                                                          10.0,
+                                                                          horizontal:
+                                                                          10.0),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                              const Row(
+                                                                children: [
+                                                                  Text(
+                                                                    'Photo',
+                                                                    style: TextStyle(
+                                                                        color:
+                                                                        Colors.black),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                  height:
+                                                                  8.0),
+                                                              Row(
+                                                                children: [
+                                                                  GestureDetector(
+                                                                    onTap:
+                                                                        () {
+                                                                      _pickImage()
+                                                                          .then((_) {
+                                                                        setState(
+                                                                                () {}); // Rebuild the widget after selecting the image
+                                                                      });
+                                                                    },
+                                                                    child:
+                                                                    const Text(
+                                                                      '+ Add',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                          Colors.green),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                  height:
+                                                                  8.0),
+                                                              _image != null
+                                                                  ? Column(
+                                                                children: [
+                                                                  Image
+                                                                      .file(
+                                                                    _image!,
+                                                                    height:
+                                                                    80,
+                                                                    width:
+                                                                    80,
+                                                                    fit:
+                                                                    BoxFit.cover,
+                                                                  ),
+                                                                  Text(_uploadedFileName ??
+                                                                      ""),
+                                                                ],
+                                                              )
+                                                                  : const Text(
+                                                                  ''),
+                                                              const SizedBox(
+                                                                  height:
+                                                                  8.0),
+                                                              Row(
+                                                                children: [
+                                                                  const SizedBox(
+                                                                    width: 0,
+                                                                  ),
+                                                                  GestureDetector(
+                                                                    onTap:
+                                                                        () async {
+                                                                      if (sqft3
+                                                                          .text
+                                                                          .isEmpty) {
+                                                                        setState(
+                                                                                () {
+                                                                              iserror =
+                                                                              true;
+                                                                            });
+                                                                      } else {
+                                                                        setState(
+                                                                                () {
+                                                                              isLoading =
+                                                                              true;
+                                                                              iserror =
+                                                                              false;
+                                                                            });
+                                                                        SharedPreferences
+                                                                        prefs =
+                                                                        await SharedPreferences.getInstance();
+                                                                        String?
+                                                                        id =
+                                                                        prefs.getString("adminId");
+                                                                        Properies_summery_Repo()
+                                                                            .Editunit(
+                                                                          rentalsqft:
+                                                                          sqft3.text,
+                                                                          unitId:
+                                                                          unit?.unitId,
+                                                                        )
+                                                                            .then((value) {
+                                                                          setState(() {
+                                                                            isLoading = false;
+                                                                          });
+
+                                                                          Navigator.of(context).pop(true);
+                                                                        }).catchError((e) {
+                                                                          setState(() {
+                                                                            isLoading = false;
+                                                                          });
+                                                                        });
+                                                                      }
+                                                                    },
+                                                                    child:
+                                                                    Material(
+                                                                      elevation:
+                                                                      3,
+                                                                      borderRadius:
+                                                                      const BorderRadius.all(
+                                                                        Radius.circular(
+                                                                            5),
+                                                                      ),
+                                                                      child:
+                                                                      Container(
+                                                                        height:
+                                                                        30,
+                                                                        width:
+                                                                        80,
+                                                                        decoration:
+                                                                         BoxDecoration(
+                                                                          color: blueColor
+
+
+,
+                                                                          borderRadius:
+                                                                          BorderRadius.all(
+                                                                            Radius.circular(5),
+                                                                          ),
+                                                                        ),
+                                                                        child: const Center(
+                                                                            child: Text(
+                                                                              "Save",
+                                                                              style:
+                                                                              TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
+                                                                            )),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      width:
+                                                                      10),
+                                                                  GestureDetector(
+                                                                    onTap:
+                                                                        () {
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    },
+                                                                    child:
+                                                                    Material(
+                                                                      elevation:
+                                                                      3,
+                                                                      borderRadius:
+                                                                      const BorderRadius.all(
+                                                                        Radius.circular(
+                                                                            5),
+                                                                      ),
+                                                                      child:
+                                                                      Container(
+                                                                        height:
+                                                                        30,
+                                                                        width:
+                                                                        80,
+                                                                        decoration:
+                                                                        const BoxDecoration(
+                                                                          color:
+                                                                          Colors.white,
+                                                                          borderRadius:
+                                                                          BorderRadius.all(
+                                                                            Radius.circular(5),
+                                                                          ),
+                                                                        ),
+                                                                        child:  Center(
+                                                                            child: Text(
+                                                                              "Cancel",
+                                                                              style:
+                                                                              TextStyle(fontWeight: FontWeight.w500, color: blueColor),
+                                                                            )),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                  height:
+                                                                  8.0),
+                                                              if (iserror)
+                                                                const Text(
+                                                                  "Please fill in all fields correctly.",
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .redAccent),
+                                                                ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                              );
+                                            }
+                                          },
+                                          child: Text(
+                                            'Update unit',
+                                            style: TextStyle(
+                                                fontSize:
+                                                MediaQuery.of(context)
+                                                    .size
+                                                    .width <
+                                                    500
+                                                    ? 13
+                                                    : 18,
+                                                color: Colors.white),
+                                          ),
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                              const Color.fromRGBO(
+                                                  21, 43, 83, 1),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                  BorderRadius.circular(
+                                                      12.0))),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    SizedBox(
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                        child: CachedNetworkImage(
+                                          imageUrl: data.first.rentalImages != null && data.first.rentalImages!.isNotEmpty
+                                              ? "$image_url${data.first.rentalImages?.first}"
+                                              : 'assets/images/no_image.jpg',
+                                          fit: BoxFit.cover,
+                                          height: MediaQuery.of(context).size.width < 500 ? 140 : 220,
+                                          width: MediaQuery.of(context).size.width < 500 ? 160 : 220,
+                                          placeholder: (context, url) => Shimmer.fromColors(
+                                            baseColor: Colors.grey[300]!,
+                                            highlightColor: Colors.grey[100]!,
+                                            child: Container(
+                                              color: Colors.grey[300],
+                                              height: MediaQuery.of(context).size.width < 500 ? 140 : 220,
+                                              width: MediaQuery.of(context).size.width < 500 ? 160 : 220,
+                                            ),
+                                          ),
+                                          errorWidget: (context, url, error) => Image.asset(
+                                            "assets/images/no_image.jpg",
+                                            fit: BoxFit.fill,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding:
+                                          const EdgeInsets.only(left: 16),
+                                          child: Text(
+                                            'ADDRESS',
+                                            style: TextStyle(
+                                                fontSize:
+                                                MediaQuery.of(context)
+                                                    .size
+                                                    .width <
+                                                    500
+                                                    ? 14
+                                                    : 20,
+                                                color: Colors.grey[800],
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        SizedBox(
+                                          width: MediaQuery.of(context).size.width > 500 ? 200: 159,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(left: 16),
+                                            child: Text(
+                                              '${widget.properties?.rentalAddress}',
+                                              maxLines: 5, // Set maximum number of lines
+                                              overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
+                                              style: TextStyle(
+                                                fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 18,
+                                                color: blueColor,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        // Padding(
+                                        //   padding:
+                                        //   const EdgeInsets.only(left: 16),
+                                        //   child: Text(
+                                        //     '${widget.properties?.rentalAddress}',
+                                        //     style: TextStyle(
+                                        //         fontSize:
+                                        //         MediaQuery.of(context)
+                                        //             .size
+                                        //             .width <
+                                        //             500
+                                        //             ? 13
+                                        //             : 18,
+                                        //         color: Colors.grey[800]),
+                                        //   ),
+                                        // ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        SizedBox(
+                                          width: MediaQuery.of(context).size.width > 500
+                                              ? 200
+                                              : 159,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(left: 16),
+                                            child:
+                                            Text(
+                                              [
+                                                widget.properties.rentalCity,
+                                                widget.properties.rentalState,
+                                                widget.properties.rentalCountry,
+                                                widget.properties.rentalPostcode,
+                                              ]
+                                                  .where((element) => element != null && element.isNotEmpty) // Filter out null or empty elements
+                                                  .map((element) => element!) // Ensure non-null elements
+                                                  .join(' , '),
+                                              style: TextStyle(
+                                                color: blueColor,
+                                                fontSize:
+                                                MediaQuery.of(context).size.width < 500
+                                                    ? 13
+                                                    : 18,
+                                              ),
+                                              maxLines: 6,
+                                            ),
+                                          ),
+                                        ),
+                                        // Padding(
+                                        //   padding:
+                                        //   const EdgeInsets.only(left: 16),
+                                        //   child: Text(
+                                        //     '${widget.properties?.rentalCity} ${widget.properties?.rentalState}',
+                                        //     style: TextStyle(
+                                        //         fontSize:
+                                        //         MediaQuery.of(context)
+                                        //             .size
+                                        //             .width <
+                                        //             500
+                                        //             ? 13
+                                        //             : 18,
+                                        //         color: Colors.grey[800]),
+                                        //   ),
+                                        // ),
+                                        // SizedBox(
+                                        //   height: 5,
+                                        // ),
+                                        // Padding(
+                                        //   padding:
+                                        //   const EdgeInsets.only(left: 16),
+                                        //   child: Text(
+                                        //     '${widget.properties?.rentalCountry} ${widget.properties?.rentalPostcode}',
+                                        //     style: TextStyle(
+                                        //         fontSize:
+                                        //         MediaQuery.of(context)
+                                        //             .size
+                                        //             .width <
+                                        //             500
+                                        //             ? 13
+                                        //             : 18,
+                                        //         color: Colors.grey[800]),
+                                        //   ),
+                                        // ),
+                                      ],
+                                    ),
+                                    Spacer(),
+                                    if (MediaQuery.of(context).size.width >
+                                        500)
+                                      Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Container(
+                                            width: 250,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                              BorderRadius.circular(12.0),
+                                              color: Colors.white,
+                                              border: Border.all(
+                                                color: blueColor
+
+
+,
+                                                width: 1,
+                                              ),
+                                            ),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                              children: [
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                SizedBox(
+                                                  // width: double.infinity,
+                                                  child: Text(
+                                                    'Add Lease',
+                                                    textAlign:
+                                                    TextAlign.start,
+                                                    style: TextStyle(
+                                                      fontSize: MediaQuery.of(
+                                                          context)
+                                                          .size
+                                                          .width <
+                                                          500
+                                                          ? 14
+                                                          : 18,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      color: blueColor
+,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                  const EdgeInsets.all(
+                                                      8.0),
+                                                  child: Container(
+                                                    height:
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                        500
+                                                        ? 36
+                                                        : 48,
+                                                    // width: double.infinity,
+                                                    child: ElevatedButton(
+                                                      onPressed: () {},
+                                                      child: Text(
+                                                        '       Add Lease    ',
+                                                        style: TextStyle(
+                                                            fontSize: MediaQuery.of(
+                                                                context)
+                                                                .size
+                                                                .width <
+                                                                500
+                                                                ? 14
+                                                                : 18,
+                                                            color:
+                                                            Colors.white,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .bold),
+                                                      ),
+                                                      style: ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                          const Color
+                                                              .fromRGBO(
+                                                              21,
+                                                              43,
+                                                              83,
+                                                              1),
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  10.0))),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 10),
+                                                  child: SizedBox(
+                                                    //  width: double.infinity,
+                                                    child: Text(
+                                                      'Rental Applicant',
+                                                      style: TextStyle(
+                                                        fontSize: MediaQuery.of(
+                                                            context)
+                                                            .size
+                                                            .width <
+                                                            500
+                                                            ? 14
+                                                            : 18,
+                                                        fontWeight:
+                                                        FontWeight.bold,
+                                                        color: blueColor
+
+
+,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                  const EdgeInsets.all(
+                                                      8.0),
+                                                  child: Container(
+                                                    height:
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                        500
+                                                        ? 36
+                                                        : 48,
+                                                    //  width: double.infinity,
+                                                    child: ElevatedButton(
+                                                      onPressed: () {
+                                                 Navigator.push(context, MaterialPageRoute(builder: (context)=>Applicants_table()));
+                                                      },
+                                                      child: Text(
+                                                        'Create Applicant',
+                                                        style: TextStyle(
+                                                            fontSize: MediaQuery.of(
+                                                                context)
+                                                                .size
+                                                                .width <
+                                                                500
+                                                                ? 14
+                                                                : 18,
+                                                            color:
+                                                            Colors.white,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .bold),
+                                                      ),
+                                                      style: ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                          const Color
+                                                              .fromRGBO(
+                                                              21,
+                                                              43,
+                                                              83,
+                                                              1),
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  10.0))),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 20,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                  ],
+                                ),
+                                // Padding(
+                                //   padding: const EdgeInsets.all(16.0),
+                                //   child:
+                                //   Container(
+                                //     width: double.infinity,
+                                //     child:
+                                //     Column(
+                                //       crossAxisAlignment: CrossAxisAlignment.start,
+                                //       children: [
+                                //         Padding(
+                                //           padding: const EdgeInsets.only(left: 16),
+                                //           child: Text(
+                                //             'ADDRESS',
+                                //             style: TextStyle(
+                                //                 fontSize:
+                                //                 MediaQuery.of(context).size.width < 500
+                                //                 ? 12
+                                //                 : 20, color: Colors.grey[800],fontWeight: FontWeight.bold),
+                                //           ),
+                                //         ),
+                                //         Padding(
+                                //           padding: const EdgeInsets.only(left: 16),
+                                //           child: Text(
+                                //             '${widget.properties?.rentalAddress}',
+                                //             style: TextStyle(
+                                //                 fontSize:
+                                //                 MediaQuery.of(context).size.width < 500
+                                //                     ? 12
+                                //                     : 18, color: Colors.grey[800]),
+                                //           ),
+                                //         ),
+                                //         Padding(
+                                //           padding: const EdgeInsets.only(left: 16),
+                                //           child: Text(
+                                //             '${widget.properties?.rentalCity} ${widget.properties?.rentalState}',
+                                //             style: TextStyle(
+                                //                 fontSize:
+                                //                 MediaQuery.of(context).size.width < 500
+                                //                     ? 12
+                                //                     : 18, color: Colors.grey[800]),
+                                //           ),
+                                //         ),
+                                //         Padding(
+                                //           padding: const EdgeInsets.only(left: 16),
+                                //           child: Text(
+                                //             '${widget.properties?.rentalCountry} ${widget.properties?.rentalPostcode}',
+                                //             style: TextStyle(
+                                //                 fontSize:
+                                //                 MediaQuery.of(context).size.width < 500
+                                //                     ? 12
+                                //                     : 18, color: Colors.grey[800]),
+                                //           ),
+                                //         ),
+                                //       ],
+                                //     ),
+                                //   ),
+                                // ),
+                                if (MediaQuery.of(context).size.width < 500)
+                                  Padding(
+                                    padding: const EdgeInsets.all(15.0),
+                                    child: Container(
+                                      // height: screenHeight * 0.26,
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                        BorderRadius.circular(12.0),
+                                        color: Colors.white,
+                                        border: Border.all(
+                                          color: const Color.fromRGBO(
+                                              21, 43, 83, 1),
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: SizedBox(
+                                              width: double.infinity,
+                                              child: Text(
+                                                'Add Lease',
+                                                style: TextStyle(
+                                                  fontSize:
+                                                  MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                      500
+                                                      ? 14
+                                                      : 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: blueColor
+
+
+,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding:
+                                            const EdgeInsets.all(8.0),
+                                            child: Container(
+                                              height: MediaQuery.of(context)
+                                                  .size
+                                                  .width <
+                                                  500
+                                                  ? 36
+                                                  : 48,
+                                              width: double.infinity,
+                                              child: ElevatedButton(
+                                                onPressed: () {
+                                                  Provider.of<SelectedTenantsProvider>(context,
+                                                      listen: false)
+                                                      .clearTenant();
+                                                  Provider.of<SelectedCosignersProvider>(context,
+                                                      listen: false)
+                                                      .clearCosigner();
+                                                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>addLease3(rentalId: widget.properties.rentalId,)));
+                                                },
+                                                child: Text(
+                                                  'Add Lease',
+                                                  style: TextStyle(
+                                                      fontSize: MediaQuery.of(
+                                                          context)
+                                                          .size
+                                                          .width <
+                                                          500
+                                                          ? 14
+                                                          : 18,
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                      FontWeight.bold),
+                                                ),
+                                                style: ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                     blueColor
+
+
+,
+                                                    shape:
+                                                    RoundedRectangleBorder(
+                                                        borderRadius:
+                                                        BorderRadius
+                                                            .circular(
+                                                            10.0))),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: SizedBox(
+                                              width: double.infinity,
+                                              child: Text(
+                                                'Rental Applicant',
+                                                style: TextStyle(
+                                                  fontSize:
+                                                  MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                      500
+                                                      ? 14
+                                                      : 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: blueColor
+
+
+,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding:
+                                            const EdgeInsets.all(8.0),
+                                            child: Container(
+                                              height: MediaQuery.of(context)
+                                                  .size
+                                                  .width <
+                                                  500
+                                                  ? 36
+                                                  : 48,
+                                              width: double.infinity,
+                                              child: ElevatedButton(
+                                                onPressed: () {
+                                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Applicants_table()));
+                                                },
+                                                child: Text(
+                                                  'Create Applicant',
+                                                  style: TextStyle(
+                                                      fontSize: MediaQuery.of(
+                                                          context)
+                                                          .size
+                                                          .width <
+                                                          500
+                                                          ? 14
+                                                          : 18,
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                      FontWeight.bold),
+                                                ),
+                                                style: ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                     blueColor
+
+
+,
+                                                    shape:
+                                                    RoundedRectangleBorder(
+                                                        borderRadius:
+                                                        BorderRadius
+                                                            .circular(
+                                                            10.0))),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                if (MediaQuery.of(context).size.width > 500)
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                              ],
                             ),
                           ),
                         ),

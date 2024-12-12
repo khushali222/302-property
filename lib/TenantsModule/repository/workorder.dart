@@ -100,6 +100,7 @@ class WorkOrderRepository {
     String? unitid,
  List? workOrder_images,
     bool? entry,
+    String? notificationTime,
   }) async {
     // Constructing the request data
     final Map<String, dynamic> data = {
@@ -116,6 +117,7 @@ class WorkOrderRepository {
       'rental_id': rentalid,
       'unit_id': unitid,
       'workOrder_images': workOrder_images,
+      'notificationTime':notificationTime,
     };
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -134,7 +136,10 @@ class WorkOrderRepository {
         "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode({"workOrder":data}),
+      body: jsonEncode({
+        "workOrder":data,
+        'notificationTime':notificationTime,
+      }),
     );
 
     // Logging the response status and body

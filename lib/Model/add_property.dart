@@ -121,17 +121,20 @@ class RentalRequest {
   RentalOwners? rentalOwner;
   Rental? rental;
   List<Unit>? units;
+  String? notificationTime;
 
   RentalRequest({
      this.rentalOwner,
      this.rental,
      this.units,
+    this.notificationTime,
   });
 
   Map<String, dynamic> toJson() => {
     'rentalOwner': rentalOwner!.toJson(),
     'rental': rental!.toJson(),
     'units': units!.map((unit) => unit.toJson()).toList(),
+    'notificationTime': notificationTime,
   };
 }
 

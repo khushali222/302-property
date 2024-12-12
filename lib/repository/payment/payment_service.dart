@@ -28,6 +28,7 @@ class PaymentService {
     required List<String>? uploadedFile,
     required List<Map<String, dynamic>> entries,
     String? tenantname,
+    String? notificationTime,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
@@ -50,8 +51,8 @@ class PaymentService {
         'date': date,
         'address1': address1,
         'processor_id': processorId,
-        'tenantName':tenantname
-
+        'tenantName':tenantname,
+        'notificationTime':notificationTime,
       };
       log(paymentDetails.toString());
       final response = await http.post(
@@ -61,7 +62,10 @@ class PaymentService {
           "id": "CRM $id",
           "Content-Type": "application/json",
         },
-        body: jsonEncode({"paymentDetails": paymentDetails}),
+        body: jsonEncode({
+          "paymentDetails": paymentDetails,
+          'notificationTime':notificationTime,
+        }),
       );
 
       if (response.statusCode == 200) {
@@ -203,6 +207,7 @@ class PaymentService {
     required List<String>? uploadedFile,
     required List<Map<String, dynamic>> entries,
     String? tenantname,
+    String? notificationTime,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
@@ -228,7 +233,8 @@ class PaymentService {
         'date': date,
         'address1': address1,
         'processor_id': processorId,
-        'tenantName':tenantname
+        'tenantName':tenantname,
+        'notificationTime':notificationTime,
       };
       print(paymentDetails);
       final response = await http.post(
@@ -238,7 +244,10 @@ class PaymentService {
           "id": "CRM $id",
           "Content-Type": "application/json",
         },
-        body: jsonEncode({"paymentDetails": paymentDetails}),
+        body: jsonEncode({
+          "paymentDetails": paymentDetails,
+          'notificationTime':notificationTime,
+        }),
       );
 
       if (response.statusCode == 200) {
@@ -375,6 +384,7 @@ class PaymentService {
     required String payment_method,
     required List<String>? uploadedFile,
     required List<Map<String, dynamic>> entries,
+    String? notificationTime,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
@@ -399,6 +409,7 @@ class PaymentService {
         'date': date,
         'address1': address1,
         'processor_id': processorId,
+        'notificationTime':notificationTime,
       };
       print(paymentDetails);
       final response = await http.post(
@@ -408,7 +419,10 @@ class PaymentService {
           "id": "CRM $id",
           "Content-Type": "application/json",
         },
-        body: jsonEncode({"paymentDetails": paymentDetails}),
+        body: jsonEncode({
+          "paymentDetails": paymentDetails,
+          'notificationTime':notificationTime,
+        }),
       );
       if (response.statusCode == 200) {
         print(response.body);
