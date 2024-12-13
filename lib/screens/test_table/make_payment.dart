@@ -312,7 +312,7 @@ class _MakePaymentState extends State<MakePayment> {
       hasError = false;
     });
     try {
-      List<Entrycharge>? charges = await ChargeRepositorys().fetchChargesTable(widget.leaseId, tenantId);
+      List<Entrycharge>? charges = await ChargeRepositorys().fetchChargesTable(widget.leaseId);
       print('leaseid ${widget.leaseId}');
       print('tenantid $tenantId');
       print("charges length:- ${charges!.length}");

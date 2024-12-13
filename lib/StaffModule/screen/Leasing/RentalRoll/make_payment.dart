@@ -422,7 +422,7 @@ class _MakePaymentState extends State<MakePayment> {
     });
     try {
       List<Entrycharge>? charges =
-          await ChargeRepositorys().fetchChargesTable(widget.leaseId, tenantId);
+          await ChargeRepositorys().fetchChargesTable(widget.leaseId,);
       List<Entrycharge> filteredCharges =
           charges?.where((entry) => entry.chargeAmount! > 0).toList() ?? [];
 

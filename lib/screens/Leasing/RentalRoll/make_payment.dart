@@ -450,7 +450,7 @@ class _MakePaymentState extends State<MakePayment> {
     });
     try {
       List<Entrycharge>? charges =
-          await ChargeRepositorys().fetchChargesTable(widget.leaseId, tenantId);
+          await ChargeRepositorys().fetchChargesTable(widget.leaseId);
       print('charge details ${charges!.length}');
       List<Entrycharge> filteredCharges =
           charges?.where((entry) => entry.chargeAmount! > 0).toList() ?? [];
@@ -3394,6 +3394,8 @@ class _MakePaymentState extends State<MakePayment> {
                                   }).toList();
                                   Map<String, String> selectedTenant =
                                       filteredTenants.first;
+                                  final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+                                  String notificationTime = formatter.format(DateTime.now());
                                   await PaymentService()
                                       .makePaymentforcard(
                                           adminId: id ?? "",
@@ -3424,7 +3426,7 @@ class _MakePaymentState extends State<MakePayment> {
                                           tenantname: tenantname,
                                           future_Date: futuredate!,
                                           uploadedFile: _uploadedFileNames,
-                                          notificationTime:DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+                                          notificationTime:notificationTime,
                                   )
                                       .then((value) {
                                     Fluttertoast.showToast(msg: "$value");
@@ -3475,6 +3477,8 @@ class _MakePaymentState extends State<MakePayment> {
                                 }).toList();
                                 Map<String, String> selectedTenant =
                                     filteredTenants.first;
+                                final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+                                String notificationTime = formatter.format(DateTime.now());
                                 await PaymentService()
                                     .makePaymentforach(
                                         adminId: id ?? "",
@@ -3501,7 +3505,7 @@ class _MakePaymentState extends State<MakePayment> {
                                         tenantname: tenantname,
                                         checkname: achname.text,
                                         uploadedFile: _uploadedFileNames,
-                                  notificationTime:DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+                                  notificationTime:notificationTime,
                                 )
                                     .then((value) {
                                   Fluttertoast.showToast(msg: "$value");
@@ -3553,6 +3557,8 @@ class _MakePaymentState extends State<MakePayment> {
                                 }).toList();
                                 Map<String, String> selectedTenant =
                                     filteredTenants.first;
+                                final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+                                String notificationTime = formatter.format(DateTime.now());
                                 await PaymentService()
                                     .makePaymentfornormal(
                                   adminId: id ?? "",
@@ -3575,7 +3581,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   Check: true,
                                   uploadedFile: _uploadedFileNames,
                                   payment_method: _selectedPaymentMethod!,
-                                  notificationTime:DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+                                  notificationTime:notificationTime,
                                 )
                                     .then((value) {
                                   Fluttertoast.showToast(msg: "$value");
@@ -3599,6 +3605,8 @@ class _MakePaymentState extends State<MakePayment> {
                                 }).toList();
                                 Map<String, String> selectedTenant =
                                     filteredTenants.first;
+                                final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+                                String notificationTime = formatter.format(DateTime.now());
                                 await PaymentService()
                                     .makePaymentfornormal(
                                   adminId: id ?? "",
@@ -3621,7 +3629,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   payment_method: _selectedPaymentMethod!,
                                   Check: false,
                                   uploadedFile: _uploadedFileNames,
-                                  notificationTime:DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+                                  notificationTime:notificationTime,
                                 )
                                     .then((value) {
                                   Fluttertoast.showToast(msg: "$value");
@@ -3685,6 +3693,8 @@ class _MakePaymentState extends State<MakePayment> {
                                   }).toList();
                                   Map<String, String> selectedTenant =
                                       filteredTenants.first;
+                                  final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+                                  String notificationTime = formatter.format(DateTime.now());
                                   await PaymentService()
                                       .makePaymentforcard(
                                           adminId: id ?? "",
@@ -3714,7 +3724,9 @@ class _MakePaymentState extends State<MakePayment> {
                                           entries: rows,
                                           tenantname: tenantname,
                                           future_Date: futuredate!,
-                                          uploadedFile: _uploadedFileNames)
+                                          uploadedFile: _uploadedFileNames,
+                                      notificationTime:notificationTime,
+                                  )
                                       .then((value) {
                                     Fluttertoast.showToast(msg: "$value");
                                     setState(() {
@@ -3764,6 +3776,8 @@ class _MakePaymentState extends State<MakePayment> {
                                 }).toList();
                                 Map<String, String> selectedTenant =
                                     filteredTenants.first;
+                                final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+                                String notificationTime = formatter.format(DateTime.now());
                                 await PaymentService()
                                     .makePaymentforach(
                                         adminId: id ?? "",
@@ -3789,7 +3803,9 @@ class _MakePaymentState extends State<MakePayment> {
                                         checkaba: bankrountingnum.text,
                                         tenantname: tenantname,
                                         checkname: achname.text,
-                                        uploadedFile: _uploadedFileNames)
+                                        uploadedFile: _uploadedFileNames,
+                                    notificationTime:notificationTime,
+                                )
                                     .then((value) {
                                   Fluttertoast.showToast(msg: "$value");
                                   setState(() {
@@ -3840,6 +3856,8 @@ class _MakePaymentState extends State<MakePayment> {
                                 }).toList();
                                 Map<String, String> selectedTenant =
                                     filteredTenants.first;
+                                final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+                                String notificationTime = formatter.format(DateTime.now());
                                 await PaymentService()
                                     .makePaymentfornormal(
                                   adminId: id ?? "",
@@ -3862,6 +3880,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   Check: true,
                                   uploadedFile: _uploadedFileNames,
                                   payment_method: _selectedPaymentMethod!,
+                                    notificationTime:notificationTime,
                                 )
                                     .then((value) {
                                   Fluttertoast.showToast(msg: "$value");
@@ -3885,6 +3904,8 @@ class _MakePaymentState extends State<MakePayment> {
                                 }).toList();
                                 Map<String, String> selectedTenant =
                                     filteredTenants.first;
+                                final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+                                String notificationTime = formatter.format(DateTime.now());
                                 await PaymentService()
                                     .makePaymentfornormal(
                                   adminId: id ?? "",
@@ -3907,6 +3928,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   payment_method: _selectedPaymentMethod!,
                                   Check: false,
                                   uploadedFile: _uploadedFileNames,
+                                    notificationTime:notificationTime
                                 )
                                     .then((value) {
                                   Fluttertoast.showToast(msg: "$value");

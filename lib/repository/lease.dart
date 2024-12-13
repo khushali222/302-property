@@ -612,10 +612,12 @@ class LeaseRepository {
     );
      print('charge respo ${response.body}');
     if (response.statusCode == 200) {
+     // Fluttertoast.showToast(msg: 'Charge delete successfully');
       // Successfully posted
       print('Charge posted successfully');
     } else {
       // Handle error
+    //  Fluttertoast.showToast(msg: 'Failed to delete charge');
       print('Failed to post charge: ${response.statusCode}');
       print('Response body: ${response.body}');
     }
