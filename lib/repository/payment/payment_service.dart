@@ -68,7 +68,7 @@ class PaymentService {
 
         }),
       );
-
+print('card for real ${response.body}');
       if (response.statusCode == 200) {
         print(response.body);
         var jsonData = jsonDecode(response.body);
@@ -89,7 +89,8 @@ class PaymentService {
               isLeaseAdded: false,
               uploadedFile: [],
               transactionId: jsonData["data"]["transactionid"],
-              responseText: jsonData["data"]["responsetext"],
+             // responseText: jsonData["data"]["responsetext"],
+              responseText: "SUCCESS",
               surcharge: surcharge)
           ]);
           return "Payment Success";
@@ -169,7 +170,7 @@ class PaymentService {
         'billing_id': billingId,
         'entry': entries,
         'total_amount':
-            (double.parse(totalAmount) - double.parse(surcharge)).toString(),
+            (double.parse(totalAmount) - double.parse(surcharge)),
         'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
@@ -423,7 +424,7 @@ class PaymentService {
         'date': date,
         'address1': address1,
         'processor_id': processorId,
-        'notificationTime':notificationTime,
+        // 'notificationTime':notificationTime,
       };
       print(paymentDetails);
 

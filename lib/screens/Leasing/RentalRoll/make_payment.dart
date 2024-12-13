@@ -64,7 +64,7 @@ class _MakePaymentState extends State<MakePayment> {
   double surchargeIncluded = 0.0;
   double totalAmount = 0.0;
   int? selectedcardindex;
-  bool? futuredate;
+  bool? futuredate = false;
   Setting1? surcharges;
   double? surchargecount = 0.0;
   double? finaltotal;
@@ -3300,7 +3300,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                         .text.isNotEmpty &&
                                                     (_selectedPaymentMethod ==
                                                         "ACH")
-                                                ? finaltotal!
+                                                ? (finaltotal ?? 0.0)
                                                 : amountController
                                                         .text.isNotEmpty
                                                     ? double.parse(
@@ -3676,7 +3676,8 @@ class _MakePaymentState extends State<MakePayment> {
                                 setState(() {
                                   _isLoading = false;
                                 });
-                              } else if (_selectedPaymentMethod == "Card") {
+                              }
+                              else if (_selectedPaymentMethod == "Card") {
                                 print("adminId ${id}");
                                 print(
                                     "adminId ${cardDetails[selectedcardindex!].company}");
@@ -3768,7 +3769,8 @@ class _MakePaymentState extends State<MakePayment> {
                                     ).show();
                                   });
                                 }
-                              } else if (_selectedPaymentMethod == "ACH") {
+                              }
+                              else if (_selectedPaymentMethod == "ACH") {
                                 List<Map<String, String>> filteredTenants =
                                     tenants.where((tenant) {
                                   return tenant['tenant_id'] ==
