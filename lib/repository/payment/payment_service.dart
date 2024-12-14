@@ -275,7 +275,8 @@ print('card for real ${response.body}');
               isLeaseAdded: false,
               uploadedFile: [],
               transactionId: jsonData["data"]["transactionid"],
-              responseText: jsonData["data"]["responsetext"],
+          //    responseText: jsonData["data"]["responsetext"],
+              responseText: "SUCCESS",
               surcharge: surcharge,
           notificationTime: notificationTime
           )
@@ -352,8 +353,8 @@ print('card for real ${response.body}');
         'payment_type': paymentType,
 
         'entry': entries,
-        'total_amount': totalAmount,
-        //'total_amount': (double.parse(totalAmount) -double.parse(surcharge)).toString(),
+       // 'total_amount': totalAmount,
+        'total_amount': (double.parse(totalAmount) -double.parse(surcharge)),
         'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
