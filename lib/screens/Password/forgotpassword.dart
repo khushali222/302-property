@@ -31,6 +31,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   String companymessage = "";
   String emailmessage = "";
   String rolemessage = "";
+  String? userId;
   bool get isEmailSubmitted => _isEmailSubmitted;
   bool get hasMultipleCompanies => _hasMultipleCompanies;
   List<Map<String, String>> get companies => _companies;
@@ -39,7 +40,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     print("Calling  ${email.text}");
     // Make API call to check email
     final response = await http.post(
-      Uri.parse('${Api_url}/api/admin/check_role'),
+      Uri.parse('${Api_url}/api/auth/check_role'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email.text}),
     );
@@ -58,7 +59,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 .map<Map<String, String>>((role) => {
                       'company': role['company_name'],
                       'admin_id': role['admin_id'],
-                      'role': role['role']
+                      'role': role['role'],
+              'user_id': role['user_id'],
                     })
                 .toList();
             _isEmailSubmitted = true;
@@ -70,6 +72,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               //_selectedCompany = roles[0]['company_name'];
               selectedrole = roles[0]['role']; // Set role directly
               admin_id = roles[0]['admin_id'];
+              userId = roles[0]["user_id"];
               _isEmailSubmitted = true;
             } else {
               print(roles[0]['role']);
@@ -77,6 +80,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               _selectedCompany = roles[0]['company_name'];
               selectedrole = roles[0]['role']; // Set role directly
               admin_id = roles[0]['admin_id'];
+              userId = roles[0]["user_id"];
               _isEmailSubmitted = true;
             }
           });
@@ -99,7 +103,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
     final response = await http.post(
       Uri.parse('${Api_url}/api/admin/sendOTP'),
-      body: {'email': email, 'admin_id': admin_id, 'role': selectedrole},
+      body: {'email': email, 'admin_id': admin_id, 'role': selectedrole,'user_id':userId},
     );
     print(response.body);
     setState(() {
@@ -116,6 +120,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   email: email,
                   admin_id: admin_id,
                   role: selectedrole,
+                  userId: userId!,
+
                 )),
       );
       Fluttertoast.showToast(msg: "OTP sent successfully");
@@ -130,10 +136,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     }
   }
 
-  void selectCompany(String company, String role, String adminid) {
+  void selectCompany(String company, String role, String adminid,String user_id) {
     _selectedCompany = company;
     selectedrole = role; // Set role when selecting company
     admin_id = adminid;
+    userId = user_id;
     print(selectedrole);
     print(selectedCompany);
     setState(() {});
@@ -297,7 +304,14 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         selectCompany(
                             companies[index]["company"]!,
                             companies[index]["role"]!,
-                            companies[index]["admin_id"]!);
+                            companies[index]["admin_id"]!,
+                            companies[index]["user_id"]!,
+
+
+
+                        );
+
+
                       },
                     ),
                   ],

@@ -66,6 +66,8 @@ class _Login_ScreenState extends State<Login_Screen> {
   String get selectedCompany => _selectedCompany;
   // String get password => _password;
   String? adminId;
+  String? userId;
+  String? userName;
   void setEmail(String email) {
     print(email);
     setState(() {
@@ -80,14 +82,18 @@ class _Login_ScreenState extends State<Login_Screen> {
     });
   }
 
-  void selectCompany(String company, String role,String admin_id) {
+  void selectCompany(
+      String company, String role, String admin_id, String user_id,String userName) {
     _selectedCompany = company;
     selectedrole = role;
     adminId = admin_id;
+    userId = user_id;
+    userName = userName;
     // Set role when selecting company
     print(selectedrole);
     print(admin_id);
     print(selectedCompany);
+    print(userId);
     setState(() {});
   }
 
@@ -105,7 +111,7 @@ class _Login_ScreenState extends State<Login_Screen> {
     print("Calling  ${email.text}");
     // Make API call to check email
     final response = await http.post(
-      Uri.parse('$Api_url/api/admin/check_role'),
+      Uri.parse('$Api_url/api/auth/check_role'),
       // Uri.parse('$Api_url/api/admin/check_role'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email.text}),
@@ -122,8 +128,13 @@ class _Login_ScreenState extends State<Login_Screen> {
           setState(() {
             _hasMultipleCompanies = true;
             _companies = roles
-                .map<Map<String, String>>((role) =>
-            {'company': role['company_name'], 'role': role['role'],'admin_id': role['admin_id'],})
+                .map<Map<String, String>>((role) => {
+                      'company': role['company_name'],
+                      'role': role['role'],
+                      'admin_id': role['admin_id'],
+                      'user_id': role['user_id'],
+                      'userName': role['userName'],
+                    })
                 .toList();
             print("roles $roles");
             _isEmailSubmitted = true;
@@ -133,6 +144,9 @@ class _Login_ScreenState extends State<Login_Screen> {
             if (roles[0]['role'] == "admin") {
               _hasMultipleCompanies = false;
               adminId = roles[0]["admin_id"];
+              userId = roles[0]["user_id"];
+              userName = roles[0]["userName"];
+
               //_selectedCompany = roles[0]['company_name'];
               selectedrole = roles[0]['role']; // Set role directly
               _isEmailSubmitted = true;
@@ -141,6 +155,9 @@ class _Login_ScreenState extends State<Login_Screen> {
               _hasMultipleCompanies = false;
               adminId = roles[0]["admin_id"];
               _selectedCompany = roles[0]['company_name'];
+              userId = roles[0]["user_id"];
+              userName = roles[0]["userName"];
+              print(userId);
               selectedrole = roles[0]['role']; // Set role directly
               _isEmailSubmitted = true;
             }
@@ -239,12 +256,12 @@ class _Login_ScreenState extends State<Login_Screen> {
                                   decoration: InputDecoration(
                                     enabledBorder: emailerror
                                         ? OutlineInputBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(10),
-                                      borderSide: BorderSide(
-                                          color: Colors
-                                              .red), // Set border color here
-                                    )
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: BorderSide(
+                                                color: Colors
+                                                    .red), // Set border color here
+                                          )
                                         : InputBorder.none,
                                     border: InputBorder.none,
                                     contentPadding: EdgeInsets.all(14),
@@ -275,12 +292,12 @@ class _Login_ScreenState extends State<Login_Screen> {
                   ),
                   emailerror
                       ? Center(
-                      child: Text(
-                        emailmessage,
-                        style: TextStyle(
-                          color: Colors.red,
-                        ),
-                      ))
+                          child: Text(
+                          emailmessage,
+                          style: TextStyle(
+                            color: Colors.red,
+                          ),
+                        ))
                       : Container(),
 
                   SizedBox(
@@ -306,20 +323,20 @@ class _Login_ScreenState extends State<Login_Screen> {
                                     "Forgot password?",
                                     style: TextStyle(
                                         fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.02,
+                                            MediaQuery.of(context).size.width *
+                                                0.02,
                                         color: Colors.blue),
                                   ),
                                 ),
                                 SizedBox(
                                   width:
-                                  MediaQuery.of(context).size.width * 0.099,
+                                      MediaQuery.of(context).size.width * 0.099,
                                 ),
                               ],
                             ),
                             SizedBox(
                               height:
-                              MediaQuery.of(context).size.height * 0.025,
+                                  MediaQuery.of(context).size.height * 0.025,
                             ),
                           ],
                         ),
@@ -357,25 +374,25 @@ class _Login_ScreenState extends State<Login_Screen> {
                               child: Center(
                                 child: loading
                                     ? SpinKitFadingCircle(
-                                  color: Colors.white,
-                                  size: 40.0,
-                                )
+                                        color: Colors.white,
+                                        size: 40.0,
+                                      )
                                     : Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Submit",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: MediaQuery.of(context)
-                                              .size
-                                              .width *
-                                              0.03),
-                                    ),
-                                  ],
-                                ),
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Submit",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.03),
+                                          ),
+                                        ],
+                                      ),
                               ),
                             ),
                           ),
@@ -417,12 +434,12 @@ class _Login_ScreenState extends State<Login_Screen> {
                                         decoration: InputDecoration(
                                           enabledBorder: passworderror
                                               ? OutlineInputBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(10),
-                                            borderSide: BorderSide(
-                                                color: Colors
-                                                    .red), // Set border color here
-                                          )
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  borderSide: BorderSide(
+                                                      color: Colors
+                                                          .red), // Set border color here
+                                                )
                                               : InputBorder.none,
                                           border: InputBorder.none,
                                           contentPadding: EdgeInsets.all(14),
@@ -445,15 +462,15 @@ class _Login_ScreenState extends State<Login_Screen> {
                                             onTap: () {
                                               setState(() {
                                                 visiable_password =
-                                                !visiable_password;
+                                                    !visiable_password;
                                               });
                                             },
                                             child: Icon(
                                               visiable_password
                                                   ? Icons
-                                                  .remove_red_eye_outlined
+                                                      .remove_red_eye_outlined
                                                   : Icons
-                                                  .visibility_off_outlined,
+                                                      .visibility_off_outlined,
                                               color: Colors.grey[600],
                                             ),
                                           ),
@@ -471,10 +488,10 @@ class _Login_ScreenState extends State<Login_Screen> {
                         ),
                         passworderror
                             ? Center(
-                            child: Text(
-                              passwordmessage,
-                              style: TextStyle(color: Colors.red),
-                            ))
+                                child: Text(
+                                passwordmessage,
+                                style: TextStyle(color: Colors.red),
+                              ))
                             : Container(),
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.025,
@@ -488,8 +505,11 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 adminId = companies[index]['admin_id'];
                                 print(adminId);
                               });
-                              selectCompany(companies[index]["company"]!,
-                                  companies[index]["role"]!,companies[index]["admin_id"]!);
+                              selectCompany(
+                                  companies[index]["company"]!,
+                                  companies[index]["role"]!,
+                                  companies[index]["admin_id"]!,
+                                  companies[index]["user_id"]!,companies[index]["userName"]!);
                             },
                           ),
                         ],
@@ -513,8 +533,8 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 "Forgot password?",
                                 style: TextStyle(
                                     fontSize:
-                                    MediaQuery.of(context).size.width *
-                                        0.02,
+                                        MediaQuery.of(context).size.width *
+                                            0.02,
                                     color: Colors.blue),
                               ),
                             ),
@@ -596,7 +616,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                           child: Center(
                             child: Container(
                               height:
-                              MediaQuery.of(context).size.height * 0.045,
+                                  MediaQuery.of(context).size.height * 0.045,
                               width: MediaQuery.of(context).size.width * 0.8,
                               decoration: BoxDecoration(
                                 color: Colors.black,
@@ -605,39 +625,39 @@ class _Login_ScreenState extends State<Login_Screen> {
                               child: Center(
                                 child: loading
                                     ? SpinKitFadingCircle(
-                                  color: Colors.white,
-                                  size: 40.0,
-                                )
+                                        color: Colors.white,
+                                        size: 40.0,
+                                      )
                                     : Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Login",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: MediaQuery.of(context)
-                                              .size
-                                              .width *
-                                              0.03),
-                                    ),
-                                    SizedBox(
-                                      height: MediaQuery.of(context)
-                                          .size
-                                          .width *
-                                          0.015,
-                                    ),
-                                    Icon(
-                                      Icons.arrow_forward_ios_sharp,
-                                      color: Colors.white,
-                                      size: MediaQuery.of(context)
-                                          .size
-                                          .width *
-                                          0.03,
-                                    ),
-                                  ],
-                                ),
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Login",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.03),
+                                          ),
+                                          SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.015,
+                                          ),
+                                          Icon(
+                                            Icons.arrow_forward_ios_sharp,
+                                            color: Colors.white,
+                                            size: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.03,
+                                          ),
+                                        ],
+                                      ),
                               ),
                             ),
                           ),
@@ -672,7 +692,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blue,
                                 fontSize:
-                                MediaQuery.of(context).size.width * 0.03),
+                                    MediaQuery.of(context).size.width * 0.03),
                           ),
                         ),
                       ),
@@ -787,12 +807,12 @@ class _Login_ScreenState extends State<Login_Screen> {
                                   decoration: InputDecoration(
                                     enabledBorder: emailerror
                                         ? OutlineInputBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(10),
-                                      borderSide: BorderSide(
-                                          color: Colors
-                                              .red), // Set border color here
-                                    )
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: BorderSide(
+                                                color: Colors
+                                                    .red), // Set border color here
+                                          )
                                         : InputBorder.none,
                                     border: InputBorder.none,
                                     contentPadding: EdgeInsets.all(14),
@@ -823,12 +843,12 @@ class _Login_ScreenState extends State<Login_Screen> {
                   ),
                   emailerror
                       ? Center(
-                      child: Text(
-                        emailmessage,
-                        style: TextStyle(
-                          color: Colors.red,
-                        ),
-                      ))
+                          child: Text(
+                          emailmessage,
+                          style: TextStyle(
+                            color: Colors.red,
+                          ),
+                        ))
                       : Container(),
 
                   SizedBox(
@@ -854,20 +874,20 @@ class _Login_ScreenState extends State<Login_Screen> {
                                     "Forgot password?",
                                     style: TextStyle(
                                         fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.035,
+                                            MediaQuery.of(context).size.width *
+                                                0.035,
                                         color: Colors.blue),
                                   ),
                                 ),
                                 SizedBox(
                                   width:
-                                  MediaQuery.of(context).size.width * 0.099,
+                                      MediaQuery.of(context).size.width * 0.099,
                                 ),
                               ],
                             ),
                             SizedBox(
                               height:
-                              MediaQuery.of(context).size.height * 0.025,
+                                  MediaQuery.of(context).size.height * 0.025,
                             ),
                           ],
                         ),
@@ -905,25 +925,25 @@ class _Login_ScreenState extends State<Login_Screen> {
                               child: Center(
                                 child: loading
                                     ? SpinKitFadingCircle(
-                                  color: Colors.white,
-                                  size: 40.0,
-                                )
+                                        color: Colors.white,
+                                        size: 40.0,
+                                      )
                                     : Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Submit",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: MediaQuery.of(context)
-                                              .size
-                                              .width *
-                                              0.045),
-                                    ),
-                                  ],
-                                ),
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Submit",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.045),
+                                          ),
+                                        ],
+                                      ),
                               ),
                             ),
                           ),
@@ -964,12 +984,12 @@ class _Login_ScreenState extends State<Login_Screen> {
                                         decoration: InputDecoration(
                                           enabledBorder: passworderror
                                               ? OutlineInputBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(10),
-                                            borderSide: BorderSide(
-                                                color: Colors
-                                                    .red), // Set border color here
-                                          )
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  borderSide: BorderSide(
+                                                      color: Colors
+                                                          .red), // Set border color here
+                                                )
                                               : InputBorder.none,
                                           border: InputBorder.none,
                                           contentPadding: EdgeInsets.all(14),
@@ -992,16 +1012,15 @@ class _Login_ScreenState extends State<Login_Screen> {
                                             onTap: () {
                                               setState(() {
                                                 visiable_password =
-                                                !visiable_password;
-
+                                                    !visiable_password;
                                               });
                                             },
                                             child: Icon(
                                               visiable_password
                                                   ? Icons
-                                                  .remove_red_eye_outlined
+                                                      .remove_red_eye_outlined
                                                   : Icons
-                                                  .visibility_off_outlined,
+                                                      .visibility_off_outlined,
                                               color: Colors.grey[600],
                                             ),
                                           ),
@@ -1019,10 +1038,10 @@ class _Login_ScreenState extends State<Login_Screen> {
                         ),
                         passworderror
                             ? Center(
-                            child: Text(
-                              passwordmessage,
-                              style: TextStyle(color: Colors.red),
-                            ))
+                                child: Text(
+                                passwordmessage,
+                                style: TextStyle(color: Colors.red),
+                              ))
                             : Container(),
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.025,
@@ -1033,10 +1052,14 @@ class _Login_ScreenState extends State<Login_Screen> {
                             onSelected: (index) {
                               setState(() {
                                 adminId = companies[index]['admin_id'];
+                                userId = companies[index]['user_id'];
                               });
                               print(adminId);
-                              selectCompany(companies[index]["company"]!,
-                                  companies[index]["role"]!,companies[index]["admin_id"]!);
+                              selectCompany(
+                                  companies[index]["company"]!,
+                                  companies[index]["role"]!,
+                                  companies[index]["admin_id"]!,
+                                  companies[index]["user_id"]!,companies[index]["userName"]!);
                             },
                           ),
                         ],
@@ -1063,8 +1086,8 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 "Forgot password?",
                                 style: TextStyle(
                                     fontSize:
-                                    MediaQuery.of(context).size.width *
-                                        0.035,
+                                        MediaQuery.of(context).size.width *
+                                            0.035,
                                     color: Colors.blue),
                               ),
                             ),
@@ -1155,39 +1178,39 @@ class _Login_ScreenState extends State<Login_Screen> {
                               child: Center(
                                 child: loading
                                     ? SpinKitFadingCircle(
-                                  color: Colors.white,
-                                  size: 40.0,
-                                )
+                                        color: Colors.white,
+                                        size: 40.0,
+                                      )
                                     : Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Login",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: MediaQuery.of(context)
-                                              .size
-                                              .width *
-                                              0.045),
-                                    ),
-                                    SizedBox(
-                                      height: MediaQuery.of(context)
-                                          .size
-                                          .width *
-                                          0.015,
-                                    ),
-                                    Icon(
-                                      Icons.arrow_forward_ios_sharp,
-                                      color: Colors.white,
-                                      size: MediaQuery.of(context)
-                                          .size
-                                          .width *
-                                          0.045,
-                                    ),
-                                  ],
-                                ),
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Login",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.045),
+                                          ),
+                                          SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.015,
+                                          ),
+                                          Icon(
+                                            Icons.arrow_forward_ios_sharp,
+                                            color: Colors.white,
+                                            size: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.045,
+                                          ),
+                                        ],
+                                      ),
                               ),
                             ),
                           ),
@@ -1222,7 +1245,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blue,
                                 fontSize:
-                                MediaQuery.of(context).size.width * 0.037),
+                                    MediaQuery.of(context).size.width * 0.037),
                           ),
                         ),
                       ),
@@ -1278,6 +1301,9 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setString('last_name', jsonData['last_name']);
       prefs.setString('email', jsonData['email']);
       prefs.setString('password', password.text);
+     // String? userId = jsonData['user_id'];
+      //prefs.setString('user_id', userId!);
+      //print("user id${userId}");
       if (!mounted) return;
 
       await Provider.of<checkPlanPurchaseProiver>(context, listen: false)
@@ -1285,7 +1311,7 @@ class _Login_ScreenState extends State<Login_Screen> {
 
       // Access the expiration date
       var provider =
-      Provider.of<checkPlanPurchaseProiver>(context, listen: false);
+          Provider.of<checkPlanPurchaseProiver>(context, listen: false);
       var expirationDateString =
           provider.checkplanpurchaseModel?.data?.expirationDate;
 
@@ -1311,7 +1337,7 @@ class _Login_ScreenState extends State<Login_Screen> {
           context,
           MaterialPageRoute(
               builder: (context) =>
-              isPlanActive ? Dashboard() : PlanPurchaseCard()));
+                  isPlanActive ? Dashboard() : PlanPurchaseCard()));
     } else {
       print('Failed to check token');
     }
@@ -1351,6 +1377,8 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setString('last_name', firstname[1]);
       prefs.setString('staffemail', jsonData['staffmember_email']);
       prefs.setString('password', password.text);
+      //prefs.setString('user_id', jsonData['user_id']);
+     // String? userId = jsonData['user_id'];
       await Provider.of<StaffPermissionProvider>(context, listen: false)
           .fetchPermissions();
       Navigator.push(
@@ -1392,6 +1420,8 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setString('last_name', jsonData['tenant_lastName']);
       prefs.setString('email', jsonData['tenant_email']);
       prefs.setString('password', password.text);
+      //prefs.setString('user_id', jsonData['user_id']);
+     // String? userId = jsonData['user_id'];
       await Provider.of<PermissionProvider>(context, listen: false)
           .fetchPermissions();
       Navigator.push(context,
@@ -1430,12 +1460,14 @@ class _Login_ScreenState extends State<Login_Screen> {
           .fetchPermissions();
       prefs.setString('first_name', firstname.first);
       // prefs.setString('last_name', firstname.length > 1 ? firstname[1]: "");
-      prefs.setString('last_name', firstname.length > 1 ? firstname[1]: "");
+      prefs.setString('last_name', firstname.length > 1 ? firstname[1] : "");
       prefs.setString('companyName', selectedCompany!);
       prefs.setString("role", "Vendor");
       print(jsonData["vendor_firstName"]);
       prefs.setString("vendor_id", jsonData["vendor_id"]);
       prefs.setString('checkedToken', token);
+    //  prefs.setString('user_id', jsonData['user_id']);
+     // String? userId = jsonData['user_id'];
       //  prefs.setString('adminId', adminId!);
       // prefs.setString('first_name', jsonData['${rolename.toLowerCase()}_firstName']);
       // prefs.setString('last_name', jsonData['${rolename.toLowerCase()}_lastName']);
@@ -1476,7 +1508,8 @@ class _Login_ScreenState extends State<Login_Screen> {
       print('Admin ID: $adminId');
       prefs.setString('checkedToken', token);
       prefs.setString('adminId', adminId!);
-
+     // prefs.setString('user_id', jsonData['user_id']);
+    //  String? userId = jsonData['user_id'];
       loginsubmit_usingrole(adminId);
     } else {
       setState(() {
@@ -1490,17 +1523,21 @@ class _Login_ScreenState extends State<Login_Screen> {
       loading = true;
     });
     // List<Map<String,dynamic>> selectedroledata = roles.where((element) => element["role_id"] == selectedRole).toList();
+
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    // String? userid = prefs.getString("user_id");
     String rolename = selectedrole;
 
     print("${Api_url}/api/auth/login");
     // print({"email": email.text, "password": password.text,"admin_id":adminId,"company":company.text});
     final response =
-    await http.post(Uri.parse('${Api_url}/api/auth/login'), body: {
+        await http.post(Uri.parse('${Api_url}/api/auth/login'), body: {
       "email": email.text,
       "password": password.text,
       "admin_id": adminId,
       "role": rolename.toLowerCase(),
-      "company": selectedCompany
+      "company": selectedCompany,
+      "user_id": userId,
     });
     print(response.body);
     final jsonData = json.decode(response.body);
@@ -1510,6 +1547,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setBool('isAuthenticated', true);
       prefs.setString('token', jsonData["token"]);
       prefs.setString('adminId', adminId);
+      prefs.setString('userId', userId!);
       print(rolename);
       if (rolename == "staffmember") await checkTokenStaff(jsonData["token"]);
       if (rolename == "tenant") await checkTokenTenant(jsonData["token"]);
@@ -1535,14 +1573,18 @@ class _Login_ScreenState extends State<Login_Screen> {
       "email": email.text,
       "password": password.text,
       "role": selectedrole,
-      "admin_id": adminId
+      "admin_id": adminId,
+      "user_id": userId,
     });
+    print("userid${userId}");
     final response =
-    await http.post(Uri.parse('${Api_url}/api/auth/login'), body: {
+        await http.post(Uri.parse('${Api_url}/api/auth/login'),
+            body: {
       "email": email.text,
       "password": password.text,
       "role": selectedrole,
-      "admin_id": adminId
+      "admin_id": adminId,
+          "user_id":userId,
     });
     print(response.body);
     final jsonData = json.decode(response.body);
@@ -1551,7 +1593,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool('isAuthenticated', true);
       prefs.setString('token', jsonData["token"]);
-
+      prefs.setString('userId', userId!);
       await checkToken(jsonData["token"]);
       //  await checkToken("token", "id");
       // Navigator.push(
@@ -1647,9 +1689,9 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                     foregroundColor:
-                    _selectedIndex == index ? Colors.white : blueColor,
+                        _selectedIndex == index ? Colors.white : blueColor,
                     backgroundColor:
-                    _selectedIndex == index ? blueColor : Colors.white,
+                        _selectedIndex == index ? blueColor : Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
@@ -1688,20 +1730,35 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                           ? Icons.check_circle
                           : Icons.radio_button_unchecked,
                       color:
-                      _selectedIndex == index ? Colors.white : Colors.grey,
+                          _selectedIndex == index ? Colors.white : Colors.grey,
                     ),
                     SizedBox(width: 5.0),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          option["company"]!,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: _selectedIndex == index
-                                  ? Colors.white
-                                  : Colors.black,
-                              fontSize: 16),
+                        Row(
+                          children: [
+                            Text(
+                              option["userName"]!,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: _selectedIndex == index
+                                      ? Colors.white
+                                      : Colors.black,
+                                  fontSize: 16),
+                            ),
+                            SizedBox(width: 5,),
+                            Text(
+                             "(${ option["company"]!})",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: _selectedIndex == index
+                                      ? Colors.white
+                                      : Colors.black,
+                                  fontSize: 16),
+                            ),
+
+                          ],
                         ),
                         Text(
                           capitalizeFirstLetter(option["role"]!),
@@ -1719,9 +1776,9 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                   foregroundColor:
-                  _selectedIndex == index ? Colors.white : blueColor,
+                      _selectedIndex == index ? Colors.white : blueColor,
                   backgroundColor:
-                  _selectedIndex == index ? blueColor : Colors.white,
+                      _selectedIndex == index ? blueColor : Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),

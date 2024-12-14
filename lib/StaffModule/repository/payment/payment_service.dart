@@ -26,6 +26,7 @@ class PaymentService {
     required List<String>? uploadedFile,
     required List<Map<String, dynamic>> entries,
     String? tenantname,
+    String? notificationTime,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");
@@ -49,7 +50,8 @@ class PaymentService {
         'date': date,
         'address1': address1,
         'processor_id': processorId,
-        'tenantName':tenantname
+        'tenantName':tenantname,
+        'notificationTime':notificationTime,
       };
     //  log(paymentDetails.toString());
       final response = await http.post(
@@ -82,8 +84,11 @@ class PaymentService {
               isLeaseAdded: false,
               uploadedFile: [],
               transactionId: jsonData["data"]["transactionid"],
-              responseText: jsonData["data"]["responsetext"],
-              surcharge: surcharge)
+              responseText: "SUCCESS",
+              //responseText: jsonData["data"]["responsetext"],
+              surcharge: surcharge,
+          notificationTime: notificationTime,
+          )
           ]);
           return "Payment Success";
         } else {
@@ -109,7 +114,9 @@ class PaymentService {
             uploadedFile: [],
             transactionId: "",
             responseText: "PENDING",
-            surcharge: surcharge);
+            surcharge: surcharge,
+            notificationTime: notificationTime
+        );
         return "Payment Scheduled Successfully";
       } catch (e) {
         throw Exception(e);
@@ -133,6 +140,7 @@ class PaymentService {
     required String transactionId,
     required String responseText,
     required String surcharge,
+    String? notificationTime,
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -157,12 +165,13 @@ class PaymentService {
         'billing_id': billingId,
         'entry': entries,
         'total_amount':
-            (double.parse(totalAmount) - double.parse(surcharge)).toString(),
+            (double.parse(totalAmount) - double.parse(surcharge)),
         'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,
         'response': responseText,
+        'notificationTime':notificationTime,
       }),
     );
 
@@ -199,6 +208,7 @@ class PaymentService {
     required List<String>? uploadedFile,
     required List<Map<String, dynamic>> entries,
     String? tenantname,
+    String? notificationTime,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");
@@ -225,7 +235,8 @@ class PaymentService {
         'date': date,
         'address1': address1,
         'processor_id': processorId,
-        'tenantName':tenantname
+        'tenantName':tenantname,
+        "notificationTime": notificationTime,
       };
       print(paymentDetails);
       final response = await http.post(
@@ -256,8 +267,10 @@ class PaymentService {
               isLeaseAdded: false,
               uploadedFile: [],
               transactionId: jsonData["data"]["transactionid"],
-              responseText: jsonData["data"]["responsetext"],
-              surcharge: surcharge)
+              responseText: "SUCCESS",
+              surcharge: surcharge,
+              notificationTime: notificationTime,
+          )
           ]);
           return "Payment Success";
         } else {
@@ -281,7 +294,9 @@ class PaymentService {
             uploadedFile: [],
             transactionId: "",
             responseText: "PENDING",
-            surcharge: surcharge);
+            surcharge: surcharge,
+            notificationTime: notificationTime
+        );
         return "Payment Scheduled Successfully";
       } catch (e) {
         throw Exception(e);
@@ -303,6 +318,7 @@ class PaymentService {
     required String transactionId,
     required String responseText,
     required String surcharge,
+    String? notificationTime,
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -325,13 +341,14 @@ class PaymentService {
         'payment_type': paymentType,
 
         'entry': entries,
-        'total_amount': totalAmount,
-        //'total_amount': (double.parse(totalAmount) -double.parse(surcharge)).toString(),
+      //  'total_amount': totalAmount,
+        'total_amount': (double.parse(totalAmount) -double.parse(surcharge)),
         'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,
         'response': responseText,
+        'notificationTime':notificationTime,
       }),
     );
 
@@ -370,6 +387,7 @@ class PaymentService {
     required bool Check,
     required List<String>? uploadedFile,
     required List<Map<String, dynamic>> entries,
+    String? notificationTime,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");
@@ -424,7 +442,9 @@ class PaymentService {
               uploadedFile: [],
               transactionId: jsonData["data"]["transactionid"],
               responseText: jsonData["data"]["responsetext"],
-              surcharge: surcharge);
+              surcharge: surcharge,
+    notificationTime: notificationTime
+          );
           return "Payment Success";
         } else {
           throw Exception('Failed payment ${jsonData["message"]}');
@@ -448,7 +468,8 @@ class PaymentService {
               uploadedFile: "",
               checknumber: Check_number,
               responseText: "PENDING",
-              surcharge: surcharge
+              surcharge: surcharge,
+              notificationTime: notificationTime
           )
         ]);
         return "Payment Successfully";
@@ -472,6 +493,7 @@ class PaymentService {
     required String checknumber,
     required String responseText,
     required String surcharge,
+    String? notificationTime,
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -498,6 +520,7 @@ class PaymentService {
         'uploaded_file': uploadedFile,
         'check_number': checknumber,
         'response': "SUCCESS",
+        'notificationTime':notificationTime,
       }),
     );
 

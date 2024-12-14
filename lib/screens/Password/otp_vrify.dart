@@ -12,9 +12,10 @@ import 'changepassword.dart';
 class otp_verify extends StatefulWidget {
   final String admin_id;
   final String role;
+  String userId;
 
   final String email;
-  const otp_verify({super.key,required this.email,required this.admin_id, required this.role});
+   otp_verify({super.key,required this.email,required this.admin_id, required this.role,required this.userId});
 
   @override
   State<otp_verify> createState() => _otp_verifyState();
@@ -48,7 +49,7 @@ class _otp_verifyState extends State<otp_verify> {
       print(jsonData);
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Changepassword(email: widget.email,admin_id: widget.admin_id,role: widget.role,)),
+        MaterialPageRoute(builder: (context) => Changepassword(email: widget.email,admin_id: widget.admin_id,role: widget.role,user_id: widget.userId,)),
       );
     Fluttertoast.showToast(msg: "OTP verify successfully");
     } else {

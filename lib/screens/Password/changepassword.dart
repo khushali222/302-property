@@ -13,7 +13,8 @@ class Changepassword extends StatefulWidget {
   final String email;
   final String admin_id;
   final String role;
-  const Changepassword({super.key, required this.email,required this.admin_id, required this.role});
+  String user_id;
+   Changepassword({super.key, required this.email,required this.admin_id, required this.role,required this.user_id});
 
   @override
   State<Changepassword> createState() => _ChangepasswordState();
@@ -46,7 +47,8 @@ class _ChangepasswordState extends State<Changepassword> {
         'email': widget.email,
         'password': password.text,
         'admin_id':widget.admin_id,
-        'role':widget.role
+        'role':widget.role,
+        'user_id':widget.user_id
       }),
     );
     print("${widget.role}");
