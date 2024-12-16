@@ -726,7 +726,7 @@ class _FinancialTableState extends State<FinancialTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data = await LeaseRepository().DeleteCharge(id, reason.text);
+            var data = await LeaseRepository().DeletePayment(id, reason.text);
             // Add your delete logic here
             if (data == 200)
               setState(() {

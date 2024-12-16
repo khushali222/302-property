@@ -5,14 +5,11 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
-import '../../constant/constant.dart';
-import '../../widgets/custom_drawer.dart';
-import '../../widgets/titleBar.dart';
+import '../../widgets/appbar.dart';
 import 'package:http/http.dart' as http;
+import '../../../widgets/titleBar.dart';
+import '../../../constant/constant.dart';
 
-import '../Maintenance/Workorder/Edit_workorders.dart';
-import '../Leasing/RentalRoll/SummeryPageLease.dart';
 class notifications extends StatefulWidget {
   const notifications({super.key});
 
@@ -31,10 +28,10 @@ class _notificationsState extends State<notifications> {
   Future<List<Map<String,dynamic>>>? fetchNotifications() async {
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? id = prefs.getString("vendor_id");
     String? token = prefs.getString('token');
     final response = await http.get(
-      Uri.parse('${Api_url}/api/notification/admin/$id'),
+      Uri.parse('${Api_url}/api/notification/vendor/$id'),
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
@@ -82,12 +79,17 @@ class _notificationsState extends State<notifications> {
     DateTime parsedDateTime = DateTime.parse(dateTime);
     return DateFormat('dd-MM-yyyy hh:mm a').format(parsedDateTime);
   }
-
+  var appBarHeight = AppBar().preferredSize.height;
+  GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer:CustomDrawer(currentpage: "Dashboard",dropdown: false,),
-      appBar: widget_302.App_Bar(context: context),
+      key:key,
+      appBar: widget_302.App_Bar(context: context,onDrawerIconPressed: () {
+        print("calling appbar");
+        key.currentState!.openDrawer();
+        // Scaffold.of(context).openDrawer();
+      }),
       body: SingleChildScrollView(
         child: Column(
           children: [

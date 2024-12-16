@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/VendorModule/screen/notifications/notifications.dart';
 import 'package:three_zero_two_property/screens/Profile/Profile_screen.dart';
 import 'package:three_zero_two_property/screens/Login/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -89,12 +90,18 @@ class widget_302  {
           SizedBox(
             width: 10,
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 15.0),
-            child: FaIcon(
-              FontAwesomeIcons.solidBell,
-              size: 25,
-              color: blueColor,
+          InkWell(
+            onTap: (){
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const notifications()));
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(top: 15.0),
+              child: FaIcon(
+                FontAwesomeIcons.solidBell,
+                size: 25,
+                color: blueColor,
+              ),
             ),
           ),
           //   FaIcon(

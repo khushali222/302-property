@@ -51,7 +51,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   void initState() {
     // TODO: implement initState
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
-    _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(widget.leaseId);
+    _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
     futureLeasetenant = LeaseRepository.fetchLeaseTenants(widget.leaseId);
     _tabController = TabController(length: 3, vsync: this);
     moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
@@ -661,8 +661,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                           _leaseLedgerFuture =
                                                               LeaseRepository()
                                                                   .fetchLeaseLedger(
-                                                                  widget
-                                                                      .leaseId);
+                                                                 leaseId: widget.leaseId);
                                                         });
                                                       }
                                                     },
@@ -2530,7 +2529,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                       setState(
                                                                               () {
                                                                             _leaseLedgerFuture =
-                                                                                LeaseRepository().fetchLeaseLedger(widget.leaseId);
+                                                                                LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
                                                                           });
                                                                     }
                                                                   },

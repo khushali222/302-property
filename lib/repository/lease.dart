@@ -676,4 +676,31 @@ class LeaseRepository {
     return response.statusCode;
   }
 
+  Future<int> DeletePayment(String payment_id,String? reason) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString("adminId");
+    final response = await http.delete(
+        Uri.parse('$Api_url/api/payment/payment/$payment_id'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'CRM $token',
+          "id": "CRM $id",
+        },
+        body: jsonEncode({"reason":reason})
+
+    );
+    print('charge respo ${response.body}');
+    if (response.statusCode == 200) {
+      // Successfully posted
+      print('Charge posted successfully');
+    } else {
+      // Handle error
+      print('Failed to post charge: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+
+    return response.statusCode;
+  }
+
 }

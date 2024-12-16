@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/financial/payment/payment_service.dart';
@@ -447,62 +448,125 @@ class _MakePaymentState extends State<MakePayment> {
   double surchargeamount = 0.0;
   double totalpayamount = 0.0;
 //for payment
+//   Future<void> fetchChargesForSelectedTenant(String tenantId) async {
+//     setState(() {
+//       isLoading = true;
+//       hasError = false;
+//     });
+//     try {
+//       List<Entrycharge>? charges = await ChargeRepositorys()
+//           .fetchChargesTable(tenantId);
+//       List<Entrycharge> filteredCharges =
+//           charges?.where((entry) => entry.chargeAmount! > 0).toList() ?? [];
+//
+//       // print('leaseid ${widget.leaseId}');
+//       // print('tenantid $tenantId');
+//       // print(charges!.length);
+//       // print("aaaa ${filteredCharges.length}");
+//
+//       setState(() {
+//         rows = charges?.where((entry) => entry.chargeAmount! > 0).map((entry) {
+//               return {
+//                 'entry_id': entry.entryId,
+//                 'account': entry.account,
+//                 'amount': 0.0,
+//                 'charge_amount': entry.chargeAmount,
+//                 'memo': entry.memo,
+//                 'date': entry.date,
+//                 'charge_type': entry.chargeType,
+//                 'newfield': false,
+//               };
+//             }).toList() ??
+//             [];
+//         //     print(rows.length);
+//         //       print(filteredCharges.length);
+//         for (var i = 0; i < filteredCharges.length; i++) {
+//           print("calling");
+//           if (i == 0) {
+//             charges_balances[0] = filteredCharges[i].chargeAmount!;
+//           } else {
+//             charges_balances.add(filteredCharges[i].chargeAmount!);
+//           }
+//         }
+//         //   print("charges ${charges_balances}");
+//         // print(rows.length);
+//         /*  print(rows.first['account']);
+//         print(rows.first['charge_amount']);
+//         print(rows.first['charge_amount']);*/
+//         controllers = rows.map((row) {
+//           return TextEditingController(text: "".toString());
+//         }).toList();
+//         //    print(rows);
+//         totalAmount = rows.fold(
+//             0.0, (sum, row) => sum + (row[amountController.text] ?? 0));
+//         isLoading = false;
+//         //   print(controllers.length);
+//       });
+//     } catch (e) {
+//       print(e);
+//       setState(() {
+//         hasError = true;
+//         isLoading = false;
+//       });
+//     }
+//   }
   Future<void> fetchChargesForSelectedTenant(String tenantId) async {
     setState(() {
       isLoading = true;
       hasError = false;
     });
     try {
-      List<Entrycharge>? charges = await ChargeRepositorys()
-          .fetchChargesTable(tenantId, widget.tenantId);
+      List<Entrycharge>? charges =
+      await ChargeRepositorys().fetchChargesTable(widget.leaseId);
+      print('charge details ${charges!.length}');
       List<Entrycharge> filteredCharges =
           charges?.where((entry) => entry.chargeAmount! > 0).toList() ?? [];
+      print("charges length:- ${charges!.length}");
+      print('leaseid ${widget.leaseId}');
 
-      // print('leaseid ${widget.leaseId}');
-      // print('tenantid $tenantId');
-      // print(charges!.length);
-      // print("aaaa ${filteredCharges.length}");
+      print('tenantid '
+          '$tenantId');
 
       setState(() {
         rows = charges?.where((entry) => entry.chargeAmount! > 0).map((entry) {
-              return {
-                'entry_id': entry.entryId,
-                'account': entry.account,
-                'amount': 0.0,
-                'charge_amount': entry.chargeAmount,
-                'memo': entry.memo,
-                'date': entry.date,
-                'charge_type': entry.chargeType,
-                'newfield': false,
-              };
-            }).toList() ??
+          return {
+            'entry_id': entry.entryId,
+            'account': entry.account,
+            'amount': 0.0,
+            'charge_amount': entry.chargeAmount,
+            'memo': entry.memo,
+            'date': entry.date,
+            'charge_type': entry.chargeType,
+            'newfield': false,
+          };
+        }).toList() ??
             [];
-        //     print(rows.length);
-        //       print(filteredCharges.length);
-        for (var i = 0; i < filteredCharges.length; i++) {
-          print("calling");
+        for (var i = 0; i < filteredCharges!.length; i++) {
           if (i == 0) {
-            charges_balances[0] = filteredCharges[i].chargeAmount!;
+            double chargeAmount = filteredCharges[i].chargeAmount!.toDouble();
+            String formattedChargeAmount = chargeAmount.toStringAsFixed(2);
+            charges_balances[0] = double.parse(formattedChargeAmount);
+            //charges_balances[0] = filteredCharges[i].chargeAmount!.toDouble();
           } else {
-            charges_balances.add(filteredCharges[i].chargeAmount!);
+            double chargeAmount = filteredCharges[i].chargeAmount!.toDouble();
+            String formattedChargeAmount = chargeAmount.toStringAsFixed(2);
+            //charges_balances[0] = double.parse(formattedChargeAmount);
+            charges_balances.add( double.parse(formattedChargeAmount));
           }
         }
-        //   print("charges ${charges_balances}");
-        // print(rows.length);
+        print("rows length:- ${rows!.length}");
         /*  print(rows.first['account']);
         print(rows.first['charge_amount']);
         print(rows.first['charge_amount']);*/
         controllers = rows.map((row) {
           return TextEditingController(text: "".toString());
         }).toList();
-        //    print(rows);
+        print(rows);
         totalAmount = rows.fold(
             0.0, (sum, row) => sum + (row[amountController.text] ?? 0));
         isLoading = false;
-        //   print(controllers.length);
       });
     } catch (e) {
-      print(e);
       setState(() {
         hasError = true;
         isLoading = false;
@@ -1755,8 +1819,11 @@ class _MakePaymentState extends State<MakePayment> {
                                   }).toList();
                                   Map<String, String> selectedTenant =
                                       filteredTenants.first;
+                                  final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+                                  String notificationTime = formatter.format(DateTime.now());
                                   await PaymentService()
                                       .makePaymentforcard(
+
                                       adminId: id ?? "",
                                       firstName: first_name!,
                                       lastName: last_name!,
@@ -1777,7 +1844,9 @@ class _MakePaymentState extends State<MakePayment> {
                                       processorId: "",
                                       leaseid: selectedTenantId!,
                                       company_name: companyName,
-                                      future_Date: false)
+                                      future_Date: false,
+                                  notificationTime: notificationTime,
+                                  )
                                       .then((value) {
                                     Fluttertoast.showToast(msg: "$value");
                                     setState(() {

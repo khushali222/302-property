@@ -22,6 +22,7 @@ class PaymentService {
     required String leaseid,
     required String company_name,
     required bool future_Date,
+    String? notificationTime,
 
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -46,6 +47,7 @@ class PaymentService {
         'date': date,
         'address1': address1,
         'processor_id': processorId,
+        'notificationTime':notificationTime,
       };
       print(paymentDetails);
 
@@ -76,13 +78,13 @@ class PaymentService {
               paymentType: "Card",
               customerVaultId: customerVaultId,
               billingId: billingId,
-
               totalAmount: amount,
               isLeaseAdded: false,
               uploadedFile: "",
               transactionId: jsonData["data"]["transactionid"],
-              responseText: jsonData["data"]["responsetext"],
+              responseText: "SUCCESS",
               surcharge: surcharge,
+                notificationTime: notificationTime
             ),
           ]);
           return "Payment Success";
@@ -110,6 +112,7 @@ class PaymentService {
           transactionId: "",
           responseText: "PENDING",
           surcharge: surcharge,
+            notificationTime: notificationTime
         );
         return "Payment Scheduled Successfully";
       } catch (e) {
@@ -127,7 +130,7 @@ class PaymentService {
     required String paymentType,
     required String customerVaultId,
     required String billingId,
-
+    String? notificationTime,
     required String totalAmount,
     required bool isLeaseAdded,
     required String uploadedFile,
@@ -156,7 +159,7 @@ class PaymentService {
         'payment_type': paymentType,
         'customer_vault_id': customerVaultId,
         'billing_id': billingId,
-
+        'notificationTime':notificationTime,
         'total_amount':
             double.parse(totalAmount) ,
         'surcharge': double.parse(surcharge),

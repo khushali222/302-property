@@ -1300,10 +1300,12 @@ class _Login_ScreenState extends State<Login_Screen> {
 
       prefs.setString('last_name', jsonData['last_name']);
       prefs.setString('email', jsonData['email']);
+      // prefs.setString('userid', jsonData['user_id'] ?? "");
+
       prefs.setString('password', password.text);
-     // String? userId = jsonData['user_id'];
-      //prefs.setString('user_id', userId!);
-      //print("user id${userId}");
+      // prefs.setString('userid', jsonData['user_id']);
+
+      print("user id${userId}");
       if (!mounted) return;
 
       await Provider.of<checkPlanPurchaseProiver>(context, listen: false)

@@ -47,18 +47,22 @@ class _EditApplicantState extends State<EditApplicant> {
     firstName.text = widget.applicant.applicantFirstName!;
     lastName.text = widget.applicant.applicantLastName!;
     email.text = widget.applicant.applicantEmail!;
-    mobileNumber.text = widget.applicant.applicantPhoneNumber == null
-        ? ''
-        :formatPhoneNumberedit( widget.applicant.applicantPhoneNumber!.toString());
-    homeNumber.text = widget.applicant.applicantHomeNumber == null
-        ? ''
-        : formatPhoneNumberedit(widget.applicant.applicantHomeNumber!.toString());
-    bussinessNumber.text = widget.applicant.applicantBusinessNumber == null
-        ? ''
-        : formatPhoneNumberedit(widget.applicant.applicantBusinessNumber!.toString());
-    telePhoneNumber.text = widget.applicant.applicantTelephoneNumber == null
-        ? ''
-        : formatPhoneNumberedit(widget.applicant.applicantTelephoneNumber!.toString());
+    // mobileNumber.text = widget.applicant.applicantPhoneNumber == null
+    //     ? ''
+    //     :formatPhoneNumberedit( widget.applicant.applicantPhoneNumber!.toString());
+    // homeNumber.text = widget.applicant.applicantHomeNumber == null
+    //     ? ''
+    //     : formatPhoneNumberedit(widget.applicant.applicantHomeNumber!.toString());
+    // bussinessNumber.text = widget.applicant.applicantBusinessNumber == null
+    //     ? ''
+    //     : formatPhoneNumberedit(widget.applicant.applicantBusinessNumber!.toString());
+    // telePhoneNumber.text = widget.applicant.applicantTelephoneNumber == null
+    //     ? ''
+    //     : formatPhoneNumberedit(widget.applicant.applicantTelephoneNumber!.toString());
+    mobileNumber.text = formatPhoneNumberedit(widget.applicant.applicantPhoneNumber?.toString() ?? '');
+    homeNumber.text = formatPhoneNumberedit(widget.applicant.applicantHomeNumber?.toString() ?? '');
+    bussinessNumber.text = formatPhoneNumberedit(widget.applicant.applicantBusinessNumber?.toString() ?? '');
+    telePhoneNumber.text = formatPhoneNumberedit(widget.applicant.applicantTelephoneNumber?.toString() ?? '');
 
     initialFirstName = widget.applicant.applicantFirstName;
     initialLastName = widget.applicant.applicantLastName;
@@ -399,29 +403,29 @@ class _EditApplicantState extends State<EditApplicant> {
                                   "applicant_firstName":
                                       firstName.text.isNotEmpty
                                           ? firstName.text
-                                          : 'N/A',
+                                          : '',
                                   "applicant_lastName": lastName.text.isNotEmpty
                                       ? lastName.text
-                                      : 'N/A',
+                                      : '',
                                   "applicant_email": email.text.isNotEmpty
                                       ? email.text
-                                      : 'N/A',
+                                      : '',
                                   "applicant_phoneNumber":
                                       mobileNumber.text.isNotEmpty
                                           ? mobileNumber.text
-                                          : 'N/A',
+                                          : '',
                                   "applicant_homeNumber":
                                       homeNumber.text.isNotEmpty
                                           ? homeNumber.text
-                                          : 'N/A',
+                                          : '',
                                   "applicant_telephoneNumber":
                                       telePhoneNumber.text.isNotEmpty
                                           ? telePhoneNumber.text
-                                          : 'N/A',
+                                          : '',
                                   "applicant_businessNumber":
                                       bussinessNumber.text.isNotEmpty
                                           ? bussinessNumber.text
-                                          : 'N/A',
+                                          : '',
                                 };
 
                                 // Make the API call using updateApplicants

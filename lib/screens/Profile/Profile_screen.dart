@@ -126,11 +126,13 @@ class _Profile_screenState extends State<Profile_screen> {
     String? id = prefs.getString("adminId");
     String? email = prefs.getString("email");
     String? role = prefs.getString("role");
+    String? userid = prefs.getString("userId");
 
     setState(() {
       loading = true; // Set loading to true while changing password
     });
 
+    print(" userid ${userid}");
     final response = await http.put(
       Uri.parse('${Api_url}/api/admin/app/reset_password'),
       headers: {
@@ -140,7 +142,8 @@ class _Profile_screenState extends State<Profile_screen> {
         'email': email,
         'password': password.text,
         'admin_id': id,
-        'role': "admin"
+        'role': "admin",
+        'user_id':userid,
       }),
     );
     print("${role}");
