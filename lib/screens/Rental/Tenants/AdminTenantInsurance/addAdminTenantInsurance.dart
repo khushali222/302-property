@@ -108,11 +108,15 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
     }
   }
 
+  DateTime? effectiveDate;
+  DateTime? expirationDate;
+
   Future<void> _selectDate(BuildContext context) async {
     DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
+      initialDate:effectiveDate ?? DateTime.now(),
+      firstDate: DateTime(2015, 8),
+    //  firstDate: DateTime(1900),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(
@@ -137,6 +141,7 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
 
     if (selectedDate != null) {
       setState(() {
+        effectiveDate = selectedDate;
         effective.text = DateFormat('dd-MM-yyyy').format(selectedDate);
       });
     }
@@ -145,8 +150,9 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
   Future<void> _selectDateexpiration(BuildContext context) async {
     DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
+      initialDate: expirationDate ?? DateTime.now(),
+      firstDate:effectiveDate!,
+      // firstDate: DateTime(1900),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(
@@ -171,6 +177,7 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
 
     if (selectedDate != null) {
       setState(() {
+        expirationDate = selectedDate;
         expiration.text = DateFormat('dd-MM-yyyy').format(selectedDate);
       });
     }

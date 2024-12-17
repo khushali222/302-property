@@ -49,9 +49,12 @@ class _AddTenantState extends State<AddTenant> {
   Future<void> _selectDate(BuildContext context) async {
     DateTime? selectedDate = await showDatePicker(
       context: context,
+      // initialDate: DateTime.now(),
+      // firstDate: DateTime(1900),
+      // lastDate: DateTime(2101),
       initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2101),
+      firstDate: DateTime(1900), // You can adjust this to your needs
+      lastDate: DateTime.now(),
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
@@ -1828,7 +1831,7 @@ class _AddTenantState extends State<AddTenant> {
                               SizedBox(
                                 height: 15,
                               ),
-                              Text('Date of Birth',
+                              Text('Date of Birth ',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,

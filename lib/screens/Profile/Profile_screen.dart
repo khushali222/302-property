@@ -52,6 +52,16 @@ class _Profile_screenState extends State<Profile_screen> {
   String _errorMessage = '';
   profile? _profile;
   ConnectivityResult? _connectivityResult;
+  String originalFirstName = '';
+  String originalLastName = '';
+  String originalEmail = '';
+  String originalPhoneNumber = '';
+  String originalCompanyName = '';
+  String originalCompanyAddress = '';
+  String originalCompanyPostalCode = '';
+  String originalCompanyCity = '';
+  String originalCompanyState = '';
+  String originalCompanyCountry = '';
   @override
   void initState() {
     super.initState();
@@ -91,6 +101,18 @@ class _Profile_screenState extends State<Profile_screen> {
 
         _companyStateController.text = profileData.companyState ?? '';
         _companyCountryController.text = profileData.companyCountry ?? '';
+
+        // Store original values
+        originalFirstName = profileData.firstName ?? '';
+        originalLastName = profileData.lastName ?? '';
+        originalEmail = profileData.email ?? '';
+        originalPhoneNumber = profileData.phoneNumber?.toString() ?? '';
+        originalCompanyName = profileData.companyName ?? '';
+        originalCompanyAddress = profileData.companyAddress ?? '';
+        originalCompanyPostalCode = profileData.companyPostalCode ?? '';
+        originalCompanyCity = profileData.companyCity ?? '';
+        originalCompanyState = profileData.companyState ?? '';
+        originalCompanyCountry = profileData.companyCountry ?? '';
 
         _isLoading = false;
       });
@@ -357,7 +379,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                         ),
                                         const SizedBox(height: 16.0),
                                         const Text(
-                                          'First Name',
+                                          'First Name *',
                                           style: TextStyle(
                                               color: Color(0xFF8A95A8),
                                               fontWeight: FontWeight.bold),
@@ -369,11 +391,11 @@ class _Profile_screenState extends State<Profile_screen> {
                                             'First Name',
                                             _firstNameController,
                                             _validateFirstName,
-
+                                          isRequired: true,
                                         ),
                                         const SizedBox(height: 16.0),
                                         const Text(
-                                          'Last Name',
+                                          'Last Name *',
                                           style: TextStyle(
                                               color: Color(0xFF8A95A8),
                                               fontWeight: FontWeight.bold),
@@ -384,10 +406,12 @@ class _Profile_screenState extends State<Profile_screen> {
                                         buildTextField(
                                             'Last Name',
                                             _lastNameController,
-                                            _validateFirstName),
+                                            _validateFirstName,
+                                        isRequired: true,
+                                        ),
                                         const SizedBox(height: 16.0),
                                         const Text(
-                                          'Email Address',
+                                          'Email Address *',
                                           style: TextStyle(
                                               color: Color(0xFF8A95A8),
                                               fontWeight: FontWeight.bold),
@@ -400,11 +424,12 @@ class _Profile_screenState extends State<Profile_screen> {
                                             _emailController,
                                             _validateFirstName,
                                           isEnabled: false,
+                                          isRequired: true,
 
                                         ),
                                         const SizedBox(height: 16.0),
                                         const Text(
-                                          'Phone Number',
+                                          'Phone Number *',
                                           style: TextStyle(
                                               color: Color(0xFF8A95A8),
                                               fontWeight: FontWeight.bold),
@@ -415,10 +440,12 @@ class _Profile_screenState extends State<Profile_screen> {
                                         buildTextField(
                                             'Phone Number',
                                             _phoneNumberController,
-                                            _validateFirstName),
+                                            _validateFirstName,
+                                        isRequired: true,
+                                        ),
                                         const SizedBox(height: 16.0),
                                         const Text(
-                                          'Company Name',
+                                          'Company Name *',
                                           style: TextStyle(
                                               color: Color(0xFF8A95A8),
                                               fontWeight: FontWeight.bold),
@@ -429,7 +456,9 @@ class _Profile_screenState extends State<Profile_screen> {
                                         buildTextField(
                                             'Company Name',
                                             _companyNameController,
-                                            _validateFirstName),
+                                            _validateFirstName,
+                                        isRequired: true,
+                                        ),
                                         const SizedBox(height: 16.0),
                                         const Text(
                                           'Company Address',
@@ -443,7 +472,9 @@ class _Profile_screenState extends State<Profile_screen> {
                                         buildTextField(
                                             'Company Address',
                                             _companyAddressController,
-                                            _validateFirstName),
+                                            _validateFirstName,
+                                        isRequired: false,
+                                        ),
                                         const SizedBox(height: 16.0),
                                         const Text(
                                           'Postal Code',
@@ -522,44 +553,78 @@ class _Profile_screenState extends State<Profile_screen> {
                                         Row(
                                           children: [
                                             GestureDetector(
+                                              // onTap: () {
+                                              //   if (_formKey.currentState!
+                                              //       .validate()) {
+                                              //     // If the form is valid, proceed with form submission
+                                              //
+                                              //     _formKey.currentState!.save();
+                                              //     ProfileRepository()
+                                              //         .Edit_profile({
+                                              //       "first_name":
+                                              //           _firstNameController
+                                              //               .text,
+                                              //       "last_name":
+                                              //           _lastNameController
+                                              //               .text,
+                                              //       "email":
+                                              //           _emailController.text,
+                                              //       "company_name":
+                                              //           _companyNameController
+                                              //               .text,
+                                              //       "phone_number":
+                                              //           _phoneNumberController
+                                              //               .text,
+                                              //       "company_address":
+                                              //           _companyAddressController
+                                              //               .text,
+                                              //       "postal_code":
+                                              //           _companyPostalCodeController
+                                              //               .text,
+                                              //       "city":
+                                              //           _companyCityController
+                                              //               .text,
+                                              //       "state":
+                                              //           _companyStateController
+                                              //               .text,
+                                              //       "country":
+                                              //           _companyCountryController
+                                              //               .text,
+                                              //     });
+                                              //   }
+                                              // },
                                               onTap: () {
-                                                if (_formKey.currentState!
-                                                    .validate()) {
-                                                  // If the form is valid, proceed with form submission
+                                                if (_formKey.currentState!.validate()) {
+                                                  // Check if any field has changed
+                                                  if (_firstNameController.text != originalFirstName ||
+                                                      _lastNameController.text != originalLastName ||
+                                                      _emailController.text != originalEmail ||
+                                                      _companyNameController.text != originalCompanyName ||
+                                                      _phoneNumberController.text != originalPhoneNumber ||
+                                                      _companyAddressController.text != originalCompanyAddress ||
+                                                      _companyPostalCodeController.text != originalCompanyPostalCode ||
+                                                      _companyCityController.text != originalCompanyCity ||
+                                                      _companyStateController.text != originalCompanyState ||
+                                                      _companyCountryController.text != originalCompanyCountry) {
 
-                                                  _formKey.currentState!.save();
-                                                  ProfileRepository()
-                                                      .Edit_profile({
-                                                    "first_name":
-                                                        _firstNameController
-                                                            .text,
-                                                    "last_name":
-                                                        _lastNameController
-                                                            .text,
-                                                    "email":
-                                                        _emailController.text,
-                                                    "company_name":
-                                                        _companyNameController
-                                                            .text,
-                                                    "phone_number":
-                                                        _phoneNumberController
-                                                            .text,
-                                                    "company_address":
-                                                        _companyAddressController
-                                                            .text,
-                                                    "postal_code":
-                                                        _companyPostalCodeController
-                                                            .text,
-                                                    "city":
-                                                        _companyCityController
-                                                            .text,
-                                                    "state":
-                                                        _companyStateController
-                                                            .text,
-                                                    "country":
-                                                        _companyCountryController
-                                                            .text,
-                                                  });
+                                                    // If any field has changed, call the API
+                                                    _formKey.currentState!.save();
+                                                    ProfileRepository().Edit_profile({
+                                                      "first_name": _firstNameController.text,
+                                                      "last_name": _lastNameController.text,
+                                                      "email": _emailController.text,
+                                                      "company_name": _companyNameController.text,
+                                                      "phone_number": _phoneNumberController.text,
+                                                      "company_address": _companyAddressController.text,
+                                                      "postal_code": _companyPostalCodeController.text,
+                                                      "city": _companyCityController.text,
+                                                      "state": _companyStateController.text,
+                                                      "country": _companyCountryController.text,
+                                                    });
+                                                  } else {
+                                                    // Optionally, show a message that no changes were made
+                                                    print("No changes detected. API call skipped.");
+                                                  }
                                                 }
                                               },
                                               child: Container(
@@ -589,6 +654,48 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                         .size
                                                                         .width <
                                                                     500
+                                                                ? 15
+                                                                : 20),
+                                                      ),
+                                                      SizedBox(width: 8,),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(width: 10,),
+                                            GestureDetector(
+
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: Container(
+                                                height: 40,
+                                                //width: 160,
+                                                decoration: BoxDecoration(
+                                                  color: blueColor,
+                                                  borderRadius:
+                                                  BorderRadius.circular(5),
+                                                ),
+                                                child: Center(
+
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .center,
+                                                    children: [
+                                                      SizedBox(width: 8,),
+                                                      Text(
+                                                        "  Back  ",
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                            FontWeight.bold,
+                                                            fontSize: MediaQuery.of(
+                                                                context)
+                                                                .size
+                                                                .width <
+                                                                500
                                                                 ? 15
                                                                 : 20),
                                                       ),
@@ -1166,7 +1273,7 @@ class _Profile_screenState extends State<Profile_screen> {
   }
 
   Widget buildTextField(String label, TextEditingController controller,
-      String? Function(String?)? validator , {bool isEnabled = true} ) {
+      String? Function(String?)? validator , {bool isEnabled = true,bool isRequired = false,} ) {
     return Material(
       elevation: 3,
       borderRadius: BorderRadius.circular(5),
@@ -1178,7 +1285,14 @@ class _Profile_screenState extends State<Profile_screen> {
         ),
         child: TextFormField(
           controller: controller,
-          validator: validator,
+          // validator: validator,
+          validator:  (value) {
+            // Only validate if the field is required
+            if (isRequired) {
+              return validator != null ? validator(value) : null;
+            }
+            return null; // No validation for non-required fields
+          },
           enabled: isEnabled,
           decoration: InputDecoration(
             border: InputBorder.none,

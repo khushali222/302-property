@@ -194,7 +194,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: enddate ?? DateTime.now(),
-      firstDate: DateTime(2015, 8),
+      // firstDate: DateTime(2015, 8),
+      firstDate: startdate!,
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(

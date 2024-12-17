@@ -1592,6 +1592,7 @@ class _Login_ScreenState extends State<Login_Screen> {
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
       print(jsonData);
+
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool('isAuthenticated', true);
       prefs.setString('token', jsonData["token"]);
@@ -1717,7 +1718,8 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
             final index = widget.buttonOptions.indexOf(option);
             return SizedBox(
               width: 320, // Adjusted width to make the button smaller
-              child: ElevatedButton(
+              child:
+              ElevatedButton(
                 onPressed: () {
                   setState(() {
                     _selectedIndex = index;
@@ -1727,14 +1729,38 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                 },
                 child: Row(
                   children: [
-                    Icon(
-                      _selectedIndex == index
-                          ? Icons.check_circle
-                          : Icons.radio_button_unchecked,
-                      color:
-                          _selectedIndex == index ? Colors.white : Colors.grey,
+                    // Icon(
+                    //   _selectedIndex == index
+                    //       ? (Icons.check_box)
+                    //       : Icons.check_box_outline_blank,
+                    //   color:
+                    //       _selectedIndex == index ? Colors.white : blueColor,
+                    //   size: 40,
+                    // ),
+                    SizedBox(width: 10,),
+                    Container(
+                      width: 30, // Set the width of the container
+                      height: 30, // Set the height of the container
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: _selectedIndex == index ? Colors.white : Colors.black, // Border color
+                          width: 2, // Set the border thickness
+                        ),
+                        borderRadius: BorderRadius.circular(3), // Optional: rounded corners
+
+                      ),
+                      child:Center(
+                        child: _selectedIndex == index
+                            ?
+                        Icon(
+                          Icons.check_sharp,
+                          color: Colors.white, // Icon color when selected
+                          size: 25, // Set the icon size
+                        )
+                            : SizedBox.shrink(), // This will create a blank space when not selected
+                      ),
                     ),
-                    SizedBox(width: 5.0),
+                    SizedBox(width: 15),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -1765,11 +1791,11 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                         Text(
                           capitalizeFirstLetter(option["role"]!),
                           style: TextStyle(
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: _selectedIndex == index
                                   ? Colors.white
                                   : Colors.black,
-                              fontSize: 12),
+                              fontSize: 13),
                         ),
                       ],
                     ),
@@ -1785,7 +1811,7 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   side: BorderSide(
-                    color: _selectedIndex == index ? blueColor : Colors.grey,
+                    color: _selectedIndex == index ? blueColor : grey,
                   ),
                 ),
               ),

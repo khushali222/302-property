@@ -108,39 +108,39 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
     // }
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    DateTime? selectedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2101),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
-              primary: blueColor, // header background color
-              onPrimary: Colors.white, // header text color
-              // onSurface: Colors.blue, // body text color
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor:
-                    blueColor, // button text color
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (selectedDate != null) {
-      setState(() {
-        effective.text = DateFormat('dd-MM-yyyy').format(selectedDate);
-      });
-    }
-  }
+  // Future<void> _selectDate(BuildContext context) async {
+  //   DateTime? selectedDate = await showDatePicker(
+  //     context: context,
+  //     initialDate: DateTime.now(),
+  //     firstDate: DateTime(1900),
+  //     lastDate: DateTime(2101),
+  //     builder: (BuildContext context, Widget? child) {
+  //       return Theme(
+  //         data: ThemeData.light().copyWith(
+  //           colorScheme: ColorScheme.light(
+  //             primary: blueColor, // header background color
+  //             onPrimary: Colors.white, // header text color
+  //             // onSurface: Colors.blue, // body text color
+  //           ),
+  //           textButtonTheme: TextButtonThemeData(
+  //             style: TextButton.styleFrom(
+  //               foregroundColor: Colors.white,
+  //               backgroundColor:
+  //                   blueColor, // button text color
+  //             ),
+  //           ),
+  //         ),
+  //         child: child!,
+  //       );
+  //     },
+  //   );
+  //
+  //   if (selectedDate != null) {
+  //     setState(() {
+  //       effective.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+  //     });
+  //   }
+  // }
 
   @override
   initState() {
@@ -155,11 +155,49 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
     super.initState();
   }
 
-  Future<void> _selectDateexpiration(BuildContext context) async {
+  // Future<void> _selectDateexpiration(BuildContext context) async {
+  //   DateTime? selectedDate = await showDatePicker(
+  //     context: context,
+  //     initialDate: DateTime.now(),
+  //     firstDate: DateTime(1900),
+  //     lastDate: DateTime(2101),
+  //     builder: (BuildContext context, Widget? child) {
+  //       return Theme(
+  //         data: ThemeData.light().copyWith(
+  //           colorScheme: ColorScheme.light(
+  //             primary: blueColor, // header background color
+  //             onPrimary: Colors.white, // header text color
+  //             // onSurface: Colors.blue, // body text color
+  //           ),
+  //           textButtonTheme: TextButtonThemeData(
+  //             style: TextButton.styleFrom(
+  //               foregroundColor: Colors.white,
+  //               backgroundColor:
+  //                   blueColor, // button text color
+  //             ),
+  //           ),
+  //         ),
+  //         child: child!,
+  //       );
+  //     },
+  //   );
+  //
+  //   if (selectedDate != null) {
+  //     setState(() {
+  //       expiration.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+  //     });
+  //   }
+  // }
+
+  DateTime? effectiveDate;
+  DateTime? expirationDate;
+
+  Future<void> _selectDate(BuildContext context) async {
     DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
+      initialDate:effectiveDate ?? DateTime.now(),
+      firstDate: DateTime(2015, 8),
+      //  firstDate: DateTime(1900),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(
@@ -173,7 +211,7 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor:
-                    blueColor, // button text color
+                blueColor, // button text color
               ),
             ),
           ),
@@ -184,6 +222,43 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
 
     if (selectedDate != null) {
       setState(() {
+        effectiveDate = selectedDate;
+        effective.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+      });
+    }
+  }
+
+  Future<void> _selectDateexpiration(BuildContext context) async {
+    DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDate: expirationDate ?? DateTime.now(),
+      firstDate:effectiveDate!,
+      // firstDate: DateTime(1900),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: blueColor, // header background color
+              onPrimary: Colors.white, // header text color
+              // onSurface: Colors.blue, // body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor:
+                blueColor, // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (selectedDate != null) {
+      setState(() {
+        expirationDate = selectedDate;
         expiration.text = DateFormat('dd-MM-yyyy').format(selectedDate);
       });
     }

@@ -194,7 +194,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: enddate ?? DateTime.now(),
-      firstDate: DateTime(2015, 8),
+      firstDate: startdate!,
+     // firstDate: DateTime(2015, 8),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(
@@ -812,7 +813,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                               width: 2,
                             ),
                             Text(
-                              "Start Date",
+                              "Start Date ",
                               style: TextStyle(
                                   color: Color(0xFF8A95A8),
                                   fontWeight: FontWeight.bold,

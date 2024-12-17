@@ -109,161 +109,214 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       ),
       body: _connectivityResult != ConnectivityResult.none
           ? SingleChildScrollView(
-            child: FutureBuilder<LeaseSummary>(
-                future: futureLeaseSummary,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 300),
-                      child: SpinKitSpinningLines(
-                        color: blueColor,
-                        size: 55.0,
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (!snapshot.hasData || snapshot.data == null) {
-                    return Center(child: Text('No data found.'));
-                  } else {
-                    var lease = snapshot.data!;
-                    return Column(
-                      children: <Widget>[
-                        const SizedBox(
-                          height: 20,
+              child: FutureBuilder<LeaseSummary>(
+                  future: futureLeaseSummary,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 300),
+                        child: SpinKitSpinningLines(
+                          color: blueColor,
+                          size: 55.0,
                         ),
-                        Row(
-                          children: [
-                            if (MediaQuery.of(context).size.width < 500)
-                              SizedBox(
-                                width: 18,
-                              ),
-                            if (MediaQuery.of(context).size.width > 500)
-                              SizedBox(
-                                width: 25,
-                              ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width > 500
-                                  ? 200
-                                  : 180,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 1),
-                                child: Text(
-                                  '${snapshot.data?.data?.rentalAddress}',
-                                  maxLines: 5, // Set maximum number of lines
-                                  overflow: TextOverflow
-                                      .ellipsis, // Handle overflow with ellipsis
-                                  style: TextStyle(
-                                      fontSize:
-                                          MediaQuery.of(context).size.width < 500
-                                              ? 13
-                                              : 18,
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                            // Text('${snapshot.data!.data!.rentalAddress}',
-                            //     style: TextStyle(
-                            //         color: blueColor,
-                            //         fontWeight: FontWeight.bold,
-                            //       fontSize:   MediaQuery.of(context).size.width < 500 ? 15 :18)),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Row(
-                          children: [
-                            if (MediaQuery.of(context).size.width < 500)
-                              SizedBox(
-                                width: 18,
-                              ),
-                            if (MediaQuery.of(context).size.width > 500)
-                              SizedBox(
-                                width: 25,
-                              ),
-                            Text(
-                                '${determineStatus(snapshot.data!.data?.startDate, snapshot.data!.data?.endDate)} ${snapshot.data!.data!.renewLeases != null && snapshot.data!.data!.renewLeases!.length > 0 ? " - Renewed" : ""}',
-                                style: TextStyle(
-                                    color: _getStatusColor(determineStatus(
-                                        snapshot.data!.data?.startDate,
-                                        snapshot.data!.data?.endDate)),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 13
-                                            : 16)),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(8),
-                          height: 60,
-                          margin: EdgeInsets.symmetric(vertical: 5,horizontal: 15),
-                          decoration: BoxDecoration(
-                              border: Border.all(color: blueColor)
-                              ,borderRadius: BorderRadius.circular(5)
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data == null) {
+                      return Center(child: Text('No data found.'));
+                    } else {
+                      var lease = snapshot.data!;
+                      return Column(
+                        children: <Widget>[
+                          const SizedBox(
+                            height: 20,
                           ),
-                          // color: Colors.red,
-                          child: Row(
+                          Row(
                             children: [
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedIndex = 0;
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: _selectedIndex == 0 ? blueColor : Colors.white,
-                                        borderRadius: BorderRadius.circular(5)
-                                    ),
-                                    child: Center(child: Text("Summary",style: TextStyle(color:  _selectedIndex != 0 ? blueColor : Colors.white,),)),
+                              if (MediaQuery.of(context).size.width < 500)
+                                SizedBox(
+                                  width: 18,
+                                ),
+                              if (MediaQuery.of(context).size.width > 500)
+                                SizedBox(
+                                  width: 25,
+                                ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width > 500
+                                    ? 200
+                                    : 180,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 1),
+                                  child: Text(
+                                    '${snapshot.data?.data?.rentalAddress}',
+                                    maxLines: 5, // Set maximum number of lines
+                                    overflow: TextOverflow
+                                        .ellipsis, // Handle overflow with ellipsis
+                                    style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 13
+                                                : 18,
+                                        color: blueColor,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ),
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedIndex = 1;
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: _selectedIndex == 1 ? blueColor : Colors.white,
-                                        borderRadius: BorderRadius.circular(5)
-                                    ),
-            
-                                    child: Center(child: Text("Finacial",style: TextStyle(color:  _selectedIndex != 1 ? blueColor : Colors.white,))),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedIndex = 2;
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: _selectedIndex == 2 ? blueColor : Colors.white,
-                                        borderRadius: BorderRadius.circular(5)
-                                    ),
-                                    child: Center(child: Text("Tenant",style: TextStyle(color:  _selectedIndex != 2 ? blueColor : Colors.white,))),
-                                  ),
-                                ),
-                              ),
-                             
+                              // Text('${snapshot.data!.data!.rentalAddress}',
+                              //     style: TextStyle(
+                              //         color: blueColor,
+                              //         fontWeight: FontWeight.bold,
+                              //       fontSize:   MediaQuery.of(context).size.width < 500 ? 15 :18)),
                             ],
                           ),
-                        ),
-                        _buildTabContent(snapshot.data!,context),
-                      /*  Expanded(
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Row(
+                            children: [
+                              if (MediaQuery.of(context).size.width < 500)
+                                SizedBox(
+                                  width: 18,
+                                ),
+                              if (MediaQuery.of(context).size.width > 500)
+                                SizedBox(
+                                  width: 25,
+                                ),
+                              Text(
+                                  '${determineStatus(snapshot.data!.data?.startDate, snapshot.data!.data?.endDate)} ${snapshot.data!.data!.renewLeases != null && snapshot.data!.data!.renewLeases!.length > 0 ? " - Renewed" : ""}',
+                                  style: TextStyle(
+                                      color: _getStatusColor(determineStatus(
+                                          snapshot.data!.data?.startDate,
+                                          snapshot.data!.data?.endDate)),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 13
+                                              : 16)),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(8),
+                            height: 60,
+                            margin: EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 15),
+                            decoration: BoxDecoration(
+                                border: Border.all(color: blueColor),
+                                borderRadius: BorderRadius.circular(5)),
+                            // color: Colors.red,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedIndex = 0;
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: _selectedIndex == 0
+                                              ? blueColor
+                                              : Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(5)),
+                                      child: Center(
+                                          child: Text(
+                                        "Summary",
+                                        style: TextStyle(
+                                          color: _selectedIndex != 0
+                                              ? blueColor
+                                              : Colors.white,
+                                        ),
+                                      )),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedIndex = 1;
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: _selectedIndex == 1
+                                              ? blueColor
+                                              : Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(5)),
+                                      child: Center(
+                                          child: Text("Finacial",
+                                              style: TextStyle(
+                                                color: _selectedIndex != 1
+                                                    ? blueColor
+                                                    : Colors.white,
+                                              ))),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedIndex = 2;
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: _selectedIndex == 2
+                                              ? blueColor
+                                              : Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(5)),
+                                      child: Center(
+                                          child: Text("Tenant",
+                                              style: TextStyle(
+                                                color: _selectedIndex != 2
+                                                    ? blueColor
+                                                    : Colors.white,
+                                              ))),
+                                    ),
+                                  ),
+                                ),
+                                // Expanded(
+                                //   child: GestureDetector(
+                                //     onTap: () {
+                                //       setState(() {
+                                //         _selectedIndex = 3;
+                                //       });
+                                //     },
+                                //     child: Container(
+                                //       decoration: BoxDecoration(
+                                //           color: _selectedIndex == 3
+                                //               ? blueColor
+                                //               : Colors.white,
+                                //           borderRadius:
+                                //               BorderRadius.circular(5)),
+                                //       child: Center(
+                                //           child: Padding(
+                                //             padding: const EdgeInsets.all(8.0),
+                                //             child: Text("Renter's insurance",
+                                //                 style: TextStyle(
+                                //                   color: _selectedIndex != 3
+                                //                       ? blueColor
+                                //                       : Colors.white,
+                                //                 )),
+                                //           )),
+                                //     ),
+                                //   ),
+                                // ),
+                              ],
+                            ),
+                          ),
+                          _buildTabContent(snapshot.data!, context),
+                          /*  Expanded(
                           child: TabBarView(
                             controller: _tabController,
                             children: [
@@ -284,11 +337,11 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                             ],
                           ),
                         ),*/
-                      ],
-                    );
-                  }
-                }),
-          )
+                        ],
+                      );
+                    }
+                  }),
+            )
           : SizedBox(
               width: double.infinity,
               child: Column(
@@ -419,7 +472,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
           //prefs.setString('dueDate', leasesummery.data?.date ?? '');
           print('renewal ${leasesummery.data?.renewLeases}');
           return Column(
-
             children: [
               const SizedBox(
                 height: 10,
@@ -637,7 +689,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 padding: const EdgeInsets.only(
                                                     top: 12),
                                                 child: Text(
-                                                  '\$ ${leaseLedger.data!.length > 0?leaseLedger.data?.first.balance!.toStringAsFixed(2):0.0}',
+                                                  '\$ ${leaseLedger.data!.length > 0 ? leaseLedger.data?.first.balance!.toStringAsFixed(2) : 0.0}',
                                                   style: TextStyle(
                                                       fontSize: 15,
                                                       fontWeight:
@@ -916,7 +968,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                         .data!.startDate,
                                                     enddate: leasesummery
                                                         .data!.endDate,
-                                                   leasetype: leasesummery
+                                                    leasetype: leasesummery
                                                         .data!.leaseType,
                                                     rentamount: leasesummery
                                                         .data!.amount
@@ -1939,7 +1991,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           ),
                                           const SizedBox(width: 5),
                                           Text(
-                                            formatPhoneNumber('${snapshot.data![index].tenantPhoneNumber}'),
+                                            formatPhoneNumber(
+                                                '${snapshot.data![index].tenantPhoneNumber}'),
                                             style: TextStyle(
                                               fontSize: 13,
                                               color: blueColor,
@@ -2242,7 +2295,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               ),
                                               const SizedBox(width: 5),
                                               Text(
-                                                formatPhoneNumber('${snapshot.data![index].tenantPhoneNumber}'),
+                                                formatPhoneNumber(
+                                                    '${snapshot.data![index].tenantPhoneNumber}'),
                                                 style: TextStyle(
                                                   fontSize: 15,
                                                   color: blueColor,
@@ -2477,13 +2531,14 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                               12),
                                                                       child:
                                                                           Text(
-
-                                                                            leaseLedger.data != null && leaseLedger.data!.isNotEmpty && leaseLedger.data!.first.balance != null
-                                                                                ? leaseLedger.data!.first.balance!.toStringAsFixed(2)
-                                                                                : 'N/A',
+                                                                        leaseLedger.data != null &&
+                                                                                leaseLedger.data!.isNotEmpty &&
+                                                                                leaseLedger.data!.first.balance != null
+                                                                            ? leaseLedger.data!.first.balance!.toStringAsFixed(2)
+                                                                            : 'N/A',
                                                                         // '\$ ${leaseLedger.data?.first.balance!.toStringAsFixed(2)}',
 
-                                                                       // '\$ ${leaseLedger.data!.length > 0?leaseLedger.data?.first.balance!.toStringAsFixed(2):0.0}',
+                                                                        // '\$ ${leaseLedger.data!.length > 0?leaseLedger.data?.first.balance!.toStringAsFixed(2):0.0}',
 
                                                                         style: TextStyle(
                                                                             fontSize:
