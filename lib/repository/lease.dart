@@ -470,7 +470,7 @@ class LeaseRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
-
+     try {
     print('$Api_url/api/leases/lease_summary/$leaseId');
     final response = await http.get(
       Uri.parse('$Api_url/api/leases/lease_summary/$leaseId'),
@@ -486,6 +486,9 @@ class LeaseRepository {
 
     } else {
       throw Exception('Failed to load lease summary');
+    }
+      } catch (e) {
+      throw Exception('Error fetching lease data: $e');
     }
   }
   static Future<List<LeaseTenant>> fetchLeaseTenants(String leaseId) async {

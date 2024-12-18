@@ -194,7 +194,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(10.0),
       child: FutureBuilder<ApplicantContentDetails>(
         future: futureApplicantDetails,
         builder: (context, snapshot) {
@@ -234,7 +234,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           style: TextStyle(
                                               color: blueColor,
                                               fontSize: 18,
-                                              fontWeight: FontWeight.w500)),
+                                              fontWeight: FontWeight.bold)),
                                     ),
                                     GestureDetector(
                                       onTap: () {
@@ -263,7 +263,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     color: Colors.white,
                                                     fontSize: 15,
                                                     fontWeight:
-                                                        FontWeight.w500),
+                                                        FontWeight.bold),
                                                 textAlign: TextAlign.center,
                                               ),
                                             ),
@@ -280,11 +280,11 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   'Applicant information',
                                   style: TextStyle(
                                       fontSize: 16,
-                                      fontWeight: FontWeight.w500,
+                                      fontWeight: FontWeight.bold,
                                       color: blueColor),
                                 ),
                                 const SizedBox(
-                                  height: 5,
+                                  height: 8,
                                 ),
                                 Container(
                                   width: double.infinity,
@@ -304,8 +304,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'First name',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[500]),
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
                                         ),
                                         const SizedBox(
                                           height: 5,
@@ -331,8 +331,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Last Name',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[500]),
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
                                         ),
                                         const SizedBox(
                                           height: 5,
@@ -357,8 +357,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Birth Date',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[500]),
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
                                         ),
                                         const SizedBox(
                                           height: 5,
@@ -375,8 +375,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Email',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[500]),
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
                                         ),
                                         const SizedBox(
                                           height: 5,
@@ -394,8 +394,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Phone Number',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[500]),
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
                                         ),
                                         const SizedBox(
                                           height: 5,
@@ -426,7 +426,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   'Applicant Street Address',
                                   style: TextStyle(
                                       fontSize: 16,
-                                      fontWeight: FontWeight.w500,
+                                      fontWeight: FontWeight.bold,
                                       color: blueColor),
                                 ),
                                 const SizedBox(
@@ -450,8 +450,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Street Address',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[500]),
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
                                         ),
                                         const SizedBox(
                                           height: 5,
@@ -468,8 +468,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'City',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[500]),
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
                                         ),
                                         const SizedBox(
                                           height: 5,
@@ -485,8 +485,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'State',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[500]),
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
                                         ),
                                         const SizedBox(
                                           height: 5,
@@ -502,8 +502,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Country',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[500]),
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
                                         ),
                                         const SizedBox(
                                           height: 5,
@@ -520,8 +520,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Postal Code',
                                           style: TextStyle(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey[500]),
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
                                         ),
                                         const SizedBox(
                                           height: 5,
@@ -543,7 +543,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   'Emergency contact',
                                   style: TextStyle(
                                     fontSize: 16,
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.bold,
                                     color: blueColor,
                                   ),
                                 ),
@@ -568,8 +568,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'First Name',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -587,8 +587,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Last Name',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -606,8 +606,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Relationship',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -625,8 +625,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Email',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -643,8 +643,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Phone Number',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -668,7 +668,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   'Rental history',
                                   style: TextStyle(
                                     fontSize: 16,
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.bold,
                                     color: blueColor,
                                   ),
                                 ),
@@ -693,8 +693,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Rental Address',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -711,8 +711,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'City',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -729,8 +729,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'State',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -747,8 +747,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Country',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -765,8 +765,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Postcode',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -783,8 +783,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Start Date',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -801,8 +801,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'End Date',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -819,8 +819,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Rent Amount',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -837,8 +837,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Reason for Leaving',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -860,7 +860,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   'Rental owner information',
                                   style: TextStyle(
                                     fontSize: 16,
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.bold,
                                     color: blueColor,
                                   ),
                                 ),
@@ -885,8 +885,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'First Name',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -904,8 +904,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Last Name',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -923,8 +923,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Email',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -942,8 +942,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Phone Number',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -966,7 +966,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   'Employment',
                                   style: TextStyle(
                                     fontSize: 16,
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.bold,
                                     color: blueColor,
                                   ),
                                 ),
@@ -991,8 +991,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Company Name',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1009,8 +1009,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Street Address',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1028,8 +1028,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'City',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1046,8 +1046,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'State',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1065,8 +1065,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Country',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1084,8 +1084,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Postal Code',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1103,8 +1103,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Primary Email',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1122,8 +1122,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Phone Number',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1141,8 +1141,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Position',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1160,8 +1160,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Supervisor First Name',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1179,8 +1179,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Supervisor Last Name',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1198,8 +1198,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           'Supervisor Title',
                                           style: TextStyle(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                              color: blueColor
                                           ),
                                         ),
                                         const SizedBox(
@@ -1217,7 +1217,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(
-                                    bottom: 16.0,
+                                    
+                                    bottom: 17.0,
+                                    left: 8,
+                                    right: 8,
                                     top: 16.0,
                                   ),
                                   child: Text('Terms and conditions',
@@ -1226,16 +1229,19 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                       style: TextStyle(
                                           color: blueColor,
                                           fontSize: 16,
-                                          fontWeight: FontWeight.w500)),
+                                          fontWeight: FontWeight.bold)),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(
                                     bottom: 16.0,
                                     top: 16.0,
+                                    left: 8,
+                                    right: 8,
                                   ),
                                   child: Text(
                                       '''I understand that this is a routine application to establish credit, character, employment, and rental history. I also understand that this is NOT an agreement to rent and that all applications must be approved. I authorize verification of references given. I declare that the statements above are true and correct, and I agree that the Rental owner may terminate my agreement entered into in reliance on any misstatement made above.''',
                                       softWrap: true,
+                                      textAlign: TextAlign.justify,
                                       overflow: TextOverflow.fade,
                                       style: TextStyle(
                                           color: Colors.grey[600],
@@ -1250,7 +1256,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         value: checked, onChanged: (value) {}),
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                        left: 4.0,
+
+                                        left: 8,
+                                        right: 8,
                                       ),
                                       child: Text('Agreed to*',
                                           softWrap: true,
@@ -1264,7 +1272,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(
-                                    left: 4.0,
+                                    left: 10,
+                                    right: 10,
                                   ),
                                   child: Text('Agreed by',
                                       softWrap: true,
@@ -1277,12 +1286,17 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                NewCustomTextField(
-                                  hintText: 'Agreed by...',
-                                  controller: _agreeByController,
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: NewCustomTextField(
+                                    hintText: 'Agreed by...',
+                                    controller: _agreeByController,
+                                  ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(
+                                    left: 8,
+                                    right: 8,
                                     bottom: 16.0,
                                     top: 16.0,
                                   ),
@@ -1315,146 +1329,149 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             fontWeight: FontWeight.w500)),
                                   ])),
                                 ),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: blueColor),
-                                  onPressed: () async {
-                                    if (_formKey.currentState!.validate()) {
-                                      SharedPreferences prefs =
-                                          await SharedPreferences.getInstance();
-                                      String? adminId =
-                                          prefs.getString('adminId');
-                                      // printAllFields();
-                                      Data data = Data(
-                                        emergencyContact: EmergencyContact(
-                                          firstName:
-                                              _emergencyFirstNameController
-                                                  .text,
-                                          lastName:
-                                              _emergencyLastNameController.text,
-                                          relationship:
-                                              _emergencyRelationshipController
-                                                  .text,
-                                          email: _emergencyEmailController.text,
-                                          phoneNumber: int.tryParse(
-                                              _emergencyPhoneNumberController
-                                                  .text),
-                                        ),
-                                        rentalHistory: RentalHistory(
-                                          rentalAdress:
-                                              _rentalAddressController.text,
-                                          rentalCity:
-                                              _rentalCityController.text,
-                                          rentalState:
-                                              _rentalStateController.text,
-                                          rentalCountry:
-                                              _rentalCountryController.text,
-                                          rentalPostcode:
-                                              _rentalPostcodeController.text,
-                                          rentalOwnerFirstName:
-                                              _rentalOwnerFirstNameController
-                                                  .text,
-                                          rentalOwnerLastName:
-                                              _rentalOwnerLastNameController
-                                                  .text,
-                                          startDate: _startDateController.text,
-                                          endDate: _endDateController.text,
-                                          rent: _rentController.text,
-                                          leavingReason:
-                                              _leavingReasonController.text,
-                                          rentalOwnerPrimaryEmail:
-                                              _rentalOwnerEmailController.text,
-                                          rentalOwnerPhoneNumber: int.tryParse(
-                                              _rentalOwnerPhoneNumberController
-                                                  .text),
-                                        ),
-                                        employment: Employment(
-                                          name: _employmentNameController.text,
-                                          streetAddress:
-                                              _employmentStreetAddressController
-                                                  .text,
-                                          city: _employmentCityController.text,
-                                          state:
-                                              _employmentStateController.text,
-                                          country:
-                                              _employmentCountryController.text,
-                                          postalCode:
-                                              _employmentPostalCodeController
-                                                  .text,
-                                          employmentPrimaryEmail:
-                                              _employmentPrimaryEmailController
-                                                  .text,
-                                          employmentPhoneNumber: int.tryParse(
-                                              _employmentPhoneNumberController
-                                                  .text),
-                                          employmentPosition:
-                                              _employmentPositionController
-                                                  .text,
-                                          supervisorFirstName:
-                                              _supervisorFirstNameController
-                                                  .text,
-                                          supervisorLastName:
-                                              _supervisorLastNameController
-                                                  .text,
-                                          supervisorTitle:
-                                              _supervisorTitleController.text,
-                                        ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: blueColor),
+                                    onPressed: () async {
+                                      if (_formKey.currentState!.validate()) {
+                                        SharedPreferences prefs =
+                                            await SharedPreferences.getInstance();
+                                        String? adminId =
+                                            prefs.getString('adminId');
+                                        // printAllFields();
+                                        Data data = Data(
+                                          emergencyContact: EmergencyContact(
+                                            firstName:
+                                                _emergencyFirstNameController
+                                                    .text,
+                                            lastName:
+                                                _emergencyLastNameController.text,
+                                            relationship:
+                                                _emergencyRelationshipController
+                                                    .text,
+                                            email: _emergencyEmailController.text,
+                                            phoneNumber: int.tryParse(
+                                                _emergencyPhoneNumberController
+                                                    .text),
+                                          ),
+                                          rentalHistory: RentalHistory(
+                                            rentalAdress:
+                                                _rentalAddressController.text,
+                                            rentalCity:
+                                                _rentalCityController.text,
+                                            rentalState:
+                                                _rentalStateController.text,
+                                            rentalCountry:
+                                                _rentalCountryController.text,
+                                            rentalPostcode:
+                                                _rentalPostcodeController.text,
+                                            rentalOwnerFirstName:
+                                                _rentalOwnerFirstNameController
+                                                    .text,
+                                            rentalOwnerLastName:
+                                                _rentalOwnerLastNameController
+                                                    .text,
+                                            startDate: _startDateController.text,
+                                            endDate: _endDateController.text,
+                                            rent: _rentController.text,
+                                            leavingReason:
+                                                _leavingReasonController.text,
+                                            rentalOwnerPrimaryEmail:
+                                                _rentalOwnerEmailController.text,
+                                            rentalOwnerPhoneNumber: int.tryParse(
+                                                _rentalOwnerPhoneNumberController
+                                                    .text),
+                                          ),
+                                          employment: Employment(
+                                            name: _employmentNameController.text,
+                                            streetAddress:
+                                                _employmentStreetAddressController
+                                                    .text,
+                                            city: _employmentCityController.text,
+                                            state:
+                                                _employmentStateController.text,
+                                            country:
+                                                _employmentCountryController.text,
+                                            postalCode:
+                                                _employmentPostalCodeController
+                                                    .text,
+                                            employmentPrimaryEmail:
+                                                _employmentPrimaryEmailController
+                                                    .text,
+                                            employmentPhoneNumber: int.tryParse(
+                                                _employmentPhoneNumberController
+                                                    .text),
+                                            employmentPosition:
+                                                _employmentPositionController
+                                                    .text,
+                                            supervisorFirstName:
+                                                _supervisorFirstNameController
+                                                    .text,
+                                            supervisorLastName:
+                                                _supervisorLastNameController
+                                                    .text,
+                                            supervisorTitle:
+                                                _supervisorTitleController.text,
+                                          ),
 
-                                        applicantId: widget.applicantDetail
-                                            .applicantId, // Assuming this value is not set from a controller
-                                        adminId:
-                                            adminId, // Assuming this value is not set from a controller
-                                        applicantStreetAddress:
-                                            _applicantStreetAddressController
-                                                .text,
-                                        applicantCity:
-                                            _applicantCityController.text,
-                                        applicantState:
-                                            _applicantStateController.text,
-                                        applicantCountry:
-                                            _applicantCountryController.text,
-                                        applicantPostalCode:
-                                            _applicantPostalCodeController.text,
-                                        agreeBy: _agreeByController.text,
+                                          applicantId: widget.applicantDetail
+                                              .applicantId, // Assuming this value is not set from a controller
+                                          adminId:
+                                              adminId, // Assuming this value is not set from a controller
+                                          applicantStreetAddress:
+                                              _applicantStreetAddressController
+                                                  .text,
+                                          applicantCity:
+                                              _applicantCityController.text,
+                                          applicantState:
+                                              _applicantStateController.text,
+                                          applicantCountry:
+                                              _applicantCountryController.text,
+                                          applicantPostalCode:
+                                              _applicantPostalCodeController.text,
+                                          agreeBy: _agreeByController.text,
 
-                                        applicantFirstName:
-                                            _applicantFirstNameController.text,
-                                        applicantLastName:
-                                            _applicantLastNameController.text,
-                                        applicantEmail:
-                                            _applicantEmailController.text,
-                                        applicantPhoneNumber:
-                                            _applicantPhoneNumberController
-                                                .text,
-                                        isApplicantDataEmpty:
-                                            false, // Default value
-                                      );
-                                      print('entry');
-                                      ApplicantSummeryRepository
-                                          applicantSummeryRepository =
-                                          ApplicantSummeryRepository();
-                                      print('entry');
-                                      bool success =
-                                          await ApplicantSummeryRepository()
-                                              .addApplicantSummaryForm(
-                                                  data, widget.applicant_id);
-                                      if (success == true) {
-                                        print('complete');
-                                        Fluttertoast.showToast(
-                                            msg:
-                                                'Applicant Added Successfully');
+                                          applicantFirstName:
+                                              _applicantFirstNameController.text,
+                                          applicantLastName:
+                                              _applicantLastNameController.text,
+                                          applicantEmail:
+                                              _applicantEmailController.text,
+                                          applicantPhoneNumber:
+                                              _applicantPhoneNumberController
+                                                  .text,
+                                          isApplicantDataEmpty:
+                                              false, // Default value
+                                        );
+                                        print('entry');
+                                        ApplicantSummeryRepository
+                                            applicantSummeryRepository =
+                                            ApplicantSummeryRepository();
+                                        print('entry');
+                                        bool success =
+                                            await ApplicantSummeryRepository()
+                                                .addApplicantSummaryForm(
+                                                    data, widget.applicant_id);
+                                        if (success == true) {
+                                          print('complete');
+                                          Fluttertoast.showToast(
+                                              msg:
+                                                  'Applicant Added Successfully');
+                                        } else {
+                                          print('not complete');
+                                          Fluttertoast.showToast(
+                                              msg: 'Failed to add applicant');
+                                        }
                                       } else {
-                                        print('not complete');
-                                        Fluttertoast.showToast(
-                                            msg: 'Failed to add applicant');
+                                        setState(
+                                            () {}); // Rebuild to show the error message
+                                        print('Form is invalid');
                                       }
-                                    } else {
-                                      setState(
-                                          () {}); // Rebuild to show the error message
-                                      print('Form is invalid');
-                                    }
-                                  },
-                                  child: const Text('Save Applicant'),
+                                    },
+                                    child: const Text('Save Applicant',style: TextStyle(fontWeight: FontWeight.bold),),
+                                  ),
                                 ),
                               ],
                             ),
@@ -1472,6 +1489,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                       child: Text(
                                           'A rental application is not associated with the applicant. A link to the online rental application can be either emailed directly to the applicant for completion or the application details can be entered manually.',
                                           softWrap: true,
+                                          textAlign: TextAlign.justify,
                                           overflow: TextOverflow.fade,
                                           style: TextStyle(
                                               color: Colors.grey[600],
@@ -1506,7 +1524,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       color: blueColor,
                                                       fontSize: 15,
                                                       fontWeight:
-                                                          FontWeight.w500),
+                                                          FontWeight.bold),
                                                   textAlign: TextAlign.center,
                                                 ),
                                               ),
@@ -1572,6 +1590,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                       child: Text(
                                           'A rental application is not associated with the applicant. A link to the online rental application can be either emailed directly to the applicant for completion or the application details can be entered manually.',
                                           softWrap: true,
+                                          textAlign: TextAlign.justify,
                                           overflow: TextOverflow.fade,
                                           style: TextStyle(
                                               color: Colors.grey[600],
@@ -1615,7 +1634,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               style: TextStyle(
                                                   color: blueColor,
                                                   fontSize: 15,
-                                                  fontWeight: FontWeight.w500),
+                                                  fontWeight: FontWeight.bold),
                                               textAlign: TextAlign.center,
                                             ),
                                           ),
@@ -1653,7 +1672,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               style: TextStyle(
                                                   color: blueColor,
                                                   fontSize: 15,
-                                                  fontWeight: FontWeight.w500),
+                                                  fontWeight: FontWeight.bold),
                                               textAlign: TextAlign.center,
                                             ),
                                           ),
@@ -1763,7 +1782,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     height: 10,
                                                   ),
                                                   // Unit ID
-                                                  const Row(
+                                                   Row(
                                                     children: [
                                                       SizedBox(
                                                         width: 2,
@@ -1771,11 +1790,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       Text(
                                                         "Applicant Name",
                                                         style: TextStyle(
-                                                            color: Color(
-                                                                0xFF8A95A8),
+                                                            color: blueColor,
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            fontSize: 12),
+                                                            fontSize: 15),
                                                       ),
                                                     ],
                                                   ),
@@ -1790,7 +1808,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: blueColor,
+                                                          color: grey,
+                                                            fontSize: 14
                                                         ),
                                                       ),
                                                       const SizedBox(width: 2),
@@ -1800,7 +1819,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     height: 18,
                                                   ),
 // Applicant Birth Date
-                                                  const Row(
+                                                   Row(
                                                     children: [
                                                       SizedBox(
                                                         width: 2,
@@ -1808,11 +1827,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       Text(
                                                         "Applicant Birth Date",
                                                         style: TextStyle(
-                                                            color: Color(
-                                                                0xFF8A95A8),
+                                                            color: blueColor,
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            fontSize: 12),
+                                                            fontSize: 15),
                                                       ),
                                                     ],
                                                   ),
@@ -1821,13 +1839,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                   ),
                                                   Row(
                                                     children: [
-                                                      const SizedBox(width: 2),
+                                                       SizedBox(width: 2),
                                                       Text(
                                                         '${(data.applicantFirstName ?? '').isEmpty ? 'N/A' : data.applicantFirstName}',
                                                         style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: blueColor,
+                                                          color: grey,
+                                                            fontSize: 14,
                                                         ),
                                                       ),
                                                       const SizedBox(width: 2),
@@ -1837,7 +1856,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     height: 18,
                                                   ),
 // Applicant Current Address
-                                                  const Row(
+                                                   Row(
                                                     children: [
                                                       SizedBox(
                                                         width: 2,
@@ -1845,11 +1864,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       Text(
                                                         "Applicant Current Address",
                                                         style: TextStyle(
-                                                            color: Color(
-                                                                0xFF8A95A8),
+                                                            color: blueColor,
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            fontSize: 12),
+                                                            fontSize: 15),
                                                       ),
                                                     ],
                                                   ),
@@ -1864,7 +1882,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: blueColor,
+                                                          color: grey,
+                                                            fontSize: 14
                                                         ),
                                                       ),
                                                       const SizedBox(width: 2),
@@ -1940,7 +1959,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 fontSize: 15,
                                                                 fontWeight:
                                                                     FontWeight
-                                                                        .w500),
+                                                                        .bold),
                                                             textAlign: TextAlign
                                                                 .center,
                                                           ),
@@ -2356,7 +2375,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               'Rental history',
                                               style: TextStyle(
                                                 fontSize: 16,
-                                                fontWeight: FontWeight.w500,
+                                                fontWeight: FontWeight.bold,
                                                 color: blueColor,
                                               ),
                                             ),
@@ -2385,7 +2404,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         fontSize: 15,
                                                         fontWeight:
                                                             FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                        color: blueColor,
                                                       ),
                                                     ),
                                                     const SizedBox(
@@ -3245,7 +3264,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                 }
                                               },
                                               child:
-                                                  const Text('Save Applicant'),
+                                                  const Text('Save Applicant',style: TextStyle(fontWeight: FontWeight.bold),),
                                             ),
                                           ],
                                         ),
@@ -3940,9 +3959,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       Text(
                                                         "Rental History",
                                                         style: TextStyle(
-                                                            color: const Color
-                                                                .fromRGBO(
-                                                                21, 43, 81, 1),
+                                                            color: blueColor,
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             fontSize: MediaQuery.of(
@@ -3957,7 +3974,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     height: 10,
                                                   ),
                                                   // Unit ID
-                                                  const Row(
+                                                   Row(
                                                     children: [
                                                       SizedBox(
                                                         width: 2,
@@ -3965,11 +3982,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       Text(
                                                         "Rental Address",
                                                         style: TextStyle(
-                                                            color: Color(
-                                                                0xFF8A95A8),
+                                                            color: blueColor,
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            fontSize: 12),
+                                                            fontSize: 15),
                                                       ),
                                                     ],
                                                   ),
@@ -3987,15 +4003,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                           '${(data.rentalHistory?.rentalCountry ?? 'N/A').isEmpty ? 'N/A' : data.rentalHistory!.rentalCountry}, '
                                                           '${(data.rentalHistory?.rentalPostcode ?? 'N/A').isEmpty ? 'N/A' : data.rentalHistory!.rentalPostcode}',
                                                           style:
-                                                              const TextStyle(
+                                                               TextStyle(
+                                                                 fontSize: 14,
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             color:
-                                                                Color.fromRGBO(
-                                                                    21,
-                                                                    43,
-                                                                    83,
-                                                                    1),
+                                                                grey,
                                                           ),
                                                         ),
                                                       ),
@@ -4018,16 +4031,15 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               const SizedBox(
                                                                 width: 2,
                                                               ),
-                                                              const Text(
+                                                               Text(
                                                                 "Rental Dates",
                                                                 style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
+                                                                    color:blueColor,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
                                                                     fontSize:
-                                                                        12),
+                                                                        15),
                                                               ),
                                                               const SizedBox(
                                                                 height: 5,
@@ -4035,16 +4047,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               Text(
                                                                 '${(data.rentalHistory?.startDate ?? 'N/A').isEmpty ? 'N/A' : data.rentalHistory!.startDate} to ${(data.rentalHistory?.endDate ?? 'N/A').isEmpty ? 'N/A' : data.rentalHistory!.endDate}',
                                                                 style:
-                                                                    const TextStyle(
+                                                                     TextStyle(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          83,
-                                                                          1),
+                                                                       fontSize: 14,
+                                                                  color: grey,
                                                                 ),
                                                               ),
                                                             ],
@@ -4061,16 +4069,15 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               const SizedBox(
                                                                 width: 2,
                                                               ),
-                                                              const Text(
+                                                               Text(
                                                                 "Monthly Rent",
                                                                 style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
+                                                                    color: blueColor,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
                                                                     fontSize:
-                                                                        12),
+                                                                        15),
                                                               ),
                                                               const SizedBox(
                                                                 height: 5,
@@ -4078,16 +4085,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               Text(
                                                                 '${(data.rentalHistory?.rent ?? 'N/A').isEmpty ? 'N/A' : data.rentalHistory!.rent}',
                                                                 style:
-                                                                    const TextStyle(
+                                                                     TextStyle(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          83,
-                                                                          1),
+          fontSize: 14,
+                                                                  color: grey,
                                                                 ),
                                                               ),
                                                             ],
@@ -4112,16 +4115,15 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               const SizedBox(
                                                                 width: 2,
                                                               ),
-                                                              const Text(
+                                                               Text(
                                                                 "Reason of Leaving",
                                                                 style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
+                                                                    color: blueColor,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
                                                                     fontSize:
-                                                                        12),
+                                                                        15),
                                                               ),
                                                               const SizedBox(
                                                                 height: 5,
@@ -4129,16 +4131,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               Text(
                                                                 '${(data.rentalHistory?.leavingReason ?? 'N/A').isEmpty ? 'N/A' : data.rentalHistory!.leavingReason}',
                                                                 style:
-                                                                    const TextStyle(
+                                                                     TextStyle(
+                                                                       fontSize: 14,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          83,
-                                                                          1),
+                                                                  color: grey,
                                                                 ),
                                                               ),
                                                             ],
@@ -4155,16 +4153,15 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               const SizedBox(
                                                                 width: 2,
                                                               ),
-                                                              const Text(
+                                                               Text(
                                                                 "Rental Owner Name",
                                                                 style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
+                                                                    color: blueColor,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
                                                                     fontSize:
-                                                                        12),
+                                                                        15),
                                                               ),
                                                               const SizedBox(
                                                                 height: 5,
@@ -4172,16 +4169,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               Text(
                                                                 '${(data.rentalHistory?.rentalOwnerFirstName ?? 'N/A').isEmpty ? 'N/A' : data.rentalHistory!.rentalOwnerFirstName} ${(data.rentalHistory?.rentalOwnerLastName ?? 'N/A').isEmpty ? 'N/A' : data.rentalHistory!.rentalOwnerLastName}',
                                                                 style:
-                                                                    const TextStyle(
+                                                                     TextStyle(
+                                                                       fontSize: 14,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          83,
-                                                                          1),
+                                                                  color: grey,
                                                                 ),
                                                               ),
                                                             ],
@@ -4206,16 +4199,15 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               const SizedBox(
                                                                 width: 2,
                                                               ),
-                                                              const Text(
+                                                               Text(
                                                                 "Rental Owner Phone",
                                                                 style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
+                                                                    color: blueColor,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
                                                                     fontSize:
-                                                                        12),
+                                                                        15),
                                                               ),
                                                               const SizedBox(
                                                                 height: 5,
@@ -4225,16 +4217,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                     '${data.rentalHistory!.rentalOwnerPhoneNumber}'),
                                                                 // '${data.rentalHistory!.rentalOwnerPhoneNumber ?? 'N/A'}',
                                                                 style:
-                                                                    const TextStyle(
+                                                                     TextStyle(
+                                                                       fontSize: 14,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          83,
-                                                                          1),
+                                                                  color:grey,
                                                                 ),
                                                               ),
                                                             ],
@@ -4251,16 +4239,15 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               const SizedBox(
                                                                 width: 2,
                                                               ),
-                                                              const Text(
+                                                               Text(
                                                                 "Rental Owner Email",
                                                                 style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
+                                                                    color: blueColor,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
                                                                     fontSize:
-                                                                        12),
+                                                                        15),
                                                               ),
                                                               const SizedBox(
                                                                 height: 5,
@@ -4268,16 +4255,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               Text(
                                                                 '${data.rentalHistory!.rentalOwnerPrimaryEmail ?? 'N/A'}',
                                                                 style:
-                                                                    const TextStyle(
+                                                                     TextStyle(
+                                                                       fontSize: 14,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          83,
-                                                                          1),
+                                                                  color: grey,
                                                                 ),
                                                               ),
                                                             ],
@@ -5073,9 +5056,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       Text(
                                                         "Emergency Contact Information",
                                                         style: TextStyle(
-                                                            color: const Color
-                                                                .fromRGBO(
-                                                                21, 43, 81, 1),
+                                                            color:  blueColor,
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             fontSize: MediaQuery.of(
@@ -5090,7 +5071,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     height: 10,
                                                   ),
                                                   // Unit ID
-                                                  const Row(
+                                                   Row(
                                                     children: [
                                                       SizedBox(
                                                         width: 2,
@@ -5098,11 +5079,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       Text(
                                                         "Emergency Contact Name",
                                                         style: TextStyle(
-                                                            color: Color(
-                                                                0xFF8A95A8),
+                                                            color: blueColor,
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            fontSize: 12),
+                                                            fontSize: 15),
                                                       ),
                                                     ],
                                                   ),
@@ -5117,7 +5097,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: blueColor,
+                                                          color: grey,
+                                                            fontSize: 14
                                                         ),
                                                       ),
                                                       const SizedBox(width: 2),
@@ -5127,7 +5108,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     height: 18,
                                                   ),
 // Emergency Contact Relationship
-                                                  const Row(
+                                                   Row(
                                                     children: [
                                                       SizedBox(
                                                         width: 2,
@@ -5135,11 +5116,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       Text(
                                                         "Emergency Contact Relationship",
                                                         style: TextStyle(
-                                                            color: Color(
-                                                                0xFF8A95A8),
+                                                            color: blueColor,
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            fontSize: 12),
+                                                            fontSize: 15),
                                                       ),
                                                     ],
                                                   ),
@@ -5154,7 +5134,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: blueColor,
+                                                          color: grey,
                                                         ),
                                                       ),
                                                       const SizedBox(width: 2),
@@ -5164,7 +5144,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     height: 18,
                                                   ),
 // Emergency Contact Email
-                                                  const Row(
+                                                   Row(
                                                     children: [
                                                       SizedBox(
                                                         width: 2,
@@ -5172,11 +5152,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       Text(
                                                         "Emergency Contact Email",
                                                         style: TextStyle(
-                                                            color: Color(
-                                                                0xFF8A95A8),
+                                                            color: blueColor,
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            fontSize: 12),
+                                                            fontSize: 15),
                                                       ),
                                                     ],
                                                   ),
@@ -5191,7 +5170,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: blueColor,
+                                                          color: grey,
+                                                            fontSize: 14
                                                         ),
                                                       ),
                                                       const SizedBox(width: 2),
@@ -5201,7 +5181,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     height: 18,
                                                   ),
 // Emergency Contact Phone
-                                                  const Row(
+                                                   Row(
                                                     children: [
                                                       SizedBox(
                                                         width: 2,
@@ -5209,11 +5189,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       Text(
                                                         "Emergency Contact Phone",
                                                         style: TextStyle(
-                                                            color: Color(
-                                                                0xFF8A95A8),
+                                                            color: blueColor,
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            fontSize: 12),
+                                                            fontSize: 15),
                                                       ),
                                                     ],
                                                   ),
@@ -5228,7 +5207,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: blueColor,
+                                                          color: grey,
+                                                            fontSize: 14
                                                         ),
                                                       ),
                                                       const SizedBox(width: 2),
@@ -5810,7 +5790,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     height: 10,
                                                   ),
                                                   // Unit ID
-                                                  const Row(
+                                                   Row(
                                                     children: [
                                                       SizedBox(
                                                         width: 2,
@@ -5818,11 +5798,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       Text(
                                                         "Employer Address",
                                                         style: TextStyle(
-                                                            color: Color(
-                                                                0xFF8A95A8),
+                                                            color: blueColor,
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            fontSize: 12),
+                                                            fontSize: 15),
                                                       ),
                                                     ],
                                                   ),
@@ -5840,15 +5819,11 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                           '${(data.employment?.country?.isEmpty ?? true) ? 'N/A' : data.employment!.country}, '
                                                           '${(data.employment?.postalCode?.isEmpty ?? true) ? 'N/A' : data.employment!.postalCode}',
                                                           style:
-                                                              const TextStyle(
+                                                               TextStyle(
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             color:
-                                                                Color.fromRGBO(
-                                                                    21,
-                                                                    43,
-                                                                    83,
-                                                                    1),
+                                                                grey,
                                                           ),
                                                         ),
                                                       ),
@@ -5870,16 +5845,15 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               const SizedBox(
                                                                 width: 2,
                                                               ),
-                                                              const Text(
+                                                               Text(
                                                                 "Employer Name",
                                                                 style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
+                                                                    color: blueColor,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
                                                                     fontSize:
-                                                                        12),
+                                                                        15),
                                                               ),
                                                               const SizedBox(
                                                                 height: 5,
@@ -5887,16 +5861,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               Text(
                                                                 '${(data.employment?.name?.isEmpty ?? true) ? 'N/A' : data.employment!.name}',
                                                                 style:
-                                                                    const TextStyle(
+                                                                     TextStyle(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          83,
-                                                                          1),
+                                                                  color: grey,
+                                                                         fontSize: 15
                                                                 ),
                                                               ),
                                                             ],
@@ -5913,16 +5883,15 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               const SizedBox(
                                                                 width: 2,
                                                               ),
-                                                              const Text(
+                                                               Text(
                                                                 "Employer Phone Number",
                                                                 style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
+                                                                    color: blueColor,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
                                                                     fontSize:
-                                                                        12),
+                                                                        15),
                                                               ),
                                                               const SizedBox(
                                                                 height: 5,
@@ -5930,16 +5899,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               Text(
                                                                 '${(data.employment?.employmentPhoneNumber?.toString().isEmpty ?? true) ? 'N/A' : data.employment!.employmentPhoneNumber}',
                                                                 style:
-                                                                    const TextStyle(
+                                                                     TextStyle(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          83,
-                                                                          1),
+                                                                  color: grey,
+                                                                        fontSize: 14
                                                                 ),
                                                               ),
                                                             ],
@@ -5963,16 +5928,15 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               const SizedBox(
                                                                 width: 2,
                                                               ),
-                                                              const Text(
+                                                               Text(
                                                                 "Employer Email",
                                                                 style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
+                                                                    color: blueColor,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
                                                                     fontSize:
-                                                                        12),
+                                                                        15),
                                                               ),
                                                               const SizedBox(
                                                                 height: 5,
@@ -5980,16 +5944,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               Text(
                                                                 '${(data.employment?.employmentPrimaryEmail?.isEmpty ?? true) ? 'N/A' : data.employment!.employmentPrimaryEmail}',
                                                                 style:
-                                                                    const TextStyle(
+                                                                     TextStyle(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          83,
-                                                                          1),
+                                                                  color: grey,
+                                                                         fontSize: 14
                                                                 ),
                                                               ),
                                                             ],
@@ -6006,16 +5966,15 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               const SizedBox(
                                                                 width: 2,
                                                               ),
-                                                              const Text(
+                                                               Text(
                                                                 "Employer Position",
                                                                 style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
+                                                                    color: blueColor,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
                                                                     fontSize:
-                                                                        12),
+                                                                        15),
                                                               ),
                                                               const SizedBox(
                                                                 height: 5,
@@ -6023,16 +5982,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               Text(
                                                                 '${(data.employment?.employmentPosition?.isEmpty ?? true) ? 'N/A' : data.employment!.employmentPosition}',
                                                                 style:
-                                                                    const TextStyle(
+                                                                     TextStyle(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          83,
-                                                                          1),
+                                                                  color: grey,
+                                                                         fontSize: 15
                                                                 ),
                                                               ),
                                                             ],
@@ -6056,16 +6011,15 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               const SizedBox(
                                                                 width: 2,
                                                               ),
-                                                              const Text(
+                                                               Text(
                                                                 "Supervisor Name",
                                                                 style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
+                                                                    color: blueColor,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
                                                                     fontSize:
-                                                                        12),
+                                                                        15),
                                                               ),
                                                               const SizedBox(
                                                                 height: 5,
@@ -6074,16 +6028,13 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                 '${(data.employment?.supervisorFirstName?.isEmpty ?? true) ? 'N/A' : data.employment!.supervisorFirstName} '
                                                                 '${(data.employment?.supervisorLastName?.isEmpty ?? true) ? 'N/A' : data.employment!.supervisorLastName}',
                                                                 style:
-                                                                    const TextStyle(
+                                                                     TextStyle(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          83,
-                                                                          1),
+                                                                  color: grey,
+                                                                         fontSize:
+                                                                         14
                                                                 ),
                                                               ),
                                                             ],
@@ -6100,16 +6051,15 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               const SizedBox(
                                                                 width: 2,
                                                               ),
-                                                              const Text(
+                                                               Text(
                                                                 "Supervisor Title",
                                                                 style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
+                                                                    color:blueColor,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
                                                                     fontSize:
-                                                                        12),
+                                                                        15),
                                                               ),
                                                               const SizedBox(
                                                                 height: 5,
@@ -6117,16 +6067,13 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               Text(
                                                                 '${(data.employment?.supervisorTitle?.isEmpty ?? true) ? 'N/A' : data.employment!.supervisorTitle}',
                                                                 style:
-                                                                    const TextStyle(
+                                                                     TextStyle(
+                                                                       fontSize:
+                                                                       15,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          83,
-                                                                          1),
+                                                                  color: grey,
                                                                 ),
                                                               ),
                                                             ],

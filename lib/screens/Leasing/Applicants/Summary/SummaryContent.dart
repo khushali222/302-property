@@ -148,37 +148,40 @@ class _SummaryContentState extends State<SummaryContent> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(
+                width: 5,
+              ),
               Expanded(
                 flex: 2,
                 child: Text(
                   status.applicantNotes ?? '',
-                  style:  TextStyle(
+                  style: TextStyle(
                       color: blueColor,
                       fontSize: 14,
-                      fontWeight: FontWeight.w500),
+                      fontWeight: FontWeight.bold),
                   softWrap: true,
                   overflow: TextOverflow.visible,
                 ),
               ),
               const SizedBox(width: 20),
               Expanded(
-                flex: 2,
+                flex: 3,
                 child: Text(
                   status.applicantFile ?? 'N/A',
-                  style:  TextStyle(
-                      color: blueColor,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    color: grey,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
                   softWrap: true,
                   overflow: TextOverflow.visible,
                 ),
               ),
-              const SizedBox(width: 20),
+              const SizedBox(width: 15),
               Expanded(
                 flex: 1,
                 child: IconButton(
-                  icon:  Icon(Icons.clear,
-                      color: blueColor),
+                  icon: Icon(Icons.clear, color: blueColor),
                   onPressed: () {
                     deleteNoteAndFile(
                         i, widget.summery.applicantId!, status.sId!);
@@ -208,9 +211,24 @@ class _SummaryContentState extends State<SummaryContent> {
         final statusMessage =
             '${status.status} by ${status.statusUpdatedBy} at ${status.updateAt}';
         rows.add(DataRow(cells: [
-          DataCell(Text(status.status!)),
-          const DataCell(Text("The New Rental Application Status")),
-          DataCell(Text(statusMessage)),
+          DataCell(Text(
+            status.status!,
+            style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+          )),
+          DataCell(Padding(
+            padding: const EdgeInsets.only(left: 5, right: 5),
+            child: Text(
+              "The New Rental Application Status",
+              style: TextStyle(color: grey, fontWeight: FontWeight.bold),
+            ),
+          )),
+          DataCell(Padding(
+            padding: const EdgeInsets.only(left: 5, right: 5),
+            child: Text(
+              statusMessage,
+              style: TextStyle(color: grey, fontWeight: FontWeight.bold),
+            ),
+          )),
         ]));
       }
       return rows;
@@ -225,12 +243,12 @@ class _SummaryContentState extends State<SummaryContent> {
           children: [
             Column(
               children: applicantCheckedChecklist.map((item) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: Row(
-                    children: [
-                      Checkbox(
-                        activeColor:  blueColor,
+                return Row(
+                  children: [
+                    SizedBox(
+                      width: 20.0, // Standard width for checkbox
+                      height: 40.0,
+                      child: Checkbox(
                         value: widget.summery.applicantCheckedChecklist!
                             .contains(item),
                         onChanged: (bool? value) {
@@ -247,10 +265,21 @@ class _SummaryContentState extends State<SummaryContent> {
                           });
                           updatecheckBox();
                         },
+                        activeColor: blueColor,
+                        // Disable checkbox if amount is not entered
                       ),
-                      Text(displayNames[item].toString()),
-                    ],
-                  ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      displayNames[item].toString(),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: blueColor,
+                          fontSize: 15),
+                    ),
+                  ],
                 );
               }).toList(),
             ),
@@ -260,25 +289,49 @@ class _SummaryContentState extends State<SummaryContent> {
                   padding: const EdgeInsets.symmetric(vertical: 4.0),
                   child: Row(
                     children: [
-                      Checkbox(
-                        activeColor:  blueColor,
-                        value: widget.summery.applicantCheckedChecklist!
-                            .contains(item),
-                        onChanged: (bool? value) {
-                          setState(() {
-                            if (value != false) {
-                              widget.summery.applicantCheckedChecklist!
-                                  .add(item);
-                              applicantChecklist.add(item);
-                            } else {
-                              widget.summery.applicantCheckedChecklist!
-                                  .remove(item);
-                              applicantChecklist.remove(item);
-                            }
-                          });
-                          updatecheckBox();
-                        },
+                      SizedBox(
+                        width: 35.0, // Standard width for checkbox
+                        height: 35.0,
+                        child: Checkbox(
+                          value: widget.summery.applicantCheckedChecklist!
+                              .contains(item),
+                          onChanged: (bool? value) {
+                            setState(() {
+                              if (value != false) {
+                                widget.summery.applicantCheckedChecklist!
+                                    .add(item);
+                                applicantChecklist.add(item);
+                              } else {
+                                widget.summery.applicantCheckedChecklist!
+                                    .remove(item);
+                                applicantChecklist.remove(item);
+                              }
+                            });
+                            updatecheckBox();
+                          },
+                          activeColor:
+                              blueColor, // Disable checkbox if amount is not entered
+                        ),
                       ),
+                      // Checkbox(
+                      //   activeColor:  blueColor,
+                      //   value: widget.summery.applicantCheckedChecklist!
+                      //       .contains(item),
+                      //   onChanged: (bool? value) {
+                      //     setState(() {
+                      //       if (value != false) {
+                      //         widget.summery.applicantCheckedChecklist!
+                      //             .add(item);
+                      //         applicantChecklist.add(item);
+                      //       } else {
+                      //         widget.summery.applicantCheckedChecklist!
+                      //             .remove(item);
+                      //         applicantChecklist.remove(item);
+                      //       }
+                      //     });
+                      //     updatecheckBox();
+                      //   },
+                      // ),
                       Text(item),
                       InkWell(
                           onTap: () {
@@ -296,65 +349,66 @@ class _SummaryContentState extends State<SummaryContent> {
               }).toList(),
             ),
             if (addcheckbox)
-              Row(
+              Column(
                 children: [
-                  SizedBox(
-                    height: 50,
-                    width: 150,
-                    child: TextFormField(
-                      controller: checkvalue,
-                      decoration: const InputDecoration(
-                          hintText: "Enter Value",
-                          border: OutlineInputBorder()),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        widget.summery.applicantChecklist!.add(checkvalue.text);
-                        checkvalue.text = "";
-                        addcheckbox = false;
-                      });
-                      updatecheckBoxnew(widget.summery.applicantChecklist!);
-                    },
-                    child: Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.green)),
-                      child: const Icon(
-                        Icons.check,
-                        color: Colors.green,
+                  SizedBox(height: 5,),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomTextField(
+                          hintText: 'Enter Value',
+                          controller: checkvalue,
+                        ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        checkvalue.text = "";
-                      });
-                    },
-                    child: Container(
-                      width: 30,
-                      height: 30,
-                      decoration:
-                          BoxDecoration(border: Border.all(color: Colors.red)),
-                      child: const Icon(
-                        Icons.close,
-                        color: Colors.red,
+                      SizedBox(
+                        width: 15,
                       ),
-                    ),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            widget.summery.applicantChecklist!.add(checkvalue.text);
+                            checkvalue.text = "";
+                            addcheckbox = false;
+                          });
+                          updatecheckBoxnew(widget.summery.applicantChecklist!);
+                        },
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.green)),
+                          child: const Icon(
+                            Icons.check,
+                            color: Colors.green,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            checkvalue.text = "";
+                          });
+                        },
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          decoration:
+                              BoxDecoration(border: Border.all(color: Colors.red)),
+                          child: const Icon(
+                            Icons.close,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             const SizedBox(
-              height: 10,
+              height: 20,
             ),
             GestureDetector(
               onTap: () {
@@ -366,27 +420,35 @@ class _SummaryContentState extends State<SummaryContent> {
               child: Material(
                 elevation: 3,
                 borderRadius: const BorderRadius.all(
-                  Radius.circular(5),
+                  Radius.circular(3),
                 ),
                 child: Container(
-                  height: 40,
+                  height: 42,
                   width: 150,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     //color: blueColor,
+                    border: Border.all(color: grey),
                     borderRadius: BorderRadius.all(
-                      Radius.circular(5),
+                      Radius.circular(3),
                     ),
                   ),
-                  child:  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Row(
+                    // mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      SizedBox(
+                        width: 5,
+                      ),
                       Icon(Icons.add),
+                      SizedBox(
+                        width: 3,
+                      ),
                       Center(
                           child: Text(
                         "Add Checklist",
                         style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            color: blueColor),
+                            fontWeight: FontWeight.w600,
+                            color: blueColor,
+                            fontSize: 14),
                       )),
                     ],
                   ),
@@ -398,15 +460,19 @@ class _SummaryContentState extends State<SummaryContent> {
             ),
             Text('Notes And Files',
                 style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[600],
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: grey,
                 )),
             const SizedBox(
               height: 10,
             ),
             if (openNote == false)
               Material(
+                elevation: 3,
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(3),
+                ),
                 child: GestureDetector(
                   onTap: () {
                     setState(() {
@@ -414,39 +480,45 @@ class _SummaryContentState extends State<SummaryContent> {
                     });
                   },
                   child: Container(
+                    height: 42,
+                    width: 150,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                          color:blueColor),
+                      borderRadius: BorderRadius.circular(3),
+                      border: Border.all(color: grey),
                     ),
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text('Attach Note / File'),
+                    child: Padding(
+                      padding: EdgeInsets.all(9.0),
+                      child: Text(
+                        'Attach Note / File',
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14),
+                      ),
                     ),
                   ),
                 ),
               ),
             if (openNote)
               Container(
-                margin: const EdgeInsets.only(top: 16),
+                margin: const EdgeInsets.only(top: 5),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  border:
-                      Border.all(color:blueColor),
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: blueColor),
                 ),
                 child: Form(
                   key: formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                       Text(
+                      Text(
                         'Notes',
                         style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
                             color: blueColor),
                       ),
                       const SizedBox(
@@ -457,29 +529,23 @@ class _SummaryContentState extends State<SummaryContent> {
                         controller: noteController,
                       ),
                       const SizedBox(height: 10),
-                       Text('Upload File',
+                      Text('Upload File',
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
-                              color: blueColor
-
-
-)),
+                              color: blueColor)),
                       const SizedBox(
-                        height: 20,
+                        height: 10,
                       ),
                       Container(
-                        height: 50,
-                        width: 95,
+                        // height: 45,
+                        width: 90,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:  blueColor
-
-
-,
+                            backgroundColor: blueColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
@@ -494,8 +560,7 @@ class _SummaryContentState extends State<SummaryContent> {
                         children: [
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                   blueColor,
+                              backgroundColor: blueColor,
                             ),
                             onPressed: () async {
                               if (formKey.currentState!.validate()) {
@@ -536,7 +601,12 @@ class _SummaryContentState extends State<SummaryContent> {
                                       size: 20.0,
                                     ),
                                   )
-                                : const Text('Save'),
+                                : const Text(
+                                    'Save',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                           ),
                           const SizedBox(width: 10),
                           GestureDetector(
@@ -547,12 +617,11 @@ class _SummaryContentState extends State<SummaryContent> {
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
+                                  horizontal: 10, vertical: 8),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                    color:blueColor),
+                                border: Border.all(color: blueColor),
                               ),
                               child: const Text('Cancel'),
                             ),
@@ -564,7 +633,7 @@ class _SummaryContentState extends State<SummaryContent> {
                 ),
               ),
             const SizedBox(
-              height: 10,
+              height: 20,
             ),
             notesAndFiles.isEmpty
                 ? Container()
@@ -574,23 +643,25 @@ class _SummaryContentState extends State<SummaryContent> {
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                            color:blueColor),
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: grey),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const SizedBox(height: 20),
-                           Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          const SizedBox(height: 10),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 14.0),
                             child: Text(
                               "Notes And Files",
                               style: TextStyle(
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: FontWeight.bold,
                                   fontSize: 16,
                                   color: blueColor),
                             ),
+                          ),
+                          SizedBox(
+                            height: 5,
                           ),
                           Padding(
                             padding:
@@ -619,11 +690,7 @@ class _SummaryContentState extends State<SummaryContent> {
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(
-                                            color: blueColor
-
-
-),
+                                        border: Border.all(color: blueColor),
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
@@ -649,21 +716,20 @@ class _SummaryContentState extends State<SummaryContent> {
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  border:
-                      Border.all(color:blueColor),
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: grey),
                 ),
                 //width: ,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
-                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 14.0),
                       child: Text(
                         "Updates",
                         style: TextStyle(
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.bold,
                             fontSize: 16,
                             color: blueColor),
                       ),
@@ -680,6 +746,7 @@ class _SummaryContentState extends State<SummaryContent> {
                       ],
                       rows: buildRows(widget.summery.applicantStatus!),
                     ),
+                    SizedBox(height: 20),
                     if (widget.summery.applicantStatus!.length > 5)
                       Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -696,9 +763,7 @@ class _SummaryContentState extends State<SummaryContent> {
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                      color:
-                                         blueColor),
+                                  border: Border.all(color: blueColor),
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -723,9 +788,8 @@ class _SummaryContentState extends State<SummaryContent> {
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  border:
-                      Border.all(color:blueColor),
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: grey),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -735,33 +799,35 @@ class _SummaryContentState extends State<SummaryContent> {
                     children: [
                       Text(
                           '${widget.summery.applicantFirstName} ${widget.summery.applicantLastName}',
-                          style:  TextStyle(
-                              fontSize: 16,
+                          style: TextStyle(
+                              fontSize: 17,
                               color: blueColor,
                               fontWeight: FontWeight.bold)),
                       const SizedBox(
                         height: 5,
                       ),
-                       Text('Applicant',
+                      Text('Applicant',
                           style: TextStyle(
-                              color: blueColor,
-                              fontWeight: FontWeight.normal)),
+                              color: grey,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15)),
                       const SizedBox(
                         height: 10,
                       ),
                       Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.home,
-                            color: Color.fromRGBO(138, 149, 168, 1),
+                            color: blueColor,
+                            size: 30,
                           ),
-                          const SizedBox(
+                          SizedBox(
                             width: 10,
                           ),
                           Text(
                             "${widget.summery.applicantHomeNumber != null ? 'N/A' : widget.summery.applicantHomeNumber ?? "N/A"}",
-                            style:  TextStyle(
-                              fontWeight: FontWeight.w500,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
                               color: blueColor,
                             ),
                           )
@@ -772,17 +838,18 @@ class _SummaryContentState extends State<SummaryContent> {
                       ),
                       Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.business_center_outlined,
-                            color: Color.fromRGBO(138, 149, 168, 1),
+                            color: blueColor,
+                            size: 30,
                           ),
-                          const SizedBox(
+                          SizedBox(
                             width: 10,
                           ),
                           Text(
                             "${widget.summery.applicantBusinessNumber != null ? 'N/A' : widget.summery.applicantBusinessNumber ?? "N/A"}",
-                            style:  TextStyle(
-                              fontWeight: FontWeight.w500,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
                               color: blueColor,
                             ),
                           )
@@ -793,18 +860,23 @@ class _SummaryContentState extends State<SummaryContent> {
                       ),
                       Row(
                         children: [
-                          const FaIcon(
-                            FontAwesomeIcons.mobile,
-                            color: Color.fromRGBO(138, 149, 168, 1),
+                          SizedBox(
+                            width: 5,
                           ),
-                          const SizedBox(
+                          FaIcon(
+                            FontAwesomeIcons.mobile,
+                            color: blueColor,
+                            size: 25,
+                          ),
+                          SizedBox(
                             width: 10,
                           ),
                           Text(
-                           formatPhoneNumber('${widget.summery.applicantPhoneNumber!}'),
-                           // "${widget.summery.applicantPhoneNumber!.isEmpty ? 'N/A' : widget.summery.applicantPhoneNumber}",
-                            style:  TextStyle(
-                              fontWeight: FontWeight.w500,
+                            formatPhoneNumber(
+                                '${widget.summery.applicantPhoneNumber!}'),
+                            // "${widget.summery.applicantPhoneNumber!.isEmpty ? 'N/A' : widget.summery.applicantPhoneNumber}",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
                               color: blueColor,
                             ),
                           )
@@ -815,17 +887,18 @@ class _SummaryContentState extends State<SummaryContent> {
                       ),
                       Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.mail,
-                            color: Color.fromRGBO(138, 149, 168, 1),
+                            color: blueColor,
+                            size: 30,
                           ),
-                          const SizedBox(
+                          SizedBox(
                             width: 10,
                           ),
                           Text(
                             "${widget.summery.applicantEmail ?? 'N/A'}",
-                            style:  TextStyle(
-                              fontWeight: FontWeight.w500,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
                               color: blueColor,
                             ),
                           )
@@ -840,7 +913,7 @@ class _SummaryContentState extends State<SummaryContent> {
               ),
             ),
             const SizedBox(
-              height: 5,
+              height: 10,
             ),
           ],
         ),

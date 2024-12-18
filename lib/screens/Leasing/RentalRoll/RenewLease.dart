@@ -64,7 +64,7 @@ class _RenewleaseState extends State<Renewlease> {
     DateTime endDate = formatDates(widget.enddate!);
     DateTime startDate = endDate;
     DateTime newEndDate =
-        DateTime(endDate.year + 1, endDate.month, endDate.day);
+        DateTime(endDate.year, endDate.month + 1, endDate.day);
 
     // startDateController.text = DateFormat('yyyy-MM-dd').format(startDate);
     //startDateController.text = formatDate(DateTime.now().toString());
@@ -492,14 +492,27 @@ class _RenewleaseState extends State<Renewlease> {
                       snapshot.data!.data!.endDate)) {
                     startDateController.text =
                         formatDate(DateTime.now().toString());
-                    DateTime endDate = formatDates(
-                        snapshot.data!.data!.renewLeases!.last.endDate!);
-                    DateTime startDate = endDate;
-                    DateTime newEndDate =
-                        DateTime(endDate.year + 1, endDate.month, endDate.day);
-                    endDateController.text = formatDate(
-                        DateFormat('yyyy-MM-dd').format(newEndDate).toString());
-                  } else if (snapshot.data!.data!.renewLeases!.length > 0) {
+
+                    if (snapshot.data!.data!.renewLeases != null &&
+                        snapshot.data!.data!.renewLeases!.isNotEmpty){
+                      DateTime endDate = formatDates(
+                          snapshot.data!.data!.renewLeases!.last.endDate!);
+                      DateTime startDate = endDate;
+                      DateTime newEndDate =
+                      DateTime(endDate.year + 1, endDate.month, endDate.day);
+                      endDateController.text = formatDate(
+                          DateFormat('yyyy-MM-dd').format(newEndDate).toString());
+                    }
+
+                    // DateTime endDate = formatDates(
+                    //     snapshot.data!.data!.renewLeases!.last.endDate!);
+                    // DateTime startDate = endDate;
+                    // DateTime newEndDate =
+                    //     DateTime(endDate.year + 1, endDate.month, endDate.day);
+                    // endDateController.text = formatDate(
+                    //     DateFormat('yyyy-MM-dd').format(newEndDate).toString());
+                  }
+                  else if (snapshot.data!.data!.renewLeases!.length > 0) {
                     startDateController.text = formatDate(
                         snapshot.data!.data!.renewLeases!.last.endDate!);
                     DateTime endDate = formatDates(
