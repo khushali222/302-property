@@ -39,8 +39,10 @@ class addLease3 extends StatefulWidget {
   final String? applicantId;
   final String? rentalId;
   final String? unitId;
+  final Tenant? tenants;
 
-  const addLease3({Key? key, this.applicantId, this.rentalId, this.unitId})
+
+   addLease3({Key? key, this.applicantId, this.rentalId, this.unitId, this.tenants})
       : super(key: key);
 
   @override
