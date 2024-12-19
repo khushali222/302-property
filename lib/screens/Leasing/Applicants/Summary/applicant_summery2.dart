@@ -12,6 +12,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -30,6 +31,7 @@ import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart'
 // import 'package:three_zero_two_property/repository/properties_summery.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
+import '../../../../provider/lease_provider.dart';
 import '../../../../widgets/drawer_tiles.dart';
 import '../../../../widgets/custom_drawer.dart';
 
@@ -438,6 +440,14 @@ class _applicant_summeryState extends State<applicant_summery>
                                   onPressed: snapshot.data!.isMovedin!
                                       ? null
                                       : () {
+                                    Provider.of<SelectedTenantsProvider>(context,
+                                        listen: false)
+                                        .clearTenant();
+                                    Provider.of<SelectedCosignersProvider>(context,
+                                        listen: false)
+                                        .clearCosigner();
+                                    Provider.of<SelectedApplicantProvider>(context,
+                                        listen: false).clearApplicant();
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(

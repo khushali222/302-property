@@ -145,6 +145,7 @@ class ApplicantSummeryRepository {
         "id": "CRM $id",
       });
 
+      print(response.body);
       if (response.statusCode == 200) {
         print('entry 200');
         final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
